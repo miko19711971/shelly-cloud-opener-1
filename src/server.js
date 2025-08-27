@@ -32,7 +32,7 @@ if (!SHELLY_AUTH_KEY) {
 }
 
 // ===== DEVICES (HEX -> { name, dec }) =====
-// Metti qui, per ogni device, anche il Decimal Id (dalla tua foto).
+// Inserisci i Decimal Id quando li hai (Arenula già inserito).
 const DEVICES = {
   // Arenula 16 — Building Door
   "3494547ab05e": { name: "Arenula 16 — Building Door", dec: "57811677130846" },
@@ -146,34 +146,37 @@ async function shellyPostForm(baseUrl, path, payloadObj) {
   });
 }
 
-// ===== Apertura relè (CONTROL → fallback TURN) =====
-async function shellyPulse(hexId, durationMs = 800) {
+// ===== Apertura relè con un'unica chiamata (timer lato cloud) =====
+async function shellyPulse(hexId, seconds = 1) {
   const baseUrl = await resolveDeviceBaseUrl(hexId);
-  const payloadOn  = { id: hexId, auth_key: SHELLY_AUTH_KEY, channel: "0", turn: "on"  };
-  const payloadOff = { id: hexId, auth_key: SHELLY_AUTH_KEY, channel: "0", turn: "off" };
+
+  // un solo POST: ON + timer (Shelly spegne da solo)
+  const payload = {
+    id: hexId,
+    auth_key: SHELLY_AUTH_KEY,
+    channel: "0",
+    turn: "on",
+    timer: String(seconds)   // spegni dopo N secondi
+  };
 
   try {
-    const onRes  = await shellyPostForm(baseUrl, "/device/relay/control", payloadOn);
-    await new Promise(r => setTimeout(r, durationMs));
-    const offRes = await shellyPostForm(baseUrl, "/device/relay/control", payloadOff);
-    return { ok: true, on: onRes.data, off: offRes.data, path: "/device/relay/control", baseUrl, encoding: "form" };
-  } catch (err1) {
-    try {
-      const onRes  = await shellyPostForm(baseUrl, "/device/relay/turn", payloadOn);
-      await new Promise(r => setTimeout(r, durationMs));
-      const offRes = await shellyPostForm(baseUrl, "/device/relay/turn", payloadOff);
-      return { ok: true, on: onRes.data, off: offRes.data, path: "/device/relay/turn", baseUrl, encoding: "form" };
-    } catch (err2) {
-      return {
-        ok: false,
-        error: "Shelly request failed",
-        details: {
-          first:  { status: err1?.response?.status, data: err1?.response?.data, message: err1?.message, path: "/device/relay/control", encoding: "form" },
-          second: { status: err2?.response?.status, data: err2?.response?.data, message: err2?.message, path: "/device/relay/turn",    encoding: "form" },
-          baseUrl
-        }
-      };
-    }
+    const res = await shellyPostForm(baseUrl, "/device/relay/control", payload);
+    const data = res.data || {};
+    // Consideriamo ok anche se non espone esplicitamente isok:true
+    return { ok: true, on: data, path: "/device/relay/control", baseUrl, encoding: "form" };
+  } catch (err) {
+    return {
+      ok: false,
+      error: "Shelly request failed",
+      details: {
+        status: err?.response?.status,
+        data: err?.response?.data,
+        message: err?.message,
+        path: "/device/relay/control",
+        encoding: "form"
+      },
+      baseUrl
+    };
   }
 }
 
