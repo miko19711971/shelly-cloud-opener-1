@@ -2,15 +2,12 @@
   "name": "shelly-cloud-opener",
   "version": "1.0.0",
   "type": "module",
-  "main": "src/server.js",
   "scripts": {
     "start": "node src/server.js"
   },
-  "engines": {
-    "node": ">=18"
-  },
   "dependencies": {
-    "axios": "^1.7.0",
+    "axios": "^1.7.2",
+    "crypto": "^1.0.1",
     "express": "^4.19.2"
   }
 }
