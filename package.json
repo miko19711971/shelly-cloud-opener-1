@@ -1,12 +1,10 @@
 {
   "name": "shelly-cloud-opener-1",
   "version": "1.0.0",
-  "description": "Simple HMAC-signed door opener for Shelly Cloud (Render deploy)",
-  "main": "index.js",
   "type": "module",
+  "main": "index.js",
   "scripts": {
-    "start": "node index.js",
-    "start:dev": "NODE_ENV=development node index.js"
+    "start": "node index.js"
   },
   "engines": {
     "node": ">=18"
