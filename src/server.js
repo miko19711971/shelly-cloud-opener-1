@@ -19,7 +19,7 @@ const HMAC_SECRET =
   process.env.TOKEN_SECRET || process.env.HMAC_SECRET || "change-me";
 const LINK_TTL_SECONDS = parseInt(process.env.LINK_TTL_SECONDS || "300", 10);
 
-// endpoint "generico" account (solo per discovery shard)
+// endpoint “generico” account (solo per discovery shard)
 const ACCOUNT_BASE = "https://shelly-api-eu.shelly.cloud";
 
 if (!SHELLY_AUTH_KEY) {
@@ -62,31 +62,41 @@ function verify(deviceId, ts, sig) {
   catch { return false; }
 }
 
-// ===== Risoluzione shard per device (cache) =====
-const deviceShardCache = new Map(); // deviceId -> baseUrl (https://shelly-xx-eu.shelly.cloud)
+// ===== Risoluzione shard per device (solo /device/status, con cache) =====
+const deviceShardCache = new Map(); // deviceId -> baseUrl
 
 async function resolveDeviceBaseUrl(deviceId) {
   if (deviceShardCache.has(deviceId)) return deviceShardCache.get(deviceId);
 
-  // Chiamata account → lista dispositivi con info server
-  const url = `${ACCOUNT_BASE}/device/all`;
-  const form = new URLSearchParams({ auth_key: SHELLY_AUTH_KEY }).toString();
-  const { data } = await axios.post(url, form, {
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    timeout: 10000
-  });
+  const urlStatus = `${ACCOUNT_BASE}/device/status`;
+  const formStatus = new URLSearchParams({
+    id: deviceId,
+    auth_key: SHELLY_AUTH_KEY
+  }).toString();
 
-  // Estraggo id + server; i nomi campo possono variare leggermente
-  const list = Array.isArray(data?.data?.devices) ? data.data.devices : [];
-  for (const d of list) {
-    const id = d?.id || d?.device_id || d?.deviceid;
-    const server = d?.server_name || d?.server || d?.domain || d?.server_domain;
-    if (id && server) {
+  try {
+    const { data: ds } = await axios.post(urlStatus, formStatus, {
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      timeout: 10000
+    });
+
+    const server =
+      ds?.data?.device?.server_name ||
+      ds?.data?.server ||
+      ds?.data?.domain ||
+      ds?.server ||
+      ds?.domain;
+
+    if (server) {
       const base = server.startsWith("http") ? server : `https://${server}`;
-      deviceShardCache.set(id, base);
+      deviceShardCache.set(deviceId, base);
+      return base;
     }
+  } catch (_e) {
+    // se fallisce, useremo ACCOUNT_BASE come fallback
   }
-  return deviceShardCache.get(deviceId); // può essere undefined se non trovato
+
+  return ACCOUNT_BASE; // può non funzionare per il controllo, ma non blocca il flusso
 }
 
 // ===== POST helper (form) =====
@@ -101,10 +111,7 @@ async function shellyPostForm(baseUrl, path, payloadObj) {
 
 // ===== Apertura relè (CONTROL → fallback TURN) =====
 async function shellyPulse(deviceId, durationMs = 800) {
-  const baseUrl =
-    (await resolveDeviceBaseUrl(deviceId)) ||
-    ACCOUNT_BASE; // fallback se non risolto, ma è quasi sempre risolto
-
+  const baseUrl = await resolveDeviceBaseUrl(deviceId);
   const payloadOn  = { id: deviceId, auth_key: SHELLY_AUTH_KEY, channel: "0", turn: "on"  };
   const payloadOff = { id: deviceId, auth_key: SHELLY_AUTH_KEY, channel: "0", turn: "off" };
 
@@ -168,7 +175,7 @@ app.get("/", (_req, res) => {
       </tr></thead>
       <tbody>${rows.join("")}</tbody>
     </table>
-    <p style="margin-top:16px;font-size:12px;opacity:.7">Shard auto: account discovery via <code>${ACCOUNT_BASE}</code></p>
+    <p style="margin-top:16px;font-size:12px;opacity:.7">Shard auto-discovery via <code>${ACCOUNT_BASE}</code></p>
   </body></html>`);
 });
 
@@ -184,21 +191,40 @@ app.get("/open", async (req, res) => {
   return res.status(502).json(result);
 });
 
-// ===== Manual Open =====
+// ===== Manual Open (sempre JSON) =====
 app.get("/manual-open/:deviceId", async (req, res) => {
   const device = req.params.deviceId;
-  if (!DEVICES[device]) return res.status(404).send("Unknown device");
-  const result = await shellyPulse(device);
-  if (result.ok) {
-    res.setHeader("Content-Type", "text/html; charset=utf-8");
-    return res.send(`<p>✅ Aperto: <b>${DEVICES[device].name}</b> (<code>${device}</code>) – via <code>${result.path}</code> su <code>${result.baseUrl}</code> (form)</p>
-    <p><a href="/">← Torna alla lista</a></p>`);
+  if (!DEVICES[device]) {
+    return res.status(404).json({ ok: false, error: "Unknown device", device });
   }
-  res.status(502).send(`<pre>${JSON.stringify(result, null, 2)}</pre>`);
+  try {
+    const result = await shellyPulse(device);
+    return res
+      .status(result.ok ? 200 : 502)
+      .json({ device, name: DEVICES[device].name, ...result });
+  } catch (e) {
+    return res.status(500).json({
+      ok: false,
+      error: "handler_crash",
+      message: e?.message,
+      stack: e?.stack
+    });
+  }
 });
 
 // ===== Health =====
 app.get("/health", (_req, res) => res.json({ ok:true }));
+
+// ===== Debug: shard risolto per un device =====
+app.get("/resolve/:deviceId", async (req, res) => {
+  const device = req.params.deviceId;
+  try {
+    const baseUrl = await resolveDeviceBaseUrl(device);
+    res.json({ ok: true, device, baseUrl });
+  } catch (e) {
+    res.status(500).json({ ok: false, error: "resolve_failed", message: e?.message });
+  }
+});
 
 app.listen(PORT, () => {
   console.log(`Server listening on :${PORT}`);
