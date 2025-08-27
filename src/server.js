@@ -1,4 +1,4 @@
- import express from "express";
+import express from "express";
 import cors from "cors";
 import crypto from "crypto";
 import axios from "axios";
@@ -15,7 +15,7 @@ const SHELLY_BASE_URL = process.env.SHELLY_BASE_URL || "https://shelly-77-eu.she
 const TOKEN_SECRET = process.env.TOKEN_SECRET || "change-me";
 const LINK_TTL_SECONDS = parseInt(process.env.LINK_TTL_SECONDS || "300", 10);
 
-// endpoint account per discovery (se serve)
+// endpoint account per discovery (per trovare lo shard corretto)
 const ACCOUNT_BASE = "https://shelly-api-eu.shelly.cloud";
 
 // ===== DEVICES =====
@@ -24,21 +24,19 @@ const DEVICES = {
   "3494547a9395": { name: "Leonina 71 — Apartment Door", dec: "57811677123477" },
   "34945479fd73": { name: "Leonina 71 — Building Door", dec: "57811677085043" },
   "3494547a1075": { name: "Via della Scala 17 — Apartment Door", dec: "57811677089909" },
-  "3494547745ee": { name: "Via della Scala 17 — Building Door", dec: "57811676906990" },
+  "3494547745ee": { name: "Via della Scala 17 — Building Door", dec: "57811676906990" }, // <— speciale (doppio impulso)
   "3494547a887d": { name: "Portico d’Ottavia 1D — Apartment Door", dec: "57811677120637" },
   "3494547ab62b": { name: "Portico d’Ottavia 1D — Building Door", dec: "57811677132331" },
   "34945479fa35": { name: "Viale Trastevere 108 — Apartment Door", dec: "57811677084213" },
   "34945479fbbe": { name: "Viale Trastevere 108 — Building Door", dec: "57811677084606" }
 };
 
-// ===== FLOW per Via della Scala (2 portoni + 1 porta) =====
+// ===== FLOW: pagina dedicata a Via della Scala =====
 const FLOWS = {
   scala: {
     title: "Via della Scala 17",
-    steps: [
-      { label: "Apri Portone (usalo 2 volte: esterno e interno)", device: "3494547745ee" },
-      { label: "Apri Porta Appartamento", device: "3494547a1075" }
-    ]
+    gateHex: "3494547745ee",   // portoni condominiali (stesso relè)
+    doorHex: "3494547a1075"    // porta appartamento
   }
 };
 
@@ -52,7 +50,6 @@ function verify(deviceId, ts, sig) {
   const good = sign(deviceId, ts);
   try { return crypto.timingSafeEqual(Buffer.from(good), Buffer.from(sig)); } catch { return false; }
 }
-// helper per generare link firmati
 function signedLinkFor(deviceId) {
   const ts = Math.floor(Date.now() / 1000);
   const sig = sign(deviceId, ts);
@@ -110,7 +107,7 @@ async function shellyForm(baseUrl, path, payload) {
   });
 }
 
-// ===== Apertura con singolo POST (timer lato cloud) =====
+// ===== Apertura singolo impulso (timer lato cloud) =====
 async function openPulse(hexId, seconds = 1) {
   const baseUrl = await resolveBaseUrl(hexId);
   const payload = {
@@ -137,6 +134,19 @@ async function openPulse(hexId, seconds = 1) {
       baseUrl
     };
   }
+}
+
+// ===== [NUOVO] Doppio impulso sequenziale sullo stesso relè =====
+async function openPulseSequenceSame(hexId, gapSeconds = 10, seconds = 1) {
+  const first = await openPulse(hexId, seconds);
+  if (!first.ok) {
+    return { ok: false, step: "first", first, note: "second skipped" };
+  }
+  // attende gap e invia secondo impulso
+  await new Promise(r => setTimeout(r, gapSeconds * 1000));
+  const second = await openPulse(hexId, seconds);
+  const ok = Boolean(second.ok);
+  return { ok, step: "second", first, second, gapSeconds };
 }
 
 // ===== UI =====
@@ -173,17 +183,19 @@ app.get("/", (_req, res) => {
   </body></html>`);
 });
 
-// ===== Pagina ospite dedicata a Via della Scala =====
+// ===== Pagina ospite: Via della Scala (UN solo bottone = 2 aperture) =====
 app.get("/flow/scala", (_req, res) => {
-  const flow = FLOWS.scala;
-  const gateLink = signedLinkFor("3494547745ee"); // stesso relè per entrambi i portoni
-  const doorLink = signedLinkFor("3494547a1075");
+  const { title, gateHex, doorHex } = FLOWS.scala;
+
+  // Il link smart del "gate" punta al device gateHex e verrà gestito in sequenza dal backend
+  const gateLink = signedLinkFor(gateHex);
+  const doorLink = signedLinkFor(doorHex);
 
   res.setHeader("Content-Type", "text/html; charset=utf-8");
   res.send(`
     <html><head>
       <meta name="viewport" content="width=device-width, initial-scale=1" />
-      <title>${flow.title} – Aperture</title>
+      <title>${title} – Aperture</title>
       <style>
         body { font-family: system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial; line-height: 1.4; margin: 24px; }
         .btn { display:inline-block; padding:14px 18px; text-decoration:none; border:1px solid #ccc; border-radius:10px; font-size:18px; margin:10px 0; }
@@ -192,14 +204,13 @@ app.get("/flow/scala", (_req, res) => {
       </style>
     </head>
     <body>
-      <h1 style="margin:0 0 8px">${flow.title} – Accesso</h1>
-      <p class="hint">Usa i pulsanti nell'ordine. I link scadono dopo ${LINK_TTL_SECONDS}s: se scadono, aggiorna la pagina.</p>
+      <h1 style="margin:0 0 8px">${title} – Accesso</h1>
+      <p class="hint">I link scadono dopo ${LINK_TTL_SECONDS}s: se scadono, aggiorna la pagina.</p>
 
       <div class="card">
         <h2 style="margin:0 0 8px">Portoni condominiali</h2>
-        <p class="hint">È lo <b>stesso</b> comando: usalo davanti al <b>primo</b> portone e poi di nuovo davanti al <b>secondo</b>.</p>
-        <p><a class="btn" href="${gateLink}">Apri Portone</a></p>
-        <p><a class="btn" href="${gateLink}">Apri Portone (secondo)</a></p>
+        <p class="hint">Un solo click: apre il primo portone e, dopo 10 secondi, anche il secondo.</p>
+        <p><a class="btn" href="${gateLink}">Apri Portoni (1 click → 2 aperture)</a></p>
       </div>
 
       <div class="card">
@@ -210,29 +221,44 @@ app.get("/flow/scala", (_req, res) => {
   `);
 });
 
-// Smart link
+// ===== Smart link (con eccezione per Via della Scala – doppio impulso) =====
 app.get("/open", async (req, res) => {
   const { device, ts, sig } = req.query;
   if (!device || !ts || !sig) return res.status(400).json({ ok:false, error:"Missing query params" });
   if (!DEVICES[device]) return res.status(404).json({ ok:false, error:"Unknown device" });
   if (!verify(device, ts, sig)) return res.status(401).json({ ok:false, error:"Invalid or expired link" });
 
-  const result = await openPulse(device);
+  let result;
+
+  // Se è il Building Door di Via della Scala => doppio impulso (10s)
+  if (device === FLOWS.scala.gateHex) {
+    result = await openPulseSequenceSame(device, 10, 1);
+  } else {
+    result = await openPulse(device, 1);
+  }
+
   return res.status(result.ok ? 200 : 502).json({ device, name: DEVICES[device].name, ...result });
 });
 
-// Manual open
+// ===== Manual open (rimane uguale; anche qui applichiamo la sequenza per coerenza)
 app.get("/manual-open/:hexId", async (req, res) => {
   const hexId = req.params.hexId;
   if (!DEVICES[hexId]) return res.status(404).json({ ok:false, error:"Unknown device", device: hexId });
-  const result = await openPulse(hexId);
+
+  let result;
+  if (hexId === FLOWS.scala.gateHex) {
+    result = await openPulseSequenceSame(hexId, 10, 1);
+  } else {
+    result = await openPulse(hexId, 1);
+  }
+
   return res.status(result.ok ? 200 : 502).json({ device: hexId, name: DEVICES[hexId].name, ...result });
 });
 
-// Health
+// ===== Health
 app.get("/health", (_req, res) => res.json({ ok: true }));
 
-// Start
+// ===== Start
 app.listen(PORT, () => {
   console.log(`Server running on ${PORT}`);
 });
