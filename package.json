@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "description": "Door & Gate opener via Shelly Cloud",
   "type": "module",
-  "main": "index.js",
+  "main": "src/server.js",
   "scripts": {
-    "start": "node index.js"
+    "start": "node src/server.js"
   },
   "engines": {
     "node": ">=18"
