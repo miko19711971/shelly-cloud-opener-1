@@ -1,4 +1,4 @@
-import express from "express";
+ import express from "express";
 import cors from "cors";
 import crypto from "crypto";
 import axios from "axios";
@@ -19,7 +19,6 @@ const LINK_TTL_SECONDS = parseInt(process.env.LINK_TTL_SECONDS || "300", 10);
 const ACCOUNT_BASE = "https://shelly-api-eu.shelly.cloud";
 
 // ===== DEVICES =====
-// (Decimal Id usati solo come fallback discovery; puoi aggiungerli quando li hai)
 const DEVICES = {
   "3494547ab05e": { name: "Arenula 16 — Building Door", dec: "57811677130846" },
   "3494547a9395": { name: "Leonina 71 — Apartment Door", dec: "57811677123477" },
@@ -32,6 +31,17 @@ const DEVICES = {
   "34945479fbbe": { name: "Viale Trastevere 108 — Building Door", dec: "57811677084606" }
 };
 
+// ===== FLOW per Via della Scala (2 portoni + 1 porta) =====
+const FLOWS = {
+  scala: {
+    title: "Via della Scala 17",
+    steps: [
+      { label: "Apri Portone (usalo 2 volte: esterno e interno)", device: "3494547745ee" },
+      { label: "Apri Porta Appartamento", device: "3494547a1075" }
+    ]
+  }
+};
+
 // ===== HMAC (Smart Link) =====
 function sign(deviceId, ts) {
   return crypto.createHmac("sha256", TOKEN_SECRET).update(`${deviceId}:${ts}`).digest("hex");
@@ -42,10 +52,15 @@ function verify(deviceId, ts, sig) {
   const good = sign(deviceId, ts);
   try { return crypto.timingSafeEqual(Buffer.from(good), Buffer.from(sig)); } catch { return false; }
 }
+// helper per generare link firmati
+function signedLinkFor(deviceId) {
+  const ts = Math.floor(Date.now() / 1000);
+  const sig = sign(deviceId, ts);
+  return `/open?device=${encodeURIComponent(deviceId)}&ts=${ts}&sig=${sig}`;
+}
 
 // ===== Discovery shard (HEX -> DEC -> fallback) =====
-const shardCache = new Map(); // hexId -> baseUrl
-
+const shardCache = new Map();
 async function discoveryStatus(idValue) {
   const url = `${ACCOUNT_BASE}/device/status`;
   const body = new URLSearchParams({ id: idValue, auth_key: SHELLY_API_KEY }).toString();
@@ -58,7 +73,6 @@ async function discoveryStatus(idValue) {
 async function resolveBaseUrl(hexId) {
   if (shardCache.has(hexId)) return shardCache.get(hexId);
 
-  // 1) prova HEX
   try {
     const d = await discoveryStatus(hexId);
     const server = d?.data?.device?.server_name || d?.data?.server || d?.data?.domain || d?.server || d?.domain;
@@ -69,7 +83,6 @@ async function resolveBaseUrl(hexId) {
     }
   } catch (_) {}
 
-  // 2) prova DEC se presente
   const dec = DEVICES[hexId]?.dec;
   if (dec) {
     try {
@@ -83,12 +96,11 @@ async function resolveBaseUrl(hexId) {
     } catch (_) {}
   }
 
-  // 3) fallback forzato da env
   shardCache.set(hexId, SHELLY_BASE_URL);
   return SHELLY_BASE_URL;
 }
 
-// ===== POST helper (form) =====
+// ===== POST helper =====
 async function shellyForm(baseUrl, path, payload) {
   const url = `${baseUrl}${path}`;
   const body = new URLSearchParams(payload).toString();
@@ -161,6 +173,43 @@ app.get("/", (_req, res) => {
   </body></html>`);
 });
 
+// ===== Pagina ospite dedicata a Via della Scala =====
+app.get("/flow/scala", (_req, res) => {
+  const flow = FLOWS.scala;
+  const gateLink = signedLinkFor("3494547745ee"); // stesso relè per entrambi i portoni
+  const doorLink = signedLinkFor("3494547a1075");
+
+  res.setHeader("Content-Type", "text/html; charset=utf-8");
+  res.send(`
+    <html><head>
+      <meta name="viewport" content="width=device-width, initial-scale=1" />
+      <title>${flow.title} – Aperture</title>
+      <style>
+        body { font-family: system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial; line-height: 1.4; margin: 24px; }
+        .btn { display:inline-block; padding:14px 18px; text-decoration:none; border:1px solid #ccc; border-radius:10px; font-size:18px; margin:10px 0; }
+        .hint { font-size:13px; opacity:.75; margin-top: 4px; }
+        .card { border:1px solid #e5e5e5; border-radius:12px; padding:16px; margin:12px 0; }
+      </style>
+    </head>
+    <body>
+      <h1 style="margin:0 0 8px">${flow.title} – Accesso</h1>
+      <p class="hint">Usa i pulsanti nell'ordine. I link scadono dopo ${LINK_TTL_SECONDS}s: se scadono, aggiorna la pagina.</p>
+
+      <div class="card">
+        <h2 style="margin:0 0 8px">Portoni condominiali</h2>
+        <p class="hint">È lo <b>stesso</b> comando: usalo davanti al <b>primo</b> portone e poi di nuovo davanti al <b>secondo</b>.</p>
+        <p><a class="btn" href="${gateLink}">Apri Portone</a></p>
+        <p><a class="btn" href="${gateLink}">Apri Portone (secondo)</a></p>
+      </div>
+
+      <div class="card">
+        <h2 style="margin:0 0 8px">Porta appartamento</h2>
+        <p><a class="btn" href="${doorLink}">Apri Porta Appartamento</a></p>
+      </div>
+    </body></html>
+  `);
+});
+
 // Smart link
 app.get("/open", async (req, res) => {
   const { device, ts, sig } = req.query;
@@ -183,7 +232,7 @@ app.get("/manual-open/:hexId", async (req, res) => {
 // Health
 app.get("/health", (_req, res) => res.json({ ok: true }));
 
-// Start (⚠️ attenzione a non inserire caratteri extra qui sotto!)
+// Start
 app.listen(PORT, () => {
   console.log(`Server running on ${PORT}`);
 });
