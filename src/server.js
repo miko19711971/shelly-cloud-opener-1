@@ -14,20 +14,19 @@ app.set("trust proxy", true);
 // ===== ENV =====
 const PORT = process.env.PORT || 3000;
 const SHELLY_AUTH_KEY =
-  process.env.SHELLY_API_KEY || process.env.SHELLY_AUTH_KEY || "";
-const SHELLY_CLOUD_BASE_URL =
-  process.env.SHELLY_BASE_URL ||
-  process.env.SHELLY_CLOUD_BASE_URL ||
-  "https://shelly-api-eu.shelly.cloud";
+  process.env.SHELLY_API_KEY || process.env.SHELLY_AUTH_KEY || ""; // API key account
 const HMAC_SECRET =
   process.env.TOKEN_SECRET || process.env.HMAC_SECRET || "change-me";
 const LINK_TTL_SECONDS = parseInt(process.env.LINK_TTL_SECONDS || "300", 10);
 
+// endpoint "generico" account (solo per discovery shard)
+const ACCOUNT_BASE = "https://shelly-api-eu.shelly.cloud";
+
 if (!SHELLY_AUTH_KEY) {
-  console.warn("[WARN] SHELLY_API_KEY (auth_key) non impostata.");
+  console.warn("[WARN] SHELLY_API_KEY non impostata.");
 }
 
-// ===== DEVICES (corretto) =====
+// ===== DEVICES (mappatura definitiva) =====
 const DEVICES = {
   // Arenula 16 → solo Building Door
   "3494547ab05e": { name: "Arenula 16 — Building Door" },
@@ -49,7 +48,7 @@ const DEVICES = {
   "34945479fd73": { name: "Viale Trastevere 108 — Building Door" }
 };
 
-// ===== HMAC =====
+// ===== HMAC (Smart Link) =====
 function sign(deviceId, ts) {
   return crypto.createHmac("sha256", HMAC_SECRET)
     .update(`${deviceId}:${ts}`)
@@ -63,52 +62,71 @@ function verify(deviceId, ts, sig) {
   catch { return false; }
 }
 
-// ===== Shelly: invio FORM x-www-form-urlencoded =====
-async function shellyCallForm(path, payloadObj) {
-  const url = `${SHELLY_CLOUD_BASE_URL}${path}`;
-  const form = new URLSearchParams(payloadObj).toString();
-  return axios.post(url, form, {
+// ===== Risoluzione shard per device (cache) =====
+const deviceShardCache = new Map(); // deviceId -> baseUrl (https://shelly-xx-eu.shelly.cloud)
+
+async function resolveDeviceBaseUrl(deviceId) {
+  if (deviceShardCache.has(deviceId)) return deviceShardCache.get(deviceId);
+
+  // Chiamata account → lista dispositivi con info server
+  const url = `${ACCOUNT_BASE}/device/all`;
+  const form = new URLSearchParams({ auth_key: SHELLY_AUTH_KEY }).toString();
+  const { data } = await axios.post(url, form, {
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    timeout: 10000
+  });
+
+  // Estraggo id + server; i nomi campo possono variare leggermente
+  const list = Array.isArray(data?.data?.devices) ? data.data.devices : [];
+  for (const d of list) {
+    const id = d?.id || d?.device_id || d?.deviceid;
+    const server = d?.server_name || d?.server || d?.domain || d?.server_domain;
+    if (id && server) {
+      const base = server.startsWith("http") ? server : `https://${server}`;
+      deviceShardCache.set(id, base);
+    }
+  }
+  return deviceShardCache.get(deviceId); // può essere undefined se non trovato
+}
+
+// ===== POST helper (form) =====
+async function shellyPostForm(baseUrl, path, payloadObj) {
+  const url = `${baseUrl}${path}`;
+  const body = new URLSearchParams(payloadObj).toString();
+  return axios.post(url, body, {
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
     timeout: 10000
   });
 }
 
-// Prova prima /device/relay/control (FORM), poi fallback su /device/relay/turn (FORM)
+// ===== Apertura relè (CONTROL → fallback TURN) =====
 async function shellyPulse(deviceId, durationMs = 800) {
+  const baseUrl =
+    (await resolveDeviceBaseUrl(deviceId)) ||
+    ACCOUNT_BASE; // fallback se non risolto, ma è quasi sempre risolto
+
   const payloadOn  = { id: deviceId, auth_key: SHELLY_AUTH_KEY, channel: "0", turn: "on"  };
   const payloadOff = { id: deviceId, auth_key: SHELLY_AUTH_KEY, channel: "0", turn: "off" };
 
   try {
-    const onRes  = await shellyCallForm("/device/relay/control", payloadOn);
+    const onRes  = await shellyPostForm(baseUrl, "/device/relay/control", payloadOn);
     await new Promise(r => setTimeout(r, durationMs));
-    const offRes = await shellyCallForm("/device/relay/control", payloadOff);
-    return { ok: true, on: onRes.data, off: offRes.data, path: "/device/relay/control", encoding: "form" };
+    const offRes = await shellyPostForm(baseUrl, "/device/relay/control", payloadOff);
+    return { ok: true, on: onRes.data, off: offRes.data, path: "/device/relay/control", baseUrl, encoding: "form" };
   } catch (err1) {
     try {
-      const onRes  = await shellyCallForm("/device/relay/turn", payloadOn);
+      const onRes  = await shellyPostForm(baseUrl, "/device/relay/turn", payloadOn);
       await new Promise(r => setTimeout(r, durationMs));
-      const offRes = await shellyCallForm("/device/relay/turn", payloadOff);
-      return { ok: true, on: onRes.data, off: offRes.data, path: "/device/relay/turn", encoding: "form" };
+      const offRes = await shellyPostForm(baseUrl, "/device/relay/turn", payloadOff);
+      return { ok: true, on: onRes.data, off: offRes.data, path: "/device/relay/turn", baseUrl, encoding: "form" };
     } catch (err2) {
       return {
         ok: false,
         error: "Shelly request failed",
         details: {
-          first: {
-            status: err1?.response?.status,
-            data: err1?.response?.data,
-            message: err1?.message,
-            path: "/device/relay/control",
-            encoding: "form"
-          },
-          second: {
-            status: err2?.response?.status,
-            data: err2?.response?.data,
-            message: err2?.message,
-            path: "/device/relay/turn",
-            encoding: "form"
-          },
-          baseUrl: SHELLY_CLOUD_BASE_URL
+          first:  { status: err1?.response?.status, data: err1?.response?.data, message: err1?.message, path: "/device/relay/control", encoding: "form" },
+          second: { status: err2?.response?.status, data: err2?.response?.data, message: err2?.message, path: "/device/relay/turn",    encoding: "form" },
+          baseUrl
         }
       };
     }
@@ -150,7 +168,7 @@ app.get("/", (_req, res) => {
       </tr></thead>
       <tbody>${rows.join("")}</tbody>
     </table>
-    <p style="margin-top:16px;font-size:12px;opacity:.7">Shelly base: <code>${SHELLY_CLOUD_BASE_URL}</code></p>
+    <p style="margin-top:16px;font-size:12px;opacity:.7">Shard auto: account discovery via <code>${ACCOUNT_BASE}</code></p>
   </body></html>`);
 });
 
@@ -162,7 +180,7 @@ app.get("/open", async (req, res) => {
   if (!verify(device, ts, sig)) return res.status(401).json({ ok:false, error:"Invalid or expired link" });
 
   const result = await shellyPulse(device);
-  if (result.ok) return res.json({ ok:true, device, name:DEVICES[device].name, path: result.path, encoding: "form" });
+  if (result.ok) return res.json({ ok:true, device, name:DEVICES[device].name, path: result.path, baseUrl: result.baseUrl, encoding: "form" });
   return res.status(502).json(result);
 });
 
@@ -173,14 +191,14 @@ app.get("/manual-open/:deviceId", async (req, res) => {
   const result = await shellyPulse(device);
   if (result.ok) {
     res.setHeader("Content-Type", "text/html; charset=utf-8");
-    return res.send(`<p>✅ Aperto: <b>${DEVICES[device].name}</b> (<code>${device}</code>) – via <code>${result.path}</code> (form)</p>
+    return res.send(`<p>✅ Aperto: <b>${DEVICES[device].name}</b> (<code>${device}</code>) – via <code>${result.path}</code> su <code>${result.baseUrl}</code> (form)</p>
     <p><a href="/">← Torna alla lista</a></p>`);
   }
   res.status(502).send(`<pre>${JSON.stringify(result, null, 2)}</pre>`);
 });
 
 // ===== Health =====
-app.get("/health", (_req, res) => res.json({ ok:true, shard:SHELLY_CLOUD_BASE_URL }));
+app.get("/health", (_req, res) => res.json({ ok:true }));
 
 app.listen(PORT, () => {
   console.log(`Server listening on :${PORT}`);
