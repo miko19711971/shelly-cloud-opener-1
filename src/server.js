@@ -8,12 +8,12 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 // ====== ENV ======
-const SHELLY_API_KEY = process.env.SHELLY_API_KEY;   // <-- la tua chiave cloud Shelly
+const SHELLY_API_KEY  = process.env.SHELLY_API_KEY; // tua chiave Shelly Cloud
 const SHELLY_BASE_URL = process.env.SHELLY_BASE_URL || "https://shelly-api-eu.shelly.cloud";
-const TOKEN_SECRET = process.env.TOKEN_SECRET || "changeme";  // <-- stringa segreta, puoi lasciarla
-const TIMEZONE = process.env.TIMEZONE || "Europe/Rome";
+const TOKEN_SECRET    = process.env.TOKEN_SECRET || "changeme"; // metti un segreto lungo
+const TIMEZONE        = process.env.TIMEZONE || "Europe/Rome";
 
-// ====== MAPPATURA TUTTI I DEVICE ======
+// ====== DEVICE MAP ======
 const TARGETS = {
   "leonina-door":                   { id: "3494547a9395", name: "Leonina — Apartment Door" },
   "leonina-building-door":          { id: "34945479fbbe", name: "Leonina — Building Door" },
@@ -29,10 +29,7 @@ const TARGETS = {
 // Shelly 1 => relay channel 0
 const RELAY_CHANNEL = 0;
 
-// ====== STORAGE TEMPORANEO per token monouso ======
-const usedTokens = new Map(); // key = sig, value = expireTime
-
-// ====== HELPER: Shelly Cloud ======
+// ====== Shelly Cloud helper (v1) ======
 async function cloudOpenRelay(deviceId) {
   const url = `${SHELLY_BASE_URL}/device/relay/control`;
   const form = new URLSearchParams({
@@ -45,7 +42,7 @@ async function cloudOpenRelay(deviceId) {
   try {
     const { data } = await axios.post(url, form.toString(), {
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      timeout: 5000
+      timeout: 10000
     });
     if (data && data.isok) return { ok: true, data };
     return { ok: false, error: data || { message: "cloud_isok_false" } };
@@ -58,7 +55,9 @@ async function cloudOpenRelay(deviceId) {
   }
 }
 
-// ====== TOKEN MONOUSO 5 MIN ======
+// ====== TOKEN MONOUSO (5 minuti) ======
+const usedTokens = new Map(); // sig -> expireTime(ms)
+
 function makeToken(target) {
   const ts = Date.now();
   const sig = crypto.createHmac("sha256", TOKEN_SECRET)
@@ -75,16 +74,15 @@ function verifyToken(target, ts, sig) {
   if (sig !== expected) return { ok: false, error: "invalid_signature" };
 
   const ageMs = Date.now() - parseInt(ts, 10);
-  if (ageMs > 5 * 60 * 1000) return { ok: false, error: "expired" }; // oltre 5 minuti
+  if (!Number.isFinite(ageMs) || ageMs > 5 * 60 * 1000) return { ok: false, error: "expired" };
 
   if (usedTokens.has(sig)) return { ok: false, error: "already_used" };
 
-  // segna come usato per sicurezza
-  usedTokens.set(sig, Date.now() + 5 * 60 * 1000);
+  usedTokens.set(sig, Date.now() + 5 * 60 * 1000); // segna come usato
   return { ok: true };
 }
 
-// pulizia periodica dei token scaduti
+// pulizia periodica
 setInterval(() => {
   const now = Date.now();
   for (const [sig, exp] of usedTokens.entries()) {
@@ -94,7 +92,39 @@ setInterval(() => {
 
 // ====== ROUTES ======
 
-// Smart redirect: genera token e manda al link firmato
+// Home con tutti i link utili
+app.get("/", (req, res) => {
+  const rows = Object.entries(TARGETS)
+    .map(([key, v]) => {
+      return `<li>
+        <b>${key}</b> — ${v.name}
+        &nbsp; <a href="/t/${key}">smart link (token 5 min)</a>
+        &nbsp; <a href="/open?target=${key}">test open (senza token)</a>
+      </li>`;
+    })
+    .join("\n");
+
+  res.type("html").send(
+    `<h1>Shelly unified opener</h1>
+     <p>${Object.keys(TARGETS).length} targets · TZ=${TIMEZONE}</p>
+     <ul>${rows}</ul>
+     <p><a href="/health">/health</a></p>`
+  );
+});
+
+// Health
+app.get("/health", (req, res) => {
+  res.json({
+    ok: true,
+    hasApiKey: !!SHELLY_API_KEY,
+    baseUrl: SHELLY_BASE_URL,
+    timezone: TIMEZONE,
+    node: process.version,
+    targets: Object.keys(TARGETS).length
+  });
+});
+
+// Smart redirect: genera token e redirige al link firmato
 app.get("/t/:target", (req, res) => {
   const target = req.params.target;
   if (!TARGETS[target]) return res.status(404).send("unknown_target");
@@ -115,14 +145,14 @@ app.get("/open/:target/:ts/:sig", async (req, res) => {
   res.json(out);
 });
 
-// Health check
-app.get("/health", (req, res) => {
-  res.json({
-    ok: true,
-    targets: Object.keys(TARGETS).length,
-    node: process.version,
-    uptime: process.uptime()
-  });
+// Apertura *senza* token (solo test)
+app.get("/open", async (req, res) => {
+  const target = req.query.target;
+  if (!TARGETS[target]) return res.json({ ok: false, error: "unknown_target" });
+
+  const deviceId = TARGETS[target].id;
+  const out = await cloudOpenRelay(deviceId);
+  res.json(out);
 });
 
 // ====== START ======
