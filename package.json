@@ -1,6 +1,7 @@
 {
   "name": "shelly-cloud-opener-1",
   "version": "1.0.0",
+  "description": "Door & Gate opener via Shelly Cloud",
   "type": "module",
   "main": "index.js",
   "scripts": {
