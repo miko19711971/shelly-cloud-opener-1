@@ -11,7 +11,7 @@ app.use(cors());
 app.use(express.json());
 app.set("trust proxy", true);
 
-// ===== ENV (coerenti con le tue foto su Render) =====
+// ===== ENV (usano i tuoi nomi Render) =====
 const PORT = process.env.PORT || 3000;
 const SHELLY_AUTH_KEY =
   process.env.SHELLY_API_KEY || process.env.SHELLY_AUTH_KEY || "";
