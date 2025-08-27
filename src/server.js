@@ -15,250 +15,190 @@ const SHELLY_BASE_URL = process.env.SHELLY_BASE_URL || "https://shelly-77-eu.she
 const TOKEN_SECRET = process.env.TOKEN_SECRET || "change-me";
 const LINK_TTL_SECONDS = parseInt(process.env.LINK_TTL_SECONDS || "300", 10);
 
-// endpoint account per discovery (per trovare lo shard corretto)
-const ACCOUNT_BASE = "https://shelly-api-eu.shelly.cloud";
-
 // ===== DEVICES =====
 const DEVICES = {
-  "3494547ab05e": { name: "Arenula 16 — Building Door", dec: "57811677130846" },
-  "3494547a9395": { name: "Leonina 71 — Apartment Door", dec: "57811677123477" },
-  "34945479fd73": { name: "Leonina 71 — Building Door", dec: "57811677085043" },
-  "3494547a1075": { name: "Via della Scala 17 — Apartment Door", dec: "57811677089909" },
-  "3494547745ee": { name: "Via della Scala 17 — Building Door", dec: "57811676906990" }, // <— speciale (doppio impulso)
-  "3494547a887d": { name: "Portico d’Ottavia 1D — Apartment Door", dec: "57811677120637" },
-  "3494547ab62b": { name: "Portico d’Ottavia 1D — Building Door", dec: "57811677132331" },
-  "34945479fa35": { name: "Viale Trastevere 108 — Apartment Door", dec: "57811677084213" },
-  "34945479fbbe": { name: "Viale Trastevere 108 — Building Door", dec: "57811677084606" }
+  "3494547ab05e": { name: "Arenula 16 — Building Door", alias: "arenula-building" },
+  "3494547a9395": { name: "Leonina 71 — Apartment Door", alias: "leonina-door" },
+  "34945479fbbe": { name: "Leonina 71 — Building Door", alias: "leonina-building" },
+  "3494547a1075": { name: "Via della Scala 17 — Apartment Door", alias: "scala-door" },
+  "3494547745ee": { name: "Via della Scala 17 — Building Door", alias: "scala-building" }, // speciale
+  "3494547a887d": { name: "Portico d’Ottavia 1D — Apartment Door", alias: "ottavia-door" },
+  "3494547ab62b": { name: "Portico d’Ottavia 1D — Building Door", alias: "ottavia-building" },
+  "34945479fa35": { name: "Viale Trastevere 108 — Apartment Door", alias: "trastevere-door" },
+  "34945479fd73": { name: "Viale Trastevere 108 — Building Door", alias: "trastevere-building" }
 };
 
-// ===== FLOW: pagina dedicata a Via della Scala =====
-const FLOWS = {
-  scala: {
-    title: "Via della Scala 17",
-    gateHex: "3494547745ee",   // portoni condominiali (stesso relè)
-    doorHex: "3494547a1075"    // porta appartamento
-  }
-};
-
-// ===== HMAC (Smart Link) =====
-function sign(deviceId, ts) {
-  return crypto.createHmac("sha256", TOKEN_SECRET).update(`${deviceId}:${ts}`).digest("hex");
-}
-function verify(deviceId, ts, sig) {
-  const now = Math.floor(Date.now() / 1000);
-  if (!ts || Math.abs(now - Number(ts)) > LINK_TTL_SECONDS) return false;
-  const good = sign(deviceId, ts);
-  try { return crypto.timingSafeEqual(Buffer.from(good), Buffer.from(sig)); } catch { return false; }
-}
-function signedLinkFor(deviceId) {
-  const ts = Math.floor(Date.now() / 1000);
-  const sig = sign(deviceId, ts);
-  return `/open?device=${encodeURIComponent(deviceId)}&ts=${ts}&sig=${sig}`;
+// Mappa alias -> hexId
+const ALIAS = {};
+for (const [hexId, meta] of Object.entries(DEVICES)) {
+  ALIAS[meta.alias] = hexId;
 }
 
-// ===== Discovery shard (HEX -> DEC -> fallback) =====
-const shardCache = new Map();
-async function discoveryStatus(idValue) {
-  const url = `${ACCOUNT_BASE}/device/status`;
-  const body = new URLSearchParams({ id: idValue, auth_key: SHELLY_API_KEY }).toString();
-  const { data } = await axios.post(url, body, {
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    timeout: 10000
-  });
-  return data;
-}
-async function resolveBaseUrl(hexId) {
-  if (shardCache.has(hexId)) return shardCache.get(hexId);
+// ===== Session & Nonce store =====
+const NONCE_TTL_MS = 60 * 60 * 1000;   // 60 minuti per il link
+const SESS_TTL_MS = 15 * 60 * 1000;    // 15 minuti di sessione
+const SESS_MAX_OPENS = 2;              // max 2 aperture
+const SESS_COOLDOWN_MS = 6000;         // 6s tra aperture
 
-  try {
-    const d = await discoveryStatus(hexId);
-    const server = d?.data?.device?.server_name || d?.data?.server || d?.data?.domain || d?.server || d?.domain;
-    if (server) {
-      const base = server.startsWith("http") ? server : `https://${server}`;
-      shardCache.set(hexId, base);
-      return base;
-    }
-  } catch (_) {}
+const nonces = new Map();   // nonce -> { alias, exp, used }
+const sessions = new Map(); // sid -> { alias, exp, opens, cooldown, ua, ip }
 
-  const dec = DEVICES[hexId]?.dec;
-  if (dec) {
-    try {
-      const d = await discoveryStatus(dec);
-      const server = d?.data?.device?.server_name || d?.data?.server || d?.data?.domain || d?.server || d?.domain;
-      if (server) {
-        const base = server.startsWith("http") ? server : `https://${server}`;
-        shardCache.set(hexId, base);
-        return base;
-      }
-    } catch (_) {}
-  }
+setInterval(() => {
+  const now = Date.now();
+  for (const [k, v] of nonces) if (v.exp < now) nonces.delete(k);
+  for (const [k, v] of sessions) if (v.exp < now) sessions.delete(k);
+}, 60 * 1000);
 
-  shardCache.set(hexId, SHELLY_BASE_URL);
-  return SHELLY_BASE_URL;
+function rndId(n = 24) {
+  return crypto.randomBytes(n).toString("base64url");
 }
 
-// ===== POST helper =====
-async function shellyForm(baseUrl, path, payload) {
-  const url = `${baseUrl}${path}`;
-  const body = new URLSearchParams(payload).toString();
-  return axios.post(url, body, {
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    timeout: 10000
-  });
+// ===== Shelly helpers =====
+async function resolveBaseUrl() {
+  return SHELLY_BASE_URL; // semplificato: usiamo sempre base configurata
 }
-
-// ===== Apertura singolo impulso (timer lato cloud) =====
 async function openPulse(hexId, seconds = 1) {
-  const baseUrl = await resolveBaseUrl(hexId);
-  const payload = {
-    id: hexId,
-    auth_key: SHELLY_API_KEY,
-    channel: "0",
-    turn: "on",
-    timer: String(seconds)
-  };
+  const baseUrl = await resolveBaseUrl();
+  const payload = { id: hexId, auth_key: SHELLY_API_KEY, channel: "0", turn: "on", timer: String(seconds) };
   try {
-    const res = await shellyForm(baseUrl, "/device/relay/control", payload);
-    return { ok: true, on: res.data, path: "/device/relay/control", baseUrl, encoding: "form" };
+    const url = `${baseUrl}/device/relay/control`;
+    const body = new URLSearchParams(payload).toString();
+    const { data } = await axios.post(url, body, { headers: { "Content-Type": "application/x-www-form-urlencoded" }, timeout: 10000 });
+    return { ok: true, on: data };
   } catch (err) {
-    return {
-      ok: false,
-      error: "Shelly request failed",
-      details: {
-        status: err?.response?.status,
-        data: err?.response?.data,
-        message: err?.message,
-        path: "/device/relay/control",
-        encoding: "form"
-      },
-      baseUrl
-    };
+    return { ok: false, error: err?.message || "request_failed" };
   }
 }
-
-// ===== [NUOVO] Doppio impulso sequenziale sullo stesso relè =====
 async function openPulseSequenceSame(hexId, gapSeconds = 10, seconds = 1) {
   const first = await openPulse(hexId, seconds);
-  if (!first.ok) {
-    return { ok: false, step: "first", first, note: "second skipped" };
-  }
-  // attende gap e invia secondo impulso
+  if (!first.ok) return { ok: false, step: "first", first, note: "second skipped" };
   await new Promise(r => setTimeout(r, gapSeconds * 1000));
   const second = await openPulse(hexId, seconds);
-  const ok = Boolean(second.ok);
-  return { ok, step: "second", first, second, gapSeconds };
+  return { ok: second.ok, first, second, gapSeconds };
 }
 
-// ===== UI =====
-app.get("/", (_req, res) => {
-  const now = Math.floor(Date.now() / 1000);
-  const rows = Object.entries(DEVICES).map(([hexId, meta]) => {
-    const ts = now;
-    const sig = sign(hexId, ts);
-    const smart = `/open?device=${encodeURIComponent(hexId)}&ts=${ts}&sig=${sig}`;
-    const manual = `/manual-open/${encodeURIComponent(hexId)}`;
-    return `
-      <tr>
-        <td style="padding:8px 12px">${meta.name}</td>
-        <td style="padding:8px 12px"><code>${hexId}</code>${meta.dec ? ` <small>(dec ${meta.dec})</small>` : ""}</td>
-        <td style="padding:8px 12px"><a href="${smart}">Smart Link</a></td>
-        <td style="padding:8px 12px"><a href="${manual}">Manual Open</a></td>
-      </tr>`;
-  }).join("");
+// ===== Landing con nonce =====
+app.get("/k/:alias/:nonce", (req, res) => {
+  const { alias, nonce } = req.params;
+  const hexId = ALIAS[alias];
+  if (!hexId) return res.status(404).send("Unknown alias");
+  const rec = nonces.get(nonce);
+  const now = Date.now();
+  if (!rec) return res.status(400).send("Invalid link");
+  if (rec.used) return res.status(410).send("Link already used");
+  if (rec.exp < now) return res.status(410).send("Link expired");
+  if (rec.alias !== alias) return res.status(400).send("Alias mismatch");
 
-  res.setHeader("Content-Type", "text/html; charset=utf-8");
-  res.send(`
-  <html><head><meta name="viewport" content="width=device-width, initial-scale=1"><title>Door Opener</title></head>
-  <body style="font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;line-height:1.4;margin:24px">
-    <h1>Door & Gate Opener</h1>
-    <p>Link firmati (scadenza: ${LINK_TTL_SECONDS}s) e apertura manuale.</p>
-    <table border="1" cellspacing="0" cellpadding="0" style="border-collapse:collapse">
-      <thead><tr><th style="padding:8px 12px;text-align:left">Nome</th>
-      <th style="padding:8px 12px;text-align:left">Device ID</th>
-      <th style="padding:8px 12px;text-align:left">Smart Link</th>
-      <th style="padding:8px 12px;text-align:left">Manual Open</th></tr></thead>
-      <tbody>${rows}</tbody>
-    </table>
-    <p style="margin-top:12px;font-size:12px;opacity:.7">Shard fallback: <code>${SHELLY_BASE_URL}</code></p>
-  </body></html>`);
+  // Consuma nonce e crea sessione
+  rec.used = true; nonces.set(nonce, rec);
+  const sid = rndId(18);
+  const ua = req.get("user-agent") || "";
+  const ip = req.ip || req.connection?.remoteAddress || "";
+  sessions.set(sid, { alias, exp: now + SESS_TTL_MS, opens: SESS_MAX_OPENS, cooldown: 0, ua, ip });
+
+  res.setHeader("Set-Cookie", `sid=${sid}; HttpOnly; SameSite=Lax; Path=/; Max-Age=${Math.floor(SESS_TTL_MS/1000)}`);
+  return renderLanding(res, alias);
 });
 
-// ===== Pagina ospite: Via della Scala (UN solo bottone = 2 aperture) =====
-app.get("/flow/scala", (_req, res) => {
-  const { title, gateHex, doorHex } = FLOWS.scala;
-
-  // Il link smart del "gate" punta al device gateHex e verrà gestito in sequenza dal backend
-  const gateLink = signedLinkFor(gateHex);
-  const doorLink = signedLinkFor(doorHex);
-
+// Pagina con bottoni
+function renderLanding(res, alias) {
+  const deviceName = DEVICES[ALIAS[alias]].name;
   res.setHeader("Content-Type", "text/html; charset=utf-8");
   res.send(`
     <html><head>
       <meta name="viewport" content="width=device-width, initial-scale=1" />
-      <title>${title} – Aperture</title>
+      <title>${deviceName} – Accesso</title>
       <style>
-        body { font-family: system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial; line-height: 1.4; margin: 24px; }
-        .btn { display:inline-block; padding:14px 18px; text-decoration:none; border:1px solid #ccc; border-radius:10px; font-size:18px; margin:10px 0; }
-        .hint { font-size:13px; opacity:.75; margin-top: 4px; }
-        .card { border:1px solid #e5e5e5; border-radius:12px; padding:16px; margin:12px 0; }
+        body { font-family: system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial; margin:24px; }
+        .btn { padding:14px 18px; border:1px solid #ccc; border-radius:10px; font-size:18px; margin:10px 0; cursor:pointer; }
+        .hint { font-size:13px; opacity:.75; margin-top:6px; }
+        .disabled { opacity:.5; pointer-events:none; }
       </style>
     </head>
     <body>
-      <h1 style="margin:0 0 8px">${title} – Accesso</h1>
-      <p class="hint">I link scadono dopo ${LINK_TTL_SECONDS}s: se scadono, aggiorna la pagina.</p>
-
-      <div class="card">
-        <h2 style="margin:0 0 8px">Portoni condominiali</h2>
-        <p class="hint">Un solo click: apre il primo portone e, dopo 10 secondi, anche il secondo.</p>
-        <p><a class="btn" href="${gateLink}">Apri Portoni (1 click → 2 aperture)</a></p>
-      </div>
-
-      <div class="card">
-        <h2 style="margin:0 0 8px">Porta appartamento</h2>
-        <p><a class="btn" href="${doorLink}">Apri Porta Appartamento</a></p>
-      </div>
+      <h1>${deviceName}</h1>
+      <button id="btn" class="btn">Apri</button>
+      <div class="hint">Max 2 aperture entro 15 minuti</div>
+      <pre id="out" class="hint"></pre>
+      <script>
+        const btn = document.getElementById('btn');
+        const out = document.getElementById('out');
+        async function doOpen(){
+          btn.classList.add('disabled');
+          out.textContent = 'Richiesta...';
+          try {
+            const r = await fetch('/api/open', {
+              method:'POST',
+              headers:{'Content-Type':'application/json'},
+              body: JSON.stringify({ alias })
+            });
+            const j = await r.json();
+            out.textContent = JSON.stringify(j,null,2);
+            if(j.ok && j.remain>0){
+              setTimeout(()=>btn.classList.remove('disabled'), j.cooldownMs||6000);
+            }
+          } catch(e){
+            out.textContent = 'Errore: '+e;
+          }
+        }
+        btn.addEventListener('click', doOpen);
+      </script>
     </body></html>
   `);
-});
+}
 
-// ===== Smart link (con eccezione per Via della Scala – doppio impulso) =====
-app.get("/open", async (req, res) => {
-  const { device, ts, sig } = req.query;
-  if (!device || !ts || !sig) return res.status(400).json({ ok:false, error:"Missing query params" });
-  if (!DEVICES[device]) return res.status(404).json({ ok:false, error:"Unknown device" });
-  if (!verify(device, ts, sig)) return res.status(401).json({ ok:false, error:"Invalid or expired link" });
+// Lettura cookie sid
+function readSid(req){
+  const raw = req.headers.cookie || "";
+  const m = raw.split(/; */).find(s => s.trim().startsWith("sid="));
+  return m ? decodeURIComponent(m.trim().slice(4)) : null;
+}
+
+// API protetta
+app.post("/api/open", async (req, res) => {
+  const sid = readSid(req);
+  if (!sid) return res.status(401).json({ ok:false, error:"no_session" });
+  const sess = sessions.get(sid);
+  const now = Date.now();
+  if (!sess) return res.status(401).json({ ok:false, error:"session_missing" });
+  if (sess.exp < now) { sessions.delete(sid); return res.status(401).json({ ok:false, error:"session_expired" }); }
+  if (sess.cooldown && now < sess.cooldown) return res.status(429).json({ ok:false, error:"cooldown", retryInMs:sess.cooldown-now });
+  if (sess.opens <= 0) return res.status(403).json({ ok:false, error:"no_opens_left" });
+
+  const alias = req.body?.alias;
+  if (sess.alias !== alias) return res.status(403).json({ ok:false, error:"wrong_alias" });
+
+  const hexId = ALIAS[alias];
+  if (!hexId) return res.status(404).json({ ok:false, error:"unknown_device" });
 
   let result;
-
-  // Se è il Building Door di Via della Scala => doppio impulso (10s)
-  if (device === FLOWS.scala.gateHex) {
-    result = await openPulseSequenceSame(device, 10, 1);
-  } else {
-    result = await openPulse(device, 1);
-  }
-
-  return res.status(result.ok ? 200 : 502).json({ device, name: DEVICES[device].name, ...result });
-});
-
-// ===== Manual open (rimane uguale; anche qui applichiamo la sequenza per coerenza)
-app.get("/manual-open/:hexId", async (req, res) => {
-  const hexId = req.params.hexId;
-  if (!DEVICES[hexId]) return res.status(404).json({ ok:false, error:"Unknown device", device: hexId });
-
-  let result;
-  if (hexId === FLOWS.scala.gateHex) {
+  if (hexId === "3494547745ee") { // Scala Building speciale
     result = await openPulseSequenceSame(hexId, 10, 1);
   } else {
     result = await openPulse(hexId, 1);
   }
 
-  return res.status(result.ok ? 200 : 502).json({ device: hexId, name: DEVICES[hexId].name, ...result });
+  if (result.ok) {
+    sess.opens -= 1;
+    sess.cooldown = Date.now() + SESS_COOLDOWN_MS;
+    sessions.set(sid, sess);
+  }
+
+  return res.status(result.ok ? 200 : 502).json({ ok: result.ok, alias, device: hexId, remain: sess.opens, cooldownMs: SESS_COOLDOWN_MS, details: result });
 });
 
-// ===== Health
-app.get("/health", (_req, res) => res.json({ ok: true }));
-
-// ===== Start
-app.listen(PORT, () => {
-  console.log(`Server running on ${PORT}`);
+// Admin per generare link
+app.get("/admin/new-link/:alias", (req,res)=>{
+  const {alias} = req.params;
+  if(!ALIAS[alias]) return res.status(404).json({ok:false,error:"unknown_alias"});
+  const nonce = rndId(18);
+  nonces.set(nonce,{alias,exp:Date.now()+NONCE_TTL_MS,used:false});
+  const url = `${req.protocol}://${req.get("host")}/k/${alias}/${nonce}`;
+  res.json({ok:true,url,expiresInMin:NONCE_TTL_MS/60000});
 });
+
+// Health
+app.get("/health", (_req,res)=>res.json({ok:true}));
+
+// Start
+app.listen(PORT, ()=>console.log("Server running on",PORT));
