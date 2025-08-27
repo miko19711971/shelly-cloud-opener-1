@@ -11,7 +11,7 @@ app.use(cors());
 app.use(express.json());
 app.set("trust proxy", true);
 
-// ===== ENV (usano i tuoi nomi Render) =====
+// ===== ENV =====
 const PORT = process.env.PORT || 3000;
 const SHELLY_AUTH_KEY =
   process.env.SHELLY_API_KEY || process.env.SHELLY_AUTH_KEY || "";
@@ -27,17 +27,26 @@ if (!SHELLY_AUTH_KEY) {
   console.warn("[WARN] SHELLY_API_KEY (auth_key) non impostata.");
 }
 
-// ===== DEVICES =====
+// ===== DEVICES (corretto) =====
 const DEVICES = {
-  "34945479fbbe": { name: "Arenula 16 – Gate" },
-  "3494547a9395": { name: "Arenula 16 – Door" },
-  "3494547ab05e": { name: "Portico 1D – Gate" },
-  "3494547ab62b": { name: "Portico 1D – Door" },
-  "3494547a887d": { name: "Via della Scala 17 – Gate" },
-  "3494547745ee": { name: "Via della Scala 17 – Door" },
-  "3494547a1075": { name: "Viale Trastevere 108 – Gate" },
-  "34945479fa35": { name: "Viale Trastevere 108 – Door" },
-  "34945479fd73": { name: "Leonina 71 – Gate/Door" }
+  // Arenula 16 → solo Building Door
+  "3494547ab05e": { name: "Arenula 16 — Building Door" },
+
+  // Leonina 71 → due dispositivi
+  "3494547a9395": { name: "Leonina 71 — Apartment Door" },
+  "34945479fbbe": { name: "Leonina 71 — Building Door" },
+
+  // Via della Scala 17
+  "3494547a1075": { name: "Via della Scala 17 — Apartment Door" },
+  "3494547745ee": { name: "Via della Scala 17 — Building Door" },
+
+  // Portico d’Ottavia 1D
+  "3494547a887d": { name: "Portico d’Ottavia 1D — Apartment Door" },
+  "3494547ab62b": { name: "Portico d’Ottavia 1D — Building Door" },
+
+  // Viale Trastevere 108
+  "34945479fa35": { name: "Viale Trastevere 108 — Apartment Door" },
+  "34945479fd73": { name: "Viale Trastevere 108 — Building Door" }
 };
 
 // ===== HMAC =====
