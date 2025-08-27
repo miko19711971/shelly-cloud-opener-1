@@ -19,7 +19,7 @@ const HMAC_SECRET =
   process.env.TOKEN_SECRET || process.env.HMAC_SECRET || "change-me";
 const LINK_TTL_SECONDS = parseInt(process.env.LINK_TTL_SECONDS || "300", 10);
 
-// endpoint “generico” account (solo per discovery shard)
+// endpoint “generico” account (usato per discovery shard)
 const ACCOUNT_BASE = "https://shelly-api-eu.shelly.cloud";
 
 if (!SHELLY_AUTH_KEY) {
@@ -62,7 +62,7 @@ function verify(deviceId, ts, sig) {
   catch { return false; }
 }
 
-// ===== Risoluzione shard per device (solo /device/status, con cache) =====
+// ===== Risoluzione shard per device (solo /device/status, con cache e log) =====
 const deviceShardCache = new Map(); // deviceId -> baseUrl
 
 async function resolveDeviceBaseUrl(deviceId) {
@@ -80,6 +80,9 @@ async function resolveDeviceBaseUrl(deviceId) {
       timeout: 10000
     });
 
+    // LOG: vedi Render → Logs per capire la struttura
+    console.log("[status.raw]", JSON.stringify(ds));
+
     const server =
       ds?.data?.device?.server_name ||
       ds?.data?.server ||
@@ -90,13 +93,15 @@ async function resolveDeviceBaseUrl(deviceId) {
     if (server) {
       const base = server.startsWith("http") ? server : `https://${server}`;
       deviceShardCache.set(deviceId, base);
+      console.log("[status.ok] device", deviceId, "->", base);
       return base;
     }
-  } catch (_e) {
-    // se fallisce, useremo ACCOUNT_BASE come fallback
+  } catch (e) {
+    console.log("[status.error]", e?.response?.status, e?.response?.data || e?.message);
   }
 
-  return ACCOUNT_BASE; // può non funzionare per il controllo, ma non blocca il flusso
+  console.log("[status.fallback] device", deviceId, "->", ACCOUNT_BASE);
+  return ACCOUNT_BASE; // fallback (potrebbe non accettare i comandi)
 }
 
 // ===== POST helper (form) =====
@@ -214,6 +219,26 @@ app.get("/manual-open/:deviceId", async (req, res) => {
 
 // ===== Health =====
 app.get("/health", (_req, res) => res.json({ ok:true }));
+
+// ===== Debug: risposta cruda di /device/status per un device =====
+app.get("/debug-status/:deviceId", async (req, res) => {
+  const device = req.params.deviceId;
+  try {
+    const urlStatus = `${ACCOUNT_BASE}/device/status`;
+    const body = new URLSearchParams({ id: device, auth_key: SHELLY_AUTH_KEY }).toString();
+    const { data } = await axios.post(urlStatus, body, {
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      timeout: 10000
+    });
+    res.json({ ok: true, data });
+  } catch (e) {
+    res.status(502).json({
+      ok: false,
+      status: e?.response?.status,
+      data: e?.response?.data || e?.message
+    });
+  }
+});
 
 // ===== Debug: shard risolto per un device =====
 app.get("/resolve/:deviceId", async (req, res) => {
