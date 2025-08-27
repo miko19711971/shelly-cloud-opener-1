@@ -1,1 +1,15 @@
-
+{
+  "name": "shelly-cloud-opener-1",
+  "version": "1.0.0",
+  "description": "Express server to open Shelly devices via cloud with daily token",
+  "main": "src/server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node src/server.js"
+  },
+  "dependencies": {
+    "axios": "^1.6.7",
+    "crypto": "^1.0.1",
+    "express": "^4.19.2"
+  }
+}
