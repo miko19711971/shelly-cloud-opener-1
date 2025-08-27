@@ -1,9 +1,8 @@
 {
   "name": "shelly-cloud-opener",
   "version": "1.0.0",
-  "description": "Shelly cloud opener with one-time 5-minute tokens",
+  "description": "Shelly cloud opener",
   "type": "module",
-  "main": "server.js",
   "scripts": {
     "start": "node src/server.js",
     "render-start": "node src/server.js"
