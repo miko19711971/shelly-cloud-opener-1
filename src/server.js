@@ -63,37 +63,56 @@ function verify(deviceId, ts, sig) {
   catch { return false; }
 }
 
-// ===== Shelly pulse: prova /turn e poi /control =====
-async function shellyCall(path, payload) {
+// ===== Shelly: invio FORM x-www-form-urlencoded =====
+async function shellyCallForm(path, payloadObj) {
   const url = `${SHELLY_CLOUD_BASE_URL}${path}`;
-  return axios.post(url, payload, { timeout: 10000 });
+  const form = new URLSearchParams(payloadObj).toString();
+  return axios.post(url, form, {
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    timeout: 10000
+  });
 }
+
+// Prova prima /device/relay/control (FORM), poi fallback su /device/relay/turn (FORM)
 async function shellyPulse(deviceId, durationMs = 800) {
-  const payloadOn  = { id: deviceId, auth_key: SHELLY_AUTH_KEY, channel: 0, turn: "on"  };
-  const payloadOff = { id: deviceId, auth_key: SHELLY_AUTH_KEY, channel: 0, turn: "off" };
+  const payloadOn  = { id: deviceId, auth_key: SHELLY_AUTH_KEY, channel: "0", turn: "on"  };
+  const payloadOff = { id: deviceId, auth_key: SHELLY_AUTH_KEY, channel: "0", turn: "off" };
 
-  const tryPaths = ["/device/relay/turn", "/device/relay/control"];
-  let lastErr = null;
-
-  for (const p of tryPaths) {
+  try {
+    const onRes  = await shellyCallForm("/device/relay/control", payloadOn);
+    await new Promise(r => setTimeout(r, durationMs));
+    const offRes = await shellyCallForm("/device/relay/control", payloadOff);
+    return { ok: true, on: onRes.data, off: offRes.data, path: "/device/relay/control", encoding: "form" };
+  } catch (err1) {
     try {
-      const onRes = await shellyCall(p, payloadOn);
+      const onRes  = await shellyCallForm("/device/relay/turn", payloadOn);
       await new Promise(r => setTimeout(r, durationMs));
-      const offRes = await shellyCall(p, payloadOff);
-      return { ok: true, on: onRes.data, off: offRes.data, path: p };
-    } catch (err) {
-      lastErr = {
-        status: err?.response?.status,
-        data: err?.response?.data,
-        message: err.message,
-        path: p,
-        baseUrl: SHELLY_CLOUD_BASE_URL
+      const offRes = await shellyCallForm("/device/relay/turn", payloadOff);
+      return { ok: true, on: onRes.data, off: offRes.data, path: "/device/relay/turn", encoding: "form" };
+    } catch (err2) {
+      return {
+        ok: false,
+        error: "Shelly request failed",
+        details: {
+          first: {
+            status: err1?.response?.status,
+            data: err1?.response?.data,
+            message: err1?.message,
+            path: "/device/relay/control",
+            encoding: "form"
+          },
+          second: {
+            status: err2?.response?.status,
+            data: err2?.response?.data,
+            message: err2?.message,
+            path: "/device/relay/turn",
+            encoding: "form"
+          },
+          baseUrl: SHELLY_CLOUD_BASE_URL
+        }
       };
-      const code = err?.response?.status;
-      if (![401, 403, 404].includes(code)) break;
     }
   }
-  return { ok: false, error: "Shelly request failed", details: lastErr };
 }
 
 // ===== UI =====
@@ -143,7 +162,7 @@ app.get("/open", async (req, res) => {
   if (!verify(device, ts, sig)) return res.status(401).json({ ok:false, error:"Invalid or expired link" });
 
   const result = await shellyPulse(device);
-  if (result.ok) return res.json({ ok:true, device, name:DEVICES[device].name, path: result.path });
+  if (result.ok) return res.json({ ok:true, device, name:DEVICES[device].name, path: result.path, encoding: "form" });
   return res.status(502).json(result);
 });
 
@@ -154,7 +173,7 @@ app.get("/manual-open/:deviceId", async (req, res) => {
   const result = await shellyPulse(device);
   if (result.ok) {
     res.setHeader("Content-Type", "text/html; charset=utf-8");
-    return res.send(`<p>✅ Aperto: <b>${DEVICES[device].name}</b> (<code>${device}</code>) – via <code>${result.path}</code></p>
+    return res.send(`<p>✅ Aperto: <b>${DEVICES[device].name}</b> (<code>${device}</code>) – via <code>${result.path}</code> (form)</p>
     <p><a href="/">← Torna alla lista</a></p>`);
   }
   res.status(502).send(`<pre>${JSON.stringify(result, null, 2)}</pre>`);
