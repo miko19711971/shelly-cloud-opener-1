@@ -7,23 +7,15 @@ const app = express();
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-// ====== ENV ======
-const SHELLY_API_KEY = process.env.SHELLY_API_KEY; // OBBLIGATORIA
-const TOKEN_SECRET   = process.env.TOKEN_SECRET || "changeme";
-const TZ             = process.env.TZ || "Europe/Rome";
+// ===== ENV =====
+const SHELLY_API_KEY = process.env.SHELLY_API_KEY;
+const SHELLY_BASE_URL = process.env.SHELLY_BASE_URL || "https://shelly-api-eu.shelly.cloud";
+const TOKEN_SECRET = process.env.TOKEN_SECRET || "changeme";
+const TZ = process.env.TZ || "Europe/Rome";
 
-// Endpoint principali (eu + global) in fallback
-const BASES = [
-  process.env.SHELLY_BASE_URL || "https://shelly-api-eu.shelly.cloud",
-  "https://shelly-api.shelly.cloud",
-];
+if (!SHELLY_API_KEY) console.error("MISSING ENV: SHELLY_API_KEY");
 
-// Sanity check
-if (!SHELLY_API_KEY) {
-  console.error("MISSING ENV: SHELLY_API_KEY");
-}
-
-// ====== MAPPATURA TUTTI I DEVICE ======
+// ===== TARGETS =====
 const TARGETS = {
   "leonina-door":              { id: "3494547a9395", name: "Leonina — Apartment Door" },
   "leonina-building-door":     { id: "34945479fbbe", name: "Leonina — Building Door" },
@@ -36,14 +28,37 @@ const TARGETS = {
   "arenula-building-door":     { id: "3494547ab05e", name: "Arenula — Building Door" }
 };
 
-// Shelly 1 => relay channel 0
 const RELAY_CHANNEL = 0;
 
-// ====== UTILS ======
+// ===== Helpers =====
+async function cloudOpenRelay(deviceId) {
+  const url = `${SHELLY_BASE_URL}/device/relay/control`;
+  const form = new URLSearchParams({
+    id: deviceId,
+    auth_key: SHELLY_API_KEY,
+    channel: String(RELAY_CHANNEL),
+    turn: "on"
+  });
+
+  try {
+    const { data } = await axios.post(url, form.toString(), {
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      timeout: 10000
+    });
+    if (data && data.isok) return { ok: true, data };
+    return { ok: false, error: data || { message: "cloud_isok_false" } };
+  } catch (err) {
+    return {
+      ok: false,
+      error: "cloud_error",
+      details: err.response ? { status: err.response.status, data: err.response.data } : String(err)
+    };
+  }
+}
+
 function todayISO() {
-  // Forziamo il giorno in TZ impostata dal container (Render: setta ENV TZ=Europe/Rome)
   const d = new Date();
-  return d.toISOString().slice(0, 10); // YYYY-MM-DD in UTC, ma per i link giornalieri va bene
+  return d.toISOString().slice(0, 10); // YYYY-MM-DD
 }
 
 function tokenFor(target, dateStr) {
@@ -51,107 +66,70 @@ function tokenFor(target, dateStr) {
   return crypto.createHmac("sha256", TOKEN_SECRET).update(payload).digest("base64url");
 }
 
-// Chiamata cloud con header Bearer + body JSON
-async function cloudOpenRelay(deviceId) {
-  const body = {
-    id: deviceId,
-    channel: RELAY_CHANNEL,
-    turn: "on",
-    // Molti endpoint non lo richiedono nel body se c'è il Bearer, ma lo aggiungo per compatibilità:
-    auth_key: SHELLY_API_KEY
-  };
+// ===== Routes =====
 
-  const tried = [];
-  for (const base of BASES) {
-    try {
-      const url = `${base}/device/relay/control`;
-      const { data } = await axios.post(url, body, {
-        headers: {
-          "Authorization": `Bearer ${SHELLY_API_KEY}`,
-          "Content-Type": "application/json"
-        },
-        timeout: 10000
-      });
-
-      // Risposta tipica: { isok: true/false, ... }
-      if (data && data.isok) {
-        return { ok: true, data, base };
-      }
-      tried.push({ base, note: "API replied", data });
-    } catch (err) {
-      const pack = err?.response
-        ? { status: err.response.status, data: err.response.data }
-        : { data: String(err) };
-      tried.push({ base, note: "request failed", err: pack });
-    }
-  }
-  return { ok: false, error: "cloud_error", tried, last: tried.at(-1) };
-}
-
-// ====== ROUTES ======
-app.get("/health", (req, res) => {
-  res.json({
-    ok: true,
-    targets: Object.keys(TARGETS).length,
-    node: process.version,
-    tz: TZ,
-    today: todayISO()
-  });
-});
-
-// Index con link utili
+// index con lista link
 app.get("/", (req, res) => {
-  const rows = Object.entries(TARGETS).map(([key, v]) => {
-    return `<li>
-      ${v.name} —
-      <a href="/t/${key}">smart link</a> |
-      <a href="/open?target=${key}">manual open (fake token)</a>
-    </li>`;
-  }).join("\n");
-
-  res.type("html").send(`
-    <h3>Shelly Opener — Guest Assistant</h3>
-    <p>Configured targets: ${Object.keys(TARGETS).length}, TZ=${TZ}</p>
-    <ul>${rows}</ul>
-    <p><a href="/health">Health Check</a></p>
-  `);
+  const list = Object.entries(TARGETS).map(([k, v]) =>
+    `<li>${v.name} — <a href="/t/${k}">smart link</a> | <a href="/gen/${k}">manual open (fake token)</a></li>`
+  ).join("");
+  res.type("html").send(
+    `<h3>Shelly Opener — Guest Assistant</h3>
+     <p>Configured targets: ${Object.keys(TARGETS).length}, TZ=${TZ}</p>
+     <ul>${list}</ul>
+     <p><a href="/health">Health Check</a></p>`
+  );
 });
 
-// Smart link che genera e reindirizza al link con token giornaliero
+// health
+app.get("/health", (req, res) => {
+  res.json({ ok: true, targets: Object.keys(TARGETS).length, node: process.version, TZ });
+});
+
+// genera link del giorno (mostra url ma non apre)
+app.get("/gen/:target", (req, res) => {
+  const target = req.params.target;
+  if (!TARGETS[target]) return res.status(404).json({ ok: false, error: "unknown_target" });
+  const date = todayISO();
+  const sig = tokenFor(target, date);
+  const url = `${req.protocol}://${req.get("host")}/open/${target}/${date}/${sig}`;
+  res.json({ ok: true, target, date, sig, url });
+});
+
+// apertura senza token (solo test)
+app.get("/open", async (req, res) => {
+  const target = req.query.target;
+  if (!TARGETS[target]) return res.status(404).json({ ok: false, error: "unknown_target" });
+  const deviceId = TARGETS[target].id;
+  const out = await cloudOpenRelay(deviceId);
+  res.json(out);
+});
+
+// apertura con token
+app.get("/open/:target/:date/:sig", async (req, res) => {
+  const { target, date, sig } = req.params;
+  if (!TARGETS[target]) return res.status(404).json({ ok: false, error: "unknown_target" });
+
+  const expected = tokenFor(target, date);
+  if (sig !== expected) return res.status(401).json({ ok: false, error: "invalid_token" });
+
+  if (date !== todayISO()) return res.status(401).json({ ok: false, error: "expired_or_wrong_date" });
+
+  const deviceId = TARGETS[target].id;
+  const out = await cloudOpenRelay(deviceId);
+  res.json(out);
+});
+
+// smart link: genera il token di oggi e TI REDIRIGE all'URL /open/...
 app.get("/t/:target", (req, res) => {
   const target = req.params.target;
-  if (!TARGETS[target]) return res.status(404).send("unknown target");
+  if (!TARGETS[target]) return res.status(404).send("unknown_target");
   const date = todayISO();
   const sig = tokenFor(target, date);
   const url = `/open/${target}/${date}/${sig}`;
   res.redirect(url);
 });
 
-// Test senza token (solo per prove)
-app.get("/open", async (req, res) => {
-  const target = req.query.target;
-  if (!TARGETS[target]) return res.json({ ok: false, error: "unknown_target" });
-  const out = await cloudOpenRelay(TARGETS[target].id);
-  res.json(out);
-});
-
-// Apertura con token giornaliero
-app.get("/open/:target/:date/:sig", async (req, res) => {
-  const { target, date, sig } = req.params;
-  if (!TARGETS[target]) return res.json({ ok: false, error: "unknown_target" });
-
-  const expected = tokenFor(target, date);
-  if (sig !== expected) return res.json({ ok: false, error: "invalid_token" });
-
-  const today = todayISO();
-  if (date !== today) return res.json({ ok: false, error: "expired_or_wrong_date" });
-
-  const out = await cloudOpenRelay(TARGETS[target].id);
-  res.json(out);
-});
-
-// ====== START ======
+// ===== start =====
 const PORT = process.env.PORT || 10000;
-app.listen(PORT, () => {
-  console.log("Server listening on", PORT);
-});
+app.listen(PORT, () => console.log("Server listening on", PORT)); 
