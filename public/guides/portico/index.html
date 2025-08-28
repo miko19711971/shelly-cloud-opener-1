@@ -1,64 +1,223 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Portico d’Ottavia — Virtual Guide</title>
-  <style>
-    body{font-family:Arial,sans-serif;margin:20px;background:#fff;text-align:center}
-    img.logo{max-width:200px;margin-bottom:10px}
-    h2{color:#333}
-    .btn{display:inline-block;padding:10px 15px;margin:5px;background:#f1f1f1;color:#333;border:1px solid #ccc;border-radius:20px;text-decoration:none;cursor:pointer;font-size:14px}
-    .btn:hover{background:#e6e6e6}
-    .answer{margin-top:15px;padding:12px;border:1px solid #ddd;border-radius:6px;background:#fafafa;text-align:left;max-width:500px;margin-left:auto;margin-right:auto}
-  </style>
-  <script>
-    function showAnswer(id){document.querySelectorAll('.answer').forEach(el=>el.style.display='none');document.getElementById(id).style.display='block';}
-  </script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Guest Help — Via del Portico d’Ottavia 1D</title>
+<link rel="icon" type="image/jpeg" href="logo-niceflatinrome.jpg">
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:#f6f6f6}
+.wrap{max-width:760px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column}
+header{position:sticky;top:0;background:#fff;border-bottom:1px solid #e0e0e0;padding:10px 14px}
+.h-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.h-left{display:flex;align-items:center;gap:10px}
+.brand{font-weight:700;color:#a33}
+.apt{margin-left:auto;opacity:.75}
+img.logo{height:36px;width:auto;display:block}
+.controls{display:flex;gap:8px;margin-top:8px}
+#voiceBtn{padding:8px 10px;border:1px solid #ddd;background:#fff;border-radius:10px;cursor:pointer;font-size:14px}
+#voiceBtn[aria-pressed="true"]{background:#2b2118;color:#fff;border-color:#2b2118}
+main{flex:1;padding:12px}
+.msg{max-width:85%;line-height:1.35;border-radius:12px;padding:10px 12px;margin:8px 0;white-space:pre-wrap}
+.msg.wd{background:#fff;border:1px solid #e0e0e0}
+.msg.me{background:#e8f0fe;border:1px solid #c5d5ff;margin-left:auto}
+.quick{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.quick button{border:1px solid #d6c5b8;background:#fff;color:#333;padding:6px 10px;border-radius:12px;cursor:pointer}
+.quick button:active{transform:translateY(1px)}
+footer{position:sticky;bottom:0;background:#fff;display:flex;gap:8px;padding:10px;border-top:1px solid #e0e0e0}
+input{flex:1;padding:12px;border:1px solid #cbd5e1;border-radius:10px;outline:none}
+#sendBtn{padding:12px 14px;border:1px solid #2b2118;background:#2b2118;color:#fff;border-radius:10px;cursor:pointer}
+.intro{background:#fff;border:1px solid #e0e0e0;padding:12px;border-radius:12px;margin:12px 0}
+.intro b{display:block;margin-bottom:6px}
+</style>
 </head>
 <body>
-  <img src="https://niceflatinrome.com/logo.png" alt="niceflatinrome.com" class="logo">
-  <h2>Apartment: PORTICO D’OTTAVIA 1D</h2>
-  <p>Hi, I am Samantha, your virtual guide. Tap a button to get a quick answer.</p>
+<div class="wrap">
+  <header>
+    <div class="h-row">
+      <div class="h-left">
+        <img class="logo" src="logo-niceflatinrome.jpg" alt="NiceFlatInRome">
+        <div class="brand">niceflatinrome.com</div>
+      </div>
+      <div class="apt">Apartment: PORTICO1D</div>
+    </div>
+    <div class="controls">
+      <button id="voiceBtn" aria-pressed="false" title="Toggle voice">🔇 Voice: Off</button>
+    </div>
+  </header>
 
-  <div>
-    <button class="btn" onclick="showAnswer('wifi')">wifi</button>
-    <button class="btn" onclick="showAnswer('checkin')">check in</button>
-    <button class="btn" onclick="showAnswer('checkout')">check out</button>
-    <button class="btn" onclick="showAnswer('water')">water</button>
-    <button class="btn" onclick="showAnswer('ac')">AC</button>
-    <button class="btn" onclick="showAnswer('bathroom')">bathroom</button>
-    <button class="btn" onclick="showAnswer('trash')">trash</button>
-    <button class="btn" onclick="showAnswer('transport')">transport</button>
-    <button class="btn" onclick="showAnswer('emergency')">emergency</button>
-  </div>
+  <main id="chat" aria-live="polite"></main>
 
-  <div id="wifi" class="answer" style="display:none;">
-    <strong>WiFi:</strong> Network: <em>{{PORTICO_WIFI_SSID}}</em>, Password: <em>{{PORTICO_WIFI_PASSWORD}}</em>
-  </div>
-  <div id="checkin" class="answer" style="display:none;">
-    <strong>Check-in:</strong> From 3:00 PM. Virtual keys arrive by email on arrival day.
-  </div>
-  <div id="checkout" class="answer" style="display:none;">
-    <strong>Check-out:</strong> Turn off lights/AC, close windows, leave keys on the table, gently close the door. Latest 11:00 AM.
-  </div>
-  <div id="water" class="answer" style="display:none;">
-    <strong>Hot Water:</strong> If it runs out, wait 15 minutes for the boiler to refill.
-  </div>
-  <div id="ac" class="answer" style="display:none;">
-    <strong>Air Conditioning:</strong> Use the remote. Switch off when leaving.
-  </div>
-  <div id="bathroom" class="answer" style="display:none;">
-    <strong>Bathroom:</strong> Do not flush wipes/sanitary items. Use the bin.
-  </div>
-  <div id="trash" class="answer" style="display:none;">
-    <strong>Trash:</strong> Bins in {{PORTICO_TRASH_LOCATION}}. Open {{PORTICO_TRASH_HOURS}}.
-  </div>
-  <div id="transport" class="answer" style="display:none;">
-    <strong>Transport:</strong> Nearest stop: <em>{{PORTICO_NEAREST_STOP}}</em>. Easy connection to Trastevere/Termini.
-  </div>
-  <div id="emergency" class="answer" style="display:none;">
-    <strong>Emergency:</strong> Police 112 • Ambulance 118 • Fire Brigade 115.
-  </div>
+  <footer>
+    <input id="input" placeholder="Type a message… e.g., wifi, transport, eat" autocomplete="off">
+    <button id="sendBtn">Send</button>
+  </footer>
+</div>
+
+<script>
+/* ------- DATA (Portico d’Ottavia 1D) ------- */
+const apt = {
+  checkin_time:'15:00',
+  checkout_time:'11:00',
+
+  // Wi-Fi
+  wifi_note:"Look at the bed: on the right side there’s a chest bench with the router on top. SSID and password are on the label attached to the router.",
+  wifi_ssid:'See router label',
+  wifi_password:'See router label',
+
+  // Water / AC / Bathroom / Towels
+  water_note:'Tap water is safe to drink. Hot water is always available.',
+  ac_note:'Air conditioning works via remote control. Please turn it OFF when you go out.',
+  bathroom_amenities:'Toilet paper, hand soap, bath mat, hairdryer.',
+  towels_note:'Per guest: 1 large + 1 medium towel. Bed is prepared on arrival.',
+
+  // Kitchen
+  kitchen_note:'Kitchen is fully equipped for your needs.',
+
+  // Building & Access
+  intercom_note:'At the building door, our unit is the third button from the bottom.',
+  registration_note:'Please send photos of two identity documents via WhatsApp for guest registration (required by law).',
+
+  // Assistance
+  host_phone:'+39 335 5245756',
+
+  // Services nearby
+  supermarkets:'Carrefour Express – Via Arenula 41 • Conad City – Via di Santa Maria del Pianto 4 • Punto Simply – Via dei Falegnami 4',
+  pharmacies:'Farmacia della Reginella – Via della Reginella 25 • Farmacia Internazionale – Largo Arenula 14 (English speaking) • Farmacia San Salvatore – Piazza della Enciclopedia Italiana 53',
+  luggage:'Radical Storage – Largo di Torre Argentina (5 min walk)',
+  laundry:'Self-service laundry – Via Arenula 47',
+  hospital:'Fatebenefratelli Hospital – Tiber Island',
+  atms:'Unicredit (Largo Arenula 1) • BNL (Via Arenula 41) • Intesa (Via Arenula 27)',
+
+  // Transport
+  transport:"Tram 8 (stop: Arenula/Cairoli) → Trastevere or Piazza Venezia. Buses from Largo Argentina. Taxi: +39 06 3570 or use FreeNow app.",
+  airports:"Fiumicino: Tram 8 → Trastevere Station → FL1 train (~45 min). Ciampino: Terravision bus or taxi. Private transfer: Welcome Pickups.",
+
+  // Safety & useful numbers
+  emergency:"EU Emergency 112 • Police 113 • Ambulance 118 • Fire 115 • English-speaking doctor +39 06 488 2371 • 24h vet +39 06 660 681",
+
+  // Eat / Drink / Shop
+  eat:"Giggetto al Portico d’Ottavia • Ba’Ghetto (Main & Bistrot) • Nonna Betta • Rimessa Roscioli • Il Giardino Romano • Sora Margherita • Yotvata (dairy, kosher).",
+  drink:"Beppe e i Suoi Formaggi (wine & cheese) • Il Goccetto (historic wine bar) • Bar del Fico (cocktails) • Caffè del Portico • Bibliothè (tea room) • Antico Caffè del Teatro di Marcello.",
+  shop:"Via del Portico d’Ottavia (artisan shops & kosher bakeries) • Forno Boccione (no sign outside) • Via Arenula boutiques • Jewish Bookstore • Kosher Delight • Fish stalls at Piazza Costaguti (mornings).",
+
+  // What to visit & Hidden gems
+  visit:"Portico d’Ottavia • Teatro di Marcello • Great Synagogue of Rome & Jewish Museum (closed Sat & Jewish holidays; museum usually 10:00–17:00) • Piazza Mattei (Turtle Fountain) • Tiber Island.",
+  hidden_gems:"Torre dei Grassi • Ponte Emilio “Ponte Rotto” (single remaining arch) • Via della Reginella (Rome’s narrow street).",
+
+  // Experiences & Day trips
+  experiences:"Guided tours in the Jewish Ghetto • Jewish-Roman food tastings • Evening walk to Campo de’ Fiori & Piazza Navona • Photo walk through hidden squares • Bike ride around Tiber Island.",
+  daytrips:"Ostia Antica (~40 min) • Tivoli (Villa d’Este & Hadrian’s Villa ~1h) • Castelli Romani (villages & wine).",
+
+  // Check-out
+  checkout_note:"Before leaving: turn off lights/AC, close windows, leave keys on the table, gently close the door."
+};
+
+const faqs = [
+  { k:'wifi', keys:['wifi','wi-fi','internet','password','router'],
+    t:`Wi-Fi: ${apt.wifi_note}\nNetwork: ${apt.wifi_ssid}. Password: ${apt.wifi_password}.` },
+
+  { k:'check in', keys:['check in','arrival','self check-in','access','entrance','intercom','doorbell'],
+    t:`Check-in from ${apt.checkin_time}.
+Intercom: ${apt.intercom_note}
+Registration: ${apt.registration_note}
+Need help? Call ${apt.host_phone}.` },
+
+  { k:'check out', keys:['check out','leave','departure'], t: apt.checkout_note },
+  { k:'water', keys:['water','hot water','drinkable','tap','shower'], t: apt.water_note },
+  { k:'AC', keys:['ac','air conditioning','aircon','air conditioner'], t: apt.ac_note },
+  { k:'bathroom', keys:['bathroom','hairdryer','towels','amenities','soap'], t:`Bathroom: ${apt.bathroom_amenities}\nTowels: ${apt.towels_note}` },
+  { k:'kitchen', keys:['kitchen','cook','cooking','stove'], t: apt.kitchen_note },
+
+  { k:'services', keys:['pharmacy','hospital','atm','sim','laundry','luggage','supermarket','groceries'],
+    t:`Supermarkets: ${apt.supermarkets}
+Pharmacies: ${apt.pharmacies}
+Hospital: ${apt.hospital}
+ATMs: ${apt.atms}
+Laundry: ${apt.laundry}
+Luggage storage: ${apt.luggage}` },
+
+  { k:'transport', keys:['transport','tram','bus','taxi','airport','train','metro'],
+    t:`${apt.transport}\nAirports: ${apt.airports}` },
+
+  { k:'eat', keys:['eat','restaurant','dinner','lunch','food'], t: apt.eat },
+  { k:'drink', keys:['drink','bar','wine','cocktail','aperitivo'], t: apt.drink },
+  { k:'shop', keys:['shop','market','shopping','bakeries','kosher'], t: apt.shop },
+  { k:'visit', keys:['what to visit','see','sight','attraction','museum','synagogue'], t: apt.visit },
+  { k:'hidden gems', keys:['hidden','secret','gem','less-known','off the beaten path'], t: apt.hidden_gems },
+  { k:'experience', keys:['experience','walk','tour','itinerary','sunset','photo'], t: apt.experiences },
+  { k:'day trips', keys:['day trip','tivoli','ostia','castelli','excursion'], t: apt.daytrips },
+  { k:'emergency', keys:['emergency','police','ambulance','fire','doctor','vet'], t: apt.emergency }
+];
+
+/* ------- UI (no server calls) ------- */
+const chatEl = document.getElementById('chat');
+const input  = document.getElementById('input');
+const sendBtn= document.getElementById('sendBtn');
+
+// Voice (Samantha – EN only)
+let voiceOn=false, pick=null;
+function pickSamantha(){
+  const all = window.speechSynthesis ? (speechSynthesis.getVoices()||[]) : [];
+  const en  = all.filter(v=>/en-/i.test(v.lang));
+  pick = en.find(v=>/samantha/i.test(v.name)) || en[0] || all[0] || null;
+}
+if('speechSynthesis' in window){
+  pickSamantha(); window.speechSynthesis.onvoiceschanged = pickSamantha;
+}
+function warm(){ try{ const u=new SpeechSynthesisUtterance('Voice enabled.'); if(pick) u.voice=pick; u.lang='en-US'; speechSynthesis.cancel(); speechSynthesis.speak(u);}catch{} }
+function speak(t){ if(!voiceOn||!('speechSynthesis' in window)) return; try{ const u=new SpeechSynthesisUtterance(t); if(pick) u.voice=pick; u.lang='en-US'; speechSynthesis.cancel(); speechSynthesis.speak(u);}catch{} }
+document.getElementById('voiceBtn').addEventListener('click',e=>{
+  voiceOn=!voiceOn; e.currentTarget.setAttribute('aria-pressed',String(voiceOn));
+  e.currentTarget.textContent = voiceOn ? '🔊 Voice: On' : '🔇 Voice: Off';
+  if(voiceOn) warm();
+});
+
+function add(type, txt){
+  const d=document.createElement('div');
+  d.className='msg '+(type==='me'?'me':'wd');
+  d.textContent=txt;
+  chatEl.appendChild(d);
+  chatEl.scrollTop=chatEl.scrollHeight;
+}
+
+function welcome(){
+  const intro=document.createElement('div');
+  intro.className='intro';
+  intro.innerHTML='<b>Hi, I’m Samantha, your virtual guide.</b>Tap a button to get a quick answer.';
+  chatEl.appendChild(intro);
+
+  const q=document.createElement('div'); q.className='quick';
+  const items=['wifi','check in','check out','water','AC','bathroom','kitchen','eat','drink','shop','visit','hidden gems','experience','day trips','transport','services','emergency'];
+  for(const it of items){
+    const b=document.createElement('button'); b.textContent=it;
+    b.onclick=()=>{ input.value=it; send(); };
+    q.appendChild(b);
+  }
+  chatEl.appendChild(q);
+}
+
+function detectIntent(msg){
+  const t=(msg||'').toLowerCase();
+  let best=null,score=0;
+  for(const f of faqs){
+    let s=0; for(const k of f.keys){ if(t.includes(k.toLowerCase())) s++; }
+    if(s>score){ score=s; best=f; }
+  }
+  return score>0?best:null;
+}
+function send(){
+  const text=(input.value||'').trim(); if(!text) return;
+  add('me',text); input.value='';
+  const m=detectIntent(text);
+  const bot = m ? m.t : 'I did not find a direct answer. Try a quick button (wifi, transport, eat…).';
+  add('wd',bot); speak(bot);
+}
+
+sendBtn.addEventListener('click',send);
+input.addEventListener('keydown',e=>{ if(e.key==='Enter') send(); });
+welcome();
+</script>
 </body>
 </html>
