@@ -1,1 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Leonina — Virtual Guide</title>
+  <style>
+    body{font-family:Arial,sans-serif;margin:20px;background:#fff;text-align:center}
+    img.logo{max-width:200px;margin-bottom:10px}
+    h2{color:#333}
+    .btn{display:inline-block;padding:10px 15px;margin:5px;background:#f1f1f1;color:#333;border:1px solid #ccc;border-radius:20px;text-decoration:none;cursor:pointer;font-size:14px}
+    .btn:hover{background:#e6e6e6}
+    .answer{margin-top:15px;padding:12px;border:1px solid #ddd;border-radius:6px;background:#fafafa;text-align:left;max-width:500px;margin-left:auto;margin-right:auto}
+  </style>
+  <script>
+    function showAnswer(id){document.querySelectorAll('.answer').forEach(el=>el.style.display='none');document.getElementById(id).style.display='block';}
+  </script>
+</head>
+<body>
+  <img src="https://niceflatinrome.com/logo.png" alt="niceflatinrome.com" class="logo">
+  <h2>Apartment: LEONINA</h2>
+  <p>Hi, I am Samantha, your virtual guide. Tap a button to get a quick answer.</p>
 
+  <div>
+    <button class="btn" onclick="showAnswer('wifi')">wifi</button>
+    <button class="btn" onclick="showAnswer('checkin')">check in</button>
+    <button class="btn" onclick="showAnswer('checkout')">check out</button>
+    <button class="btn" onclick="showAnswer('water')">water</button>
+    <button class="btn" onclick="showAnswer('ac')">AC</button>
+    <button class="btn" onclick="showAnswer('bathroom')">bathroom</button>
+    <button class="btn" onclick="showAnswer('trash')">trash</button>
+    <button class="btn" onclick="showAnswer('transport')">transport</button>
+    <button class="btn" onclick="showAnswer('emergency')">emergency</button>
+  </div>
+
+  <div id="wifi" class="answer" style="display:none;">
+    <strong>WiFi:</strong> Network: <em>{{LEONINA_WIFI_SSID}}</em>, Password: <em>{{LEONINA_WIFI_PASSWORD}}</em>
+  </div>
+  <div id="checkin" class="answer" style="display:none;">
+    <strong>Check-in:</strong> From 3:00 PM. Virtual keys arrive by email on arrival day.
+  </div>
+  <div id="checkout" class="answer" style="display:none;">
+    <strong>Check-out:</strong> Turn off lights/AC, close windows, leave keys on the table, gently close the door. Latest 11:00 AM.
+  </div>
+  <div id="water" class="answer" style="display:none;">
+    <strong>Hot Water:</strong> If it runs out, wait 15 minutes for the boiler to refill.
+  </div>
+  <div id="ac" class="answer" style="display:none;">
+    <strong>Air Conditioning:</strong> Use the remote. Switch off when leaving.
+  </div>
+  <div id="bathroom" class="answer" style="display:none;">
+    <strong>Bathroom:</strong> Do not flush wipes/sanitary items. Use the bin.
+  </div>
+  <div id="trash" class="answer" style="display:none;">
+    <strong>Trash:</strong> Bins in {{LEONINA_TRASH_LOCATION}}. Open {{LEONINA_TRASH_HOURS}}.
+  </div>
+  <div id="transport" class="answer" style="display:none;">
+    <strong>Transport:</strong> Nearest stop: <em>{{LEONINA_NEAREST_STOP}}</em>. Easy connection to Termini/Colosseo.
+  </div>
+  <div id="emergency" class="answer" style="display:none;">
+    <strong>Emergency:</strong> Police 112 • Ambulance 118 • Fire Brigade 115.
+  </div>
+</body>
+</html>
