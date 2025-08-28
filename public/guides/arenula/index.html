@@ -1,117 +1,224 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Arenula 16 — Virtual Guide</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 20px;
-      background-color: #ffffff;
-      text-align: center;
-    }
-    img.logo {
-      max-width: 200px;
-      margin-bottom: 10px;
-    }
-    h2 {
-      color: #333;
-    }
-    .btn {
-      display: inline-block;
-      padding: 10px 15px;
-      margin: 5px;
-      background-color: #f1f1f1;
-      color: #333;
-      border: 1px solid #ccc;
-      border-radius: 20px;
-      text-decoration: none;
-      cursor: pointer;
-      font-size: 14px;
-    }
-    .btn:hover {
-      background-color: #e6e6e6;
-    }
-    .answer {
-      margin-top: 15px;
-      padding: 12px;
-      border: 1px solid #ddd;
-      border-radius: 6px;
-      background-color: #fafafa;
-      text-align: left;
-      max-width: 500px;
-      margin-left: auto;
-      margin-right: auto;
-    }
-  </style>
-  <script>
-    function showAnswer(id) {
-      document.querySelectorAll('.answer').forEach(el => el.style.display = 'none');
-      document.getElementById(id).style.display = 'block';
-    }
-  </script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Guest Help — Via Arenula 16</title>
+<link rel="icon" type="image/jpeg" href="logo-niceflatinrome.jpg">
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:#f6f6f6}
+.wrap{max-width:760px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column}
+header{position:sticky;top:0;background:#fff;border-bottom:1px solid #e0e0e0;padding:10px 14px}
+.h-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.h-left{display:flex;align-items:center;gap:10px}
+.brand{font-weight:700;color:#a33}
+.apt{margin-left:auto;opacity:.75}
+img.logo{height:36px;width:auto;display:block}
+.controls{display:flex;gap:8px;margin-top:8px}
+#voiceBtn{padding:8px 10px;border:1px solid #ddd;background:#fff;border-radius:10px;cursor:pointer;font-size:14px}
+#voiceBtn[aria-pressed="true"]{background:#2b2118;color:#fff;border-color:#2b2118}
+main{flex:1;padding:12px}
+.msg{max-width:85%;line-height:1.35;border-radius:12px;padding:10px 12px;margin:8px 0;white-space:pre-wrap}
+.msg.wd{background:#fff;border:1px solid #e0e0e0}
+.msg.me{background:#e8f0fe;border:1px solid #c5d5ff;margin-left:auto}
+.quick{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.quick button{border:1px solid #d6c5b8;background:#fff;color:#333;padding:6px 10px;border-radius:12px;cursor:pointer}
+.quick button:active{transform:translateY(1px)}
+footer{position:sticky;bottom:0;background:#fff;display:flex;gap:8px;padding:10px;border-top:1px solid #e0e0e0}
+input{flex:1;padding:12px;border:1px solid #cbd5e1;border-radius:10px;outline:none}
+#sendBtn{padding:12px 14px;border:1px solid #2b2118;background:#2b2118;color:#fff;border-radius:10px;cursor:pointer}
+.intro{background:#fff;border:1px solid #e0e0e0;padding:12px;border-radius:12px;margin:12px 0}
+.intro b{display:block;margin-bottom:6px}
+</style>
 </head>
 <body>
-  <!-- Logo -->
-  <img src="https://niceflatinrome.com/logo.png" alt="niceflatinrome.com" class="logo">
+<div class="wrap">
+  <header>
+    <div class="h-row">
+      <div class="h-left">
+        <img class="logo" src="logo-niceflatinrome.jpg" alt="NiceFlatInRome">
+        <div class="brand">niceflatinrome.com</div>
+      </div>
+      <div class="apt">Apartment: ARENULA16</div>
+    </div>
+    <div class="controls">
+      <button id="voiceBtn" aria-pressed="false" title="Toggle voice">🔇 Voice: Off</button>
+    </div>
+  </header>
 
-  <!-- Titolo -->
-  <h2>Apartment: ARENULA16</h2>
+  <main id="chat" aria-live="polite"></main>
 
-  <p>Hi, I am Samantha, your virtual guide. Tap a button to get a quick answer.</p>
+  <footer>
+    <input id="input" placeholder="Type a message… e.g., wifi, gas, transport" autocomplete="off">
+    <button id="sendBtn">Send</button>
+  </footer>
+</div>
 
-  <!-- Bottoni -->
-  <div>
-    <button class="btn" onclick="showAnswer('wifi')">wifi</button>
-    <button class="btn" onclick="showAnswer('checkin')">check in</button>
-    <button class="btn" onclick="showAnswer('checkout')">check out</button>
-    <button class="btn" onclick="showAnswer('water')">water</button>
-    <button class="btn" onclick="showAnswer('ac')">AC</button>
-    <button class="btn" onclick="showAnswer('bathroom')">bathroom</button>
-    <button class="btn" onclick="showAnswer('trash')">trash</button>
-    <button class="btn" onclick="showAnswer('transport')">transport</button>
-    <button class="btn" onclick="showAnswer('emergency')">emergency</button>
-  </div>
+<script>
+/* ------- DATA (Arenula 16) ------- */
+const apt = {
+  checkin_time:'15:00',
+  checkout_time:'11:00',
 
-  <!-- Risposte -->
-  <div id="wifi" class="answer" style="display:none;">
-    <strong>WiFi:</strong> Network: <em>Arenula16</em>, Password: <em>arenula2025</em>
-  </div>
+  // Wi-Fi
+  wifi_note:'Router on the desk by the window. Turn it to see SSID & password.',
+  wifi_ssid:'See router label',
+  wifi_password:'See router label',
 
-  <div id="checkin" class="answer" style="display:none;">
-    <strong>Check-in:</strong> From 3:00 PM. You will receive your virtual keys by email on arrival day.
-  </div>
+  // Water / AC / Bathroom
+  water_note:'Tap water is safe to drink. Hot water is always available.',
+  ac_note:'Please switch off the air conditioning when you go out.',
+  bathroom_amenities:'Toilet paper, hand soap, bath mat, hairdryer.',
+  towels_note:'Per guest: 1 large + 1 medium towel. Bed is prepared on arrival.',
 
-  <div id="checkout" class="answer" style="display:none;">
-    <strong>Check-out:</strong> Before leaving: turn off lights/AC, close windows, leave keys on the table, gently close the door.  
-    Latest check-out: 11:00 AM.
-  </div>
+  // Gas / kitchen
+  gas_steps:'Gas valve: horizontal=open, vertical=closed. Choose burner. Light a match/lighter. Turn & press the black knob until the flame is steady, then release.',
 
-  <div id="water" class="answer" style="display:none;">
-    <strong>Hot Water:</strong> Always available. If it runs out, please wait 15 minutes for the boiler to refill.
-  </div>
+  // Building
+  intercom_code:'C8',
+  elevator_note:'Elevator for owners only — please do not use.',
+  main_door_hours:'08:00–13:00 and 15:30–18:00',
+  concierge:'Paolo',
 
-  <div id="ac" class="answer" style="display:none;">
-    <strong>Air Conditioning:</strong> Use the remote. Please switch off when leaving the apartment.
-  </div>
+  // Services nearby
+  pharmacy:'Farmacia Arenula, Via Arenula 19–21 — +39 06 686 8815',
+  hospital:'Fatebenefratelli Hospital, Tiber Island 1',
+  atms:'Unicredit (Largo Arenula 1), BNL (Via Arenula 41), Intesa (Via Arenula 27)',
+  sims:'Vodafone (Corso Vittorio Emanuele II, 209), TIM (Piazza Venezia, 2), Iliad (Via del Corso, 282)',
+  laundry:'Self-service laundry: Via Arenula 47',
+  luggage:'Radical Storage at Largo di Torre Argentina (5 min)',
 
-  <div id="bathroom" class="answer" style="display:none;">
-    <strong>Bathroom:</strong> Please do not flush wipes or sanitary items. Use the bin provided.
-  </div>
+  // Transport
+  transport:'Tram 8 (Arenula/Cairoli) → Trastevere or Piazza Venezia. Bus 40/64 → Termini & Vatican. Taxi: +39 06 3570 or FreeNow app.',
+  airports:'Fiumicino: Tram 8 → Trastevere → FL1 train (~45 min). Ciampino: Terravision bus or taxi. Private transfer: Welcome Pickups.',
 
-  <div id="trash" class="answer" style="display:none;">
-    <strong>Trash:</strong> Recycling bins are located in Piazza Mattei. Open daily from 7:00 to 9:30 AM.
-  </div>
+  // Safety
+  emergency:'EU Emergency 112 • Police 113 • Ambulance 118 • Fire 115 • English doctor +39 06 488 2371 • 24h vet +39 06 660 681',
 
-  <div id="transport" class="answer" style="display:none;">
-    <strong>Transport:</strong> The nearest tram stop is <em>Arenula-Cairoli</em>.  
-    Easy connection to Termini and Trastevere.
-  </div>
+  // Eat/Drink/See/Do
+  eat:'Roscioli; Emma Pizzeria; Ditirambo; Osteria da Fortunata; Pianostrada; Forno Campo de’ Fiori; Gelateria del Teatro.',
+  drink:'Caffè Camerino (Largo Arenula 30); Irish Pub (Largo Argentina); Modius Radisson Rooftop.',
+  shop:'Via Arenula delis/bakeries/gelato; Piazza Costaguti fish market; Forno Boccione; Mercato Monti (weekends).',
+  visit:'Largo di Torre Argentina (temples & cat sanctuary); Portico d’Ottavia; Tiber Island; Piazza Farnese; hidden churches (Chiesa Nuova, S. Maria in Campitelli, S. Barbara dei Librari).',
+  experiences:'Evening walk: Largo Argentina → Ghetto → Tiber Island → Teatro di Marcello; aperitivo at Camerino or Modius; pastries at Forno Boccione; sunset on Lungotevere.',
+  daytrips:'Ostia Antica (~40 min); Tivoli (Villa d’Este & Hadrian’s Villa ~1h); Castelli Romani (villages & wine).',
 
-  <div id="emergency" class="answer" style="display:none;">
-    <strong>Emergency Numbers:</strong> Police 112, Ambulance 118, Fire Brigade 115.
-  </div>
+  // Check-out
+  checkout_note:'Before leaving: turn off lights/AC, close windows, leave keys on the table, gently close the door.',
+  host_phone:'+39 335 5245756'
+};
 
+const faqs = [
+  { k:'wifi', keys:['wifi','wi-fi','internet','password','router'],
+    t:`Wi-Fi: ${apt.wifi_note}\nNetwork: ${apt.wifi_ssid}. Password: ${apt.wifi_password}.` },
+
+  { k:'check in', keys:['check in','arrival','access','intercom','code'],
+    t:`Check-in from ${apt.checkin_time}.
+Intercom code: ${apt.intercom_code}.
+Main door hours: ${apt.main_door_hours}.
+Concierge: ${apt.concierge}.
+Need help? Call ${apt.host_phone}.` },
+
+  { k:'check out', keys:['check out','leave','departure'], t: apt.checkout_note },
+  { k:'water', keys:['water','hot water','drinkable','tap'], t: apt.water_note },
+  { k:'AC', keys:['ac','air conditioning','aircon','air'], t: apt.ac_note },
+  { k:'bathroom', keys:['bathroom','hairdryer','soap','towels'], t:`Bathroom: ${apt.bathroom_amenities}\nTowels: ${apt.towels_note}` },
+  { k:'gas', keys:['gas','kitchen','cook','flame','burner'], t:`Gas use: ${apt.gas_steps}` },
+
+  { k:'building', keys:['building','elevator','door','hours','concierge'],
+    t:`Intercom: ${apt.intercom_code}.
+Elevator: ${apt.elevator_note}.
+Main door: ${apt.main_door_hours}.
+Concierge: ${apt.concierge}.` },
+
+  { k:'services', keys:['pharmacy','hospital','atm','sim','laundry','luggage'],
+    t:`Pharmacy: ${apt.pharmacy}
+Hospital: ${apt.hospital}
+ATMs: ${apt.atms}
+SIMs: ${apt.sims}
+Laundry: ${apt.laundry}
+Luggage: ${apt.luggage}` },
+
+  { k:'transport', keys:['transport','tram','bus','taxi','airport','train'],
+    t:`${apt.transport}\nAirports: ${apt.airports}` },
+
+  { k:'eat', keys:['eat','restaurant','dinner','lunch','food'], t: apt.eat },
+  { k:'drink', keys:['drink','bar','wine','cocktail','aperitivo'], t: apt.drink },
+  { k:'shop', keys:['shop','market','shopping'], t: apt.shop },
+  { k:'visit', keys:['visit','visiting','what to visit','see','sight','attraction','museum','museums'], t: apt.visit },
+  { k:'experience', keys:['experience','walk','tour','itinerary','sunset'], t: apt.experiences },
+  { k:'day trips', keys:['day trips','day trip','tivoli','ostia','castelli','excursion','excursions'], t: apt.daytrips },
+  { k:'emergency', keys:['emergency','police','ambulance','fire','doctor','vet'], t: apt.emergency }
+];
+
+/* ------- UI (no server calls) ------- */
+const chatEl = document.getElementById('chat');
+const input  = document.getElementById('input');
+const sendBtn= document.getElementById('sendBtn');
+
+// Voice (Samantha – EN only)
+let voiceOn=false, pick=null;
+function pickSamantha(){
+  const all = window.speechSynthesis ? (speechSynthesis.getVoices()||[]) : [];
+  const en  = all.filter(v=>/en-/i.test(v.lang));
+  pick = en.find(v=>/samantha/i.test(v.name)) || en[0] || all[0] || null;
+}
+if('speechSynthesis' in window){
+  pickSamantha(); window.speechSynthesis.onvoiceschanged = pickSamantha;
+}
+function warm(){ try{ const u=new SpeechSynthesisUtterance('Voice enabled.'); if(pick) u.voice=pick; u.lang='en-US'; speechSynthesis.cancel(); speechSynthesis.speak(u);}catch{} }
+function speak(t){ if(!voiceOn||!('speechSynthesis' in window)) return; try{ const u=new SpeechSynthesisUtterance(t); if(pick) u.voice=pick; u.lang='en-US'; speechSynthesis.cancel(); speechSynthesis.speak(u);}catch{} }
+document.getElementById('voiceBtn').addEventListener('click',e=>{
+  voiceOn=!voiceOn; e.currentTarget.setAttribute('aria-pressed',String(voiceOn));
+  e.currentTarget.textContent = voiceOn ? '🔊 Voice: On' : '🔇 Voice: Off';
+  if(voiceOn) warm();
+});
+
+function add(type, txt){
+  const d=document.createElement('div');
+  d.className='msg '+(type==='me'?'me':'wd');
+  d.textContent=txt;
+  chatEl.appendChild(d);
+  chatEl.scrollTop=chatEl.scrollHeight;
+}
+
+function welcome(){
+  const intro=document.createElement('div');
+  intro.className='intro';
+  intro.innerHTML='<b>Hi, I’m Samantha, your virtual guide.</b>Tap a button to get a quick answer.';
+  chatEl.appendChild(intro);
+
+  const q=document.createElement('div'); q.className='quick';
+  const items=['wifi','check in','check out','water','AC','bathroom','gas','eat','drink','shop','visit','experience','day trips','transport','services','emergency'];
+  for(const it of items){
+    const b=document.createElement('button'); b.textContent=it;
+    b.onclick=()=>{ input.value=it; send(); };
+    q.appendChild(b);
+  }
+  chatEl.appendChild(q);
+}
+
+function detectIntent(msg){
+  const t=(msg||'').toLowerCase();
+  let best=null,score=0;
+  for(const f of faqs){
+    let s=0; for(const k of f.keys){ if(t.includes(k.toLowerCase())) s++; }
+    if(s>score){ score=s; best=f; }
+  }
+  return score>0?best:null;
+}
+function send(){
+  const text=(input.value||'').trim(); if(!text) return;
+  add('me',text); input.value='';
+  const m=detectIntent(text);
+  const bot = m ? m.t : 'I did not find a direct answer. Try a quick button (wifi, gas, transport…).';
+  add('wd',bot); speak(bot);
+}
+
+sendBtn.addEventListener('click',send);
+input.addEventListener('keydown',e=>{ if(e.key==='Enter') send(); });
+welcome();
+</script>
 </body>
 </html>
