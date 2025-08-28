@@ -3,11 +3,18 @@ import express from "express";
 import axios from "axios";
 import crypto from "crypto";
 import cors from "cors";
+import path from "path";
+import { fileURLToPath } from "url";
 
 const app = express();
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cors());
+
+// ========= STATIC: serve /public (guide & check-in) =========
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+app.use(express.static(path.join(__dirname, "..", "public")));
 
 // ========= ENV =========
 const SHELLY_API_KEY  = process.env.SHELLY_API_KEY;
@@ -29,9 +36,10 @@ const TARGETS = {
   "leonina-building":                { name: "Leonina 71 — Building Door",                ids: ["34945479fd73"] },
 
   "via-della-scala-door":            { name: "Via della Scala 17 — Apartment Door",       ids: ["3494547a1075"] },
-  // Per il building a Via della Scala apriamo in sequenza due attuatori.
-  // Se attualmente è un solo Shelly che comanda entrambi in cascata, lascia lo stesso ID ripetuto,
-  // altrimenti metti i due ID reali dei due portoni in quest'array (ordine = 1° cancello poi 2° cancello).
+
+  // Via della Scala — building: apertura in sequenza (1° cancello -> 10s -> 2° cancello)
+  // Se hai due Shelly separati per i due portoni, inserisci qui i DUE ID in ordine.
+  // Al momento è lasciato lo stesso ID due volte come nel tuo flusso attuale.
   "via-della-scala-building":        { name: "Via della Scala 17 — Building Door",        ids: ["3494547745ee", "3494547745ee"] },
 
   "portico-1d-door":                 { name: "Portico d'Ottavia 1D — Apartment Door",     ids: ["3494547a887d"] },
@@ -61,10 +69,9 @@ async function shellyTurnOn(deviceId) {
       { headers: { "Content-Type": "application/x-www-form-urlencoded" }, timeout: 7000 }
     );
     if (data && data.isok) return { ok: true, data, path: "/device/relay/control", encoding: "form" };
-    // Se isok === false, riporto l'errore
     return { ok: false, status: 400, data, path: "/device/relay/control", encoding: "form" };
   } catch (err) {
-    // 401/limiti o simili: provo anche /device/relay/turn
+    // 2) fallback /device/relay/turn
     try {
       const { data } = await axios.post(
         `${SHELLY_BASE_URL}/device/relay/turn`,
@@ -88,7 +95,6 @@ async function shellyTurnOn(deviceId) {
 async function openOne(deviceId) {
   const first = await shellyTurnOn(deviceId);
   if (first.ok) return { ok: true, first };
-  // Se il primo tentativo non è ok, riporto anche il dettaglio
   return { ok: false, first };
 }
 
@@ -98,7 +104,6 @@ async function openSequence(ids, delayMs = 10000) {
   for (let i = 0; i < ids.length; i++) {
     const r = await openOne(ids[i]);
     logs.push({ step: i + 1, device: ids[i], ...r });
-    // se non ultimo, attendo
     if (i < ids.length - 1) {
       await new Promise(res => setTimeout(res, delayMs));
     }
@@ -143,11 +148,10 @@ function newTokenFor(targetKey, opts = {}) {
   return { token: makeToken(payload), payload };
 }
 
-// In-memory tracker per jti già usate (difesa replay, oltre alla firma/exp)
+// In-memory tracker per jti già usate (difesa replay)
 const seenJti = new Set();
 function markJti(jti) { seenJti.add(jti); }
 function isSeenJti(jti) { return seenJti.has(jti); }
-// pulizia periodica
 setInterval(() => { seenJti.clear(); }, 60 * 60 * 1000);
 
 // ========== PAGINE HTML ==========
@@ -204,7 +208,6 @@ function landingHtml(targetKey, targetName, tokenPayload, tokenStr) {
           if(j.ok){
             okmsg.classList.remove('hidden');
             if (j.nextUrl) {
-              // subito rimpiazzo l'URL con il nuovo token (rigenerato)
               window.location.replace(j.nextUrl);
             } else if (typeof j.remaining === 'number') {
               leftEl.textContent = j.remaining;
@@ -277,7 +280,6 @@ app.get("/k/:target/:token", (req, res) => {
   if (p.tgt !== target) return res.status(400).send("Invalid link");
   if (Date.now() > p.exp) return res.status(400).send("Link scaduto");
 
-  // Mostro pagina
   res.type("html").send(landingHtml(target, targetDef.name, p, token));
 });
 
@@ -303,25 +305,27 @@ app.post("/k/:target/:token/open", async (req, res) => {
     result = await openSequence(targetDef.ids, 10000); // 10s tra il 1° e il 2°
   }
 
-  // Segno il token come usato (anti-replay)
+  // anti-replay
   markJti(p.jti);
 
   // Aggiorno contatore
   const used = (p.used || 0) + 1;
   const remaining = Math.max(0, p.max - used);
 
-  // Se non ho esaurito, rigenero subito un nuovo token con stesso exp/max ma used aggiornato
   if (used < p.max) {
-    const { token: nextTok } = newTokenFor(target, { used, max: p.max, windowMin: Math.ceil((p.exp - Date.now())/60000) });
+    const { token: nextTok } = newTokenFor(target, {
+      used,
+      max: p.max,
+      windowMin: Math.ceil((p.exp - Date.now())/60000)
+    });
     const nextUrl = `${req.protocol}://${req.get("host")}/k/${target}/${nextTok}`;
     return res.json({ ok: true, opened: result, remaining, nextUrl });
   }
 
-  // Esaurito: non rigenero
   return res.json({ ok: true, opened: result, remaining: 0 });
 });
 
-// Apertura manuale (tabella home) — solo diagnostica
+// Apertura manuale (tabella home) — diagnostica
 app.post("/api/open-now/:target", async (req, res) => {
   const key = req.params.target;
   const t = TARGETS[key];
