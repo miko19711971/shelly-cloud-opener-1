@@ -3,11 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Virtual Guide — SCALA17</title>
-<link rel="icon" type="image/png" href="logo-niceflatinrome.jpg">
+<title>Guest Help — Via della Scala 17</title>
+<link rel="icon" type="image/jpeg" href="./logo-niceflatinrome.jpg">
 <style>
-*{box-sizing:border-box} 
-body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:#f6f6f6}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:#f6f6f6}
 .wrap{max-width:760px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column}
 header{position:sticky;top:0;background:#fff;border-bottom:1px solid #e0e0e0;padding:10px 14px}
 .h-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
@@ -35,7 +35,8 @@ input{flex:1;padding:12px;border:1px solid #cbd5e1;border-radius:10px;outline:no
   <header>
     <div class="h-row">
       <div class="h-left">
-        <img class="logo" src="logo-niceflatinrome.jpg" alt="NiceFlatInRome">
+        <!-- il path è relativo alla cartella /guides/scala/ -->
+        <img class="logo" src="./logo-niceflatinrome.jpg" alt="niceflatinrome.com">
         <div class="brand">niceflatinrome.com</div>
       </div>
       <div class="apt">Apartment: SCALA17</div>
@@ -54,26 +55,85 @@ input{flex:1;padding:12px;border:1px solid #cbd5e1;border-radius:10px;outline:no
 </div>
 
 <script>
-const chatEl = document.getElementById('chat');
-const input = document.getElementById('input');
-const sendBtn = document.getElementById('sendBtn');
+/* ====== DATI APPARTAMENTO (SCALA 17) ====== */
+const apartment = {
+  apartment_id:'SCALA17',
+  name:'Via della Scala 17',
+  checkin_time:'15:00',
+  checkout_time:'11:00',
+  wifi_note:'Router on the right side of the living room, on a bench. Black cylinder-shaped device; turn it to see SSID & password on the back.',
+  wifi_ssid:'See router label',
+  wifi_password:'See router label',
+  water_note:'Tap water is safe to drink. Hot water is always on.',
+  bathroom_amenities:'Toilet paper, hand soap, hairdryer, bath mat.',
+  towels_note:'Per guest: 1 large + 1 medium towel. Bed is prepared on arrival.',
+  gas_steps:'Facing the gas meter: steel handle horizontal = OPEN; pointing down = CLOSED. To cook: 1) choose the burner, 2) press & turn the knob, 3) keep it pressed a few seconds until the flame is steady, 4) release.',
+  washer_note:'Washing machine manual is in the kitchen drawer. If missing, search your model on Google and download the PDF manual.',
+  intercom_note:'At the entrance there are two intercom columns. Your unit is in the column closest to the door on the left-hand side, first from the bottom. After the first door, the second intercom corresponds to Internal A/1.',
+  elevator_note:'—',
+  main_door_hours:'—',
+  concierge:'—',
+  pharmacy:'Farmacia Trastevere (Viale Trastevere 116). Other options: Pharmacy near Piazza Trilussa.',
+  hospital:'Ospedale Nuovo Regina Margherita (Via Emilio Morosini 30).',
+  atms:'Intesa Sanpaolo ATM (Piazza Santa Maria in Trastevere), Unicredit ATM (Viale Trastevere 108).',
+  sims:'Vodafone (Viale Trastevere 143), TIM (Piazza San Cosimato 70).',
+  laundry:'Self-service laundry: Via della Scala 51.',
+  luggage:'Radical Storage points in Trastevere / near Largo Argentina (book online).',
+  transport:'Tram 8 from Trastevere → Piazza Venezia. Buses 23 and H connect to the Vatican, Piazza Venezia, and Termini. Walking is best around Trastevere.',
+  airports:'Fiumicino: Tram 8 → Trastevere Station → FL1 train (~45 min). Ciampino: Terravision bus or taxi. Private transfer: Welcome Pickups.',
+  taxi:'Radio Taxi +39 06 3570 or FreeNow app.',
+  emergency:'EU Emergency 112 • Police 113 • Ambulance 118 • Fire 115 • English-speaking doctor +39 06 488 2371 • 24h vet +39 06 660 681',
+  eat:'Da Teo — Piazza dei Ponziani 7A; Ristorante La Scala — Piazza della Scala 58–61; Da Carlone — Piazza Sant’Apollonia 11; Osteria Fernanda — Vicolo del Cinque 18; Osteria der Belli — Seafood Sardinian/Roman; Tonnarello — Roman classics; La Tavernaccia — Roast meats, pasta; Nannarella — Homemade pasta',
+  drink:'VinAllegro (aperitivo, Piazza G.T. Arquati 114); Freni e Frizioni (cocktails); Bar San Calisto (iconic bar); La Vite (Piazza S. Cosimato 70).',
+  shop:'Mercato San Cosimato; Antica Norcineria Iacozzilli; Valzani; Le Levain; Porta Portese (Sun); Twice Vintage; Carlo Cecchini Leather.',
+  visit:'Santa Maria in Trastevere; Santa Cecilia; Museo di Roma in Trastevere; Orto Botanico; Villa Farnesina; Ponte Sisto → Campo de’ Fiori → Piazza Navona.',
+  experiences:'Scenic loop: Via della Scala → S. Maria in Trastevere → Santa Cecilia → Gianicolo → Orto Botanico. Evening wine at La Vite or San Calisto; pastries at Valzani; romantic stroll over Ponte Sisto.',
+  daytrips:'Ostia Antica (~40 min); Tivoli (Villa d’Este & Hadrian’s Villa ~1h); Castelli Romani (villages & wine).',
+  romantic_walk:'Start: Via della Scala 17 → Santa Maria in Trastevere → Ponte Sisto (sunset) → Campo de’ Fiori → Piazza Navona → Fior di Luna gelato → Biscottificio Innocenti → back to Via della Scala 17.',
+  checkout_note:'Before leaving: turn off lights, close windows, leave keys on the table, gently close the door.',
+  host_phone:'+39 335 5245756'
+};
 
-let voiceOn = false, pick = null;
+/* ====== FAQ LOCALI (NO CHIAMATE DI RETE) ====== */
+const faqs = [
+  { intent:'wifi',       keys:['wifi','wi-fi','internet','password','router'], tpl:`Wi-Fi: {wifi_note}\nNetwork: {wifi_ssid}. Password: {wifi_password}.` },
+  { intent:'check in',   keys:['check in','arrival','access','intercom','doorbell','code'], tpl:`Check-in from {checkin_time}. Intercom: {intercom_note}\nNeed help? Call {host_phone}.` },
+  { intent:'check out',  keys:['check out','leave','departure'], tpl:`{checkout_note}` },
+  { intent:'water',      keys:['water','hot water','drinkable','tap'], tpl:`{water_note}` },
+  { intent:'bathroom',   keys:['bathroom','hairdryer','soap','towels','amenities'], tpl:`Bathroom: {bathroom_amenities}\nTowels: {towels_note}` },
+  { intent:'gas',        keys:['gas','kitchen','cook','flame','burner'], tpl:`Gas use: {gas_steps}\nWasher: {washer_note}` },
+  { intent:'services',   keys:['services','pharmacy','hospital','atm','sim','laundry','luggage','numbers'], tpl:`Pharmacy: {pharmacy}\nHospital: {hospital}\nATMs: {atms}\nSIMs: {sims}\nLaundry: {laundry}\nLuggage: {luggage}` },
+  { intent:'transport',  keys:['transport','tram','bus','taxi','airport','train'], tpl:`{transport}\nAirports: {airports}\nTaxi: {taxi}` },
+  { intent:'eat',        keys:['eat','restaurant','dinner','lunch','food'], tpl:`{eat}` },
+  { intent:'drink',      keys:['drink','bar','wine','cocktail','aperitivo'], tpl:`{drink}` },
+  { intent:'shop',       keys:['shop','market','shopping','boutique'], tpl:`{shop}` },
+  { intent:'visit',      keys:['visit','see','sight','attraction','museum'], tpl:`{visit}` },
+  { intent:'experience', keys:['experience','walk','tour','itinerary','sunset','romantic'], tpl:`{experiences}\nRomantic route: {romantic_walk}` },
+  { intent:'day trips',  keys:['day trip','tivoli','ostia','castelli','excursion'], tpl:`{daytrips}` },
+  { intent:'emergency',  keys:['emergency','police','ambulance','fire','doctor','vet'], tpl:`{emergency}` }
+];
+
+/* ====== UI/Voce ====== */
+const chatEl = document.getElementById('chat');
+const input  = document.getElementById('input');
+const sendBtn= document.getElementById('sendBtn');
+
+let voiceOn=false, pick=null;
 function pickSamantha(){
   const all = window.speechSynthesis ? (speechSynthesis.getVoices()||[]) : [];
-  const en = all.filter(v=>/en-/i.test(v.lang));
+  const en  = all.filter(v=>/en-/i.test(v.lang));
   pick = en.find(v=>/samantha/i.test(v.name)) || en[0] || all[0] || null;
 }
 if ('speechSynthesis' in window){
   pickSamantha(); window.speechSynthesis.onvoiceschanged = pickSamantha;
 }
-function warm(){ try{ const u=new SpeechSynthesisUtterance('Voice enabled.'); if(pick) u.voice=pick; u.lang='en-US'; speechSynthesis.cancel(); speechSynthesis.speak(u);}catch{} }
-function speak(t){ if(!voiceOn||!('speechSynthesis'in window))return; try{ const u=new SpeechSynthesisUtterance(t); if(pick) u.voice=pick; u.lang='en-US'; speechSynthesis.cancel(); speechSynthesis.speak(u);}catch{} }
-
+function speak(t){ if(!voiceOn||!('speechSynthesis' in window)) return;
+  try{ const u=new SpeechSynthesisUtterance(t); if(pick) u.voice=pick; u.lang='en-US'; speechSynthesis.cancel(); speechSynthesis.speak(u);}catch{}
+}
 document.getElementById('voiceBtn').addEventListener('click',e=>{
   voiceOn=!voiceOn; e.currentTarget.setAttribute('aria-pressed',String(voiceOn));
   e.currentTarget.textContent = voiceOn ? '🔊 Voice: On' : '🔇 Voice: Off';
-  if (voiceOn) warm();
+  if (voiceOn) speak('Voice enabled.');
 });
 
 function add(type, txt){ const d=document.createElement('div'); d.className='msg '+(type==='me'?'me':'wd'); d.textContent=txt; chatEl.appendChild(d); chatEl.scrollTop=chatEl.scrollHeight; }
@@ -85,14 +145,23 @@ function welcome(){
   chatEl.appendChild(q);
 }
 
-async function send(){
+function norm(s){ return (s||'').toLowerCase().replace(/\s+/g,' ').trim(); }
+function detectIntent(msg){
+  const t=norm(msg); let best=null,score=0;
+  for(const f of faqs){ let s=0; for(const k of f.keys){ if(t.includes(norm(k))) s++; }
+    if(s>score){ score=s; best=f; }
+  }
+  return best;
+}
+function fill(tpl,obj){ return tpl.replace(/\{(\w+)\}/g,(_,k)=> obj[k] ?? `{${k}}`); }
+
+function send(){
   const text=(input.value||'').trim(); if(!text) return;
   add('me',text); input.value='';
-  try{
-    const r=await fetch('/api/message',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:text})});
-    const data=await r.json(); const bot=data.text||'Sorry, something went wrong.';
-    add('wd',bot); speak(bot);
-  }catch{ add('wd','Network error. Please try again.'); }
+  const m = detectIntent(text);
+  const ans = m ? fill(m.tpl, apartment)
+                : 'I did not find a direct answer. Try a button or use keywords (wifi, gas, transport, eat…).';
+  add('wd',ans); speak(ans);
 }
 sendBtn.addEventListener('click',send);
 input.addEventListener('keydown',e=>{ if(e.key==='Enter') send(); });
