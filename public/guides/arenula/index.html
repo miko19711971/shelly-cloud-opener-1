@@ -8,55 +8,70 @@
     body {
       font-family: Arial, sans-serif;
       margin: 20px;
-      background-color: #fafafa;
+      background-color: #ffffff;
+      text-align: center;
     }
-    h1 {
-      color: #6b4226;
+    img.logo {
+      max-width: 200px;
+      margin-bottom: 10px;
+    }
+    h2 {
+      color: #333;
     }
     .btn {
       display: inline-block;
       padding: 10px 15px;
       margin: 5px;
-      background-color: #6b4226;
-      color: #fff;
-      border-radius: 6px;
+      background-color: #f1f1f1;
+      color: #333;
+      border: 1px solid #ccc;
+      border-radius: 20px;
       text-decoration: none;
       cursor: pointer;
+      font-size: 14px;
     }
     .btn:hover {
-      background-color: #8c5c3c;
+      background-color: #e6e6e6;
     }
     .answer {
       margin-top: 15px;
-      padding: 10px;
+      padding: 12px;
       border: 1px solid #ddd;
       border-radius: 6px;
-      background-color: #fff;
+      background-color: #fafafa;
+      text-align: left;
+      max-width: 500px;
+      margin-left: auto;
+      margin-right: auto;
     }
   </style>
   <script>
     function showAnswer(id) {
-      // nasconde tutte le risposte
       document.querySelectorAll('.answer').forEach(el => el.style.display = 'none');
-      // mostra solo quella selezionata
       document.getElementById(id).style.display = 'block';
     }
   </script>
 </head>
 <body>
-  <h1>Arenula 16 — Virtual Guide</h1>
+  <!-- Logo -->
+  <img src="https://niceflatinrome.com/logo.png" alt="niceflatinrome.com" class="logo">
+
+  <!-- Titolo -->
+  <h2>Apartment: ARENULA16</h2>
+
   <p>Hi, I am Samantha, your virtual guide. Tap a button to get a quick answer.</p>
 
   <!-- Bottoni -->
   <div>
-    <button class="btn" onclick="showAnswer('wifi')">WiFi</button>
-    <button class="btn" onclick="showAnswer('checkin')">Check-in</button>
-    <button class="btn" onclick="showAnswer('checkout')">Check-out</button>
-    <button class="btn" onclick="showAnswer('water')">Hot Water</button>
-    <button class="btn" onclick="showAnswer('ac')">Air Conditioning</button>
-    <button class="btn" onclick="showAnswer('trash')">Trash</button>
-    <button class="btn" onclick="showAnswer('transport')">Transport</button>
-    <button class="btn" onclick="showAnswer('emergency')">Emergency</button>
+    <button class="btn" onclick="showAnswer('wifi')">wifi</button>
+    <button class="btn" onclick="showAnswer('checkin')">check in</button>
+    <button class="btn" onclick="showAnswer('checkout')">check out</button>
+    <button class="btn" onclick="showAnswer('water')">water</button>
+    <button class="btn" onclick="showAnswer('ac')">AC</button>
+    <button class="btn" onclick="showAnswer('bathroom')">bathroom</button>
+    <button class="btn" onclick="showAnswer('trash')">trash</button>
+    <button class="btn" onclick="showAnswer('transport')">transport</button>
+    <button class="btn" onclick="showAnswer('emergency')">emergency</button>
   </div>
 
   <!-- Risposte -->
@@ -65,31 +80,38 @@
   </div>
 
   <div id="checkin" class="answer" style="display:none;">
-    <strong>Check-in:</strong> Available from 3:00 PM. You will receive your virtual keys via email on the day of arrival.
+    <strong>Check-in:</strong> From 3:00 PM. You will receive your virtual keys by email on arrival day.
   </div>
 
   <div id="checkout" class="answer" style="display:none;">
-    <strong>Check-out:</strong> Please leave before 11:00 AM. Turn off AC, lights, and leave the keys on the table.
+    <strong>Check-out:</strong> Before leaving: turn off lights/AC, close windows, leave keys on the table, gently close the door.  
+    Latest check-out: 11:00 AM.
   </div>
 
   <div id="water" class="answer" style="display:none;">
-    <strong>Hot Water:</strong> The water heater is always on. If there’s no hot water, please wait 15 minutes.
+    <strong>Hot Water:</strong> Always available. If it runs out, please wait 15 minutes for the boiler to refill.
   </div>
 
   <div id="ac" class="answer" style="display:none;">
-    <strong>Air Conditioning:</strong> Use the remote control. Please turn it off when leaving the apartment.
+    <strong>Air Conditioning:</strong> Use the remote. Please switch off when leaving the apartment.
+  </div>
+
+  <div id="bathroom" class="answer" style="display:none;">
+    <strong>Bathroom:</strong> Please do not flush wipes or sanitary items. Use the bin provided.
   </div>
 
   <div id="trash" class="answer" style="display:none;">
-    <strong>Trash:</strong> Recycling bins are located in Piazza Mattei from 7:00 AM to 9:30 AM.
+    <strong>Trash:</strong> Recycling bins are located in Piazza Mattei. Open daily from 7:00 to 9:30 AM.
   </div>
 
   <div id="transport" class="answer" style="display:none;">
-    <strong>Transport:</strong> The nearest tram stop is <em>Arenula-Cairoli</em>, 2 minutes’ walk. Easy connection to Termini and Trastevere.
+    <strong>Transport:</strong> The nearest tram stop is <em>Arenula-Cairoli</em>.  
+    Easy connection to Termini and Trastevere.
   </div>
 
   <div id="emergency" class="answer" style="display:none;">
     <strong>Emergency Numbers:</strong> Police 112, Ambulance 118, Fire Brigade 115.
   </div>
+
 </body>
 </html>
