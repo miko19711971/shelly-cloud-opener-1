@@ -1,10 +1,10 @@
- <!doctype html>
+<!doctype html>
 <html lang="it">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Check-in — Via del Portico d’Ottavia 1D</title>
-  <link rel="icon" href="building-door.jpg" />
+  <title>Guida Check-in — Via del Portico d’Ottavia 1D</title>
+  <link rel="icon" href="/public/checkin/ottavia/building-door.jpg" />
   <style>
     :root{--brand:#2b2118;--ink:#1f2937;--muted:#6b7280;--bg:#f7f7f7;--card:#fff;--line:#e5e7eb}
     *{box-sizing:border-box}
@@ -27,7 +27,7 @@
 </head>
 <body>
 <header class="wrap">
-  <h1 id="title">Check-in — Via del Portico d’Ottavia 1D</h1>
+  <h1 id="title">Guida Check-in — Via del Portico d’Ottavia 1D</h1>
   <div class="addr" id="address">Indirizzo: Via del Portico d’Ottavia 1D, Roma</div>
   <div class="langs" id="langs"></div>
 </header>
@@ -35,13 +35,13 @@
 <main class="wrap" id="content"></main>
 
 <script>
-  // ---- LINKS apertura ----
+  // ---- LINK apertura (assoluti) ----
   const OPEN_URLS = {
-    building: 'https://shelly-cloud-opener-1.onrender.com/manual-open/3494547ab62b',
-    apartment:'https://shelly-cloud-opener-1.onrender.com/manual-open/3494547a887d'
+    building: '/manual-open/3494547ab62b', // Portone
+    apartment: '/manual-open/3494547a887d' // Porta appartamento
   };
 
-  // ---- TRADUZIONI ----
+  // ---- TRADUZIONI (IT/EN) ----
   const T = {
     it: {
       langName:'Italiano',
@@ -49,13 +49,13 @@
       address:'Indirizzo: Via del Portico d’Ottavia 1D, Roma',
       steps: [
         {h:'Arrivo all’edificio', p:'Quando arrivi a Via del Portico d’Ottavia 1D, cerca questo portone.',
-         img:'building-door.jpg', cap:'Ingresso — piccolo portone in legno.'},
+         img:'/public/checkin/ottavia/building-door.jpg', cap:'Ingresso — piccolo portone in legno.'},
         {h:'Passo 1 — Apri il portone', p:'Usa il pulsante qui sotto per aprire il portone del palazzo.',
          btn:{text:'APRI PORTONE', url:OPEN_URLS.building}},
         {h:'Luci del corridoio (timer)', p:'Prima delle scale, a sinistra, trovi il pulsante delle luci interne. Si spegne dopo ~5 minuti.',
-         img:'hallway-light.jpg', cap:'Corridoio — pulsante luce a sinistra, prima delle scale.'},
+         img:'/public/checkin/ottavia/hallway-light.jpg', cap:'Corridoio — pulsante luce a sinistra, prima delle scale.'},
         {h:'Passo 2 — Raggiungi l’appartamento (3º piano)', p:'Sali fino al 3º piano.',
-         img:'apartment-door.jpg', cap:'Porta appartamento — 3º piano.'},
+         img:'/public/checkin/ottavia/apartment-door.jpg', cap:'Porta appartamento — 3º piano.'},
         {h:"Passo 3 — Apri la porta dell'appartamento", p:'Premere solo se si è davanti alla porta.',
          btn:{text:'APRI PORTA APPARTAMENTO', url:OPEN_URLS.apartment}}
       ],
@@ -68,20 +68,19 @@
       address:'Address: Via del Portico d’Ottavia 1D, Rome',
       steps: [
         {h:'Arrival at the building', p:'When you reach Via del Portico d’Ottavia 1D, look for this small wooden door.',
-         img:'building-door.jpg', cap:'Building entrance — little wooden door.'},
+         img:'/public/checkin/ottavia/building-door.jpg', cap:'Building entrance — little wooden door.'},
         {h:'Step 1 — Open the building door', p:'Use the button below to open the building door.',
          btn:{text:'OPEN BUILDING DOOR', url:OPEN_URLS.building}},
         {h:'Hallway lights (timer)', p:'Before the stairs on the left there is a light button (auto-off after ~5 min).',
-         img:'hallway-light.jpg', cap:'Hallway — light button on the left, before the stairs.'},
+         img:'/public/checkin/ottavia/hallway-light.jpg', cap:'Hallway — light button on the left, before the stairs.'},
         {h:'Step 2 — Reach the apartment (3rd floor)', p:'Go up to the 3rd floor.',
-         img:'apartment-door.jpg', cap:'Apartment door — 3rd floor.'},
+         img:'/public/checkin/ottavia/apartment-door.jpg', cap:'Apartment door — 3rd floor.'},
         {h:'Step 3 — Open the apartment door', p:'Press only if you are in front of the door.',
          btn:{text:'OPEN APARTMENT DOOR', url:OPEN_URLS.apartment}}
       ],
       help:'Need help?', call:'Call or WhatsApp:',
       footer:'niceflatinrome.com • Quick visual guide — Via del Portico d’Ottavia 1D'
     }
-    // (aggiungi ES/FR/DE uguali a prima con la stessa logica se vuoi tutte le lingue)
   };
 
   // ---- Render pagina ----
@@ -91,6 +90,7 @@
 
   document.getElementById('title').textContent = c.title;
   document.getElementById('address').textContent = c.address;
+
   document.getElementById('langs').innerHTML = Object.entries(T)
     .map(([k,v])=>`<a class="pill ${k===L?'active':''}" href="?lang=${k}">${v.langName}</a>`).join('');
 
