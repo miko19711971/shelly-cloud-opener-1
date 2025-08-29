@@ -35,13 +35,14 @@
 </header>
 
 <main class="wrap">
+  <!-- 1 -->
   <section class="card">
     <div class="step">
       <div class="num">1</div>
       <div>
         <h2>Open the Building Door</h2>
         <p>Use the button below to unlock the main door.</p>
-        <a class="cta" href="#" onclick="openBuilding();return false;">➜ Open Building Door</a>
+        <a class="cta" href="#" onclick="openWith('statusBuilding','/token/portico-1d-building');return false;">➜ Open Building Door</a>
         <div class="status" id="statusBuilding"></div>
         <div class="note">Pressing this button will also turn on the indoor corridor lights.</div>
         <figure>
@@ -49,13 +50,14 @@
           <figcaption>Main entrance — Via del Portico d’Ottavia 1D.</figcaption>
         </figure>
         <figure>
-          <img src="hallway-light.jpg" alt="Hallway lights turned on">
+          <img src="hallway-light.jpg" alt="Hallway lights">
           <figcaption>Corridor lights turn on automatically when you open the building door.</figcaption>
         </figure>
       </div>
     </div>
   </section>
 
+  <!-- 2 -->
   <section class="card">
     <div class="step">
       <div class="num">2</div>
@@ -66,13 +68,14 @@
     </div>
   </section>
 
+  <!-- 3 -->
   <section class="card">
     <div class="step">
       <div class="num">3</div>
       <div>
         <h2>This is Your Apartment Door</h2>
         <p>Please press the button only once when you are certain this is the correct door.</p>
-        <a class="cta" href="#" onclick="openApartment();return false;">➜ Open Apartment Door</a>
+        <a class="cta" href="#" onclick="openWith('statusApartment','/token/portico-1d-door');return false;">➜ Open Apartment Door</a>
         <div class="status" id="statusApartment"></div>
         <figure>
           <img src="apartment-door.jpg" alt="Apartment door — Via del Portico d’Ottavia 1D">
@@ -91,17 +94,16 @@
 </main>
 
 <script>
-async function openWith(statusEl, path){
+async function openWith(statusId, path){
+  const s=document.getElementById(statusId);
   try{
-    statusEl.textContent='Generating one-time key…';
+    s.textContent='Generating one-time key…';
     const r=await fetch(path,{cache:'no-store'});
     const j=await r.json();
-    if(j && j.url){ statusEl.textContent='Key OK. Opening…'; location.href=j.url; }
-    else{ statusEl.textContent = (j && (j.error||j.message)) ? String(j.error||j.message) : 'No URL returned.'; }
-  }catch(e){ statusEl.textContent='Network error. Try again.'; }
+    if(j && j.url){ s.textContent='Key OK. Opening…'; location.href=j.url; }
+    else{ s.textContent=(j && (j.error||j.message)) ? String(j.error||j.message) : 'No URL returned.'; }
+  }catch(e){ s.textContent='Network error. Try again.'; }
 }
-function openBuilding(){ openWith(document.getElementById('statusBuilding'), '/token/ottavia-building'); }
-function openApartment(){ openWith(document.getElementById('statusApartment'), '/token/ottavia-apartment'); }
 </script>
 </body>
 </html>
