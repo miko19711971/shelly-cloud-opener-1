@@ -6,7 +6,7 @@
 <title>Check-in Guide — Via del Portico d’Ottavia 1D</title>
 <link rel="icon" href="building-door.jpg">
 <style>
-  :root { --brand:#2b2118; --ink:#1f2937; --muted:#6b7280; --bg:#f7f7f7; --card:#fff; --line:#e5e7eb; }
+  :root { --brand:#2b2118; --ink:#1f2937; --muted:#6b7280; --bg:#f7f7f7; --card:#ffffff; --line:#e5e7eb; }
   *{box-sizing:border-box}
   body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--ink)}
   .wrap{max-width:860px;margin:0 auto;padding:16px}
@@ -42,15 +42,22 @@
       <div>
         <h2>Open the Building Door</h2>
         <p>Use the button below to unlock the main door.</p>
+
         <a class="cta" href="#" onclick="openWith('statusBuilding','/token/portico-1d-building');return false;">➜ Open Building Door</a>
         <div class="status" id="statusBuilding"></div>
+
         <div class="note">Pressing this button will also turn on the indoor corridor lights.</div>
+
+        <!-- 🔧 MODIFICATA: percorso assoluto + id -->
         <figure>
-          <img src="building-door.jpg" alt="Building entrance — Via del Portico d’Ottavia 1D">
+          <img id="img-building"
+               src="/checkin/ottavia/building-door.jpg"
+               alt="Building entrance — Via del Portico d’Ottavia 1D">
           <figcaption>Main entrance — Via del Portico d’Ottavia 1D.</figcaption>
         </figure>
+
         <figure>
-          <img src="hallway-light.jpg" alt="Hallway lights">
+          <img src="hallway-light.jpg" alt="Hallway lights turned on">
           <figcaption>Corridor lights turn on automatically when you open the building door.</figcaption>
         </figure>
       </div>
@@ -75,8 +82,10 @@
       <div>
         <h2>This is Your Apartment Door</h2>
         <p>Please press the button only once when you are certain this is the correct door.</p>
+
         <a class="cta" href="#" onclick="openWith('statusApartment','/token/portico-1d-door');return false;">➜ Open Apartment Door</a>
         <div class="status" id="statusApartment"></div>
+
         <figure>
           <img src="apartment-door.jpg" alt="Apartment door — Via del Portico d’Ottavia 1D">
           <figcaption>Apartment door — 3rd floor.</figcaption>
@@ -104,6 +113,30 @@ async function openWith(statusId, path){
     else{ s.textContent=(j && (j.error||j.message)) ? String(j.error||j.message) : 'No URL returned.'; }
   }catch(e){ s.textContent='Network error. Try again.'; }
 }
+</script>
+
+<!-- 🔧 MODIFICATA: cache-buster + fallback estensione/case SOLO per la prima immagine -->
+<script>
+(function(){
+  var img = document.getElementById('img-building');
+  if(!img) return;
+
+  // forza una versione fresca evitando cache
+  if (!img.src.includes('?')) img.src = img.src + '?t=' + Date.now();
+
+  // fallback estensioni/case se il file su disco non è .jpg
+  var tried = 0;
+  var variants = [
+    '/checkin/ottavia/building-door.JPG',
+    '/checkin/ottavia/building-door.jpeg'
+  ];
+  img.addEventListener('error', function(){
+    if (tried < variants.length){
+      img.src = variants[tried] + '?t=' + Date.now();
+      tried++;
+    }
+  });
+})();
 </script>
 </body>
 </html>
