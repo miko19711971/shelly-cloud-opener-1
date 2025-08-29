@@ -1,1 +1,89 @@
 
+       
+async function openWith(statusId, path){
+  const s=document.getElementById(statusId);
+  try{
+    s.textContent='Generating one-time key…';
+    const r=await fetch(path,{cache:'no-store'});
+    const j=await r.json();
+    if(j && j.url){ s.textContent='Key OK. Opening…'; location.href=j.url; }
+    else{ s.textContent=(j && (j.error||j.message)) ? String(j.error||j.message) : 'No URL returned.'; }
+  }catch(e){ s.textContent='Network error. Try again.'; }
+}
+
+/* -------- EN/IT -------- */
+const T = {
+  en: {
+    title:'Check-in Guide — Via Leonina 71',
+    addr:'Address: Via Leonina 71, Rome • Entrance keypad: 16 or 7171 + 🔑',
+    s1_t:'Open the Building Door',
+    s1_p:'Press the button below to open the building door.',
+    s1_cap:'Façade and entrance — Via Leonina 71.',
+    s2_t:'Walk to the end of the corridor',
+    s2_p:'Go straight until the end of the corridor.',
+    s2_cap:'End of corridor — the last door on the right is the elevator.',
+    s3_t:'Take the elevator to the 4th floor',
+    s3_p:'Get the elevator and arrive at the fourth floor.',
+    s4_t:'This is your apartment door',
+    s4_p:'Press the button only once when you are sure it’s the correct door.',
+    s4_cap:'Apartment entrance — green door on the top floor.',
+    help_h:'Need help?',
+    help_p:'Call or WhatsApp: <a class="cta" href="tel:+393355245756">+39 335 524 5756</a>',
+    btn_building:'➜ Open Building Door',
+    btn_apartment:'➜ Open Apartment Door',
+    footer:'niceflatinrome.com • Quick visual guide for arrivals at Via Leonina 71'
+  },
+  it: {
+    title:'Guida Check-in — Via Leonina 71',
+    addr:'Indirizzo: Via Leonina 71, Roma • Tastierino ingresso: 16 oppure 7171 + 🔑',
+    s1_t:'Apri il portone del palazzo',
+    s1_p:'Premi il pulsante qui sotto per aprire il portone.',
+    s1_cap:'Facciata e ingresso — Via Leonina 71.',
+    s2_t:'Vai in fondo al corridoio',
+    s2_p:'Prosegui dritto fino alla fine del corridoio.',
+    s2_cap:'Fondo corridoio — l’ultima porta a destra è l’ascensore.',
+    s3_t:'Prendi l’ascensore al 4° piano',
+    s3_p:'Prendi l’ascensore e sali al quarto piano.',
+    s4_t:'Questa è la porta del tuo appartamento',
+    s4_p:'Premi il pulsante una sola volta quando sei sicuro che sia la porta corretta.',
+    s4_cap:"Ingresso dell'appartamento — porta verde all’ultimo piano.",
+    help_h:'Serve aiuto?',
+    help_p:'Chiama o WhatsApp: <a class="cta" href="tel:+393355245756">+39 335 524 5756</a>',
+    btn_building:'➜ Apri il portone',
+    btn_apartment:'➜ Apri porta appartamento',
+    footer:'niceflatinrome.com • Guida rapida per gli arrivi a Via Leonina 71'
+  }
+};
+
+(function(){
+  const params=new URLSearchParams(location.search);
+  const L=(params.get('lang')||'en').toLowerCase();
+  const t=T[L]||T.en;
+  document.getElementById('title').textContent=t.title;
+  document.getElementById('h1').textContent=t.title;
+  document.getElementById('addr').textContent=t.addr;
+  document.getElementById('s1_t').textContent=t.s1_t;
+  document.getElementById('s1_p').textContent=t.s1_p;
+  document.getElementById('s1_cap').textContent=t.s1_cap;
+  document.getElementById('s2_t').textContent=t.s2_t;
+  document.getElementById('s2_p').textContent=t.s2_p;
+  document.getElementById('s2_cap').textContent=t.s2_cap;
+  document.getElementById('s3_t').textContent=t.s3_t;
+  document.getElementById('s3_p').textContent=t.s3_p;
+  document.getElementById('s4_t').textContent=t.s4_t;
+  document.getElementById('s4_p').textContent=t.s4_p;
+  document.getElementById('s4_cap').textContent=t.s4_cap;
+  document.getElementById('help_h').textContent=t.help_h;
+  document.getElementById('help_p').innerHTML=t.help_p;
+  document.getElementById('footer').textContent=t.footer;
+  document.getElementById('btn_building').textContent=t.btn_building;
+  document.getElementById('btn_apartment').textContent=t.btn_apartment;
+
+  // attiva underline barra lingua
+  document.querySelectorAll('#langbar a').forEach(a=>{
+    a.classList.toggle('active', a.getAttribute('data-lang')===L);
+  });
+})();
+</script>
+</body>
+</html>
