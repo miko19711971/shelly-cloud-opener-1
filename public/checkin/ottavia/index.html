@@ -26,6 +26,10 @@
   .cta{display:inline-block;margin-top:10px;padding:10px 12px;border-radius:10px;background:var(--brand);color:#fff;text-decoration:none;cursor:pointer}
   .status{font-size:13px;color:#6b7280;margin-top:6px}
   footer{color:var(--muted);text-align:center;font-size:12px;margin:18px 0}
+
+  /* cornice coerente anche per <object> */
+  .imgframe{width:90%;margin:0 auto;border:1px solid var(--line);border-radius:10px;display:block}
+  .imgframe object{width:100%;height:auto;display:block;border-radius:10px;aspect-ratio:3/4;background:#f9fafb}
 </style>
 </head>
 <body>
@@ -48,10 +52,18 @@
 
         <div class="note">Pressing this button will also turn on the indoor corridor lights.</div>
 
-        <!-- Prima foto: loader robusto con più sorgenti e varianti -->
+        <!-- FOTO PORTONE: <object> con fallback <img>, nessun JS può sovrascriverla -->
         <figure>
-          <img id="img-building" alt="Building entrance — Via del Portico d’Ottavia 1D"
-               style="width:90%;display:block;margin:0 auto;border-radius:10px;border:1px solid #e5e7eb;object-fit:cover">
+          <div class="imgframe">
+            <object data="https://cdn.jsdelivr.net/gh/miko19711971/shelly-cloud-opener-1@main/public/checkin/ottavia/building-door.jpg"
+                    type="image/jpeg"
+                    referrerpolicy="no-referrer"
+                    crossorigin="anonymous">
+              <img src="https://raw.githubusercontent.com/miko19711971/shelly-cloud-opener-1/main/public/checkin/ottavia/building-door.jpg?v=2"
+                   alt="Building entrance — Via del Portico d’Ottavia 1D"
+                   style="width:100%;height:auto;display:block;border-radius:10px">
+            </object>
+          </div>
           <figcaption>Main entrance — Via del Portico d’Ottavia 1D.</figcaption>
         </figure>
 
@@ -112,40 +124,6 @@ async function openWith(statusId, path){
     else{ s.textContent=(j && (j.error||j.message)) ? String(j.error||j.message) : 'No URL returned.'; }
   }catch(e){ s.textContent='Network error. Try again.'; }
 }
-
-/* ===== Robust image loader for the first photo ===== */
-(function(){
-  const el = document.getElementById('img-building');
-  if(!el) return;
-
-  // Varianti di nome/estensione e sorgenti alternative
-  const names = ['building-door.jpg','building-door.JPG','building-door.jpeg'];
-  const bases = [
-    '',                                   // relativo (stessa cartella)
-    '/checkin/ottavia/',                  // assoluto locale
-    'https://cdn.jsdelivr.net/gh/miko19711971/shelly-cloud-opener-1@main/public/checkin/ottavia/',
-    'https://raw.githubusercontent.com/miko19711971/shelly-cloud-opener-1/main/public/checkin/ottavia/'
-  ];
-
-  // Costruisci lista candidati
-  const candidates = [];
-  for(const b of bases){
-    for(const n of names){
-      const u = b + n + (b.startsWith('http') ? '?cb=' + Date.now() : '');
-      candidates.push(u);
-    }
-  }
-
-  let i = 0;
-  function tryNext(){
-    if(i >= candidates.length) return;
-    el.src = candidates[i++];
-  }
-  el.addEventListener('error', tryNext);
-
-  // parti dal primo candidato
-  tryNext();
-})();
 </script>
 </body>
 </html>
