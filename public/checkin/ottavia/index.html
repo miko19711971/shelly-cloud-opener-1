@@ -6,7 +6,7 @@
 <title>Check-in Guide — Via del Portico d’Ottavia 1D</title>
 <link rel="icon" href="building-door.jpg">
 <style>
-  :root { --brand:#2b2118; --ink:#1f2937; --muted:#6b7280; --bg:#f7f7f7; --card:#ffffff; --line:#e5e7eb; }
+  :root { --brand:#2b2118; --ink:#1f2937; --muted:#6b7280; --bg:#f7f7f7; --card:#fff; --line:#e5e7eb; }
   *{box-sizing:border-box}
   body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--ink)}
   .wrap{max-width:860px;margin:0 auto;padding:16px}
@@ -35,32 +35,27 @@
 </header>
 
 <main class="wrap">
-  <!-- 1 -->
   <section class="card">
     <div class="step">
       <div class="num">1</div>
       <div>
         <h2>Open the Building Door</h2>
         <p>Use the button below to unlock the main door.</p>
-
         <a class="cta" href="#" onclick="openBuilding();return false;">➜ Open Building Door</a>
         <div class="status" id="statusBuilding"></div>
-
         <div class="note">Pressing this button will also turn on the indoor corridor lights.</div>
-
         <figure>
-          <img id="img-building" src="building-door.jpg" alt="Building entrance — Via del Portico d’Ottavia 1D">
+          <img src="building-door.jpg" alt="Building entrance — Via del Portico d’Ottavia 1D">
           <figcaption>Main entrance — Via del Portico d’Ottavia 1D.</figcaption>
         </figure>
         <figure>
-          <img id="img-hallway" src="hallway-light.jpg" alt="Hallway lights turned on">
+          <img src="hallway-light.jpg" alt="Hallway lights turned on">
           <figcaption>Corridor lights turn on automatically when you open the building door.</figcaption>
         </figure>
       </div>
     </div>
   </section>
 
-  <!-- 2 -->
   <section class="card">
     <div class="step">
       <div class="num">2</div>
@@ -71,19 +66,16 @@
     </div>
   </section>
 
-  <!-- 3 -->
   <section class="card">
     <div class="step">
       <div class="num">3</div>
       <div>
         <h2>This is Your Apartment Door</h2>
         <p>Please press the button only once when you are certain this is the correct door.</p>
-
         <a class="cta" href="#" onclick="openApartment();return false;">➜ Open Apartment Door</a>
         <div class="status" id="statusApartment"></div>
-
         <figure>
-          <img id="img-apartment" src="apartment-door.jpg" alt="Apartment door — Via del Portico d’Ottavia 1D">
+          <img src="apartment-door.jpg" alt="Apartment door — Via del Portico d’Ottavia 1D">
           <figcaption>Apartment door — 3rd floor.</figcaption>
         </figure>
       </div>
@@ -99,34 +91,17 @@
 </main>
 
 <script>
-/* --- Buttons call LOCAL endpoints we just added on the server --- */
 async function openWith(statusEl, path){
   try{
-    statusEl.textContent = 'Generating one-time key…';
-    const r = await fetch(path, {cache:'no-store'});
-    const j = await r.json();
-    if (j && j.url){ statusEl.textContent = 'Key OK. Opening…'; location.href = j.url; }
-    else { statusEl.textContent = (j && (j.error||j.message)) ? String(j.error||j.message) : 'No URL returned.'; }
-  }catch(e){ statusEl.textContent = 'Network error. Try again.'; }
+    statusEl.textContent='Generating one-time key…';
+    const r=await fetch(path,{cache:'no-store'});
+    const j=await r.json();
+    if(j && j.url){ statusEl.textContent='Key OK. Opening…'; location.href=j.url; }
+    else{ statusEl.textContent = (j && (j.error||j.message)) ? String(j.error||j.message) : 'No URL returned.'; }
+  }catch(e){ statusEl.textContent='Network error. Try again.'; }
 }
 function openBuilding(){ openWith(document.getElementById('statusBuilding'), '/token/ottavia-building'); }
 function openApartment(){ openWith(document.getElementById('statusApartment'), '/token/ottavia-apartment'); }
-
-/* --- Image fallbacks (.JPG/.jpeg) + cache-busting after your re-upload --- */
-function addImgFallback(imgEl, variants){
-  if(!imgEl) return; let i=0;
-  imgEl.addEventListener('error', ()=>{
-    if(i<variants.length){ imgEl.src = variants[i] + (variants[i].includes('?')?'':`?t=${Date.now()}`); i++; }
-  });
-}
-window.addEventListener('DOMContentLoaded', ()=>{
-  document.querySelectorAll('img').forEach(img=>{
-    const base = img.getAttribute('src');
-    const root = base.replace(/\.(jpg|jpeg|JPG|JPEG).*$/,'');
-    addImgFallback(img, [`${root}.JPG`, `${root}.jpeg`]);
-    img.src = `${base}?t=${Date.now()}`; // force fresh after re-upload
-  });
-});
 </script>
 </body>
 </html>
