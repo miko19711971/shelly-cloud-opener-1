@@ -49,6 +49,7 @@
         <h2 id="s1_t">Arrivo all’edificio</h2>
         <p id="s1_p">Quando arrivi a Via del Portico d’Ottavia 1D, cerca questo portone.</p>
         <figure>
+          <!-- IMG: path RELATIVO (stessa cartella del file) -->
           <img src="building-door.jpg" alt="Ingresso — piccolo portone in legno">
           <figcaption id="s1_cap">Ingresso — piccolo portone in legno.</figcaption>
         </figure>
@@ -56,7 +57,7 @@
     </div>
   </section>
 
-  <!-- 2 (OPEN PORTONE) -->
+  <!-- 2: Apri Portone -->
   <section class="card">
     <div class="step">
       <div class="num">2</div>
@@ -99,7 +100,7 @@
     </div>
   </section>
 
-  <!-- 5 (OPEN APPARTAMENTO) -->
+  <!-- 5: Apri Appartamento -->
   <section class="card">
     <div class="step">
       <div class="num">5</div>
@@ -121,57 +122,33 @@
 </main>
 
 <script>
-/* ---------- TESTI IT/EN ---------- */
+/* --- testi IT/EN (essenziali) --- */
 const T={
-  it:{title:'Guida Check-in — Via del Portico d’Ottavia 1D',
-      addr:'Indirizzo: Via del Portico d’Ottavia 1D, Roma',
-      s1_t:'Arrivo all’edificio',
-      s1_p:'Quando arrivi a Via del Portico d’Ottavia 1D, cerca questo portone.',
-      s1_cap:'Ingresso — piccolo portone in legno.',
-      s2_t:'Apri il portone',
-      s2_p:'Usa il pulsante qui sotto per aprire il portone del palazzo.',
-      s3_t:'Luci del corridoio (timer)',
-      s3_p:'Prima delle scale, a sinistra, trovi il pulsante delle luci interne. Si spegne dopo ~5 minuti.',
-      s3_cap:'Corridoio — pulsante luce a sinistra, prima delle scale.',
-      s4_t:'Raggiungere l’appartamento',
-      s4_p:'Sali fino al 3º piano.',
-      s4_cap:'Porta appartamento — 3º piano.',
-      s5_t:'Apri la porta dell’appartamento',
-      s5_p:'Premere solo se si è davanti alla porta.',
-      help_h:'Serve aiuto?',
-      help_p:'Chiama o WhatsApp: ',
-      phone:'+39 335 524 5756',
+  it:{title:'Guida Check-in — Via del Portico d’Ottavia 1D',addr:'Indirizzo: Via del Portico d’Ottavia 1D, Roma',
+      s1_t:'Arrivo all’edificio',s1_p:'Quando arrivi a Via del Portico d’Ottavia 1D, cerca questo portone.',s1_cap:'Ingresso — piccolo portone in legno.',
+      s2_t:'Apri il portone',s2_p:'Usa il pulsante qui sotto per aprire il portone del palazzo.',
+      s3_t:'Luci del corridoio (timer)',s3_p:'Prima delle scale, a sinistra, trovi il pulsante delle luci interne. Si spegne dopo ~5 minuti.',s3_cap:'Corridoio — pulsante luce a sinistra, prima delle scale.',
+      s4_t:'Raggiungere l’appartamento',s4_p:'Sali fino al 3º piano.',s4_cap:'Porta appartamento — 3º piano.',
+      s5_t:'Apri la porta dell’appartamento',s5_p:'Premere solo se si è davanti alla porta.',
+      help_h:'Serve aiuto?',help_p:'Chiama o WhatsApp: ',phone:'+39 335 524 5756',
       footer:'niceflatinrome.com • Guida rapida arrivi — Via del Portico d’Ottavia 1D'},
-  en:{title:'Check-in Guide — Via del Portico d’Ottavia 1D',
-      addr:'Address: Via del Portico d’Ottavia 1D, Rome',
-      s1_t:'Arrival at the building',
-      s1_p:'When you reach Via del Portico d’Ottavia 1D, look for this small wooden door.',
-      s1_cap:'Building entrance — little wooden door.',
-      s2_t:'Open the building door',
-      s2_p:'Use the button below to open the building door.',
-      s3_t:'Hallway lights (timer)',
-      s3_p:'Before the stairs on the left there is a light button (auto-off after ~5 min).',
-      s3_cap:'Hallway — light button on the left, before the stairs.',
-      s4_t:'Reach the apartment',
-      s4_p:'Go up to the 3rd floor.',
-      s4_cap:'Apartment door — 3rd floor.',
-      s5_t:'Open the apartment door',
-      s5_p:'Press only if you are in front of the door.',
-      help_h:'Need help?',
-      help_p:'Call or WhatsApp: ',
-      phone:'+39 335 524 5756',
+  en:{title:'Check-in Guide — Via del Portico d’Ottavia 1D',addr:'Address: Via del Portico d’Ottavia 1D, Rome',
+      s1_t:'Arrival at the building',s1_p:'When you reach Via del Portico d’Ottavia 1D, look for this small wooden door.',s1_cap:'Building entrance — little wooden door.',
+      s2_t:'Open the building door',s2_p:'Use the button below to open the building door.',
+      s3_t:'Hallway lights (timer)',s3_p:'Before the stairs on the left there is a light button (auto-off after ~5 min).',s3_cap:'Hallway — light button on the left, before the stairs.',
+      s4_t:'Reach the apartment',s4_p:'Go up to the 3rd floor.',s4_cap:'Apartment door — 3rd floor.',
+      s5_t:'Open the apartment door',s5_p:'Press only if you are in front of the door.',
+      help_h:'Need help?',help_p:'Call or WhatsApp: ',phone:'+39 335 524 5756',
       footer:'niceflatinrome.com • Quick visual guide — Via del Portico d’Ottavia 1D'}
 };
 
-/* lingua da ?lang= */
 const params=new URLSearchParams(location.search);
 const L=(params.get('lang')||'it').toLowerCase();
 applyLang(L);
 document.querySelectorAll('#langbar a').forEach(a=>{
   a.addEventListener('click',e=>{
     e.preventDefault();
-    const code=a.getAttribute('data-lang');
-    location.search='?lang='+code;
+    location.search='?lang='+a.getAttribute('data-lang');
   });
 });
 function applyLang(code){
@@ -186,16 +163,16 @@ function applyLang(code){
   footer.textContent=t.footer;
 }
 
-/* -------- OPEN: usa gli stessi token di Arenula --------
+/* --- Aperture: stessi token style di Arenula ---
    Richiede che il server esponga:
-   GET /token/ottavia-building    -> { url: "/k/..." }
-   GET /token/ottavia-apartment   -> { url: "/k/..." }
--------------------------------------------------------- */
+   GET /token/ottavia-building   -> { url: "/k/..." } per device 3494547ab62b
+   GET /token/ottavia-apartment  -> { url: "/k/..." } per device 3494547a887d
+-------------------------------------------------*/
 async function openOttaviaBuilding(){
   const s=document.getElementById('statusBuilding');
   try{
     s.textContent='Genero chiave monouso…';
-    const r=await fetch('https://shelly-cloud-opener-1.onrender.com/token/ottavia-building',{cache:'no-store'});
+    const r=await fetch('/token/ottavia-building',{cache:'no-store'});
     const j=await r.json();
     if(j && j.url){ s.textContent='Apro…'; location.href=j.url; }
     else s.textContent='Nessun URL restituito. Riprova.';
@@ -205,7 +182,7 @@ async function openOttaviaApartment(){
   const s=document.getElementById('statusApartment');
   try{
     s.textContent='Genero chiave monouso…';
-    const r=await fetch('https://shelly-cloud-opener-1.onrender.com/token/ottavia-apartment',{cache:'no-store'});
+    const r=await fetch('/token/ottavia-apartment',{cache:'no-store'});
     const j=await r.json();
     if(j && j.url){ s.textContent='Apro…'; location.href=j.url; }
     else s.textContent='Nessun URL restituito. Riprova.';
