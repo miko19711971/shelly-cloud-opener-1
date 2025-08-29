@@ -48,11 +48,11 @@
 
         <div class="note">Pressing this button will also turn on the indoor corridor lights.</div>
 
-        <!-- 🔧 MODIFICATA: percorso assoluto + id -->
+        <!-- SOLO QUESTA FIGURE È STATA MODIFICATA (carica da GitHub raw) -->
         <figure>
-          <img id="img-building"
-               src="/checkin/ottavia/building-door.jpg"
-               alt="Building entrance — Via del Portico d’Ottavia 1D">
+          <img
+            src="https://raw.githubusercontent.com/miko19711971/shelly-cloud-opener-1/main/public/checkin/ottavia/building-door.jpg?t=123"
+            alt="Building entrance — Via del Portico d’Ottavia 1D">
           <figcaption>Main entrance — Via del Portico d’Ottavia 1D.</figcaption>
         </figure>
 
@@ -113,30 +113,6 @@ async function openWith(statusId, path){
     else{ s.textContent=(j && (j.error||j.message)) ? String(j.error||j.message) : 'No URL returned.'; }
   }catch(e){ s.textContent='Network error. Try again.'; }
 }
-</script>
-
-<!-- 🔧 MODIFICATA: cache-buster + fallback estensione/case SOLO per la prima immagine -->
-<script>
-(function(){
-  var img = document.getElementById('img-building');
-  if(!img) return;
-
-  // forza una versione fresca evitando cache
-  if (!img.src.includes('?')) img.src = img.src + '?t=' + Date.now();
-
-  // fallback estensioni/case se il file su disco non è .jpg
-  var tried = 0;
-  var variants = [
-    '/checkin/ottavia/building-door.JPG',
-    '/checkin/ottavia/building-door.jpeg'
-  ];
-  img.addEventListener('error', function(){
-    if (tried < variants.length){
-      img.src = variants[tried] + '?t=' + Date.now();
-      tried++;
-    }
-  });
-})();
 </script>
 </body>
 </html>
