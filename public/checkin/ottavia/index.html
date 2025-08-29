@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Guida Check-in — Via del Portico d’Ottavia 1D</title>
-<link rel="icon" href="building-door.jpg">
+<link rel="icon" href="./building-door.jpg?v=2">
 <style>
   :root { --brand:#2b2118; --ink:#1f2937; --muted:#6b7280; --bg:#f7f7f7; --card:#fff; --line:#e5e7eb; }
   *{box-sizing:border-box}
@@ -49,8 +49,8 @@
         <h2 id="s1_t">Arrivo all’edificio</h2>
         <p id="s1_p">Quando arrivi a Via del Portico d’Ottavia 1D, cerca questo portone.</p>
         <figure>
-          <!-- carico con fallback multipli -->
-          <img id="img-building" src="building-door.jpg" alt="Ingresso — piccolo portone in legno">
+          <!-- immagine con bust-cache e fallback -->
+          <img id="img-building" src="./building-door.jpg?v=2" alt="Ingresso — piccolo portone in legno">
           <figcaption id="s1_cap">Ingresso — piccolo portone in legno.</figcaption>
         </figure>
       </div>
@@ -64,7 +64,8 @@
       <div>
         <h2 id="s2_t">Apri il portone</h2>
         <p id="s2_p">Usa il pulsante qui sotto per aprire il portone del palazzo.</p>
-        <a class="cta" id="openBuildingBtn" href="#" onclick="openWithFallback(['\/token\/ottavia-building','\/token\/ottavia-gate','\/token\/portico-building'],'statusBuilding');return false;">➜ Apri Portone</a>
+        <a class="cta" id="openBuildingBtn" href="#"
+           onclick="openWithFallback(['/token/ottavia-building','/token/ottavia-gate','/token/portico-building'],'statusBuilding');return false;">➜ Apri Portone</a>
         <div class="status" id="statusBuilding"></div>
       </div>
     </div>
@@ -78,7 +79,7 @@
         <h2 id="s3_t">Luci del corridoio (timer)</h2>
         <p id="s3_p">Prima delle scale, a sinistra, trovi il pulsante delle luci interne. Si spegne dopo ~5 minuti.</p>
         <figure>
-          <img src="hallway-light.jpg" alt="Corridoio — pulsante luce a sinistra, prima delle scale">
+          <img src="./hallway-light.jpg" alt="Corridoio — pulsante luce a sinistra, prima delle scale">
           <figcaption id="s3_cap">Corridoio — pulsante luce a sinistra, prima delle scale.</figcaption>
         </figure>
       </div>
@@ -93,7 +94,7 @@
         <h2 id="s4_t">Raggiungere l’appartamento</h2>
         <p id="s4_p">Sali fino al 3º piano.</p>
         <figure>
-          <img src="apartment-door.jpg" alt="Porta appartamento — 3º piano">
+          <img src="./apartment-door.jpg" alt="Porta appartamento — 3º piano">
           <figcaption id="s4_cap">Porta appartamento — 3º piano.</figcaption>
         </figure>
       </div>
@@ -107,7 +108,8 @@
       <div>
         <h2 id="s5_t">Apri la porta dell’appartamento</h2>
         <p id="s5_p">Premere solo se si è davanti alla porta.</p>
-        <a class="cta" id="openAptBtn" href="#" onclick="openWithFallback(['\/token\/ottavia-apartment','\/token\/ottavia-door'],'statusApartment');return false;">➜ Apri Porta Appartamento</a>
+        <a class="cta" id="openAptBtn" href="#"
+           onclick="openWithFallback(['/token/ottavia-apartment','/token/ottavia-door'],'statusApartment');return false;">➜ Apri Porta Appartamento</a>
         <div class="status" id="statusApartment"></div>
       </div>
     </div>
@@ -158,19 +160,19 @@ function applyLang(code){
   s3_t.textContent=t.s3_t; s3_p.textContent=t.s3_p; s3_cap.textContent=t.s3_cap;
   s4_t.textContent=t.s4_t; s4_p.textContent=t.s4_p; s4_cap.textContent=t.s4_cap;
   s5_t.textContent=t.s5_t; s5_p.textContent=t.s5_p;
-  help_h.textContent=t.help_h; help_p.innerHTML=t.help_p+'<a class="cta" href="tel:+393355245756)">'+t.phone+'</a>';
+  help_h.textContent=t.help_h; help_p.innerHTML=t.help_p+'<a class="cta" href="tel:+393355245756">'+t.phone+'</a>';
   footer.textContent=t.footer;
 }
 
-/* ---- Loader robusto per la PRIMA FOTO ---- */
+/* ---- Loader robusto per la PRIMA FOTO (prova varianti) ---- */
 (function ensureBuildingPhoto(){
   const el=document.getElementById('img-building');
   const origin=location.origin;
   const candidates=[
+    './building-door.jpg?v=2',
+    './building-door.jpeg?v=2',
     'building-door.jpg',
     'building-door.jpeg',
-    'checkin/ottavia/building-door.jpg',
-    'checkin/ottavia/building-door.jpeg',
     origin+'/checkin/ottavia/building-door.jpg',
     origin+'/checkin/ottavia/building-door.jpeg'
   ];
