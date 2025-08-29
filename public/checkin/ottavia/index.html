@@ -35,7 +35,7 @@
 </header>
 
 <main class="wrap">
-  <!-- STEP 1 -->
+  <!-- 1 -->
   <section class="card">
     <div class="step">
       <div class="num">1</div>
@@ -48,14 +48,10 @@
 
         <div class="note">Pressing this button will also turn on the indoor corridor lights.</div>
 
-        <!-- Building door image via CDN with raw GitHub fallback -->
+        <!-- Prima foto: loader robusto con più sorgenti e varianti -->
         <figure>
-          <img
-            src="https://cdn.jsdelivr.net/gh/miko19711971/shelly-cloud-opener-1@main/public/checkin/ottavia/building-door.jpg"
-            alt="Building entrance — Via del Portico d’Ottavia 1D"
-            style="width:90%;display:block;margin:0 auto;border-radius:10px;border:1px solid #e5e7eb;object-fit:cover"
-            loading="eager" referrerpolicy="no-referrer" crossorigin="anonymous"
-            onerror="this.onerror=null;this.src='https://raw.githubusercontent.com/miko19711971/shelly-cloud-opener-1/main/public/checkin/ottavia/building-door.jpg?cb=2';">
+          <img id="img-building" alt="Building entrance — Via del Portico d’Ottavia 1D"
+               style="width:90%;display:block;margin:0 auto;border-radius:10px;border:1px solid #e5e7eb;object-fit:cover">
           <figcaption>Main entrance — Via del Portico d’Ottavia 1D.</figcaption>
         </figure>
 
@@ -67,7 +63,7 @@
     </div>
   </section>
 
-  <!-- STEP 2 -->
+  <!-- 2 -->
   <section class="card">
     <div class="step">
       <div class="num">2</div>
@@ -78,7 +74,7 @@
     </div>
   </section>
 
-  <!-- STEP 3 -->
+  <!-- 3 -->
   <section class="card">
     <div class="step">
       <div class="num">3</div>
@@ -97,7 +93,6 @@
     </div>
   </section>
 
-  <!-- HELP -->
   <section class="card">
     <h2>Need help?</h2>
     <p>Call or WhatsApp: <a class="cta" href="tel:+393355245756">+39 335 524 5756</a></p>
@@ -117,6 +112,40 @@ async function openWith(statusId, path){
     else{ s.textContent=(j && (j.error||j.message)) ? String(j.error||j.message) : 'No URL returned.'; }
   }catch(e){ s.textContent='Network error. Try again.'; }
 }
+
+/* ===== Robust image loader for the first photo ===== */
+(function(){
+  const el = document.getElementById('img-building');
+  if(!el) return;
+
+  // Varianti di nome/estensione e sorgenti alternative
+  const names = ['building-door.jpg','building-door.JPG','building-door.jpeg'];
+  const bases = [
+    '',                                   // relativo (stessa cartella)
+    '/checkin/ottavia/',                  // assoluto locale
+    'https://cdn.jsdelivr.net/gh/miko19711971/shelly-cloud-opener-1@main/public/checkin/ottavia/',
+    'https://raw.githubusercontent.com/miko19711971/shelly-cloud-opener-1/main/public/checkin/ottavia/'
+  ];
+
+  // Costruisci lista candidati
+  const candidates = [];
+  for(const b of bases){
+    for(const n of names){
+      const u = b + n + (b.startsWith('http') ? '?cb=' + Date.now() : '');
+      candidates.push(u);
+    }
+  }
+
+  let i = 0;
+  function tryNext(){
+    if(i >= candidates.length) return;
+    el.src = candidates[i++];
+  }
+  el.addEventListener('error', tryNext);
+
+  // parti dal primo candidato
+  tryNext();
+})();
 </script>
 </body>
 </html>
