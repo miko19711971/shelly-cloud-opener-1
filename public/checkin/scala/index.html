@@ -1,1 +1,194 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title id="title">Check-in Guide — Via della Scala 17, unit A/1</title>
+<link rel="icon" href="building-door.jpg">
+<style>
+  :root { --brand:#2b2118; --ink:#1f2937; --muted:#6b7280; --bg:#f7f7f7; --card:#ffffff; --line:#e5e7eb; }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--ink)}
+  .wrap{max-width:860px;margin:0 auto;padding:16px}
+  header{position:sticky;top:0;background:var(--card);border-bottom:1px solid var(--line);padding:12px 14px;z-index:5}
+  h1{font-size:20px;margin:0}
+  .addr{font-size:14px;color:var(--muted)}
+  .lang{font-size:14px;margin-top:6px}
+  .lang a{color:var(--ink);text-decoration:none}
+  .lang a.active{text-decoration:underline}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin:14px 0}
+  .step{display:flex;gap:12px;align-items:flex-start}
+  .num{flex:0 0 36px;height:36px;border-radius:50%;background:var(--brand);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700}
+  h2{margin:6px 0 8px 0;font-size:18px}
+  p{margin:6px 0;line-height:1.45}
+  figure{margin:10px 0}
+  img{max-width:100%;height:auto;border-radius:10px;border:1px solid var(--line);display:block}
+  figure img{width:90%;margin:0 auto}
+  figcaption{font-size:12px;color:var(--muted);margin-top:6px;text-align:center}
+  .note{background:#fff7ed;border:1px solid #fed7aa;color:#7c2d12;padding:10px;border-radius:8px;margin-top:8px}
+  .cta{display:inline-block;margin-top:10px;padding:10px 12px;border-radius:10px;background:var(--brand);color:#fff;text-decoration:none;cursor:pointer}
+  .status{font-size:13px;color:#6b7280;margin-left:8px}
+  footer{color:var(--muted);text-align:center;font-size:12px;margin:18px 0}
+  .imgframe{width:90%;margin:0 auto;border:1px solid var(--line);border-radius:10px;display:block}
+  .imgframe object{width:100%;height:auto;display:block;border-radius:10px;background:#f9fafb}
+</style>
+</head>
+<body>
+<header class="wrap">
+  <h1 id="h1">Check-in Guide — Via della Scala 17, unit A/1</h1>
+  <div class="addr" id="addr">Address: Via della Scala 17, Rome • Unit: A/1</div>
+  <div class="lang" id="langbar">Language:
+    <a href="?lang=en" data-lang="en" class="active">English</a> ·
+    <a href="?lang=it" data-lang="it">Italiano</a>
+  </div>
+</header>
 
+<main class="wrap">
+  <!-- 1 -->
+  <section class="card">
+    <div class="step">
+      <div class="num">1</div>
+      <div>
+        <h2 id="s1_t">Finding the Building Entrance</h2>
+        <p id="s1_p">Welcome in front of your building door.</p>
+        <figure>
+          <div class="imgframe">
+            <object data="building-door.jpg" type="image/jpeg">
+              <img src="building-door.jpg" alt="Main entrance — Via della Scala 17" style="width:100%;height:auto;border-radius:10px">
+            </object>
+          </div>
+          <figcaption id="s1_cap">Main entrance — Via della Scala 17.</figcaption>
+        </figure>
+
+        <a class="cta" id="btn_building" href="#" onclick="openWith('statusBuilding','/token/via-della-scala-building');return false;">➜ Open Building Gates</a>
+        <span class="status" id="statusBuilding"></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2 -->
+  <section class="card">
+    <div class="step">
+      <div class="num">2</div>
+      <div>
+        <h2 id="s2_t">Locate the Intercom</h2>
+        <p id="s2_p1">Press the intercom circled in red, then call me at <a class="cta" href="tel:+393355245756">+39 335 524 5756</a>.</p>
+        <figure>
+          <img src="intercom-entrance.jpg" alt="Entrance intercom — call after pressing">
+          <figcaption id="s2_cap1">Entrance intercom — call me after pressing.</figcaption>
+        </figure>
+        <p id="s2_p2">Walk straight and on your right-hand side you will find a second intercom. Press button A/1. Then I will open the door.</p>
+        <figure>
+          <img src="second-intercom-a1.jpg" alt="Second intercom — press A/1">
+          <figcaption id="s2_cap2">Second intercom — press A/1.</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3 -->
+  <section class="card">
+    <div class="step">
+      <div class="num">3</div>
+      <div>
+        <h2 id="s3_t">Pass Through the First Door</h2>
+        <p id="s3_p">After the click, enter. Turn left.</p>
+        <figure>
+          <img src="courtyard.jpg" alt="Follow the arrow then turn left">
+          <figcaption id="s3_cap">Follow the arrow, then turn left.</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4 (ULTIMO STEP) -->
+  <section class="card">
+    <div class="step">
+      <div class="num">4</div>
+      <div>
+        <h2 id="s4_t">This is your apartment door</h2>
+        <p id="s4_p">You’ve reached the door of your apartment (green door on the left).</p>
+        <figure>
+          <img src="apartment-green-door.jpg" alt="Green apartment door">
+          <figcaption id="s4_cap">Green door = your apartment entrance.</figcaption>
+        </figure>
+
+        <!-- SOLO questo bottone: niente lockbox, niente codice -->
+        <a class="cta" id="btn_apartment" href="#" onclick="openWith('statusApartment','/token/via-della-scala-door');return false;">➜ Open Apartment Door</a>
+        <span class="status" id="statusApartment"></span>
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2 id="help_h">Need help?</h2>
+    <p id="help_p">Call or WhatsApp: <a class="cta" href="tel:+393355245756">+39 335 524 5756</a></p>
+  </section>
+
+  <footer id="footer">niceflatinrome.com • Quick visual guide for arrivals at Via della Scala 17, unit A/1</footer>
+</main>
+
+<script>
+async function openWith(statusId, path){
+  const s=document.getElementById(statusId);
+  try{
+    s.textContent='Generating one-time key…';
+    const r=await fetch(path,{cache:'no-store'});
+    const j=await r.json();
+    if(j && j.url){ s.textContent='Key OK. Opening…'; location.href=j.url; }
+    else{ s.textContent=(j && (j.error||j.message)) ? String(j.error||j.message) : 'No URL returned.'; }
+  }catch(e){ s.textContent='Network error. Try again.'; }
+}
+
+/* -------- EN/IT text -------- */
+const T = {
+  en:{title:'Check-in Guide — Via della Scala 17, unit A/1',
+      addr:'Address: Via della Scala 17, Rome • Unit: A/1',
+      s1_t:'Finding the Building Entrance',s1_p:'Welcome in front of your building door.',s1_cap:'Main entrance — Via della Scala 17.',
+      s2_t:'Locate the Intercom',
+      s2_p1:'Press the intercom circled in red, then call me at',
+      s2_p2:'Walk straight and on your right-hand side you will find a second intercom. Press button A/1. Then I will open the door.',
+      s2_cap1:'Entrance intercom — call me after pressing.',s2_cap2:'Second intercom — press A/1.',
+      s3_t:'Pass Through the First Door',s3_p:'After the click, enter. Turn left.',s3_cap:'Follow the arrow, then turn left.',
+      s4_t:'This is your apartment door',s4_p:'You’ve reached the door of your apartment (green door on the left).',s4_cap:'Green door = your apartment entrance.',
+      help_h:'Need help?',help_p:'Call or WhatsApp: <a class="cta" href="tel:+393355245756">+39 335 524 5756</a>',
+      btn_building:'➜ Open Building Gates',btn_apartment:'➜ Open Apartment Door',
+      footer:'niceflatinrome.com • Quick visual guide for arrivals at Via della Scala 17, unit A/1'},
+  it:{title:'Guida Check-in — Via della Scala 17, int. A/1',
+      addr:'Indirizzo: Via della Scala 17, Roma • Interno: A/1',
+      s1_t:"Ingresso dell'edificio",s1_p:'Benvenuto davanti al portone.',s1_cap:'Ingresso principale — Via della Scala 17.',
+      s2_t:'Trova il citofono',
+      s2_p1:'Premi il citofono cerchiato in rosso e poi chiamami al',
+      s2_p2:'Prosegui dritto: sulla destra trovi un secondo citofono. Premi il tasto A/1. Poi apro io.',
+      s2_cap1:'Citofono ingresso — chiamami dopo aver premuto.',s2_cap2:'Secondo citofono — premi A/1.',
+      s3_t:'Attraversa il primo portone',s3_p:'Dopo il click entra. Svolta a sinistra.',s3_cap:'Segui la freccia e gira a sinistra.',
+      s4_t:'Questa è la porta del tuo appartamento',s4_p:'Sei arrivato davanti alla porta dell’appartamento (porta verde a sinistra).',s4_cap:'Porta verde = ingresso appartamento.',
+      help_h:'Serve aiuto?',help_p:'Chiama o WhatsApp: <a class="cta" href="tel:+393355245756">+39 335 524 5756</a>',
+      btn_building:'➜ Apri i portoni',btn_apartment:'➜ Apri porta appartamento',
+      footer:'niceflatinrome.com • Guida rapida per arrivi a Via della Scala 17, A/1'}
+};
+
+(function(){
+  const L=(new URLSearchParams(location.search).get('lang')||'en').toLowerCase(),t=T[L]||T.en;
+  document.getElementById('title').textContent=t.title;
+  document.getElementById('h1').textContent=t.title;
+  document.getElementById('addr').textContent=t.addr;
+
+  ['s1_t','s1_p','s1_cap','s2_t','s2_p2','s2_cap1','s2_cap2','s3_t','s3_p','s3_cap','s4_t','s4_p','s4_cap','help_h','footer']
+    .forEach(id=>{ document.getElementById(id).textContent=t[id]; });
+
+  // s2_p1 e help_p hanno link
+  document.getElementById('s2_p1').innerHTML = (L==='it'
+    ? 'Premi il citofono cerchiato in rosso e poi chiamami al '
+    : 'Press the intercom circled in red, then call me at ')
+    + '<a class="cta" href="tel:+393355245756">+39 335 524 5756</a>.';
+  document.getElementById('help_p').innerHTML = t.help_p;
+
+  document.getElementById('btn_building').textContent=t.btn_building;
+  document.getElementById('btn_apartment').textContent=t.btn_apartment;
+
+  document.querySelectorAll('#langbar a').forEach(a=>a.classList.toggle('active',a.getAttribute('data-lang')===L));
+})();
+</script>
+</body>
+</html>
