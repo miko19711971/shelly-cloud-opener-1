@@ -6,7 +6,7 @@
 <title>Guida Check-in — Via del Portico d’Ottavia 1D</title>
 <link rel="icon" href="building-door.jpg">
 <style>
-  :root { --brand:#2b2118; --ink:#1f2937; --muted:#6b7280; --bg:#f7f7f7; --card:#ffffff; --line:#e5e7eb; }
+  :root { --brand:#2b2118; --ink:#1f2937; --muted:#6b7280; --bg:#f7f7f7; --card:#fff; --line:#e5e7eb; }
   *{box-sizing:border-box}
   body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--ink)}
   .wrap{max-width:860px;margin:0 auto;padding:16px}
@@ -49,8 +49,8 @@
         <h2 id="s1_t">Arrivo all’edificio</h2>
         <p id="s1_p">Quando arrivi a Via del Portico d’Ottavia 1D, cerca questo portone.</p>
         <figure>
-          <!-- IMG: path RELATIVO (stessa cartella del file) -->
-          <img src="building-door.jpg" alt="Ingresso — piccolo portone in legno">
+          <!-- carico con fallback multipli -->
+          <img id="img-building" src="building-door.jpg" alt="Ingresso — piccolo portone in legno">
           <figcaption id="s1_cap">Ingresso — piccolo portone in legno.</figcaption>
         </figure>
       </div>
@@ -64,7 +64,7 @@
       <div>
         <h2 id="s2_t">Apri il portone</h2>
         <p id="s2_p">Usa il pulsante qui sotto per aprire il portone del palazzo.</p>
-        <a class="cta" id="openBuildingBtn" href="#" onclick="openOttaviaBuilding();return false;">➜ Apri Portone</a>
+        <a class="cta" id="openBuildingBtn" href="#" onclick="openWithFallback(['\/token\/ottavia-building','\/token\/ottavia-gate','\/token\/portico-building'],'statusBuilding');return false;">➜ Apri Portone</a>
         <div class="status" id="statusBuilding"></div>
       </div>
     </div>
@@ -107,7 +107,7 @@
       <div>
         <h2 id="s5_t">Apri la porta dell’appartamento</h2>
         <p id="s5_p">Premere solo se si è davanti alla porta.</p>
-        <a class="cta" id="openAptBtn" href="#" onclick="openOttaviaApartment();return false;">➜ Apri Porta Appartamento</a>
+        <a class="cta" id="openAptBtn" href="#" onclick="openWithFallback(['\/token\/ottavia-apartment','\/token\/ottavia-door'],'statusApartment');return false;">➜ Apri Porta Appartamento</a>
         <div class="status" id="statusApartment"></div>
       </div>
     </div>
@@ -122,7 +122,7 @@
 </main>
 
 <script>
-/* --- testi IT/EN (essenziali) --- */
+/* ---- testi minimi IT/EN ---- */
 const T={
   it:{title:'Guida Check-in — Via del Portico d’Ottavia 1D',addr:'Indirizzo: Via del Portico d’Ottavia 1D, Roma',
       s1_t:'Arrivo all’edificio',s1_p:'Quando arrivi a Via del Portico d’Ottavia 1D, cerca questo portone.',s1_cap:'Ingresso — piccolo portone in legno.',
@@ -141,7 +141,6 @@ const T={
       help_h:'Need help?',help_p:'Call or WhatsApp: ',phone:'+39 335 524 5756',
       footer:'niceflatinrome.com • Quick visual guide — Via del Portico d’Ottavia 1D'}
 };
-
 const params=new URLSearchParams(location.search);
 const L=(params.get('lang')||'it').toLowerCase();
 applyLang(L);
@@ -159,34 +158,42 @@ function applyLang(code){
   s3_t.textContent=t.s3_t; s3_p.textContent=t.s3_p; s3_cap.textContent=t.s3_cap;
   s4_t.textContent=t.s4_t; s4_p.textContent=t.s4_p; s4_cap.textContent=t.s4_cap;
   s5_t.textContent=t.s5_t; s5_p.textContent=t.s5_p;
-  help_h.textContent=t.help_h; help_p.innerHTML=t.help_p+'<a class="cta" href="tel:+393355245756">'+t.phone+'</a>';
+  help_h.textContent=t.help_h; help_p.innerHTML=t.help_p+'<a class="cta" href="tel:+393355245756)">'+t.phone+'</a>';
   footer.textContent=t.footer;
 }
 
-/* --- Aperture: stessi token style di Arenula ---
-   Richiede che il server esponga:
-   GET /token/ottavia-building   -> { url: "/k/..." } per device 3494547ab62b
-   GET /token/ottavia-apartment  -> { url: "/k/..." } per device 3494547a887d
--------------------------------------------------*/
-async function openOttaviaBuilding(){
-  const s=document.getElementById('statusBuilding');
-  try{
-    s.textContent='Genero chiave monouso…';
-    const r=await fetch('/token/ottavia-building',{cache:'no-store'});
-    const j=await r.json();
-    if(j && j.url){ s.textContent='Apro…'; location.href=j.url; }
-    else s.textContent='Nessun URL restituito. Riprova.';
-  }catch(e){ s.textContent='Errore di rete. Riprova.'; }
-}
-async function openOttaviaApartment(){
-  const s=document.getElementById('statusApartment');
-  try{
-    s.textContent='Genero chiave monouso…';
-    const r=await fetch('/token/ottavia-apartment',{cache:'no-store'});
-    const j=await r.json();
-    if(j && j.url){ s.textContent='Apro…'; location.href=j.url; }
-    else s.textContent='Nessun URL restituito. Riprova.';
-  }catch(e){ s.textContent='Errore di rete. Riprova.'; }
+/* ---- Loader robusto per la PRIMA FOTO ---- */
+(function ensureBuildingPhoto(){
+  const el=document.getElementById('img-building');
+  const origin=location.origin;
+  const candidates=[
+    'building-door.jpg',
+    'building-door.jpeg',
+    'checkin/ottavia/building-door.jpg',
+    'checkin/ottavia/building-door.jpeg',
+    origin+'/checkin/ottavia/building-door.jpg',
+    origin+'/checkin/ottavia/building-door.jpeg'
+  ];
+  let i=0;
+  el.onerror=function(){
+    i++;
+    if(i<candidates.length) el.src=candidates[i];
+  };
+})();
+
+/* ---- Apertura con fallback: prova più endpoint finché uno risponde con {url} ---- */
+async function openWithFallback(paths, statusId){
+  const s=document.getElementById(statusId);
+  s.textContent='Genero chiave monouso…';
+  for(const p of paths){
+    try{
+      const r=await fetch(p,{cache:'no-store'});
+      if(!r.ok) continue;
+      const j=await r.json();
+      if(j && j.url){ s.textContent='Apro…'; location.href=j.url; return; }
+    }catch(_){}
+  }
+  s.textContent='Nessun URL restituito. Riprova.';
 }
 </script>
 </body>
