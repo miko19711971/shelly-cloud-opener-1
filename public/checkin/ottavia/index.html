@@ -35,7 +35,7 @@
 </header>
 
 <main class="wrap">
-  <!-- STEP 1: OPEN BUILDING DOOR -->
+  <!-- 1 -->
   <section class="card">
     <div class="step">
       <div class="num">1</div>
@@ -43,7 +43,7 @@
         <h2>Open the Building Door</h2>
         <p>Use the button below to unlock the main door.</p>
 
-        <a class="cta" id="openBuildingBtn" href="#" onclick="openPorticoBuilding();return false;">➜ Open Building Door</a>
+        <a class="cta" href="#" onclick="openBuilding();return false;">➜ Open Building Door</a>
         <div class="status" id="statusBuilding"></div>
 
         <div class="note">Pressing this button will also turn on the indoor corridor lights.</div>
@@ -60,7 +60,7 @@
     </div>
   </section>
 
-  <!-- STEP 2: ARRIVE AT 3RD FLOOR -->
+  <!-- 2 -->
   <section class="card">
     <div class="step">
       <div class="num">2</div>
@@ -71,7 +71,7 @@
     </div>
   </section>
 
-  <!-- STEP 3: OPEN APARTMENT DOOR -->
+  <!-- 3 -->
   <section class="card">
     <div class="step">
       <div class="num">3</div>
@@ -79,7 +79,7 @@
         <h2>This is Your Apartment Door</h2>
         <p>Please press the button only once when you are certain this is the correct door.</p>
 
-        <a class="cta" id="openApartmentBtn" href="#" onclick="openPorticoApartment();return false;">➜ Open Apartment Door</a>
+        <a class="cta" href="#" onclick="openApartment();return false;">➜ Open Apartment Door</a>
         <div class="status" id="statusApartment"></div>
 
         <figure>
@@ -99,74 +99,32 @@
 </main>
 
 <script>
-/* ---------- OPEN: try multiple endpoint slugs (fallback chain) ---------- */
-async function openWithCandidates(statusEl, candidates){
-  statusEl.textContent = 'Generating one-time key…';
-  for(const slug of candidates){
-    try{
-      const r = await fetch(`https://shelly-cloud-opener-1.onrender.com/token/${slug}`, {cache:'no-store'});
-      const ct = r.headers.get('content-type') || '';
-      let j = null;
-      if (ct.includes('application/json')) {
-        j = await r.json();
-      } else {
-        const txt = await r.text();
-        statusEl.textContent = `Server said: ${txt.slice(0,180)}…`;
-      }
-      if (j && j.url){
-        statusEl.textContent = `Key OK (${slug}). Opening…`;
-        location.href = j.url;
-        return;
-      }
-      if (j && (j.error || j.message)){
-        statusEl.textContent = `Server said: ${(j.error||j.message).toString().slice(0,180)}`;
-      }
-    }catch(e){
-      statusEl.textContent = `Network error on ${slug}. Trying next…`;
-    }
-  }
-  statusEl.textContent = 'No working endpoint found. Please try again or contact support.';
+/* --- Buttons call LOCAL endpoints we just added on the server --- */
+async function openWith(statusEl, path){
+  try{
+    statusEl.textContent = 'Generating one-time key…';
+    const r = await fetch(path, {cache:'no-store'});
+    const j = await r.json();
+    if (j && j.url){ statusEl.textContent = 'Key OK. Opening…'; location.href = j.url; }
+    else { statusEl.textContent = (j && (j.error||j.message)) ? String(j.error||j.message) : 'No URL returned.'; }
+  }catch(e){ statusEl.textContent = 'Network error. Try again.'; }
 }
+function openBuilding(){ openWith(document.getElementById('statusBuilding'), '/token/ottavia-building'); }
+function openApartment(){ openWith(document.getElementById('statusApartment'), '/token/ottavia-apartment'); }
 
-async function openPorticoBuilding(){
-  const s = document.getElementById('statusBuilding');
-  const candidates = [
-    'ottavia-building',
-    'portico-building',
-    'portico-ottavia-building'
-  ];
-  openWithCandidates(s, candidates);
-}
-
-async function openPorticoApartment(){
-  const s = document.getElementById('statusApartment');
-  const candidates = [
-    'ottavia-apartment',
-    'portico-apartment',
-    'portico-ottavia-apartment'
-  ];
-  openWithCandidates(s, candidates);
-}
-
-/* ---------- Image fallback (.JPG/.jpeg) + cache-busting ---------- */
+/* --- Image fallbacks (.JPG/.jpeg) + cache-busting after your re-upload --- */
 function addImgFallback(imgEl, variants){
-  if(!imgEl) return;
-  let i = 0;
+  if(!imgEl) return; let i=0;
   imgEl.addEventListener('error', ()=>{
-    if (i < variants.length){
-      imgEl.src = variants[i] + (variants[i].includes('?') ? '' : `?t=${Date.now()}`);
-      i++;
-    }
+    if(i<variants.length){ imgEl.src = variants[i] + (variants[i].includes('?')?'':`?t=${Date.now()}`); i++; }
   });
 }
-
 window.addEventListener('DOMContentLoaded', ()=>{
   document.querySelectorAll('img').forEach(img=>{
     const base = img.getAttribute('src');
     const root = base.replace(/\.(jpg|jpeg|JPG|JPEG).*$/,'');
     addImgFallback(img, [`${root}.JPG`, `${root}.jpeg`]);
-    // force reload to avoid stale cache after your re-upload
-    img.src = `${base}?t=${Date.now()}`;
+    img.src = `${base}?t=${Date.now()}`; // force fresh after re-upload
   });
 });
 </script>
