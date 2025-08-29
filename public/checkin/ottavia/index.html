@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Check-in Guide — Via del Portico d’Ottavia 1D</title>
+<title id="title">Check-in Guide — Via del Portico d’Ottavia 1D</title>
 <link rel="icon" href="building-door.jpg">
 <style>
   :root { --brand:#2b2118; --ink:#1f2937; --muted:#6b7280; --bg:#f7f7f7; --card:#ffffff; --line:#e5e7eb; }
@@ -13,6 +13,9 @@
   header{position:sticky;top:0;background:var(--card);border-bottom:1px solid var(--line);padding:12px 14px;z-index:5}
   h1{font-size:20px;margin:0}
   .addr{font-size:14px;color:var(--muted)}
+  .lang{font-size:14px;margin-top:6px}
+  .lang a{color:var(--ink);text-decoration:none}
+  .lang a.active{text-decoration:underline}
   .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin:14px 0}
   .step{display:flex;gap:12px;align-items:flex-start}
   .num{flex:0 0 36px;height:36px;border-radius:50%;background:var(--brand);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700}
@@ -27,15 +30,18 @@
   .status{font-size:13px;color:#6b7280;margin-top:6px}
   footer{color:var(--muted);text-align:center;font-size:12px;margin:18px 0}
 
-  /* cornice coerente anche per <object> */
   .imgframe{width:90%;margin:0 auto;border:1px solid var(--line);border-radius:10px;display:block}
   .imgframe object{width:100%;height:auto;display:block;border-radius:10px;aspect-ratio:3/4;background:#f9fafb}
 </style>
 </head>
 <body>
 <header class="wrap">
-  <h1>Check-in Guide — Via del Portico d’Ottavia 1D</h1>
-  <div class="addr">Address: Via del Portico d’Ottavia 1D, Rome</div>
+  <h1 id="h1">Check-in Guide — Via del Portico d’Ottavia 1D</h1>
+  <div class="addr" id="addr">Address: Via del Portico d’Ottavia 1D, Rome</div>
+  <div class="lang" id="langbar">Language:
+    <a href="?lang=en" data-lang="en" class="active">English</a> ·
+    <a href="?lang=it" data-lang="it">Italiano</a>
+  </div>
 </header>
 
 <main class="wrap">
@@ -44,15 +50,15 @@
     <div class="step">
       <div class="num">1</div>
       <div>
-        <h2>Open the Building Door</h2>
-        <p>Use the button below to unlock the main door.</p>
+        <h2 id="s1_t">Open the Building Door</h2>
+        <p id="s1_p">Use the button below to unlock the main door.</p>
 
-        <a class="cta" href="#" onclick="openWith('statusBuilding','/token/portico-1d-building');return false;">➜ Open Building Door</a>
+        <a class="cta" href="#" onclick="openWith('statusBuilding','/token/portico-1d-building');return false;" id="btn_building">➜ Open Building Door</a>
         <div class="status" id="statusBuilding"></div>
 
-        <div class="note">Pressing this button will also turn on the indoor corridor lights.</div>
+        <div class="note" id="s1_note">Pressing this button will also turn on the indoor corridor lights.</div>
 
-        <!-- FOTO PORTONE: <object> con fallback <img>, nessun JS può sovrascriverla -->
+        <!-- foto portone stabile (object + fallback), lasciata identica nella logica -->
         <figure>
           <div class="imgframe">
             <object data="https://cdn.jsdelivr.net/gh/miko19711971/shelly-cloud-opener-1@main/public/checkin/ottavia/building-door.jpg"
@@ -64,12 +70,12 @@
                    style="width:100%;height:auto;display:block;border-radius:10px">
             </object>
           </div>
-          <figcaption>Main entrance — Via del Portico d’Ottavia 1D.</figcaption>
+          <figcaption id="s1_cap">Main entrance — Via del Portico d’Ottavia 1D.</figcaption>
         </figure>
 
         <figure>
           <img src="hallway-light.jpg" alt="Hallway lights turned on">
-          <figcaption>Corridor lights turn on automatically when you open the building door.</figcaption>
+          <figcaption id="s1_cap2">Corridor lights turn on automatically when you open the building door.</figcaption>
         </figure>
       </div>
     </div>
@@ -80,8 +86,8 @@
     <div class="step">
       <div class="num">2</div>
       <div>
-        <h2>Arrive at the Third Floor</h2>
-        <p>Go up to the 3rd floor.</p>
+        <h2 id="s2_t">Arrive at the Third Floor</h2>
+        <p id="s2_p">Go up to the 3rd floor.</p>
       </div>
     </div>
   </section>
@@ -91,26 +97,26 @@
     <div class="step">
       <div class="num">3</div>
       <div>
-        <h2>This is Your Apartment Door</h2>
-        <p>Please press the button only once when you are certain this is the correct door.</p>
+        <h2 id="s3_t">This is Your Apartment Door</h2>
+        <p id="s3_p">Please press the button only once when you are certain this is the correct door.</p>
 
-        <a class="cta" href="#" onclick="openWith('statusApartment','/token/portico-1d-door');return false;">➜ Open Apartment Door</a>
+        <a class="cta" href="#" onclick="openWith('statusApartment','/token/portico-1d-door');return false;" id="btn_apartment">➜ Open Apartment Door</a>
         <div class="status" id="statusApartment"></div>
 
         <figure>
           <img src="apartment-door.jpg" alt="Apartment door — Via del Portico d’Ottavia 1D">
-          <figcaption>Apartment door — 3rd floor.</figcaption>
+          <figcaption id="s3_cap">Apartment door — 3rd floor.</figcaption>
         </figure>
       </div>
     </div>
   </section>
 
   <section class="card">
-    <h2>Need help?</h2>
-    <p>Call or WhatsApp: <a class="cta" href="tel:+393355245756">+39 335 524 5756</a></p>
+    <h2 id="help_h">Need help?</h2>
+    <p id="help_p">Call or WhatsApp: <a class="cta" href="tel:+393355245756">+39 335 524 5756</a></p>
   </section>
 
-  <footer>niceflatinrome.com • Quick visual guide for arrivals at Via del Portico d’Ottavia 1D</footer>
+  <footer id="footer">niceflatinrome.com • Quick visual guide for arrivals at Via del Portico d’Ottavia 1D</footer>
 </main>
 
 <script>
@@ -124,6 +130,79 @@ async function openWith(statusId, path){
     else{ s.textContent=(j && (j.error||j.message)) ? String(j.error||j.message) : 'No URL returned.'; }
   }catch(e){ s.textContent='Network error. Try again.'; }
 }
+
+/* ---------- EN/IT (solo testi) ---------- */
+const T = {
+  en:{
+    title:"Check-in Guide — Via del Portico d’Ottavia 1D",
+    addr:"Address: Via del Portico d’Ottavia 1D, Rome",
+    s1_t:"Open the Building Door",
+    s1_p:"Use the button below to unlock the main door.",
+    s1_note:"Pressing this button will also turn on the indoor corridor lights.",
+    s1_cap:"Main entrance — Via del Portico d’Ottavia 1D.",
+    s1_cap2:"Corridor lights turn on automatically when you open the building door.",
+    s2_t:"Arrive at the Third Floor",
+    s2_p:"Go up to the 3rd floor.",
+    s3_t:"This is Your Apartment Door",
+    s3_p:"Please press the button only once when you are certain this is the correct door.",
+    s3_cap:"Apartment door — 3rd floor.",
+    help_h:"Need help?",
+    help_p:'Call or WhatsApp: <a class="cta" href="tel:+393355245756">+39 335 524 5756</a>',
+    btn_building:"➜ Open Building Door",
+    btn_apartment:"➜ Open Apartment Door",
+    footer:"niceflatinrome.com • Quick visual guide for arrivals at Via del Portico d’Ottavia 1D"
+  },
+  it:{
+    title:"Guida Check-in — Via del Portico d’Ottavia 1D",
+    addr:"Indirizzo: Via del Portico d’Ottavia 1D, Roma",
+    s1_t:"Apri il portone dell’edificio",
+    s1_p:"Usa il pulsante qui sotto per sbloccare il portone.",
+    s1_note:"Premendo questo pulsante si accendono anche le luci interne del corridoio.",
+    s1_cap:"Ingresso principale — Via del Portico d’Ottavia 1D.",
+    s1_cap2:"Le luci del corridoio si accendono automaticamente quando apri il portone.",
+    s2_t:"Arriva al terzo piano",
+    s2_p:"Sali al 3° piano.",
+    s3_t:"Questa è la porta del tuo appartamento",
+    s3_p:"Premi il pulsante una sola volta quando sei certo che sia la porta corretta.",
+    s3_cap:"Porta dell’appartamento — 3° piano.",
+    help_h:"Serve aiuto?",
+    help_p:'Chiama o WhatsApp: <a class="cta" href="tel:+393355245756">+39 335 524 5756</a>',
+    btn_building:"➜ Apri il portone",
+    btn_apartment:"➜ Apri porta appartamento",
+    footer:"niceflatinrome.com • Guida rapida di arrivo a Via del Portico d’Ottavia 1D"
+  }
+};
+
+(function(){
+  const params=new URLSearchParams(location.search);
+  const L=(params.get('lang')||'en').toLowerCase();
+  const t=T[L]||T.en;
+
+  // attiva underline nella barra lingua
+  document.querySelectorAll('#langbar a').forEach(a=>{
+    a.classList.toggle('active', a.getAttribute('data-lang')===L);
+  });
+
+  // applica testi
+  document.getElementById('title').textContent=t.title;
+  document.getElementById('h1').textContent=t.title;
+  document.getElementById('addr').textContent=t.addr;
+  document.getElementById('s1_t').textContent=t.s1_t;
+  document.getElementById('s1_p').textContent=t.s1_p;
+  document.getElementById('s1_note').textContent=t.s1_note;
+  document.getElementById('s1_cap').textContent=t.s1_cap;
+  document.getElementById('s1_cap2').textContent=t.s1_cap2;
+  document.getElementById('s2_t').textContent=t.s2_t;
+  document.getElementById('s2_p').textContent=t.s2_p;
+  document.getElementById('s3_t').textContent=t.s3_t;
+  document.getElementById('s3_p').textContent=t.s3_p;
+  document.getElementById('s3_cap').textContent=t.s3_cap;
+  document.getElementById('help_h').textContent=t.help_h;
+  document.getElementById('help_p').innerHTML=t.help_p;
+  document.getElementById('footer').textContent=t.footer;
+  document.getElementById('btn_building').textContent=t.btn_building;
+  document.getElementById('btn_apartment').textContent=t.btn_apartment;
+})();
 </script>
 </body>
 </html>
