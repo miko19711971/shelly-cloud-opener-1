@@ -1,28 +1,5 @@
   
-      <div>
-        <h2 id="s4_t">This is your apartment door</h2>
-        <p id="s4_p">Press the button only once when you are sure it’s the correct door.</p>
-
-        <a class="cta" href="#" onclick="openWith('statusApartment','/token/leonina-door');return false;" id="btn_apartment">➜ Open Apartment Door</a>
-        <div class="status" id="statusApartment"></div>
-
-        <figure>
-          <img src="apartment-door.jpg" alt="Apartment door — Via Leonina 71">
-          <figcaption id="s4_cap">Apartment entrance — green door on the top floor.</figcaption>
-        </figure>
-      </div>
-    </div>
-  </section>
-
-  <section class="card">
-    <h2 id="help_h">Need help?</h2>
-    <p id="help_p">Call or WhatsApp: <a class="cta" href="tel:+393355245756">+39 335 524 5756</a></p>
-  </section>
-
-  <footer id="footer">niceflatinrome.com • Quick visual guide for arrivals at Via Leonina 71</footer>
-</main>
-
-<script>
+       
 async function openWith(statusId, path){
   const s=document.getElementById(statusId);
   try{
