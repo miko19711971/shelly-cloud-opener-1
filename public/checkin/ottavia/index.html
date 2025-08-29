@@ -26,20 +26,6 @@
   .cta{display:inline-block;margin-top:10px;padding:10px 12px;border-radius:10px;background:var(--brand);color:#fff;text-decoration:none;cursor:pointer}
   .status{font-size:13px;color:#6b7280;margin-top:6px}
   footer{color:var(--muted);text-align:center;font-size:12px;margin:18px 0}
-
-  /* --- HERO per la prima foto: background-image immutabile --- */
-  .hero {
-    width: 90%;
-    margin: 0 auto;
-    border: 1px solid var(--line);
-    border-radius: 10px;
-    background-position: center;
-    background-size: cover;
-    background-repeat: no-repeat;
-    /* rapporto 3:4 (puoi regolare) */
-    position: relative;
-    padding-top: 133.33%;
-  }
 </style>
 </head>
 <body>
@@ -62,11 +48,14 @@
 
         <div class="note">Pressing this button will also turn on the indoor corridor lights.</div>
 
-        <!-- FOTO PORTONE come BACKGROUND: non può essere cambiata da script esterni -->
+        <!-- Building door image via CDN with raw GitHub fallback -->
         <figure>
-          <div class="hero"
-               style="background-image:url('https://raw.githubusercontent.com/miko19711971/shelly-cloud-opener-1/main/public/checkin/ottavia/building-door.jpg?cb=1')"
-               aria-label="Building entrance — Via del Portico d’Ottavia 1D"></div>
+          <img
+            src="https://cdn.jsdelivr.net/gh/miko19711971/shelly-cloud-opener-1@main/public/checkin/ottavia/building-door.jpg"
+            alt="Building entrance — Via del Portico d’Ottavia 1D"
+            style="width:90%;display:block;margin:0 auto;border-radius:10px;border:1px solid #e5e7eb;object-fit:cover"
+            loading="eager" referrerpolicy="no-referrer" crossorigin="anonymous"
+            onerror="this.onerror=null;this.src='https://raw.githubusercontent.com/miko19711971/shelly-cloud-opener-1/main/public/checkin/ottavia/building-door.jpg?cb=2';">
           <figcaption>Main entrance — Via del Portico d’Ottavia 1D.</figcaption>
         </figure>
 
