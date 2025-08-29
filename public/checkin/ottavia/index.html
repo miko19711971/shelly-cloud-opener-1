@@ -1,12 +1,12 @@
 <!doctype html>
-<html lang="it">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Guida Check-in — Via del Portico d’Ottavia 1D</title>
-<link rel="icon" href="./building-door.jpg?v=2">
+<title>Check-in Guide — Via del Portico d’Ottavia 1D</title>
+<link rel="icon" href="building-door.jpg">
 <style>
-  :root { --brand:#2b2118; --ink:#1f2937; --muted:#6b7280; --bg:#f7f7f7; --card:#fff; --line:#e5e7eb; }
+  :root { --brand:#2b2118; --ink:#1f2937; --muted:#6b7280; --bg:#f7f7f7; --card:#ffffff; --line:#e5e7eb; }
   *{box-sizing:border-box}
   body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--ink)}
   .wrap{max-width:860px;margin:0 auto;padding:16px}
@@ -25,6 +25,7 @@
   img{max-width:100%;height:auto;border-radius:10px;border:1px solid var(--line);display:block}
   figure img{width:90%;margin:0 auto}
   figcaption{font-size:12px;color:var(--muted);margin-top:6px;text-align:center}
+  .note{background:#fff7ed;border:1px solid #fed7aa;color:#7c2d12;padding:10px;border-radius:8px;margin-top:8px}
   .cta{display:inline-block;margin-top:10px;padding:10px 12px;border-radius:10px;background:var(--brand);color:#fff;text-decoration:none;cursor:pointer}
   .status{font-size:13px;color:#6b7280;margin-top:6px}
   footer{color:var(--muted);text-align:center;font-size:12px;margin:18px 0}
@@ -32,170 +33,173 @@
 </head>
 <body>
 <header class="wrap">
-  <h1 id="title">Guida Check-in — Via del Portico d’Ottavia 1D</h1>
-  <div class="addr" id="addr">Indirizzo: Via del Portico d’Ottavia 1D, Roma</div>
-  <div class="lang" id="langbar">Lingua:
-    <a href="#" data-lang="it" class="active">Italiano</a> ·
-    <a href="#" data-lang="en">English</a>
+  <h1 id="title">Check-in Guide — Via del Portico d’Ottavia 1D</h1>
+  <div class="addr" id="addr">Address: Via del Portico d’Ottavia 1D, Rome</div>
+  <div class="lang" id="langbar">Language:
+    <a href="#" data-lang="en" class="active">English</a> ·
+    <a href="#" data-lang="it">Italiano</a>
   </div>
 </header>
 
 <main class="wrap">
-  <!-- 1 -->
+  <!-- STEP 1: OPEN BUILDING DOOR -->
   <section class="card">
     <div class="step">
       <div class="num">1</div>
       <div>
-        <h2 id="s1_t">Arrivo all’edificio</h2>
-        <p id="s1_p">Quando arrivi a Via del Portico d’Ottavia 1D, cerca questo portone.</p>
+        <h2 id="s1_t">Open the Building Door</h2>
+        <p id="s1_p">Use the button below to unlock the main door.</p>
+
+        <a class="cta" id="openBuildingBtn" href="#" onclick="openPorticoBuilding();return false;">➜ Open Building Door</a>
+        <div class="status" id="statusBuilding"></div>
+
+        <div class="note" id="s1_note">Pressing this button will also turn on the indoor corridor lights.</div>
+
         <figure>
-          <!-- immagine con bust-cache e fallback -->
-          <img id="img-building" src="./building-door.jpg?v=2" alt="Ingresso — piccolo portone in legno">
-          <figcaption id="s1_cap">Ingresso — piccolo portone in legno.</figcaption>
+          <img src="building-door.jpg" alt="Building entrance — Via del Portico d’Ottavia 1D">
+          <figcaption id="s1_cap">Main entrance — Via del Portico d’Ottavia 1D.</figcaption>
+        </figure>
+        <figure>
+          <img src="hallway-light.jpg" alt="Hallway lights turned on">
+          <figcaption id="s1_cap2">Corridor lights turn on automatically when you open the building door.</figcaption>
         </figure>
       </div>
     </div>
   </section>
 
-  <!-- 2: Apri Portone -->
+  <!-- STEP 2: ARRIVE AT 3RD FLOOR -->
   <section class="card">
     <div class="step">
       <div class="num">2</div>
       <div>
-        <h2 id="s2_t">Apri il portone</h2>
-        <p id="s2_p">Usa il pulsante qui sotto per aprire il portone del palazzo.</p>
-        <a class="cta" id="openBuildingBtn" href="#"
-           onclick="openWithFallback(['/token/ottavia-building','/token/ottavia-gate','/token/portico-building'],'statusBuilding');return false;">➜ Apri Portone</a>
-        <div class="status" id="statusBuilding"></div>
+        <h2 id="s2_t">Arrive at the Third Floor</h2>
+        <p id="s2_p">Go up to the 3rd floor.</p>
       </div>
     </div>
   </section>
 
-  <!-- 3 -->
+  <!-- STEP 3: OPEN APARTMENT DOOR -->
   <section class="card">
     <div class="step">
       <div class="num">3</div>
       <div>
-        <h2 id="s3_t">Luci del corridoio (timer)</h2>
-        <p id="s3_p">Prima delle scale, a sinistra, trovi il pulsante delle luci interne. Si spegne dopo ~5 minuti.</p>
-        <figure>
-          <img src="./hallway-light.jpg" alt="Corridoio — pulsante luce a sinistra, prima delle scale">
-          <figcaption id="s3_cap">Corridoio — pulsante luce a sinistra, prima delle scale.</figcaption>
-        </figure>
-      </div>
-    </div>
-  </section>
+        <h2 id="s3_t">This is Your Apartment Door</h2>
+        <p id="s3_p1">Please press the button only once when you are certain this is the correct door.</p>
 
-  <!-- 4 -->
-  <section class="card">
-    <div class="step">
-      <div class="num">4</div>
-      <div>
-        <h2 id="s4_t">Raggiungere l’appartamento</h2>
-        <p id="s4_p">Sali fino al 3º piano.</p>
-        <figure>
-          <img src="./apartment-door.jpg" alt="Porta appartamento — 3º piano">
-          <figcaption id="s4_cap">Porta appartamento — 3º piano.</figcaption>
-        </figure>
-      </div>
-    </div>
-  </section>
-
-  <!-- 5: Apri Appartamento -->
-  <section class="card">
-    <div class="step">
-      <div class="num">5</div>
-      <div>
-        <h2 id="s5_t">Apri la porta dell’appartamento</h2>
-        <p id="s5_p">Premere solo se si è davanti alla porta.</p>
-        <a class="cta" id="openAptBtn" href="#"
-           onclick="openWithFallback(['/token/ottavia-apartment','/token/ottavia-door'],'statusApartment');return false;">➜ Apri Porta Appartamento</a>
+        <a class="cta" id="openApartmentBtn" href="#" onclick="openPorticoApartment();return false;">➜ Open Apartment Door</a>
         <div class="status" id="statusApartment"></div>
+
+        <figure>
+          <img src="apartment-door.jpg" alt="Apartment door — Via del Portico d’Ottavia 1D">
+          <figcaption id="s3_cap">Apartment door — 3rd floor.</figcaption>
+        </figure>
       </div>
     </div>
   </section>
 
   <section class="card">
-    <h2 id="help_h">Serve aiuto?</h2>
-    <p id="help_p">Chiama o WhatsApp: <a class="cta" href="tel:+393355245756">+39 335 524 5756</a></p>
+    <h2 id="help_h">Need help?</h2>
+    <p id="help_p">Call or WhatsApp: <a class="cta" href="tel:+393355245756">+39 335 524 5756</a></p>
   </section>
 
-  <footer id="footer">niceflatinrome.com • Guida rapida arrivi — Via del Portico d’Ottavia 1D</footer>
+  <footer id="footer">niceflatinrome.com • Quick visual guide for arrivals at Via del Portico d’Ottavia 1D</footer>
 </main>
 
 <script>
-/* ---- testi minimi IT/EN ---- */
-const T={
-  it:{title:'Guida Check-in — Via del Portico d’Ottavia 1D',addr:'Indirizzo: Via del Portico d’Ottavia 1D, Roma',
-      s1_t:'Arrivo all’edificio',s1_p:'Quando arrivi a Via del Portico d’Ottavia 1D, cerca questo portone.',s1_cap:'Ingresso — piccolo portone in legno.',
-      s2_t:'Apri il portone',s2_p:'Usa il pulsante qui sotto per aprire il portone del palazzo.',
-      s3_t:'Luci del corridoio (timer)',s3_p:'Prima delle scale, a sinistra, trovi il pulsante delle luci interne. Si spegne dopo ~5 minuti.',s3_cap:'Corridoio — pulsante luce a sinistra, prima delle scale.',
-      s4_t:'Raggiungere l’appartamento',s4_p:'Sali fino al 3º piano.',s4_cap:'Porta appartamento — 3º piano.',
-      s5_t:'Apri la porta dell’appartamento',s5_p:'Premere solo se si è davanti alla porta.',
-      help_h:'Serve aiuto?',help_p:'Chiama o WhatsApp: ',phone:'+39 335 524 5756',
-      footer:'niceflatinrome.com • Guida rapida arrivi — Via del Portico d’Ottavia 1D'},
-  en:{title:'Check-in Guide — Via del Portico d’Ottavia 1D',addr:'Address: Via del Portico d’Ottavia 1D, Rome',
-      s1_t:'Arrival at the building',s1_p:'When you reach Via del Portico d’Ottavia 1D, look for this small wooden door.',s1_cap:'Building entrance — little wooden door.',
-      s2_t:'Open the building door',s2_p:'Use the button below to open the building door.',
-      s3_t:'Hallway lights (timer)',s3_p:'Before the stairs on the left there is a light button (auto-off after ~5 min).',s3_cap:'Hallway — light button on the left, before the stairs.',
-      s4_t:'Reach the apartment',s4_p:'Go up to the 3rd floor.',s4_cap:'Apartment door — 3rd floor.',
-      s5_t:'Open the apartment door',s5_p:'Press only if you are in front of the door.',
-      help_h:'Need help?',help_p:'Call or WhatsApp: ',phone:'+39 335 524 5756',
-      footer:'niceflatinrome.com • Quick visual guide — Via del Portico d’Ottavia 1D'}
+/* ---------- TESTO MULTILINGUA (EN/IT dai contenuti del PDF) ---------- */
+const T = {
+  en: {
+    title:"Check-in Guide — Via del Portico d’Ottavia 1D",
+    addr:"Address: Via del Portico d’Ottavia 1D, Rome",
+    s1_t:"Open the Building Door",
+    s1_p:"Use the button below to unlock the main door.",
+    s1_note:"Pressing this button will also turn on the indoor corridor lights.",
+    s1_cap:"Main entrance — Via del Portico d’Ottavia 1D.",
+    s1_cap2:"Corridor lights turn on automatically when you open the building door.",
+    s2_t:"Arrive at the Third Floor",
+    s2_p:"Go up to the 3rd floor.",
+    s3_t:"This is Your Apartment Door",
+    s3_p1:"Please press the button only once when you are certain this is the correct door.",
+    s3_cap:"Apartment door — 3rd floor.",
+    help_h:"Need help?",
+    help_p:"Call or WhatsApp: ",
+    phone:"+39 335 524 5756",
+    footer:"niceflatinrome.com • Quick visual guide for arrivals at Via del Portico d’Ottavia 1D"
+  },
+  it: {
+    title:"Guida Check-in — Via del Portico d’Ottavia 1D",
+    addr:"Indirizzo: Via del Portico d’Ottavia 1D, Roma",
+    s1_t:"Apri il portone dell’edificio",
+    s1_p:"Usa il pulsante qui sotto per sbloccare il portone.",
+    s1_note:"Premendo questo pulsante si accendono anche le luci interne del corridoio.",
+    s1_cap:"Ingresso principale — Via del Portico d’Ottavia 1D.",
+    s1_cap2:"Le luci del corridoio si accendono automaticamente quando apri il portone.",
+    s2_t:"Arriva al terzo piano",
+    s2_p:"Sali al 3° piano.",
+    s3_t:"Questa è la porta del tuo appartamento",
+    s3_p1:"Premi il pulsante una sola volta quando sei certo che sia la porta corretta.",
+    s3_cap:"Porta dell’appartamento — 3° piano.",
+    help_h:"Serve aiuto?",
+    help_p:"Chiama o WhatsApp: ",
+    phone:"+39 335 524 5756",
+    footer:"niceflatinrome.com • Guida rapida di arrivo a Via del Portico d’Ottavia 1D"
+  }
 };
+
+/* lingua da querystring ?lang= */
 const params=new URLSearchParams(location.search);
-const L=(params.get('lang')||'it').toLowerCase();
+const L=(params.get('lang')||'en').toLowerCase();
 applyLang(L);
+
 document.querySelectorAll('#langbar a').forEach(a=>{
   a.addEventListener('click',e=>{
     e.preventDefault();
-    location.search='?lang='+a.getAttribute('data-lang');
+    const code=a.getAttribute('data-lang');
+    location.search='?lang='+code;
   });
 });
+
+/* Applica i testi della lingua selezionata */
 function applyLang(code){
-  const t=T[code]||T.it;
-  title.textContent=t.title; addr.textContent=t.addr;
-  s1_t.textContent=t.s1_t; s1_p.textContent=t.s1_p; s1_cap.textContent=t.s1_cap;
-  s2_t.textContent=t.s2_t; s2_p.textContent=t.s2_p;
-  s3_t.textContent=t.s3_t; s3_p.textContent=t.s3_p; s3_cap.textContent=t.s3_cap;
-  s4_t.textContent=t.s4_t; s4_p.textContent=t.s4_p; s4_cap.textContent=t.s4_cap;
-  s5_t.textContent=t.s5_t; s5_p.textContent=t.s5_p;
-  help_h.textContent=t.help_h; help_p.innerHTML=t.help_p+'<a class="cta" href="tel:+393355245756">'+t.phone+'</a>';
-  footer.textContent=t.footer;
+  const t=T[code]||T.en;
+  document.getElementById('title').textContent=t.title;
+  document.getElementById('addr').textContent=t.addr;
+  document.getElementById('s1_t').textContent=t.s1_t;
+  document.getElementById('s1_p').textContent=t.s1_p;
+  document.getElementById('s1_cap').textContent=t.s1_cap;
+  document.getElementById('s1_cap2').textContent=t.s1_cap2;
+  document.getElementById('s1_note').textContent=t.s1_note;
+  document.getElementById('s2_t').textContent=t.s2_t;
+  document.getElementById('s2_p').textContent=t.s2_p;
+  document.getElementById('s3_t').textContent=t.s3_t;
+  document.getElementById('s3_p1').textContent=t.s3_p1;
+  document.getElementById('s3_cap').textContent=t.s3_cap;
+  document.getElementById('help_h').textContent=t.help_h;
+  document.getElementById('help_p').innerHTML=t.help_p+'<a class="cta" href="tel:+393355245756">'+t.phone+'</a>';
+  document.getElementById('footer').textContent=t.footer;
 }
 
-/* ---- Loader robusto per la PRIMA FOTO (prova varianti) ---- */
-(function ensureBuildingPhoto(){
-  const el=document.getElementById('img-building');
-  const origin=location.origin;
-  const candidates=[
-    './building-door.jpg?v=2',
-    './building-door.jpeg?v=2',
-    'building-door.jpg',
-    'building-door.jpeg',
-    origin+'/checkin/ottavia/building-door.jpg',
-    origin+'/checkin/ottavia/building-door.jpeg'
-  ];
-  let i=0;
-  el.onerror=function(){
-    i++;
-    if(i<candidates.length) el.src=candidates[i];
-  };
-})();
+/* -------- OPEN: stesso principio di Arenula, due endpoint -------- */
+async function openPorticoBuilding(){
+  const s=document.getElementById('statusBuilding');
+  try{
+    s.textContent='Generating one-time key…';
+    const r=await fetch('https://shelly-cloud-opener-1.onrender.com/token/portico-building',{cache:'no-store'});
+    const j=await r.json();
+    if(j && j.url){ s.textContent='Key OK. Opening…'; location.href=j.url; }
+    else{ s.textContent='No URL returned. Try again.'; }
+  }catch(e){ s.textContent='Network error. Try again.'; }
+}
 
-/* ---- Apertura con fallback: prova più endpoint finché uno risponde con {url} ---- */
-async function openWithFallback(paths, statusId){
-  const s=document.getElementById(statusId);
-  s.textContent='Genero chiave monouso…';
-  for(const p of paths){
-    try{
-      const r=await fetch(p,{cache:'no-store'});
-      if(!r.ok) continue;
-      const j=await r.json();
-      if(j && j.url){ s.textContent='Apro…'; location.href=j.url; return; }
-    }catch(_){}
-  }
-  s.textContent='Nessun URL restituito. Riprova.';
+async function openPorticoApartment(){
+  const s=document.getElementById('statusApartment');
+  try{
+    s.textContent='Generating one-time key…';
+    const r=await fetch('https://shelly-cloud-opener-1.onrender.com/token/portico-apartment',{cache:'no-store'});
+    const j=await r.json();
+    if(j && j.url){ s.textContent='Key OK. Opening…'; location.href=j.url; }
+    else{ s.textContent='No URL returned. Try again.'; }
+  }catch(e){ s.textContent='Network error. Try again.'; }
 }
 </script>
 </body>
