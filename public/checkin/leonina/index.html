@@ -6,7 +6,7 @@ async function openWith(statusId, path){
     s.textContent='Generating one-time key…';
     const r=await fetch(path,{cache:'no-store'});
     const j=await r.json();
-    if(j && j.url){ s.textContent='Key OK. Opening…'; location.href=j.url; }
+    if(j && j.url){ s.textContent='Key OK. …'; location.href=j.url; }
     else{ s.textContent=(j && (j.error||j.message)) ? String(j.error||j.message) : 'No URL returned.'; }
   }catch(e){ s.textContent='Network error. Try again.'; }
 }
