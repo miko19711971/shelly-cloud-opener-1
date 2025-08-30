@@ -27,6 +27,11 @@
   .cta{display:inline-block;margin-top:10px;padding:10px 12px;border-radius:10px;background:var(--brand);color:#fff;text-decoration:none}
   .status{font-size:13px;color:#6b7280;margin-top:6px}
   footer{color:var(--muted);text-align:center;font-size:12px;margin:18px 0}
+
+  /* Crop leggero SOLO per la foto del punto 2 */
+  #s2_img { width:100%; height:380px; object-fit:cover; }
+  /* Nascondi elementi testuali non desiderati */
+  .hide { display:none !important; }
 </style>
 <script>
   async function openWith(statusId, path){
@@ -61,9 +66,10 @@
           <figcaption id="s1_cap">Building entrance / passageway to the courtyard.</figcaption>
         </figure>
 
-        <!-- 👉 INVERTITO: punta a Leonina -->
+        <!-- (RIMOSSO da qui) 
         <a class="cta" href="#" onclick="openWith('statusBuilding','/token/leonina-building');return false;" id="btn_building">Open Building Gate</a>
         <div class="status" id="statusBuilding"></div>
+        -->
       </div>
     </div>
   </section>
@@ -74,13 +80,17 @@
       <div class="num">2</div>
       <div>
         <h2 id="s2_t">Using the Intercom</h2>
-        <p><span id="s2_p1">Press B-9 (Chiani) on the intercom panel, then call me at</span>
-           <a class="cta" href="tel:+393355245756" id="phone">+39 335 524 5756</a>.
-           <span id="s2_p2">Wait for the click to unlock the gate.</span></p>
+        <p><span id="s2_p1">Press B-9 (Chiani) on the intercom panel.</span>
+           <a class="cta hide" href="tel:+393355245756" id="phone">+39 335 524 5756</a>
+           <span id="s2_p2" class="hide">Wait for the click to unlock the gate.</span></p>
         <figure>
-          <img src="intercom-b9.jpg" alt="Intercom panel — press B-9 (Chiani)">
+          <img id="s2_img" src="intercom-b9.jpg" alt="Intercom panel — press B-9 (Chiani)">
           <figcaption id="s2_cap">Intercom panel — press B-9 (Chiani).</figcaption>
         </figure>
+
+        <!-- Bottone spostato qui (funzionante come prima) -->
+        <a class="cta" href="#" onclick="openWith('statusBuilding','/token/leonina-building');return false;" id="btn_building">Open Building Gate</a>
+        <div class="status" id="statusBuilding"></div>
       </div>
     </div>
   </section>
@@ -112,11 +122,10 @@
           <figcaption id="s4_cap">Apartment door.</figcaption>
         </figure>
 
-        <!-- 👉 INVERTITO: punta a Leonina -->
         <a class="cta" href="#" onclick="openWith('statusDoor','/token/leonina-door');return false;" id="btn_door">Open Apartment Door</a>
         <div class="status" id="statusDoor"></div>
 
-        <p><span id="s4_p2">Call me when you are in front of the door and I will open it for you:</span>
+        <p class="hide"><span id="s4_p2">Call me when you are in front of the door and I will open it for you:</span>
            <a class="cta" href="tel:+393355245756" id="phone2">+39 335 524 5756</a></p>
       </div>
     </div>
@@ -131,14 +140,13 @@
 </main>
 
 <script>
-  /* se avevi la barra lingue dinamica, lascio lo scheletro invariato: */
   const T = {
     en: { langName:'English', langLabel:'Language',
       title:'Check-in Guide — Viale Trastevere 108',
       addressLine:'Address: Viale Trastevere 108, Rome • Intercom: B-9 “Chiani”',
       help:'Need help?', call:'Call or WhatsApp', phone:'+39 335 524 5756',
       s1_t:'Arriving at the Building', s1_p:'When you arrive at the entrance shown below, you’ve reached your destination.', s1_cap:'Building entrance / passageway to the courtyard.',
-      s2_t:'Using the Intercom', s2_p1:'Press B-9 (Chiani) on the intercom panel, then call me at', s2_p2:'Wait for the click to unlock the gate.', s2_cap:'Intercom panel — press B-9 (Chiani).',
+      s2_t:'Using the Intercom', s2_p1:'Press B-9 (Chiani) on the intercom panel.', s2_p2:'Wait for the click to unlock the gate.', s2_cap:'Intercom panel — press B-9 (Chiani).',
       s3_t:'Go Through the Passage', s3_p:'Walk straight through the passage to the inner gate.', s3_cap:'Walk straight to the inner gate.',
       s4_t:'Reaching the Apartment', s4_p1:'Take the stairs/elevator to the 4th floor.', s4_p2:'Call me when you are in front of the door and I will open it for you:', s4_cap:'Apartment door.',
       footer:'niceflatinrome.com • Quick visual check-in guide'
@@ -148,7 +156,7 @@
       addressLine:'Indirizzo: Viale Trastevere 108, Roma • Citofono: B-9 “Chiani”',
       help:'Serve aiuto?', call:'Chiama o WhatsApp', phone:'+39 335 524 5756',
       s1_t:'Arrivo al palazzo', s1_p:'Quando vedi l’ingresso qui sotto, sei arrivato a destinazione.', s1_cap:'Ingresso / passaggio verso il cortile.',
-      s2_t:'Uso del citofono', s2_p1:'Premi B-9 (Chiani) sul pannello, poi chiamami al', s2_p2:'Attendi il “clic” di sblocco del cancello.', s2_cap:'Pannello citofono — premi B-9 (Chiani).',
+      s2_t:'Uso del citofono', s2_p1:'Premi B-9 (Chiani) sul pannello del citofono.', s2_p2:'Attendi il “clic” di sblocco del cancello.', s2_cap:'Pannello citofono — premi B-9 (Chiani).',
       s3_t:'Attraversa il passaggio', s3_p:'Prosegui dritto fino al cancelletto interno.', s3_cap:'Dritto fino al cancelletto interno.',
       s4_t:'Raggiungere l’appartamento', s4_p1:'Scala/ascensore fino al 4° piano.', s4_p2:'Chiamami quando sei davanti alla porta e la apro io:', s4_cap:'Porta dell’appartamento.',
       footer:'niceflatinrome.com • Guida rapida di check-in'
@@ -191,5 +199,3 @@
 </script>
 </body>
 </html>
-
-   
