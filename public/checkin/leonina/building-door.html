@@ -1,1 +1,36 @@
-
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Via Leonina 71 — Building Door</title>
+<style>
+  body {font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; margin:0; padding:20px; background:#f7f7f7; color:#1f2937;}
+  .wrap {max-width: 600px; margin: 0 auto;}
+  h1 {font-size:20px; margin-bottom:10px;}
+  .status {font-size:14px; color:#6b7280; margin-top:10px;}
+  .cta {display:inline-block; margin-top:10px; padding:10px 12px; border-radius:10px;
+        background:#2b2118; color:#fff; text-decoration:none;}
+</style>
+<script>
+  async function openWith(statusId, path){
+    const s = document.getElementById(statusId);
+    try{
+      s.textContent = 'Generating one-time key…';
+      const r = await fetch(path, {cache:'no-store'});
+      const j = await r.json();
+      if (j && j.url){ s.textContent = 'Key OK. Redirecting…'; location.href = j.url; }
+      else { s.textContent = (j && (j.error||j.message)) ? String(j.error||j.message) : 'No URL returned.'; }
+    }catch(e){ s.textContent = String(e); }
+  }
+</script>
+</head>
+<body>
+<div class="wrap">
+  <h1>Via Leonina 71 — Building Door</h1>
+  <!-- Mantieni esattamente il tuo endpoint già funzionante -->
+  <a class="cta" onclick="openWith('status','/api/leonina/building-door')">Open Building Door</a>
+  <div class="status" id="status"></div>
+</div>
+</body>
+</html>
