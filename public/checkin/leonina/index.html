@@ -1,4 +1,4 @@
-<!doctype html>
+ <!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -77,7 +77,7 @@
       <div class="num">2</div>
       <div>
         <h2 id="s2_t">Walk to the end of the corridor</h2>
-        <p id="s2_p">Go straight until the end of the corridor.</p>
+        <p id="s2_p" style="display:none"></p>
         <figure>
           <img src="elevator-corridor.jpg" alt="Corridor leading to the elevator">
           <figcaption id="s2_cap">End of corridor — the last door on the right is the elevator.</figcaption>
@@ -92,7 +92,7 @@
       <div class="num">3</div>
       <div>
         <h2 id="s3_t">Take the elevator to the 4th floor</h2>
-        <p id="s3_p">Get the elevator and arrive at the fourth floor.</p>
+        <p id="s3_p" style="display:none"></p>
       </div>
     </div>
   </section>
@@ -192,10 +192,10 @@ const T = {
   document.getElementById('s1_p').textContent=t.s1_p;
   document.getElementById('s1_cap').textContent=t.s1_cap;
   document.getElementById('s2_t').textContent=t.s2_t;
-  document.getElementById('s2_p').textContent=t.s2_p;
+  document.getElementById('s2_p').textContent=t.s2_p;  // ok: è nascosto via CSS inline
   document.getElementById('s2_cap').textContent=t.s2_cap;
   document.getElementById('s3_t').textContent=t.s3_t;
-  document.getElementById('s3_p').textContent=t.s3_p;
+  document.getElementById('s3_p').textContent=t.s3_p;  // ok: è nascosto via CSS inline
   document.getElementById('s4_t').textContent=t.s4_t;
   document.getElementById('s4_p').textContent=t.s4_p;
   document.getElementById('s4_cap').textContent=t.s4_cap;
