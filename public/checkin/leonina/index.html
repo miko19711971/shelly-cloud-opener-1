@@ -1,4 +1,4 @@
- <!doctype html>
+<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -14,7 +14,7 @@
   h1{font-size:20px;margin:0}
   .addr{font-size:14px;color:var(--muted)}
   .lang{font-size:14px;margin-top:6px}
-  .lang a{color:var(--ink);text-decoration:none}
+  .lang a{color:var(--ink);text-decoration:none;font-weight:700;margin-right:10px}
   .lang a.active{text-decoration:underline}
   .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin:14px 0}
   .step{display:flex;gap:12px;align-items:flex-start}
@@ -31,6 +31,7 @@
   footer{color:var(--muted);text-align:center;font-size:12px;margin:18px 0}
   .imgframe{width:90%;margin:0 auto;border:1px solid var(--line);border-radius:10px;display:block}
   .imgframe object{width:100%;height:auto;display:block;border-radius:10px;aspect-ratio:3/4;background:#f9fafb}
+  .hide{display:none!important}
 </style>
 </head>
 <body>
@@ -38,8 +39,7 @@
   <h1 id="h1">Check-in Guide — Via Leonina 71</h1>
   <div class="addr" id="addr">Address: Via Leonina 71, Rome • Entrance keypad: 16 or 7171 + 🔑</div>
   <div class="lang" id="langbar">Language:
-    <a href="?lang=en" data-lang="en" class="active">English</a> ·
-    <a href="?lang=it" data-lang="it">Italiano</a>
+    <!-- riempito via JS con EN · IT · FR · DE · ES -->
   </div>
 </header>
 
@@ -52,11 +52,10 @@
         <h2 id="s1_t">Open the Building Door</h2>
         <p id="s1_p">Press the button below to open the building door.</p>
 
-        <!-- 👉 INVERTITO: punta a Viale Trastevere -->
+        <!-- 👉 INVERTITO: punta a Viale Trastevere (come nel tuo file) -->
         <a class="cta" href="#" onclick="openWith('statusBuilding','/token/viale-trastevere-building');return false;" id="btn_building">➜ Open Building Door</a>
         <div class="status" id="statusBuilding"></div>
 
-        <!-- immagine con fallback -->
         <figure>
           <div class="imgframe">
             <object data="https://cdn.jsdelivr.net/gh/miko19711971/shelly-cloud-opener-1@main/public/checkin/leonina/building-door.jpg"
@@ -77,7 +76,7 @@
       <div class="num">2</div>
       <div>
         <h2 id="s2_t">Walk to the end of the corridor</h2>
-        <p id="s2_p" style="display:none"></p>
+        <p id="s2_p" class="hide"></p> <!-- frase rimossa -->
         <figure>
           <img src="elevator-corridor.jpg" alt="Corridor leading to the elevator">
           <figcaption id="s2_cap">End of corridor — the last door on the right is the elevator.</figcaption>
@@ -92,7 +91,7 @@
       <div class="num">3</div>
       <div>
         <h2 id="s3_t">Take the elevator to the 4th floor</h2>
-        <p id="s3_p" style="display:none"></p>
+        <p id="s3_p" class="hide"></p> <!-- frase rimossa -->
       </div>
     </div>
   </section>
@@ -137,7 +136,7 @@ async function openWith(statusId, path){
   }catch(e){ s.textContent='Network error. Try again.'; }
 }
 
-/* -------- EN/IT (immutato) -------- */
+/* -------- 5 lingue (bottoni inclusi) -------- */
 const T = {
   en: {
     title:'Check-in Guide — Via Leonina 71',
@@ -157,7 +156,8 @@ const T = {
     help_p:'Call or WhatsApp: <a class="cta" href="tel:+393355245756">+39 335 524 5756</a>',
     btn_building:'➜ Open Building Door',
     btn_apartment:'➜ Open Apartment Door',
-    footer:'niceflatinrome.com • Quick visual guide for arrivals at Via Leonina 71'
+    footer:'niceflatinrome.com • Quick visual guide for arrivals at Via Leonina 71',
+    langLabel:'Language', langName:'English'
   },
   it: {
     title:'Guida Check-in — Via Leonina 71',
@@ -177,14 +177,90 @@ const T = {
     help_p:'Chiama o WhatsApp: <a class="cta" href="tel:+393355245756">+39 335 524 5756</a>',
     btn_building:'➜ Apri il portone',
     btn_apartment:'➜ Apri porta appartamento',
-    footer:'niceflatinrome.com • Guida rapida per gli arrivi a Via Leonina 71'
+    footer:'niceflatinrome.com • Guida rapida per gli arrivi a Via Leonina 71',
+    langLabel:'Lingua', langName:'Italiano'
+  },
+  fr: {
+    title:'Guide d’enregistrement — Via Leonina 71',
+    addr:'Adresse : Via Leonina 71, Rome • Clavier d’entrée : 16 ou 7171 + 🔑',
+    s1_t:'Ouvrir la porte de l’immeuble',
+    s1_p:'Appuyez sur le bouton ci-dessous pour ouvrir la porte.',
+    s1_cap:'Façade et entrée — Via Leonina 71.',
+    s2_t:'Allez au bout du couloir',
+    s2_p:'Allez tout droit jusqu’au bout du couloir.',
+    s2_cap:'Fin du couloir — la dernière porte à droite est l’ascenseur.',
+    s3_t:'Prenez l’ascenseur jusqu’au 4e étage',
+    s3_p:'Prenez l’ascenseur et montez au quatrième étage.',
+    s4_t:'Voici la porte de votre appartement',
+    s4_p:'Appuyez une seule fois lorsque vous êtes sûr que c’est la bonne porte.',
+    s4_cap:"Entrée de l’appartement — porte verte au dernier étage.",
+    help_h:'Besoin d’aide ?',
+    help_p:'Appeler ou WhatsApp : <a class="cta" href="tel:+393355245756">+39 335 524 5756</a>',
+    btn_building:'➜ Ouvrir la porte de l’immeuble',
+    btn_apartment:"➜ Ouvrir la porte de l’appartement",
+    footer:'niceflatinrome.com • Guide visuel rapide pour les arrivées à Via Leonina 71',
+    langLabel:'Langue', langName:'Français'
+  },
+  de: {
+    title:'Check-in-Leitfaden — Via Leonina 71',
+    addr:'Adresse: Via Leonina 71, Rom • Eingangstastatur: 16 oder 7171 + 🔑',
+    s1_t:'Haustür öffnen',
+    s1_p:'Drücken Sie unten auf die Taste, um die Haustür zu öffnen.',
+    s1_cap:'Fassade und Eingang — Via Leonina 71.',
+    s2_t:'Bis zum Ende des Flurs gehen',
+    s2_p:'Gehen Sie geradeaus bis zum Ende des Flurs.',
+    s2_cap:'Flurende — die letzte Tür rechts ist der Aufzug.',
+    s3_t:'Mit dem Aufzug in den 4. Stock',
+    s3_p:'Nehmen Sie den Aufzug in den vierten Stock.',
+    s4_t:'Das ist Ihre Wohnungstür',
+    s4_p:'Drücken Sie die Taste nur einmal, wenn Sie sicher sind, dass es die richtige Tür ist.',
+    s4_cap:'Wohnungseingang — grüne Tür im obersten Stock.',
+    help_h:'Brauchen Sie Hilfe?',
+    help_p:'Anrufen oder WhatsApp: <a class="cta" href="tel:+393355245756">+39 335 524 5756</a>',
+    btn_building:'➜ Haustür öffnen',
+    btn_apartment:'➜ Wohnungstür öffnen',
+    footer:'niceflatinrome.com • Kurzanleitung für die Anreise in die Via Leonina 71',
+    langLabel:'Sprache', langName:'Deutsch'
+  },
+  es: {
+    title:'Guía de check-in — Via Leonina 71',
+    addr:'Dirección: Via Leonina 71, Roma • Teclado de entrada: 16 o 7171 + 🔑',
+    s1_t:'Abrir la puerta del edificio',
+    s1_p:'Pulsa el botón de abajo para abrir la puerta del edificio.',
+    s1_cap:'Fachada y entrada — Via Leonina 71.',
+    s2_t:'Ve hasta el final del pasillo',
+    s2_p:'Sigue recto hasta el final del pasillo.',
+    s2_cap:'Final del pasillo — la última puerta a la derecha es el ascensor.',
+    s3_t:'Toma el ascensor hasta el 4º piso',
+    s3_p:'Toma el ascensor y sube al cuarto piso.',
+    s4_t:'Esta es la puerta de tu apartamento',
+    s4_p:'Pulsa el botón solo una vez cuando estés seguro de que es la puerta correcta.',
+    s4_cap:'Entrada del apartamento — puerta verde en el último piso.',
+    help_h:'¿Necesitas ayuda?',
+    help_p:'Llama o WhatsApp: <a class="cta" href="tel:+393355245756">+39 335 524 5756</a>',
+    btn_building:'➜ Abrir puerta del edificio',
+    btn_apartment:'➜ Abrir puerta del apartamento',
+    footer:'niceflatinrome.com • Guía visual rápida para llegadas a Via Leonina 71',
+    langLabel:'Idioma', langName:'Español'
   }
 };
 
+/* applica lingua + barra link */
 (function(){
   const params=new URLSearchParams(location.search);
   const L=(params.get('lang')||'en').toLowerCase();
   const t=T[L]||T.en;
+
+  // barra lingue con link reali
+  const base=location.pathname.replace(/\/+$/,'');
+  document.getElementById('langbar').innerHTML =
+    `${t.langLabel}: ` +
+    Object.entries(T).map(([k,v])=>{
+      const cls=(k===L)?'active':'';
+      return `<a class="${cls}" href="${base}?lang=${k}">${v.langName}</a>`;
+    }).join(' · ');
+
+  // applica testi
   document.getElementById('title').textContent=t.title;
   document.getElementById('h1').textContent=t.title;
   document.getElementById('addr').textContent=t.addr;
@@ -192,10 +268,10 @@ const T = {
   document.getElementById('s1_p').textContent=t.s1_p;
   document.getElementById('s1_cap').textContent=t.s1_cap;
   document.getElementById('s2_t').textContent=t.s2_t;
-  document.getElementById('s2_p').textContent=t.s2_p;  // ok: è nascosto via CSS inline
+  document.getElementById('s2_p').textContent=t.s2_p;  // è nascosto
   document.getElementById('s2_cap').textContent=t.s2_cap;
   document.getElementById('s3_t').textContent=t.s3_t;
-  document.getElementById('s3_p').textContent=t.s3_p;  // ok: è nascosto via CSS inline
+  document.getElementById('s3_p').textContent=t.s3_p;  // è nascosto
   document.getElementById('s4_t').textContent=t.s4_t;
   document.getElementById('s4_p').textContent=t.s4_p;
   document.getElementById('s4_cap').textContent=t.s4_cap;
@@ -204,8 +280,10 @@ const T = {
   document.getElementById('footer').textContent=t.footer;
   document.getElementById('btn_building').textContent=t.btn_building;
   document.getElementById('btn_apartment').textContent=t.btn_apartment;
+
+  // evidenzia lingua attiva
   document.querySelectorAll('#langbar a').forEach(a=>{
-    a.classList.toggle('active', a.getAttribute('data-lang')===L);
+    a.classList.toggle('active', a.textContent===t.langName);
   });
 })();
 </script>
