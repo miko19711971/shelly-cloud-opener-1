@@ -1,54 +1,15 @@
-// Check-in — Via della Scala 17, unit A/1 (EN only, simplified)
-import express from 'express';
-import cors from 'cors';
-
-const app = express();
-app.use(cors());
-app.use(express.json());
-app.use(express.static('.')); // serve le immagini dalla root
-
-// ---------- TEXTS ----------
-const T = {
-  en: {
-    title: 'Check-in Guide — Via della Scala 17, unit A/1',
-    addressLine: 'Address: Via della Scala 17, Rome • Unit: A/1',
-    phone: '+39 335 524 5756',
-
-    s1_t: 'Finding the Building Entrance',
-    s1_p: 'Welcome in front of your building door.',
-    s1_cap: 'Main entrance — Via della Scala 17.',
-
-    s2_t: 'Enter the Building',
-    s2_p: 'Walk straight and on your right-hand side you will find the corridor. Then I will open the door remotely.',
-    
-    s3_t: 'Pass Through the Corridor',
-    s3_p: 'After the click, enter and turn left.',
-    s3_cap: 'Follow the arrow, then turn left.',
-
-    s4_t: 'This is your Apartment Door',
-    s4_p: 'You’ve reached the green door on the left. This is your apartment entrance.',
-    s4_cap: 'Apartment green door — your entrance.',
-
-    help: 'Need help?',
-    call: 'Call or WhatsApp',
-    footer: 'niceflatinrome.com • Quick visual guide for arrivals at Via della Scala 17, unit A/1'
-  }
-};
-
-// ---------- ROUTE ----------
-app.get('/', (req, res) => {
-  const L = T.en;
-
-  const html = `<!doctype html>
+<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>${L.title}</title>
+<title>Check-in Guide — Via della Scala 17, unit A/1</title>
 <link rel="icon" href="building-door.jpg">
+<link rel="preload" as="image" href="building-door.jpg?v=8">
 <style>
-  :root { --brand:#2b2118; --ink:#1f2937; --muted:#6b7280; --bg:#f7f7f7; --card:#ffffff; --line:#e5e7eb;}
-  *{box-sizing:border-box} body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--ink)}
+  :root { --brand:#2b2118; --ink:#1f2937; --muted:#6b7280; --bg:#f7f7f7; --card:#ffffff; --line:#e5e7eb; }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--ink)}
   .wrap{max-width:860px;margin:0 auto;padding:16px}
   header{position:sticky;top:0;background:var(--card);border-bottom:1px solid var(--line);padding:12px 14px;z-index:5}
   h1{font-size:20px;margin:0}
@@ -59,103 +20,102 @@ app.get('/', (req, res) => {
   h2{margin:6px 0 8px 0;font-size:18px}
   p{margin:6px 0;line-height:1.45}
   figure{margin:10px 0}
-  img{max-width:100%;height:auto;border-radius:10px;border:1px solid var(--line);display:block}
   figcaption{font-size:12px;color:var(--muted);margin-top:6px;text-align:center}
-  .cta{display:inline-block;margin-top:6px;padding:7px 10px;border-radius:10px;background:var(--brand);color:#fff;text-decoration:none}
+  .imgframe{width:90%;margin:0 auto;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#f9fafb}
+  .imgframe object,.imgframe img{width:100%;height:auto;display:block}
+  .cta{display:inline-block;margin-top:10px;padding:10px 12px;border-radius:10px;background:var(--brand);color:#fff;text-decoration:none;cursor:pointer}
+  .status{font-size:13px;color:#6b7280;margin-left:8px}
   footer{color:var(--muted);text-align:center;font-size:12px;margin:18px 0}
 </style>
-<script>
-  async function openWith(statusId, path){
-    const s=document.getElementById(statusId);
-    try{
-      s.textContent='Generating one-time key...';
-      const r=await fetch(path,{cache:'no-store'});
-      const j=await r.json();
-      if(j && j.url){ s.textContent='Opening...'; location.href=j.url; }
-      else{ s.textContent='Error: ' + (j.error||'no URL'); }
-    }catch(e){ s.textContent='Network error. Try again.'; }
-  }
-</script>
 </head>
 <body>
 <header class="wrap">
-  <h1>${L.title}</h1>
-  <div class="addr">${L.addressLine}</div>
+  <h1>Check-in Guide — Via della Scala 17, unit A/1</h1>
+  <div class="addr">Address: Via della Scala 17, Rome • Unit: A/1</div>
 </header>
 
 <main class="wrap">
-  <!-- Step 1 -->
+  <!-- 1. BUILDING DOOR -->
   <section class="card">
     <div class="step">
       <div class="num">1</div>
       <div>
-        <h2>${L.s1_t}</h2>
-        <p>${L.s1_p}</p>
+        <h2>Finding the Building Entrance</h2>
+        <p>Welcome in front of your building door.</p>
         <figure>
-          <img src="building-door.jpg" alt="Building entrance">
-          <figcaption>${L.s1_cap}</figcaption>
+          <div class="imgframe">
+            <!-- object + img fallback (risolve i bug di cache su alcuni iPad/iOS) -->
+            <object data="building-door.jpg?v=8" type="image/jpeg">
+              <img src="building-door.jpg?v=8" alt="Main entrance — Via della Scala 17">
+            </object>
+          </div>
+          <figcaption>Main entrance — Via della Scala 17.</figcaption>
         </figure>
-        <a class="cta" href="#" onclick="openWith('status1','/token/scala-building')">Open Building Gates</a>
-        <div id="status1"></div>
+        <a class="cta" href="#" onclick="openWith('statusBuilding','/token/via-della-scala-building');return false;">➜ Open Building Gates</a>
+        <span class="status" id="statusBuilding"></span>
       </div>
     </div>
   </section>
 
-  <!-- Step 2 -->
+  <!-- 2. CORRIDOR / ARROW -->
   <section class="card">
     <div class="step">
       <div class="num">2</div>
       <div>
-        <h2>${L.s2_t}</h2>
-        <p>${L.s2_p}</p>
+        <h2>Go through the corridor</h2>
+        <p>After the click, enter and turn left.</p>
+        <figure>
+          <div class="imgframe">
+            <object data="courtyard.jpg?v=8" type="image/jpeg">
+              <img src="courtyard.jpg?v=8" alt="Follow the arrow, then turn left">
+            </object>
+          </div>
+          <figcaption>Follow the arrow, then turn left.</figcaption>
+        </figure>
       </div>
     </div>
   </section>
 
-  <!-- Step 3 -->
+  <!-- 3. APARTMENT DOOR -->
   <section class="card">
     <div class="step">
       <div class="num">3</div>
       <div>
-        <h2>${L.s3_t}</h2>
-        <p>${L.s3_p}</p>
+        <h2>This is your apartment door</h2>
+        <p>You’ve reached the green door on the left. This is your apartment entrance.</p>
         <figure>
-          <img src="courtyard.jpg" alt="Corridor and arrow">
-          <figcaption>${L.s3_cap}</figcaption>
+          <div class="imgframe">
+            <object data="apartment-green-door.jpg?v=8" type="image/jpeg">
+              <img src="apartment-green-door.jpg?v=8" alt="Apartment green door — your entrance">
+            </object>
+          </div>
+          <figcaption>Green door = your apartment entrance.</figcaption>
         </figure>
-      </div>
-    </div>
-  </section>
-
-  <!-- Step 4 -->
-  <section class="card">
-    <div class="step">
-      <div class="num">4</div>
-      <div>
-        <h2>${L.s4_t}</h2>
-        <p>${L.s4_p}</p>
-        <figure>
-          <img src="apartment-green-door.jpg" alt="Apartment green door">
-          <figcaption>${L.s4_cap}</figcaption>
-        </figure>
-        <a class="cta" href="#" onclick="openWith('status2','/token/scala-apartment')">Open Apartment Door</a>
-        <div id="status2"></div>
+        <a class="cta" href="#" onclick="openWith('statusApartment','/token/via-della-scala-door');return false;">➜ Open Apartment Door</a>
+        <span class="status" id="statusApartment"></span>
       </div>
     </div>
   </section>
 
   <section class="card">
-    <h2>${L.help}</h2>
-    <p>${L.call}: <a class="cta" href="tel:+393355245756">${L.phone}</a></p>
+    <h2>Need help?</h2>
+    <p>Call or WhatsApp: <a class="cta" href="tel:+393355245756">+39 335 524 5756</a></p>
   </section>
 
-  <footer>${L.footer}</footer>
+  <footer>niceflatinrome.com • Quick visual guide for arrivals at Via della Scala 17, unit A/1</footer>
 </main>
-</body>
-</html>`;
-  res.setHeader('content-type','text/html; charset=utf-8');
-  res.end(html);
-});
 
-const port = process.env.PORT || 8787;
-app.listen(port, () => console.log('Guide running on http://localhost:' + port));
+<script>
+  async function openWith(statusId, path){
+    const s=document.getElementById(statusId);
+    try{
+      s.textContent='Generating one-time key…';
+      const r=await fetch(path,{cache:'no-store'});
+      const j=await r.json();
+      if(j && j.url){ s.textContent='Key OK. Opening…'; location.href=j.url; }
+      else{ s.textContent=(j && (j.error||j.message)) ? String(j.error||j.message) : 'No URL returned.'; }
+    }catch(e){ s.textContent='Network error. Try again.'; }
+  }
+</script>
+</body>
+</html>
