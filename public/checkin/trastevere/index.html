@@ -27,11 +27,7 @@
   .cta{display:inline-block;margin-top:10px;padding:10px 12px;border-radius:10px;background:var(--brand);color:#fff;text-decoration:none}
   .status{font-size:13px;color:#6b7280;margin-top:6px}
   footer{color:var(--muted);text-align:center;font-size:12px;margin:18px 0}
-
-  /* Crop leggero SOLO per la foto del punto 2 */
-  #s2_img { width:100%; height:380px; object-fit:cover; }
-  /* Nascondi elementi testuali non desiderati */
-  .hide { display:none !important; }
+  .hide { display:none!important; }
 </style>
 <script>
   async function openWith(statusId, path){
@@ -65,11 +61,6 @@
           <img src="building-entrance.jpg" alt="Building entrance / passageway to the courtyard">
           <figcaption id="s1_cap">Building entrance / passageway to the courtyard.</figcaption>
         </figure>
-
-        <!-- (RIMOSSO da qui) 
-        <a class="cta" href="#" onclick="openWith('statusBuilding','/token/leonina-building');return false;" id="btn_building">Open Building Gate</a>
-        <div class="status" id="statusBuilding"></div>
-        -->
       </div>
     </div>
   </section>
@@ -80,15 +71,13 @@
       <div class="num">2</div>
       <div>
         <h2 id="s2_t">Using the Intercom</h2>
-        <p><span id="s2_p1">Press B-9 (Chiani) on the intercom panel.</span>
-           <a class="cta hide" href="tel:+393355245756" id="phone">+39 335 524 5756</a>
-           <span id="s2_p2" class="hide">Wait for the click to unlock the gate.</span></p>
+        <p><span id="s2_p1">Press B-9 (Chiani) on the intercom panel.</span></p>
         <figure>
-          <img id="s2_img" src="intercom-b9.jpg" alt="Intercom panel — press B-9 (Chiani)">
+          <img src="intercom-b9.jpg" alt="Intercom panel — press B-9 (Chiani)">
           <figcaption id="s2_cap">Intercom panel — press B-9 (Chiani).</figcaption>
         </figure>
 
-        <!-- Bottone spostato qui (funzionante come prima) -->
+        <!-- Bottone di apertura -->
         <a class="cta" href="#" onclick="openWith('statusBuilding','/token/leonina-building');return false;" id="btn_building">Open Building Gate</a>
         <div class="status" id="statusBuilding"></div>
       </div>
@@ -124,9 +113,6 @@
 
         <a class="cta" href="#" onclick="openWith('statusDoor','/token/leonina-door');return false;" id="btn_door">Open Apartment Door</a>
         <div class="status" id="statusDoor"></div>
-
-        <p class="hide"><span id="s4_p2">Call me when you are in front of the door and I will open it for you:</span>
-           <a class="cta" href="tel:+393355245756" id="phone2">+39 335 524 5756</a></p>
       </div>
     </div>
   </section>
@@ -160,6 +146,36 @@
       s3_t:'Attraversa il passaggio', s3_p:'Prosegui dritto fino al cancelletto interno.', s3_cap:'Dritto fino al cancelletto interno.',
       s4_t:'Raggiungere l’appartamento', s4_p1:'Scala/ascensore fino al 4° piano.', s4_p2:'Chiamami quando sei davanti alla porta e la apro io:', s4_cap:'Porta dell’appartamento.',
       footer:'niceflatinrome.com • Guida rapida di check-in'
+    },
+    fr: { langName:'Français', langLabel:'Langue',
+      title:'Guide d’enregistrement — Viale Trastevere 108',
+      addressLine:'Adresse : Viale Trastevere 108, Rome • Interphone : B-9 « Chiani »',
+      help:'Besoin d’aide ?', call:'Appeler ou WhatsApp', phone:'+39 335 524 5756',
+      s1_t:'Arriver à l’immeuble', s1_p:'Lorsque vous voyez l’entrée ci-dessous, vous êtes arrivés à destination.', s1_cap:'Entrée de l’immeuble / passage vers la cour.',
+      s2_t:'Utiliser l’interphone', s2_p1:'Appuyez sur B-9 (Chiani) sur l’interphone.', s2_p2:'Attendez le clic de déverrouillage du portail.', s2_cap:'Panneau d’interphone — appuyez sur B-9 (Chiani).',
+      s3_t:'Traversez le passage', s3_p:'Allez tout droit jusqu’au portail intérieur.', s3_cap:'Tout droit jusqu’au portail intérieur.',
+      s4_t:'Rejoindre l’appartement', s4_p1:'Prenez l’escalier/l’ascenseur jusqu’au 4e étage.', s4_p2:'Appelez-moi lorsque vous êtes devant la porte et je l’ouvrirai pour vous :', s4_cap:'Porte de l’appartement.',
+      footer:'niceflatinrome.com • Guide visuel rapide de check-in'
+    },
+    de: { langName:'Deutsch', langLabel:'Sprache',
+      title:'Check-in-Leitfaden — Viale Trastevere 108',
+      addressLine:'Adresse: Viale Trastevere 108, Rom • Gegensprechanlage: B-9 „Chiani“',
+      help:'Brauchen Sie Hilfe?', call:'Anrufen oder WhatsApp', phone:'+39 335 524 5756',
+      s1_t:'Ankunft am Gebäude', s1_p:'Wenn Sie den unten gezeigten Eingang sehen, sind Sie am Ziel.', s1_cap:'Gebäudeeingang / Durchgang zum Innenhof.',
+      s2_t:'Gegensprechanlage benutzen', s2_p1:'Drücken Sie B-9 (Chiani) an der Gegensprechanlage.', s2_p2:'Warten Sie auf das Klicken zum Entriegeln des Tores.', s2_cap:'Gegensprechanlage — drücken Sie B-9 (Chiani).',
+      s3_t:'Durch den Durchgang gehen', s3_p:'Gehen Sie geradeaus bis zum inneren Tor.', s3_cap:'Geradeaus bis zum inneren Tor.',
+      s4_t:'Zum Apartment gelangen', s4_p1:'Nehmen Sie die Treppe/den Aufzug in den 4. Stock.', s4_p2:'Rufen Sie mich an, wenn Sie vor der Tür stehen, ich öffne für Sie:', s4_cap:'Apartmenttür.',
+      footer:'niceflatinrome.com • Kurzanleitung für den Check-in'
+    },
+    es: { langName:'Español', langLabel:'Idioma',
+      title:'Guía de check-in — Viale Trastevere 108',
+      addressLine:'Dirección: Viale Trastevere 108, Roma • Portero: B-9 “Chiani”',
+      help:'¿Necesitas ayuda?', call:'Llama o WhatsApp', phone:'+39 335 524 5756',
+      s1_t:'Llegada al edificio', s1_p:'Cuando veas la entrada que aparece abajo, habrás llegado a tu destino.', s1_cap:'Entrada del edificio / pasaje hacia el patio.',
+      s2_t:'Uso del portero', s2_p1:'Pulsa B-9 (Chiani) en el panel del portero.', s2_p2:'Espera el clic que desbloquea la puerta.', s2_cap:'Panel del portero — pulsa B-9 (Chiani).',
+      s3_t:'Cruza el pasaje', s3_p:'Sigue recto hasta la puerta interior.', s3_cap:'Recto hasta la puerta interior.',
+      s4_t:'Llegar al apartamento', s4_p1:'Toma las escaleras/el ascensor hasta el 4º piso.', s4_p2:'Llámame cuando estés frente a la puerta y la abriré por ti:', s4_cap:'Puerta del apartamento.',
+      footer:'niceflatinrome.com • Guía visual rápida de check-in'
     }
   };
 
