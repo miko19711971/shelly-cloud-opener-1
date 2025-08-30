@@ -29,7 +29,6 @@
   .cta{display:inline-block;margin-top:10px;padding:10px 12px;border-radius:10px;background:var(--brand);color:#fff;text-decoration:none;cursor:pointer}
   .status{font-size:13px;color:#6b7280;margin-top:6px}
   footer{color:var(--muted);text-align:center;font-size:12px;margin:18px 0}
-
   .imgframe{width:90%;margin:0 auto;border:1px solid var(--line);border-radius:10px;display:block}
   .imgframe object{width:100%;height:auto;display:block;border-radius:10px;aspect-ratio:3/4;background:#f9fafb}
 </style>
@@ -56,9 +55,9 @@
         <a class="cta" href="#" onclick="openWith('statusBuilding','/token/portico-1d-building');return false;" id="btn_building">➜ Open Building Door</a>
         <div class="status" id="statusBuilding"></div>
 
-        <div class="note" id="s1_note">Pressing this button will also turn on the indoor corridor lights.</div>
+        <!-- nascosto per non rompere lo script -->
+        <div class="note" id="s1_note" style="display:none"></div>
 
-        <!-- foto portone stabile (object + fallback), lasciata identica nella logica -->
         <figure>
           <div class="imgframe">
             <object data="https://cdn.jsdelivr.net/gh/miko19711971/shelly-cloud-opener-1@main/public/checkin/ottavia/building-door.jpg"
@@ -75,7 +74,7 @@
 
         <figure>
           <img src="hallway-light.jpg" alt="Hallway lights turned on">
-          <figcaption id="s1_cap2">Corridor lights turn on automatically when you open the building door.</figcaption>
+          <figcaption id="s1_cap2">Press this button to turn on the indoor corridor lights.</figcaption>
         </figure>
       </div>
     </div>
@@ -138,9 +137,9 @@ const T = {
     addr:"Address: Via del Portico d’Ottavia 1D, Rome",
     s1_t:"Open the Building Door",
     s1_p:"Use the button below to unlock the main door.",
-    s1_note:"Pressing this button will also turn on the indoor corridor lights.",
+    s1_note:"", /* hidden */
     s1_cap:"Main entrance — Via del Portico d’Ottavia 1D.",
-    s1_cap2:"Corridor lights turn on automatically when you open the building door.",
+    s1_cap2:"Press this button to turn on the indoor corridor lights.",
     s2_t:"Arrive at the Third Floor",
     s2_p:"Go up to the 3rd floor.",
     s3_t:"This is Your Apartment Door",
@@ -157,7 +156,7 @@ const T = {
     addr:"Indirizzo: Via del Portico d’Ottavia 1D, Roma",
     s1_t:"Apri il portone dell’edificio",
     s1_p:"Usa il pulsante qui sotto per sbloccare il portone.",
-    s1_note:"Premendo questo pulsante si accendono anche le luci interne del corridoio.",
+    s1_note:"", /* nascosto */
     s1_cap:"Ingresso principale — Via del Portico d’Ottavia 1D.",
     s1_cap2:"Le luci del corridoio si accendono automaticamente quando apri il portone.",
     s2_t:"Arriva al terzo piano",
@@ -177,19 +176,15 @@ const T = {
   const params=new URLSearchParams(location.search);
   const L=(params.get('lang')||'en').toLowerCase();
   const t=T[L]||T.en;
-
-  // attiva underline nella barra lingua
   document.querySelectorAll('#langbar a').forEach(a=>{
     a.classList.toggle('active', a.getAttribute('data-lang')===L);
   });
-
-  // applica testi
   document.getElementById('title').textContent=t.title;
   document.getElementById('h1').textContent=t.title;
   document.getElementById('addr').textContent=t.addr;
   document.getElementById('s1_t').textContent=t.s1_t;
   document.getElementById('s1_p').textContent=t.s1_p;
-  document.getElementById('s1_note').textContent=t.s1_note;
+  document.getElementById('s1_note').textContent=t.s1_note; // è nascosto
   document.getElementById('s1_cap').textContent=t.s1_cap;
   document.getElementById('s1_cap2').textContent=t.s1_cap2;
   document.getElementById('s2_t').textContent=t.s2_t;
