@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Check-in Guide — Via della Scala 17, unit A/1</title>
 <link rel="icon" href="building-door.jpg">
-<link rel="preload" as="image" href="building-door.jpg?v=8">
+<link rel="preload" as="image" href="building-door.jpg?v=10">
 <style>
   :root { --brand:#2b2118; --ink:#1f2937; --muted:#6b7280; --bg:#f7f7f7; --card:#ffffff; --line:#e5e7eb; }
   *{box-sizing:border-box}
@@ -44,9 +44,8 @@
         <p>Welcome in front of your building door.</p>
         <figure>
           <div class="imgframe">
-            <!-- object + img fallback (risolve i bug di cache su alcuni iPad/iOS) -->
-            <object data="building-door.jpg?v=8" type="image/jpeg">
-              <img src="building-door.jpg?v=8" alt="Main entrance — Via della Scala 17">
+            <object data="building-door.jpg?v=10" type="image/jpeg">
+              <img src="building-door.jpg?v=10" alt="Main entrance — Via della Scala 17">
             </object>
           </div>
           <figcaption>Main entrance — Via della Scala 17.</figcaption>
@@ -66,9 +65,11 @@
         <p>After the click, enter and turn left.</p>
         <figure>
           <div class="imgframe">
-            <object data="courtyard.jpg?v=8" type="image/jpeg">
-              <img src="courtyard.jpg?v=8" alt="Follow the arrow, then turn left">
-            </object>
+            <!-- tenta .jpg, se 404 passa a .jpeg -->
+            <img id="img-courtyard" src="courtyard.jpg?v=10" alt="Follow the arrow, then turn left"
+                 onerror="
+                   if(this.dataset.triedjpeg!=='1'){ this.dataset.triedjpeg='1'; this.src='courtyard.jpeg?v=10'; }
+                 ">
           </div>
           <figcaption>Follow the arrow, then turn left.</figcaption>
         </figure>
@@ -85,8 +86,8 @@
         <p>You’ve reached the green door on the left. This is your apartment entrance.</p>
         <figure>
           <div class="imgframe">
-            <object data="apartment-green-door.jpg?v=8" type="image/jpeg">
-              <img src="apartment-green-door.jpg?v=8" alt="Apartment green door — your entrance">
+            <object data="apartment-green-door.jpg?v=10" type="image/jpeg">
+              <img src="apartment-green-door.jpg?v=10" alt="Apartment green door — your entrance">
             </object>
           </div>
           <figcaption>Green door = your apartment entrance.</figcaption>
