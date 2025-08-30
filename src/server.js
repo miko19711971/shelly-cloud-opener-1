@@ -33,7 +33,7 @@ const TARGETS = {
   "arenula-building":                { name: "Arenula 16 — Building Door",                ids: ["3494547ab05e"] },
 
   "leonina-door":                    { name: "Leonina 71 — Apartment Door",               ids: ["3494547a9395"] },
-  "leonina-building":                { name: "Leonina 71 — Building Door",                ids: ["34945479fd73"] },
+  "leonina-building":                { name: "Building Door",                ids: ["34945479fd73"] },
 
   "via-della-scala-door":            { name: "Via della Scala 17 — Apartment Door",       ids: ["3494547a1075"] },
 
@@ -46,7 +46,7 @@ const TARGETS = {
   "portico-1d-building":             { name: "Portico d'Ottavia 1D — Building Door",      ids: ["3494547ab62b"] },
 
   "viale-trastevere-door":           { name: "Viale Trastevere 108 — Apartment Door",     ids: ["34945479fa35"] },
-  "viale-trastevere-building":       { name: "Viale Trastevere 108 — Building Door",      ids: ["34945479fbbe"] },
+  "viale-trastevere-building":       { name: "Building Door",      ids: ["34945479fbbe"] },
 };
 
 // Shelly 1: relay = channel 0
