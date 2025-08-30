@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Check-in Guide — Via del Portico d’Ottavia 1D</title>
-<link rel="icon" href="building-door.jpg">
+<link rel="icon" href="building-entrance.jpg">
 <style>
   :root { --brand:#2b2118; --ink:#1f2937; --muted:#6b7280; --bg:#f7f7f7; --card:#ffffff; --line:#e5e7eb; }
   *{box-sizing:border-box}
@@ -18,7 +18,7 @@
   .lang-btn.active{text-decoration:underline}
   .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin:14px 0}
   .step{display:flex;gap:12px;align-items:flex-start}
-  .num{flex:0 0 36px;height:36px;border-radius:50%;background:var(--brand);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700}
+  .num{flex:0 0 36px;height:36px;border-radius:50%;background:--brand;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700}
   h2{margin:6px 0 8px 0;font-size:18px}
   p{margin:6px 0;line-height:1.45}
   figure{margin:10px 0}
@@ -27,20 +27,20 @@
   .cta{display:inline-block;margin-top:10px;padding:10px 12px;border-radius:10px;background:var(--brand);color:#fff;text-decoration:none}
   .status{font-size:13px;color:#6b7280;margin-top:6px}
   footer{color:var(--muted);text-align:center;font-size:12px;margin:18px 0}
-  /* crop ottico solo per la foto del punto 2 */
-  #s2_img { width:100%; height:380px; object-fit:cover; }
-  .hide { display:none !important; }
+  /* piccolo crop ottico per la foto del citofono */
+  #s2_img{width:100%;height:380px;object-fit:cover}
+  .hide{display:none!important}
 </style>
 <script>
   async function openWith(statusId, path){
-    const s = document.getElementById(statusId);
+    const s=document.getElementById(statusId);
     try{
-      s.textContent = 'Generating one-time key…';
-      const r = await fetch(path, {cache:'no-store'});
-      const j = await r.json();
-      if (j && j.url){ s.textContent = 'Key OK. Redirecting…'; location.href = j.url; }
-      else { s.textContent = (j && (j.error||j.message)) ? String(j.error||j.message) : 'No URL returned.'; }
-    }catch(e){ s.textContent = String(e); }
+      s.textContent='Generating one-time key…';
+      const r=await fetch(path,{cache:'no-store'});
+      const j=await r.json();
+      if(j && j.url){ s.textContent='Key OK. Redirecting…'; location.href=j.url; }
+      else{ s.textContent=(j && (j.error||j.message)) ? String(j.error||j.message) : 'No URL returned.'; }
+    }catch(e){ s.textContent=String(e); }
   }
 </script>
 </head>
@@ -60,15 +60,10 @@
         <h2 id="s1_t">Arriving at the Building</h2>
         <p id="s1_p">When you arrive at the entrance shown below, you’ve reached your destination.</p>
         <figure>
-          <!-- immagine tramite CDN + fallback -->
-          <object data="https://cdn.jsdelivr.net/gh/miko19711971/shelly-cloud-opener-1@main/public/checkin/ottavia/building-door.jpg"
-                  type="image/jpeg" referrerpolicy="no-referrer" crossorigin="anonymous">
-            <img src="https://raw.githubusercontent.com/miko19711971/shelly-cloud-opener-1/main/public/checkin/ottavia/building-door.jpg"
-                 alt="Building entrance / passageway to the courtyard" style="width:100%;height:auto;border-radius:10px;border:1px solid #e5e7eb;display:block">
-          </object>
+          <img src="building-entrance.jpg" alt="Building entrance / passageway to the courtyard">
           <figcaption id="s1_cap">Building entrance / passageway to the courtyard.</figcaption>
         </figure>
-        <!-- (bottone di apertura spostato allo Step 2) -->
+        <!-- nessun bottone qui (spostato allo Step 2) -->
       </div>
     </div>
   </section>
@@ -83,17 +78,11 @@
            <a class="cta hide" href="tel:+393355245756" id="phone">+39 335 524 5756</a>
            <span id="s2_p2" class="hide">Wait for the click to unlock the gate.</span></p>
         <figure>
-          <!-- intercom via CDN + fallback -->
-          <object data="https://cdn.jsdelivr.net/gh/miko19711971/shelly-cloud-opener-1@main/public/checkin/ottavia/intercom-b9.jpg"
-                  type="image/jpeg" referrerpolicy="no-referrer" crossorigin="anonymous">
-            <img id="s2_img"
-                 src="https://raw.githubusercontent.com/miko19711971/shelly-cloud-opener-1/main/public/checkin/ottavia/intercom-b9.jpg"
-                 alt="Intercom panel — press B-9 (Chiani)" style="width:100%;height:380px;object-fit:cover;border-radius:10px;border:1px solid #e5e7eb;display:block">
-          </object>
+          <img id="s2_img" src="intercom-b9.jpg" alt="Intercom panel — press B-9 (Chiani)">
           <figcaption id="s2_cap">Intercom panel — press B-9 (Chiani).</figcaption>
         </figure>
 
-        <!-- Bottone spostato qui (funzionante) -->
+        <!-- bottone funzionante -->
         <a class="cta" href="#" onclick="openWith('statusBuilding','/token/leonina-building');return false;" id="btn_building">Open Building Gate</a>
         <div class="status" id="statusBuilding"></div>
       </div>
@@ -145,101 +134,72 @@
 </main>
 
 <script>
-  /* --------- Dizionario 5 lingue (bottoni inclusi) --------- */
+  /* ---- Dizionario 5 lingue (bottoni inclusi) ---- */
   const T = {
-    en: { langName:'English', langLabel:'Language',
-      title:'Check-in Guide — Via del Portico d’Ottavia 1D',
-      addressLine:'Address: Via del Portico d’Ottavia 1D, Rome',
-      help:'Need help?', call:'Call or WhatsApp', phone:'+39 335 524 5756',
-      s1_t:'Arriving at the Building', s1_p:'When you arrive at the entrance shown below, you’ve reached your destination.', s1_cap:'Building entrance / passageway to the courtyard.',
-      s2_t:'Using the Intercom', s2_p1:'Press B-9 (Chiani) on the intercom panel.', s2_p2:'Wait for the click to unlock the gate.', s2_cap:'Intercom panel — press B-9 (Chiani).',
-      s3_t:'Go Through the Passage', s3_p:'Walk straight through the passage to the inner gate.', s3_cap:'Walk straight to the inner gate.',
-      s4_t:'Reaching the Apartment', s4_p1:'Take the stairs/elevator to the 4th floor.', s4_p2:'Call me when you are in front of the door and I will open it for you:', s4_cap:'Apartment door.',
-      btn_building:'Open Building Gate', btn_door:'Open Apartment Door',
-      footer:'niceflatinrome.com • Quick visual check-in guide'
-    },
-    it: { langName:'Italiano', langLabel:'Lingua',
-      title:'Guida Check-in — Via del Portico d’Ottavia 1D',
-      addressLine:'Indirizzo: Via del Portico d’Ottavia 1D, Roma',
-      help:'Serve aiuto?', call:'Chiama o WhatsApp', phone:'+39 335 524 5756',
-      s1_t:'Arrivo al palazzo', s1_p:'Quando vedi l’ingresso qui sotto, sei arrivato a destinazione.', s1_cap:'Ingresso / passaggio verso il cortile.',
-      s2_t:'Uso del citofono', s2_p1:'Premi B-9 (Chiani) sul pannello del citofono.', s2_p2:'Attendi il “clic” di sblocco del cancello.', s2_cap:'Pannello citofono — premi B-9 (Chiani).',
-      s3_t:'Attraversa il passaggio', s3_p:'Prosegui dritto fino al cancelletto interno.', s3_cap:'Dritto fino al cancelletto interno.',
-      s4_t:'Raggiungere l’appartamento', s4_p1:'Scala/ascensore fino al 4° piano.', s4_p2:'Chiamami quando sei davanti alla porta e la apro io:', s4_cap:'Porta dell’appartamento.',
-      btn_building:'Apri cancello', btn_door:'Apri Porta Appartamento',
-      footer:'niceflatinrome.com • Guida rapida di check-in'
-    },
-    fr: { langName:'Français', langLabel:'Langue',
-      title:'Guide d’enregistrement — Via del Portico d’Ottavia 1D',
-      addressLine:'Adresse : Via del Portico d’Ottavia 1D, Rome',
-      help:'Besoin d’aide ?', call:'Appeler ou WhatsApp', phone:'+39 335 524 5756',
-      s1_t:'Arriver à l’immeuble', s1_p:'Lorsque vous voyez l’entrée ci-dessous, vous êtes arrivés à destination.', s1_cap:'Entrée de l’immeuble / passage vers la cour.',
-      s2_t:'Utiliser l’interphone', s2_p1:'Appuyez sur B-9 (Chiani) sur le panneau de l’interphone.', s2_p2:'Attendez le clic de déverrouillage du portail.', s2_cap:'Panneau d’interphone — appuyez sur B-9 (Chiani).',
-      s3_t:'Traversez le passage', s3_p:'Allez tout droit jusqu’au portail intérieur.', s3_cap:'Tout droit jusqu’au portail intérieur.',
-      s4_t:'Rejoindre l’appartement', s4_p1:'Prenez l’escalier/l’ascenseur jusqu’au 4e étage.', s4_p2:'Appelez-moi lorsque vous êtes devant la porte et je l’ouvrirai pour vous :', s4_cap:'Porte de l’appartement.',
-      btn_building:'Ouvrir le portail', btn_door:"Ouvrir la porte de l’appartement",
-      footer:'niceflatinrome.com • Guide visuel rapide de check-in'
-    },
-    de: { langName:'Deutsch', langLabel:'Sprache',
-      title:'Check-in-Leitfaden — Via del Portico d’Ottavia 1D',
-      addressLine:'Adresse: Via del Portico d’Ottavia 1D, Rom',
-      help:'Brauchen Sie Hilfe?', call:'Anrufen oder WhatsApp', phone:'+39 335 524 5756',
-      s1_t:'Ankunft am Gebäude', s1_p:'Wenn Sie den unten gezeigten Eingang sehen, sind Sie am Ziel.', s1_cap:'Gebäudeeingang / Durchgang zum Innenhof.',
-      s2_t:'Gegensprechanlage benutzen', s2_p1:'Drücken Sie B-9 (Chiani) an der Gegensprechanlage.', s2_p2:'Warten Sie auf das Klicken zum Entriegeln des Tores.', s2_cap:'Gegensprechanlage — drücken Sie B-9 (Chiani).',
-      s3_t:'Durch den Durchgang gehen', s3_p:'Gehen Sie geradeaus bis zum inneren Tor.', s3_cap:'Geradeaus bis zum inneren Tor.',
-      s4_t:'Zum Apartment gelangen', s4_p1:'Nehmen Sie die Treppe/den Aufzug in den 4. Stock.', s4_p2:'Rufen Sie mich an, wenn Sie vor der Tür stehen, ich öffne für Sie:', s4_cap:'Apartmenttür.',
-      btn_building:'Tor öffnen', btn_door:'Wohnungstür öffnen',
-      footer:'niceflatinrome.com • Kurzanleitung für den Check-in'
-    },
-    es: { langName:'Español', langLabel:'Idioma',
-      title:'Guía de check-in — Via del Portico d’Ottavia 1D',
-      addressLine:'Dirección: Via del Portico d’Ottavia 1D, Roma',
-      help:'¿Necesitas ayuda?', call:'Llama o WhatsApp', phone:'+39 335 524 5756',
-      s1_t:'Llegada al edificio', s1_p:'Cuando veas la entrada que aparece abajo, habrás llegado a tu destino.', s1_cap:'Entrada del edificio / pasaje hacia el patio.',
-      s2_t:'Uso del portero', s2_p1:'Pulsa B-9 (Chiani) en el panel del portero.', s2_p2:'Espera el clic que desbloquea la puerta.', s2_cap:'Panel del portero — pulsa B-9 (Chiani).',
-      s3_t:'Cruza el pasaje', s3_p:'Sigue recto hasta la puerta interior.', s3_cap:'Recto hasta la puerta interior.',
-      s4_t:'Llegar al apartamento', s4_p1:'Toma las escaleras/el ascensor hasta el 4º piso.', s4_p2:'Llámame cuando estés frente a la puerta y la abriré por ti:', s4_cap:'Puerta del apartamento.',
-      btn_building:'Abrir el portón', btn_door:'Abrir la puerta del apartamento',
-      footer:'niceflatinrome.com • Guía visual rápida de check-in'
-    }
+    en:{langName:'English',langLabel:'Language',
+      title:'Check-in Guide — Via del Portico d’Ottavia 1D',addressLine:'Address: Via del Portico d’Ottavia 1D, Rome',
+      help:'Need help?',call:'Call or WhatsApp',phone:'+39 335 524 5756',
+      s1_t:'Arriving at the Building',s1_p:'When you arrive at the entrance shown below, you’ve reached your destination.',s1_cap:'Building entrance / passageway to the courtyard.',
+      s2_t:'Using the Intercom',s2_p1:'Press B-9 (Chiani) on the intercom panel.',s2_p2:'Wait for the click to unlock the gate.',s2_cap:'Intercom panel — press B-9 (Chiani).',
+      s3_t:'Go Through the Passage',s3_p:'Walk straight through the passage to the inner gate.',s3_cap:'Walk straight to the inner gate.',
+      s4_t:'Reaching the Apartment',s4_p1:'Take the stairs/elevator to the 4th floor.',s4_p2:'Call me when you are in front of the door and I will open it for you:',s4_cap:'Apartment door.',
+      btn_building:'Open Building Gate',btn_door:'Open Apartment Door',footer:'niceflatinrome.com • Quick visual check-in guide'},
+    it:{langName:'Italiano',langLabel:'Lingua',
+      title:'Guida Check-in — Via del Portico d’Ottavia 1D',addressLine:'Indirizzo: Via del Portico d’Ottavia 1D, Roma',
+      help:'Serve aiuto?',call:'Chiama o WhatsApp',phone:'+39 335 524 5756',
+      s1_t:'Arrivo al palazzo',s1_p:'Quando vedi l’ingresso qui sotto, sei arrivato a destinazione.',s1_cap:'Ingresso / passaggio verso il cortile.',
+      s2_t:'Uso del citofono',s2_p1:'Premi B-9 (Chiani) sul pannello del citofono.',s2_p2:'Attendi il “clic” di sblocco del cancello.',s2_cap:'Pannello citofono — premi B-9 (Chiani).',
+      s3_t:'Attraversa il passaggio',s3_p:'Prosegui dritto fino al cancelletto interno.',s3_cap:'Dritto fino al cancelletto interno.',
+      s4_t:'Raggiungere l’appartamento',s4_p1:'Scala/ascensore fino al 4° piano.',s4_p2:'Chiamami quando sei davanti alla porta e la apro io:',s4_cap:'Porta dell’appartamento.',
+      btn_building:'Apri cancello',btn_door:'Apri Porta Appartamento',footer:'niceflatinrome.com • Guida rapida di check-in'},
+    fr:{langName:'Français',langLabel:'Langue',
+      title:'Guide d’enregistrement — Via del Portico d’Ottavia 1D',addressLine:'Adresse : Via del Portico d’Ottavia 1D, Rome',
+      help:'Besoin d’aide ?',call:'Appeler ou WhatsApp',phone:'+39 335 524 5756',
+      s1_t:'Arriver à l’immeuble',s1_p:'Lorsque vous voyez l’entrée ci-dessous, vous êtes arrivés à destination.',s1_cap:'Entrée de l’immeuble / passage vers la cour.',
+      s2_t:'Utiliser l’interphone',s2_p1:'Appuyez sur B-9 (Chiani) sur l’interphone.',s2_p2:'Attendez le clic de déverrouillage du portail.',s2_cap:'Panneau d’interphone — appuyez sur B-9 (Chiani).',
+      s3_t:'Traversez le passage',s3_p:'Allez tout droit jusqu’au portail intérieur.',s3_cap:'Tout droit jusqu’au portail intérieur.',
+      s4_t:'Rejoindre l’appartement',s4_p1:'Prenez l’escalier/l’ascenseur jusqu’au 4e étage.',s4_p2:'Appelez-moi lorsque vous êtes devant la porte et je l’ouvrirai pour vous :',s4_cap:'Porte de l’appartement.',
+      btn_building:'Ouvrir le portail',btn_door:"Ouvrir la porte de l’appartement",footer:'niceflatinrome.com • Guide visuel rapide de check-in'},
+    de:{langName:'Deutsch',langLabel:'Sprache',
+      title:'Check-in-Leitfaden — Via del Portico d’Ottavia 1D',addressLine:'Adresse: Via del Portico d’Ottavia 1D, Rom',
+      help:'Brauchen Sie Hilfe?',call:'Anrufen oder WhatsApp',phone:'+39 335 524 5756',
+      s1_t:'Ankunft am Gebäude',s1_p:'Wenn Sie den unten gezeigten Eingang sehen, sind Sie am Ziel.',s1_cap:'Gebäudeeingang / Durchgang zum Innenhof.',
+      s2_t:'Gegensprechanlage benutzen',s2_p1:'Drücken Sie B-9 (Chiani) an der Gegensprechanlage.',s2_p2:'Warten Sie auf das Klicken zum Entriegeln des Tores.',s2_cap:'Gegensprechanlage — drücken Sie B-9 (Chiani).',
+      s3_t:'Durch den Durchgang gehen',s3_p:'Gehen Sie geradeaus bis zum inneren Tor.',s3_cap:'Geradeaus bis zum inneren Tor.',
+      s4_t:'Zum Apartment gelangen',s4_p1:'Nehmen Sie die Treppe/den Aufzug in den 4. Stock.',s4_p2:'Rufen Sie mich an, wenn Sie vor der Tür stehen, ich öffne für Sie:',s4_cap:'Apartmenttür.',
+      btn_building:'Tor öffnen',btn_door:'Wohnungstür öffnen',footer:'niceflatinrome.com • Kurzanleitung für den Check-in'},
+    es:{langName:'Español',langLabel:'Idioma',
+      title:'Guía de check-in — Via del Portico d’Ottavia 1D',addressLine:'Dirección: Via del Portico d’Ottavia 1D, Roma',
+      help:'¿Necesitas ayuda?',call:'Llama o WhatsApp',phone:'+39 335 524 5756',
+      s1_t:'Llegada al edificio',s1_p:'Cuando veas la entrada que aparece abajo, habrás llegado a tu destino.',s1_cap:'Entrada del edificio / pasaje hacia el patio.',
+      s2_t:'Uso del portero',s2_p1:'Pulsa B-9 (Chiani) en el panel del portero.',s2_p2:'Espera el clic que desbloquea la puerta.',s2_cap:'Panel del portero — pulsa B-9 (Chiani).',
+      s3_t:'Cruza el pasaje',s3_p:'Sigue recto hasta la puerta interior.',s3_cap:'Recto hasta la puerta interior.',
+      s4_t:'Llegar al apartamento',s4_p1:'Toma las escaleras/el ascensor hasta el 4º piso.',s4_p2:'Llámame cuando estés frente a la puerta y la abriré por ti:',s4_cap:'Puerta del apartamento.',
+      btn_building:'Abrir el portón',btn_door:'Abrir la puerta del apartamento',footer:'niceflatinrome.com • Guía visual rápida de check-in'}
   };
 
-  /* ---------- Rendering lingue ---------- */
-  const q = new URLSearchParams(location.search);
-  const lang = (q.get('lang')||'en').toLowerCase();
-  const L = T[lang] || T.en;
+  const q=new URLSearchParams(location.search);
+  const lang=(q.get('lang')||'en').toLowerCase();
+  const L=T[lang]||T.en;
 
-  // barra lingue (link reali)
-  const buttons = Object.entries(T).map(([code,v])=>{
-    const cls = (code===lang)?'lang-btn active':'lang-btn';
+  const buttons=Object.entries(T).map(([code,v])=>{
+    const cls=(code===lang)?'lang-btn active':'lang-btn';
     return `<a class="${cls}" href="?lang=${code}">${v.langName}</a>`;
   }).join(' ');
   document.getElementById('langbar').innerHTML = `${L.langLabel}: ${buttons}`;
 
-  // mapping testi
-  const setText = (id, text) => { const el=document.getElementById(id); if(el) el.textContent=text; };
+  const setText=(id,txt)=>{const el=document.getElementById(id); if(el) el.textContent=txt;};
 
-  setText('title', L.title);
-  setText('addr', L.addressLine);
-
-  setText('s1_t', L.s1_t); setText('s1_p', L.s1_p); setText('s1_cap', L.s1_cap);
-
-  setText('s2_t', L.s2_t); setText('s2_p1', L.s2_p1); setText('s2_p2', L.s2_p2); setText('s2_cap', L.s2_cap);
-
-  setText('s3_t', L.s3_t); setText('s3_p', L.s3_p); setText('s3_cap', L.s3_cap);
-
-  setText('s4_t', L.s4_t); setText('s4_p1', L.s4_p1); setText('s4_p2', L.s4_p2); setText('s4_cap', L.s4_cap);
-
-  setText('help', L.help);
-  const call = document.getElementById('call');
-  if (call && call.firstChild) call.firstChild.textContent = L.call + ': ';
-  const phone = document.getElementById('phone'); if (phone) phone.textContent = L.phone;
-  const phone2 = document.getElementById('phone2'); if (phone2) phone2.textContent = L.phone;
-
-  setText('btn_building', L.btn_building);
-  setText('btn_door', L.btn_door);
-
-  setText('footer', L.footer);
+  setText('title',L.title); setText('addr',L.addressLine);
+  setText('s1_t',L.s1_t); setText('s1_p',L.s1_p); setText('s1_cap',L.s1_cap);
+  setText('s2_t',L.s2_t); setText('s2_p1',L.s2_p1); setText('s2_p2',L.s2_p2); setText('s2_cap',L.s2_cap);
+  setText('s3_t',L.s3_t); setText('s3_p',L.s3_p); setText('s3_cap',L.s3_cap);
+  setText('s4_t',L.s4_t); setText('s4_p1',L.s4_p1); setText('s4_p2',L.s4_p2); setText('s4_cap',L.s4_cap);
+  setText('help',L.help); if(document.getElementById('call')?.firstChild){document.getElementById('call').firstChild.textContent=L.call+': ';}
+  if(document.getElementById('phone')) document.getElementById('phone').textContent=L.phone;
+  if(document.getElementById('phone2')) document.getElementById('phone2').textContent=L.phone;
+  setText('btn_building',L.btn_building); setText('btn_door',L.btn_door);
+  setText('footer',L.footer);
 </script>
 </body>
 </html>
