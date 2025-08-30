@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Check-in Guide — Via della Scala 17, unit A/1</title>
+<title id="title">Check-in Guide — Via della Scala 17, unit A/1</title>
 <link rel="icon" href="building-door.jpg">
 <link rel="preload" as="image" href="building-door.jpg?v=10">
 <style>
@@ -14,6 +14,9 @@
   header{position:sticky;top:0;background:var(--card);border-bottom:1px solid var(--line);padding:12px 14px;z-index:5}
   h1{font-size:20px;margin:0}
   .addr{font-size:14px;color:var(--muted)}
+  .lang{font-size:14px;margin-top:6px}
+  .lang a{color:var(--ink);text-decoration:none}
+  .lang a.active{text-decoration:underline}
   .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin:14px 0}
   .step{display:flex;gap:12px;align-items:flex-start}
   .num{flex:0 0 36px;height:36px;border-radius:50%;background:var(--brand);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700}
@@ -30,8 +33,17 @@
 </head>
 <body>
 <header class="wrap">
-  <h1>Check-in Guide — Via della Scala 17, unit A/1</h1>
-  <div class="addr">Address: Via della Scala 17, Rome • Unit: A/1</div>
+  <h1 id="h1">Check-in Guide — Via della Scala 17, unit A/1</h1>
+  <div class="addr" id="addr">Address: Via della Scala 17, Rome • Unit: A/1</div>
+  <!-- Barra lingue -->
+  <div class="lang" id="langbar">
+    Language:
+    <a href="?lang=en" data-lang="en" class="active">English</a> ·
+    <a href="?lang=it" data-lang="it">Italiano</a> ·
+    <a href="?lang=fr" data-lang="fr">Français</a> ·
+    <a href="?lang=de" data-lang="de">Deutsch</a> ·
+    <a href="?lang=es" data-lang="es">Español</a>
+  </div>
 </header>
 
 <main class="wrap">
@@ -40,17 +52,17 @@
     <div class="step">
       <div class="num">1</div>
       <div>
-        <h2>Finding the Building Entrance</h2>
-        <p>Welcome in front of your building door.</p>
+        <h2 id="s1_t">Finding the Building Entrance</h2>
+        <p id="s1_p">Welcome in front of your building door.</p>
         <figure>
           <div class="imgframe">
             <object data="building-door.jpg?v=10" type="image/jpeg">
               <img src="building-door.jpg?v=10" alt="Main entrance — Via della Scala 17">
             </object>
           </div>
-          <figcaption>Main entrance — Via della Scala 17.</figcaption>
+          <figcaption id="s1_cap">Main entrance — Via della Scala 17.</figcaption>
         </figure>
-        <a class="cta" href="#" onclick="openWith('statusBuilding','/token/via-della-scala-building');return false;">➜ Open Building Gates</a>
+        <a class="cta" href="#" onclick="openWith('statusBuilding','/token/via-della-scala-building');return false;" id="btn_building">➜ Open Building Gates</a>
         <span class="status" id="statusBuilding"></span>
       </div>
     </div>
@@ -61,8 +73,8 @@
     <div class="step">
       <div class="num">2</div>
       <div>
-        <h2>Go through the corridor</h2>
-        <p>After the click, enter and turn left.</p>
+        <h2 id="s2_t">Go through the corridor</h2>
+        <p id="s2_p">After the click, enter and turn left.</p>
         <figure>
           <div class="imgframe">
             <!-- tenta .jpg, se 404 passa a .jpeg -->
@@ -71,7 +83,7 @@
                    if(this.dataset.triedjpeg!=='1'){ this.dataset.triedjpeg='1'; this.src='courtyard.jpeg?v=10'; }
                  ">
           </div>
-          <figcaption>Follow the arrow, then turn left.</figcaption>
+          <figcaption id="s2_cap">Follow the arrow, then turn left.</figcaption>
         </figure>
       </div>
     </div>
@@ -82,28 +94,28 @@
     <div class="step">
       <div class="num">3</div>
       <div>
-        <h2>This is your apartment door</h2>
-        <p>You’ve reached the green door on the left. This is your apartment entrance.</p>
+        <h2 id="s3_t">This is your apartment door</h2>
+        <p id="s3_p">You’ve reached the green door on the left. This is your apartment entrance.</p>
         <figure>
           <div class="imgframe">
             <object data="apartment-green-door.jpg?v=10" type="image/jpeg">
               <img src="apartment-green-door.jpg?v=10" alt="Apartment green door — your entrance">
             </object>
           </div>
-          <figcaption>Green door = your apartment entrance.</figcaption>
+          <figcaption id="s3_cap">Green door = your apartment entrance.</figcaption>
         </figure>
-        <a class="cta" href="#" onclick="openWith('statusApartment','/token/via-della-scala-door');return false;">➜ Open Apartment Door</a>
+        <a class="cta" href="#" onclick="openWith('statusApartment','/token/via-della-scala-door');return false;" id="btn_apartment">➜ Open Apartment Door</a>
         <span class="status" id="statusApartment"></span>
       </div>
     </div>
   </section>
 
   <section class="card">
-    <h2>Need help?</h2>
-    <p>Call or WhatsApp: <a class="cta" href="tel:+393355245756">+39 335 524 5756</a></p>
+    <h2 id="help_h">Need help?</h2>
+    <p id="help_p">Call or WhatsApp: <a class="cta" href="tel:+393355245756">+39 335 524 5756</a></p>
   </section>
 
-  <footer>niceflatinrome.com • Quick visual guide for arrivals at Via della Scala 17, unit A/1</footer>
+  <footer id="footer">niceflatinrome.com • Quick visual guide for arrivals at Via della Scala 17, unit A/1</footer>
 </main>
 
 <script>
@@ -117,6 +129,135 @@
       else{ s.textContent=(j && (j.error||j.message)) ? String(j.error||j.message) : 'No URL returned.'; }
     }catch(e){ s.textContent='Network error. Try again.'; }
   }
+
+  /* ----------- Dizionario testi: 5 lingue ----------- */
+  const T = {
+    en: {
+      title:'Check-in Guide — Via della Scala 17, unit A/1',
+      addr:'Address: Via della Scala 17, Rome • Unit: A/1',
+      s1_t:'Finding the Building Entrance',
+      s1_p:'Welcome in front of your building door.',
+      s1_cap:'Main entrance — Via della Scala 17.',
+      btn_building:'➜ Open Building Gates',
+      s2_t:'Go through the corridor',
+      s2_p:'After the click, enter and turn left.',
+      s2_cap:'Follow the arrow, then turn left.',
+      s3_t:'This is your apartment door',
+      s3_p:'You’ve reached the green door on the left. This is your apartment entrance.',
+      s3_cap:'Green door = your apartment entrance.',
+      btn_apartment:'➜ Open Apartment Door',
+      help_h:'Need help?',
+      help_p:'Call or WhatsApp: <a class="cta" href="tel:+393355245756">+39 335 524 5756</a>',
+      footer:'niceflatinrome.com • Quick visual guide for arrivals at Via della Scala 17, unit A/1'
+    },
+    it: {
+      title:'Guida Check-in — Via della Scala 17, interno A/1',
+      addr:'Indirizzo: Via della Scala 17, Roma • Interno: A/1',
+      s1_t:"Individua l’ingresso del palazzo",
+      s1_p:'Sei davanti al portone del tuo stabile.',
+      s1_cap:'Ingresso principale — Via della Scala 17.',
+      btn_building:'➜ Apri il portone',
+      s2_t:'Attraversa il corridoio',
+      s2_p:'Dopo il clic entra e gira a sinistra.',
+      s2_cap:'Segui la freccia, poi gira a sinistra.',
+      s3_t:'Questa è la porta del tuo appartamento',
+      s3_p:'Hai raggiunto la porta verde sulla sinistra. È l’ingresso del tuo appartamento.',
+      s3_cap:'Porta verde = ingresso del tuo appartamento.',
+      btn_apartment:'➜ Apri porta appartamento',
+      help_h:'Serve aiuto?',
+      help_p:'Chiama o WhatsApp: <a class="cta" href="tel:+393355245756">+39 335 524 5756</a>',
+      footer:'niceflatinrome.com • Guida rapida per gli arrivi in Via della Scala 17, interno A/1'
+    },
+    fr: {
+      title:'Guide d’enregistrement — Via della Scala 17, unité A/1',
+      addr:'Adresse : Via della Scala 17, Rome • Unité : A/1',
+      s1_t:'Trouver l’entrée de l’immeuble',
+      s1_p:'Bienvenue devant la porte de votre immeuble.',
+      s1_cap:'Entrée principale — Via della Scala 17.',
+      btn_building:"➜ Ouvrir le portail de l’immeuble",
+      s2_t:'Traversez le couloir',
+      s2_p:'Après le clic, entrez et tournez à gauche.',
+      s2_cap:'Suivez la flèche puis tournez à gauche.',
+      s3_t:'Voici la porte de votre appartement',
+      s3_p:'Vous êtes arrivé à la porte verte sur la gauche. C’est l’entrée de votre appartement.',
+      s3_cap:'Porte verte = entrée de votre appartement.',
+      btn_apartment:"➜ Ouvrir la porte de l’appartement",
+      help_h:'Besoin d’aide ?',
+      help_p:'Appeler ou WhatsApp : <a class="cta" href="tel:+393355245756">+39 335 524 5756</a>',
+      footer:"niceflatinrome.com • Guide visuel rapide d’arrivée à Via della Scala 17, unité A/1"
+    },
+    de: {
+      title:'Check-in-Leitfaden — Via della Scala 17, Einheit A/1',
+      addr:'Adresse: Via della Scala 17, Rom • Einheit: A/1',
+      s1_t:'Gebäudeeingang finden',
+      s1_p:'Willkommen vor der Haustür Ihres Gebäudes.',
+      s1_cap:'Haupteingang — Via della Scala 17.',
+      btn_building:'➜ Haustor öffnen',
+      s2_t:'Durch den Flur gehen',
+      s2_p:'Nach dem Klick eintreten und links abbiegen.',
+      s2_cap:'Folgen Sie dem Pfeil, dann links abbiegen.',
+      s3_t:'Das ist Ihre Wohnungstür',
+      s3_p:'Sie sind bei der grünen Tür links angekommen. Das ist der Eingang Ihrer Wohnung.',
+      s3_cap:'Grüne Tür = Wohnungseingang.',
+      btn_apartment:'➜ Wohnungstür öffnen',
+      help_h:'Brauchen Sie Hilfe?',
+      help_p:'Anrufen oder WhatsApp: <a class="cta" href="tel:+393355245756">+39 335 524 5756</a>',
+      footer:'niceflatinrome.com • Kurze visuelle Ankunftshilfe für Via della Scala 17, Einheit A/1'
+    },
+    es: {
+      title:'Guía de check-in — Via della Scala 17, unidad A/1',
+      addr:'Dirección: Via della Scala 17, Roma • Unidad: A/1',
+      s1_t:'Encontrar la entrada del edificio',
+      s1_p:'Bienvenido frente a la puerta del edificio.',
+      s1_cap:'Entrada principal — Via della Scala 17.',
+      btn_building:'➜ Abrir puerta del edificio',
+      s2_t:'Cruza el pasillo',
+      s2_p:'Después del clic, entra y gira a la izquierda.',
+      s2_cap:'Sigue la flecha y luego gira a la izquierda.',
+      s3_t:'Esta es la puerta de tu apartamento',
+      s3_p:'Has llegado a la puerta verde de la izquierda. Es la entrada de tu apartamento.',
+      s3_cap:'Puerta verde = entrada de tu apartamento.',
+      btn_apartment:'➜ Abrir puerta del apartamento',
+      help_h:'¿Necesitas ayuda?',
+      help_p:'Llama o WhatsApp: <a class="cta" href="tel:+393355245756">+39 335 524 5756</a>',
+      footer:'niceflatinrome.com • Guía visual rápida para llegadas a Via della Scala 17, unidad A/1'
+    }
+  };
+
+  (function(){
+    const params=new URLSearchParams(location.search);
+    const L=(params.get('lang')||'en').toLowerCase();
+    const t=T[L]||T.en;
+
+    // attiva link selezionato
+    document.querySelectorAll('#langbar a').forEach(a=>{
+      a.classList.toggle('active', a.getAttribute('data-lang')===L);
+    });
+
+    // applica contenuti
+    document.getElementById('title').textContent=t.title;
+    document.getElementById('h1').textContent=t.title;
+    document.getElementById('addr').textContent=t.addr;
+
+    document.getElementById('s1_t').textContent=t.s1_t;
+    document.getElementById('s1_p').textContent=t.s1_p;
+    document.getElementById('s1_cap').textContent=t.s1_cap;
+    document.getElementById('btn_building').textContent=t.btn_building;
+
+    document.getElementById('s2_t').textContent=t.s2_t;
+    document.getElementById('s2_p').textContent=t.s2_p;
+    document.getElementById('s2_cap').textContent=t.s2_cap;
+
+    document.getElementById('s3_t').textContent=t.s3_t;
+    document.getElementById('s3_p').textContent=t.s3_p;
+    document.getElementById('s3_cap').textContent=t.s3_cap;
+    document.getElementById('btn_apartment').textContent=t.btn_apartment;
+
+    document.getElementById('help_h').textContent=t.help_h;
+    document.getElementById('help_p').innerHTML=t.help_p;
+
+    document.getElementById('footer').textContent=t.footer;
+  })();
 </script>
 </body>
 </html>
