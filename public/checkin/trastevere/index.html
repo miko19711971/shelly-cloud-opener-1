@@ -1,94 +1,9 @@
-// Check-in — Viale Trastevere 108 (multilingual static guide)
-import express from 'express';
-import cors from 'cors';
-
-const app = express();
-app.use(cors());
-app.use(express.json());
-app.use(express.static('.')); // serve images from repo root
-
-// ---------- TRANSLATIONS ----------
-const T = {
-  en: {
-    langName: 'English',
-    langLabel: 'Language',
-    title: 'Check-in Guide — Viale Trastevere 108',
-    addressLine: 'Address: Viale Trastevere 108, Rome • Intercom: B-9 “Chiani”',
-    help: 'Need help?',
-    call: 'Call or WhatsApp',
-    phone: '+39 335 524 5756',
-
-    s1_t: 'Arriving at the Building',
-    s1_p: 'When you arrive at the entrance shown below, you’ve reached your destination.',
-    s1_cap: 'Building entrance / passageway to the courtyard.',
-
-    s2_t: 'Using the Intercom',
-    s2_p1: 'Press B-9 (Chiani) on the intercom panel, then call me at',
-    s2_p2: 'Wait for the click to unlock the gate.',
-    s2_cap: 'Intercom panel — press B-9 (Chiani).',
-
-    s3_t: 'Go Through the Passage',
-    s3_p: 'Walk straight through the passage to the inner gate.',
-    s3_cap: 'Walk straight to the inner gate.',
-
-    s4_t: 'Reaching the Apartment',
-    s4_p1: 'Take the stairs/elevator to the 4th floor.',
-    s4_p2: 'Call me when you are in front of the door and I will open it for you:',
-    s4_cap: 'Apartment door.',
-
-    footer: 'niceflatinrome.com • Quick visual check-in guide',
-  },
-
-  it: {
-    langName: 'Italiano',
-    langLabel: 'Lingua',
-    title: 'Guida Check-in — Viale Trastevere 108',
-    addressLine: 'Indirizzo: Viale Trastevere 108, Roma • Citofono: B-9 “Chiani”',
-    help: 'Serve aiuto?',
-    call: 'Chiama o WhatsApp',
-    phone: '+39 335 524 5756',
-
-    s1_t: 'Arrivo al palazzo',
-    s1_p: 'Quando vedi l’ingresso qui sotto, sei arrivato a destinazione.',
-    s1_cap: 'Ingresso / passaggio verso il cortile.',
-
-    s2_t: 'Uso del citofono',
-    s2_p1: 'Premi B-9 (Chiani) sul pannello, poi chiamami al',
-    s2_p2: 'Attendi il “clic” di sblocco del cancello.',
-    s2_cap: 'Pannello citofono — premi B-9 (Chiani).',
-
-    s3_t: 'Attraversa il passaggio',
-    s3_p: 'Prosegui dritto fino al cancelletto interno.',
-    s3_cap: 'Dritto fino al cancelletto interno.',
-
-    s4_t: 'Raggiungere l’appartamento',
-    s4_p1: 'Scala/ascensore fino al 4° piano.',
-    s4_p2: 'Chiamami quando sei davanti alla porta e la apro io:',
-    s4_cap: 'Porta dell’appartamento.',
-
-    footer: 'niceflatinrome.com • Guida rapida di check-in',
-  }
-};
-
-const fallback = 'en';
-
-// ---------- ROUTE ----------
-app.get('/', (req, res) => {
-  const lang = (req.query.lang || '').toLowerCase();
-  const L = T[lang] || T[fallback];
-
-  const buttons = Object.entries(T)
-    .map(([code, v]) => {
-      const active = (L === T[code]) ? 'class="lang-btn active"' : 'class="lang-btn"';
-      return `<a ${active} href="?lang=${code}">${v.langName}</a>`;
-    }).join(' ');
-
-  const html = `<!doctype html>
-<html lang="${lang || fallback}">
+<!doctype html>
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>${L.title}</title>
+<title>Check-in Guide — Viale Trastevere 108</title>
 <link rel="icon" href="building-entrance.jpg">
 <style>
   :root { --brand:#2b2118; --ink:#1f2937; --muted:#6b7280; --bg:#f7f7f7; --card:#ffffff; --line:#e5e7eb; }
@@ -108,16 +23,30 @@ app.get('/', (req, res) => {
   p{margin:6px 0;line-height:1.45}
   figure{margin:10px 0}
   img{max-width:100%;height:auto;border-radius:10px;border:1px solid var(--line);display:block}
-  figcaption{font-size:12px;color:var(--muted);margin-top:6px}
-  .cta{display:inline-block;margin-left:6px;padding:7px 10px;border-radius:10px;background:var(--brand);color:#fff;text-decoration:none}
+  figcaption{font-size:12px;color:var(--muted);margin-top:6px;text-align:center}
+  .cta{display:inline-block;margin-top:10px;padding:10px 12px;border-radius:10px;background:var(--brand);color:#fff;text-decoration:none}
+  .status{font-size:13px;color:#6b7280;margin-top:6px}
   footer{color:var(--muted);text-align:center;font-size:12px;margin:18px 0}
 </style>
+<script>
+  // Tiny helper: generate token and redirect to one-time link
+  async function openWith(statusId, path){
+    const s = document.getElementById(statusId);
+    try{
+      s.textContent = 'Generating one-time key…';
+      const r = await fetch(path, {cache:'no-store'});
+      const j = await r.json();
+      if (j && j.url){ s.textContent = 'Key OK. Redirecting…'; location.href = j.url; }
+      else { s.textContent = (j && (j.error||j.message)) ? String(j.error||j.message) : 'No URL returned.'; }
+    }catch(e){ s.textContent = String(e); }
+  }
+</script>
 </head>
 <body>
 <header class="wrap">
-  <h1>${L.title}</h1>
-  <div class="addr">${L.addressLine}</div>
-  <div class="langbar">${L.langLabel}: ${buttons}</div>
+  <h1 id="title">Check-in Guide — Viale Trastevere 108</h1>
+  <div class="addr" id="addr">Address: Viale Trastevere 108, Rome • Intercom: B-9 “Chiani”</div>
+  <div class="langbar" id="langbar"></div>
 </header>
 
 <main class="wrap">
@@ -126,12 +55,15 @@ app.get('/', (req, res) => {
     <div class="step">
       <div class="num">1</div>
       <div>
-        <h2>${L.s1_t}</h2>
-        <p>${L.s1_p}</p>
+        <h2 id="s1_t">Arriving at the Building</h2>
+        <p id="s1_p">When you arrive at the entrance shown below, you’ve reached your destination.</p>
         <figure>
-          <img src="building-entrance.jpg" alt="Building entrance">
-          <figcaption>${L.s1_cap}</figcaption>
+          <img src="building-entrance.jpg" alt="Building entrance / passageway to the courtyard">
+          <figcaption id="s1_cap">Building entrance / passageway to the courtyard.</figcaption>
         </figure>
+
+        <a class="cta" href="#" onclick="openWith('statusBuilding','/token/viale-trastevere-building');return false;" id="btn_building">Open Building Gate</a>
+        <div class="status" id="statusBuilding"></div>
       </div>
     </div>
   </section>
@@ -141,11 +73,13 @@ app.get('/', (req, res) => {
     <div class="step">
       <div class="num">2</div>
       <div>
-        <h2>${L.s2_t}</h2>
-        <p>${L.s2_p1} <a class="cta" href="tel:+393355245756">${L.phone}</a>. ${L.s2_p2}</p>
+        <h2 id="s2_t">Using the Intercom</h2>
+        <p><span id="s2_p1">Press B-9 (Chiani) on the intercom panel, then call me at</span>
+           <a class="cta" href="tel:+393355245756" id="phone">+39 335 524 5756</a>.
+           <span id="s2_p2">Wait for the click to unlock the gate.</span></p>
         <figure>
-          <img src="intercom-b9.jpg" alt="Intercom B-9 Chiani">
-          <figcaption>${L.s2_cap}</figcaption>
+          <img src="intercom-b9.jpg" alt="Intercom panel — press B-9 (Chiani)">
+          <figcaption id="s2_cap">Intercom panel — press B-9 (Chiani).</figcaption>
         </figure>
       </div>
     </div>
@@ -156,11 +90,11 @@ app.get('/', (req, res) => {
     <div class="step">
       <div class="num">3</div>
       <div>
-        <h2>${L.s3_t}</h2>
-        <p>${L.s3_p}</p>
+        <h2 id="s3_t">Go Through the Passage</h2>
+        <p id="s3_p">Walk straight through the passage to the inner gate.</p>
         <figure>
-          <img src="corridor-gate.jpg" alt="Passage to inner gate">
-          <figcaption>${L.s3_cap}</figcaption>
+          <img src="corridor-gate.jpg" alt="Walk straight to the inner gate">
+          <figcaption id="s3_cap">Walk straight to the inner gate.</figcaption>
         </figure>
       </div>
     </div>
@@ -171,31 +105,123 @@ app.get('/', (req, res) => {
     <div class="step">
       <div class="num">4</div>
       <div>
-        <h2>${L.s4_t}</h2>
-        <p>${L.s4_p1}</p>
+        <h2 id="s4_t">Reaching the Apartment</h2>
+        <p id="s4_p1">Take the stairs/elevator to the 4th floor.</p>
         <figure>
           <img src="apartment-door.jpg" alt="Apartment door">
-          <figcaption>${L.s4_cap}</figcaption>
+          <figcaption id="s4_cap">Apartment door.</figcaption>
         </figure>
-        <p>${L.s4_p2} <a class="cta" href="tel:+393355245756">${L.phone}</a></p>
+
+        <a class="cta" href="#" onclick="openWith('statusDoor','/token/viale-trastevere-door');return false;" id="btn_door">Open Apartment Door</a>
+        <div class="status" id="statusDoor"></div>
+
+        <p><span id="s4_p2">Call me when you are in front of the door and I will open it for you:</span>
+           <a class="cta" href="tel:+393355245756" id="phone2">+39 335 524 5756</a></p>
       </div>
     </div>
   </section>
 
   <section class="card">
-    <h2>${L.help}</h2>
-    <p>${L.call}: <a class="cta" href="tel:+393355245756">${L.phone}</a></p>
+    <h2 id="help">Need help?</h2>
+    <p id="call">Call or WhatsApp: <a class="cta" href="tel:+393355245756">+39 335 524 5756</a></p>
   </section>
 
-  <footer>${L.footer}</footer>
+  <footer id="footer">niceflatinrome.com • Quick visual check-in guide</footer>
 </main>
-</body>
-</html>`;
-  res.setHeader('content-type','text/html; charset=utf-8');
-  res.end(html);
-});
 
-const port = process.env.PORT || 8787;
-app.listen(port, () =>
-  console.log('Check-in guide running on http://localhost:' + port)
-);
+<script>
+  // --------- Translations ----------
+  const T = {
+    en: { langName:'English', langLabel:'Language',
+      title:'Check-in Guide — Viale Trastevere 108',
+      addressLine:'Address: Viale Trastevere 108, Rome • Intercom: B-9 “Chiani”',
+      help:'Need help?', call:'Call or WhatsApp', phone:'+39 335 524 5756',
+      s1_t:'Arriving at the Building', s1_p:'When you arrive at the entrance shown below, you’ve reached your destination.', s1_cap:'Building entrance / passageway to the courtyard.',
+      s2_t:'Using the Intercom', s2_p1:'Press B-9 (Chiani) on the intercom panel, then call me at', s2_p2:'Wait for the click to unlock the gate.', s2_cap:'Intercom panel — press B-9 (Chiani).',
+      s3_t:'Go Through the Passage', s3_p:'Walk straight through the passage to the inner gate.', s3_cap:'Walk straight to the inner gate.',
+      s4_t:'Reaching the Apartment', s4_p1:'Take the stairs/elevator to the 4th floor.', s4_p2:'Call me when you are in front of the door and I will open it for you:', s4_cap:'Apartment door.',
+      footer:'niceflatinrome.com • Quick visual check-in guide'
+    },
+    it: { langName:'Italiano', langLabel:'Lingua',
+      title:'Guida Check-in — Viale Trastevere 108',
+      addressLine:'Indirizzo: Viale Trastevere 108, Roma • Citofono: B-9 “Chiani”',
+      help:'Serve aiuto?', call:'Chiama o WhatsApp', phone:'+39 335 524 5756',
+      s1_t:'Arrivo al palazzo', s1_p:'Quando vedi l’ingresso qui sotto, sei arrivato a destinazione.', s1_cap:'Ingresso / passaggio verso il cortile.',
+      s2_t:'Uso del citofono', s2_p1:'Premi B-9 (Chiani) sul pannello, poi chiamami al', s2_p2:'Attendi il “clic” di sblocco del cancello.', s2_cap:'Pannello citofono — premi B-9 (Chiani).',
+      s3_t:'Attraversa il passaggio', s3_p:'Prosegui dritto fino al cancelletto interno.', s3_cap:'Dritto fino al cancelletto interno.',
+      s4_t:'Raggiungere l’appartamento', s4_p1:'Scala/ascensore fino al 4° piano.', s4_p2:'Chiamami quando sei davanti alla porta e la apro io:', s4_cap:'Porta dell’appartamento.',
+      footer:'niceflatinrome.com • Guida rapida di check-in'
+    },
+    es: { langName:'Español', langLabel:'Idioma',
+      title:'Guía de Check-in — Viale Trastevere 108',
+      addressLine:'Dirección: Viale Trastevere 108, Roma • Portero: B-9 “Chiani”',
+      help:'¿Necesitas ayuda?', call:'Llamar o WhatsApp', phone:'+39 335 524 5756',
+      s1_t:'Llegada al edificio', s1_p:'Cuando veas la entrada de abajo, has llegado a tu destino.', s1_cap:'Entrada del edificio / pasillo hacia el patio.',
+      s2_t:'Uso del portero', s2_p1:'Pulsa B-9 (Chiani) en el panel y luego llámame al', s2_p2:'Espera el “clic” para que se abra la puerta.', s2_cap:'Portero — pulsa B-9 (Chiani).',
+      s3_t:'Cruza el pasillo', s3_p:'Camina recto por el pasillo hasta la reja interior.', s3_cap:'Recto hasta la reja interior.',
+      s4_t:'Llegar al apartamento', s4_p1:'Sube por las escaleras/ascensor hasta el 4º piso.', s4_p2:'Llámame cuando estés frente a la puerta y la abriré por ti:', s4_cap:'Puerta del apartamento.',
+      footer:'niceflatinrome.com • Guía visual de check-in'
+    },
+    fr: { langName:'Français', langLabel:'Langue',
+      title:'Guide d’arrivée — Viale Trastevere 108',
+      addressLine:'Adresse : Viale Trastevere 108, Rome • Interphone : B-9 « Chiani »',
+      help:'Besoin d’aide ?', call:'Appeler ou WhatsApp', phone:'+39 335 524 5756',
+      s1_t:'Arriver à l’immeuble', s1_p:'Lorsque vous voyez l’entrée ci-dessous, vous êtes arrivé.', s1_cap:'Entrée de l’immeuble / passage vers la cour.',
+      s2_t:'Utiliser l’interphone', s2_p1:'Appuyez sur B-9 (Chiani), puis appelez-moi au', s2_p2:'Attendez le déclic d’ouverture.', s2_cap:'Interphone — bouton B-9 (Chiani).',
+      s3_t:'Traverser le passage', s3_p:'Allez tout droit jusqu’au portail intérieur.', s3_cap:'Tout droit vers le portail intérieur.',
+      s4_t:'Accéder à l’appartement', s4_p1:'Prenez les escaliers/l’ascenseur jusqu’au 4e étage.', s4_p2:'Appelez-moi lorsque vous êtes devant la porte, je vous l’ouvrirai :', s4_cap:'Porte de l’appartement.',
+      footer:'niceflatinrome.com • Guide visuel d’arrivée'
+    },
+    de: { langName:'Deutsch', langLabel:'Sprache',
+      title:'Check-in-Anleitung — Viale Trastevere 108',
+      addressLine:'Adresse: Viale Trastevere 108, Rom • Sprechanlage: B-9 „Chiani“',
+      help:'Brauchen Sie Hilfe?', call:'Anrufen oder WhatsApp', phone:'+39 335 524 5756',
+      s1_t:'Ankunft am Gebäude', s1_p:'Wenn Sie den Eingang unten sehen, sind Sie am Ziel.', s1_cap:'Hauseingang / Durchgang in den Hof.',
+      s2_t:'Sprechanlage benutzen', s2_p1:'Drücken Sie B-9 (Chiani) und rufen Sie mich dann an unter', s2_p2:'Warten Sie auf das Klicken zum Entriegeln.', s2_cap:'Sprechanlage — Taste B-9 (Chiani).',
+      s3_t:'Durch den Durchgang gehen', s3_p:'Gehen Sie geradeaus bis zum inneren Tor.', s3_cap:'Geradeaus bis zum inneren Tor.',
+      s4_t:'Wohnung erreichen', s4_p1:'Nehmen Sie Treppe/Aufzug in den 4. Stock.', s4_p2:'Rufen Sie mich an, wenn Sie vor der Tür stehen, ich öffne sie für Sie:', s4_cap:'Wohnungstür.',
+      footer:'niceflatinrome.com • Visuelle Check-in-Anleitung'
+    }
+  };
+
+  // Init language
+  const q = new URLSearchParams(location.search);
+  const lang = (q.get('lang')||'en').toLowerCase();
+  const L = T[lang] || T.en;
+
+  // Render language bar
+  const buttons = Object.entries(T).map(([code,v])=>{
+    const cls = (code===lang)?'lang-btn active':'lang-btn';
+    return `<a class="${cls}" href="?lang=${code}">${v.langName}</a>`;
+  }).join(' ');
+  document.getElementById('langbar').innerHTML = `${L.langLabel}: ${buttons}`;
+
+  // Fill texts
+  document.getElementById('title').textContent = L.title;
+  document.getElementById('addr').textContent = L.addressLine;
+  document.getElementById('s1_t').textContent = L.s1_t;
+  document.getElementById('s1_p').textContent = L.s1_p;
+  document.getElementById('s1_cap').textContent = L.s1_cap;
+  document.getElementById('s2_t').textContent = L.s2_t;
+  document.getElementById('s2_p1').textContent = L.s2_p1 + ' ';
+  document.getElementById('s2_p2').textContent = ' ' + L.s2_p2;
+  document.getElementById('s2_cap').textContent = L.s2_cap;
+  document.getElementById('s3_t').textContent = L.s3_t;
+  document.getElementById('s3_p').textContent = L.s3_p;
+  document.getElementById('s3_cap').textContent = L.s3_cap;
+  document.getElementById('s4_t').textContent = L.s4_t;
+  document.getElementById('s4_p1').textContent = L.s4_p1;
+  document.getElementById('s4_cap').textContent = L.s4_cap;
+  document.getElementById('s4_p2').textContent = L.s4_p2;
+  document.getElementById('help').textContent = L.help;
+  document.getElementById('call').firstChild.textContent = L.call + ': ';
+  document.getElementById('footer').textContent = L.footer;
+  // phones
+  document.getElementById('phone').textContent = L.phone;
+  document.getElementById('phone2').textContent = L.phone;
+  // buttons labels
+  document.getElementById('btn_building').textContent = (lang==='it'?'Apri cancello':'Open Building Gate');
+  document.getElementById('btn_door').textContent = (lang==='it'?'Apri Porta Appartamento':'Open Apartment Door');
+</script>
+</body>
+</html>
