@@ -29,26 +29,23 @@
   footer{color:var(--muted);text-align:center;font-size:12px;margin:18px 0}
 </style>
 <script>
-async function openWith(statusId, path){
-  const s = document.getElementById(statusId);
-  try{
-    s.textContent = 'Generating one-time key…';
-    const r = await fetch(path, {cache:'no-store'});
-    const j = await r.json();
-    if (j && j.url){ s.textContent = 'Key OK. Redirecting…'; location.href = j.url; }
-    else { s.textContent = (j && (j.error||j.message)) ? String(j.error||j.message) : 'No URL returned.'; }
-  }catch(e){ s.textContent = String(e); }
-}
+  async function openWith(statusId, path){
+    const s = document.getElementById(statusId);
+    try{
+      s.textContent = 'Generating one-time key…';
+      const r = await fetch(path, {cache:'no-store'});
+      const j = await r.json();
+      if (j && j.url){ s.textContent = 'Key OK. Redirecting…'; location.href = j.url; }
+      else { s.textContent = (j && (j.error||j.message)) ? String(j.error||j.message) : 'No URL returned.'; }
+    }catch(e){ s.textContent = String(e); }
+  }
 </script>
 </head>
 <body>
 <header class="wrap">
   <h1 id="title">Check-in Guide — Viale Trastevere 108</h1>
   <div class="addr" id="addr">Address: Viale Trastevere 108, Rome • Intercom: B-9 “Chiani”</div>
-  <div class="langbar" id="langbar">Language:
-    <a href="?lang=en" class="lang-btn active">English</a> ·
-    <a href="?lang=it" class="lang-btn">Italiano</a>
-  </div>
+  <div class="langbar" id="langbar"></div>
 </header>
 
 <main class="wrap">
@@ -64,8 +61,8 @@ async function openWith(statusId, path){
           <figcaption id="s1_cap">Building entrance / passageway to the courtyard.</figcaption>
         </figure>
 
-        <!-- ✅ Trastevere: endpoint giusto -->
-        <a class="cta" href="#" onclick="openWith('statusBuilding','/token/viale-trastevere-building');return false;" id="btn_building">Open Building Gate</a>
+        <!-- 👉 INVERTITO: punta a Leonina -->
+        <a class="cta" href="#" onclick="openWith('statusBuilding','/token/leonina-building');return false;" id="btn_building">Open Building Gate</a>
         <div class="status" id="statusBuilding"></div>
       </div>
     </div>
@@ -115,8 +112,8 @@ async function openWith(statusId, path){
           <figcaption id="s4_cap">Apartment door.</figcaption>
         </figure>
 
-        <!-- ✅ Trastevere: endpoint giusto -->
-        <a class="cta" href="#" onclick="openWith('statusDoor','/token/viale-trastevere-door');return false;" id="btn_door">Open Apartment Door</a>
+        <!-- 👉 INVERTITO: punta a Leonina -->
+        <a class="cta" href="#" onclick="openWith('statusDoor','/token/leonina-door');return false;" id="btn_door">Open Apartment Door</a>
         <div class="status" id="statusDoor"></div>
 
         <p><span id="s4_p2">Call me when you are in front of the door and I will open it for you:</span>
@@ -132,5 +129,65 @@ async function openWith(statusId, path){
 
   <footer id="footer">niceflatinrome.com • Quick visual check-in guide</footer>
 </main>
+
+<script>
+  /* se avevi la barra lingue dinamica, lascio lo scheletro invariato: */
+  const T = {
+    en: { langName:'English', langLabel:'Language',
+      title:'Check-in Guide — Viale Trastevere 108',
+      addressLine:'Address: Viale Trastevere 108, Rome • Intercom: B-9 “Chiani”',
+      help:'Need help?', call:'Call or WhatsApp', phone:'+39 335 524 5756',
+      s1_t:'Arriving at the Building', s1_p:'When you arrive at the entrance shown below, you’ve reached your destination.', s1_cap:'Building entrance / passageway to the courtyard.',
+      s2_t:'Using the Intercom', s2_p1:'Press B-9 (Chiani) on the intercom panel, then call me at', s2_p2:'Wait for the click to unlock the gate.', s2_cap:'Intercom panel — press B-9 (Chiani).',
+      s3_t:'Go Through the Passage', s3_p:'Walk straight through the passage to the inner gate.', s3_cap:'Walk straight to the inner gate.',
+      s4_t:'Reaching the Apartment', s4_p1:'Take the stairs/elevator to the 4th floor.', s4_p2:'Call me when you are in front of the door and I will open it for you:', s4_cap:'Apartment door.',
+      footer:'niceflatinrome.com • Quick visual check-in guide'
+    },
+    it: { langName:'Italiano', langLabel:'Lingua',
+      title:'Guida Check-in — Viale Trastevere 108',
+      addressLine:'Indirizzo: Viale Trastevere 108, Roma • Citofono: B-9 “Chiani”',
+      help:'Serve aiuto?', call:'Chiama o WhatsApp', phone:'+39 335 524 5756',
+      s1_t:'Arrivo al palazzo', s1_p:'Quando vedi l’ingresso qui sotto, sei arrivato a destinazione.', s1_cap:'Ingresso / passaggio verso il cortile.',
+      s2_t:'Uso del citofono', s2_p1:'Premi B-9 (Chiani) sul pannello, poi chiamami al', s2_p2:'Attendi il “clic” di sblocco del cancello.', s2_cap:'Pannello citofono — premi B-9 (Chiani).',
+      s3_t:'Attraversa il passaggio', s3_p:'Prosegui dritto fino al cancelletto interno.', s3_cap:'Dritto fino al cancelletto interno.',
+      s4_t:'Raggiungere l’appartamento', s4_p1:'Scala/ascensore fino al 4° piano.', s4_p2:'Chiamami quando sei davanti alla porta e la apro io:', s4_cap:'Porta dell’appartamento.',
+      footer:'niceflatinrome.com • Guida rapida di check-in'
+    }
+  };
+
+  const q = new URLSearchParams(location.search);
+  const lang = (q.get('lang')||'en').toLowerCase();
+  const L = T[lang] || T.en;
+
+  const buttons = Object.entries(T).map(([code,v])=>{
+    const cls = (code===lang)?'lang-btn active':'lang-btn';
+    return `<a class="${cls}" href="?lang=${code}">${v.langName}</a>`;
+  }).join(' ');
+  document.getElementById('langbar').innerHTML = `${L.langLabel}: ${buttons}`;
+
+  document.getElementById('title').textContent = L.title;
+  document.getElementById('addr').textContent = L.addressLine;
+  document.getElementById('s1_t').textContent = L.s1_t;
+  document.getElementById('s1_p').textContent = L.s1_p;
+  document.getElementById('s1_cap').textContent = L.s1_cap;
+  document.getElementById('s2_t').textContent = L.s2_t;
+  document.getElementById('s2_p1').textContent = L.s2_p1 + ' ';
+  document.getElementById('s2_p2').textContent = ' ' + L.s2_p2;
+  document.getElementById('s2_cap').textContent = L.s2_cap;
+  document.getElementById('s3_t').textContent = L.s3_t;
+  document.getElementById('s3_p').textContent = L.s3_p;
+  document.getElementById('s3_cap').textContent = L.s3_cap;
+  document.getElementById('s4_t').textContent = L.s4_t;
+  document.getElementById('s4_p1').textContent = L.s4_p1;
+  document.getElementById('s4_cap').textContent = L.s4_cap;
+  document.getElementById('s4_p2').textContent = L.s4_p2;
+  document.getElementById('help').textContent = L.help;
+  document.getElementById('call').firstChild.textContent = L.call + ': ';
+  document.getElementById('footer').textContent = L.footer;
+  document.getElementById('phone').textContent = L.phone;
+  document.getElementById('phone2').textContent = L.phone;
+  document.getElementById('btn_building').textContent = (lang==='it'?'Apri cancello':'Open Building Gate');
+  document.getElementById('btn_door').textContent = (lang==='it'?'Apri Porta Appartamento':'Open Apartment Door');
+</script>
 </body>
 </html>
