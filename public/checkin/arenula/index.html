@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Check-in Guide — Via Arenula 16</title>
-<link rel="icon" href="building-facade.jpg">
+<title id="doc_title">Check-in Guide — Via Arenula 16</title>
+<link rel="icon" href="building-door.jpg">
 <style>
   :root { --brand:#2b2118; --ink:#1f2937; --muted:#6b7280; --bg:#f7f7f7; --card:#ffffff; --line:#e5e7eb; }
   *{box-sizing:border-box}
@@ -13,8 +13,8 @@
   header{position:sticky;top:0;background:var(--card);border-bottom:1px solid var(--line);padding:12px 14px;z-index:5}
   h1{font-size:20px;margin:0}
   .addr{font-size:14px;color:var(--muted)}
-  .lang{font-size:15px;font-weight:800;margin-top:8px}
-  .lang a{color:var(--ink);text-decoration:none}
+  .lang{font-size:14px;margin-top:6px}
+  .lang a{color:var(--ink);text-decoration:none;font-weight:700;margin-right:10px}
   .lang a.active{text-decoration:underline}
   .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin:14px 0}
   .step{display:flex;gap:12px;align-items:flex-start}
@@ -35,17 +35,14 @@
 <header class="wrap">
   <h1 id="title">Check-in Guide — Via Arenula 16</h1>
   <div class="addr" id="addr">Address: Via Arenula 16, Rome • Intercom: C8 • Elevator: private, do not use</div>
+  <!-- Barra lingue: link reali con ?lang=xx -->
   <div class="lang" id="langbar">Language:
-    <a href="#" data-lang="en" class="active">English</a> ·
-    <a href="#" data-lang="it">Italiano</a> ·
-    <a href="#" data-lang="es">Español</a> ·
-    <a href="#" data-lang="fr">Français</a> ·
-    <a href="#" data-lang="de">Deutsch</a>
+    <!-- verrà riempita via JS con EN · IT · FR · DE · ES -->
   </div>
 </header>
 
 <main class="wrap">
-  <!-- 1 -->
+  <!-- 1 Outside the Building -->
   <section class="card">
     <div class="step">
       <div class="num">1</div>
@@ -53,14 +50,14 @@
         <h2 id="s1_t">Arriving at the Building</h2>
         <p id="s1_p">When you reach Via Arenula 16, look for the large wooden entrance door with the number 16 engraved on the stone frame.</p>
         <figure>
-          <img src="building-facade.jpg" alt="Building entrance — Via Arenula 16">
+          <img src="arenula-front.jpg" alt="Building façade — Via Arenula 16">
           <figcaption id="s1_cap">Façade and main entrance — Via Arenula 16.</figcaption>
         </figure>
       </div>
     </div>
   </section>
 
-  <!-- 2 -->
+  <!-- 2 Using the Intercom -->
   <section class="card">
     <div class="step">
       <div class="num">2</div>
@@ -68,27 +65,30 @@
         <h2 id="s2_t">Using the Intercom</h2>
         <p id="s2_p">Press C8 on the intercom panel.</p>
         <figure>
-          <img src="intercom.jpg" alt="Intercom panel with C8 highlighted">
+          <img src="intercom.jpg" alt="Intercom panel — press C8">
           <figcaption id="s2_cap">Intercom panel — press C8.</figcaption>
         </figure>
       </div>
     </div>
   </section>
 
-  <!-- 3 -->
+  <!-- 3 Entering the Main Door -->
   <section class="card">
     <div class="step">
       <div class="num">3</div>
       <div>
         <h2 id="s3_t">Entering the Main Door</h2>
+        <!-- testo rimosso su richiesta: manteniamo p nascosto -->
         <p id="s3_p" style="display:none"></p>
-        <a class="cta" id="openBtn" href="#" onclick="openArenula();return false;">➜ Open Building Door</a>
+
+        <!-- Bottone apertura portone (immutato) -->
+        <a class="cta" id="btn_building" href="#" onclick="openArenula();return false;">Open Building Door</a>
         <div class="status" id="status"></div>
       </div>
     </div>
   </section>
 
-  <!-- 4 -->
+  <!-- 4 Inside the Building -->
   <section class="card">
     <div class="step">
       <div class="num">4</div>
@@ -97,39 +97,28 @@
         <p id="s4_p">Walk straight across the corridor into the courtyard, then take the stairs on your right after the elevator.</p>
         <div class="note" id="s4_note">The elevator is strictly private — We are not allowed to use it.</div>
         <figure>
-          <img src="hallway.jpg" alt="Hallway leading to the courtyard and stairs">
-          <figcaption id="s4_cap">Go straight to the courtyard, then stairs on the right (after the elevator).</figcaption>
+          <img src="inside-corridor.jpg" alt="Inside corridor and courtyard access">
+          <figcaption id="s4_cap">Corridor to the courtyard; stairs are on the right after the elevator.</figcaption>
         </figure>
       </div>
     </div>
   </section>
 
-  <!-- 5 -->
+  <!-- 5 Apartment Door -->
   <section class="card">
     <div class="step">
       <div class="num">5</div>
       <div>
-        <h2 id="s5_t">Reaching the Apartment</h2>
-        <p id="s5_p">Go to the 3rd floor. At the end of the stairs, you’ll find the apartment door in front of you.</p>
-        <figure>
-          <img src="apartment-door.jpg" alt="Apartment door at the top of the stairs">
-          <figcaption id="s5_cap">Apartment door — 3rd floor, end of the stairs.</figcaption>
-        </figure>
-      </div>
-    </div>
-  </section>
+        <h2 id="s5_t">This is your apartment door</h2>
+        <p id="s5_p">Press the button only once when you are sure it’s the correct door.</p>
 
-  <!-- 6 -->
-  <section class="card">
-    <div class="step">
-      <div class="num">6</div>
-      <div>
-        <h2 id="s6_t">Unlocking the Apartment Door</h2>
-        <p id="s6_p1">Use the key from the lockbox. After taking the key, close the lockbox and mix the numbers.</p>
-        <p id="s6_p2">Use the square key and turn clockwise until it clicks. You’re in!</p>
+        <!-- Bottone apertura appartamento (immutato) -->
+        <a class="cta" href="#" onclick="openWith('statusApartment','/token/arenula-door');return false;" id="btn_apartment">Open Apartment Door</a>
+        <div class="status" id="statusApartment"></div>
+
         <figure>
-          <img src="key-safe.jpg" alt="Lockbox with combination wheels">
-          <figcaption id="s6_cap">Lockbox for the key — close it and scramble the code after use.</figcaption>
+          <img src="apartment-door.jpg" alt="Apartment door — Via Arenula 16">
+          <figcaption id="s5_cap">Apartment entrance.</figcaption>
         </figure>
       </div>
     </div>
@@ -144,6 +133,7 @@
 </main>
 
 <script>
+/* ---------- LOGICA APERTURA (immutata) ---------- */
 async function openArenula(){
   const status=document.getElementById('status');
   try{
@@ -160,6 +150,201 @@ async function openArenula(){
     status.textContent='Network error. Try again.';
   }
 }
+async function openWith(statusId, path){
+  const s=document.getElementById(statusId);
+  try{
+    s.textContent='Generating one-time key…';
+    const r=await fetch(path,{cache:'no-store'});
+    const j=await r.json();
+    if(j && j.url){ s.textContent='Key OK. Opening…'; location.href=j.url; }
+    else{ s.textContent=(j && (j.error||j.message)) ? String(j.error||j.message) : 'No URL returned.'; }
+  }catch(e){ s.textContent='Network error. Try again.'; }
+}
+
+/* ---------- DIZIONARIO 5 LINGUE (bottoni inclusi) ---------- */
+const T = {
+  en: {
+    title:'Check-in Guide — Via Arenula 16',
+    addr:'Address: Via Arenula 16, Rome • Intercom: C8 • Elevator: private, do not use',
+    s1_t:'Arriving at the Building',
+    s1_p:'When you reach Via Arenula 16, look for the large wooden entrance door with the number 16 engraved on the stone frame.',
+    s1_cap:'Façade and main entrance — Via Arenula 16.',
+    s2_t:'Using the Intercom',
+    s2_p:'Press C8 on the intercom panel.',
+    s2_cap:'Intercom panel — press C8.',
+    s3_t:'Entering the Main Door',
+    s3_p:'Push the door once it is unlocked.',
+    s4_t:'Inside the Building',
+    s4_p:'Walk straight across the corridor into the courtyard, then take the stairs on your right after the elevator.',
+    s4_note:'The elevator is strictly private — We are not allowed to use it.',
+    s4_cap:'Corridor to the courtyard; stairs are on the right after the elevator.',
+    s5_t:'This is your apartment door',
+    s5_p:'Press the button only once when you are sure it’s the correct door.',
+    s5_cap:'Apartment entrance.',
+    help_h:'Need help?',
+    help_p:'Call or WhatsApp: <a class="cta" href="tel:+393355245756">+39 335 524 5756</a>',
+    btn_building:'Open Building Door',
+    btn_apartment:'Open Apartment Door',
+    footer:'niceflatinrome.com • Quick visual guide for arrivals at Via Arenula 16',
+    langLabel:'Language', langName:'English'
+  },
+  it: {
+    title:'Guida Check-in — Via Arenula 16',
+    addr:'Indirizzo: Via Arenula 16, Roma • Citofono: C8 • Ascensore: privato, non usare',
+    s1_t:"Arrivo all'edificio",
+    s1_p:'Cerca il grande portone in legno con il numero 16 inciso sulla cornice in pietra.',
+    s1_cap:'Facciata e ingresso principale — Via Arenula 16.',
+    s2_t:'Uso del citofono',
+    s2_p:'Premi C8 sul pannello del citofono.',
+    s2_cap:'Pannello citofono — premi C8.',
+    s3_t:'Entrata dal portone',
+    s3_p:'Spingi la porta quando è sbloccata.',
+    s4_t:"Dentro l'edificio",
+    s4_p:"Prosegui dritto nel cortile e prendi le scale a destra dopo l'ascensore.",
+    s4_note:"L'ascensore è strettamente privato — non possiamo usarlo.",
+    s4_cap:'Corridoio verso il cortile; scale a destra dopo l’ascensore.',
+    s5_t:"Questa è la porta del tuo appartamento",
+    s5_p:'Premi il pulsante una sola volta quando sei sicuro che sia la porta corretta.',
+    s5_cap:"Ingresso dell'appartamento.",
+    help_h:'Serve aiuto?',
+    help_p:'Chiama o WhatsApp: <a class="cta" href="tel:+393355245756">+39 335 524 5756</a>',
+    btn_building:'Apri portone',
+    btn_apartment:'Apri porta appartamento',
+    footer:'niceflatinrome.com • Guida rapida per gli arrivi a Via Arenula 16',
+    langLabel:'Lingua', langName:'Italiano'
+  },
+  fr: {
+    title:'Guide d’enregistrement — Via Arenula 16',
+    addr:'Adresse : Via Arenula 16, Rome • Interphone : C8 • Ascenseur : privé, ne pas utiliser',
+    s1_t:'Arriver à l’immeuble',
+    s1_p:'À votre arrivée Via Arenula 16, repérez le grand portail en bois avec le numéro 16 gravé sur la pierre.',
+    s1_cap:'Façade et entrée principale — Via Arenula 16.',
+    s2_t:'Utiliser l’interphone',
+    s2_p:'Appuyez sur C8 sur le panneau de l’interphone.',
+    s2_cap:'Panneau d’interphone — appuyez sur C8.',
+    s3_t:'Entrer par le portail',
+    s3_p:'Poussez la porte une fois déverrouillée.',
+    s4_t:'À l’intérieur du bâtiment',
+    s4_p:'Traversez le couloir jusqu’à la cour, puis prenez les escaliers à droite après l’ascenseur.',
+    s4_note:'L’ascenseur est strictement privé — nous ne sommes pas autorisés à l’utiliser.',
+    s4_cap:'Couloir vers la cour ; escaliers à droite après l’ascenseur.',
+    s5_t:'Voici la porte de votre appartement',
+    s5_p:'Appuyez sur le bouton une seule fois lorsque vous êtes sûr que c’est la bonne porte.',
+    s5_cap:"Entrée de l’appartement.",
+    help_h:'Besoin d’aide ?',
+    help_p:'Appeler ou WhatsApp : <a class="cta" href="tel:+393355245756">+39 335 524 5756</a>',
+    btn_building:'Ouvrir le portail',
+    btn_apartment:"Ouvrir la porte de l’appartement",
+    footer:'niceflatinrome.com • Guide visuel rapide pour l’arrivée à Via Arenula 16',
+    langLabel:'Langue', langName:'Français'
+  },
+  de: {
+    title:'Check-in-Leitfaden — Via Arenula 16',
+    addr:'Adresse: Via Arenula 16, Rom • Gegensprechanlage: C8 • Aufzug: privat, nicht benutzen',
+    s1_t:'Ankunft am Gebäude',
+    s1_p:'Suchen Sie an der Via Arenula 16 das große Holztor mit der Zahl 16 im Stein.',
+    s1_cap:'Fassade und Haupteingang — Via Arenula 16.',
+    s2_t:'Gegensprechanlage benutzen',
+    s2_p:'Drücken Sie C8 an der Gegensprechanlage.',
+    s2_cap:'Gegensprechanlage — C8 drücken.',
+    s3_t:'Durch das Haupttor eintreten',
+    s3_p:'Drücken Sie die Tür, sobald sie entriegelt ist.',
+    s4_t:'Im Gebäude',
+    s4_p:'Gehen Sie durch den Korridor in den Hof und nehmen Sie dann die Treppe rechts nach dem Aufzug.',
+    s4_note:'Der Aufzug ist strikt privat — wir dürfen ihn nicht benutzen.',
+    s4_cap:'Korridor zum Hof; Treppe rechts nach dem Aufzug.',
+    s5_t:'Dies ist Ihre Wohnungstür',
+    s5_p:'Drücken Sie den Knopf nur einmal, wenn Sie sicher sind, dass es die richtige Tür ist.',
+    s5_cap:'Wohnungseingang.',
+    help_h:'Brauchen Sie Hilfe?',
+    help_p:'Anrufen oder WhatsApp: <a class="cta" href="tel:+393355245756">+39 335 524 5756</a>',
+    btn_building:'Haustür öffnen',
+    btn_apartment:'Wohnungstür öffnen',
+    footer:'niceflatinrome.com • Schnelle visuelle Anreisehilfe für Via Arenula 16',
+    langLabel:'Sprache', langName:'Deutsch'
+  },
+  es: {
+    title:'Guía de check-in — Via Arenula 16',
+    addr:'Dirección: Via Arenula 16, Roma • Portero: C8 • Ascensor: privado, no usar',
+    s1_t:'Llegada al edificio',
+    s1_p:'Al llegar a Via Arenula 16, busca la gran puerta de madera con el número 16 grabado en la piedra.',
+    s1_cap:'Fachada y entrada principal — Via Arenula 16.',
+    s2_t:'Uso del portero',
+    s2_p:'Pulsa C8 en el panel del portero.',
+    s2_cap:'Panel del portero — pulsa C8.',
+    s3_t:'Entrar por la puerta principal',
+    s3_p:'Empuja la puerta cuando esté desbloqueada.',
+    s4_t:'Dentro del edificio',
+    s4_p:'Sigue recto por el pasillo hasta el patio y luego toma las escaleras a la derecha, después del ascensor.',
+    s4_note:'El ascensor es estrictamente privado — no está permitido usarlo.',
+    s4_cap:'Pasillo hacia el patio; escaleras a la derecha después del ascensor.',
+    s5_t:'Esta es la puerta de tu apartamento',
+    s5_p:'Pulsa el botón solo una vez cuando estés seguro de que es la puerta correcta.',
+    s5_cap:'Entrada del apartamento.',
+    help_h:'¿Necesitas ayuda?',
+    help_p:'Llama o WhatsApp: <a class="cta" href="tel:+393355245756">+39 335 524 5756</a>',
+    btn_building:'Abrir puerta del edificio',
+    btn_apartment:'Abrir puerta del apartamento',
+    footer:'niceflatinrome.com • Guía visual rápida para llegar a Via Arenula 16',
+    langLabel:'Idioma', langName:'Español'
+  }
+};
+
+/* ------- Rendering lingue ------- */
+(function(){
+  const params=new URLSearchParams(location.search);
+  const code=(params.get('lang')||'en').toLowerCase();
+  const t=T[code]||T.en;
+
+  // barra lingue con link reali
+  const bar=document.getElementById('langbar');
+  const base=location.pathname.replace(/\/+$/,'');
+  const links=Object.entries(T).map(([k,v])=>{
+    const url=`${base}?lang=${k}`;
+    const cls=(k===code)?'active':'';
+    return `<a class="${cls}" href="${url}">${v.langName}</a>`;
+  }).join(' · ');
+  bar.innerHTML = `${t.langLabel}: ${links}`;
+
+  // helper
+  const setText=(id,txt)=>{ const el=document.getElementById(id); if(el) el.textContent=txt; };
+  const setHTML=(id,html)=>{ const el=document.getElementById(id); if(el) el.innerHTML=html; };
+
+  // titolo documento e H1
+  setText('title', t.title);
+  setText('doc_title', t.title);
+
+  setText('addr', t.addr);
+  setText('s1_t', t.s1_t);
+  setText('s1_p', t.s1_p);
+  setText('s1_cap', t.s1_cap);
+
+  setText('s2_t', t.s2_t);
+  setText('s2_p', t.s2_p);
+  setText('s2_cap', t.s2_cap);
+
+  setText('s3_t', t.s3_t);
+  // s3_p resta nascosto ma aggiorniamo comunque il testo
+  setText('s3_p', t.s3_p);
+
+  setText('s4_t', t.s4_t);
+  setText('s4_p', t.s4_p);
+  setText('s4_cap', t.s4_cap);
+  setText('s4_note', t.s4_note);
+
+  setText('s5_t', t.s5_t);
+  setText('s5_p', t.s5_p);
+  setText('s5_cap', t.s5_cap);
+
+  setText('help_h', t.help_h);
+  setHTML('help_p', t.help_p);
+
+  // bottoni localizzati
+  setText('btn_building', t.btn_building);
+  setText('btn_apartment', t.btn_apartment);
+
+  setText('footer', t.footer);
+})();
 </script>
 </body>
 </html>
