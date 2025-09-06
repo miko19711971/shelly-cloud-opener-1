@@ -21,8 +21,11 @@ const PUBLIC_DIR = path.join(__dirname, "..", "public");
 // 1) continua a servire tutta la /public a root (com'era)
 app.use(express.static(PUBLIC_DIR));
 
-// 2) alias esplicito per le guide sotto /guides (separato dall'opener)
+// 2) alias ESPICITO per le guide semplici sotto /guides (come avevi)
 app.use("/guides", express.static(path.join(PUBLIC_DIR, "guides"), { fallthrough: false }));
+
+// 2bis) NUOVO: alias per le Virtual Guide MULTILINGUA (bottone EN/4 lingue)
+app.use("/guest-assistant", express.static(path.join(PUBLIC_DIR, "guest-assistant"), { fallthrough: false }));
 
 // 3) redirect 301 dai vecchi percorsi (se ne avevi) ai nuovi /guides/...
 app.get(["/checkin/scala", "/checkin/scala/index.html"], (req, res) =>
@@ -165,7 +168,7 @@ function isSeenJti(jti) { return seenJti.has(jti); }
 setInterval(() => { seenJti.clear(); }, 60 * 60 * 1000);
 
 // ========== PAGINE HTML ==========
-function pageCss() { /* (identico) */ return `
+function pageCss() { return `
   body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;margin:24px}
   .wrap{max-width:680px}
   h1{font-size:28px;margin:0 0 8px}
@@ -176,7 +179,7 @@ function pageCss() { /* (identico) */ return `
   .err{color:#b21a1a;white-space:pre-wrap}
   .hidden{display:none}
 `; }
-function landingHtml(targetKey, targetName, tokenPayload, tokenStr) { /* (identico al tuo) */ 
+function landingHtml(targetKey, targetName, tokenPayload, tokenStr) {
   const remaining = Math.max(0, (tokenPayload?.max || 0) - (tokenPayload?.used || 0));
   const expInSec = Math.max(0, Math.floor((tokenPayload.exp - Date.now()) / 1000));
   return `<!doctype html><html lang="it"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
