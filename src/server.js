@@ -11,10 +11,35 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cors());
 
-// ========= STATIC: serve /public (guide & check-in) =========
+// ========= STATIC =========
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-app.use(express.static(path.join(__dirname, "..", "public")));
+
+// cartella public (già usata per check-in ecc.)
+const PUBLIC_DIR = path.join(__dirname, "..", "public");
+
+// 1) continua a servire tutta la /public a root (com'era)
+app.use(express.static(PUBLIC_DIR));
+
+// 2) alias esplicito per le guide sotto /guides (separato dall'opener)
+app.use("/guides", express.static(path.join(PUBLIC_DIR, "guides"), { fallthrough: false }));
+
+// 3) redirect 301 dai vecchi percorsi (se ne avevi) ai nuovi /guides/...
+app.get(["/checkin/scala", "/checkin/scala/index.html"], (req, res) =>
+  res.redirect(301, "/guides/scala/")
+);
+app.get(["/checkin/leonina", "/checkin/leonina/index.html"], (req, res) =>
+  res.redirect(301, "/guides/leonina/")
+);
+app.get(["/checkin/arenula", "/checkin/arenula/index.html"], (req, res) =>
+  res.redirect(301, "/guides/arenula/")
+);
+app.get(["/checkin/trastevere", "/checkin/trastevere/index.html"], (req, res) =>
+  res.redirect(301, "/guides/trastevere/")
+);
+app.get(["/checkin/ottavia", "/checkin/ottavia/index.html", "/checkin/portico", "/checkin/portico/index.html"], (req, res) =>
+  res.redirect(301, "/guides/portico/")
+);
 
 // ========= ENV =========
 const SHELLY_API_KEY  = process.env.SHELLY_API_KEY;
@@ -27,26 +52,20 @@ const DEFAULT_WINDOW_MIN = parseInt(process.env.WINDOW_MIN || "15", 10);
 const DEFAULT_MAX_OPENS  = parseInt(process.env.MAX_OPENS  || "2", 10);
 
 // ========= MAPPATURA DISPOSITIVI =========
-// ⚠️ Mantiene gli stessi ID che funzionano già nel tuo deploy.
-// Se per un target indichi "ids: [...]", verranno aperti in sequenza (es. 2 cancelli).
 const TARGETS = {
-  "arenula-building":                { name: "Arenula 16 — Building Door",                ids: ["3494547ab05e"] },
+  "arenula-building":         { name: "Arenula 16 — Building Door",                ids: ["3494547ab05e"] },
 
-  "leonina-door":                    { name: "Leonina 71 — Apartment Door",               ids: ["3494547a9395"] },
-  "leonina-building":                { name: "Building Door",                ids: ["34945479fd73"] },
+  "leonina-door":             { name: "Leonina 71 — Apartment Door",               ids: ["3494547a9395"] },
+  "leonina-building":         { name: "Building Door",                             ids: ["34945479fd73"] },
 
-  "via-della-scala-door":            { name: "Via della Scala 17 — Apartment Door",       ids: ["3494547a1075"] },
+  "via-della-scala-door":     { name: "Via della Scala 17 — Apartment Door",       ids: ["3494547a1075"] },
+  "via-della-scala-building": { name: "Via della Scala 17 — Building Door",        ids: ["3494547745ee", "3494547745ee"] },
 
-  // Via della Scala — building: apertura in sequenza (1° cancello -> 10s -> 2° cancello)
-  // Se hai due Shelly separati per i due portoni, inserisci qui i DUE ID in ordine.
-  // Al momento è lasciato lo stesso ID due volte come nel tuo flusso attuale.
-  "via-della-scala-building":        { name: "Via della Scala 17 — Building Door",        ids: ["3494547745ee", "3494547745ee"] },
+  "portico-1d-door":          { name: "Portico d'Ottavia 1D — Apartment Door",     ids: ["3494547a887d"] },
+  "portico-1d-building":      { name: "Portico d'Ottavia 1D — Building Door",      ids: ["3494547ab62b"] },
 
-  "portico-1d-door":                 { name: "Portico d'Ottavia 1D — Apartment Door",     ids: ["3494547a887d"] },
-  "portico-1d-building":             { name: "Portico d'Ottavia 1D — Building Door",      ids: ["3494547ab62b"] },
-
-  "viale-trastevere-door":           { name: "Viale Trastevere 108 — Apartment Door",     ids: ["34945479fa35"] },
-  "viale-trastevere-building":       { name: "Building Door",      ids: ["34945479fbbe"] },
+  "viale-trastevere-door":    { name: "Viale Trastevere 108 — Apartment Door",     ids: ["34945479fa35"] },
+  "viale-trastevere-building":{ name: "Building Door",                             ids: ["34945479fbbe"] },
 };
 
 // Shelly 1: relay = channel 0
@@ -54,7 +73,6 @@ const RELAY_CHANNEL = 0;
 
 // ========== HELPER: chiamate Shelly Cloud ==========
 async function shellyTurnOn(deviceId) {
-  // 1) endpoint classico
   const form = new URLSearchParams({
     id: deviceId,
     auth_key: SHELLY_API_KEY,
@@ -71,7 +89,6 @@ async function shellyTurnOn(deviceId) {
     if (data && data.isok) return { ok: true, data, path: "/device/relay/control", encoding: "form" };
     return { ok: false, status: 400, data, path: "/device/relay/control", encoding: "form" };
   } catch (err) {
-    // 2) fallback /device/relay/turn
     try {
       const { data } = await axios.post(
         `${SHELLY_BASE_URL}/device/relay/turn`,
@@ -98,7 +115,6 @@ async function openOne(deviceId) {
   return { ok: false, first };
 }
 
-// Apre in sequenza i deviceId (array) con delay in ms fra uno e il successivo
 async function openSequence(ids, delayMs = 10000) {
   const logs = [];
   for (let i = 0; i < ids.length; i++) {
@@ -112,15 +128,13 @@ async function openSequence(ids, delayMs = 10000) {
   return { ok, logs };
 }
 
-// ========== TOKEN MONOUSO CON CONTATORE ==========
+// ========== TOKEN MONOUSO ==========
 function b64url(buf) {
   return Buffer.from(buf).toString("base64").replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "");
 }
 function hmac(str) {
   return b64url(crypto.createHmac("sha256", TOKEN_SECRET).update(str).digest());
 }
-
-// payload: { tgt, exp, max, used, jti }
 function makeToken(payload) {
   const header = b64url(JSON.stringify({ alg: "HS256", typ: "TOK" }));
   const body   = b64url(JSON.stringify(payload));
@@ -137,8 +151,6 @@ function parseToken(token) {
   catch { return { ok: false, error: "bad_payload" }; }
   return { ok: true, payload };
 }
-
-// Genera un nuovo token (reset conteggio oppure carry-over dei 'used')
 function newTokenFor(targetKey, opts = {}) {
   const max = opts.max ?? DEFAULT_MAX_OPENS;
   const windowMin = opts.windowMin ?? DEFAULT_WINDOW_MIN;
@@ -147,89 +159,45 @@ function newTokenFor(targetKey, opts = {}) {
   const payload = { tgt: targetKey, exp, max, used: opts.used ?? 0, jti };
   return { token: makeToken(payload), payload };
 }
-
-// In-memory tracker per jti già usate (difesa replay)
 const seenJti = new Set();
 function markJti(jti) { seenJti.add(jti); }
 function isSeenJti(jti) { return seenJti.has(jti); }
 setInterval(() => { seenJti.clear(); }, 60 * 60 * 1000);
 
 // ========== PAGINE HTML ==========
-function pageCss() {
-  return `
-    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;margin:24px}
-    .wrap{max-width:680px}
-    h1{font-size:28px;margin:0 0 8px}
-    p{color:#444}
-    button{font-size:18px;padding:10px 18px;border:1px solid #333;border-radius:8px;background:#fff;cursor:pointer}
-    .muted{color:#777;font-size:14px;margin-top:14px}
-    .ok{color:#0a7b34}
-    .err{color:#b21a1a;white-space:pre-wrap}
-    .hidden{display:none}
-  `;
-}
-
-function landingHtml(targetKey, targetName, tokenPayload, tokenStr) {
+function pageCss() { /* (identico) */ return `
+  body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;margin:24px}
+  .wrap{max-width:680px}
+  h1{font-size:28px;margin:0 0 8px}
+  p{color:#444}
+  button{font-size:18px;padding:10px 18px;border:1px solid #333;border-radius:8px;background:#fff;cursor:pointer}
+  .muted{color:#777;font-size:14px;margin-top:14px}
+  .ok{color:#0a7b34}
+  .err{color:#b21a1a;white-space:pre-wrap}
+  .hidden{display:none}
+`; }
+function landingHtml(targetKey, targetName, tokenPayload, tokenStr) { /* (identico al tuo) */ 
   const remaining = Math.max(0, (tokenPayload?.max || 0) - (tokenPayload?.used || 0));
   const expInSec = Math.max(0, Math.floor((tokenPayload.exp - Date.now()) / 1000));
-
-  return `<!doctype html>
-  <html lang="it"><head><meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>${targetName}</title>
-  <style>${pageCss()}</style></head>
-  <body><div class="wrap">
-    <h1>${targetName}</h1>
-
-    <button id="btn">Apri</button>
-    <div class="muted" id="hint">Max ${tokenPayload.max} aperture entro ${DEFAULT_WINDOW_MIN} minuti · residuo: <b id="left">${remaining}</b> · scade tra <span id="ttl">${expInSec}</span>s</div>
-
-    <p class="ok hidden" id="okmsg">✔ Apertura inviata.</p>
-    <pre class="err hidden" id="errmsg"></pre>
-
-    <script>
-      const btn = document.getElementById('btn');
-      const okmsg = document.getElementById('okmsg');
-      const errmsg = document.getElementById('errmsg');
-      const leftEl = document.getElementById('left');
-      const ttlEl  = document.getElementById('ttl');
-
-      // countdown
-      let ttl = ${expInSec};
-      setInterval(()=>{ if(ttl>0){ ttl--; ttlEl.textContent = ttl; }}, 1000);
-
-      btn.addEventListener('click', async () => {
-        btn.disabled = true;
-        okmsg.classList.add('hidden');
-        errmsg.classList.add('hidden');
-        try{
-          const res = await fetch(window.location.pathname + '/open', { method:'POST' });
-          const j = await res.json();
-          if(j.ok){
-            okmsg.classList.remove('hidden');
-            if (j.nextUrl) {
-              window.location.replace(j.nextUrl);
-            } else if (typeof j.remaining === 'number') {
-              leftEl.textContent = j.remaining;
-            }
-          } else {
-            errmsg.textContent = JSON.stringify(j, null, 2);
-            errmsg.classList.remove('hidden');
-          }
-        }catch(e){
-          errmsg.textContent = String(e);
-          errmsg.classList.remove('hidden');
-        }finally{
-          btn.disabled = false;
-        }
-      });
-    </script>
-  </div></body></html>`;
-}
+  return `<!doctype html><html lang="it"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>${targetName}</title><style>${pageCss()}</style></head><body><div class="wrap">
+  <h1>${targetName}</h1>
+  <button id="btn">Apri</button>
+  <div class="muted" id="hint">Max ${tokenPayload.max} aperture entro ${DEFAULT_WINDOW_MIN} minuti · residuo: <b id="left">${remaining}</b> · scade tra <span id="ttl">${expInSec}</span>s</div>
+  <p class="ok hidden" id="okmsg">✔ Apertura inviata.</p>
+  <pre class="err hidden" id="errmsg"></pre>
+  <script>
+    const btn=document.getElementById('btn'),okmsg=document.getElementById('okmsg'),errmsg=document.getElementById('errmsg'),leftEl=document.getElementById('left'),ttlEl=document.getElementById('ttl');
+    let ttl=${expInSec}; setInterval(()=>{ if(ttl>0){ttl--; ttlEl.textContent=ttl;} },1000);
+    btn.addEventListener('click', async ()=>{ btn.disabled=true; okmsg.classList.add('hidden'); errmsg.classList.add('hidden');
+      try{ const res=await fetch(window.location.pathname+'/open',{method:'POST'}); const j=await res.json();
+        if(j.ok){ okmsg.classList.remove('hidden'); if(j.nextUrl){ window.location.replace(j.nextUrl); } else if(typeof j.remaining==='number'){ leftEl.textContent=j.remaining; } }
+        else { errmsg.textContent=JSON.stringify(j,null,2); errmsg.classList.remove('hidden'); }
+      }catch(e){ errmsg.textContent=String(e); errmsg.classList.remove('hidden'); } finally{ btn.disabled=false; }
+    });
+  </script></div></body></html>`; }
 
 // ========== ROUTES ==========
-
-// Home diagnostica (tabella come prima + link di test)
 app.get("/", (req, res) => {
   const rows = Object.entries(TARGETS).map(([key, t]) => {
     const ids = t.ids.join(", ");
@@ -252,8 +220,7 @@ app.get("/", (req, res) => {
   </body></html>`);
 });
 
-// Genera un link temporaneo per un target
-// es: GET /token/arenula-building?mins=60&max=2
+// token & opener (identici ai tuoi)
 app.get("/token/:target", (req, res) => {
   const targetKey = req.params.target;
   const target = TARGETS[targetKey];
@@ -267,23 +234,18 @@ app.get("/token/:target", (req, res) => {
   return res.json({ ok:true, url, expiresInMin: Math.round((payload.exp - Date.now())/60000) });
 });
 
-// Pagina di atterraggio (bottone)
 app.get("/k/:target/:token", (req, res) => {
   const { target, token } = req.params;
   const targetDef = TARGETS[target];
   if (!targetDef) return res.status(404).send("Invalid link");
-
   const parsed = parseToken(token);
   if (!parsed.ok) return res.status(400).send("Invalid link");
-
   const p = parsed.payload;
   if (p.tgt !== target) return res.status(400).send("Invalid link");
   if (Date.now() > p.exp) return res.status(400).send("Link scaduto");
-
   res.type("html").send(landingHtml(target, targetDef.name, p, token));
 });
 
-// Click su "Apri" (rigenera token finché non si supera il limite)
 app.post("/k/:target/:token/open", async (req, res) => {
   const { target, token } = req.params;
   const targetDef = TARGETS[target];
@@ -297,18 +259,12 @@ app.post("/k/:target/:token/open", async (req, res) => {
   if (Date.now() > p.exp) return res.status(400).json({ ok:false, error:"expired" });
   if (isSeenJti(p.jti)) return res.status(400).json({ ok:false, error:"replayed" });
 
-  // Eseguo apertura (singola o in sequenza)
   let result;
-  if (targetDef.ids.length === 1) {
-    result = await openOne(targetDef.ids[0]);
-  } else {
-    result = await openSequence(targetDef.ids, 10000); // 10s tra il 1° e il 2°
-  }
+  if (targetDef.ids.length === 1) result = await openOne(targetDef.ids[0]);
+  else result = await openSequence(targetDef.ids, 10000);
 
-  // anti-replay
   markJti(p.jti);
 
-  // Aggiorno contatore
   const used = (p.used || 0) + 1;
   const remaining = Math.max(0, p.max - used);
 
@@ -321,11 +277,9 @@ app.post("/k/:target/:token/open", async (req, res) => {
     const nextUrl = `${req.protocol}://${req.get("host")}/k/${target}/${nextTok}`;
     return res.json({ ok: true, opened: result, remaining, nextUrl });
   }
-
   return res.json({ ok: true, opened: result, remaining: 0 });
 });
 
-// Apertura manuale (tabella home) — diagnostica
 app.post("/api/open-now/:target", async (req, res) => {
   const key = req.params.target;
   const t = TARGETS[key];
@@ -338,7 +292,6 @@ app.post("/api/open-now/:target", async (req, res) => {
   res.json({ target: key, name: t.name, ...out, baseUrl: SHELLY_BASE_URL });
 });
 
-// Health
 app.get("/health", (req, res) => {
   res.json({
     ok: true,
