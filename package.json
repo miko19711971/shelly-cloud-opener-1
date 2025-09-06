@@ -1,11 +1,11 @@
 {
-  "name": "shelly-cloud-opener",
+  "name": "shelly-cloud-opener-1",
   "version": "1.0.0",
-  "description": "Shelly cloud opener",
+  "private": true,
   "type": "module",
   "scripts": {
     "start": "node src/server.js",
-    "render-start": "node src/server.js"
+    "dev": "NODE_ENV=development node src/server.js"
   },
   "dependencies": {
     "axios": "^1.7.7",
