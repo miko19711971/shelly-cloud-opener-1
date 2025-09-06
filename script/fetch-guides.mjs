@@ -1,31 +1,57 @@
-// scripts/fetch-guides.mjs
-import { execSync } from "child_process";
+// script/fetch-guides.mjs
 import fs from "fs";
 import path from "path";
+import https from "https";
 
-// Directory di destinazione sul progetto
-const targetDir = path.join(process.cwd(), "public", "guest-assistant");
+const GITHUB_TOKEN = process.env.GITHUB_TOKEN || ""; // -> aggiungilo su Render (Settings > Environment)
+const OUT_BASE = path.join(process.cwd(), "public", "guest-assistant");
 
-// Lista delle tue guide con repo e cartelle
-const guides = {
-  scala:    "https://github.com/miko19711971/guest-assistant-scala.git",
-  leonina:  "https://github.com/miko19711971/guest-assistant-leonina.git",
-  arenula:  "https://github.com/miko19711971/guest-assistant-arenula.git",
-  portico:  "https://github.com/miko19711971/guest-assistant-portico.git",
-  trastevere: "https://github.com/miko19711971/guest-assistant-viale-trastevere.git"
+// Mappa: cartella destinazione -> URL RAW dell'index.html (branch main)
+// Se i nomi/branch differiscono, aggiorna solo questi URL.
+const SOURCES = {
+  scala:      "https://raw.githubusercontent.com/miko19711971/guest-assistant-scala/main/index.html",
+  leonina:    "https://raw.githubusercontent.com/miko19711971/guest-assistant-leonina/main/index.html",
+  arenula:    "https://raw.githubusercontent.com/miko19711971/guest-assistant-arenula/main/index.html",
+  trastevere: "https://raw.githubusercontent.com/miko19711971/guest-assistant-viale-trastevere_virtual_guide/main/index.html",
+  portico:    "https://raw.githubusercontent.com/miko19711971/guest-assistant-portico/main/index.html"
 };
 
-// Cancella e ricrea la cartella target
-fs.rmSync(targetDir, { recursive: true, force: true });
-fs.mkdirSync(targetDir, { recursive: true });
+function fetchToFile(url, dest) {
+  return new Promise((resolve, reject) => {
+    fs.mkdirSync(path.dirname(dest), { recursive: true });
+    const opts = new URL(url);
+    const headers = { "User-Agent": "render-fetch-guides" };
+    if (GITHUB_TOKEN) headers.Authorization = `token ${GITHUB_TOKEN}`;
 
-// Clona e copia i contenuti di ogni guida
-for (const [name, repo] of Object.entries(guides)) {
-  const tmpDir = path.join("/tmp", `guide-${name}`);
-  console.log(`Fetching ${name}...`);
-  execSync(`git clone --depth=1 ${repo} ${tmpDir}`, { stdio: "inherit" });
-  fs.cpSync(tmpDir, path.join(targetDir, name), { recursive: true });
-  fs.rmSync(tmpDir, { recursive: true, force: true });
+    https.get({ ...opts, headers }, (res) => {
+      if (res.statusCode !== 200) {
+        reject(new Error(`GET ${url} -> ${res.statusCode}`));
+        res.resume();
+        return;
+      }
+      const file = fs.createWriteStream(dest);
+      res.pipe(file);
+      file.on("finish", () => file.close(resolve));
+      file.on("error", reject);
+    }).on("error", reject);
+  });
 }
 
-console.log("✅ All guides copied into /public/guest-assistant/");
+(async () => {
+  try {
+    // pulizia base
+    fs.rmSync(OUT_BASE, { recursive: true, force: true });
+
+    for (const [folder, url] of Object.entries(SOURCES)) {
+      const dest = path.join(OUT_BASE, folder, "index.html");
+      console.log(`→ downloading ${folder} ...`);
+      await fetchToFile(url, dest);
+      console.log(`✓ saved ${dest}`);
+    }
+
+    console.log("✅ All guides fetched to /public/guest-assistant");
+  } catch (e) {
+    console.error("❌ Fetch guides failed:", e?.message || e);
+    process.exit(1);
+  }
+})();
