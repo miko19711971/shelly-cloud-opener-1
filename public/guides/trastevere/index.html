@@ -76,7 +76,8 @@ input{flex:1;padding:12px;border:1px solid #cbd5e1;border-radius:10px;outline:no
 <script>
 /* === CONFIG === */
 const APARTMENT_ID = "VIALETRASTEVERE108";
-const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxsl0p2kKLSIWZEr6ZFpUCp819uFWrd_j11CuCoDpYvRoF19SyXu70x11c8A7edf/exec";
+/* Se in futuro ridistribuisci la Web App e cambia l'URL, aggiorna qui sotto */
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxCm83uKeMsUw0UKDk-QrKg-3pNsdpP28yUTOuMe1qeHUtreCnhjf3_AwFAV5Mz_1a/exec";
 
 /* ============ CONTENUTI LOCALIZZATI ============ */
 const DATA = {
@@ -90,7 +91,7 @@ const DATA = {
       quick: ["wifi","check in","check out","water","AC","bathroom","kitchen","building","eat","drink","shop","visit","experience","day trips","transport","services","emergency"],
       fallback: "I did not find a direct answer. Try a quick button (wifi, kitchen, transport, visit…)."
     },
-    apt: { /* ... CONTENUTO EN come nel tuo ... */ 
+    apt: {
       checkin_time:'15:00', checkout_time:'11:00',
       wifi_note:'Near the TV there is a WHITE router. Turn it around to see the label with SSID & password.',
       wifi_ssid:'See router label', wifi_password:'See router label',
@@ -154,7 +155,7 @@ const DATA = {
       quick:["wifi","check in","check out","acqua","aria condizionata","bagno","cucina","edificio","mangiare","bere","shopping","visitare","esperienze","gite di un giorno","trasporti","servizi","emergenza"],
       fallback:"Non ho trovato una risposta diretta. Prova un pulsante (wifi, cucina, trasporti, visitare…)."
     },
-    apt:{ /* ... CONTENUTO IT come nel tuo ... */ 
+    apt:{
       checkin_time:'15:00', checkout_time:'11:00',
       wifi_note:'Vicino alla TV c’è un router BIANCO. Giralo per leggere sull’etichetta SSID e password.',
       wifi_ssid:'Vedi etichetta del router', wifi_password:'Vedi etichetta del router',
@@ -189,7 +190,7 @@ const DATA = {
       daytrips:'Ostia Antica (~40 min) • Tivoli (Villa d’Este & Villa Adriana ~1h) • Castelli Romani.',
       checkout_note:'Prima di partire: spegni luci/AC, chiudi le finestre, lascia le chiavi sul tavolo e chiudi a chiave la porta.'
     },
-    intents:[ /* ... intents IT come nel tuo ... */ 
+    intents:[
       {k:'wifi',keys:['wifi','wi-fi','internet','password','router'],t:a=>`Wi-Fi: ${a.wifi_note}\nRete: ${a.wifi_ssid}. Password: ${a.wifi_password}.`},
       {k:'check in',keys:['check in','arrivo','accesso','self check-in','ingresso','citofono','campanello'],t:a=>`Check-in dalle ${a.checkin_time}.\n${a.bedrooms_note}\n${a.registration_note}\n${a.concierge}\nServe aiuto? ${a.host_phone}.`},
       {k:'check out',keys:['check out','partenza','lasciare'],t:a=>a.checkout_note},
@@ -211,39 +212,195 @@ const DATA = {
   },
 
   fr: {
-    ui:{ /* ... come nel tuo ... */ 
+    ui:{
       welcome:"Bonjour, je suis Samantha, votre guide virtuel. Touchez un bouton pour une réponse rapide.",
       placeholder:"Bonjour, je suis Samantha, votre guide virtuel. Touchez un bouton — ou écrivez ici…",
       apt_label:"Appartement", voice_on:"🔊 Voix : Activée", voice_off:"🔇 Voix : Désactivée",
       quick:["wifi","check in","check out","eau","climatisation","salle de bain","cuisine","immeuble","manger","boire","shopping","visiter","expériences","excursions","transports","services","urgence"],
       fallback:"Je n’ai pas trouvé de réponse directe. Essayez un bouton (wifi, cuisine, transports, visiter…)."
     },
-    apt:{ /* ... FR ... */ },
-    intents:[ /* ... FR ... */ ]
+    apt:{
+      checkin_time:'15:00', checkout_time:'11:00',
+      wifi_note:"Près de la TV se trouve un routeur BLANC. Tournez-le pour lire le SSID et le mot de passe.",
+      wifi_ssid:"Voir l’étiquette du routeur", wifi_password:"Voir l’étiquette du routeur",
+      water_note:"L’eau du robinet est potable. L’eau chaude est toujours disponible.",
+      ac_note:"Merci d’éteindre la climatisation en quittant l’appartement.",
+      bathroom_amenities:"Papier toilette, savon pour les mains, tapis de bain, sèche-cheveux.",
+      towels_note:"Par personne : 1 grande + 1 moyenne. Lits prêts à l’arrivée.",
+      bathroom_notice:"IMPORTANT (salle de bain entre les chambres) : n’utilisez QUE le papier toilette fourni. Ne jetez rien d’autre (débordement/100 €).",
+      bedrooms_note:"Deux chambres + un canapé-lit double. Les clés sont sur la table à l’arrivée.",
+      gas_steps:"Robinet de gaz (à gauche du compteur) : BAS = FERMÉ • HORIZONTAL = OUVERT. Choisir brûleur, appuyer & tourner, maintenir, relâcher.",
+      kitchen_note:"Cuisine entièrement équipée, prête à l’emploi.",
+      main_door_hours:"Porte d’immeuble accessible avec la clé fournie.",
+      concierge:"Concierge : Massimo — 08:30–13:00 et 15:30–18:30.",
+      registration_note:"Veuillez envoyer vos passeports par WhatsApp à l’hôte (enregistrement obligatoire).",
+      host_phone:"+39 335 5245756",
+      supermarkets:"Mini-marché Viale Trastevere (près du 108) • Produits frais Largo/Piazza San Cosimato (matin).",
+      pharmacies:"Pharmacie Piazza Trilussa • Autres le long de Viale Trastevere.",
+      luggage:"Radical Storage — Piazza Mastai (≈5 min).",
+      laundry:"Laverie — Viale Trastevere 150.",
+      hospital:"Ospedale Nuovo Regina Margherita — Via Emilio Morosini 30.",
+      atms:"DAB le long de Viale Trastevere (BNL, Unicredit, Intesa).",
+      sims:"Vodafone (Viale Trastevere 143) • TIM (Piazza San Cosimato 70).",
+      transport:"Tram 8 → Largo Argentina / Piazza Venezia. Tram 3 à proximité. Bus H → Termini. Taxi : +39 06 3570 ou FreeNow.",
+      airports:"Fiumicino : Tram 8 → gare de Trastevere → FL1 (~45 min). Ciampino : bus → Termini → Tram 8.",
+      emergency:"Urgences UE 112 • Police 113 • Ambulance 118 • Pompiers 115 • Médecin anglophone +39 06 488 2371 • Vétérinaire 24h +39 06 660 681",
+      eat:"Da Enzo al 29 ; Osteria der Belli ; Tonnarello ; Trattoria Da Teo ; Spirito di Vino ; Pianostrada ; Trapizzino.",
+      drink:"Enoteca Ferrara ; Freni e Frizioni ; L’Angolo Divino ; Mimì e Cocò ; La Prosciutteria.",
+      shop:"Marché Porta Portese (dim) ; boulangeries/traiteurs Viale Trastevere ; boutiques Via della Lungaretta.",
+      visit:"Santa Maria in Trastevere ; Santa Cecilia ; Musée de Rome à Trastevere ; Orto Botanico ; Villa Farnesina ; Piazza Trilussa ; promenade sur le Ponte Sisto vers Campo de’ Fiori.",
+      experiences:"Balade du soir : Viale Trastevere → Piazza Trilussa → Santa Maria → ruelles → berges du Tibre → Campo de’ Fiori. Apéritif chez Freni e Frizioni ; églises ; coucher de soleil au Janicule.",
+      romantic_walk:"Départ : Viale Trastevere 108 → Piazza S. Maria → Terrasse du Janicule → Orto Botanico → Gelateria del Viale → Biscottificio Innocenti → retour.",
+      daytrips:"Ostia Antica (~40 min) • Tivoli (Villa d’Este & d’Hadrien ~1h) • Castelli Romani.",
+      checkout_note:"Avant de partir : éteignez lumières/clim, fermez les fenêtres, laissez les clés sur la table et fermez à clé."
+    },
+    intents:[
+      {k:'wifi',keys:['wifi','wi-fi','internet','mot de passe','routeur'],t:a=>`Wi-Fi : ${a.wifi_note}\nRéseau : ${a.wifi_ssid}. Mot de passe : ${a.wifi_password}.`},
+      {k:'check in',keys:['check in','arrivée','accès','self check-in','entrée','interphone','sonnette'],t:a=>`Arrivée à partir de ${a.checkin_time}.\n${a.bedrooms_note}\n${a.registration_note}\n${a.concierge}\nBesoin d’aide ? ${a.host_phone}.`},
+      {k:'check out',keys:['check out','départ','quitter'],t:a=>a.checkout_note},
+      {k:'eau',keys:['eau','chaude','potable','robinet'],t:a=>a.water_note},
+      {k:'climatisation',keys:['climatisation','clim','ac'],t:a=>a.ac_note},
+      {k:'salle de bain',keys:['salle de bain','sdb','serviettes','papier','sèche-cheveux'],t:a=>`Salles de bain : ${a.bathroom_amenities}\nServiettes : ${a.towels_note}\n${a.bathroom_notice}`},
+      {k:'cuisine',keys:['cuisine','cuisiner','gaz','plaques'],t:a=>`${a.kitchen_note}\nGaz : ${a.gas_steps}`},
+      {k:'immeuble',keys:['immeuble','porte','horaires','concierge','ascenseur'],t:a=>`Porte : ${a.main_door_hours}\n${a.concierge}`},
+      {k:'services',keys:['pharmacie','hôpital','dab','sim','laverie','consigne','supermarché'],t:a=>`Supermarchés : ${a.supermarkets}\nPharmacies : ${a.pharmacies}\nHôpital : ${a.hospital}\nDAB : ${a.atms}\nLaverie : ${a.laundry}\nConsigne : ${a.luggage}\nCartes SIM : ${a.sims}`},
+      {k:'transports',keys:['transports','tram','bus','taxi','aéroport','train','métro'],t:a=>`${a.transport}\nAéroports : ${a.airports}`},
+      {k:'manger',keys:['manger','restaurant','dîner','déjeuner'],t:a=>a.eat},
+      {k:'boire',keys:['boire','bar','vin','cocktail','apéritif'],t:a=>a.drink},
+      {k:'shopping',keys:['shopping','marché','boutiques','boulangeries'],t:a=>a.shop},
+      {k:'visiter',keys:['visiter','musée','attractions','voir'],t:a=>a.visit},
+      {k:'expériences',keys:['expériences','balade','itinéraire','coucher de soleil','romantique'],t:a=>`${a.experiences}\nParcours romantique : ${a.romantic_walk}`},
+      {k:'excursions',keys:['excursions','ostia','tivoli','castelli','journée'],t:a=>a.daytrips},
+      {k:'urgence',keys:['urgence','police','ambulance','pompiers','médecin','vétérinaire'],t:a=>a.emergency}
+    ]
   },
 
   de: {
-    ui:{ /* ... DE ... */ 
+    ui:{
       welcome:"Hallo, ich bin Samantha, dein virtueller Guide. Tippe auf einen Button für eine schnelle Antwort.",
       placeholder:"Hallo, ich bin Samantha, dein virtueller Guide. Tippe auf einen Button — oder schreibe hier…",
       apt_label:"Apartment", voice_on:"🔊 Stimme: An", voice_off:"🔇 Stimme: Aus",
       quick:["WLAN","check in","check out","Wasser","Klimaanlage","Bad","Küche","Gebäude","Essen","Trinken","Shopping","Sehenswürdigkeiten","Erlebnisse","Tagesausflüge","Verkehr","Services","Notfall"],
       fallback:"Keine direkte Antwort gefunden. Nutze einen Button (WLAN, Küche, Verkehr, Sehenswürdigkeiten…)."
     },
-    apt:{ /* ... DE ... */ },
-    intents:[ /* ... DE ... */ ]
+    apt:{
+      checkin_time:'15:00', checkout_time:'11:00',
+      wifi_note:"Neben dem Fernseher steht ein WEISSER Router. Umdrehen, um SSID & Passwort zu sehen.",
+      wifi_ssid:"Siehe Router-Etikett", wifi_password:"Siehe Router-Etikett",
+      water_note:"Leitungswasser ist trinkbar. Warmwasser ist immer an.",
+      ac_note:"Bitte schalten Sie die Klimaanlage aus, wenn Sie die Wohnung verlassen.",
+      bathroom_amenities:"Toilettenpapier, Handseife, Badematte, Föhn.",
+      towels_note:"Pro Gast: 1 großes + 1 mittleres Handtuch. Betten bei Ankunft gemacht.",
+      bathroom_notice:"WICHTIG (Bad zwischen den Schlafzimmern): nur bereitgestelltes Papier verwenden. Sonst Verstopfung (100 €).",
+      bedrooms_note:"Zwei Schlafzimmer + Schlafsofa (Doppelbett). Schlüssel liegen bei Ankunft auf dem Tisch.",
+      gas_steps:"Gashahn (links vom Zähler): UNTEN = ZU • WAAGRECHT = OFFEN. Brenner wählen, drücken & drehen, kurz halten, loslassen.",
+      kitchen_note:"Küche vollständig ausgestattet.",
+      main_door_hours:"Haustür mit bereitgestelltem Schlüssel zugänglich.",
+      concierge:"Hausmeister: Massimo — 08:30–13:00 und 15:30–18:30.",
+      registration_note:"Bitte Pässe per WhatsApp an den Gastgeber senden (Registrierung).",
+      host_phone:"+39 335 5245756",
+      supermarkets:"Mini-Market nahe 108 • Frischemarkt Largo/Piazza San Cosimato (morgens).",
+      pharmacies:"Apotheke Piazza Trilussa • Weitere entlang der Viale Trastevere.",
+      luggage:"Radical Storage — Piazza Mastai (≈5 Min).",
+      laundry:"Waschsalon — Viale Trastevere 150.",
+      hospital:"Ospedale Nuovo Regina Margherita — Via Emilio Morosini 30.",
+      atms:"Geldautomaten entlang der Viale Trastevere.",
+      sims:"Vodafone (Viale Trastevere 143) • TIM (Piazza San Cosimato 70).",
+      transport:"Tram 8 → Largo Argentina/Piazza Venezia. Tram 3 in der Nähe. Bus H → Termini. Taxi: +39 06 3570 oder FreeNow.",
+      airports:"Fiumicino: Tram 8 → Bahnhof Trastevere → FL1 (~45 Min). Ciampino: Bus → Termini → Tram 8.",
+      emergency:"EU-Notruf 112 • Polizei 113 • Rettung 118 • Feuerwehr 115 • Arzt (EN) +39 06 488 2371 • Tierarzt 24h +39 06 660 681",
+      eat:"Da Enzo al 29; Osteria der Belli; Tonnarello; Trattoria Da Teo; Spirito di Vino; Pianostrada; Trapizzino.",
+      drink:"Enoteca Ferrara; Freni e Frizioni; L’Angolo Divino; Mimì e Cocò; La Prosciutteria.",
+      shop:"Markt Porta Portese (So.); Bäckereien & Delis auf Viale Trastevere; Boutiquen Via della Lungaretta.",
+      visit:"Santa Maria in Trastevere; Santa Cecilia; Museo di Roma in Trastevere; Orto Botanico; Villa Farnesina; Piazza Trilussa; über die Ponte Sisto zum Campo de’ Fiori.",
+      experiences:"Abendrunde: Viale Trastevere → Piazza Trilussa → Santa Maria → Gassen → Tiberufer → Campo de’ Fiori. Aperitivo bei Freni e Frizioni; Kirchen; Sonnenuntergang am Gianicolo.",
+      romantic_walk:"Start: Viale Trastevere 108 → Piazza S. Maria → Gianicolo-Terrasse → Orto Botanico → Gelateria del Viale → Biscottificio Innocenti → zurück.",
+      daytrips:"Ostia Antica (~40 Min) • Tivoli (Villa d’Este & Hadriansvilla ~1h) • Castelli Romani.",
+      checkout_note:"Vor der Abreise: Licht/AC aus, Fenster schließen, Schlüssel auf dem Tisch lassen, Türe abschließen."
+    },
+    intents:[
+      {k:'WLAN',keys:['wlan','wifi','wi-fi','internet','passwort','router'],t:a=>`WLAN: ${a.wifi_note}\nNetz: ${a.wifi_ssid}. Passwort: ${a.wifi_password}.`},
+      {k:'check in',keys:['check in','ankunft','zugang','selbst check-in','eingang','klingel','sprechanlage'],t:a=>`Check-in ab ${a.checkin_time}.\n${a.bedrooms_note}\n${a.registration_note}\n${a.concierge}\nHilfe? ${a.host_phone}.`},
+      {k:'check out',keys:['check out','abreise','verlassen'],t:a=>a.checkout_note},
+      {k:'Wasser',keys:['wasser','warmwasser','trinkbar','hahn'],t:a=>a.water_note},
+      {k:'Klimaanlage',keys:['klimaanlage','klima','ac'],t:a=>a.ac_note},
+      {k:'Bad',keys:['bad','handtücher','seife','wc','hinweis','föhn'],t:a=>`Bäder: ${a.bathroom_amenities}\nHandtücher: ${a.towels_note}\n${a.bathroom_notice}`},
+      {k:'Küche',keys:['küche','kochen','herd','gas'],t:a=>`${a.kitchen_note}\nGas: ${a.gas_steps}`},
+      {k:'Gebäude',keys:['gebäude','tür','zeiten','hausmeister','aufzug'],t:a=>`Tür: ${a.main_door_hours}\n${a.concierge}`},
+      {k:'Services',keys:['apotheke','krankenhaus','geldautomat','sim','wäscherei','gepäck','supermarkt'],t:a=>`Supermärkte: ${a.supermarkets}\nApotheken: ${a.pharmacies}\nKrankenhaus: ${a.hospital}\nGeldautomaten: ${a.atms}\nWaschsalon: ${a.laundry}\nGepäck: ${a.luggage}\nSIM: ${a.sims}`},
+      {k:'Verkehr',keys:['verkehr','tram','bus','taxi','flughafen','zug','metro'],t:a=>`${a.transport}\nFlughäfen: ${a.airports}`},
+      {k:'Essen',keys:['essen','restaurant','abendessen','mittagessen'],t:a=>a.eat},
+      {k:'Trinken',keys:['trinken','bar','wein','cocktail','aperitif'],t:a=>a.drink},
+      {k:'Shopping',keys:['shopping','markt','geschäfte','bäckereien'],t:a=>a.shop},
+      {k:'Sehenswürdigkeiten',keys:['sehenswürdigkeiten','besuchen','museum','attraktionen'],t:a=>a.visit},
+      {k:'Erlebnisse',keys:['erlebnisse','spaziergang','tour','route','sonnenuntergang','romantisch'],t:a=>`${a.experiences}\nRomantische Route: ${a.romantic_walk}`},
+      {k:'Tagesausflüge',keys:['tagesausflug','tivoli','ostia','castelli','ausflug'],t:a=>a.daytrips},
+      {k:'Notfall',keys:['notfall','polizei','rettung','feuerwehr','arzt','tierarzt'],t:a=>a.emergency}
+    ]
   },
 
   es: {
-    ui:{ /* ... ES ... */ 
+    ui:{
       welcome:"Hola, soy Samantha, tu guía virtual. Toca un botón para una respuesta rápida.",
       placeholder:"Hola, soy Samantha, tu guía virtual. Toca un botón — o escribe aquí…",
       apt_label:"Apartamento", voice_on:"🔊 Voz: Activada", voice_off:"🔇 Voz: Desactivada",
       quick:["wifi","check in","check out","agua","aire acondicionado","baño","cocina","edificio","comer","beber","compras","visitar","experiencias","excursiones","transporte","servicios","emergencia"],
       fallback:"No encontré una respuesta directa. Prueba un botón (wifi, cocina, transporte, visitar…)."
     },
-    apt:{ /* ... ES ... */ },
-    intents:[ /* ... ES ... */ ]
+    apt:{
+      checkin_time:'15:00', checkout_time:'11:00',
+      wifi_note:"Cerca de la TV hay un router BLANCO. Gíralo para ver el SSID y la contraseña.",
+      wifi_ssid:"Ver etiqueta del router", wifi_password:"Ver etiqueta del router",
+      water_note:"El agua del grifo es potable. El agua caliente está siempre activa.",
+      ac_note:"Apaga el aire acondicionado al salir del apartamento.",
+      bathroom_amenities:"Papel higiénico, jabón de manos, alfombrilla, secador.",
+      towels_note:"Por huésped: 1 toalla grande + 1 mediana. Camas preparadas a la llegada.",
+      bathroom_notice:"IMPORTANTE (baño entre dormitorios): usa SOLO el papel higiénico proporcionado. No tires nada más (atascos/100 €).",
+      bedrooms_note:"Dos dormitorios + sofá cama doble. Las llaves están en la mesa a la llegada.",
+      gas_steps:"Llave del gas (izquierda del contador): ABAJO = CERRADO • HORIZONTAL = ABIERTO. Elegir fogón, presionar y girar, mantener unos segundos, soltar.",
+      kitchen_note:"Cocina completamente equipada y lista para usar.",
+      main_door_hours:"Puerta del edificio accesible con la llave proporcionada.",
+      concierge:"Conserje: Massimo — 08:30–13:00 y 15:30–18:30.",
+      registration_note:"Envía los pasaportes por WhatsApp al anfitrión (registro obligatorio).",
+      host_phone:"+39 335 5245756",
+      supermarkets:"Mini-market en Viale Trastevere cerca del 108 • Productos frescos en Largo/Piazza San Cosimato (mañanas).",
+      pharmacies:"Farmacia en Piazza Trilussa • Otras a lo largo de Viale Trastevere.",
+      luggage:"Radical Storage — Piazza Mastai (≈5 min).",
+      laundry:"Lavandería — Viale Trastevere 150.",
+      hospital:"Ospedale Nuovo Regina Margherita — Via Emilio Morosini 30.",
+      atms:"Cajeros en Viale Trastevere (BNL, Unicredit, Intesa).",
+      sims:"Vodafone (Viale Trastevere 143) • TIM (Piazza San Cosimato 70).",
+      transport:"Tranvía 8 → Largo Argentina / Piazza Venezia. Tranvía 3 cerca. Bus H → Termini. Taxi: +39 06 3570 o app FreeNow.",
+      airports:"Fiumicino: Tranvía 8 → Estación Trastevere → FL1 (~45 min). Ciampino: bus a Termini y luego Tranvía 8.",
+      emergency:"Emergencia UE 112 • Policía 113 • Ambulancia 118 • Bomberos 115 • Médico en inglés +39 06 488 2371 • Veterinario 24h +39 06 660 681",
+      eat:"Da Enzo al 29; Osteria der Belli; Tonnarello; Trattoria Da Teo; Spirito di Vino; Pianostrada; Trapizzino.",
+      drink:"Enoteca Ferrara; Freni e Frizioni; L’Angolo Divino; Mimì e Cocò; La Prosciutteria.",
+      shop:"Mercado de Porta Portese (dom.); panaderías y charcuterías artesanales; boutiques en Via della Lungaretta.",
+      visit:"Santa Maria in Trastevere; Santa Cecilia; Museo de Roma en Trastevere; Orto Botanico; Villa Farnesina; Piazza Trilussa; paseo por el Ponte Sisto hacia Campo de’ Fiori.",
+      experiences:"Paseo vespertino: Viale Trastevere → Piazza Trilussa → Santa Maria → callejuelas → ribera del Tíber → Campo de’ Fiori. Aperitivo en Freni e Frizioni; iglesias; atardecer en el Gianicolo.",
+      romantic_walk:"Inicio: Viale Trastevere 108 → Plaza S. Maria → Terraza del Gianicolo → Orto Botanico → Gelateria del Viale → Biscottificio Innocenti → regreso.",
+      daytrips:"Ostia Antica (~40 min) • Tivoli (Villa d’Este y Villa Adriana ~1h) • Castelli Romani.",
+      checkout_note:"Antes de salir: apaga luces/AC, cierra ventanas, deja las llaves en la mesa y cierra con llave."
+    },
+    intents:[
+      {k:'wifi',keys:['wifi','wi-fi','internet','contraseña','router'],t:a=>`Wi-Fi: ${a.wifi_note}\nRed: ${a.wifi_ssid}. Contraseña: ${a.wifi_password}.`},
+      {k:'check in',keys:['check in','llegada','acceso','self check-in','entrada','timbre','portero'],t:a=>`Check-in desde las ${a.checkin_time}.\n${a.bedrooms_note}\n${a.registration_note}\n${a.concierge}\n¿Necesitas ayuda? ${a.host_phone}.`},
+      {k:'check out',keys:['check out','salida','marchar'],t:a=>a.checkout_note},
+      {k:'agua',keys:['agua','caliente','potable','grifo'],t:a=>a.water_note},
+      {k:'aire acondicionado',keys:['aire acondicionado','ac','clima'],t:a=>a.ac_note},
+      {k:'baño',keys:['baño','toallas','jabón','wc','aviso','secador'],t:a=>`Baños: ${a.bathroom_amenities}\nToallas: ${a.towels_note}\n${a.bathroom_notice}`},
+      {k:'cocina',keys:['cocina','cocinar','hornilla','gas'],t:a=>`${a.kitchen_note}\nUso del gas: ${a.gas_steps}`},
+      {k:'edificio',keys:['edificio','puerta','horarios','conserje','ascensor'],t:a=>`${a.main_door_hours}\n${a.concierge}`},
+      {k:'servicios',keys:['farmacia','hospital','cajero','sim','lavandería','equipaje','supermercado'],t:a=>`Supermercados: ${a.supermarkets}\nFarmacias: ${a.pharmacies}\nHospital: ${a.hospital}\nCajeros: ${a.atms}\nLavandería: ${a.laundry}\nConsigna: ${a.luggage}\nSIM: ${a.sims}`},
+      {k:'transporte',keys:['transporte','tranvía','bus','taxi','aeropuerto','tren','metro'],t:a=>`${a.transport}\nAeropuertos: ${a.airports}`},
+      {k:'comer',keys:['comer','restaurante','cena','almuerzo'],t:a=>a.eat},
+      {k:'beber',keys:['beber','bar','vino','cóctel','aperitivo'],t:a=>a.drink},
+      {k:'compras',keys:['compras','mercado','tiendas','panaderías'],t:a=>a.shop},
+      {k:'visitar',keys:['visitar','museo','atracciones','ver'],t:a=>a.visit},
+      {k:'experiencias',keys:['experiencias','paseo','tour','itinerario','atardecer','romántico'],t:a=>`${a.experiences}\nRuta romántica: ${a.romantic_walk}`},
+      {k:'excursiones',keys:['excursión','ostia','tivoli','castelli','día'],t:a=>a.daytrips},
+      {k:'emergencia',keys:['emergencia','policía','ambulancia','bomberos','médico','veterinario'],t:a=>a.emergency}
+    ]
   }
 }; /* <-- CHIUDE const DATA */
 
@@ -326,9 +483,8 @@ function add(type, txt){
   d.textContent=txt;
   chatEl.appendChild(d);
   chatEl.scrollTop=chatEl.scrollHeight;
-  return d; // ritorno il nodo creato
+  return d;
 }
-
 function detectIntent(text){
   const L = DATA[lang]; const t = (text||'').toLowerCase();
   let best=null,score=0;
@@ -338,17 +494,12 @@ function detectIntent(text){
   }
   return best;
 }
-
-// Restituisce { text, topic }
 function getAnswer(text){
-  const L = DATA[lang];
-  const apt = L.apt;
+  const L = DATA[lang]; const apt=L.apt;
   const m = detectIntent(text);
   if(!m) return { text: L.ui.fallback, topic: 'fallback' };
   try{ return { text: m.t(apt), topic: m.k }; }catch{ return { text: L.ui.fallback, topic: 'fallback' }; }
 }
-
-// invio a Google Script
 function postFeedback(vote, topic, answerText){
   try{
     fetch(GOOGLE_SCRIPT_URL, {
@@ -365,7 +516,6 @@ function postFeedback(vote, topic, answerText){
     });
   }catch{}
 }
-
 function attachFeedbackUI(container, topic, answerText){
   const box = document.createElement('div');
   box.className = 'fb-box';
@@ -376,28 +526,20 @@ function attachFeedbackUI(container, topic, answerText){
   likeBtn.type='button'; likeBtn.textContent='👍 Like';
   const dislikeBtn = document.createElement('button');
   dislikeBtn.type='button'; dislikeBtn.textContent='👎 Dislike';
-
   const done = document.createElement('span');
   done.className='fb-done'; done.textContent='Thanks for your feedback!';
   done.style.display='none';
-
   function finish(v){
     likeBtn.disabled = true; dislikeBtn.disabled = true;
     likeBtn.style.opacity = 0.6; dislikeBtn.style.opacity = 0.6;
     done.style.display = 'inline';
     postFeedback(v, topic, answerText);
   }
-
   likeBtn.addEventListener('click', ()=>finish('like'));
   dislikeBtn.addEventListener('click', ()=>finish('dislike'));
-
-  box.appendChild(label);
-  box.appendChild(likeBtn);
-  box.appendChild(dislikeBtn);
-  box.appendChild(done);
+  box.appendChild(label); box.appendChild(likeBtn); box.appendChild(dislikeBtn); box.appendChild(done);
   container.appendChild(box);
 }
-
 function welcome(){
   const L=DATA[lang].ui;
   const intro=document.createElement('div'); intro.className='intro';
@@ -411,19 +553,15 @@ function welcome(){
   }
   chatEl.appendChild(q);
 }
-
 function send(){
   const text=(input.value||'').trim(); if(!text) return;
   add('me',text); input.value='';
   const {text:bot, topic} = getAnswer(text);
   const botNode = add('wd',bot); speak(bot);
-  // Aggancio Like/Dislike sotto la risposta
   attachFeedbackUI(botNode, topic, bot);
 }
-
 sendBtn.addEventListener('click',send);
 input.addEventListener('keydown',e=>{ if(e.key==='Enter') send(); });
-
 applyUI(); welcome();
 </script>
 </body>
