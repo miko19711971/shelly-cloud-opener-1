@@ -34,6 +34,13 @@ input{flex:1;padding:12px;border:1px solid #cbd5e1;border-radius:10px;outline:no
 .intro{background:#fff;border:1px solid #e0e0e0;padding:12px;border-radius:12px;margin:12px 0}
 .intro b{display:block;margin-bottom:6px}
 .small{opacity:.7;font-size:12px;margin-top:6px}
+
+/* --- Feedback UI --- */
+.fb-box{margin-top:8px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.fb-box .fb-label{font-size:12px;opacity:.7;margin-right:4px}
+.fb-box button{border:1px solid #ddd;background:#fff;padding:6px 10px;border-radius:999px;cursor:pointer}
+.fb-box button:active{transform:scale(0.98)}
+.fb-done{font-size:12px;opacity:.8}
 </style>
 </head>
 <body>
@@ -65,10 +72,15 @@ input{flex:1;padding:12px;border:1px solid #cbd5e1;border-radius:10px;outline:no
     <button id="sendBtn">Send</button>
   </footer>
 </div>
-
 <script>
+/* === CONFIG === */
+const APARTMENT_ID = "SCALA17";
+/* Usa lo stesso deployment della guida precedente (puoi sostituirlo se fai un nuovo deploy) */
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxCm83uKeMsUw0UKDk-QrKg-3pNsdpP28yUTOuMe1qeHUtreCnhjf3_AwFAV5Mz_1a/exec";
+
 /* ============ CONTENUTI LOCALIZZATI (SCALA 17) ============ */
 const DATA = {
+
   en: {
     ui: {
       welcome: "Hi, I am Samantha, your virtual guide. Tap a button to get a quick answer.",
@@ -426,7 +438,6 @@ document.querySelector('.lang').addEventListener('click',e=>{
   refreshVoice(); applyUI(); chatEl.innerHTML=''; welcome();
   if(voiceOn) warm();
 });
-
 function applyUI(){
   const L = DATA[lang].ui;
   document.getElementById('aptLabel').textContent = L.apt_label;
@@ -435,13 +446,14 @@ function applyUI(){
   document.querySelectorAll('.lang [data-lang]').forEach(b=> b.setAttribute('aria-current', b.getAttribute('data-lang')===lang ? 'true':'false'));
 }
 
-/* ============ CHAT LOGIC ============ */
+/* ============ CHAT LOGIC + FEEDBACK ============ */
 function add(type, txt){
   const d=document.createElement('div');
   d.className='msg '+(type==='me'?'me':'wd');
   d.textContent=txt;
   chatEl.appendChild(d);
   chatEl.scrollTop=chatEl.scrollHeight;
+  return d;
 }
 function detectIntent(text){
   const L = DATA[lang]; const t = (text||'').toLowerCase();
@@ -452,13 +464,55 @@ function detectIntent(text){
   }
   return best;
 }
-function answerFor(text){
-  const L = DATA[lang];
-  const apt = L.apt;
+function getAnswer(text){
+  const L = DATA[lang]; const apt=L.apt;
   const m = detectIntent(text);
-  if(!m) return L.ui.fallback;
-  try{ return m.t(apt); }catch{ return L.ui.fallback; }
+  if(!m) return { text: L.ui.fallback, topic: 'fallback' };
+  try{ return { text: m.t(apt), topic: m.k }; }catch{ return { text: L.ui.fallback, topic: 'fallback' }; }
 }
+
+/* --- invio feedback al Google Sheet --- */
+function postFeedback(vote, topic, answerText){
+  try{
+    fetch(GOOGLE_SCRIPT_URL, {
+      method:'POST',
+      mode:'no-cors',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        apartment_id: APARTMENT_ID,
+        language: (lang||'en').toUpperCase(),
+        topic: topic,
+        answer_text: answerText,
+        vote: vote
+      })
+    });
+  }catch{}
+}
+function attachFeedbackUI(container, topic, answerText){
+  const box = document.createElement('div');
+  box.className = 'fb-box';
+  const label = document.createElement('span');
+  label.className = 'fb-label';
+  label.textContent = 'Was this helpful?';
+  const likeBtn = document.createElement('button');
+  likeBtn.type='button'; likeBtn.textContent='👍 Like';
+  const dislikeBtn = document.createElement('button');
+  dislikeBtn.type='button'; dislikeBtn.textContent='👎 Dislike';
+  const done = document.createElement('span');
+  done.className='fb-done'; done.textContent='Thanks for your feedback!';
+  done.style.display='none';
+  function finish(v){
+    likeBtn.disabled = true; dislikeBtn.disabled = true;
+    likeBtn.style.opacity = 0.6; dislikeBtn.style.opacity = 0.6;
+    done.style.display = 'inline';
+    postFeedback(v, topic, answerText);
+  }
+  likeBtn.addEventListener('click', ()=>finish('like'));
+  dislikeBtn.addEventListener('click', ()=>finish('dislike'));
+  box.appendChild(label); box.appendChild(likeBtn); box.appendChild(dislikeBtn); box.appendChild(done);
+  container.appendChild(box);
+}
+
 function welcome(){
   const L=DATA[lang].ui;
   const intro=document.createElement('div'); intro.className='intro';
@@ -475,12 +529,12 @@ function welcome(){
 function send(){
   const text=(input.value||'').trim(); if(!text) return;
   add('me',text); input.value='';
-  const bot=answerFor(text);
-  add('wd',bot); speak(bot);
+  const {text:bot, topic} = getAnswer(text);
+  const botNode = add('wd',bot); speak(bot);
+  attachFeedbackUI(botNode, topic, bot);
 }
 sendBtn.addEventListener('click',send);
 input.addEventListener('keydown',e=>{ if(e.key==='Enter') send(); });
-
 applyUI(); welcome();
 </script>
 </body>
