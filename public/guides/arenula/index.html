@@ -34,6 +34,12 @@ input{flex:1;padding:12px;border:1px solid #cbd5e1;border-radius:10px;outline:no
 .intro{background:#fff;border:1px solid #e0e0e0;padding:12px;border-radius:12px;margin:12px 0}
 .intro b{display:block;margin-bottom:6px}
 .small{opacity:.7;font-size:12px;margin-top:6px}
+/* --- Feedback UI --- */
+.fb-box{margin-top:8px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.fb-box .fb-label{font-size:12px;opacity:.7;margin-right:4px}
+.fb-box button{border:1px solid #ddd;background:#fff;padding:6px 10px;border-radius:999px;cursor:pointer}
+.fb-box button:active{transform:scale(0.98)}
+.fb-done{font-size:12px;opacity:.8}
 </style>
 </head>
 <body>
@@ -67,8 +73,14 @@ input{flex:1;padding:12px;border:1px solid #cbd5e1;border-radius:10px;outline:no
 </div>
 
 <script>
+/* === CONFIG === */
+const APARTMENT_ID = "ARENULA16";
+/* Usa lo stesso deployment Google Script già in uso per le altre guide */
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxCm83uKeMsUw0UKDk-QrKg-3pNsdpP28yUTOuMe1qeHUtreCnhjf3_AwFAV5Mz_1a/exec";
+
 /* ============ CONTENUTI LOCALIZZATI (ARENULA 16) ============ */
 const DATA = {
+
   en: {
     ui: {
       welcome: "Hi, I am Samantha, your virtual guide. Tap a button to get a quick answer.",
@@ -77,7 +89,11 @@ const DATA = {
       voice_on: "🔊 Voice: On",
       voice_off: "🔇 Voice: Off",
       quick: ["wifi","check in","check out","water","AC","bathroom","gas","building","eat","drink","shop","visit","experience","day trips","transport","services","emergency"],
-      fallback: "I did not find a direct answer. Try a quick button (wifi, gas, transport, visit…)."
+      fallback: "I did not find a direct answer. Try a quick button (wifi, gas, transport, visit…).",
+      fb_label:"Was this helpful?",
+      fb_like:"👍 Like",
+      fb_dislike:"👎 Dislike",
+      fb_thanks:"Thanks for your feedback!"
     },
     apt: {
       checkin_time:'15:00', checkout_time:'11:00',
@@ -135,7 +151,11 @@ const DATA = {
       placeholder:"Ciao, sono Samantha, la tua guida virtuale. Tocca un pulsante — oppure scrivi qui…",
       apt_label:"Appartamento", voice_on:"🔊 Voce: On", voice_off:"🔇 Voce: Off",
       quick:["wifi","check in","check out","acqua","aria condizionata","bagno","gas","edificio","mangiare","bere","shopping","visitare","esperienze","gite di un giorno","trasporti","servizi","emergenza"],
-      fallback:"Non ho trovato una risposta diretta. Prova un pulsante (wifi, gas, trasporti, visitare…)."
+      fallback:"Non ho trovato una risposta diretta. Prova un pulsante (wifi, gas, trasporti, visitare…).",
+      fb_label:"Ti è stato utile?",
+      fb_like:"👍 Mi piace",
+      fb_dislike:"👎 Non mi piace",
+      fb_thanks:"Grazie per il tuo feedback!"
     },
     apt:{
       checkin_time:'15:00', checkout_time:'11:00',
@@ -193,7 +213,11 @@ const DATA = {
       placeholder:"Bonjour, je suis Samantha, votre guide virtuel. Touchez un bouton — ou écrivez ici…",
       apt_label:"Appartement", voice_on:"🔊 Voix : Activée", voice_off:"🔇 Voix : Désactivée",
       quick:["wifi","check in","check out","eau","climatisation","salle de bain","gaz","immeuble","manger","boire","shopping","visiter","expériences","excursions","transports","services","urgence"],
-      fallback:"Je n’ai pas trouvé de réponse directe. Essayez un bouton (wifi, gaz, transports, visiter…)."
+      fallback:"Je n’ai pas trouvé de réponse directe. Essayez un bouton (wifi, gaz, transports, visiter…).",
+      fb_label:"Cette réponse vous a-t-elle aidé·e ?",
+      fb_like:"👍 J’aime",
+      fb_dislike:"👎 Je n’aime pas",
+      fb_thanks:"Merci pour votre retour !"
     },
     apt:{
       checkin_time:'15:00', checkout_time:'11:00',
@@ -251,9 +275,13 @@ const DATA = {
       placeholder:"Hallo, ich bin Samantha, dein virtueller Guide. Tippe auf einen Button — oder schreibe hier…",
       apt_label:"Apartment", voice_on:"🔊 Stimme: An", voice_off:"🔇 Stimme: Aus",
       quick:["WLAN","check in","check out","Wasser","Klimaanlage","Bad","Gas","Gebäude","Essen","Trinken","Shopping","Sehenswürdigkeiten","Erlebnisse","Tagesausflüge","Verkehr","Services","Notfall"],
-      fallback:"Keine direkte Antwort gefunden. Nutze einen Button (WLAN, Gas, Verkehr, Sehenswürdigkeiten…)."
+      fallback:"Keine direkte Antwort gefunden. Nutze einen Button (WLAN, Gas, Verkehr, Sehenswürdigkeiten…).",
+      fb_label:"War diese Antwort hilfreich?",
+      fb_like:"👍 Like",
+      fb_dislike:"👎 Dislike",
+      fb_thanks:"Danke für dein Feedback!"
     },
-    apt:{ /* contenuti come EN, tradotti sopra */ 
+    apt:{
       checkin_time:'15:00', checkout_time:'11:00',
       wifi_note:"Router auf dem Schreibtisch am Fenster. Umdrehen, um SSID & Passwort zu sehen.",
       wifi_ssid:"Siehe Router-Etikett", wifi_password:"Siehe Router-Etikett",
@@ -309,7 +337,11 @@ const DATA = {
       placeholder:"Hola, soy Samantha, tu guía virtual. Toca un botón — o escribe aquí…",
       apt_label:"Apartamento", voice_on:"🔊 Voz: Activada", voice_off:"🔇 Voz: Desactivada",
       quick:["wifi","check in","check out","agua","aire acondicionado","baño","gas","edificio","comer","beber","compras","visitar","experiencias","excursiones","transporte","servicios","emergencia"],
-      fallback:"No encontré una respuesta directa. Prueba un botón (wifi, gas, transporte, visitar…)."
+      fallback:"No encontré una respuesta directa. Prueba un botón (wifi, gas, transporte, visitar…).",
+      fb_label:"¿Te resultó útil?",
+      fb_like:"👍 Me gusta",
+      fb_dislike:"👎 No me gusta",
+      fb_thanks:"¡Gracias por tu opinión!"
     },
     apt:{
       checkin_time:'15:00', checkout_time:'11:00',
@@ -435,15 +467,15 @@ function applyUI(){
   document.querySelectorAll('.lang [data-lang]').forEach(b=> b.setAttribute('aria-current', b.getAttribute('data-lang')===lang ? 'true':'false'));
 }
 
-/* ============ CHAT LOGIC ============ */
+/* ============ CHAT LOGIC + FEEDBACK ============ */
 function add(type, txt){
   const d=document.createElement('div');
   d.className='msg '+(type==='me'?'me':'wd');
   d.textContent=txt;
   chatEl.appendChild(d);
   chatEl.scrollTop=chatEl.scrollHeight;
+  return d;
 }
-
 function detectIntent(text){
   const L = DATA[lang]; const t = (text||'').toLowerCase();
   let best=null,score=0;
@@ -453,13 +485,54 @@ function detectIntent(text){
   }
   return best;
 }
-
-function answerFor(text){
-  const L = DATA[lang];
-  const apt = L.apt;
+function getAnswer(text){
+  const L = DATA[lang]; const apt=L.apt;
   const m = detectIntent(text);
-  if(!m) return L.ui.fallback;
-  try{ return m.t(apt); }catch{ return L.ui.fallback; }
+  if(!m) return { text: L.ui.fallback, topic: 'fallback' };
+  try{ return { text: m.t(apt), topic: m.k }; }catch{ return { text: L.ui.fallback, topic: 'fallback' }; }
+}
+
+/* --- invio feedback al Google Sheet --- */
+function postFeedback(vote, topic, answerText){
+  try{
+    fetch(GOOGLE_SCRIPT_URL, {
+      method:'POST',
+      mode:'no-cors',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        apartment_id: APARTMENT_ID,
+        language: (lang||'en').toUpperCase(),
+        topic: topic,
+        answer_text: answerText,
+        vote: vote
+      })
+    });
+  }catch{}
+}
+function attachFeedbackUI(container, topic, answerText){
+  const L = DATA[lang].ui;
+  const box = document.createElement('div');
+  box.className = 'fb-box';
+  const label = document.createElement('span');
+  label.className = 'fb-label';
+  label.textContent = L.fb_label;
+  const likeBtn = document.createElement('button');
+  likeBtn.type='button'; likeBtn.textContent= L.fb_like;
+  const dislikeBtn = document.createElement('button');
+  dislikeBtn.type='button'; dislikeBtn.textContent= L.fb_dislike;
+  const done = document.createElement('span');
+  done.className='fb-done'; done.textContent= L.fb_thanks;
+  done.style.display='none';
+  function finish(v){
+    likeBtn.disabled = true; dislikeBtn.disabled = true;
+    likeBtn.style.opacity = 0.6; dislikeBtn.style.opacity = 0.6;
+    done.style.display = 'inline';
+    postFeedback(v, topic, answerText);
+  }
+  likeBtn.addEventListener('click', ()=>finish('like'));
+  dislikeBtn.addEventListener('click', ()=>finish('dislike'));
+  box.appendChild(label); box.appendChild(likeBtn); box.appendChild(dislikeBtn); box.appendChild(done);
+  container.appendChild(box);
 }
 
 function welcome(){
@@ -476,17 +549,24 @@ function welcome(){
   chatEl.appendChild(q);
 }
 
+/* --- invio messaggio --- */
 function send(){
-  const text=(input.value||'').trim(); if(!text) return;
-  add('me',text); input.value='';
-  const bot=answerFor(text);
-  add('wd',bot); speak(bot);
+  const text=(input.value||'').trim(); 
+  if(!text) return;
+  add('me',text); 
+  input.value='';
+  const {text:bot, topic} = getAnswer(text);
+  const botNode = add('wd',bot); 
+  speak(bot);
+  attachFeedbackUI(botNode, topic, bot);
 }
 
+/* --- eventi --- */
 sendBtn.addEventListener('click',send);
 input.addEventListener('keydown',e=>{ if(e.key==='Enter') send(); });
 
-applyUI(); welcome();
+applyUI(); 
+welcome();
 </script>
 </body>
 </html>
