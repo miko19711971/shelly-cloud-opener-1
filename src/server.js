@@ -47,7 +47,11 @@ app.get(["/checkin/ottavia", "/checkin/ottavia/index.html", "/checkin/portico", 
 // ========= ENV =========
 const SHELLY_API_KEY  = process.env.SHELLY_API_KEY;
 const SHELLY_BASE_URL = process.env.SHELLY_BASE_URL || "https://shelly-api-eu.shelly.cloud";
-const const TOKEN_SECRET    = process.env.TOKEN_SECRET;
+const TOKEN_SECRET = process.env.TOKEN_SECRET;
+if (!TOKEN_SECRET) {
+  console.error("❌ Missing TOKEN_SECRET env var");
+  process.exit(1);
+}
 const TIMEZONE        = process.env.TIMEZONE        || "Europe/Rome";
 
 // Limiti sicurezza: di default 2 aperture entro 15 minuti
