@@ -11,6 +11,11 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cors());
 
+// 🔒 0) KILL LEGACY /checkin LINKS — PRIMA DI QUALSIASI STATIC
+app.all(['/checkin', '/checkin/*'], (req, res) => {
+  res.status(410).type('text/plain').send('❌ Questo link non è più valido.');
+});
+
 // ========= STATIC =========
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -24,24 +29,20 @@ app.use(express.static(PUBLIC_DIR));
 // 2) alias ESPICITO per le guide semplici sotto /guides (come avevi)
 app.use("/guides", express.static(path.join(PUBLIC_DIR, "guides"), { fallthrough: false }));
 
-// 2bis) NUOVO: alias per le Virtual Guide MULTILINGUA (bottone EN/4 lingue)
+// 2bis) alias per le Virtual Guide MULTILINGUA
 app.use("/guest-assistant", express.static(path.join(PUBLIC_DIR, "guest-assistant"), { fallthrough: false }));
 
-// 3) redirect 301 dai vecchi percorsi (se ne avevi) ai nuovi /guides/...
-// 🔒 Blocca completamente i vecchi link /checkin
-app.get("/checkin/*", (req, res) => {
-  res.status(410).send("❌ Questo link non è più valido");
-});
+// ⛔️ RIMOSSI tutti i redirect /checkin -> /guides (altrimenti i vecchi link restano utili)
 
 // ========= ENV =========
 const SHELLY_API_KEY  = process.env.SHELLY_API_KEY;
 const SHELLY_BASE_URL = process.env.SHELLY_BASE_URL || "https://shelly-api-eu.shelly.cloud";
-const TOKEN_SECRET = process.env.TOKEN_SECRET;
+const TOKEN_SECRET    = process.env.TOKEN_SECRET;
 if (!TOKEN_SECRET) {
   console.error("❌ Missing TOKEN_SECRET env var");
   process.exit(1);
 }
-const TIMEZONE        = process.env.TIMEZONE        || "Europe/Rome";
+const TIMEZONE        = process.env.TIMEZONE || "Europe/Rome";
 
 // Limiti sicurezza: di default 2 aperture entro 15 minuti
 const DEFAULT_WINDOW_MIN = parseInt(process.env.WINDOW_MIN || "15", 10);
@@ -84,7 +85,7 @@ async function shellyTurnOn(deviceId) {
     );
     if (data && data.isok) return { ok: true, data, path: "/device/relay/control", encoding: "form" };
     return { ok: false, status: 400, data, path: "/device/relay/control", encoding: "form" };
-  } catch (err) {
+  } catch {
     try {
       const { data } = await axios.post(
         `${SHELLY_BASE_URL}/device/relay/turn`,
@@ -239,6 +240,7 @@ app.get("/k/:target/:token", (req, res) => {
   const p = parsed.payload;
   if (p.tgt !== target) return res.status(400).send("Invalid link");
   if (Date.now() > p.exp) return res.status(400).send("Link scaduto");
+  res.set('Cache-Control','no-store, no-cache, must-revalidate, private'); // evita caching
   res.type("html").send(landingHtml(target, targetDef.name, p, token));
 });
 
@@ -276,7 +278,7 @@ app.post("/k/:target/:token/open", async (req, res) => {
   return res.json({ ok: true, opened: result, remaining: 0 });
 });
 
- // 🔒 Blocca apertura diretta dalle vecchie email
+// 🔒 Blocca apertura diretta dalle vecchie email (bypass)
 app.post("/api/open-now/:target", (req, res) => {
   return res.status(403).json({ ok: false, error: "Direct open disabled" });
 });
