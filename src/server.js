@@ -59,9 +59,23 @@ const TOKEN_VERSION  = parseInt(process.env.TOKEN_VERSION || "1", 10);
 // REVOKE_BEFORE: epoch ms (es. Date.parse("2025-09-18T14:00:00+02:00"))
 const REVOKE_BEFORE  = parseInt(process.env.REVOKE_BEFORE || "0", 10);
 
+// 🔀 Prefisso dei NUOVI link (per spegnere /k/* nelle vecchie mail)
+const LINK_PREFIX = process.env.LINK_PREFIX || "/k2";
+
 // Limiti sicurezza: di default 2 aperture entro 15 minuti
 const DEFAULT_WINDOW_MIN = parseInt(process.env.WINDOW_MIN || "15", 10);
 const DEFAULT_MAX_OPENS  = parseInt(process.env.MAX_OPENS  || "2", 10);
+
+// ========= NO-CACHE & DEBUG HEADERS =========
+app.use((req, res, next) => {
+  if (req.path.startsWith("/k/") || req.path.startsWith(LINK_PREFIX)) {
+    res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0");
+    res.setHeader("Pragma", "no-cache");
+  }
+  res.setHeader("X-Link-Prefix", LINK_PREFIX);
+  res.setHeader("X-Token-Version", String(TOKEN_VERSION));
+  next();
+});
 
 // ========= MAPPATURA DISPOSITIVI =========
 const TARGETS = {
@@ -154,7 +168,7 @@ function makeToken(payload) {
   return `${header}.${body}.${sig}`;
 }
 
-// ✅ PATCH: validazione con versione e soglia di revoca
+// ✅ validazione con versione e soglia di revoca
 function parseToken(token) {
   const [h, b, s] = token.split(".");
   if (!h || !b || !s) return { ok: false, error: "bad_format" };
@@ -176,7 +190,7 @@ function parseToken(token) {
   return { ok: true, payload };
 }
 
-// ✅ PATCH: i token includono iat/ver
+// ✅ i token includono iat/ver
 function newTokenFor(targetKey, opts = {}) {
   const max = opts.max ?? DEFAULT_MAX_OPENS;
   const windowMin = opts.windowMin ?? DEFAULT_WINDOW_MIN;
@@ -199,7 +213,7 @@ const seenJti = new Set();
 function markJti(jti) { seenJti.add(jti); }
 function isSeenJti(jti) { return seenJti.has(jti); }
 
-// ✅ PATCH: mantieni la cache replay più a lungo (24h)
+// ✅ mantieni la cache replay più a lungo (24h)
 setInterval(() => { seenJti.clear(); }, 24 * 60 * 60 * 1000);
 
 // ========== PAGINE HTML ==========
@@ -236,7 +250,7 @@ function landingHtml(targetKey, targetName, tokenPayload, tokenStr) {
   </script></div></body></html>`;
 }
 
-// ========== ROUTES ==========
+// ========== HOME ==========
 app.get("/", (req, res) => {
   const rows = Object.entries(TARGETS).map(([key, t]) => {
     const ids = t.ids.join(", ");
@@ -259,7 +273,7 @@ app.get("/", (req, res) => {
   </body></html>`);
 });
 
-// token & opener
+// ========== GENERA LINK (ora punta al nuovo prefisso) ==========
 app.get("/token/:target", (req, res) => {
   const targetKey = req.params.target;
   const target = TARGETS[targetKey];
@@ -269,11 +283,20 @@ app.get("/token/:target", (req, res) => {
   const maxOpens  = parseInt(req.query.max  || DEFAULT_MAX_OPENS, 10);
 
   const { token, payload } = newTokenFor(targetKey, { windowMin, max: maxOpens, used: 0 });
-  const url = `${req.protocol}://${req.get("host")}/k/${targetKey}/${token}`;
+  const url = `${req.protocol}://${req.get("host")}${LINK_PREFIX}/${targetKey}/${token}`;
   return res.json({ ok:true, url, expiresInMin: Math.round((payload.exp - Date.now())/60000) });
 });
 
-app.get("/k/:target/:token", (req, res) => {
+// 🔥 HARD KILL dei vecchi link: /k/* viene disattivato
+app.all("/k/:target/:token", (req, res) => {
+  res.status(410).send("Link non più valido.");
+});
+app.all("/k/:target/:token/open", (req, res) => {
+  res.status(410).json({ ok:false, error:"gone", message:"Link non più valido." });
+});
+
+// ========== NUOVE ROUTE operative su LINK_PREFIX (default /k2) ==========
+app.get(`${LINK_PREFIX}/:target/:token`, (req, res) => {
   const { target, token } = req.params;
   const targetDef = TARGETS[target];
   if (!targetDef) return res.status(404).send("Invalid link");
@@ -290,10 +313,11 @@ app.get("/k/:target/:token", (req, res) => {
   if (p.tgt !== target) return res.status(400).send("Invalid link");
   if (Date.now() > p.exp) return res.status(400).send("Link scaduto");
 
+  res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0");
   res.type("html").send(landingHtml(target, targetDef.name, p, token));
 });
 
-app.post("/k/:target/:token/open", async (req, res) => {
+app.post(`${LINK_PREFIX}/:target/:token/open`, async (req, res) => {
   const { target, token } = req.params;
   const targetDef = TARGETS[target];
   if (!targetDef) return res.status(404).json({ ok:false, error:"unknown_target" });
@@ -327,7 +351,7 @@ app.post("/k/:target/:token/open", async (req, res) => {
       max: p.max,
       windowMin: Math.ceil((p.exp - Date.now())/60000)
     });
-    const nextUrl = `${req.protocol}://${req.get("host")}/k/${target}/${nextTok}`;
+    const nextUrl = `${req.protocol}://${req.get("host")}${LINK_PREFIX}/${target}/${nextTok}`;
     return res.json({ ok: true, opened: result, remaining, nextUrl });
   }
   return res.json({ ok: true, opened: result, remaining: 0 });
@@ -346,12 +370,13 @@ app.get("/health", (req, res) => {
     uptime: process.uptime(),
     baseUrl: SHELLY_BASE_URL,
     tokenVersion: TOKEN_VERSION,
-    revokeBefore: REVOKE_BEFORE
+    revokeBefore: REVOKE_BEFORE,
+    linkPrefix: LINK_PREFIX
   });
 });
 
 // ========= START =========
 const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => {
-  console.log("Server running on", PORT, "TZ:", TIMEZONE, "TokenVer:", TOKEN_VERSION, "RevokeBefore:", REVOKE_BEFORE || "-");
+  console.log("Server running on", PORT, "TZ:", TIMEZONE, "TokenVer:", TOKEN_VERSION, "RevokeBefore:", REVOKE_BEFORE || "-", "LinkPrefix:", LINK_PREFIX);
 });
