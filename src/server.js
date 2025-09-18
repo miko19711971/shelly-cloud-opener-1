@@ -27,17 +27,28 @@ app.use("/guides", express.static(path.join(PUBLIC_DIR, "guides"), { fallthrough
 // 2bis) NUOVO: alias per le Virtual Guide MULTILINGUA (bottone EN/4 lingue)
 app.use("/guest-assistant", express.static(path.join(PUBLIC_DIR, "guest-assistant"), { fallthrough: false }));
 
-// 3) (NESSUN blocco su /checkin/*: deve rimanere accessibile per i link nuovi)
+// 3) 🔒 Blocca COMPLETAMENTE i vecchi link /checkin (tutte le vecchie email)
+app.get("/checkin/*", (req, res) => {
+  res.status(410).send("❌ Questo link non è più valido.");
+});
+
+// 3bis) ✅ Nuovi link per il self-check-in (da usare nelle automazioni future)
+// Redirigono alle pagine già esistenti sotto /guides/...
+app.get("/selfcheck/leonina",    (req, res) => res.redirect(301, "/guides/leonina/"));
+app.get("/selfcheck/arenula",    (req, res) => res.redirect(301, "/guides/arenula/"));
+app.get("/selfcheck/trastevere", (req, res) => res.redirect(301, "/guides/trastevere/"));
+app.get("/selfcheck/scala",      (req, res) => res.redirect(301, "/guides/scala/"));
+app.get("/selfcheck/portico",    (req, res) => res.redirect(301, "/guides/portico/"));
 
 // ========= ENV =========
 const SHELLY_API_KEY  = process.env.SHELLY_API_KEY;
 const SHELLY_BASE_URL = process.env.SHELLY_BASE_URL || "https://shelly-api-eu.shelly.cloud";
-const TOKEN_SECRET = process.env.TOKEN_SECRET;
+const TOKEN_SECRET    = process.env.TOKEN_SECRET;
 if (!TOKEN_SECRET) {
   console.error("❌ Missing TOKEN_SECRET env var");
   process.exit(1);
 }
-const TIMEZONE        = process.env.TIMEZONE        || "Europe/Rome";
+const TIMEZONE        = process.env.TIMEZONE || "Europe/Rome";
 
 // Limiti sicurezza: di default 2 aperture entro 15 minuti
 const DEFAULT_WINDOW_MIN = parseInt(process.env.WINDOW_MIN || "15", 10);
