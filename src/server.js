@@ -355,6 +355,3 @@ const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => {
   console.log("Server running on", PORT, "TZ:", TIMEZONE, "TokenVer:", TOKEN_VERSION, "RevokeBefore:", REVOKE_BEFORE || "-");
 });
-
-
-Fai un ultimo controllo finale allo script e confermami che è funzionante che annulla tutte le aperture delle e-mail precedenti, ma che allo stesso tempo mantiene i livelli di sicurezza per le aperture future
