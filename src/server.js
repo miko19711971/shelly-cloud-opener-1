@@ -287,16 +287,9 @@ app.post("/k/:target/:token/open", async (req, res) => {
   return res.json({ ok: true, opened: result, remaining: 0 });
 });
 
-app.post("/api/open-now/:target", async (req, res) => {
-  const key = req.params.target;
-  const t = TARGETS[key];
-  if (!t) return res.status(404).json({ ok:false, error:"unknown_target" });
-
-  const out = (t.ids.length === 1)
-    ? await openOne(t.ids[0])
-    : await openSequence(t.ids, 10000);
-
-  res.json({ target: key, name: t.name, ...out, baseUrl: SHELLY_BASE_URL });
+ // 🔒 Blocca apertura diretta dalle vecchie email
+app.post("/api/open-now/:target", (req, res) => {
+  return res.status(403).json({ ok: false, error: "Direct open disabled" });
 });
 
 app.get("/health", (req, res) => {
