@@ -1,4 +1,3 @@
-Controllami tutto lo script e dimmi se adesso ho fatto tutto correttamente. E poi dimmi che cosa devo fare sul token secret su Render.
 // server.js
 import express from "express";
 import axios from "axios";
