@@ -1,4 +1,4 @@
-// server.js
+// server.js (PART 1/6)
 import express from "express";
 import axios from "axios";
 import crypto from "crypto";
@@ -11,38 +11,10 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cors());
 
-// ========= STATIC =========
+// ========= STATIC PATHS =========
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-
-// cartella public (già usata per check-in ecc.)
 const PUBLIC_DIR = path.join(__dirname, "..", "public");
-
-// 1) continua a servire tutta la /public a root (com'era)
-app.use(express.static(PUBLIC_DIR));
-
-// 2) alias ESPICITO per le guide semplici sotto /guides (come avevi)
-app.use("/guides", express.static(path.join(PUBLIC_DIR, "guides"), { fallthrough: false }));
-
-// 2bis) NUOVO: alias per le Virtual Guide MULTILINGUA (bottone EN/4 lingue)
-app.use("/guest-assistant", express.static(path.join(PUBLIC_DIR, "guest-assistant"), { fallthrough: false }));
-
-// 3) redirect 301 dai vecchi percorsi (se ne avevi) ai nuovi /guides/...
-app.get(["/checkin/scala", "/checkin/scala/index.html"], (req, res) =>
-  res.redirect(301, "/guides/scala/")
-);
-app.get(["/checkin/leonina", "/checkin/leonina/index.html"], (req, res) =>
-  res.redirect(301, "/guides/leonina/")
-);
-app.get(["/checkin/arenula", "/checkin/arenula/index.html"], (req, res) =>
-  res.redirect(301, "/guides/arenula/")
-);
-app.get(["/checkin/trastevere", "/checkin/trastevere/index.html"], (req, res) =>
-  res.redirect(301, "/guides/trastevere/")
-);
-app.get(["/checkin/ottavia", "/checkin/ottavia/index.html", "/checkin/portico", "/checkin/portico/index.html"], (req, res) =>
-  res.redirect(301, "/guides/portico/")
-);
 
 // ========= ENV BASE =========
 const SHELLY_API_KEY  = process.env.SHELLY_API_KEY;
@@ -55,24 +27,45 @@ if (!TOKEN_SECRET) {
 const TIMEZONE        = process.env.TIMEZONE || "Europe/Rome";
 
 // ========= ROTAZIONE HARD-CODED (kill totale dei token vecchi) =========
-const ROTATION_TAG   = "R-2025-09-18-final"; // cambia questo string se mai vorrai invalidare di nuovo
-const TOKEN_VERSION  = 100;                  // versione token forzata nel codice (ignora ENV)
-const LINK_PREFIX    = "/k3";                // NUOVO prefisso definitivo
-const SIGNING_SECRET = `${TOKEN_SECRET}|${ROTATION_TAG}`;
-
-// (opzionale) REVOKE_BEFORE via ENV rimane disponibile, ma non serve per il kill
-const REVOKE_BEFORE  = parseInt(process.env.REVOKE_BEFORE || "0", 10);
-
-// ⏱️ Cutoff automatico: invalida tutto emesso prima del boot
-const STARTED_AT = Date.now(); // ms
+const ROTATION_TAG   = "R-2025-09-18-final";     // cambia questa stringa per invalidare tutto in futuro
+const TOKEN_VERSION  = 100;                      // versione token forzata (non usa ENV)
+const LINK_PREFIX    = "/k3";                    // NUOVO prefisso definitivo dei link
+const SIGNING_SECRET = `${TOKEN_SECRET}|${ROTATION_TAG}`; // firma ruotata
+const REVOKE_BEFORE  = parseInt(process.env.REVOKE_BEFORE || "0", 10); // opzionale
+const STARTED_AT     = Date.now(); // invalida tutto emesso prima del boot
 
 // Limiti sicurezza default
 const DEFAULT_WINDOW_MIN = parseInt(process.env.WINDOW_MIN || "15", 10);
 const DEFAULT_MAX_OPENS  = parseInt(process.env.MAX_OPENS  || "2", 10);
 
+// server.js (PART 2/6)
+// ======== HARD CSP per bloccare aperture dirette dalle guide ========
+const GUIDE_CSP = [
+  "default-src 'self'",
+  "script-src 'self'",
+  "style-src 'self'",
+  "img-src 'self' data:",
+  "connect-src 'self'", // blocca fetch/XHR verso domini esterni (es. *.shelly.cloud)
+  "form-action 'self'",
+  "frame-ancestors 'none'",
+  "base-uri 'self'",
+  "navigate-to 'self' https://shelly-cloud-opener-1.onrender.com" // vieta link esterni
+].join("; ");
+
+function setGuideSecurityHeaders(req, res, next) {
+  res.setHeader("Content-Security-Policy", GUIDE_CSP);
+  res.setHeader("Referrer-Policy", "no-referrer");
+  res.setHeader("X-Content-Type-Options", "nosniff");
+  res.setHeader("X-Frame-Options", "DENY");
+  next();
+}
+
+// ⚠️ Applica CSP alle guide PRIMA di servirle staticamente
+app.use(["/checkin", "/guides", "/guest-assistant"], setGuideSecurityHeaders);
+
 // ========= NO-CACHE & DEBUG HEADERS =========
 app.use((req, res, next) => {
-  if (req.path.startsWith("/k/") || req.path.startsWith(LINK_PREFIX)) {
+  if (req.path.startsWith("/k/") || req.path.startsWith("/k2/") || req.path.startsWith(LINK_PREFIX)) {
     res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0");
     res.setHeader("Pragma", "no-cache");
   }
@@ -83,19 +76,30 @@ app.use((req, res, next) => {
   next();
 });
 
+// ========= STATIC =========
+app.use(express.static(PUBLIC_DIR)); // root di /public
+
+// Alias espliciti
+app.use("/guides", express.static(path.join(PUBLIC_DIR, "guides"), { fallthrough: false }));
+app.use("/guest-assistant", express.static(path.join(PUBLIC_DIR, "guest-assistant"), { fallthrough: false }));
+
+// Redirect vecchi percorsi check-in → nuove guide
+app.get(["/checkin/scala", "/checkin/scala/index.html"], (req, res) => res.redirect(301, "/guides/scala/"));
+app.get(["/checkin/leonina", "/checkin/leonina/index.html"], (req, res) => res.redirect(301, "/guides/leonina/"));
+app.get(["/checkin/arenula", "/checkin/arenula/index.html"], (req, res) => res.redirect(301, "/guides/arenula/"));
+app.get(["/checkin/trastevere", "/checkin/trastevere/index.html"], (req, res) => res.redirect(301, "/guides/trastevere/"));
+app.get(["/checkin/ottavia", "/checkin/ottavia/index.html", "/checkin/portico", "/checkin/portico/index.html"], (req, res) => res.redirect(301, "/guides/portico/"));
+
+// server.js (PART 3/6)
 // ========= MAPPATURA DISPOSITIVI =========
 const TARGETS = {
   "arenula-building":         { name: "Arenula 16 — Building Door",                ids: ["3494547ab05e"] },
-
   "leonina-door":             { name: "Leonina 71 — Apartment Door",               ids: ["3494547a9395"] },
   "leonina-building":         { name: "Building Door",                             ids: ["34945479fd73"] },
-
   "via-della-scala-door":     { name: "Via della Scala 17 — Apartment Door",       ids: ["3494547a1075"] },
   "via-della-scala-building": { name: "Via della Scala 17 — Building Door",        ids: ["3494547745ee", "3494547745ee"] },
-
   "portico-1d-door":          { name: "Portico d'Ottavia 1D — Apartment Door",     ids: ["3494547a887d"] },
   "portico-1d-building":      { name: "Portico d'Ottavia 1D — Building Door",      ids: ["3494547ab62b"] },
-
   "viale-trastevere-door":    { name: "Viale Trastevere 108 — Apartment Door",     ids: ["34945479fa35"] },
   "viale-trastevere-building":{ name: "Building Door",                             ids: ["34945479fbbe"] },
 };
@@ -111,7 +115,6 @@ async function shellyTurnOn(deviceId) {
     channel: String(RELAY_CHANNEL),
     turn: "on"
   });
-
   try {
     const { data } = await axios.post(
       `${SHELLY_BASE_URL}/device/relay/control`,
@@ -152,14 +155,13 @@ async function openSequence(ids, delayMs = 10000) {
   for (let i = 0; i < ids.length; i++) {
     const r = await openOne(ids[i]);
     logs.push({ step: i + 1, device: ids[i], ...r });
-    if (i < ids.length - 1) {
-      await new Promise(res => setTimeout(res, delayMs));
-    }
+    if (i < ids.length - 1) await new Promise(res => setTimeout(res, delayMs));
   }
   const ok = logs.every(l => l.ok);
   return { ok, logs };
 }
 
+// server.js (PART 4/6)
 // ========== TOKEN MONOUSO ==========
 function b64url(buf) {
   return Buffer.from(buf).toString("base64").replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "");
@@ -188,15 +190,12 @@ function parseToken(token) {
   try { payload = JSON.parse(Buffer.from(b, "base64").toString("utf8")); }
   catch { return { ok: false, error: "bad_payload" }; }
 
-  // Versione forzata
   if (typeof payload.ver !== "number" || payload.ver !== TOKEN_VERSION) {
     return { ok: false, error: "bad_version" };
   }
-  // Revoca per data (se configurata)
   if (REVOKE_BEFORE && typeof payload.iat === "number" && payload.iat < REVOKE_BEFORE) {
     return { ok: false, error: "revoked" };
   }
-  // Revoca automatica al boot
   if (typeof payload.iat !== "number" || payload.iat < STARTED_AT) {
     return { ok: false, error: "revoked_boot" };
   }
@@ -217,8 +216,8 @@ function newTokenFor(targetKey, opts = {}) {
     max,
     used: opts.used ?? 0,
     jti,
-    iat: now,           // emesso a
-    ver: TOKEN_VERSION  // versione forzata
+    iat: now,
+    ver: TOKEN_VERSION
   };
   return { token: makeToken(payload), payload };
 }
@@ -226,9 +225,7 @@ function newTokenFor(targetKey, opts = {}) {
 const seenJti = new Set();
 function markJti(jti) { seenJti.add(jti); }
 function isSeenJti(jti) { return seenJti.has(jti); }
-
-// ✅ mantieni la cache replay più a lungo (24h)
-setInterval(() => { seenJti.clear(); }, 24 * 60 * 60 * 1000);
+setInterval(() => { seenJti.clear(); }, 24 * 60 * 60 * 1000); // anti-replay cache 24h
 
 // ========== PAGINE HTML ==========
 function pageCss() { return `
@@ -264,6 +261,7 @@ function landingHtml(targetKey, targetName, tokenPayload, tokenStr) {
   </script></div></body></html>`;
 }
 
+// server.js (PART 5/6)
 // ========== HOME ==========
 app.get("/", (req, res) => {
   const rows = Object.entries(TARGETS).map(([key, t]) => {
@@ -302,18 +300,10 @@ app.get("/token/:target", (req, res) => {
 });
 
 // 🔥 HARD KILL dei vecchi link: /k/* e /k2/* vengono disattivati
-app.all("/k/:target/:token", (req, res) => {
-  res.status(410).send("Link non più valido.");
-});
-app.all("/k/:target/:token/open", (req, res) => {
-  res.status(410).json({ ok:false, error:"gone", message:"Link non più valido." });
-});
-app.all("/k2/:target/:token", (req, res) => {
-  res.status(410).send("Link non più valido.");
-});
-app.all("/k2/:target/:token/open", (req, res) => {
-  res.status(410).json({ ok:false, error:"gone", message:"Link non più valido." });
-});
+app.all("/k/:target/:token", (req, res) => res.status(410).send("Link non più valido."));
+app.all("/k/:target/:token/open", (req, res) => res.status(410).json({ ok:false, error:"gone", message:"Link non più valido." }));
+app.all("/k2/:target/:token", (req, res) => res.status(410).send("Link non più valido."));
+app.all("/k2/:target/:token/open", (req, res) => res.status(410).json({ ok:false, error:"gone", message:"Link non più valido." }));
 
 // ========== NUOVE ROUTE operative su LINK_PREFIX (default /k3) ==========
 app.get(`${LINK_PREFIX}/:target/:token`, (req, res) => {
@@ -323,12 +313,12 @@ app.get(`${LINK_PREFIX}/:target/:token`, (req, res) => {
 
   const parsed = parseToken(token);
   if (!parsed.ok) {
-    const code = (parsed.error === "bad_signature" || parsed.error === "bad_version" || parsed.error === "revoked" || parsed.error === "revoked_boot") ? 410 : 400;
-    const msg  = parsed.error === "bad_signature"  ? "Link non più valido (firma)." :
-                 parsed.error === "bad_version"    ? "Link non più valido." :
-                 parsed.error === "revoked"        ? "Link revocato." :
-                 parsed.error === "revoked_boot"   ? "Link revocato (riavvio sistema)." :
-                                                      "Invalid link";
+    const code = (["bad_signature","bad_version","revoked","revoked_boot"].includes(parsed.error)) ? 410 : 400;
+    const msg  = parsed.error === "bad_signature" ? "Link non più valido (firma)." :
+                 parsed.error === "bad_version"   ? "Link non più valido." :
+                 parsed.error === "revoked"       ? "Link revocato." :
+                 parsed.error === "revoked_boot"  ? "Link revocato (riavvio sistema)." :
+                                                     "Invalid link";
     return res.status(code).send(msg);
   }
   const p = parsed.payload;
@@ -346,12 +336,12 @@ app.post(`${LINK_PREFIX}/:target/:token/open`, async (req, res) => {
 
   const parsed = parseToken(token);
   if (!parsed.ok) {
-    const code = (parsed.error === "bad_signature" || parsed.error === "bad_version" || parsed.error === "revoked" || parsed.error === "revoked_boot") ? 410 : 400;
-    const msg  = parsed.error === "bad_signature"  ? "Link non più valido (firma)." :
-                 parsed.error === "bad_version"    ? "Link non più valido." :
-                 parsed.error === "revoked"        ? "Link revocato." :
-                 parsed.error === "revoked_boot"   ? "Link revocato (riavvio sistema)." :
-                                                      "invalid";
+    const code = (["bad_signature","bad_version","revoked","revoked_boot"].includes(parsed.error)) ? 410 : 400;
+    const msg  = parsed.error === "bad_signature" ? "Link non più valido (firma)." :
+                 parsed.error === "bad_version"   ? "Link non più valido." :
+                 parsed.error === "revoked"       ? "Link revocato." :
+                 parsed.error === "revoked_boot"  ? "Link revocato (riavvio sistema)." :
+                                                     "invalid";
     return res.status(code).json({ ok:false, error:parsed.error, message: msg });
   }
 
@@ -381,6 +371,7 @@ app.post(`${LINK_PREFIX}/:target/:token/open`, async (req, res) => {
   return res.json({ ok: true, opened: result, remaining: 0 });
 });
 
+// server.js (PART 6/6)
 // 🔒 Blocca apertura diretta dalle vecchie email
 app.post("/api/open-now/:target", (req, res) => {
   return res.status(403).json({ ok: false, error: "Direct open disabled" });
