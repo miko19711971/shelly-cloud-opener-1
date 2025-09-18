@@ -27,29 +27,32 @@ app.use("/guides", express.static(path.join(PUBLIC_DIR, "guides"), { fallthrough
 // 2bis) NUOVO: alias per le Virtual Guide MULTILINGUA (bottone EN/4 lingue)
 app.use("/guest-assistant", express.static(path.join(PUBLIC_DIR, "guest-assistant"), { fallthrough: false }));
 
-// 3) 🔒 Blocca COMPLETAMENTE i vecchi link /checkin (tutte le vecchie email)
-app.get("/checkin/*", (req, res) => {
-  res.set("Cache-Control", "no-store");
-  res.status(410).type("html").send("❌ Questo link non è più valido.");
-});
-
-// 3bis) ✅ Nuovi link per il self-check-in (da usare nelle automazioni future)
-// Redirigono alle pagine già esistenti sotto /guides/...
-app.get("/selfcheck/leonina",    (req, res) => res.redirect(301, "/guides/leonina/"));
-app.get("/selfcheck/arenula",    (req, res) => res.redirect(301, "/guides/arenula/"));
-app.get("/selfcheck/trastevere", (req, res) => res.redirect(301, "/guides/trastevere/"));
-app.get("/selfcheck/scala",      (req, res) => res.redirect(301, "/guides/scala/"));
-app.get("/selfcheck/portico",    (req, res) => res.redirect(301, "/guides/portico/"));
+// 3) redirect 301 dai vecchi percorsi (se ne avevi) ai nuovi /guides/...
+app.get(["/checkin/scala", "/checkin/scala/index.html"], (req, res) =>
+  res.redirect(301, "/guides/scala/")
+);
+app.get(["/checkin/leonina", "/checkin/leonina/index.html"], (req, res) =>
+  res.redirect(301, "/guides/leonina/")
+);
+app.get(["/checkin/arenula", "/checkin/arenula/index.html"], (req, res) =>
+  res.redirect(301, "/guides/arenula/")
+);
+app.get(["/checkin/trastevere", "/checkin/trastevere/index.html"], (req, res) =>
+  res.redirect(301, "/guides/trastevere/")
+);
+app.get(["/checkin/ottavia", "/checkin/ottavia/index.html", "/checkin/portico", "/checkin/portico/index.html"], (req, res) =>
+  res.redirect(301, "/guides/portico/")
+);
 
 // ========= ENV =========
 const SHELLY_API_KEY  = process.env.SHELLY_API_KEY;
 const SHELLY_BASE_URL = process.env.SHELLY_BASE_URL || "https://shelly-api-eu.shelly.cloud";
-const TOKEN_SECRET    = process.env.TOKEN_SECRET;
+const TOKEN_SECRET = process.env.TOKEN_SECRET;
 if (!TOKEN_SECRET) {
   console.error("❌ Missing TOKEN_SECRET env var");
   process.exit(1);
 }
-const TIMEZONE        = process.env.TIMEZONE || "Europe/Rome";
+const TIMEZONE        = process.env.TIMEZONE        || "Europe/Rome";
 
 // Limiti sicurezza: di default 2 aperture entro 15 minuti
 const DEFAULT_WINDOW_MIN = parseInt(process.env.WINDOW_MIN || "15", 10);
@@ -224,7 +227,7 @@ app.get("/", (req, res) => {
   </body></html>`);
 });
 
-// token & opener
+// token & opener (identici ai tuoi)
 app.get("/token/:target", (req, res) => {
   const targetKey = req.params.target;
   const target = TARGETS[targetKey];
@@ -235,7 +238,6 @@ app.get("/token/:target", (req, res) => {
 
   const { token, payload } = newTokenFor(targetKey, { windowMin, max: maxOpens, used: 0 });
   const url = `${req.protocol}://${req.get("host")}/k/${targetKey}/${token}`;
-  res.set("Cache-Control", "no-store");
   return res.json({ ok:true, url, expiresInMin: Math.round((payload.exp - Date.now())/60000) });
 });
 
@@ -248,7 +250,6 @@ app.get("/k/:target/:token", (req, res) => {
   const p = parsed.payload;
   if (p.tgt !== target) return res.status(400).send("Invalid link");
   if (Date.now() > p.exp) return res.status(400).send("Link scaduto");
-  res.set("Cache-Control", "no-store");
   res.type("html").send(landingHtml(target, targetDef.name, p, token));
 });
 
@@ -286,9 +287,9 @@ app.post("/k/:target/:token/open", async (req, res) => {
   return res.json({ ok: true, opened: result, remaining: 0 });
 });
 
-// 🔒 Blocca apertura diretta dalle vecchie email (tutti i metodi)
-app.all("/api/open-now/:target", (req, res) => {
-  return res.status(403).json({ ok: false, error: "Direct open disabled. Use a /k/<target>/<token> link." });
+ // 🔒 Blocca apertura diretta dalle vecchie email
+app.post("/api/open-now/:target", (req, res) => {
+  return res.status(403).json({ ok: false, error: "Direct open disabled" });
 });
 
 app.get("/health", (req, res) => {
