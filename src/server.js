@@ -44,7 +44,7 @@ app.get(["/checkin/ottavia", "/checkin/ottavia/index.html", "/checkin/portico", 
   res.redirect(301, "/guides/portico/")
 );
 
-// ========= ENV =========
+// ========= ENV BASE =========
 const SHELLY_API_KEY  = process.env.SHELLY_API_KEY;
 const SHELLY_BASE_URL = process.env.SHELLY_BASE_URL || "https://shelly-api-eu.shelly.cloud";
 const TOKEN_SECRET    = process.env.TOKEN_SECRET;
@@ -54,18 +54,19 @@ if (!TOKEN_SECRET) {
 }
 const TIMEZONE        = process.env.TIMEZONE || "Europe/Rome";
 
-// 🔐 Nuove leve di revoca/versioning
-const TOKEN_VERSION  = parseInt(process.env.TOKEN_VERSION || "1", 10);
-// REVOKE_BEFORE: epoch ms (es. Date.parse("2025-09-18T14:00:00+02:00"))
+// ========= ROTAZIONE HARD-CODED (kill totale dei token vecchi) =========
+const ROTATION_TAG   = "R-2025-09-18-final"; // cambia questo string se mai vorrai invalidare di nuovo
+const TOKEN_VERSION  = 100;                  // versione token forzata nel codice (ignora ENV)
+const LINK_PREFIX    = "/k3";                // NUOVO prefisso definitivo
+const SIGNING_SECRET = `${TOKEN_SECRET}|${ROTATION_TAG}`;
+
+// (opzionale) REVOKE_BEFORE via ENV rimane disponibile, ma non serve per il kill
 const REVOKE_BEFORE  = parseInt(process.env.REVOKE_BEFORE || "0", 10);
 
-// 🔀 Prefisso dei NUOVI link (per spegnere /k/* nelle vecchie mail)
-const LINK_PREFIX = process.env.LINK_PREFIX || "/k2";
-
-// ⏱️ Cutoff automatico: invalida tutto ciò che è stato emesso prima dell’ultimo boot
+// ⏱️ Cutoff automatico: invalida tutto emesso prima del boot
 const STARTED_AT = Date.now(); // ms
 
-// Limiti sicurezza: di default 2 aperture entro 15 minuti
+// Limiti sicurezza default
 const DEFAULT_WINDOW_MIN = parseInt(process.env.WINDOW_MIN || "15", 10);
 const DEFAULT_MAX_OPENS  = parseInt(process.env.MAX_OPENS  || "2", 10);
 
@@ -77,6 +78,7 @@ app.use((req, res, next) => {
   }
   res.setHeader("X-Link-Prefix", LINK_PREFIX);
   res.setHeader("X-Token-Version", String(TOKEN_VERSION));
+  res.setHeader("X-Rotation-Tag", ROTATION_TAG);
   res.setHeader("X-Started-At", String(STARTED_AT));
   next();
 });
@@ -162,8 +164,11 @@ async function openSequence(ids, delayMs = 10000) {
 function b64url(buf) {
   return Buffer.from(buf).toString("base64").replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "");
 }
+function hmac_raw(str) {
+  return crypto.createHmac("sha256", SIGNING_SECRET).update(str).digest();
+}
 function hmac(str) {
-  return b64url(crypto.createHmac("sha256", TOKEN_SECRET).update(str).digest());
+  return b64url(hmac_raw(str));
 }
 function makeToken(payload) {
   const header = b64url(JSON.stringify({ alg: "HS256", typ: "TOK" }));
@@ -172,7 +177,7 @@ function makeToken(payload) {
   return `${header}.${body}.${sig}`;
 }
 
-// ✅ validazione con versione, soglia di revoca e cutoff di boot
+// ✅ validazione con nuova firma, versione, soglia e cutoff boot
 function parseToken(token) {
   const [h, b, s] = token.split(".");
   if (!h || !b || !s) return { ok: false, error: "bad_format" };
@@ -183,15 +188,15 @@ function parseToken(token) {
   try { payload = JSON.parse(Buffer.from(b, "base64").toString("utf8")); }
   catch { return { ok: false, error: "bad_payload" }; }
 
-  // Versione
+  // Versione forzata
   if (typeof payload.ver !== "number" || payload.ver !== TOKEN_VERSION) {
     return { ok: false, error: "bad_version" };
   }
-  // Revoca per data, se configurata
+  // Revoca per data (se configurata)
   if (REVOKE_BEFORE && typeof payload.iat === "number" && payload.iat < REVOKE_BEFORE) {
     return { ok: false, error: "revoked" };
   }
-  // ⛔ Revoca automatica: qualsiasi token emesso prima dell'ultimo boot è morto
+  // Revoca automatica al boot
   if (typeof payload.iat !== "number" || payload.iat < STARTED_AT) {
     return { ok: false, error: "revoked_boot" };
   }
@@ -199,7 +204,7 @@ function parseToken(token) {
   return { ok: true, payload };
 }
 
-// ✅ i token includono iat/ver
+// ✅ i token includono iat/ver forzati
 function newTokenFor(targetKey, opts = {}) {
   const max = opts.max ?? DEFAULT_MAX_OPENS;
   const windowMin = opts.windowMin ?? DEFAULT_WINDOW_MIN;
@@ -212,8 +217,8 @@ function newTokenFor(targetKey, opts = {}) {
     max,
     used: opts.used ?? 0,
     jti,
-    iat: now,          // emesso a
-    ver: TOKEN_VERSION // versione corrente
+    iat: now,           // emesso a
+    ver: TOKEN_VERSION  // versione forzata
   };
   return { token: makeToken(payload), payload };
 }
@@ -282,7 +287,7 @@ app.get("/", (req, res) => {
   </body></html>`);
 });
 
-// ========== GENERA LINK (usa prefisso nuovo) ==========
+// ========== GENERA LINK (usa prefisso nuovo /k3) ==========
 app.get("/token/:target", (req, res) => {
   const targetKey = req.params.target;
   const target = TARGETS[targetKey];
@@ -296,15 +301,21 @@ app.get("/token/:target", (req, res) => {
   return res.json({ ok:true, url, expiresInMin: Math.round((payload.exp - Date.now())/60000) });
 });
 
-// 🔥 HARD KILL dei vecchi link: /k/* viene disattivato
+// 🔥 HARD KILL dei vecchi link: /k/* e /k2/* vengono disattivati
 app.all("/k/:target/:token", (req, res) => {
   res.status(410).send("Link non più valido.");
 });
 app.all("/k/:target/:token/open", (req, res) => {
   res.status(410).json({ ok:false, error:"gone", message:"Link non più valido." });
 });
+app.all("/k2/:target/:token", (req, res) => {
+  res.status(410).send("Link non più valido.");
+});
+app.all("/k2/:target/:token/open", (req, res) => {
+  res.status(410).json({ ok:false, error:"gone", message:"Link non più valido." });
+});
 
-// ========== NUOVE ROUTE operative su LINK_PREFIX (default /k2) ==========
+// ========== NUOVE ROUTE operative su LINK_PREFIX (default /k3) ==========
 app.get(`${LINK_PREFIX}/:target/:token`, (req, res) => {
   const { target, token } = req.params;
   const targetDef = TARGETS[target];
@@ -312,11 +323,12 @@ app.get(`${LINK_PREFIX}/:target/:token`, (req, res) => {
 
   const parsed = parseToken(token);
   if (!parsed.ok) {
-    const code = (parsed.error === "bad_version" || parsed.error === "revoked" || parsed.error === "revoked_boot") ? 410 : 400;
-    const msg  = parsed.error === "bad_version"   ? "Link non più valido." :
-                 parsed.error === "revoked"       ? "Link revocato." :
-                 parsed.error === "revoked_boot"  ? "Link revocato (riavvio sistema)." :
-                                                    "Invalid link";
+    const code = (parsed.error === "bad_signature" || parsed.error === "bad_version" || parsed.error === "revoked" || parsed.error === "revoked_boot") ? 410 : 400;
+    const msg  = parsed.error === "bad_signature"  ? "Link non più valido (firma)." :
+                 parsed.error === "bad_version"    ? "Link non più valido." :
+                 parsed.error === "revoked"        ? "Link revocato." :
+                 parsed.error === "revoked_boot"   ? "Link revocato (riavvio sistema)." :
+                                                      "Invalid link";
     return res.status(code).send(msg);
   }
   const p = parsed.payload;
@@ -334,11 +346,12 @@ app.post(`${LINK_PREFIX}/:target/:token/open`, async (req, res) => {
 
   const parsed = parseToken(token);
   if (!parsed.ok) {
-    const code = (parsed.error === "bad_version" || parsed.error === "revoked" || parsed.error === "revoked_boot") ? 410 : 400;
-    const msg  = parsed.error === "bad_version"   ? "Link non più valido." :
-                 parsed.error === "revoked"       ? "Link revocato." :
-                 parsed.error === "revoked_boot"  ? "Link revocato (riavvio sistema)." :
-                                                    "invalid";
+    const code = (parsed.error === "bad_signature" || parsed.error === "bad_version" || parsed.error === "revoked" || parsed.error === "revoked_boot") ? 410 : 400;
+    const msg  = parsed.error === "bad_signature"  ? "Link non più valido (firma)." :
+                 parsed.error === "bad_version"    ? "Link non più valido." :
+                 parsed.error === "revoked"        ? "Link revocato." :
+                 parsed.error === "revoked_boot"   ? "Link revocato (riavvio sistema)." :
+                                                      "invalid";
     return res.status(code).json({ ok:false, error:parsed.error, message: msg });
   }
 
@@ -381,9 +394,10 @@ app.get("/health", (req, res) => {
     uptime: process.uptime(),
     baseUrl: SHELLY_BASE_URL,
     tokenVersion: TOKEN_VERSION,
-    revokeBefore: REVOKE_BEFORE,
+    rotationTag: ROTATION_TAG,
     linkPrefix: LINK_PREFIX,
-    startedAt: STARTED_AT
+    startedAt: STARTED_AT,
+    revokeBefore: REVOKE_BEFORE
   });
 });
 
@@ -394,8 +408,9 @@ app.listen(PORT, () => {
     "Server running on", PORT,
     "TZ:", TIMEZONE,
     "TokenVer:", TOKEN_VERSION,
-    "RevokeBefore:", REVOKE_BEFORE || "-",
+    "RotationTag:", ROTATION_TAG,
     "LinkPrefix:", LINK_PREFIX,
-    "StartedAt:", STARTED_AT
+    "StartedAt:", STARTED_AT,
+    "RevokeBefore:", REVOKE_BEFORE || "-"
   );
 });
