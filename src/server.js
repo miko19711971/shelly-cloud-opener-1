@@ -47,12 +47,17 @@ app.get(["/checkin/ottavia", "/checkin/ottavia/index.html", "/checkin/portico", 
 // ========= ENV =========
 const SHELLY_API_KEY  = process.env.SHELLY_API_KEY;
 const SHELLY_BASE_URL = process.env.SHELLY_BASE_URL || "https://shelly-api-eu.shelly.cloud";
-const TOKEN_SECRET = process.env.TOKEN_SECRET;
+const TOKEN_SECRET    = process.env.TOKEN_SECRET;
 if (!TOKEN_SECRET) {
   console.error("❌ Missing TOKEN_SECRET env var");
   process.exit(1);
 }
-const TIMEZONE        = process.env.TIMEZONE        || "Europe/Rome";
+const TIMEZONE        = process.env.TIMEZONE || "Europe/Rome";
+
+// 🔐 Nuove leve di revoca/versioning
+const TOKEN_VERSION  = parseInt(process.env.TOKEN_VERSION || "1", 10);
+// REVOKE_BEFORE: epoch ms (es. Date.parse("2025-09-18T14:00:00+02:00"))
+const REVOKE_BEFORE  = parseInt(process.env.REVOKE_BEFORE || "0", 10);
 
 // Limiti sicurezza: di default 2 aperture entro 15 minuti
 const DEFAULT_WINDOW_MIN = parseInt(process.env.WINDOW_MIN || "15", 10);
@@ -148,28 +153,54 @@ function makeToken(payload) {
   const sig    = hmac(`${header}.${body}`);
   return `${header}.${body}.${sig}`;
 }
+
+// ✅ PATCH: validazione con versione e soglia di revoca
 function parseToken(token) {
   const [h, b, s] = token.split(".");
   if (!h || !b || !s) return { ok: false, error: "bad_format" };
   const sig = hmac(`${h}.${b}`);
   if (sig !== s) return { ok: false, error: "bad_signature" };
+
   let payload;
   try { payload = JSON.parse(Buffer.from(b, "base64").toString("utf8")); }
   catch { return { ok: false, error: "bad_payload" }; }
+
+  // Blocca token emessi con versione precedente o senza 'ver'
+  if (typeof payload.ver !== "number" || payload.ver !== TOKEN_VERSION) {
+    return { ok: false, error: "bad_version" };
+  }
+  // Blocca token emessi prima della soglia REVOKE_BEFORE
+  if (REVOKE_BEFORE && typeof payload.iat === "number" && payload.iat < REVOKE_BEFORE) {
+    return { ok: false, error: "revoked" };
+  }
   return { ok: true, payload };
 }
+
+// ✅ PATCH: i token includono iat/ver
 function newTokenFor(targetKey, opts = {}) {
   const max = opts.max ?? DEFAULT_MAX_OPENS;
   const windowMin = opts.windowMin ?? DEFAULT_WINDOW_MIN;
-  const exp = Date.now() + windowMin * 60 * 1000;
+  const now = Date.now();
+  const exp = now + windowMin * 60 * 1000;
   const jti = b64url(crypto.randomBytes(9));
-  const payload = { tgt: targetKey, exp, max, used: opts.used ?? 0, jti };
+  const payload = {
+    tgt: targetKey,
+    exp,
+    max,
+    used: opts.used ?? 0,
+    jti,
+    iat: now,          // emesso a
+    ver: TOKEN_VERSION // versione corrente
+  };
   return { token: makeToken(payload), payload };
 }
+
 const seenJti = new Set();
 function markJti(jti) { seenJti.add(jti); }
 function isSeenJti(jti) { return seenJti.has(jti); }
-setInterval(() => { seenJti.clear(); }, 60 * 60 * 1000);
+
+// ✅ PATCH: mantieni la cache replay più a lungo (24h)
+setInterval(() => { seenJti.clear(); }, 24 * 60 * 60 * 1000);
 
 // ========== PAGINE HTML ==========
 function pageCss() { return `
@@ -202,7 +233,8 @@ function landingHtml(targetKey, targetName, tokenPayload, tokenStr) {
         else { errmsg.textContent=JSON.stringify(j,null,2); errmsg.classList.remove('hidden'); }
       }catch(e){ errmsg.textContent=String(e); errmsg.classList.remove('hidden'); } finally{ btn.disabled=false; }
     });
-  </script></div></body></html>`; }
+  </script></div></body></html>`;
+}
 
 // ========== ROUTES ==========
 app.get("/", (req, res) => {
@@ -227,7 +259,7 @@ app.get("/", (req, res) => {
   </body></html>`);
 });
 
-// token & opener (identici ai tuoi)
+// token & opener
 app.get("/token/:target", (req, res) => {
   const targetKey = req.params.target;
   const target = TARGETS[targetKey];
@@ -245,11 +277,19 @@ app.get("/k/:target/:token", (req, res) => {
   const { target, token } = req.params;
   const targetDef = TARGETS[target];
   if (!targetDef) return res.status(404).send("Invalid link");
+
   const parsed = parseToken(token);
-  if (!parsed.ok) return res.status(400).send("Invalid link");
+  if (!parsed.ok) {
+    const code = (parsed.error === "bad_version" || parsed.error === "revoked") ? 410 : 400;
+    const msg  = parsed.error === "bad_version" ? "Link non più valido." :
+                 parsed.error === "revoked"     ? "Link revocato."      :
+                                                  "Invalid link";
+    return res.status(code).send(msg);
+  }
   const p = parsed.payload;
   if (p.tgt !== target) return res.status(400).send("Invalid link");
   if (Date.now() > p.exp) return res.status(400).send("Link scaduto");
+
   res.type("html").send(landingHtml(target, targetDef.name, p, token));
 });
 
@@ -259,12 +299,18 @@ app.post("/k/:target/:token/open", async (req, res) => {
   if (!targetDef) return res.status(404).json({ ok:false, error:"unknown_target" });
 
   const parsed = parseToken(token);
-  if (!parsed.ok) return res.status(400).json({ ok:false, error:parsed.error });
+  if (!parsed.ok) {
+    const code = (parsed.error === "bad_version" || parsed.error === "revoked") ? 410 : 400;
+    const msg  = parsed.error === "bad_version" ? "Link non più valido." :
+                 parsed.error === "revoked"     ? "Link revocato."      :
+                                                  "invalid";
+    return res.status(code).json({ ok:false, error:parsed.error, message: msg });
+  }
 
   const p = parsed.payload;
   if (p.tgt !== target) return res.status(400).json({ ok:false, error:"target_mismatch" });
   if (Date.now() > p.exp) return res.status(400).json({ ok:false, error:"expired" });
-  if (isSeenJti(p.jti)) return res.status(400).json({ ok:false, error:"replayed" });
+  if (isSeenJti(p.jti))    return res.status(400).json({ ok:false, error:"replayed" });
 
   let result;
   if (targetDef.ids.length === 1) result = await openOne(targetDef.ids[0]);
@@ -287,7 +333,7 @@ app.post("/k/:target/:token/open", async (req, res) => {
   return res.json({ ok: true, opened: result, remaining: 0 });
 });
 
- // 🔒 Blocca apertura diretta dalle vecchie email
+// 🔒 Blocca apertura diretta dalle vecchie email
 app.post("/api/open-now/:target", (req, res) => {
   return res.status(403).json({ ok: false, error: "Direct open disabled" });
 });
@@ -299,11 +345,16 @@ app.get("/health", (req, res) => {
     node: process.version,
     uptime: process.uptime(),
     baseUrl: SHELLY_BASE_URL,
+    tokenVersion: TOKEN_VERSION,
+    revokeBefore: REVOKE_BEFORE
   });
 });
 
 // ========= START =========
 const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => {
-  console.log("Server running on", PORT, "TZ:", TIMEZONE);
+  console.log("Server running on", PORT, "TZ:", TIMEZONE, "TokenVer:", TOKEN_VERSION, "RevokeBefore:", REVOKE_BEFORE || "-");
 });
+
+
+Fai un ultimo controllo finale allo script e confermami che è funzionante che annulla tutte le aperture delle e-mail precedenti, ma che allo stesso tempo mantiene i livelli di sicurezza per le aperture future
