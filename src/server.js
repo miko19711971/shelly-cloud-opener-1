@@ -39,17 +39,21 @@ const DEFAULT_WINDOW_MIN = parseInt(process.env.WINDOW_MIN || "15", 10);
 const DEFAULT_MAX_OPENS  = parseInt(process.env.MAX_OPENS  || "2", 10);
 
 // server.js (PART 2/6)
-// ======== HARD CSP per bloccare aperture dirette dalle guide ========
+// ======== HARD CSP per bloccare aperture dirette dalle guide mantenendo la grafica ========
+// Permettiamo inline CSS/JS e asset https (per CDN, font, immagini), ma blocchiamo:
+// - connect-src: SOLO 'self' -> niente chiamate a Shelly o altri domini
+// - navigate-to: SOLO 'self' -> niente link/redirect verso altri domini
 const GUIDE_CSP = [
   "default-src 'self'",
-  "script-src 'self'",
-  "style-src 'self'",
-  "img-src 'self' data:",
-  "connect-src 'self'", // blocca fetch/XHR verso domini esterni (es. *.shelly.cloud)
+  "script-src 'self' 'unsafe-inline'",
+  "style-src 'self' 'unsafe-inline' https:",
+  "img-src 'self' data: https:",
+  "font-src 'self' data: https:",
+  "connect-src 'self'",
   "form-action 'self'",
   "frame-ancestors 'none'",
   "base-uri 'self'",
-  "navigate-to 'self' https://shelly-cloud-opener-1.onrender.com" // vieta link esterni
+  "navigate-to 'self' https://shelly-cloud-opener-1.onrender.com"
 ].join("; ");
 
 function setGuideSecurityHeaders(req, res, next) {
@@ -227,7 +231,7 @@ function markJti(jti) { seenJti.add(jti); }
 function isSeenJti(jti) { return seenJti.has(jti); }
 setInterval(() => { seenJti.clear(); }, 24 * 60 * 60 * 1000); // anti-replay cache 24h
 
-// ========== PAGINE HTML ==========
+// ========== PAGINE HTML (layout come PRIMO script) ==========
 function pageCss() { return `
   body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;margin:24px}
   .wrap{max-width:680px}
@@ -262,7 +266,7 @@ function landingHtml(targetKey, targetName, tokenPayload, tokenStr) {
 }
 
 // server.js (PART 5/6)
-// ========== HOME ==========
+// ========== HOME (layout come PRIMO script) ==========
 app.get("/", (req, res) => {
   const rows = Object.entries(TARGETS).map(([key, t]) => {
     const ids = t.ids.join(", ");
@@ -281,7 +285,7 @@ app.get("/", (req, res) => {
   <p>Link firmati temporanei e apertura manuale.</p>
   <table><thead><tr><th>Nome</th><th>Device ID</th><th>Smart Link</th><th>Manual Open</th></tr></thead>
   <tbody>${rows}</tbody></table>
-  <p class="muted">Shard fallback: <code>${SHELLY_BASE_URL}</code></p>
+  <p class="muted">Shard fallback: <code>${SHELLLY_BASE_URL}</code></p>
   </body></html>`);
 });
 
