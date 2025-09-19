@@ -4,7 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title id="title">Check-in Guide — Via del Portico d’Ottavia 1D</title>
-<link rel="icon" href="building-door.jpg">
+
+<!-- Favicon: uso l'immagine su CDN così è sempre disponibile -->
+<link rel="icon" href="https://cdn.jsdelivr.net/gh/miko19711971/shelly-cloud-opener-1@main/public/checkin/ottavia/building-door.jpg">
+
 <style>
   :root { --brand:#2b2118; --ink:#1f2937; --muted:#6b7280; --bg:#f7f7f7; --card:#ffffff; --line:#e5e7eb; }
   *{box-sizing:border-box}
@@ -55,21 +58,19 @@
         <h2 id="s1_t">Open the Building Door</h2>
         <p id="s1_p">Use the button below to unlock the main door.</p>
 
+        <!-- Bottoni: puntano ai target corretti -->
         <a class="cta" href="#" onclick="openWith('statusBuilding','/token/portico-1d-building');return false;" id="btn_building">➜ Open Building Door</a>
         <div class="status" id="statusBuilding"></div>
 
-        <!-- nascosto per non rompere lo script -->
         <div class="note" id="s1_note" style="display:none"></div>
 
+        <!-- ✅ FOTO 1 sostituita (niente <object>, solo <img> con fallback) -->
         <figure>
-          <div class="imgframe">
-            <object data="https://cdn.jsdelivr.net/gh/miko19711971/shelly-cloud-opener-1@main/public/checkin/ottavia/building-door.jpg"
-                    type="image/jpeg" referrerpolicy="no-referrer" crossorigin="anonymous">
-              <img src="https://raw.githubusercontent.com/miko19711971/shelly-cloud-opener-1/main/public/checkin/ottavia/building-door.jpg?v=2"
-                   alt="Building entrance — Via del Portico d’Ottavia 1D"
-                   style="width:100%;height:auto;display:block;border-radius:10px">
-            </object>
-          </div>
+          <img
+            src="https://cdn.jsdelivr.net/gh/miko19711971/shelly-cloud-opener-1@main/public/checkin/ottavia/building-door.jpg"
+            alt="Building entrance — Via del Portico d’Ottavia 1D"
+            style="width:90%;margin:0 auto;display:block;border-radius:10px;border:1px solid #e5e7eb"
+            onerror="this.onerror=null;this.src='https://raw.githubusercontent.com/miko19711971/shelly-cloud-opener-1/main/public/checkin/ottavia/building-door.jpg?v=2'">
           <figcaption id="s1_cap">Main entrance — Via del Portico d’Ottavia 1D.</figcaption>
         </figure>
 
@@ -133,101 +134,46 @@ async function openWith(statusId, path){
 
 /* ---------- 5 lingue (solo testi) ---------- */
 const T = {
-  en:{
-    title:"Check-in Guide — Via del Portico d’Ottavia 1D",
-    addr:"Address: Via del Portico d’Ottavia 1D, Rome",
-    s1_t:"Open the Building Door",
-    s1_p:"Use the button below to unlock the main door.",
-    s1_note:"",
-    s1_cap:"Main entrance — Via del Portico d’Ottavia 1D.",
-    s1_cap2:"Press this button to turn on the indoor corridor lights.",
-    s2_t:"Arrive at the Third Floor",
-    s2_p:"Go up to the 3rd floor.",
-    s3_t:"This is Your Apartment Door",
-    s3_p:"Please press the button only once when you are certain this is the correct door.",
-    s3_cap:"Apartment door — 3rd floor.",
-    help_h:"Need help?",
-    help_p:'Call or WhatsApp: <a class="cta" href="tel:+393355245756">+39 335 524 5756</a>',
-    btn_building:"➜ Open Building Door",
-    btn_apartment:"➜ Open Apartment Door",
-    footer:"niceflatinrome.com • Quick visual guide for arrivals at Via del Portico d’Ottavia 1D"
-  },
-  it:{
-    title:"Guida Check-in — Via del Portico d’Ottavia 1D",
-    addr:"Indirizzo: Via del Portico d’Ottavia 1D, Roma",
-    s1_t:"Apri il portone dell’edificio",
-    s1_p:"Usa il pulsante qui sotto per sbloccare il portone.",
-    s1_note:"",
-    s1_cap:"Ingresso principale — Via del Portico d’Ottavia 1D.",
-    s1_cap2:"Le luci del corridoio si accendono automaticamente quando apri il portone.",
-    s2_t:"Arriva al terzo piano",
-    s2_p:"Sali al 3° piano.",
-    s3_t:"Questa è la porta del tuo appartamento",
-    s3_p:"Premi il pulsante una sola volta quando sei certo che sia la porta corretta.",
-    s3_cap:"Porta dell’appartamento — 3° piano.",
-    help_h:"Serve aiuto?",
-    help_p:'Chiama o WhatsApp: <a class="cta" href="tel:+393355245756">+39 335 524 5756</a>',
-    btn_building:"➜ Apri il portone",
-    btn_apartment:"➜ Apri porta appartamento",
-    footer:"niceflatinrome.com • Guida rapida di arrivo a Via del Portico d’Ottavia 1D"
-  },
-  fr:{
-    title:"Guide d’enregistrement — Via del Portico d’Ottavia 1D",
-    addr:"Adresse : Via del Portico d’Ottavia 1D, Rome",
-    s1_t:"Ouvrir la porte de l’immeuble",
-    s1_p:"Appuyez sur le bouton ci-dessous pour déverrouiller la porte principale.",
-    s1_note:"",
-    s1_cap:"Entrée principale — Via del Portico d’Ottavia 1D.",
-    s1_cap2:"Appuyez sur ce bouton pour allumer les lumières du couloir intérieur.",
-    s2_t:"Arriver au troisième étage",
-    s2_p:"Montez au 3e étage.",
-    s3_t:"Voici la porte de votre appartement",
-    s3_p:"Appuyez une seule fois lorsque vous êtes sûr que c’est la bonne porte.",
-    s3_cap:"Porte de l’appartement — 3e étage.",
-    help_h:"Besoin d’aide ?",
-    help_p:'Appeler ou WhatsApp : <a class="cta" href="tel:+393355245756">+39 335 524 5756</a>',
-    btn_building:"➜ Ouvrir la porte de l’immeuble",
-    btn_apartment:"➜ Ouvrir la porte de l’appartement",
-    footer:"niceflatinrome.com • Guide visuel rapide pour l’arrivée à Via del Portico d’Ottavia 1D"
-  },
-  de:{
-    title:"Check-in-Leitfaden — Via del Portico d’Ottavia 1D",
-    addr:"Adresse: Via del Portico d’Ottavia 1D, Rom",
-    s1_t:"Haustür öffnen",
-    s1_p:"Drücken Sie unten auf die Taste, um die Haustür zu entriegeln.",
-    s1_note:"",
-    s1_cap:"Haupteingang — Via del Portico d’Ottavia 1D.",
-    s1_cap2:"Drücken Sie diese Taste, um das Licht im Innenkorridor einzuschalten.",
-    s2_t:"Am dritten Stock ankommen",
-    s2_p:"Gehen Sie in den 3. Stock.",
-    s3_t:"Das ist Ihre Wohnungstür",
-    s3_p:"Drücken Sie den Knopf nur einmal, wenn Sie sicher sind, dass es die richtige Tür ist.",
-    s3_cap:"Wohnungstür — 3. Stock.",
-    help_h:"Brauchen Sie Hilfe?",
-    help_p:'Anrufen oder WhatsApp: <a class="cta" href="tel:+393355245756">+39 335 524 5756</a>',
-    btn_building:"➜ Haustür öffnen",
-    btn_apartment:"➜ Wohnungstür öffnen",
-    footer:"niceflatinrome.com • Schnelle visuelle Anleitung für die Ankunft a Via del Portico d’Ottavia 1D"
-  },
-  es:{
-    title:"Guía de check-in — Via del Portico d’Ottavia 1D",
-    addr:"Dirección: Via del Portico d’Ottavia 1D, Roma",
-    s1_t:"Abrir la puerta del edificio",
-    s1_p:"Pulsa el botón de abajo para desbloquear la puerta principal.",
-    s1_note:"",
-    s1_cap:"Entrada principal — Via del Portico d’Ottavia 1D.",
-    s1_cap2:"Pulsa este botón para encender las luces del pasillo interior.",
-    s2_t:"Llegar al tercer piso",
-    s2_p:"Sube al 3.º piso.",
-    s3_t:"Esta es la puerta de tu apartamento",
-    s3_p:"Pulsa el botón solo una vez cuando estés seguro de que es la puerta correcta.",
-    s3_cap:"Puerta del apartamento — 3.º piso.",
-    help_h:"¿Necesitas ayuda?",
-    help_p:'Llama o WhatsApp: <a class="cta" href="tel:+393355245756">+39 335 524 5756</a>',
-    btn_building:"➜ Abrir puerta del edificio",
-    btn_apartment:"➜ Abrir puerta del apartamento",
-    footer:"niceflatinrome.com • Guía visual rápida para llegadas a Via del Portico d’Ottavia 1D"
-  }
+  en:{title:"Check-in Guide — Via del Portico d’Ottavia 1D",addr:"Address: Via del Portico d’Ottavia 1D, Rome",
+      s1_t:"Open the Building Door",s1_p:"Use the button below to unlock the main door.",s1_note:"",
+      s1_cap:"Main entrance — Via del Portico d’Ottavia 1D.",s1_cap2:"Press this button to turn on the indoor corridor lights.",
+      s2_t:"Arrive at the Third Floor",s2_p:"Go up to the 3rd floor.",
+      s3_t:"This is Your Apartment Door",s3_p:"Please press the button only once when you are certain this is the correct door.",s3_cap:"Apartment door — 3rd floor.",
+      help_h:"Need help?",help_p:'Call or WhatsApp: <a class="cta" href="tel:+393355245756">+39 335 524 5756</a>',
+      btn_building:"➜ Open Building Door",btn_apartment:"➜ Open Apartment Door",
+      footer:"niceflatinrome.com • Quick visual guide for arrivals at Via del Portico d’Ottavia 1D"},
+  it:{title:"Guida Check-in — Via del Portico d’Ottavia 1D",addr:"Indirizzo: Via del Portico d’Ottavia 1D, Roma",
+      s1_t:"Apri il portone dell’edificio",s1_p:"Usa il pulsante qui sotto per sbloccare il portone.",s1_note:"",
+      s1_cap:"Ingresso principale — Via del Portico d’Ottavia 1D.",s1_cap2:"Le luci del corridoio si accendono automaticamente quando apri il portone.",
+      s2_t:"Arriva al terzo piano",s2_p:"Sali al 3° piano.",
+      s3_t:"Questa è la porta del tuo appartamento",s3_p:"Premi il pulsante una sola volta quando sei certo che sia la porta corretta.",s3_cap:"Porta dell’appartamento — 3° piano.",
+      help_h:"Serve aiuto?",help_p:'Chiama o WhatsApp: <a class="cta" href="tel:+393355245756">+39 335 524 5756</a>',
+      btn_building:"➜ Apri il portone",btn_apartment:"➜ Apri porta appartamento",
+      footer:"niceflatinrome.com • Guida rapida di arrivo a Via del Portico d’Ottavia 1D"},
+  fr:{title:"Guide d’enregistrement — Via del Portico d’Ottavia 1D",addr:"Adresse : Via del Portico d’Ottavia 1D, Rome",
+      s1_t:"Ouvrir la porte de l’immeuble",s1_p:"Appuyez sur le bouton ci-dessous pour déverrouiller la porte principale.",s1_note:"",
+      s1_cap:"Entrée principale — Via del Portico d’Ottavia 1D.",s1_cap2:"Appuyez sur ce bouton pour allumer les lumières du couloir intérieur.",
+      s2_t:"Arriver au troisième étage",s2_p:"Montez au 3e étage.",
+      s3_t:"Voici la porte de votre appartement",s3_p:"Appuyez une seule fois lorsque vous êtes sûr que c’est la bonne porte.",s3_cap:"Porte de l’appartement — 3e étage.",
+      help_h:"Besoin d’aide ?",help_p:'Appeler ou WhatsApp : <a class="cta" href="tel:+393355245756">+39 335 524 5756</a>',
+      btn_building:"➜ Ouvrir la porte de l’immeuble",btn_apartment:"➜ Ouvrir la porte de l’appartement",
+      footer:"niceflatinrome.com • Guide visuel rapide pour l’arrivée à Via del Portico d’Ottavia 1D"},
+  de:{title:"Check-in-Leitfaden — Via del Portico d’Ottavia 1D",addr:"Adresse: Via del Portico d’Ottavia 1D, Rom",
+      s1_t:"Haustür öffnen",s1_p:"Drücken Sie unten auf die Taste, um die Haustür zu entriegeln.",s1_note:"",
+      s1_cap:"Haupteingang — Via del Portico d’Ottavia 1D.",s1_cap2:"Drücken Sie diese Taste, um das Licht im Innenkorridor einzuschalten.",
+      s2_t:"Am dritten Stock ankommen",s2_p:"Gehen Sie in den 3. Stock.",
+      s3_t:"Das ist Ihre Wohnungstür",s3_p:"Drücken Sie den Knopf nur einmal, wenn Sie sicher sind, dass es die richtige Tür ist.",s3_cap:"Wohnungstür — 3. Stock.",
+      help_h:"Brauchen Sie Hilfe?",help_p:'Anrufen oder WhatsApp: <a class="cta" href="tel:+393355245756">+39 335 524 5756</a>',
+      btn_building:"➜ Haustür öffnen",btn_apartment:"➜ Wohnungstür öffnen",
+      footer:"niceflatinrome.com • Schnelle visuelle Anleitung für die Ankunft a Via del Portico d’Ottavia 1D"},
+  es:{title:"Guía de check-in — Via del Portico d’Ottavia 1D",addr:"Dirección: Via del Portico d’Ottavia 1D, Roma",
+      s1_t:"Abrir la puerta del edificio",s1_p:"Pulsa el botón de abajo para desbloquear la puerta principal.",s1_note:"",
+      s1_cap:"Entrada principal — Via del Portico d’Ottavia 1D.",s1_cap2:"Pulsa este botón para encender las luces del pasillo interior.",
+      s2_t:"Llegar al tercer piso",s2_p:"Sube al 3.º piso.",
+      s3_t:"Esta es la puerta de tu apartamento",s3_p:"Pulsa el botón solo una vez cuando estés seguro de que es la puerta correcta.",s3_cap:"Puerta del apartamento — 3.º piso.",
+      help_h:"¿Necesitas ayuda?",help_p:'Llama o WhatsApp: <a class="cta" href="tel:+393355245756">+39 335 524 5756</a>',
+      btn_building:"➜ Abrir puerta del edificio",btn_apartment:"➜ Abrir puerta del apartamento",
+      footer:"niceflatinrome.com • Guía visual rápida para llegadas a Via del Portico d’Ottavia 1D"}
 };
 
 (function(){
@@ -235,17 +181,19 @@ const T = {
   const L=(params.get('lang')||'en').toLowerCase();
   const t=T[L]||T.en;
 
+  // attiva la lingua selezionata
   document.querySelectorAll('#langbar a').forEach(a=>{
     a.classList.toggle('active', a.getAttribute('data-lang')===L);
   });
 
+  // testi
   document.getElementById('title').textContent=t.title;
   document.getElementById('h1').textContent=t.title;
   document.getElementById('addr').textContent=t.addr;
 
   document.getElementById('s1_t').textContent=t.s1_t;
   document.getElementById('s1_p').textContent=t.s1_p;
-  document.getElementById('s1_note').textContent=t.s1_note; // hidden
+  document.getElementById('s1_note').textContent=t.s1_note;
   document.getElementById('s1_cap').textContent=t.s1_cap;
   document.getElementById('s1_cap2').textContent=t.s1_cap2;
 
