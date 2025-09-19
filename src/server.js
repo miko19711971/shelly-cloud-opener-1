@@ -1,4 +1,4 @@
-import express from "express";
+press";
 import axios from "axios";
 import crypto from "crypto";
 import cors from "cors";
@@ -27,9 +27,9 @@ if (!TOKEN_SECRET) {
 const TIMEZONE        = process.env.TIMEZONE || "Europe/Rome";
 
 // ========= ROTAZIONE HARD-CODED =========
-const ROTATION_TAG   = "R-2025-09-18-final";
-const TOKEN_VERSION  = 100;
-const LINK_PREFIX    = "/k3";
+const ROTATION_TAG   = "R-2025-09-18-final"; // lascia così; cambialo solo se vuoi revocare tutto in futuro
+const TOKEN_VERSION  = 100;                  // versione token
+const LINK_PREFIX    = "/k3";                // prefisso attivo per i nuovi link
 const SIGNING_SECRET = `${TOKEN_SECRET}|${ROTATION_TAG}`;
 const REVOKE_BEFORE  = parseInt(process.env.REVOKE_BEFORE || "0", 10);
 const STARTED_AT     = Date.now();
@@ -37,9 +37,8 @@ const STARTED_AT     = Date.now();
 // Limiti sicurezza default
 const DEFAULT_WINDOW_MIN = parseInt(process.env.WINDOW_MIN || "15", 10);
 const DEFAULT_MAX_OPENS  = parseInt(process.env.MAX_OPENS  || "2", 10);
-const GUIDE_WINDOW_MIN   = 1440;   // ⏱ 24 ore validità guide
 
-// ======== CSP per le guide =========
+// ======== CSP per le guide (blocca aperture dirette esterne) ========
 const GUIDE_CSP = [
   "default-src 'self'",
   "script-src 'self' 'unsafe-inline'",
@@ -77,6 +76,7 @@ app.use((req, res, next) => {
 
 // ========= STATIC =========
 app.use(express.static(PUBLIC_DIR));
+app.use("/guides", express.static(path.join(PUBLIC_DIR, "guides"), { fallthrough: false }));
 app.use("/guest-assistant", express.static(path.join(PUBLIC_DIR, "guest-assistant"), { fallthrough: false }));
 
 // Redirect vecchi percorsi → nuove guide
@@ -84,7 +84,7 @@ app.get(["/checkin/scala", "/checkin/scala/index.html"], (req, res) => res.redir
 app.get(["/checkin/leonina", "/checkin/leonina/index.html"], (req, res) => res.redirect(301, "/guides/leonina/"));
 app.get(["/checkin/arenula", "/checkin/arenula/index.html"], (req, res) => res.redirect(301, "/guides/arenula/"));
 app.get(["/checkin/trastevere", "/checkin/trastevere/index.html"], (req, res) => res.redirect(301, "/guides/trastevere/"));
-app.get(["/checkin/portico", "/checkin/portico/index.html"], (req, res) => res.redirect(301, "/guides/portico/"));
+
 
 // ========= MAPPATURA DISPOSITIVI =========
 const TARGETS = {
@@ -122,6 +122,22 @@ async function shellyTurnOn(deviceId) {
   }
 }
 
+async function openOne(deviceId) {
+  const first = await shellyTurnOn(deviceId);
+  if (first.ok) return { ok: true, first };
+  return { ok: false, first };
+}
+async function openSequence(ids, delayMs = 10000) {
+  const logs = [];
+  for (let i = 0; i < ids.length; i++) {
+    const r = await openOne(ids[i]);
+    logs.push({ step: i + 1, device: ids[i], ...r });
+    if (i < ids.length - 1) await new Promise(res => setTimeout(res, delayMs));
+  }
+  const ok = logs.every(l => l.ok);
+  return { ok, logs };
+}
+
 // ========== TOKEN MONOUSO ==========
 function b64url(buf) {
   return Buffer.from(buf).toString("base64").replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "");
@@ -135,6 +151,7 @@ function makeToken(payload) {
   return `${header}.${body}.${sig}`;
 }
 
+// ✅ validazione con versione e revoche
 function parseToken(token) {
   const [h, b, s] = token.split(".");
   if (!h || !b || !s) return { ok: false, error: "bad_format" };
@@ -152,6 +169,7 @@ function parseToken(token) {
   return { ok: true, payload };
 }
 
+// ✅ i token includono iat/ver forzati
 function newTokenFor(targetKey, opts = {}) {
   const max = opts.max ?? DEFAULT_MAX_OPENS;
   const windowMin = opts.windowMin ?? DEFAULT_WINDOW_MIN;
@@ -162,21 +180,91 @@ function newTokenFor(targetKey, opts = {}) {
   return { token: makeToken(payload), payload };
 }
 
-// ====== GUIDE DINAMICHE (24h) ======
-app.get("/guides/:apt", (req, res) => {
-  const apt = req.params.apt;
-  const { token } = newTokenFor(`guide-${apt}`, { windowMin: GUIDE_WINDOW_MIN, max: 50 });
-  const url = `${req.protocol}://${req.get("host")}${LINK_PREFIX}/guide-${apt}/${token}`;
-  res.redirect(302, url);
+const seenJti = new Set();
+function markJti(jti) { seenJti.add(jti); }
+function isSeenJti(jti) { return seenJti.has(jti); }
+setInterval(() => { seenJti.clear(); }, 24 * 60 * 60 * 1000);
+
+// ====== HTML landing ======
+function pageCss() { return `
+  body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;margin:24px}
+  .wrap{max-width:680px}
+  h1{font-size:28px;margin:0 0 8px}
+  p{color:#444}
+  button{font-size:18px;padding:10px 18px;border:1px solid #333;border-radius:8px;background:#fff;cursor:pointer}
+  .muted{color:#777;font-size:14px;margin-top:14px}
+  .ok{color:#0a7b34}
+  .err{color:#b21a1a;white-space:pre-wrap}
+  .hidden{display:none}
+`; }
+function landingHtml(targetKey, targetName, tokenPayload) {
+  const remaining = Math.max(0, (tokenPayload?.max || 0) - (tokenPayload?.used || 0));
+  const expInSec = Math.max(0, Math.floor((tokenPayload.exp - Date.now()) / 1000));
+  return `<!doctype html><html lang="it"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>${targetName}</title><style>${pageCss()}</style></head><body><div class="wrap">
+  <h1>${targetName}</h1>
+  <button id="btn">Apri</button>
+  <div class="muted" id="hint">Max ${tokenPayload.max} aperture entro ${DEFAULT_WINDOW_MIN} minuti · residuo: <b id="left">${remaining}</b> · scade tra <span id="ttl">${expInSec}</span>s</div>
+  <p class="ok hidden" id="okmsg">✔ Apertura inviata.</p>
+  <pre class="err hidden" id="errmsg"></pre>
+  <script>
+    const btn=document.getElementById('btn'),okmsg=document.getElementById('okmsg'),errmsg=document.getElementById('errmsg'),leftEl=document.getElementById('left'),ttlEl=document.getElementById('ttl');
+    let ttl=${expInSec}; setInterval(()=>{ if(ttl>0){ttl--; ttlEl.textContent=ttl;} },1000);
+    btn.addEventListener('click', async ()=>{ 
+      btn.disabled=true; okmsg.classList.add('hidden'); errmsg.classList.add('hidden');
+      try{
+        const res=await fetch(window.location.pathname+'/open',{method:'POST'}); 
+        const j=await res.json();
+        if(j.ok){ okmsg.classList.remove('hidden'); if(typeof j.remaining==='number'){ leftEl.textContent=j.remaining; } if(j.nextUrl){ try{history.replaceState(null,'',j.nextUrl);}catch(_){}} }
+        else { errmsg.textContent=JSON.stringify(j,null,2); errmsg.classList.remove('hidden'); }
+      }catch(e){ errmsg.textContent=String(e); errmsg.classList.remove('hidden'); } 
+      finally{ btn.disabled=false; }
+    });
+  </script></div></body></html>`;
+}
+
+// ====== Home di servizio ======
+app.get("/", (req, res) => {
+  const rows = Object.entries(TARGETS).map(([key, t]) => {
+    const ids = t.ids.join(", ");
+    return `<tr>
+      <td>${t.name}</td>
+      <td><code>${ids}</code></td>
+      <td><a href="/token/${key}">Crea link</a></td>
+      <td><form method="post" action="/api/open-now/${key}" style="display:inline"><button>Manual Open</button></form></td>
+    </tr>`;
+  }).join("\n");
+  res.type("html").send(`<!doctype html><html><head><meta charset="utf-8"/><style>
+    body{font-family:system-ui;margin:24px} table{border-collapse:collapse}
+    td,th{border:1px solid #ccc;padding:8px 12px}
+  </style><title>Door & Gate Opener</title></head><body>
+  <h1>Door & Gate Opener</h1>
+  <p>Link firmati temporanei e apertura manuale.</p>
+  <table><thead><tr><th>Nome</th><th>Device ID</th><th>Smart Link</th><th>Manual Open</th></tr></thead>
+  <tbody>${rows}</tbody></table>
+  <p class="muted">Shard fallback: <code>${SHELLY_BASE_URL}</code></p>
+  </body></html>`);
 });
 
-app.get(`${LINK_PREFIX}/guide-:apt/:token`, (req, res) => {
-  const { apt, token } = req.params;
-  const parsed = parseToken(token);
-  if (!parsed.ok || Date.now() > parsed.payload.exp) return res.status(410).send("Guide link expired");
+// ====== Genera link (prefisso nuovo /k3) ======
+app.get("/token/:target", (req, res) => {
+  const targetKey = req.params.target;
+  const target = TARGETS[targetKey];
+  if (!target) return res.status(404).json({ ok:false, error:"unknown_target" });
 
-  res.sendFile(path.join(PUBLIC_DIR, "guides", apt, "index.html"));
+  const windowMin = parseInt(req.query.mins || DEFAULT_WINDOW_MIN, 10);
+  const maxOpens  = parseInt(req.query.max  || DEFAULT_MAX_OPENS, 10);
+
+  const { token, payload } = newTokenFor(targetKey, { windowMin, max: maxOpens, used: 0 });
+  const url = `${req.protocol}://${req.get("host")}${LINK_PREFIX}/${targetKey}/${token}`;
+  return res.json({ ok:true, url, expiresInMin: Math.round((payload.exp - Date.now())/60000) });
 });
+
+// 🔥 Vecchi link /k e /k2 rimangono disattivati
+app.all("/k/:target/:token", (req, res) => res.status(410).send("Link non più valido."));
+app.all("/k/:target/:token/open", (req, res) => res.status(410).json({ ok:false, error:"gone", message:"Link non più valido." }));
+app.all("/k2/:target/:token", (req, res) => res.status(410).send("Link non più valido."));
+app.all("/k2/:target/:token/open", (req, res) => res.status(410).json({ ok:false, error:"gone", message:"Link non più valido." }));
 
 // ====== Nuove route operative su /k3 ======
 app.get(`${LINK_PREFIX}/:target/:token`, (req, res) => {
@@ -185,8 +273,21 @@ app.get(`${LINK_PREFIX}/:target/:token`, (req, res) => {
   if (!targetDef) return res.status(404).send("Invalid link");
 
   const parsed = parseToken(token);
-  if (!parsed.ok || Date.now() > parsed.payload.exp) return res.status(410).send("Link scaduto");
-  res.type("html").send(`<h1>${targetDef.name}</h1><p>Token valido per apertura.</p>`);
+  if (!parsed.ok) {
+    const code = (["bad_signature","bad_version","revoked","revoked_boot"].includes(parsed.error)) ? 410 : 400;
+    const msg  = parsed.error === "bad_signature" ? "Link non più valido (firma)." :
+                 parsed.error === "bad_version"   ? "Link non più valido." :
+                 parsed.error === "revoked"       ? "Link revocato." :
+                 parsed.error === "revoked_boot"  ? "Link revocato (riavvio sistema)." :
+                                                     "Invalid link";
+    return res.status(code).send(msg);
+  }
+  const p = parsed.payload;
+  if (p.tgt !== target) return res.status(400).send("Invalid link");
+  if (Date.now() > p.exp) return res.status(400).send("Link scaduto");
+
+  res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0");
+  res.type("html").send(landingHtml(target, targetDef.name, p));
 });
 
 app.post(`${LINK_PREFIX}/:target/:token/open`, async (req, res) => {
@@ -195,17 +296,76 @@ app.post(`${LINK_PREFIX}/:target/:token/open`, async (req, res) => {
   if (!targetDef) return res.status(404).json({ ok:false, error:"unknown_target" });
 
   const parsed = parseToken(token);
-  if (!parsed.ok || Date.now() > parsed.payload.exp) return res.status(410).json({ ok:false, error:"expired" });
+  if (!parsed.ok) {
+    const code = (["bad_signature","bad_version","revoked","revoked_boot"].includes(parsed.error)) ? 410 : 400;
+    const msg  = parsed.error === "bad_signature" ? "Link non più valido (firma)." :
+                 parsed.error === "bad_version"   ? "Link non più valido." :
+                 parsed.error === "revoked"       ? "Link revocato." :
+                 parsed.error === "revoked_boot"  ? "Link revocato (riavvio sistema)." :
+                                                     "invalid";
+    return res.status(code).json({ ok:false, error:parsed.error, message: msg });
+  }
+
+  const p = parsed.payload;
+  if (p.tgt !== target) return res.status(400).json({ ok:false, error:"target_mismatch" });
+  if (Date.now() > p.exp) return res.status(400).json({ ok:false, error:"expired" });
+  if (isSeenJti(p.jti))    return res.status(400).json({ ok:false, error:"replayed" });
 
   let result;
   if (targetDef.ids.length === 1) result = await openOne(targetDef.ids[0]);
   else result = await openSequence(targetDef.ids, 10000);
 
-  return res.json({ ok:true, opened: result });
+  markJti(p.jti);
+
+  const used = (p.used || 0) + 1;
+  const remaining = Math.max(0, p.max - used);
+
+  if (used < p.max) {
+    const { token: nextTok } = newTokenFor(target, {
+      used,
+      max: p.max,
+      windowMin: Math.ceil((p.exp - Date.now())/60000)
+    });
+    const nextUrl = `${req.protocol}://${req.get("host")}${LINK_PREFIX}/${target}/${nextTok}`;
+    return res.json({ ok: true, opened: result, remaining, nextUrl });
+  }
+  return res.json({ ok: true, opened: result, remaining: 0 });
+});
+
+// ✅ **RIATTIVA** i bottoni delle guide: crea token e redirige a /k3
+app.all("/api/open-now/:target", (req, res) => {
+  const targetKey = req.params.target;
+  const targetDef = TARGETS[targetKey];
+  if (!targetDef) return res.status(404).send("Unknown target");
+  const { token } = newTokenFor(targetKey, { windowMin: DEFAULT_WINDOW_MIN, max: DEFAULT_MAX_OPENS, used: 0 });
+  return res.redirect(302, `${LINK_PREFIX}/${targetKey}/${token}`);
+});
+
+app.get("/health", (req, res) => {
+  res.json({
+    ok: true,
+    targets: Object.keys(TARGETS).length,
+    node: process.version,
+    uptime: process.uptime(),
+    baseUrl: SHELLY_BASE_URL,
+    tokenVersion: TOKEN_VERSION,
+    rotationTag: ROTATION_TAG,
+    linkPrefix: LINK_PREFIX,
+    startedAt: STARTED_AT,
+    revokeBefore: REVOKE_BEFORE
+  });
 });
 
 // ========= START =========
 const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => {
-  console.log("Server running on", PORT, "TZ:", TIMEZONE, "TokenVer:", TOKEN_VERSION);
+  console.log(
+    "Server running on", PORT,
+    "TZ:", TIMEZONE,
+    "TokenVer:", TOKEN_VERSION,
+    "RotationTag:", ROTATION_TAG,
+    "LinkPrefix:", LINK_PREFIX,
+    "StartedAt:", STARTED_AT,
+    "RevokeBefore:", REVOKE_BEFORE || "-"
+  );
 });
