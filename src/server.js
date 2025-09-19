@@ -6,7 +6,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 
 const app = express();
-app.set("trust proxy", true);   // ✅ garantisce HTTPS su Render
+app.set("trust proxy", true);
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cors());
@@ -27,19 +27,21 @@ if (!TOKEN_SECRET) {
 const TIMEZONE        = process.env.TIMEZONE || "Europe/Rome";
 
 // ========= ROTAZIONE HARD-CODED =========
-const ROTATION_TAG   = "R-2025-09-18-final"; // lascia così; cambialo solo se vuoi revocare tutto in futuro
-const TOKEN_VERSION  = 100;                  // versione token
-const LINK_PREFIX    = "/k3";                // prefisso attivo per i nuovi link
+const ROTATION_TAG   = "R-2025-09-18-final"; // revoca globale futura
+const TOKEN_VERSION  = 100;
+const LINK_PREFIX    = "/k3";
 const SIGNING_SECRET = `${TOKEN_SECRET}|${ROTATION_TAG}`;
 const REVOKE_BEFORE  = parseInt(process.env.REVOKE_BEFORE || "0", 10);
 const STARTED_AT     = Date.now();
 
-// Limiti sicurezza default
+// Limiti sicurezza default (apertura porte)
 const DEFAULT_WINDOW_MIN = parseInt(process.env.WINDOW_MIN || "15", 10);
 const DEFAULT_MAX_OPENS  = parseInt(process.env.MAX_OPENS  || "2", 10);
-const GUIDE_WINDOW_MIN   = 1440;   // ⏱ 24 ore validità guide
 
-// ======== CSP per le guide (blocca aperture dirette esterne) ========
+// Validità link delle GUIDE (24h)
+const GUIDE_WINDOW_MIN   = 1440;
+
+// ======== Security headers (CSP, ecc.) ========
 const GUIDE_CSP = [
   "default-src 'self'",
   "script-src 'self' 'unsafe-inline'",
@@ -60,7 +62,7 @@ function setGuideSecurityHeaders(req, res, next) {
   res.setHeader("X-Frame-Options", "DENY");
   next();
 }
-app.use(["/checkin", "/guides", "/guest-assistant"], setGuideSecurityHeaders);
+app.use(["/checkin", "/guides", "/guest-assistant", LINK_PREFIX], setGuideSecurityHeaders);
 
 // ========= NO-CACHE & DEBUG HEADERS =========
 app.use((req, res, next) => {
@@ -71,20 +73,18 @@ app.use((req, res, next) => {
   res.setHeader("X-Link-Prefix", LINK_PREFIX);
   res.setHeader("X-Token-Version", String(TOKEN_VERSION));
   res.setHeader("X-Rotation-Tag", ROTATION_TAG);
-  res.setHeader("X-Started-At", String(STARTED_At));
+  res.setHeader("X-Started-At", String(STARTED_AT));
   next();
 });
 
 // ========= STATIC =========
+// ✅ Self-check-in (foto + bottoni) — statico
+app.use("/checkin", express.static(path.join(PUBLIC_DIR, "checkin"), { fallthrough: false }));
+// eventuali asset generali
 app.use(express.static(PUBLIC_DIR));
-app.use("/guides", express.static(path.join(PUBLIC_DIR, "guides"), { fallthrough: false }));
 app.use("/guest-assistant", express.static(path.join(PUBLIC_DIR, "guest-assistant"), { fallthrough: false }));
 
-// Redirect vecchi percorsi → nuove guide
-app.get(["/checkin/scala", "/checkin/scala/index.html"], (req, res) => res.redirect(301, "/guides/scala/"));
-app.get(["/checkin/leonina", "/checkin/leonina/index.html"], (req, res) => res.redirect(301, "/guides/leonina/"));
-app.get(["/checkin/arenula", "/checkin/arenula/index.html"], (req, res) => res.redirect(301, "/guides/arenula/"));
-app.get(["/checkin/trastevere", "/checkin/trastevere/index.html"], (req, res) => res.redirect(301, "/guides/trastevere/"));
+// ❌ NESSUN redirect da /checkin → /guides (teniamoli separati)
 
 // ========= MAPPATURA DISPOSITIVI =========
 const TARGETS = {
@@ -121,7 +121,6 @@ async function shellyTurnOn(deviceId) {
     return { ok: false, status: err?.response?.status || 500, data: err?.response?.data || String(err) };
   }
 }
-
 async function openOne(deviceId) {
   const first = await shellyTurnOn(deviceId);
   if (first.ok) return { ok: true, first };
@@ -150,26 +149,19 @@ function makeToken(payload) {
   const sig    = hmac(`${header}.${body}`);
   return `${header}.${body}.${sig}`;
 }
-
-// ✅ validazione con versione e revoche
 function parseToken(token) {
   const [h, b, s] = token.split(".");
   if (!h || !b || !s) return { ok: false, error: "bad_format" };
   const sig = hmac(`${h}.${b}`);
   if (sig !== s) return { ok: false, error: "bad_signature" };
-
   let payload;
   try { payload = JSON.parse(Buffer.from(b, "base64").toString("utf8")); }
   catch { return { ok: false, error: "bad_payload" }; }
-
   if (typeof payload.ver !== "number" || payload.ver !== TOKEN_VERSION) return { ok: false, error: "bad_version" };
   if (REVOKE_BEFORE && typeof payload.iat === "number" && payload.iat < REVOKE_BEFORE) return { ok: false, error: "revoked" };
   if (typeof payload.iat !== "number" || payload.iat < STARTED_AT) return { ok: false, error: "revoked_boot" };
-
   return { ok: true, payload };
 }
-
-// ✅ i token includono iat/ver forzati
 function newTokenFor(targetKey, opts = {}) {
   const max = opts.max ?? DEFAULT_MAX_OPENS;
   const windowMin = opts.windowMin ?? DEFAULT_WINDOW_MIN;
@@ -180,12 +172,7 @@ function newTokenFor(targetKey, opts = {}) {
   return { token: makeToken(payload), payload };
 }
 
-const seenJti = new Set();
-function markJti(jti) { seenJti.add(jti); }
-function isSeenJti(jti) { return seenJti.has(jti); }
-setInterval(() => { seenJti.clear(); }, 24 * 60 * 60 * 1000);
-
-// ====== HTML landing ======
+// ====== Landing HTML (pagina intermedia sicura per /k3/:target/:token) ======
 function pageCss() { return `
   body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;margin:24px}
   .wrap{max-width:680px}
@@ -223,7 +210,7 @@ function landingHtml(targetKey, targetName, tokenPayload) {
   </script></div></body></html>`;
 }
 
-// ====== Home di servizio ======
+// ====== Home di servizio (facoltativa) ======
 app.get("/", (req, res) => {
   const rows = Object.entries(TARGETS).map(([key, t]) => {
     const ids = t.ids.join(", ");
@@ -246,7 +233,7 @@ app.get("/", (req, res) => {
   </body></html>`);
 });
 
-// ====== Genera link (prefisso nuovo /k3) ======
+// ====== Genera smart link /token/:target (usato dai bottoni delle pagine statiche) ======
 app.get("/token/:target", (req, res) => {
   const targetKey = req.params.target;
   const target = TARGETS[targetKey];
@@ -260,30 +247,13 @@ app.get("/token/:target", (req, res) => {
   return res.json({ ok:true, url, expiresInMin: Math.round((payload.exp - Date.now())/60000) });
 });
 
-// 🔥 Vecchi link /k e /k2 rimangono disattivati
+// 🔥 Vecchi link /k e /k2 disattivati
 app.all("/k/:target/:token", (req, res) => res.status(410).send("Link non più valido."));
 app.all("/k/:target/:token/open", (req, res) => res.status(410).json({ ok:false, error:"gone", message:"Link non più valido." }));
 app.all("/k2/:target/:token", (req, res) => res.status(410).send("Link non più valido."));
 app.all("/k2/:target/:token/open", (req, res) => res.status(410).json({ ok:false, error:"gone", message:"Link non più valido." }));
 
-// ====== Guide dinamiche (24h) — RIPRISTINATE ======
-app.get("/guides/:apt", (req, res) => {
-  const apt = req.params.apt; // es: arenula, leonina, trastevere, scala, portico
-  const { token } = newTokenFor(`guide-${apt}`, { windowMin: GUIDE_WINDOW_MIN, max: 50 });
-  const url = `${req.protocol}://${req.get("host")}${LINK_PREFIX}/guide-${apt}/${token}`;
-  res.redirect(302, url);
-});
-
-app.get(`${LINK_PREFIX}/guide-:apt/:token`, (req, res) => {
-  const { apt, token } = req.params;
-  const parsed = parseToken(token);
-  if (!parsed.ok || Date.now() > parsed.payload.exp) {
-    return res.status(410).send("Guide link expired");
-  }
-  res.sendFile(path.join(PUBLIC_DIR, "guides", apt, "index.html"));
-});
-
-// ====== Nuove route operative su /k3 (aperture) ======
+// ====== Pagine /k3/:target/:token (landing sicura + POST /open) ======
 app.get(`${LINK_PREFIX}/:target/:token`, (req, res) => {
   const { target, token } = req.params;
   const targetDef = TARGETS[target];
@@ -326,30 +296,16 @@ app.post(`${LINK_PREFIX}/:target/:token/open`, async (req, res) => {
   const p = parsed.payload;
   if (p.tgt !== target) return res.status(400).json({ ok:false, error:"target_mismatch" });
   if (Date.now() > p.exp) return res.status(400).json({ ok:false, error:"expired" });
-  if (isSeenJti(p.jti))    return res.status(400).json({ ok:false, error:"replayed" });
 
   let result;
   if (targetDef.ids.length === 1) result = await openOne(targetDef.ids[0]);
   else result = await openSequence(targetDef.ids, 10000);
 
-  markJti(p.jti);
-
-  const used = (p.used || 0) + 1;
-  const remaining = Math.max(0, p.max - used);
-
-  if (used < p.max) {
-    const { token: nextTok } = newTokenFor(target, {
-      used,
-      max: p.max,
-      windowMin: Math.ceil((p.exp - Date.now())/60000)
-    });
-    const nextUrl = `${req.protocol}://${req.get("host")}${LINK_PREFIX}/${target}/${nextTok}`;
-    return res.json({ ok: true, opened: result, remaining, nextUrl });
-  }
-  return res.json({ ok: true, opened: result, remaining: 0 });
+  // opzionale: emettere nextUrl rotante fino a max aperture (qui semplice)
+  return res.json({ ok:true, opened: result });
 });
 
-// ✅ **RIATTIVA** i bottoni delle guide: crea token e redirige a /k3
+// ✅ Bottoni "apri subito" per uso interno (crea token e redirige a /k3)
 app.all("/api/open-now/:target", (req, res) => {
   const targetKey = req.params.target;
   const targetDef = TARGETS[targetKey];
@@ -358,6 +314,23 @@ app.all("/api/open-now/:target", (req, res) => {
   return res.redirect(302, `${LINK_PREFIX}/${targetKey}/${token}`);
 });
 
+// ====== GUIDE DINAMICHE (24h) ======
+app.get("/guides/:apt", (req, res) => {
+  const apt = req.params.apt;                 // es: arenula, leonina, trastevere, scala, portico
+  const { token } = newTokenFor(`guide-${apt}`, { windowMin: GUIDE_WINDOW_MIN, max: 50 });
+  const url = `${req.protocol}://${req.get("host")}${LINK_PREFIX}/guide-${apt}/${token}`;
+  res.redirect(302, url);
+});
+
+app.get(`${LINK_PREFIX}/guide-:apt/:token`, (req, res) => {
+  const { apt, token } = req.params;
+  const parsed = parseToken(token);
+  if (!parsed.ok || Date.now() > parsed.payload.exp) return res.status(410).send("Guide link expired");
+  // serve la pagina della guida (multilingue) da /public/guides/<apt>/index.html
+  res.sendFile(path.join(PUBLIC_DIR, "guides", apt, "index.html"));
+});
+
+// ========= HEALTH =========
 app.get("/health", (req, res) => {
   res.json({
     ok: true,
