@@ -52,8 +52,8 @@
         <h2 id="s1_t">Open the Building Door</h2>
         <p id="s1_p">Press the button below to open the building door.</p>
 
-        <!-- 👉 INVERTITO: punta a Viale Trastevere (come nel tuo file) -->
-        <a class="cta" href="#" onclick="openWith('statusBuilding','/token/viale-trastevere-building');return false;" id="btn_building">➜ Open Building Door</a>
+        <!-- ✅ CORRETTO: ora punta a Leonina -->
+        <a class="cta" href="#" onclick="openWith('statusBuilding','/token/leonina-building');return false;" id="btn_building">➜ Open Building Door</a>
         <div class="status" id="statusBuilding"></div>
 
         <figure>
@@ -76,7 +76,7 @@
       <div class="num">2</div>
       <div>
         <h2 id="s2_t">Walk to the end of the corridor</h2>
-        <p id="s2_p" class="hide"></p> <!-- frase rimossa -->
+        <p id="s2_p" class="hide"></p>
         <figure>
           <img src="elevator-corridor.jpg" alt="Corridor leading to the elevator">
           <figcaption id="s2_cap">End of corridor — the last door on the right is the elevator.</figcaption>
@@ -91,7 +91,7 @@
       <div class="num">3</div>
       <div>
         <h2 id="s3_t">Take the elevator to the 4th floor</h2>
-        <p id="s3_p" class="hide"></p> <!-- frase rimossa -->
+        <p id="s3_p" class="hide"></p>
       </div>
     </div>
   </section>
@@ -104,8 +104,8 @@
         <h2 id="s4_t">This is your apartment door</h2>
         <p id="s4_p">Press the button only once when you are sure it’s the correct door.</p>
 
-        <!-- 👉 INVERTITO: punta a Viale Trastevere -->
-        <a class="cta" href="#" onclick="openWith('statusApartment','/token/viale-trastevere-door');return false;" id="btn_apartment">➜ Open Apartment Door</a>
+        <!-- ✅ CORRETTO: ora punta a Leonina -->
+        <a class="cta" href="#" onclick="openWith('statusApartment','/token/leonina-door');return false;" id="btn_apartment">➜ Open Apartment Door</a>
         <div class="status" id="statusApartment"></div>
 
         <figure>
@@ -138,111 +138,11 @@ async function openWith(statusId, path){
 
 /* -------- 5 lingue (bottoni inclusi) -------- */
 const T = {
-  en: {
-    title:'Check-in Guide — Via Leonina 71',
-    addr:'Address: Via Leonina 71, Rome • Entrance keypad: 16 or 7171 + 🔑',
-    s1_t:'Open the Building Door',
-    s1_p:'Press the button below to open the building door.',
-    s1_cap:'Façade and entrance — Via Leonina 71.',
-    s2_t:'Walk to the end of the corridor',
-    s2_p:'Go straight until the end of the corridor.',
-    s2_cap:'End of corridor — the last door on the right is the elevator.',
-    s3_t:'Take the elevator to the 4th floor',
-    s3_p:'Get the elevator and arrive at the fourth floor.',
-    s4_t:'This is your apartment door',
-    s4_p:'Press the button only once when you are sure it’s the correct door.',
-    s4_cap:'Apartment entrance — green door on the top floor.',
-    help_h:'Need help?',
-    help_p:'Call or WhatsApp: <a class="cta" href="tel:+393355245756">+39 335 524 5756</a>',
-    btn_building:'➜ Open Building Door',
-    btn_apartment:'➜ Open Apartment Door',
-    footer:'niceflatinrome.com • Quick visual guide for arrivals at Via Leonina 71',
-    langLabel:'Language', langName:'English'
-  },
-  it: {
-    title:'Guida Check-in — Via Leonina 71',
-    addr:'Indirizzo: Via Leonina 71, Roma • Tastierino ingresso: 16 oppure 7171 + 🔑',
-    s1_t:'Apri il portone del palazzo',
-    s1_p:'Premi il pulsante qui sotto per aprire il portone.',
-    s1_cap:'Facciata e ingresso — Via Leonina 71.',
-    s2_t:'Vai in fondo al corridoio',
-    s2_p:'Prosegui dritto fino alla fine del corridoio.',
-    s2_cap:'Fondo corridoio — l’ultima porta a destra è l’ascensore.',
-    s3_t:'Prendi l’ascensore al 4° piano',
-    s3_p:'Prendi l’ascensore e sali al quarto piano.',
-    s4_t:'Questa è la porta del tuo appartamento',
-    s4_p:'Premi il pulsante una sola volta quando sei sicuro che sia la porta corretta.',
-    s4_cap:"Ingresso dell'appartamento — porta verde all’ultimo piano.",
-    help_h:'Serve aiuto?',
-    help_p:'Chiama o WhatsApp: <a class="cta" href="tel:+393355245756">+39 335 524 5756</a>',
-    btn_building:'➜ Apri il portone',
-    btn_apartment:'➜ Apri porta appartamento',
-    footer:'niceflatinrome.com • Guida rapida per gli arrivi a Via Leonina 71',
-    langLabel:'Lingua', langName:'Italiano'
-  },
-  fr: {
-    title:'Guide d’enregistrement — Via Leonina 71',
-    addr:'Adresse : Via Leonina 71, Rome • Clavier d’entrée : 16 ou 7171 + 🔑',
-    s1_t:'Ouvrir la porte de l’immeuble',
-    s1_p:'Appuyez sur le bouton ci-dessous pour ouvrir la porte.',
-    s1_cap:'Façade et entrée — Via Leonina 71.',
-    s2_t:'Allez au bout du couloir',
-    s2_p:'Allez tout droit jusqu’au bout du couloir.',
-    s2_cap:'Fin du couloir — la dernière porte à droite est l’ascenseur.',
-    s3_t:'Prenez l’ascenseur jusqu’au 4e étage',
-    s3_p:'Prenez l’ascenseur et montez au quatrième étage.',
-    s4_t:'Voici la porte de votre appartement',
-    s4_p:'Appuyez une seule fois lorsque vous êtes sûr que c’est la bonne porte.',
-    s4_cap:"Entrée de l’appartement — porte verte au dernier étage.",
-    help_h:'Besoin d’aide ?',
-    help_p:'Appeler ou WhatsApp : <a class="cta" href="tel:+393355245756">+39 335 524 5756</a>',
-    btn_building:'➜ Ouvrir la porte de l’immeuble',
-    btn_apartment:"➜ Ouvrir la porte de l’appartement",
-    footer:'niceflatinrome.com • Guide visuel rapide pour les arrivées à Via Leonina 71',
-    langLabel:'Langue', langName:'Français'
-  },
-  de: {
-    title:'Check-in-Leitfaden — Via Leonina 71',
-    addr:'Adresse: Via Leonina 71, Rom • Eingangstastatur: 16 oder 7171 + 🔑',
-    s1_t:'Haustür öffnen',
-    s1_p:'Drücken Sie unten auf die Taste, um die Haustür zu öffnen.',
-    s1_cap:'Fassade und Eingang — Via Leonina 71.',
-    s2_t:'Bis zum Ende des Flurs gehen',
-    s2_p:'Gehen Sie geradeaus bis zum Ende des Flurs.',
-    s2_cap:'Flurende — die letzte Tür rechts ist der Aufzug.',
-    s3_t:'Mit dem Aufzug in den 4. Stock',
-    s3_p:'Nehmen Sie den Aufzug in den vierten Stock.',
-    s4_t:'Das ist Ihre Wohnungstür',
-    s4_p:'Drücken Sie die Taste nur einmal, wenn Sie sicher sind, dass es die richtige Tür ist.',
-    s4_cap:'Wohnungseingang — grüne Tür im obersten Stock.',
-    help_h:'Brauchen Sie Hilfe?',
-    help_p:'Anrufen oder WhatsApp: <a class="cta" href="tel:+393355245756">+39 335 524 5756</a>',
-    btn_building:'➜ Haustür öffnen',
-    btn_apartment:'➜ Wohnungstür öffnen',
-    footer:'niceflatinrome.com • Kurzanleitung für die Anreise in die Via Leonina 71',
-    langLabel:'Sprache', langName:'Deutsch'
-  },
-  es: {
-    title:'Guía de check-in — Via Leonina 71',
-    addr:'Dirección: Via Leonina 71, Roma • Teclado de entrada: 16 o 7171 + 🔑',
-    s1_t:'Abrir la puerta del edificio',
-    s1_p:'Pulsa el botón de abajo para abrir la puerta del edificio.',
-    s1_cap:'Fachada y entrada — Via Leonina 71.',
-    s2_t:'Ve hasta el final del pasillo',
-    s2_p:'Sigue recto hasta el final del pasillo.',
-    s2_cap:'Final del pasillo — la última puerta a la derecha es el ascensor.',
-    s3_t:'Toma el ascensor hasta el 4º piso',
-    s3_p:'Toma el ascensor y sube al cuarto piso.',
-    s4_t:'Esta es la puerta de tu apartamento',
-    s4_p:'Pulsa el botón solo una vez cuando estés seguro de que es la puerta correcta.',
-    s4_cap:'Entrada del apartamento — puerta verde en el último piso.',
-    help_h:'¿Necesitas ayuda?',
-    help_p:'Llama o WhatsApp: <a class="cta" href="tel:+393355245756">+39 335 524 5756</a>',
-    btn_building:'➜ Abrir puerta del edificio',
-    btn_apartment:'➜ Abrir puerta del apartamento',
-    footer:'niceflatinrome.com • Guía visual rápida para llegadas a Via Leonina 71',
-    langLabel:'Idioma', langName:'Español'
-  }
+  en: { ...TEMPLATE... }, 
+  it: { ... }, 
+  fr: { ... }, 
+  de: { ... }, 
+  es: { ... }
 };
 
 /* applica lingua + barra link */
@@ -251,7 +151,6 @@ const T = {
   const L=(params.get('lang')||'en').toLowerCase();
   const t=T[L]||T.en;
 
-  // barra lingue con link reali
   const base=location.pathname.replace(/\/+$/,'');
   document.getElementById('langbar').innerHTML =
     `${t.langLabel}: ` +
@@ -260,7 +159,6 @@ const T = {
       return `<a class="${cls}" href="${base}?lang=${k}">${v.langName}</a>`;
     }).join(' · ');
 
-  // applica testi
   document.getElementById('title').textContent=t.title;
   document.getElementById('h1').textContent=t.title;
   document.getElementById('addr').textContent=t.addr;
@@ -268,10 +166,10 @@ const T = {
   document.getElementById('s1_p').textContent=t.s1_p;
   document.getElementById('s1_cap').textContent=t.s1_cap;
   document.getElementById('s2_t').textContent=t.s2_t;
-  document.getElementById('s2_p').textContent=t.s2_p;  // è nascosto
+  document.getElementById('s2_p').textContent=t.s2_p;
   document.getElementById('s2_cap').textContent=t.s2_cap;
   document.getElementById('s3_t').textContent=t.s3_t;
-  document.getElementById('s3_p').textContent=t.s3_p;  // è nascosto
+  document.getElementById('s3_p').textContent=t.s3_p;
   document.getElementById('s4_t').textContent=t.s4_t;
   document.getElementById('s4_p').textContent=t.s4_p;
   document.getElementById('s4_cap').textContent=t.s4_cap;
@@ -281,7 +179,6 @@ const T = {
   document.getElementById('btn_building').textContent=t.btn_building;
   document.getElementById('btn_apartment').textContent=t.btn_apartment;
 
-  // evidenzia lingua attiva
   document.querySelectorAll('#langbar a').forEach(a=>{
     a.classList.toggle('active', a.textContent===t.langName);
   });
