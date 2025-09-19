@@ -1,4 +1,3 @@
-// server.js (PART 1/6)
 import express from "express";
 import axios from "axios";
 import crypto from "crypto";
@@ -28,9 +27,9 @@ if (!TOKEN_SECRET) {
 const TIMEZONE        = process.env.TIMEZONE || "Europe/Rome";
 
 // ========= ROTAZIONE HARD-CODED =========
-const ROTATION_TAG   = "R-2025-09-18-final"; // cambia questa stringa per invalidare tutto in futuro
-const TOKEN_VERSION  = 100;                  // versione token forzata
-const LINK_PREFIX    = "/k3";                // prefisso definitivo
+const ROTATION_TAG   = "R-2025-09-18-final"; // lascia così; cambialo solo se vuoi revocare tutto in futuro
+const TOKEN_VERSION  = 100;                  // versione token
+const LINK_PREFIX    = "/k3";                // prefisso attivo per i nuovi link
 const SIGNING_SECRET = `${TOKEN_SECRET}|${ROTATION_TAG}`;
 const REVOKE_BEFORE  = parseInt(process.env.REVOKE_BEFORE || "0", 10);
 const STARTED_AT     = Date.now();
@@ -39,15 +38,14 @@ const STARTED_AT     = Date.now();
 const DEFAULT_WINDOW_MIN = parseInt(process.env.WINDOW_MIN || "15", 10);
 const DEFAULT_MAX_OPENS  = parseInt(process.env.MAX_OPENS  || "2", 10);
 
-// server.js (PART 2/6)
-// ======== HARD CSP per bloccare aperture dirette dalle guide mantenendo la grafica ========
+// ======== CSP per le guide (blocca aperture dirette esterne) ========
 const GUIDE_CSP = [
   "default-src 'self'",
   "script-src 'self' 'unsafe-inline'",
   "style-src 'self' 'unsafe-inline' https:",
   "img-src 'self' data: https:",
   "font-src 'self' data: https:",
-  "connect-src 'self'", // blocca fetch esterni
+  "connect-src 'self'",
   "form-action 'self'",
   "frame-ancestors 'none'",
   "base-uri 'self'",
@@ -61,7 +59,6 @@ function setGuideSecurityHeaders(req, res, next) {
   res.setHeader("X-Frame-Options", "DENY");
   next();
 }
-
 app.use(["/checkin", "/guides", "/guest-assistant"], setGuideSecurityHeaders);
 
 // ========= NO-CACHE & DEBUG HEADERS =========
@@ -79,7 +76,6 @@ app.use((req, res, next) => {
 
 // ========= STATIC =========
 app.use(express.static(PUBLIC_DIR));
-
 app.use("/guides", express.static(path.join(PUBLIC_DIR, "guides"), { fallthrough: false }));
 app.use("/guest-assistant", express.static(path.join(PUBLIC_DIR, "guest-assistant"), { fallthrough: false }));
 
@@ -90,7 +86,6 @@ app.get(["/checkin/arenula", "/checkin/arenula/index.html"], (req, res) => res.r
 app.get(["/checkin/trastevere", "/checkin/trastevere/index.html"], (req, res) => res.redirect(301, "/guides/trastevere/"));
 app.get(["/checkin/ottavia", "/checkin/ottavia/index.html", "/checkin/portico", "/checkin/portico/index.html"], (req, res) => res.redirect(301, "/guides/portico/"));
 
-// server.js (PART 3/6)
 // ========= MAPPATURA DISPOSITIVI =========
 const TARGETS = {
   "arenula-building":         { name: "Arenula 16 — Building Door",                ids: ["3494547ab05e"] },
@@ -132,7 +127,6 @@ async function openOne(deviceId) {
   if (first.ok) return { ok: true, first };
   return { ok: false, first };
 }
-
 async function openSequence(ids, delayMs = 10000) {
   const logs = [];
   for (let i = 0; i < ids.length; i++) {
@@ -144,17 +138,12 @@ async function openSequence(ids, delayMs = 10000) {
   return { ok, logs };
 }
 
-// server.js (PART 4/6)
 // ========== TOKEN MONOUSO ==========
 function b64url(buf) {
   return Buffer.from(buf).toString("base64").replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "");
 }
-function hmac_raw(str) {
-  return crypto.createHmac("sha256", SIGNING_SECRET).update(str).digest();
-}
-function hmac(str) {
-  return b64url(hmac_raw(str));
-}
+function hmac_raw(str) { return crypto.createHmac("sha256", SIGNING_SECRET).update(str).digest(); }
+function hmac(str) { return b64url(hmac_raw(str)); }
 function makeToken(payload) {
   const header = b64url(JSON.stringify({ alg: "HS256", typ: "TOK" }));
   const body   = b64url(JSON.stringify(payload));
@@ -162,7 +151,7 @@ function makeToken(payload) {
   return `${header}.${body}.${sig}`;
 }
 
-// ✅ validazione con nuova firma, versione, soglia e cutoff boot
+// ✅ validazione con versione e revoche
 function parseToken(token) {
   const [h, b, s] = token.split(".");
   if (!h || !b || !s) return { ok: false, error: "bad_format" };
@@ -173,15 +162,9 @@ function parseToken(token) {
   try { payload = JSON.parse(Buffer.from(b, "base64").toString("utf8")); }
   catch { return { ok: false, error: "bad_payload" }; }
 
-  if (typeof payload.ver !== "number" || payload.ver !== TOKEN_VERSION) {
-    return { ok: false, error: "bad_version" };
-  }
-  if (REVOKE_BEFORE && typeof payload.iat === "number" && payload.iat < REVOKE_BEFORE) {
-    return { ok: false, error: "revoked" };
-  }
-  if (typeof payload.iat !== "number" || payload.iat < STARTED_AT) {
-    return { ok: false, error: "revoked_boot" };
-  }
+  if (typeof payload.ver !== "number" || payload.ver !== TOKEN_VERSION) return { ok: false, error: "bad_version" };
+  if (REVOKE_BEFORE && typeof payload.iat === "number" && payload.iat < REVOKE_BEFORE) return { ok: false, error: "revoked" };
+  if (typeof payload.iat !== "number" || payload.iat < STARTED_AT) return { ok: false, error: "revoked_boot" };
 
   return { ok: true, payload };
 }
@@ -193,24 +176,16 @@ function newTokenFor(targetKey, opts = {}) {
   const now = Date.now();
   const exp = now + windowMin * 60 * 1000;
   const jti = b64url(crypto.randomBytes(9));
-  const payload = {
-    tgt: targetKey,
-    exp,
-    max,
-    used: opts.used ?? 0,
-    jti,
-    iat: now,
-    ver: TOKEN_VERSION
-  };
+  const payload = { tgt: targetKey, exp, max, used: opts.used ?? 0, jti, iat: now, ver: TOKEN_VERSION };
   return { token: makeToken(payload), payload };
 }
 
 const seenJti = new Set();
 function markJti(jti) { seenJti.add(jti); }
 function isSeenJti(jti) { return seenJti.has(jti); }
-setInterval(() => { seenJti.clear(); }, 24 * 60 * 60 * 1000); // anti-replay cache 24h
+setInterval(() => { seenJti.clear(); }, 24 * 60 * 60 * 1000);
 
-// ========== PAGINE HTML (layout come PRIMO script, con PATCH JS) ==========
+// ====== HTML landing ======
 function pageCss() { return `
   body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;margin:24px}
   .wrap{max-width:680px}
@@ -222,7 +197,7 @@ function pageCss() { return `
   .err{color:#b21a1a;white-space:pre-wrap}
   .hidden{display:none}
 `; }
-function landingHtml(targetKey, targetName, tokenPayload, tokenStr) {
+function landingHtml(targetKey, targetName, tokenPayload) {
   const remaining = Math.max(0, (tokenPayload?.max || 0) - (tokenPayload?.used || 0));
   const expInSec = Math.max(0, Math.floor((tokenPayload.exp - Date.now()) / 1000));
   return `<!doctype html><html lang="it"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
@@ -235,35 +210,20 @@ function landingHtml(targetKey, targetName, tokenPayload, tokenStr) {
   <script>
     const btn=document.getElementById('btn'),okmsg=document.getElementById('okmsg'),errmsg=document.getElementById('errmsg'),leftEl=document.getElementById('left'),ttlEl=document.getElementById('ttl');
     let ttl=${expInSec}; setInterval(()=>{ if(ttl>0){ttl--; ttlEl.textContent=ttl;} },1000);
-
-    async function safeOpen(){
+    btn.addEventListener('click', async ()=>{ 
       btn.disabled=true; okmsg.classList.add('hidden'); errmsg.classList.add('hidden');
       try{
-        const res = await fetch(window.location.pathname + '/open', { method:'POST' });
-        const j = await res.json();
-        if(j.ok){
-          okmsg.classList.remove('hidden');
-          if(typeof j.remaining==='number'){ leftEl.textContent=j.remaining; }
-          if(j.nextUrl){ try{ history.replaceState(null,'',j.nextUrl); }catch(_){} }
-          return;
-        }
-        errmsg.textContent = JSON.stringify(j,null,2);
-        errmsg.classList.remove('hidden');
-      }catch(e){
-        // fallback ottimistico: se la rete fallisce, potrebbe essere già arrivato al server
-        okmsg.classList.remove('hidden');
-        errmsg.textContent = 'Apertura inviata. (Nota: aggiornamento pagina non riuscito)';
-        errmsg.classList.remove('hidden');
-      }finally{
-        btn.disabled=false;
-      }
-    }
-    btn.addEventListener('click', safeOpen);
+        const res=await fetch(window.location.pathname+'/open',{method:'POST'}); 
+        const j=await res.json();
+        if(j.ok){ okmsg.classList.remove('hidden'); if(typeof j.remaining==='number'){ leftEl.textContent=j.remaining; } if(j.nextUrl){ try{history.replaceState(null,'',j.nextUrl);}catch(_){}} }
+        else { errmsg.textContent=JSON.stringify(j,null,2); errmsg.classList.remove('hidden'); }
+      }catch(e){ errmsg.textContent=String(e); errmsg.classList.remove('hidden'); } 
+      finally{ btn.disabled=false; }
+    });
   </script></div></body></html>`;
 }
 
-// server.js (PART 5/6)
-// ========== HOME (layout come PRIMO script) ==========
+// ====== Home di servizio ======
 app.get("/", (req, res) => {
   const rows = Object.entries(TARGETS).map(([key, t]) => {
     const ids = t.ids.join(", ");
@@ -286,7 +246,7 @@ app.get("/", (req, res) => {
   </body></html>`);
 });
 
-// ========== GENERA LINK (usa prefisso nuovo /k3) ==========
+// ====== Genera link (prefisso nuovo /k3) ======
 app.get("/token/:target", (req, res) => {
   const targetKey = req.params.target;
   const target = TARGETS[targetKey];
@@ -300,13 +260,13 @@ app.get("/token/:target", (req, res) => {
   return res.json({ ok:true, url, expiresInMin: Math.round((payload.exp - Date.now())/60000) });
 });
 
-// 🔥 HARD KILL dei vecchi link: /k/* e /k2/* vengono disattivati
+// 🔥 Vecchi link /k e /k2 rimangono disattivati
 app.all("/k/:target/:token", (req, res) => res.status(410).send("Link non più valido."));
 app.all("/k/:target/:token/open", (req, res) => res.status(410).json({ ok:false, error:"gone", message:"Link non più valido." }));
 app.all("/k2/:target/:token", (req, res) => res.status(410).send("Link non più valido."));
 app.all("/k2/:target/:token/open", (req, res) => res.status(410).json({ ok:false, error:"gone", message:"Link non più valido." }));
 
-// ========== NUOVE ROUTE operative su LINK_PREFIX (default /k3) ==========
+// ====== Nuove route operative su /k3 ======
 app.get(`${LINK_PREFIX}/:target/:token`, (req, res) => {
   const { target, token } = req.params;
   const targetDef = TARGETS[target];
@@ -327,10 +287,9 @@ app.get(`${LINK_PREFIX}/:target/:token`, (req, res) => {
   if (Date.now() > p.exp) return res.status(400).send("Link scaduto");
 
   res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0");
-  res.type("html").send(landingHtml(target, targetDef.name, p, token));
+  res.type("html").send(landingHtml(target, targetDef.name, p));
 });
 
-// server.js (PART 6/6)
 app.post(`${LINK_PREFIX}/:target/:token/open`, async (req, res) => {
   const { target, token } = req.params;
   const targetDef = TARGETS[target];
@@ -373,9 +332,13 @@ app.post(`${LINK_PREFIX}/:target/:token/open`, async (req, res) => {
   return res.json({ ok: true, opened: result, remaining: 0 });
 });
 
-// 🔒 Blocca apertura diretta dalle vecchie email
-app.post("/api/open-now/:target", (req, res) => {
-  return res.status(403).json({ ok: false, error: "Direct open disabled" });
+// ✅ **RIATTIVA** i bottoni delle guide: crea token e redirige a /k3
+app.all("/api/open-now/:target", (req, res) => {
+  const targetKey = req.params.target;
+  const targetDef = TARGETS[targetKey];
+  if (!targetDef) return res.status(404).send("Unknown target");
+  const { token } = newTokenFor(targetKey, { windowMin: DEFAULT_WINDOW_MIN, max: DEFAULT_MAX_OPENS, used: 0 });
+  return res.redirect(302, `${LINK_PREFIX}/${targetKey}/${token}`);
 });
 
 app.get("/health", (req, res) => {
