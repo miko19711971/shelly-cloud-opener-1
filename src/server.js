@@ -122,22 +122,6 @@ async function shellyTurnOn(deviceId) {
   }
 }
 
-async function openOne(deviceId) {
-  const first = await shellyTurnOn(deviceId);
-  if (first.ok) return { ok: true, first };
-  return { ok: false, first };
-}
-async function openSequence(ids, delayMs = 10000) {
-  const logs = [];
-  for (let i = 0; i < ids.length; i++) {
-    const r = await openOne(ids[i]);
-    logs.push({ step: i + 1, device: ids[i], ...r });
-    if (i < ids.length - 1) await new Promise(res => setTimeout(res, delayMs));
-  }
-  const ok = logs.every(l => l.ok);
-  return { ok, logs };
-}
-
 // ========== TOKEN MONOUSO ==========
 function b64url(buf) {
   return Buffer.from(buf).toString("base64").replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "");
@@ -150,19 +134,24 @@ function makeToken(payload) {
   const sig    = hmac(`${header}.${body}`);
   return `${header}.${body}.${sig}`;
 }
+
 function parseToken(token) {
   const [h, b, s] = token.split(".");
   if (!h || !b || !s) return { ok: false, error: "bad_format" };
   const sig = hmac(`${h}.${b}`);
   if (sig !== s) return { ok: false, error: "bad_signature" };
+
   let payload;
   try { payload = JSON.parse(Buffer.from(b, "base64").toString("utf8")); }
   catch { return { ok: false, error: "bad_payload" }; }
+
   if (typeof payload.ver !== "number" || payload.ver !== TOKEN_VERSION) return { ok: false, error: "bad_version" };
   if (REVOKE_BEFORE && typeof payload.iat === "number" && payload.iat < REVOKE_BEFORE) return { ok: false, error: "revoked" };
   if (typeof payload.iat !== "number" || payload.iat < STARTED_AT) return { ok: false, error: "revoked_boot" };
+
   return { ok: true, payload };
 }
+
 function newTokenFor(targetKey, opts = {}) {
   const max = opts.max ?? DEFAULT_MAX_OPENS;
   const windowMin = opts.windowMin ?? DEFAULT_WINDOW_MIN;
@@ -171,45 +160,6 @@ function newTokenFor(targetKey, opts = {}) {
   const jti = b64url(crypto.randomBytes(9));
   const payload = { tgt: targetKey, exp, max, used: opts.used ?? 0, jti, iat: now, ver: TOKEN_VERSION };
   return { token: makeToken(payload), payload };
-}
-
-// ====== Landing HTML (bottone Apri per i link /k3/:target/:token) ======
-function pageCss() { return `
-  body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;margin:24px}
-  .wrap{max-width:680px}
-  h1{font-size:28px;margin:0 0 8px}
-  p{color:#444}
-  button{font-size:18px;padding:10px 18px;border:1px solid #333;border-radius:8px;background:#fff;cursor:pointer}
-  .muted{color:#777;font-size:14px;margin-top:14px}
-  .ok{color:#0a7b34}
-  .err{color:#b21a1a;white-space:pre-wrap}
-  .hidden{display:none}
-`; }
-
-function landingHtml(targetKey, targetName, tokenPayload) {
-  const remaining = Math.max(0, (tokenPayload?.max || 0) - (tokenPayload?.used || 0));
-  const expInSec = Math.max(0, Math.floor((tokenPayload.exp - Date.now()) / 1000));
-  return `<!doctype html><html lang="it"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>${targetName}</title><style>${pageCss()}</style></head><body><div class="wrap">
-  <h1>${targetName}</h1>
-  <button id="btn">Apri</button>
-  <div class="muted" id="hint">Token valido · residuo stimato: <b id="left">${remaining}</b> · scade tra <span id="ttl">${expInSec}</span>s</div>
-  <p class="ok hidden" id="okmsg">✔ Apertura inviata.</p>
-  <pre class="err hidden" id="errmsg"></pre>
-  <script>
-    const btn=document.getElementById('btn'),okmsg=document.getElementById('okmsg'),errmsg=document.getElementById('errmsg'),leftEl=document.getElementById('left'),ttlEl=document.getElementById('ttl');
-    let ttl=${expInSec}; setInterval(()=>{ if(ttl>0){ttl--; ttlEl.textContent=ttl;} },1000);
-    btn.addEventListener('click', async ()=>{ 
-      btn.disabled=true; okmsg.classList.add('hidden'); errmsg.classList.add('hidden');
-      try{
-        const res=await fetch(window.location.pathname+'/open',{method:'POST'}); 
-        const j=await res.json();
-        if(j.ok){ okmsg.classList.remove('hidden'); if(typeof j.remaining==='number'){ leftEl.textContent=j.remaining; } }
-        else { errmsg.textContent=JSON.stringify(j,null,2); errmsg.classList.remove('hidden'); }
-      }catch(e){ errmsg.textContent=String(e); errmsg.classList.remove('hidden'); } 
-      finally{ btn.disabled=false; }
-    });
-  </script></div></body></html>`;
 }
 
 // ====== GUIDE DINAMICHE (24h) ======
@@ -224,37 +174,19 @@ app.get(`${LINK_PREFIX}/guide-:apt/:token`, (req, res) => {
   const { apt, token } = req.params;
   const parsed = parseToken(token);
   if (!parsed.ok || Date.now() > parsed.payload.exp) return res.status(410).send("Guide link expired");
+
   res.sendFile(path.join(PUBLIC_DIR, "guides", apt, "index.html"));
 });
 
-// ====== Genera smart link (usato dai bottoni nelle guide) ======
-app.get("/token/:target", (req, res) => {
-  const targetKey = req.params.target;
-  const target = TARGETS[targetKey];
-  if (!target) return res.status(404).json({ ok:false, error:"unknown_target" });
-
-  const windowMin = parseInt(req.query.mins || DEFAULT_WINDOW_MIN, 10);
-  const maxOpens  = parseInt(req.query.max  || DEFAULT_MAX_OPENS, 10);
-
-  const { token, payload } = newTokenFor(targetKey, { windowMin, max: maxOpens, used: 0 });
-  const url = `${req.protocol}://${req.get("host")}${LINK_PREFIX}/${targetKey}/${token}`;
-  return res.json({ ok:true, url, expiresInMin: Math.round((payload.exp - Date.now())/60000) });
-});
-
-// ====== Pagina intermedia sicura per i link /k3 (aperture) ======
+// ====== Nuove route operative su /k3 ======
 app.get(`${LINK_PREFIX}/:target/:token`, (req, res) => {
   const { target, token } = req.params;
   const targetDef = TARGETS[target];
   if (!targetDef) return res.status(404).send("Invalid link");
 
   const parsed = parseToken(token);
-  if (!parsed.ok) return res.status(410).send("Link non più valido");
-  const p = parsed.payload;
-  if (p.tgt !== target) return res.status(400).send("Invalid link");
-  if (Date.now() > p.exp) return res.status(410).send("Link scaduto");
-
-  res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0");
-  res.type("html").send(landingHtml(target, targetDef.name, p));
+  if (!parsed.ok || Date.now() > parsed.payload.exp) return res.status(410).send("Link scaduto");
+  res.type("html").send(`<h1>${targetDef.name}</h1><p>Token valido per apertura.</p>`);
 });
 
 app.post(`${LINK_PREFIX}/:target/:token/open`, async (req, res) => {
@@ -263,10 +195,7 @@ app.post(`${LINK_PREFIX}/:target/:token/open`, async (req, res) => {
   if (!targetDef) return res.status(404).json({ ok:false, error:"unknown_target" });
 
   const parsed = parseToken(token);
-  if (!parsed.ok) return res.status(410).json({ ok:false, error:"invalid" });
-  const p = parsed.payload;
-  if (p.tgt !== target) return res.status(400).json({ ok:false, error:"target_mismatch" });
-  if (Date.now() > p.exp) return res.status(410).json({ ok:false, error:"expired" });
+  if (!parsed.ok || Date.now() > parsed.payload.exp) return res.status(410).json({ ok:false, error:"expired" });
 
   let result;
   if (targetDef.ids.length === 1) result = await openOne(targetDef.ids[0]);
@@ -275,54 +204,8 @@ app.post(`${LINK_PREFIX}/:target/:token/open`, async (req, res) => {
   return res.json({ ok:true, opened: result });
 });
 
-// ====== Home di servizio (facoltativa) ======
-app.get("/", (req, res) => {
-  const rows = Object.entries(TARGETS).map(([key, t]) => {
-    const ids = t.ids.join(", ");
-    return `<tr>
-      <td>${t.name}</td>
-      <td><code>${ids}</code></td>
-      <td><a href="/token/${key}">Crea link</a></td>
-      <td><form method="post" action="${LINK_PREFIX}/${key}/DUMMY/open" onsubmit="alert('Usa prima /token per generare un link valido');return false;"><button disabled>Manual Open</button></form></td>
-    </tr>`;
-  }).join("\n");
-  res.type("html").send(`<!doctype html><html><head><meta charset="utf-8"/><style>
-    body{font-family:system-ui;margin:24px} table{border-collapse:collapse}
-    td,th{border:1px solid #ccc;padding:8px 12px}
-  </style><title>Door & Gate Opener</title></head><body>
-  <h1>Door & Gate Opener</h1>
-  <p>Link firmati temporanei e apertura manuale.</p>
-  <table><thead><tr><th>Nome</th><th>Device ID</th><th>Smart Link</th><th>Manual Open</th></tr></thead>
-  <tbody>${rows}</tbody></table>
-  <p class="muted">Shard fallback: <code>${SHELLY_BASE_URL}</code></p>
-  </body></html>`);
-});
-
-app.get("/health", (req, res) => {
-  res.json({
-    ok: true,
-    targets: Object.keys(TARGETS).length,
-    node: process.version,
-    uptime: process.uptime(),
-    baseUrl: SHELLY_BASE_URL,
-    tokenVersion: TOKEN_VERSION,
-    rotationTag: ROTATION_TAG,
-    linkPrefix: LINK_PREFIX,
-    startedAt: STARTED_AT,
-    revokeBefore: REVOKE_BEFORE
-  });
-});
-
 // ========= START =========
 const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => {
-  console.log(
-    "Server running on", PORT,
-    "TZ:", TIMEZONE,
-    "TokenVer:", TOKEN_VERSION,
-    "RotationTag:", ROTATION_TAG,
-    "LinkPrefix:", LINK_PREFIX,
-    "StartedAt:", STARTED_AT,
-    "RevokeBefore:", REVOKE_BEFORE || "-"
-  );
+  console.log("Server running on", PORT, "TZ:", TIMEZONE, "TokenVer:", TOKEN_VERSION);
 });
