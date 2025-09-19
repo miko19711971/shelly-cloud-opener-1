@@ -1,4 +1,4 @@
-press";
+ import express from "express";
 import axios from "axios";
 import crypto from "crypto";
 import cors from "cors";
@@ -37,6 +37,7 @@ const STARTED_AT     = Date.now();
 // Limiti sicurezza default
 const DEFAULT_WINDOW_MIN = parseInt(process.env.WINDOW_MIN || "15", 10);
 const DEFAULT_MAX_OPENS  = parseInt(process.env.MAX_OPENS  || "2", 10);
+const GUIDE_WINDOW_MIN   = 1440;   // ⏱ 24 ore validità guide
 
 // ======== CSP per le guide (blocca aperture dirette esterne) ========
 const GUIDE_CSP = [
@@ -70,7 +71,7 @@ app.use((req, res, next) => {
   res.setHeader("X-Link-Prefix", LINK_PREFIX);
   res.setHeader("X-Token-Version", String(TOKEN_VERSION));
   res.setHeader("X-Rotation-Tag", ROTATION_TAG);
-  res.setHeader("X-Started-At", String(STARTED_AT));
+  res.setHeader("X-Started-At", String(STARTED_At));
   next();
 });
 
@@ -84,7 +85,6 @@ app.get(["/checkin/scala", "/checkin/scala/index.html"], (req, res) => res.redir
 app.get(["/checkin/leonina", "/checkin/leonina/index.html"], (req, res) => res.redirect(301, "/guides/leonina/"));
 app.get(["/checkin/arenula", "/checkin/arenula/index.html"], (req, res) => res.redirect(301, "/guides/arenula/"));
 app.get(["/checkin/trastevere", "/checkin/trastevere/index.html"], (req, res) => res.redirect(301, "/guides/trastevere/"));
-
 
 // ========= MAPPATURA DISPOSITIVI =========
 const TARGETS = {
@@ -266,7 +266,24 @@ app.all("/k/:target/:token/open", (req, res) => res.status(410).json({ ok:false,
 app.all("/k2/:target/:token", (req, res) => res.status(410).send("Link non più valido."));
 app.all("/k2/:target/:token/open", (req, res) => res.status(410).json({ ok:false, error:"gone", message:"Link non più valido." }));
 
-// ====== Nuove route operative su /k3 ======
+// ====== Guide dinamiche (24h) — RIPRISTINATE ======
+app.get("/guides/:apt", (req, res) => {
+  const apt = req.params.apt; // es: arenula, leonina, trastevere, scala, portico
+  const { token } = newTokenFor(`guide-${apt}`, { windowMin: GUIDE_WINDOW_MIN, max: 50 });
+  const url = `${req.protocol}://${req.get("host")}${LINK_PREFIX}/guide-${apt}/${token}`;
+  res.redirect(302, url);
+});
+
+app.get(`${LINK_PREFIX}/guide-:apt/:token`, (req, res) => {
+  const { apt, token } = req.params;
+  const parsed = parseToken(token);
+  if (!parsed.ok || Date.now() > parsed.payload.exp) {
+    return res.status(410).send("Guide link expired");
+  }
+  res.sendFile(path.join(PUBLIC_DIR, "guides", apt, "index.html"));
+});
+
+// ====== Nuove route operative su /k3 (aperture) ======
 app.get(`${LINK_PREFIX}/:target/:token`, (req, res) => {
   const { target, token } = req.params;
   const targetDef = TARGETS[target];
