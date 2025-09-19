@@ -84,7 +84,7 @@ app.get(["/checkin/scala", "/checkin/scala/index.html"], (req, res) => res.redir
 app.get(["/checkin/leonina", "/checkin/leonina/index.html"], (req, res) => res.redirect(301, "/guides/leonina/"));
 app.get(["/checkin/arenula", "/checkin/arenula/index.html"], (req, res) => res.redirect(301, "/guides/arenula/"));
 app.get(["/checkin/trastevere", "/checkin/trastevere/index.html"], (req, res) => res.redirect(301, "/guides/trastevere/"));
-app.get(["/checkin/ottavia", "/checkin/ottavia/index.html", "/checkin/portico", "/checkin/portico/index.html"], (req, res) => res.redirect(301, "/guides/portico/"));
+
 
 // ========= MAPPATURA DISPOSITIVI =========
 const TARGETS = {
