@@ -76,7 +76,8 @@
       <div>
         <h2 id="s3_t">Entering the Main Door</h2>
         <p id="s3_p" style="display:none"></p>
-        <a class="cta" id="btn_building" href="#" onclick="openArenula();return false;">Open Building Door</a>
+        <!-- ✅ Bottone aggiornato: usa /token/arenula-building via openWith -->
+        <a class="cta" id="btn_building" href="#" onclick="openWith('status','/token/arenula-building');return false;">Open Building Door</a>
         <div class="status" id="status"></div>
       </div>
     </div>
@@ -123,17 +124,6 @@
 </main>
 
 <script>
-/* apertura (immutata) */
-async function openArenula(){
-  const status=document.getElementById('status');
-  try{
-    status.textContent='Generating one-time key…';
-    const r=await fetch('https://shelly-cloud-opener-1.onrender.com/token/arenula-building',{cache:'no-store'});
-    const j=await r.json();
-    if(j && j.url){ status.textContent='Key OK. Opening…'; location.href=j.url; }
-    else{ status.textContent='No URL returned. Try again.'; }
-  }catch(e){ status.textContent='Network error. Try again.'; }
-}
 async function openWith(statusId, path){
   const s=document.getElementById(statusId);
   try{
@@ -236,4 +226,3 @@ const T = {
 </script>
 </body>
 </html>
-
