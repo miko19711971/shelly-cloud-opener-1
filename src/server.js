@@ -25,6 +25,7 @@ if (!TOKEN_SECRET) {
   process.exit(1);
 }
 const TIMEZONE        = process.env.TIMEZONE || "Europe/Rome";
+const ALLOW_TODAY_FALLBACK = process.env.ALLOW_TODAY_FALLBACK === "1";
 
 // ========= ROTAZIONE HARD-CODED =========
 const ROTATION_TAG   = "R-2025-09-18-final"; // revoca globale futura
@@ -38,9 +39,9 @@ const STARTED_AT     = Date.now();
 const DEFAULT_WINDOW_MIN = parseInt(process.env.WINDOW_MIN || "15", 10);
 const DEFAULT_MAX_OPENS  = parseInt(process.env.MAX_OPENS  || "2", 10);
 
-// (facoltativo: non più usato per le guide statiche)
+// (guide sono statiche; mantenuta solo per riferimento)
 const GUIDE_WINDOW_MIN   = 1440;
-// ✅ Validità link dei SELF-CHECK-IN (24h)
+// ✅ Validità token dei SELF-CHECK-IN (UI countdown); la regola REALE è “solo giorno di check-in”
 const CHECKIN_WINDOW_MIN = 1440;
 
 // ======== Security headers (CSP, ecc.) ========
@@ -94,7 +95,7 @@ const TARGETS = {
 
 const RELAY_CHANNEL = 0;
 
-// ========== HELPER: chiamate Shelly Cloud ==========
+// ========== HELPER Shelly ==========
 async function shellyTurnOn(deviceId) {
   const form = new URLSearchParams({
     id: deviceId,
@@ -114,11 +115,7 @@ async function shellyTurnOn(deviceId) {
     return { ok: false, status: err?.response?.status || 500, data: err?.response?.data || String(err) };
   }
 }
-async function openOne(deviceId) {
-  const first = await shellyTurnOn(deviceId);
-  if (first.ok) return { ok: true, first };
-  return { ok: false, first };
-}
+async function openOne(deviceId) { const first = await shellyTurnOn(deviceId); return first.ok ? { ok:true, first } : { ok:false, first }; }
 async function openSequence(ids, delayMs = 10000) {
   const logs = [];
   for (let i = 0; i < ids.length; i++) {
@@ -126,8 +123,7 @@ async function openSequence(ids, delayMs = 10000) {
     logs.push({ step: i + 1, device: ids[i], ...r });
     if (i < ids.length - 1) await new Promise(res => setTimeout(res, delayMs));
   }
-  const ok = logs.every(l => l.ok);
-  return { ok, logs };
+  return { ok: logs.every(l => l.ok), logs };
 }
 
 // ========== TOKEN MONOUSO ==========
@@ -143,7 +139,7 @@ function makeToken(payload) {
   return `${header}.${body}.${sig}`;
 }
 function parseToken(token) {
-  const [h, b, s] = token.split(".");
+  const [h, b, s] = (token || "").split(".");
   if (!h || !b || !s) return { ok: false, error: "bad_format" };
   const sig = hmac(`${h}.${b}`);
   if (sig !== s) return { ok: false, error: "bad_signature" };
@@ -161,9 +157,15 @@ function newTokenFor(targetKey, opts = {}) {
   const now = Date.now();
   const exp = now + windowMin * 60 * 1000;
   const jti = b64url(crypto.randomBytes(9));
-  const payload = { tgt: targetKey, exp, max, used: opts.used ?? 0, jti, iat: now, ver: TOKEN_VERSION };
+  const payload = { tgt: targetKey, exp, max, used: opts.used ?? 0, jti, iat: now, ver: TOKEN_VERSION, day: opts.day };
   return { token: makeToken(payload), payload };
 }
+
+// ====== Time helpers (Europe/Rome) ======
+const fmtDay = new Intl.DateTimeFormat("en-CA", { timeZone: TIMEZONE, year: "numeric", month: "2-digit", day: "2-digit" });
+// YYYY-MM-DD nel fuso definito
+function tzToday() { return fmtDay.format(new Date()); }
+function isYYYYMMDD(s) { return typeof s === "string" && /^\d{4}-\d{2}-\d{2}$/.test(s); }
 
 // ====== Landing HTML (pagina intermedia /k3/:target/:token) ======
 function pageCss() { return `
@@ -180,9 +182,11 @@ function pageCss() { return `
 function landingHtml(targetKey, targetName, tokenPayload) {
   const remaining = Math.max(0, (tokenPayload?.max || 0) - (tokenPayload?.used || 0));
   const expInSec = Math.max(0, Math.floor((tokenPayload.exp - Date.now()) / 1000));
+  const day = tokenPayload.day || "-";
   return `<!doctype html><html lang="it"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>${targetName}</title><style>${pageCss()}</style></head><body><div class="wrap">
   <h1>${targetName}</h1>
+  <p class="muted">Valido solo nel giorno di check-in: <b>${day}</b> (${TIMEZONE})</p>
   <button id="btn">Apri</button>
   <div class="muted" id="hint">Max ${tokenPayload.max} aperture entro ${DEFAULT_WINDOW_MIN} minuti · residuo: <b id="left">${remaining}</b> · scade tra <span id="ttl">${expInSec}</span>s</div>
   <p class="ok hidden" id="okmsg">✔ Apertura inviata.</p>
@@ -226,7 +230,7 @@ app.get("/", (req, res) => {
   </body></html>`);
 });
 
-// ====== Genera smart link /token/:target (usato dai bottoni delle pagine statiche) ======
+// ====== Genera smart link /token/:target ======
 app.get("/token/:target", (req, res) => {
   const targetKey = req.params.target;
   const target = TARGETS[targetKey];
@@ -240,13 +244,13 @@ app.get("/token/:target", (req, res) => {
   return res.json({ ok:true, url, expiresInMin: Math.round((payload.exp - Date.now())/60000) });
 });
 
-// 🔥 Vecchi link /k e /k2 disattivati
+// 🔥 Vecchi link disattivati
 app.all("/k/:target/:token", (req, res) => res.status(410).send("Link non più valido."));
-app.all("/k/:target/:token/open", (req, res) => res.status(410).json({ ok:false, error:"gone", message:"Link non più valido." }));
+app.all("/k/:target/:token/open", (req, res) => res.status(410).json({ ok:false, error:"gone" }));
 app.all("/k2/:target/:token", (req, res) => res.status(410).send("Link non più valido."));
-app.all("/k2/:target/:token/open", (req, res) => res.status(410).json({ ok:false, error:"gone", message:"Link non più valido." }));
+app.all("/k2/:target/:token/open", (req, res) => res.status(410).json({ ok:false, error:"gone" }));
 
-// ====== Pagine /k3/:target/:token (landing sicura + POST /open) ======
+// ====== /k3 landing + open ======
 app.get(`${LINK_PREFIX}/:target/:token`, (req, res) => {
   const { target, token } = req.params;
   const targetDef = TARGETS[target];
@@ -259,13 +263,12 @@ app.get(`${LINK_PREFIX}/:target/:token`, (req, res) => {
                  parsed.error === "bad_version"   ? "Link non più valido." :
                  parsed.error === "revoked"       ? "Link revocato." :
                  parsed.error === "revoked_boot"  ? "Link revocato (riavvio sistema)." :
-                                                     "Invalid link";
+                 "Invalid link";
     return res.status(code).send(msg);
   }
   const p = parsed.payload;
   if (p.tgt !== target) return res.status(400).send("Invalid link");
   if (Date.now() > p.exp) return res.status(400).send("Link scaduto");
-
   res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0");
   res.type("html").send(landingHtml(target, targetDef.name, p));
 });
@@ -278,14 +281,8 @@ app.post(`${LINK_PREFIX}/:target/:token/open`, async (req, res) => {
   const parsed = parseToken(token);
   if (!parsed.ok) {
     const code = (["bad_signature","bad_version","revoked","revoked_boot"].includes(parsed.error)) ? 410 : 400;
-    const msg  = parsed.error === "bad_signature" ? "Link non più valido (firma)." :
-                 parsed.error === "bad_version"   ? "Link non più valido." :
-                 parsed.error === "revoked"       ? "Link revocato." :
-                 parsed.error === "revoked_boot"  ? "Link revocato (riavvio sistema)." :
-                                                     "invalid";
-    return res.status(code).json({ ok:false, error:parsed.error, message: msg });
+    return res.status(code).json({ ok:false, error:parsed.error });
   }
-
   const p = parsed.payload;
   if (p.tgt !== target) return res.status(400).json({ ok:false, error:"target_mismatch" });
   if (Date.now() > p.exp) return res.status(400).json({ ok:false, error:"expired" });
@@ -297,7 +294,7 @@ app.post(`${LINK_PREFIX}/:target/:token/open`, async (req, res) => {
   return res.json({ ok:true, opened: result });
 });
 
-// ✅ Bottoni "apri subito" per uso interno (crea token e redirige a /k3)
+// ✅ “apri subito” interno
 app.all("/api/open-now/:target", (req, res) => {
   const targetKey = req.params.target;
   const targetDef = TARGETS[targetKey];
@@ -306,31 +303,45 @@ app.all("/api/open-now/:target", (req, res) => {
   return res.redirect(302, `${LINK_PREFIX}/${targetKey}/${token}`);
 });
 
-// ====== (NUOVO) VIRTUAL GUIDES **STATICHE** SEMPRE ACCESSIBILI ======
-// Ora le guide NON usano più token né redirect: serviamo il contenuto statico.
+// ====== GUIDES STATICHE SEMPRE ACCESSIBILI ======
 app.use("/guides", express.static(path.join(PUBLIC_DIR, "guides"), { fallthrough: false }));
 
-// ====== SELF-CHECK-IN DINAMICI (24h) ======
-// Link breve → genera token 24h e redirige alla pagina firmata
+// ====== SELF-CHECK-IN — VALIDI SOLO IL GIORNO DI CHECK-IN ======
+// Link breve: /checkin/:apt/?d=YYYY-MM-DD (Europe/Rome). Se ALLOW_TODAY_FALLBACK=1 e manca d, usa “oggi”.
 app.get("/checkin/:apt/", (req, res) => {
   const apt = req.params.apt.toLowerCase();
-  const { token } = newTokenFor(`checkin-${apt}`, { windowMin: CHECKIN_WINDOW_MIN, max: 200 });
+  let day = (req.query.d || "").toString().slice(0, 10);
+  const today = tzToday();
+
+  if (!isYYYYMMDD(day)) {
+    if (ALLOW_TODAY_FALLBACK) {
+      day = today; // retro-compatibilità: senza ?d la validità è solo oggi
+    } else {
+      return res.status(410).send("Questo link richiede la data di check-in (?d=YYYY-MM-DD).");
+    }
+  }
+  if (day !== today) {
+    return res.status(410).send("Questo link è valido solo nel giorno di check-in.");
+  }
+
+  const { token } = newTokenFor(`checkin-${apt}`, { windowMin: CHECKIN_WINDOW_MIN, max: 200, day });
   const url = `${req.protocol}://${req.get("host")}/checkin/${apt}/index.html?t=${token}`;
   res.redirect(302, url);
 });
 
-// Pagina protetta: verifica token in ?t=...
+// Pagina protetta: verifica token + giorno
 app.get("/checkin/:apt/index.html", (req, res) => {
   const apt = req.params.apt.toLowerCase();
   const t = String(req.query.t || "");
   const parsed = parseToken(t);
-  if (!parsed.ok || parsed.payload.tgt !== `checkin-${apt}` || Date.now() > parsed.payload.exp) {
-    return res.status(410).send("Questo link non è più valido.");
-  }
+  if (!parsed.ok) return res.status(410).send("Questo link non è più valido.");
+  const { tgt, day } = parsed.payload || {};
+  if (tgt !== `checkin-${apt}`) return res.status(410).send("Link non valido.");
+  if (!isYYYYMMDD(day) || day !== tzToday()) return res.status(410).send("Questo link è valido solo nel giorno di check-in.");
   res.sendFile(path.join(PUBLIC_DIR, "checkin", apt, "index.html"));
 });
 
-// ========= STATIC (asset generali e fallback) =========
+// ========= STATIC (asset) =========
 app.use("/checkin", express.static(path.join(PUBLIC_DIR, "checkin"), { fallthrough: false }));
 app.use("/guest-assistant", express.static(path.join(PUBLIC_DIR, "guest-assistant"), { fallthrough: false }));
 app.use(express.static(PUBLIC_DIR));
@@ -360,6 +371,7 @@ app.listen(PORT, () => {
     "RotationTag:", ROTATION_TAG,
     "LinkPrefix:", LINK_PREFIX,
     "StartedAt:", STARTED_AT,
-    "RevokeBefore:", REVOKE_BEFORE || "-"
+    "RevokeBefore:", REVOKE_BEFORE || "-",
+    "AllowTodayFallback:", ALLOW_TODAY_FALLBACK ? "1" : "0"
   );
 });
