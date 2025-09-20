@@ -38,7 +38,7 @@ const STARTED_AT     = Date.now();
 const DEFAULT_WINDOW_MIN = parseInt(process.env.WINDOW_MIN || "15", 10);
 const DEFAULT_MAX_OPENS  = parseInt(process.env.MAX_OPENS  || "2", 10);
 
-// Validità link delle GUIDE (24h)
+// (facoltativo: non più usato per le guide statiche)
 const GUIDE_WINDOW_MIN   = 1440;
 // ✅ Validità link dei SELF-CHECK-IN (24h)
 const CHECKIN_WINDOW_MIN = 1440;
@@ -306,20 +306,9 @@ app.all("/api/open-now/:target", (req, res) => {
   return res.redirect(302, `${LINK_PREFIX}/${targetKey}/${token}`);
 });
 
-// ====== GUIDE DINAMICHE (24h) ======
-app.get("/guides/:apt", (req, res) => {
-  const apt = req.params.apt.toLowerCase();   // es: arenula, leonina, trastevere, scala, portico
-  const { token } = newTokenFor(`guide-${apt}`, { windowMin: GUIDE_WINDOW_MIN, max: 50 });
-  const url = `${req.protocol}://${req.get("host")}${LINK_PREFIX}/guide-${apt}/${token}`;
-  res.redirect(302, url);
-});
-
-app.get(`${LINK_PREFIX}/guide-:apt/:token`, (req, res) => {
-  const { apt, token } = req.params;
-  const parsed = parseToken(token);
-  if (!parsed.ok || Date.now() > parsed.payload.exp) return res.status(410).send("Guide link expired");
-  res.sendFile(path.join(PUBLIC_DIR, "guides", apt, "index.html"));
-});
+// ====== (NUOVO) VIRTUAL GUIDES **STATICHE** SEMPRE ACCESSIBILI ======
+// Ora le guide NON usano più token né redirect: serviamo il contenuto statico.
+app.use("/guides", express.static(path.join(PUBLIC_DIR, "guides"), { fallthrough: false }));
 
 // ====== SELF-CHECK-IN DINAMICI (24h) ======
 // Link breve → genera token 24h e redirige alla pagina firmata
@@ -341,11 +330,10 @@ app.get("/checkin/:apt/index.html", (req, res) => {
   res.sendFile(path.join(PUBLIC_DIR, "checkin", apt, "index.html"));
 });
 
-// ========= STATIC =========
-// (gli asset statici cadono solo dopo la logica sopra)
+// ========= STATIC (asset generali e fallback) =========
 app.use("/checkin", express.static(path.join(PUBLIC_DIR, "checkin"), { fallthrough: false }));
-app.use(express.static(PUBLIC_DIR));
 app.use("/guest-assistant", express.static(path.join(PUBLIC_DIR, "guest-assistant"), { fallthrough: false }));
+app.use(express.static(PUBLIC_DIR));
 
 // ========= HEALTH & START =========
 app.get("/health", (req, res) => {
