@@ -40,6 +40,8 @@ const DEFAULT_MAX_OPENS  = parseInt(process.env.MAX_OPENS  || "2", 10);
 
 // Validità link delle GUIDE (24h)
 const GUIDE_WINDOW_MIN   = 1440;
+// ✅ Validità link dei SELF-CHECK-IN (24h)
+const CHECKIN_WINDOW_MIN = 1440;
 
 // ======== Security headers (CSP, ecc.) ========
 const GUIDE_CSP = [
@@ -76,15 +78,6 @@ app.use((req, res, next) => {
   res.setHeader("X-Started-At", String(STARTED_AT));
   next();
 });
-
-// ========= STATIC =========
-// ✅ Self-check-in (foto + bottoni) — statico
-app.use("/checkin", express.static(path.join(PUBLIC_DIR, "checkin"), { fallthrough: false }));
-// eventuali asset generali
-app.use(express.static(PUBLIC_DIR));
-app.use("/guest-assistant", express.static(path.join(PUBLIC_DIR, "guest-assistant"), { fallthrough: false }));
-
-// ❌ NESSUN redirect da /checkin → /guides (teniamoli separati)
 
 // ========= MAPPATURA DISPOSITIVI =========
 const TARGETS = {
@@ -172,7 +165,7 @@ function newTokenFor(targetKey, opts = {}) {
   return { token: makeToken(payload), payload };
 }
 
-// ====== Landing HTML (pagina intermedia sicura per /k3/:target/:token) ======
+// ====== Landing HTML (pagina intermedia /k3/:target/:token) ======
 function pageCss() { return `
   body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;margin:24px}
   .wrap{max-width:680px}
@@ -301,7 +294,6 @@ app.post(`${LINK_PREFIX}/:target/:token/open`, async (req, res) => {
   if (targetDef.ids.length === 1) result = await openOne(targetDef.ids[0]);
   else result = await openSequence(targetDef.ids, 10000);
 
-  // opzionale: emettere nextUrl rotante fino a max aperture (qui semplice)
   return res.json({ ok:true, opened: result });
 });
 
@@ -316,7 +308,7 @@ app.all("/api/open-now/:target", (req, res) => {
 
 // ====== GUIDE DINAMICHE (24h) ======
 app.get("/guides/:apt", (req, res) => {
-  const apt = req.params.apt;                 // es: arenula, leonina, trastevere, scala, portico
+  const apt = req.params.apt.toLowerCase();   // es: arenula, leonina, trastevere, scala, portico
   const { token } = newTokenFor(`guide-${apt}`, { windowMin: GUIDE_WINDOW_MIN, max: 50 });
   const url = `${req.protocol}://${req.get("host")}${LINK_PREFIX}/guide-${apt}/${token}`;
   res.redirect(302, url);
@@ -326,11 +318,36 @@ app.get(`${LINK_PREFIX}/guide-:apt/:token`, (req, res) => {
   const { apt, token } = req.params;
   const parsed = parseToken(token);
   if (!parsed.ok || Date.now() > parsed.payload.exp) return res.status(410).send("Guide link expired");
-  // serve la pagina della guida (multilingue) da /public/guides/<apt>/index.html
   res.sendFile(path.join(PUBLIC_DIR, "guides", apt, "index.html"));
 });
 
-// ========= HEALTH =========
+// ====== SELF-CHECK-IN DINAMICI (24h) ======
+// Link breve → genera token 24h e redirige alla pagina firmata
+app.get("/checkin/:apt/", (req, res) => {
+  const apt = req.params.apt.toLowerCase();
+  const { token } = newTokenFor(`checkin-${apt}`, { windowMin: CHECKIN_WINDOW_MIN, max: 200 });
+  const url = `${req.protocol}://${req.get("host")}/checkin/${apt}/index.html?t=${token}`;
+  res.redirect(302, url);
+});
+
+// Pagina protetta: verifica token in ?t=...
+app.get("/checkin/:apt/index.html", (req, res) => {
+  const apt = req.params.apt.toLowerCase();
+  const t = String(req.query.t || "");
+  const parsed = parseToken(t);
+  if (!parsed.ok || parsed.payload.tgt !== `checkin-${apt}` || Date.now() > parsed.payload.exp) {
+    return res.status(410).send("Questo link non è più valido.");
+  }
+  res.sendFile(path.join(PUBLIC_DIR, "checkin", apt, "index.html"));
+});
+
+// ========= STATIC =========
+// (gli asset statici cadono solo dopo la logica sopra)
+app.use("/checkin", express.static(path.join(PUBLIC_DIR, "checkin"), { fallthrough: false }));
+app.use(express.static(PUBLIC_DIR));
+app.use("/guest-assistant", express.static(path.join(PUBLIC_DIR, "guest-assistant"), { fallthrough: false }));
+
+// ========= HEALTH & START =========
 app.get("/health", (req, res) => {
   res.json({
     ok: true,
@@ -346,7 +363,6 @@ app.get("/health", (req, res) => {
   });
 });
 
-// ========= START =========
 const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => {
   console.log(
