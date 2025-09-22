@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title id="title">Check-in Guide — Via del Portico d’Ottavia 1D</title>
 
-<!-- Favicon: uso l'immagine su CDN così è sempre disponibile -->
-<link rel="icon" href="https://cdn.jsdelivr.net/gh/miko19711971/shelly-cloud-opener-1@main/public/checkin/ottavia/building-door.jpg">
+<!-- Favicon: ora file locale, niente CDN -->
+<link rel="icon" href="/checkin/portico/building-door.jpg">
 
 <style>
   :root { --brand:#2b2118; --ink:#1f2937; --muted:#6b7280; --bg:#f7f7f7; --card:#ffffff; --line:#e5e7eb; }
@@ -64,13 +64,13 @@
 
         <div class="note" id="s1_note" style="display:none"></div>
 
-        <!-- ✅ FOTO 1 sostituita (niente <object>, solo <img> con fallback) -->
+        <!-- ✅ FOTO 1: usa il file locale con fallback GitHub corretto (cartella 'portico') -->
         <figure>
           <img
-            src="https://cdn.jsdelivr.net/gh/miko19711971/shelly-cloud-opener-1@main/public/checkin/ottavia/building-door.jpg"
+            src="building-door.jpg"
             alt="Building entrance — Via del Portico d’Ottavia 1D"
             style="width:90%;margin:0 auto;display:block;border-radius:10px;border:1px solid #e5e7eb"
-            onerror="this.onerror=null;this.src='https://raw.githubusercontent.com/miko19711971/shelly-cloud-opener-1/main/public/checkin/ottavia/building-door.jpg?v=2'">
+            onerror="this.onerror=null;this.src='https://raw.githubusercontent.com/miko19711971/shelly-cloud-opener-1/main/public/checkin/portico/building-door.jpg?v=2'">
           <figcaption id="s1_cap">Main entrance — Via del Portico d’Ottavia 1D.</figcaption>
         </figure>
 
@@ -150,6 +150,7 @@ const T = {
       help_h:"Serve aiuto?",help_p:'Chiama o WhatsApp: <a class="cta" href="tel:+393355245756">+39 335 524 5756</a>',
       btn_building:"➜ Apri il portone",btn_apartment:"➜ Apri porta appartamento",
       footer:"niceflatinrome.com • Guida rapida di arrivo a Via del Portico d’Ottavia 1D"},
+
   fr:{title:"Guide d’enregistrement — Via del Portico d’Ottavia 1D",addr:"Adresse : Via del Portico d’Ottavia 1D, Rome",
       s1_t:"Ouvrir la porte de l’immeuble",s1_p:"Appuyez sur le bouton ci-dessous pour déverrouiller la porte principale.",s1_note:"",
       s1_cap:"Entrée principale — Via del Portico d’Ottavia 1D.",s1_cap2:"Appuyez sur ce bouton pour allumer les lumières du couloir intérieur.",
