@@ -167,6 +167,57 @@ const fmtDay = new Intl.DateTimeFormat("en-CA", { timeZone: TIMEZONE, year: "num
 function tzToday() { return fmtDay.format(new Date()); }
 function isYYYYMMDD(s) { return typeof s === "string" && /^\d{4}-\d{2}-\d{2}$/.test(s); }
 
+// ====== Normalizzatore formati data Hostaway → YYYY-MM-DD ======
+const MONTHS_MAP = (() => {
+  const m = new Map();
+  // Inglese
+  ["january","february","march","april","may","june","july","august","september","october","november","december"]
+    .forEach((n,i)=>m.set(n,i+1));
+  ["jan","feb","mar","apr","may","jun","jul","aug","sep","sept","oct","nov","dec"]
+    .forEach((n,i)=>m.set(n,i+1));
+  // Italiano
+  [["gennaio","gen"],["febbraio","feb"],["marzo","mar"],["aprile","apr"],["maggio","mag"],["giugno","giu"],["luglio","lug"],["agosto","ago"],["settembre","set"],["ottobre","ott"],["novembre","nov"],["dicembre","dic"]]
+    .forEach(([full,short],i)=>{ m.set(full,i+1); m.set(short,i+1); });
+  // Spagnolo
+  [["enero","ene"],["febrero","feb"],["marzo","mar"],["abril","abr"],["mayo","may"],["junio","jun"],["julio","jul"],["agosto","ago"],["septiembre","sep"],["octubre","oct"],["noviembre","nov"],["diciembre","dic"]]
+    .forEach(([full,short],i)=>{ m.set(full,i+1); m.set(short,i+1); });
+  // Francese (senza diacritici)
+  [["janvier","jan"],["février","fevrier"],["mars","mar"],["avril","avr"],["mai","mai"],["juin","juin"],["juillet","juillet"],["août","aout"],["septembre","sep"],["octobre","oct"],["novembre","nov"],["décembre","decembre"]]
+    .forEach(([full,short],i)=>{ m.set(full.normalize("NFD").replace(/\p{Diacritic}/gu,''),i+1); m.set(short.normalize("NFD").replace(/\p{Diacritic}/gu,''),i+1); });
+  // Tedesco
+  [["januar","jan"],["februar","feb"],["märz","marz"],["april","apr"],["mai","mai"],["juni","jun"],["juli","jul"],["august","aug"],["september","sep"],["oktober","okt"],["november","nov"],["dezember","dez"]]
+    .forEach(([full,short],i)=>{ m.set(full.normalize("NFD").replace(/\p{Diacritic}/gu,''),i+1); m.set(short.normalize("NFD").replace(/\p{Diacritic}/gu,''),i+1); });
+  return m;
+})();
+
+function pad2(n){ return n < 10 ? "0"+n : String(n); }
+
+function normalizeCheckinDate(raw){
+  if (raw == null) return null;
+  let s = String(raw).trim();
+  if (!s) return null;
+  // pulizia base: togli virgole, normalizza spazi e diacritici
+  const sClean = s.replace(/,/g," ").replace(/\s+/g," ").trim()
+    .toLowerCase().normalize("NFD").replace(/\p{Diacritic}/gu,'');
+  // 1) YYYY-MM-DD
+  if (/^\d{4}-\d{2}-\d{2}$/.test(sClean)) return sClean;
+  // 2) DD/MM/YYYY o DD-MM-YYYY
+  let m = sClean.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})$/);
+  if (m) {
+    const d = parseInt(m[1],10), mo = parseInt(m[2],10), y = parseInt(m[3],10);
+    if (d>=1 && d<=31 && mo>=1 && mo<=12) return `${y}-${pad2(mo)}-${pad2(d)}`;
+  }
+  // 3) DD MMM YYYY o DD MMMM YYYY (multilingua)
+  m = sClean.match(/^(\d{1,2}) ([a-z]+) (\d{4})$/);
+  if (m) {
+    const d = parseInt(m[1],10), monName = m[2];
+    const y = parseInt(m[3],10);
+    const mo = MONTHS_MAP.get(monName);
+    if (mo && d>=1 && d<=31) return `${y}-${pad2(mo)}-${pad2(d)}`;
+  }
+  return null;
+}
+
 // ====== Landing HTML (pagina intermedia /k3/:target/:token) ======
 function pageCss() { return `
   body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;margin:24px}
@@ -307,21 +358,28 @@ app.all("/api/open-now/:target", (req, res) => {
 app.use("/guides", express.static(path.join(PUBLIC_DIR, "guides"), { fallthrough: false }));
 
 // ====== SELF-CHECK-IN — VALIDI SOLO IL GIORNO DI CHECK-IN ======
-// Link breve: /checkin/:apt/?d=YYYY-MM-DD (Europe/Rome). Se ALLOW_TODAY_FALLBACK=1 e manca d, usa “oggi”.
+// Link breve: /checkin/:apt/?d=<data> (accetta più formati). Se ALLOW_TODAY_FALLBACK=1 e manca d, usa “oggi”.
 app.get("/checkin/:apt/", (req, res) => {
   const apt = req.params.apt.toLowerCase();
-  let day = (req.query.d || "").toString().slice(0, 10);
   const today = tzToday();
 
-  if (!isYYYYMMDD(day)) {
+  // 1) leggi raw e normalizza
+  const raw = (req.query.d || "").toString();
+  let day = normalizeCheckinDate(raw);
+
+  // 2) se mancante/non valida -> fallback opzionale a oggi
+  if (!day) {
     if (ALLOW_TODAY_FALLBACK) {
-      day = today; // retro-compatibilità: senza ?d la validità è solo oggi
+      day = today;
     } else {
-      return res.status(410).send("Questo link richiede la data di check-in (?d=YYYY-MM-DD).");
+      return res.status(410).send("Questo link richiede la data di check-in (?d), es. ?d=2025-09-22.");
     }
   }
+
+  // 3) vincolo: valido SOLO nel giorno di check-in (Europe/Rome)
   if (day !== today) {
     return res.status(410).send("Questo link è valido solo nel giorno di check-in.");
+    // (opzione alternativa: 302 verso /checkin/:apt/?d=<oggi>)
   }
 
   const { token } = newTokenFor(`checkin-${apt}`, { windowMin: CHECKIN_WINDOW_MIN, max: 200, day });
