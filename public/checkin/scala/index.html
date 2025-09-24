@@ -1,4 +1,4 @@
- <!doctype html>
+<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -37,11 +37,11 @@
   <div class="addr" id="addr">Address: Via della Scala 17, Rome • Unit: A/1</div>
   <div class="lang" id="langbar">
     Language:
-    <a href="?lang=en" data-lang="en" class="active">English</a> ·
-    <a href="?lang=it" data-lang="it">Italiano</a> ·
-    <a href="?lang=fr" data-lang="fr">Français</a> ·
-    <a href="?lang=de" data-lang="de">Deutsch</a> ·
-    <a href="?lang=es" data-lang="es">Español</a>
+    <a href="#" data-lang="en" class="active">English</a> ·
+    <a href="#" data-lang="it">Italiano</a> ·
+    <a href="#" data-lang="fr">Français</a> ·
+    <a href="#" data-lang="de">Deutsch</a> ·
+    <a href="#" data-lang="es">Español</a>
   </div>
 </header>
 
@@ -53,10 +53,6 @@
       <div>
         <h2 id="s1_t">Finding the Building Entrance</h2>
         <p id="s1_p">Welcome in front of your building door.</p>
-
-        <!-- ✅ NUOVO PARAGRAFO: istruzioni lucchetto -->
-        <p id="s1_lock">The keys are inside the padlock. Facing the green door on the left, you will see some bicycles. On the iron bar there is a padlock. The combination is 6793. Open the padlock, take the keys, close it again, and scramble the numbers.</p>
-
         <figure>
           <div class="imgframe">
             <object data="building-door.jpg?v=10" type="image/jpeg">
@@ -96,6 +92,10 @@
       <div>
         <h2 id="s3_t">This is your apartment door</h2>
         <p id="s3_p">You’ve reached the green door on the left. This is your apartment entrance.</p>
+
+        <!-- ✅ Nuovo paragrafo (lucchetto) qui, sotto “Entrance” -->
+        <p id="s3_lock">The keys are inside the padlock. Facing the green door on the left, you will see some bicycles. On the iron bar there is a padlock. The combination is 6793. Open the padlock, take the keys, close it again, and scramble the numbers.</p>
+
         <figure>
           <div class="imgframe">
             <object data="apartment-green-door.jpg?v=10" type="image/jpeg">
@@ -130,14 +130,13 @@
     }catch(e){ s.textContent='Network error. Try again.'; }
   }
 
-  /* ----------- Dizionario testi: 5 lingue (aggiunto s1_lock) ----------- */
+  /* ----------- Dizionario testi: 5 lingue (s3_lock) ----------- */
   const T = {
     en: {
       title:'Check-in Guide — Via della Scala 17, unit A/1',
       addr:'Address: Via della Scala 17, Rome • Unit: A/1',
       s1_t:'Finding the Building Entrance',
       s1_p:'Welcome in front of your building door.',
-      s1_lock:'The keys are inside the padlock. Facing the green door on the left, you will see some bicycles. On the iron bar there is a padlock. The combination is 6793. Open the padlock, take the keys, close it again, and scramble the numbers.',
       s1_cap:'Main entrance — Via della Scala 17.',
       btn_building:'➜ Open Building Gates',
       s2_t:'Go through the corridor',
@@ -145,6 +144,7 @@
       s2_cap:'Follow the arrow, then turn left.',
       s3_t:'This is your apartment door',
       s3_p:'You’ve reached the green door on the left. This is your apartment entrance.',
+      s3_lock:'The keys are inside the padlock. Facing the green door on the left, you will see some bicycles. On the iron bar there is a padlock. The combination is 6793. Open the padlock, take the keys, close it again, and scramble the numbers.',
       s3_cap:'Green door = your apartment entrance.',
       btn_apartment:'➜ Open Apartment Door',
       help_h:'Need help?',
@@ -156,7 +156,6 @@
       addr:'Indirizzo: Via della Scala 17, Roma • Interno: A/1',
       s1_t:"Individua l’ingresso del palazzo",
       s1_p:'Sei davanti al portone del tuo stabile.',
-      s1_lock:'Le chiavi sono all’interno del lucchetto. Guardando la porta verde sulla sinistra, dove ci sono le biciclette c’è una barra di ferro con un lucchetto. La combinazione è 6793. Apri il lucchetto, prendi le chiavi, richiudilo e mischia i numeri.',
       s1_cap:'Ingresso principale — Via della Scala 17.',
       btn_building:'➜ Apri il portone',
       s2_t:'Attraversa il corridoio',
@@ -164,6 +163,7 @@
       s2_cap:'Segui la freccia, poi gira a sinistra.',
       s3_t:'Questa è la porta del tuo appartamento',
       s3_p:'Hai raggiunto la porta verde sulla sinistra. È l’ingresso del tuo appartamento.',
+      s3_lock:'Le chiavi sono all’interno del lucchetto. Guardando la porta verde sulla sinistra, dove ci sono le biciclette c’è una barra di ferro con un lucchetto. La combinazione è 6793. Apri il lucchetto, prendi le chiavi, richiudilo e mischia i numeri.',
       s3_cap:'Porta verde = ingresso del tuo appartamento.',
       btn_apartment:'➜ Apri porta appartamento',
       help_h:'Serve aiuto?',
@@ -175,7 +175,6 @@
       addr:'Adresse : Via della Scala 17, Rome • Unité : A/1',
       s1_t:"Trouver l’entrée de l’immeuble",
       s1_p:'Bienvenue devant la porte de votre immeuble.',
-      s1_lock:"Les clés sont à l’intérieur du cadenas. En face de la porte verte sur la gauche, vous verrez des vélos. Sur la barre en fer, il y a un cadenas. La combinaison est 6793. Ouvrez le cadenas, prenez les clés, refermez-le et mélangez les chiffres.",
       s1_cap:'Entrée principale — Via della Scala 17.',
       btn_building:"➜ Ouvrir le portail de l’immeuble",
       s2_t:'Traversez le couloir',
@@ -183,6 +182,7 @@
       s2_cap:'Suivez la flèche puis tournez à gauche.',
       s3_t:'Voici la porte de votre appartement',
       s3_p:'Vous êtes arrivé à la porte verte sur la gauche. C’est l’entrée de votre appartement.',
+      s3_lock:"Les clés sont à l’intérieur du cadenas. En face de la porte verte sur la gauche, vous verrez des vélos. Sur la barre en fer, il y a un cadenas. La combinaison est 6793. Ouvrez le cadenas, prenez les clés, refermez-le et mélangez les chiffres.",
       s3_cap:"Porte verte = entrée de votre appartement.",
       btn_apartment:"➜ Ouvrir la porte de l’appartement",
       help_h:'Besoin d’aide ?',
@@ -194,7 +194,6 @@
       addr:'Adresse: Via della Scala 17, Rom • Einheit: A/1',
       s1_t:'Gebäudeeingang finden',
       s1_p:'Willkommen vor der Haustür Ihres Gebäudes.',
-      s1_lock:'Die Schlüssel befinden sich im Vorhängeschloss. Wenn Sie der grünen Tür links gegenüberstehen, sehen Sie Fahrräder. An der Eisenstange hängt ein Vorhängeschloss. Die Kombination lautet 6793. Öffnen Sie das Schloss, nehmen Sie die Schlüssel, schließen Sie es wieder und verdrehen Sie die Zahlen.',
       s1_cap:'Haupteingang — Via della Scala 17.',
       btn_building:'➜ Haustor öffnen',
       s2_t:'Durch den Flur gehen',
@@ -202,6 +201,7 @@
       s2_cap:'Folgen Sie dem Pfeil, dann links abbiegen.',
       s3_t:'Das ist Ihre Wohnungstür',
       s3_p:'Sie sind bei der grünen Tür links angekommen. Das ist der Eingang Ihrer Wohnung.',
+      s3_lock:'Die Schlüssel befinden sich im Vorhängeschloss. Wenn Sie der grünen Tür links gegenüberstehen, sehen Sie Fahrräder. An der Eisenstange hängt ein Vorhängeschloss. Die Kombination lautet 6793. Öffnen Sie das Schloss, nehmen Sie die Schlüssel, schließen Sie es wieder und verdrehen Sie die Zahlen.',
       s3_cap:'Grüne Tür = Wohnungseingang.',
       btn_apartment:'➜ Wohnungstür öffnen',
       help_h:'Brauchen Sie Hilfe?',
@@ -213,7 +213,6 @@
       addr:'Dirección: Via della Scala 17, Roma • Unidad: A/1',
       s1_t:'Encontrar la entrada del edificio',
       s1_p:'Bienvenido frente a la puerta del edificio.',
-      s1_lock:'Las llaves están dentro del candado. De frente a la puerta verde a la izquierda, verás unas bicicletas. En la barra de hierro hay un candado. La combinación es 6793. Abre el candado, toma las llaves, ciérralo de nuevo y mezcla los números.',
       s1_cap:'Entrada principal — Via della Scala 17.',
       btn_building:'➜ Abrir puerta del edificio',
       s2_t:'Cruza el pasillo',
@@ -221,6 +220,7 @@
       s2_cap:'Sigue la flecha y luego gira a la izquierda.',
       s3_t:'Esta es la puerta de tu apartamento',
       s3_p:'Has llegado a la puerta verde de la izquierda. Es la entrada de tu apartamento.',
+      s3_lock:'Las llaves están dentro del candado. De frente a la puerta verde a la izquierda, verás unas bicicletas. En la barra de hierro hay un candado. La combinación es 6793. Abre el candado, toma las llaves, ciérralo de nuevo y mezcla los números.',
       s3_cap:'Puerta verde = entrada de tu apartamento.',
       btn_apartment:'➜ Abrir puerta del apartamento',
       help_h:'¿Necesitas ayuda?',
@@ -234,9 +234,13 @@
     const L=(params.get('lang')||'en').toLowerCase();
     const t=T[L]||T.en;
 
-    // attiva link selezionato
+    // costruisci correttamente gli href della barra lingue preservando tutti i parametri (es. t=)
     document.querySelectorAll('#langbar a').forEach(a=>{
-      a.classList.toggle('active', a.getAttribute('data-lang')===L);
+      const lang=a.getAttribute('data-lang');
+      const p=new URLSearchParams(params);
+      p.set('lang', lang);
+      a.href = location.pathname + '?' + p.toString();
+      a.classList.toggle('active', lang===L);
     });
 
     // applica contenuti
@@ -246,7 +250,6 @@
 
     document.getElementById('s1_t').textContent=t.s1_t;
     document.getElementById('s1_p').textContent=t.s1_p;
-    document.getElementById('s1_lock').textContent=t.s1_lock;   // ← nuovo
     document.getElementById('s1_cap').textContent=t.s1_cap;
     document.getElementById('btn_building').textContent=t.btn_building;
 
@@ -256,6 +259,7 @@
 
     document.getElementById('s3_t').textContent=t.s3_t;
     document.getElementById('s3_p').textContent=t.s3_p;
+    document.getElementById('s3_lock').textContent=t.s3_lock; // nuovo testo al punto 3
     document.getElementById('s3_cap').textContent=t.s3_cap;
     document.getElementById('btn_apartment').textContent=t.btn_apartment;
 
