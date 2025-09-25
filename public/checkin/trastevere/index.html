@@ -1,373 +1,201 @@
-import express from "express";
-import axios from "axios";
-import crypto from "crypto";
-import cors from "cors";
-import path from "path";
-import { fileURLToPath } from "url";
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title id="title">Self Check-in — Viale Trastevere 108</title>
+<link rel="icon" href="building-door.jpg">
+<style>
+  :root { --brand:#2b2118; --ink:#1f2937; --muted:#6b7280; --bg:#f7f7f7; --card:#ffffff; --line:#e5e7eb; }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--ink)}
+  .wrap{max-width:860px;margin:0 auto;padding:16px}
+  header{position:sticky;top:0;background:var(--card);border-bottom:1px solid var(--line);padding:12px 14px;z-index:5}
+  h1{font-size:20px;margin:0}
+  .addr{font-size:14px;color:var(--muted)}
+  .lang{font-size:14px;margin-top:6px}
+  .lang a{color:var(--ink);text-decoration:none;font-weight:700;margin-right:10px}
+  .lang a.active{text-decoration:underline}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin:14px 0}
+  .step{display:flex;gap:12px;align-items:flex-start}
+  .num{flex:0 0 36px;height:36px;border-radius:50%;background:var(--brand);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700}
+  h2{margin:6px 0 8px 0;font-size:18px}
+  p{margin:6px 0;line-height:1.45}
+  figure{margin:10px 0}
+  img{max-width:100%;height:auto;border-radius:10px;border:1px solid var(--line);display:block}
+  figure img{width:90%;margin:0 auto}
+  figcaption{font-size:12px;color:var(--muted);margin-top:6px;text-align:center}
+  .cta{display:inline-block;margin-top:10px;padding:10px 12px;border-radius:10px;background:var(--brand);color:#fff;text-decoration:none;cursor:pointer}
+  .status{font-size:13px;color:#6b7280;margin-top:6px;min-height:1.2em}
+  footer{color:var(--muted);text-align:center;font-size:12px;margin:18px 0}
+  .hide{display:none!important}
+  .note{background:#fff7ed;border:1px solid #fed7aa;color:#7c2d12;padding:10px;border-radius:8px;margin-top:8px}
+</style>
+</head>
+<body>
+<header class="wrap">
+  <h1 id="h1">Self Check-in — Viale Trastevere 108</h1>
+  <div class="addr" id="addr">Address: Viale Trastevere 108, Rome • Use the buttons below to open the doors.</div>
+  <div class="lang" id="langbar">Language: <!-- filled by JS --></div>
+</header>
 
-const app = express();
-app.set("trust proxy", true);   // ✅ garantisce HTTPS su Render
-app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
-app.use(cors());
+<main class="wrap">
+  <!-- Step 1 — Building -->
+  <section class="card">
+    <div class="step">
+      <div class="num">1</div>
+      <div>
+        <h2 id="s1_t">Open the Building Door</h2>
+        <p id="s1_p">Press the button below when you are at the entrance.</p>
 
-// ========= STATIC PATHS =========
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const PUBLIC_DIR = path.join(__dirname, "..", "public");
+        <!-- MONOUSO 24h -->
+        <a class="cta" href="#" onclick="openWith('statusBuilding','/token/viale-trastevere-building?mins=1440&max=1');return false;" id="btn_building">➜ Open Building Door</a>
+        <div class="status" id="statusBuilding"></div>
 
-// ========= ENV BASE =========
-const SHELLY_API_KEY  = process.env.SHELLY_API_KEY;
-const SHELLY_BASE_URL = process.env.SHELLY_BASE_URL || "https://shelly-api-eu.shelly.cloud";
-const TOKEN_SECRET    = process.env.TOKEN_SECRET;
-if (!TOKEN_SECRET) {
-  console.error("❌ Missing TOKEN_SECRET env var");
-  process.exit(1);
-}
-const TIMEZONE        = process.env.TIMEZONE || "Europe/Rome";
+        <figure>
+          <img src="building-door.jpg" alt="Building entrance — Viale Trastevere 108">
+          <figcaption id="s1_cap">Façade and entrance — Viale Trastevere 108.</figcaption>
+        </figure>
 
-// ========= ROTAZIONE HARD-CODED =========
-const ROTATION_TAG   = "R-2025-09-18-final"; // lascia così; cambialo solo se vuoi revocare tutto in futuro
-const TOKEN_VERSION  = 100;                  // versione token
-const LINK_PREFIX    = "/k3";                // prefisso attivo per i nuovi link
-const SIGNING_SECRET = `${TOKEN_SECRET}|${ROTATION_TAG}`;
-const REVOKE_BEFORE  = parseInt(process.env.REVOKE_BEFORE || "0", 10);
-const STARTED_AT     = Date.now();
+        <p class="note" id="s1_note">
+          For security, each key is valid once and expires after 24 hours. If you need to open again, press the button here to generate a new one-time key.
+        </p>
+      </div>
+    </div>
+  </section>
 
-// Limiti sicurezza default
-const DEFAULT_WINDOW_MIN = parseInt(process.env.WINDOW_MIN || "15", 10);
-const DEFAULT_MAX_OPENS  = parseInt(process.env.MAX_OPENS  || "2", 10);
+  <!-- Step 2 — Path / Elevator -->
+  <section class="card">
+    <div class="step">
+      <div class="num">2</div>
+      <div>
+        <h2 id="s2_t">Go to your floor</h2>
+        <p id="s2_p">Use the elevator or the stairs to reach your apartment floor.</p>
+        <figure>
+          <img src="elevator-corridor.jpg" alt="Corridor / elevator">
+          <figcaption id="s2_cap">Follow the corridor to the elevator.</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
 
-// ======== CSP per le guide (blocca aperture dirette esterne) ========
-const GUIDE_CSP = [
-  "default-src 'self'",
-  "script-src 'self' 'unsafe-inline'",
-  "style-src 'self' 'unsafe-inline' https:",
-  "img-src 'self' data: https:",
-  "font-src 'self' data: https:",
-  "connect-src 'self'",
-  "form-action 'self'",
-  "frame-ancestors 'none'",
-  "base-uri 'self'",
-  "navigate-to 'self' https://shelly-cloud-opener-1.onrender.com"
-].join("; ");
+  <!-- Step 3 — Apartment -->
+  <section class="card">
+    <div class="step">
+      <div class="num">3</div>
+      <div>
+        <h2 id="s3_t">Open your Apartment Door</h2>
+        <p id="s3_p">Press only once when you are in front of the correct door.</p>
 
-function setGuideSecurityHeaders(req, res, next) {
-  res.setHeader("Content-Security-Policy", GUIDE_CSP);
-  res.setHeader("Referrer-Policy", "no-referrer");
-  res.setHeader("X-Content-Type-Options", "nosniff");
-  res.setHeader("X-Frame-Options", "DENY");
-  next();
-}
-app.use(["/checkin", "/guides", "/guest-assistant"], setGuideSecurityHeaders);
+        <!-- MONOUSO 24h -->
+        <a class="cta" href="#" onclick="openWith('statusApartment','/token/viale-trastevere-door?mins=1440&max=1');return false;" id="btn_apartment">➜ Open Apartment Door</a>
+        <div class="status" id="statusApartment"></div>
 
-// ========= NO-CACHE & DEBUG HEADERS =========
-app.use((req, res, next) => {
-  if (req.path.startsWith("/k/") || req.path.startsWith("/k2/") || req.path.startsWith(LINK_PREFIX)) {
-    res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0");
-    res.setHeader("Pragma", "no-cache");
+        <figure>
+          <img src="apartment-door.jpg" alt="Apartment door — Viale Trastevere 108">
+          <figcaption id="s3_cap">Apartment entrance — Viale Trastevere 108.</figcaption>
+        </figure>
+
+        <p class="note" id="s3_note">
+          The link used to open the door is immediately invalid after one use and, in any case, expires 24 hours after check-in.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2 id="help_h">Need help?</h2>
+    <p id="help_p">Call or WhatsApp: <a class="cta" href="tel:+393355245756">+39 335 524 5756</a></p>
+  </section>
+
+  <footer id="footer">niceflatinrome.com • Self check-in guide for Viale Trastevere 108</footer>
+</main>
+
+<script>
+async function openWith(statusId, path){
+  const s=document.getElementById(statusId);
+  try{
+    s.textContent='Generating one-time key…';
+    const r=await fetch(path,{cache:'no-store'});
+    if(!r.ok){ s.textContent='Link generation error. Try again.'; return; }
+    const j=await r.json();
+    if(j && j.url){
+      s.textContent='Key OK. Opening…';
+      location.href=j.url; // → /k3/... monouso, auto-scadenza 24h
+    }else{
+      s.textContent=(j && (j.error||j.message)) ? String(j.error||j.message) : 'No URL returned.';
+    }
+  }catch(e){
+    s.textContent='Network error. Try again.';
   }
-  res.setHeader("X-Link-Prefix", LINK_PREFIX);
-  res.setHeader("X-Token-Version", String(TOKEN_VERSION));
-  res.setHeader("X-Rotation-Tag", ROTATION_TAG);
-  res.setHeader("X-Started-At", String(STARTED_AT));
-  next();
-});
+}
 
-// ========= STATIC =========
-app.use(express.static(PUBLIC_DIR));
-app.use("/guides", express.static(path.join(PUBLIC_DIR, "guides"), { fallthrough: false }));
-app.use("/guest-assistant", express.static(path.join(PUBLIC_DIR, "guest-assistant"), { fallthrough: false }));
-
-// Redirect vecchi percorsi → nuove guide
-app.get(["/checkin/scala", "/checkin/scala/index.html"], (req, res) => res.redirect(301, "/guides/scala/"));
-app.get(["/checkin/leonina", "/checkin/leonina/index.html"], (req, res) => res.redirect(301, "/guides/leonina/"));
-app.get(["/checkin/arenula", "/checkin/arenula/index.html"], (req, res) => res.redirect(301, "/guides/arenula/"));
-app.get(["/checkin/trastevere", "/checkin/trastevere/index.html"], (req, res) => res.redirect(301, "/guides/trastevere/"));
-
-
-// ========= MAPPATURA DISPOSITIVI =========
-const TARGETS = {
-  "arenula-building":         { name: "Arenula 16 — Building Door",                ids: ["3494547ab05e"] },
-  "leonina-door":             { name: "Leonina 71 — Apartment Door",               ids: ["3494547a9395"] },
-  "leonina-building":         { name: "Building Door",                             ids: ["34945479fd73"] },
-  "via-della-scala-door":     { name: "Via della Scala 17 — Apartment Door",       ids: ["3494547a1075"] },
-  "via-della-scala-building": { name: "Via della Scala 17 — Building Door",        ids: ["3494547745ee", "3494547745ee"] },
-  "portico-1d-door":          { name: "Portico d'Ottavia 1D — Apartment Door",     ids: ["3494547a887d"] },
-  "portico-1d-building":      { name: "Portico d'Ottavia 1D — Building Door",      ids: ["3494547ab62b"] },
-  "viale-trastevere-door":    { name: "Viale Trastevere 108 — Apartment Door",     ids: ["34945479fa35"] },
-  "viale-trastevere-building":{ name: "Building Door",                             ids: ["34945479fbbe"] },
+/* EN/IT quick toggle (testi brevi) */
+const T = {
+  en: {
+    title:'Self Check-in — Viale Trastevere 108',
+    addr:'Address: Viale Trastevere 108, Rome • Use the buttons below to open the doors.',
+    s1_t:'Open the Building Door',
+    s1_p:'Press the button below when you are at the entrance.',
+    s1_cap:'Façade and entrance — Viale Trastevere 108.',
+    s1_note:'For security, each key is valid once and expires after 24 hours. If you need to open again, press the button here to generate a new one-time key.',
+    s2_t:'Go to your floor',
+    s2_p:'Use the elevator or the stairs to reach your apartment floor.',
+    s2_cap:'Follow the corridor to the elevator.',
+    s3_t:'Open your Apartment Door',
+    s3_p:'Press only once when you are in front of the correct door.',
+    s3_cap:'Apartment entrance — Viale Trastevere 108.',
+    s3_note:'The link used to open the door is immediately invalid after one use and, in any case, expires 24 hours after check-in.',
+    help_h:'Need help?',
+    help_p:'Call or WhatsApp: <a class="cta" href="tel:+393355245756">+39 335 524 5756</a>',
+    footer:'niceflatinrome.com • Self check-in guide for Viale Trastevere 108',
+    langLabel:'Language',
+    langNames:{en:'English', it:'Italiano'}
+  },
+  it: {
+    title:'Self Check-in — Viale Trastevere 108',
+    addr:'Indirizzo: Viale Trastevere 108, Roma • Usa i pulsanti sotto per aprire le porte.',
+    s1_t:'Apri il Portone del Palazzo',
+    s1_p:'Premi il pulsante quando sei davanti all’ingresso.',
+    s1_cap:'Facciata e ingresso — Viale Trastevere 108.',
+    s1_note:'Per sicurezza, ogni chiave è valida una sola volta ed è valida 24 ore dal check-in. Se ti serve riaprire, premi di nuovo qui per generare una nuova chiave monouso.',
+    s2_t:'Raggiungi il tuo piano',
+    s2_p:'Usa l’ascensore o le scale per raggiungere il piano dell’appartamento.',
+    s2_cap:'Segui il corridoio fino all’ascensore.',
+    s3_t:'Apri la Porta dell’Appartamento',
+    s3_p:'Premi una sola volta quando sei sicuro di essere davanti alla porta corretta.',
+    s3_cap:'Ingresso appartamento — Viale Trastevere 108.',
+    s3_note:'Il link usato per aprire la porta diventa subito non valido dopo l’uso ed in ogni caso scade 24 ore dopo il check-in.',
+    help_h:'Serve aiuto?',
+    help_p:'Chiama o WhatsApp: <a class="cta" href="tel:+393355245756">+39 335 524 5756</a>',
+    footer:'niceflatinrome.com • Guida self check-in per Viale Trastevere 108',
+    langLabel:'Lingua',
+    langNames:{en:'English', it:'Italiano'}
+  }
 };
 
-const RELAY_CHANNEL = 0;
+(function(){
+  const params=new URLSearchParams(location.search);
+  const L=(params.get('lang')||'en').toLowerCase();
+  const t=T[L]||T.en;
 
-// ========== HELPER: chiamate Shelly Cloud ==========
-async function shellyTurnOn(deviceId) {
-  const form = new URLSearchParams({
-    id: deviceId,
-    auth_key: SHELLY_API_KEY,
-    channel: String(RELAY_CHANNEL),
-    turn: "on"
-  });
-  try {
-    const { data } = await axios.post(
-      `${SHELLY_BASE_URL}/device/relay/control`,
-      form.toString(),
-      { headers: { "Content-Type": "application/x-www-form-urlencoded" }, timeout: 7000 }
-    );
-    if (data && data.isok) return { ok: true, data };
-    return { ok: false, status: 400, data };
-  } catch (err) {
-    return { ok: false, status: err?.response?.status || 500, data: err?.response?.data || String(err) };
-  }
-}
+  const set = (id, val) => { const el=document.getElementById(id); if(el) el.innerHTML = val; };
+  document.getElementById('title').textContent=t.title;
+  set('h1', t.title);
+  set('addr', t.addr);
+  set('s1_t', t.s1_t); set('s1_p', t.s1_p); set('s1_cap', t.s1_cap); set('s1_note', t.s1_note);
+  set('s2_t', t.s2_t); set('s2_p', t.s2_p); set('s2_cap', t.s2_cap);
+  set('s3_t', t.s3_t); set('s3_p', t.s3_p); set('s3_cap', t.s3_cap); set('s3_note', t.s3_note);
+  set('help_h', t.help_h); set('help_p', t.help_p);
+  set('footer', t.footer);
 
-async function openOne(deviceId) {
-  const first = await shellyTurnOn(deviceId);
-  if (first.ok) return { ok: true, first };
-  return { ok: false, first };
-}
-async function openSequence(ids, delayMs = 10000) {
-  const logs = [];
-  for (let i = 0; i < ids.length; i++) {
-    const r = await openOne(ids[i]);
-    logs.push({ step: i + 1, device: ids[i], ...r });
-    if (i < ids.length - 1) await new Promise(res => setTimeout(res, delayMs));
-  }
-  const ok = logs.every(l => l.ok);
-  return { ok, logs };
-}
-
-// ========== TOKEN MONOUSO ==========
-function b64url(buf) {
-  return Buffer.from(buf).toString("base64").replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "");
-}
-function hmac_raw(str) { return crypto.createHmac("sha256", SIGNING_SECRET).update(str).digest(); }
-function hmac(str) { return b64url(hmac_raw(str)); }
-function makeToken(payload) {
-  const header = b64url(JSON.stringify({ alg: "HS256", typ: "TOK" }));
-  const body   = b64url(JSON.stringify(payload));
-  const sig    = hmac(`${header}.${body}`);
-  return `${header}.${body}.${sig}`;
-}
-
-// ✅ validazione con versione e revoche
-function parseToken(token) {
-  const [h, b, s] = token.split(".");
-  if (!h || !b || !s) return { ok: false, error: "bad_format" };
-  const sig = hmac(`${h}.${b}`);
-  if (sig !== s) return { ok: false, error: "bad_signature" };
-
-  let payload;
-  try { payload = JSON.parse(Buffer.from(b, "base64").toString("utf8")); }
-  catch { return { ok: false, error: "bad_payload" }; }
-
-  if (typeof payload.ver !== "number" || payload.ver !== TOKEN_VERSION) return { ok: false, error: "bad_version" };
-  if (REVOKE_BEFORE && typeof payload.iat === "number" && payload.iat < REVOKE_BEFORE) return { ok: false, error: "revoked" };
-  if (typeof payload.iat !== "number" || payload.iat < STARTED_AT) return { ok: false, error: "revoked_boot" };
-
-  return { ok: true, payload };
-}
-
-// ✅ i token includono iat/ver forzati
-function newTokenFor(targetKey, opts = {}) {
-  const max = opts.max ?? DEFAULT_MAX_OPENS;
-  const windowMin = opts.windowMin ?? DEFAULT_WINDOW_MIN;
-  const now = Date.now();
-  const exp = now + windowMin * 60 * 1000;
-  const jti = b64url(crypto.randomBytes(9));
-  const payload = { tgt: targetKey, exp, max, used: opts.used ?? 0, jti, iat: now, ver: TOKEN_VERSION };
-  return { token: makeToken(payload), payload };
-}
-
-const seenJti = new Set();
-function markJti(jti) { seenJti.add(jti); }
-function isSeenJti(jti) { return seenJti.has(jti); }
-setInterval(() => { seenJti.clear(); }, 24 * 60 * 60 * 1000);
-
-// ====== HTML landing ======
-function pageCss() { return `
-  body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;margin:24px}
-  .wrap{max-width:680px}
-  h1{font-size:28px;margin:0 0 8px}
-  p{color:#444}
-  button{font-size:18px;padding:10px 18px;border:1px solid #333;border-radius:8px;background:#fff;cursor:pointer}
-  .muted{color:#777;font-size:14px;margin-top:14px}
-  .ok{color:#0a7b34}
-  .err{color:#b21a1a;white-space:pre-wrap}
-  .hidden{display:none}
-`; }
-function landingHtml(targetKey, targetName, tokenPayload) {
-  const remaining = Math.max(0, (tokenPayload?.max || 0) - (tokenPayload?.used || 0));
-  const expInSec = Math.max(0, Math.floor((tokenPayload.exp - Date.now()) / 1000));
-  return `<!doctype html><html lang="it"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>${targetName}</title><style>${pageCss()}</style></head><body><div class="wrap">
-  <h1>${targetName}</h1>
-  <button id="btn">Apri</button>
-  <div class="muted" id="hint">Max ${tokenPayload.max} aperture entro ${DEFAULT_WINDOW_MIN} minuti · residuo: <b id="left">${remaining}</b> · scade tra <span id="ttl">${expInSec}</span>s</div>
-  <p class="ok hidden" id="okmsg">✔ Apertura inviata.</p>
-  <pre class="err hidden" id="errmsg"></pre>
-  <script>
-    const btn=document.getElementById('btn'),okmsg=document.getElementById('okmsg'),errmsg=document.getElementById('errmsg'),leftEl=document.getElementById('left'),ttlEl=document.getElementById('ttl');
-    let ttl=${expInSec}; setInterval(()=>{ if(ttl>0){ttl--; ttlEl.textContent=ttl;} },1000);
-    btn.addEventListener('click', async ()=>{ 
-      btn.disabled=true; okmsg.classList.add('hidden'); errmsg.classList.add('hidden');
-      try{
-        const res=await fetch(window.location.pathname+'/open',{method:'POST'}); 
-        const j=await res.json();
-        if(j.ok){ okmsg.classList.remove('hidden'); if(typeof j.remaining==='number'){ leftEl.textContent=j.remaining; } if(j.nextUrl){ try{history.replaceState(null,'',j.nextUrl);}catch(_){}} }
-        else { errmsg.textContent=JSON.stringify(j,null,2); errmsg.classList.remove('hidden'); }
-      }catch(e){ errmsg.textContent=String(e); errmsg.classList.remove('hidden'); } 
-      finally{ btn.disabled=false; }
-    });
-  </script></div></body></html>`;
-}
-
-// ====== Home di servizio ======
-app.get("/", (req, res) => {
-  const rows = Object.entries(TARGETS).map(([key, t]) => {
-    const ids = t.ids.join(", ");
-    return `<tr>
-      <td>${t.name}</td>
-      <td><code>${ids}</code></td>
-      <td><a href="/token/${key}">Crea link</a></td>
-      <td><form method="post" action="/api/open-now/${key}" style="display:inline"><button>Manual Open</button></form></td>
-    </tr>`;
-  }).join("\n");
-  res.type("html").send(`<!doctype html><html><head><meta charset="utf-8"/><style>
-    body{font-family:system-ui;margin:24px} table{border-collapse:collapse}
-    td,th{border:1px solid #ccc;padding:8px 12px}
-  </style><title>Door & Gate Opener</title></head><body>
-  <h1>Door & Gate Opener</h1>
-  <p>Link firmati temporanei e apertura manuale.</p>
-  <table><thead><tr><th>Nome</th><th>Device ID</th><th>Smart Link</th><th>Manual Open</th></tr></thead>
-  <tbody>${rows}</tbody></table>
-  <p class="muted">Shard fallback: <code>${SHELLY_BASE_URL}</code></p>
-  </body></html>`);
-});
-
-// ====== Genera link (prefisso nuovo /k3) ======
-app.get("/token/:target", (req, res) => {
-  const targetKey = req.params.target;
-  const target = TARGETS[targetKey];
-  if (!target) return res.status(404).json({ ok:false, error:"unknown_target" });
-
-  const windowMin = parseInt(req.query.mins || DEFAULT_WINDOW_MIN, 10);
-  const maxOpens  = parseInt(req.query.max  || DEFAULT_MAX_OPENS, 10);
-
-  const { token, payload } = newTokenFor(targetKey, { windowMin, max: maxOpens, used: 0 });
-  const url = `${req.protocol}://${req.get("host")}${LINK_PREFIX}/${targetKey}/${token}`;
-  return res.json({ ok:true, url, expiresInMin: Math.round((payload.exp - Date.now())/60000) });
-});
-
-// 🔥 Vecchi link /k e /k2 rimangono disattivati
-app.all("/k/:target/:token", (req, res) => res.status(410).send("Link non più valido."));
-app.all("/k/:target/:token/open", (req, res) => res.status(410).json({ ok:false, error:"gone", message:"Link non più valido." }));
-app.all("/k2/:target/:token", (req, res) => res.status(410).send("Link non più valido."));
-app.all("/k2/:target/:token/open", (req, res) => res.status(410).json({ ok:false, error:"gone", message:"Link non più valido." }));
-
-// ====== Nuove route operative su /k3 ======
-app.get(`${LINK_PREFIX}/:target/:token`, (req, res) => {
-  const { target, token } = req.params;
-  const targetDef = TARGETS[target];
-  if (!targetDef) return res.status(404).send("Invalid link");
-
-  const parsed = parseToken(token);
-  if (!parsed.ok) {
-    const code = (["bad_signature","bad_version","revoked","revoked_boot"].includes(parsed.error)) ? 410 : 400;
-    const msg  = parsed.error === "bad_signature" ? "Link non più valido (firma)." :
-                 parsed.error === "bad_version"   ? "Link non più valido." :
-                 parsed.error === "revoked"       ? "Link revocato." :
-                 parsed.error === "revoked_boot"  ? "Link revocato (riavvio sistema)." :
-                                                     "Invalid link";
-    return res.status(code).send(msg);
-  }
-  const p = parsed.payload;
-  if (p.tgt !== target) return res.status(400).send("Invalid link");
-  if (Date.now() > p.exp) return res.status(400).send("Link scaduto");
-
-  res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0");
-  res.type("html").send(landingHtml(target, targetDef.name, p));
-});
-
-app.post(`${LINK_PREFIX}/:target/:token/open`, async (req, res) => {
-  const { target, token } = req.params;
-  const targetDef = TARGETS[target];
-  if (!targetDef) return res.status(404).json({ ok:false, error:"unknown_target" });
-
-  const parsed = parseToken(token);
-  if (!parsed.ok) {
-    const code = (["bad_signature","bad_version","revoked","revoked_boot"].includes(parsed.error)) ? 410 : 400;
-    const msg  = parsed.error === "bad_signature" ? "Link non più valido (firma)." :
-                 parsed.error === "bad_version"   ? "Link non più valido." :
-                 parsed.error === "revoked"       ? "Link revocato." :
-                 parsed.error === "revoked_boot"  ? "Link revocato (riavvio sistema)." :
-                                                     "invalid";
-    return res.status(code).json({ ok:false, error:parsed.error, message: msg });
-  }
-
-  const p = parsed.payload;
-  if (p.tgt !== target) return res.status(400).json({ ok:false, error:"target_mismatch" });
-  if (Date.now() > p.exp) return res.status(400).json({ ok:false, error:"expired" });
-  if (isSeenJti(p.jti))    return res.status(400).json({ ok:false, error:"replayed" });
-
-  let result;
-  if (targetDef.ids.length === 1) result = await openOne(targetDef.ids[0]);
-  else result = await openSequence(targetDef.ids, 10000);
-
-  markJti(p.jti);
-
-  const used = (p.used || 0) + 1;
-  const remaining = Math.max(0, p.max - used);
-
-  if (used < p.max) {
-    const { token: nextTok } = newTokenFor(target, {
-      used,
-      max: p.max,
-      windowMin: Math.ceil((p.exp - Date.now())/60000)
-    });
-    const nextUrl = `${req.protocol}://${req.get("host")}${LINK_PREFIX}/${target}/${nextTok}`;
-    return res.json({ ok: true, opened: result, remaining, nextUrl });
-  }
-  return res.json({ ok: true, opened: result, remaining: 0 });
-});
-
-// ✅ **RIATTIVA** i bottoni delle guide: crea token e redirige a /k3
-app.all("/api/open-now/:target", (req, res) => {
-  const targetKey = req.params.target;
-  const targetDef = TARGETS[targetKey];
-  if (!targetDef) return res.status(404).send("Unknown target");
-  const { token } = newTokenFor(targetKey, { windowMin: DEFAULT_WINDOW_MIN, max: DEFAULT_MAX_OPENS, used: 0 });
-  return res.redirect(302, `${LINK_PREFIX}/${targetKey}/${token}`);
-});
-
-app.get("/health", (req, res) => {
-  res.json({
-    ok: true,
-    targets: Object.keys(TARGETS).length,
-    node: process.version,
-    uptime: process.uptime(),
-    baseUrl: SHELLY_BASE_URL,
-    tokenVersion: TOKEN_VERSION,
-    rotationTag: ROTATION_TAG,
-    linkPrefix: LINK_PREFIX,
-    startedAt: STARTED_AT,
-    revokeBefore: REVOKE_BEFORE
-  });
-});
-
-// ========= START =========
-const PORT = process.env.PORT || 10000;
-app.listen(PORT, () => {
-  console.log(
-    "Server running on", PORT,
-    "TZ:", TIMEZONE,
-    "TokenVer:", TOKEN_VERSION,
-    "RotationTag:", ROTATION_TAG,
-    "LinkPrefix:", LINK_PREFIX,
-    "StartedAt:", STARTED_AT,
-    "RevokeBefore:", REVOKE_BEFORE || "-"
-  );
-});
-
- 
+  const bar = document.getElementById('langbar');
+  bar.innerHTML = `${t.langLabel}: ` + Object.keys(T).map(k=>{
+    const name=T[k].langNames[k]; const cls = (k===L)?'active':'';
+    const url = location.pathname + '?lang=' + k;
+    return `<a class="${cls}" href="${url}">${name}</a>`;
+  }).join(' · ');
+})();
+</script>
+</body>
+</html>
