@@ -196,18 +196,14 @@ function normalizeCheckinDate(raw){
   if (raw == null) return null;
   let s = String(raw).trim();
   if (!s) return null;
-  // pulizia base: togli virgole, normalizza spazi e diacritici
   const sClean = s.replace(/,/g," ").replace(/\s+/g," ").trim()
     .toLowerCase().normalize("NFD").replace(/\p{Diacritic}/gu,'');
-  // 1) YYYY-MM-DD
   if (/^\d{4}-\d{2}-\d{2}$/.test(sClean)) return sClean;
-  // 2) DD/MM/YYYY o DD-MM-YYYY
   let m = sClean.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})$/);
   if (m) {
     const d = parseInt(m[1],10), mo = parseInt(m[2],10), y = parseInt(m[3],10);
     if (d>=1 && d<=31 && mo>=1 && mo<=12) return `${y}-${pad2(mo)}-${pad2(d)}`;
   }
-  // 3) DD MMM YYYY o DD MMMM YYYY (multilingua)
   m = sClean.match(/^(\d{1,2}) ([a-z]+) (\d{4})$/);
   if (m) {
     const d = parseInt(m[1],10), monName = m[2];
@@ -301,7 +297,7 @@ app.all("/k/:target/:token/open", (req, res) => res.status(410).json({ ok:false,
 app.all("/k2/:target/:token", (req, res) => res.status(410).send("Link non più valido."));
 app.all("/k2/:target/:token/open", (req, res) => res.status(410).json({ ok:false, error:"gone" }));
 
-// ====== /k3 landing + open ======
+// ====== /k3 landing + open (GET)
 app.get(`${LINK_PREFIX}/:target/:token`, (req, res) => {
   const { target, token } = req.params;
   const targetDef = TARGETS[target];
@@ -324,6 +320,7 @@ app.get(`${LINK_PREFIX}/:target/:token`, (req, res) => {
   res.type("html").send(landingHtml(target, targetDef.name, p));
 });
 
+// ====== /k3 landing + open (POST) — ⭐ PATCH SOLO PER Viale Trastevere
 app.post(`${LINK_PREFIX}/:target/:token/open`, async (req, res) => {
   const { target, token } = req.params;
   const targetDef = TARGETS[target];
@@ -342,6 +339,20 @@ app.post(`${LINK_PREFIX}/:target/:token/open`, async (req, res) => {
   if (targetDef.ids.length === 1) result = await openOne(targetDef.ids[0]);
   else result = await openSequence(targetDef.ids, 10000);
 
+  // ✅ Enforce solo per Viale Trastevere 108
+  const STRICT_TARGETS = new Set(["viale-trastevere-building", "viale-trastevere-door"]);
+  if (STRICT_TARGETS.has(target)) {
+    // Se Shelly non conferma, ritorniamo errore (così l'utente vede il messaggio in rosso)
+    if (!result || result.ok !== true) {
+      return res.status(502).json({
+        ok: false,
+        error: "shelly_open_failed",
+        target,
+        details: result
+      });
+    }
+  }
+
   return res.json({ ok:true, opened: result });
 });
 
@@ -358,16 +369,13 @@ app.all("/api/open-now/:target", (req, res) => {
 app.use("/guides", express.static(path.join(PUBLIC_DIR, "guides"), { fallthrough: false }));
 
 // ====== SELF-CHECK-IN — VALIDI SOLO IL GIORNO DI CHECK-IN ======
-// Link breve: /checkin/:apt/?d=<data> (accetta più formati). Se ALLOW_TODAY_FALLBACK=1 e manca d, usa “oggi”.
 app.get("/checkin/:apt/", (req, res) => {
   const apt = req.params.apt.toLowerCase();
   const today = tzToday();
 
-  // 1) leggi raw e normalizza
   const raw = (req.query.d || "").toString();
   let day = normalizeCheckinDate(raw);
 
-  // 2) se mancante/non valida -> fallback opzionale a oggi
   if (!day) {
     if (ALLOW_TODAY_FALLBACK) {
       day = today;
@@ -376,10 +384,8 @@ app.get("/checkin/:apt/", (req, res) => {
     }
   }
 
-  // 3) vincolo: valido SOLO nel giorno di check-in (Europe/Rome)
   if (day !== today) {
     return res.status(410).send("Questo link è valido solo nel giorno di check-in.");
-    // (opzione alternativa: 302 verso /checkin/:apt/?d=<oggi>)
   }
 
   const { token } = newTokenFor(`checkin-${apt}`, { windowMin: CHECKIN_WINDOW_MIN, max: 200, day });
