@@ -1,4 +1,4 @@
-  <!doctype html>
+<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -125,25 +125,39 @@
 </main>
 
 <script>
+/* ---- Localizzazione messaggi di stato ---- */
+function tMsgs(){
+  const L=(new URLSearchParams(location.search).get('lang')||'en').toLowerCase();
+  const M={
+    en:{gen:'Generating one-time key…',ok:'Key OK. Opening…',err:'Network error. Try again.',bad:'Link generation error. Try again.'},
+    it:{gen:'Generazione chiave monouso…',ok:'Chiave OK. Apertura…',err:'Errore di rete. Riprova.',bad:'Errore generazione link. Riprova.'},
+    fr:{gen:'Génération de clé à usage unique…',ok:'Clé OK. Ouverture…',err:'Erreur réseau. Réessayez.',bad:'Erreur de génération du lien. Réessayez.'},
+    de:{gen:'Einmal-Schlüssel wird erzeugt…',ok:'Schlüssel OK. Öffnen…',err:'Netzwerkfehler. Bitte erneut versuchen.',bad:'Fehler bei der Linkerstellung. Erneut versuchen.'},
+    es:{gen:'Generando clave de un solo uso…',ok:'Clave OK. Abriendo…',err:'Error de red. Inténtalo de nuevo.',bad:'Error al generar el enlace. Inténtalo de nuevo.'}
+  };
+  return M[L]||M.en;
+}
+
 async function openWith(statusId, path){
   const s=document.getElementById(statusId);
+  const M=tMsgs();
   try{
-    s.textContent='Generating one-time key…';
+    s.textContent=M.gen;
     const r=await fetch(path,{cache:'no-store'});
-    if(!r.ok){ s.textContent='Link generation error. Try again.'; return; }
+    if(!r.ok){ s.textContent=M.bad; return; }
     const j=await r.json();
     if(j && j.url){
-      s.textContent='Key OK. Opening…';
+      s.textContent=M.ok;
       location.href=j.url; // → /k3/... monouso, scadenza 24h
     }else{
-      s.textContent=(j && (j.error||j.message)) ? String(j.error||j.message) : 'No URL returned.';
+      s.textContent=(j && (j.error||j.message)) ? String(j.error||j.message) : M.bad;
     }
   }catch(e){
-    s.textContent='Network error. Try again.';
+    s.textContent=M.err;
   }
 }
 
-// Fallback immagine: prova una lista di alternative
+/* Fallback immagine: prova una lista di alternative */
 function imgFallback(img, alternatives){
   if(!alternatives || !alternatives.length) return;
   const next = alternatives.shift();
@@ -153,6 +167,7 @@ function imgFallback(img, alternatives){
 </script>
 
 <script>
+/* ---- Testi multilingua + barra lingue che conserva i parametri ---- */
 const T = {
   en: { title:'Check-in Guide — Viale Trastevere 108', addr:'Address: Viale Trastevere 108, Rome • Use the buttons below to open the doors.',
         s1_t:'Open the Building Door', s1_p:'Press the button below when you are at the entrance.', s1_cap:'Façade and entrance — Viale Trastevere 108.',
@@ -201,7 +216,7 @@ const T = {
         footer:"niceflatinrome.com • Guía de self check-in — Viale Trastevere 108", langLabel:"Idioma", langName:"Español" }
 };
 
-/* Inizializza lingua e UI + barra lingue che mantiene il token */
+/* Inizializza lingua e UI + barra lingue che mantiene il token e gli altri parametri */
 (function(){
   const params=new URLSearchParams(location.search);
   const L=(params.get('lang')||'en').toLowerCase();
@@ -217,14 +232,12 @@ const T = {
   document.getElementById('btn_building').textContent = t.btn_building;
   document.getElementById('btn_apartment').textContent = t.btn_apartment;
 
-  // ✅ conserva TUTTI i parametri (incluso t) quando cambi lingua
+  // conserva TUTTI i parametri (incluso t=) quando cambi lingua
   const bar = document.getElementById('langbar');
   bar.innerHTML = `${t.langLabel}: ` + Object.keys(T).map(k=>{
     const p = new URLSearchParams(params);
     p.set('lang', k);
-    const url = location.pathname + '?' + p.toString();
-    const cls = (k===L)?'active':'';
-    return `<a class="${cls}" href="${url}">${T[k].langName}</a>`;
+    return `<a class="${k===L?'active':''}" href="${location.pathname+'?'+p.toString()}">${T[k].langName}</a>`;
   }).join(' · ');
 })();
 </script>
