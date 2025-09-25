@@ -28,6 +28,8 @@
   .note{background:#fff7ed;border:1px solid #fed7aa;color:#7c2d12;padding:10px;border-radius:8px;margin-top:8px}
   .cta{display:inline-block;margin-top:10px;padding:10px 12px;border-radius:10px;background:var(--brand);color:#fff;text-decoration:none;cursor:pointer}
   .status{font-size:13px;color:#6b7280;margin-top:6px;min-height:1.2em}
+  .status.err{color:#b91c1c}
+  .status.ok{color:#0a7b34}
   footer{color:#6b7280;text-align:center;font-size:12px;margin:18px 0}
 </style>
 </head>
@@ -127,7 +129,10 @@ function tMsgs(){
   const L=(new URLSearchParams(location.search).get('lang')||'en').toLowerCase();
   const M={
     en:{gen:'Generating one-time key…',ok:'Key OK. Opening…',err:'Network error. Try again.',bad:'Link generation error. Try again.'},
-    it:{gen:'Generazione chiave monouso…',ok:'Chiave OK. Apertura…',err:'Errore di rete. Riprova.',bad:'Errore generazione link. Riprova.'}
+    it:{gen:'Generazione chiave monouso…',ok:'Chiave OK. Apertura…',err:'Errore di rete. Riprova.',bad:'Errore generazione link. Riprova.'},
+    fr:{gen:'Génération de clé à usage unique…',ok:'Clé OK. Ouverture…',err:'Erreur réseau. Réessayez.',bad:'Erreur de génération du lien. Réessayez.'},
+    de:{gen:'Einmal-Schlüssel wird erzeugt…',ok:'Schlüssel OK. Öffnen…',err:'Netzwerkfehler. Bitte erneut versuchen.',bad:'Fehler bei der Linkerstellung. Erneut versuchen.'},
+    es:{gen:'Generando clave de un solo uso…',ok:'Clave OK. Abriendo…',err:'Error de red. Inténtalo de nuevo.',bad:'Error al generar el enlace. Inténtalo de nuevo.'}
   };
   return M[L]||M.en;
 }
@@ -136,18 +141,19 @@ async function openWith(statusId, path){
   const s=document.getElementById(statusId);
   const M=tMsgs();
   try{
-    s.textContent=M.gen;
+    s.className='status'; s.textContent=M.gen;
     const r=await fetch(path,{cache:'no-store'});
-    if(!r.ok){ s.textContent=M.bad; return; }
+    if(!r.ok){ s.classList.add('err'); s.textContent=M.bad+' ('+r.status+')'; return; }
     const j=await r.json();
     if(j && j.url){
-      s.textContent=M.ok;
-      location.href=j.url; // /k3/target/token
+      s.classList.add('ok'); s.textContent=M.ok;
+      location.href=j.url; // reindirizza alla landing /k3/:target/:token
     }else{
-      s.textContent=(j && (j.error||j.message)) ? String(j.error||j.message) : M.bad;
+      const msg=(j && (j.error||j.message)) ? String(j.error||j.message) : M.bad;
+      s.classList.add('err'); s.textContent=msg;
     }
   }catch(e){
-    s.textContent=M.err;
+    s.classList.add('err'); s.textContent=M.err;
   }
 }
 
@@ -180,9 +186,41 @@ const T = {
        s3_note:'Il link di apertura diventa non valido subito dopo l’uso ed in ogni caso scade 24 ore dopo il check-in.',
        help_h:'Serve aiuto?', help_p:'Chiama o WhatsApp: <a class="cta" href="tel:+393355245756">+39 335 524 5756</a>',
        btn_building:'➜ Apri il portone', btn_apartment:'➜ Apri porta appartamento',
-       footer:'niceflatinrome.com • Guida self check-in — Viale Trastevere 108', langLabel:'Lingua', langName:'Italiano' }
+       footer:'niceflatinrome.com • Guida self check-in — Viale Trastevere 108', langLabel:'Lingua', langName:'Italiano' },
+  fr:{ title:"Guide d’enregistrement — Viale Trastevere 108",
+       addr:"Adresse : Viale Trastevere 108, Rome • Utilisez les boutons ci-dessous pour ouvrir les portes.",
+       s1_t:"Ouvrir la porte de l’immeuble", s1_p:"Appuyez sur le bouton lorsque vous êtes à l’entrée.", s1_cap:"Façade et entrée — Viale Trastevere 108.",
+       s1_note:"Pour des raisons de sécurité, chaque clé est à usage unique et expire après 24 heures. Si elle expire, appuyez à nouveau pour en générer une nouvelle.",
+       s2_t:"Montez à votre étage", s2_p:"Utilisez l’ascenseur ou les escaliers pour rejoindre l’étage de votre appartement.", s2_cap:"Suivez le couloir jusqu’à l’ascenseur.",
+       s3_t:"Ouvrir la porte de l’appartement", s3_p:"Appuyez une seule fois lorsque vous êtes devant la bonne porte.", s3_cap:"Entrée de l’appartement — Viale Trastevere 108.",
+       s3_note:"Le lien d’ouverture devient invalide immédiatement après usage et, dans tous les cas, expire 24 heures après le check-in.",
+       help_h:"Besoin d’aide ?", help_p:'Appeler ou WhatsApp : <a class="cta" href="tel:+393355245756">+39 335 524 5756</a>',
+       btn_building:"➜ Ouvrir la porte de l’immeuble", btn_apartment:"➜ Ouvrir la porte de l’appartement",
+       footer:"niceflatinrome.com • Guide d’auto check-in — Viale Trastevere 108", langLabel:"Langue", langName:"Français" },
+  de:{ title:"Check-in-Leitfaden — Viale Trastevere 108",
+       addr:"Adresse: Viale Trastevere 108, Rom • Verwenden Sie die Schaltflächen unten, um die Türen zu öffnen.",
+       s1_t:"Haustür öffnen", s1_p:"Drücken Sie die Schaltfläche, wenn Sie am Eingang sind.", s1_cap:"Fassade und Eingang — Viale Trastevere 108.",
+       s1_note:"Aus Sicherheitsgründen ist jeder Schlüssel einmalig und läuft nach 24 Stunden ab. Wenn er abläuft, erzeugen Sie über die Schaltfläche einen neuen.",
+       s2_t:"Gehen Sie zu Ihrem Stockwerk", s2_p:"Nehmen Sie den Aufzug oder die Treppe, um Ihr Stockwerk zu erreichen.", s2_cap:"Folgen Sie dem Flur bis zum Aufzug.",
+       s3_t:"Wohnungstür öffnen", s3_p:"Drücken Sie die Taste nur einmal, wenn Sie vor der richtigen Tür stehen.", s3_cap:"Wohnungseingang — Viale Trastevere 108.",
+       s3_note:"Der Öffnungslink wird unmittelbar nach der Nutzung ungültig und läuft zudem 24 Stunden nach dem Check-in ab.",
+       help_h:"Brauchen Sie Hilfe?", help_p:'Anrufen oder WhatsApp: <a class="cta" href="tel:+393355245756">+39 335 524 5756</a>',
+       btn_building:"➜ Haustür öffnen", btn_apartment:"➜ Wohnungstür öffnen",
+       footer:"niceflatinrome.com • Self Check-in Leitfaden — Viale Trastevere 108", langLabel:"Sprache", langName:"Deutsch" },
+  es:{ title:"Guía de check-in — Viale Trastevere 108",
+       addr:"Dirección: Viale Trastevere 108, Roma • Usa los botones de abajo para abrir las puertas.",
+       s1_t:"Abrir la puerta del edificio", s1_p:"Pulsa el botón cuando estés en la entrada.", s1_cap:"Fachada y entrada — Viale Trastevere 108.",
+       s1_note:"Por seguridad, cada llave es de un solo uso y caduca a las 24 horas. Si caduca, pulsa de nuevo el botón para generar otra.",
+       s2_t:"Ve a tu planta", s2_p:"Usa el ascensor o las escaleras para llegar a tu apartamento.", s2_cap:"Sigue el pasillo hasta el ascensor.",
+       s3_t:"Abrir la puerta del apartamento", s3_p:"Pulsa solo una vez cuando estés frente a la puerta correcta.", s3_cap:"Entrada del apartamento — Viale Trastevere 108.",
+       s3_note:"El enlace de apertura se invalida inmediatamente tras un uso y, en cualquier caso, caduca 24 horas después del check-in.",
+       help_h:"¿Necesitas ayuda?", help_p:'Llama o WhatsApp: <a class="cta" href="tel:+393355245756">+39 335 524 5756</a>',
+       btn_building:"➜ Abrir puerta del edificio", btn_apartment:"➜ Abrir puerta del apartamento",
+       footer:"niceflatinrome.com • Guía de self check-in — Viale Trastevere 108", langLabel:"Idioma", langName:"Español" }
 };
+</script>
 
+<script>
 (function(){
   const params=new URLSearchParams(location.search);
   const L=(params.get('lang')||'en').toLowerCase();
@@ -198,7 +236,7 @@ const T = {
   document.getElementById('btn_building').textContent=t.btn_building;
   document.getElementById('btn_apartment').textContent=t.btn_apartment;
 
-  // mantiene eventuali altri parametri quando cambi lingua
+  // Barra lingue: conserva TUTTI i parametri già presenti (es. ?t=, ecc.)
   const bar=document.getElementById('langbar');
   bar.innerHTML = `${t.langLabel}: ` + Object.keys(T).map(k=>{
     const p=new URLSearchParams(params); p.set('lang',k);
