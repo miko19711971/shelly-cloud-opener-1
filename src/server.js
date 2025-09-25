@@ -1,4 +1,4 @@
-import express from "express";
+ import express from "express";
 import axios from "axios";
 import crypto from "crypto";
 import cors from "cors";
@@ -93,14 +93,20 @@ const TARGETS = {
   "viale-trastevere-building":{ name: "Building Door",                             ids: ["34945479fbbe"] },
 };
 
-const RELAY_CHANNEL = 0;
+// 🔧 PATCH SOLO TRST — canale relè per target specifici
+const RELAY_CHANNEL = 0; // default per tutto
+const CHANNEL_BY_TARGET = {
+  "viale-trastevere-building": 1,
+  "viale-trastevere-door":     1
+};
 
 // ========== HELPER Shelly ==========
-async function shellyTurnOn(deviceId) {
+// Usa il canale richiesto (patch locale per TRST)
+async function shellyTurnOn(deviceId, channel) {
   const form = new URLSearchParams({
     id: deviceId,
     auth_key: SHELLY_API_KEY,
-    channel: String(RELAY_CHANNEL),
+    channel: String(channel),
     turn: "on"
   });
   try {
@@ -115,15 +121,28 @@ async function shellyTurnOn(deviceId) {
     return { ok: false, status: err?.response?.status || 500, data: err?.response?.data || String(err) };
   }
 }
-async function openOne(deviceId) { const first = await shellyTurnOn(deviceId); return first.ok ? { ok:true, first } : { ok:false, first }; }
-async function openSequence(ids, delayMs = 10000) {
+
+async function openOne(deviceId, channel) {
+  const first = await shellyTurnOn(deviceId, channel);
+  return first.ok ? { ok:true, first } : { ok:false, first };
+}
+async function openSequence(ids, channel, delayMs = 10000) {
   const logs = [];
   for (let i = 0; i < ids.length; i++) {
-    const r = await openOne(ids[i]);
+    const r = await openOne(ids[i], channel);
     logs.push({ step: i + 1, device: ids[i], ...r });
     if (i < ids.length - 1) await new Promise(res => setTimeout(res, delayMs));
   }
   return { ok: logs.every(l => l.ok), logs };
+}
+
+// 👇 wrapper per rispettare il canale per target (patch locale TRST)
+async function openTarget(targetKey) {
+  const t = TARGETS[targetKey];
+  if (!t) return { ok:false, error:"unknown_target" };
+  const channel = CHANNEL_BY_TARGET[targetKey] ?? RELAY_CHANNEL;
+  if (t.ids.length === 1) return openOne(t.ids[0], channel);
+  return openSequence(t.ids, channel, 10000);
 }
 
 // ========== TOKEN MONOUSO ==========
@@ -163,28 +182,22 @@ function newTokenFor(targetKey, opts = {}) {
 
 // ====== Time helpers (Europe/Rome) ======
 const fmtDay = new Intl.DateTimeFormat("en-CA", { timeZone: TIMEZONE, year: "numeric", month: "2-digit", day: "2-digit" });
-// YYYY-MM-DD nel fuso definito
 function tzToday() { return fmtDay.format(new Date()); }
 function isYYYYMMDD(s) { return typeof s === "string" && /^\d{4}-\d{2}-\d{2}$/.test(s); }
 
 // ====== Normalizzatore formati data Hostaway → YYYY-MM-DD ======
 const MONTHS_MAP = (() => {
   const m = new Map();
-  // Inglese
   ["january","february","march","april","may","june","july","august","september","october","november","december"]
     .forEach((n,i)=>m.set(n,i+1));
   ["jan","feb","mar","apr","may","jun","jul","aug","sep","sept","oct","nov","dec"]
     .forEach((n,i)=>m.set(n,i+1));
-  // Italiano
   [["gennaio","gen"],["febbraio","feb"],["marzo","mar"],["aprile","apr"],["maggio","mag"],["giugno","giu"],["luglio","lug"],["agosto","ago"],["settembre","set"],["ottobre","ott"],["novembre","nov"],["dicembre","dic"]]
     .forEach(([full,short],i)=>{ m.set(full,i+1); m.set(short,i+1); });
-  // Spagnolo
   [["enero","ene"],["febrero","feb"],["marzo","mar"],["abril","abr"],["mayo","may"],["junio","jun"],["julio","jul"],["agosto","ago"],["septiembre","sep"],["octubre","oct"],["noviembre","nov"],["diciembre","dic"]]
     .forEach(([full,short],i)=>{ m.set(full,i+1); m.set(short,i+1); });
-  // Francese (senza diacritici)
   [["janvier","jan"],["février","fevrier"],["mars","mar"],["avril","avr"],["mai","mai"],["juin","juin"],["juillet","juillet"],["août","aout"],["septembre","sep"],["octobre","oct"],["novembre","nov"],["décembre","decembre"]]
     .forEach(([full,short],i)=>{ m.set(full.normalize("NFD").replace(/\p{Diacritic}/gu,''),i+1); m.set(short.normalize("NFD").replace(/\p{Diacritic}/gu,''),i+1); });
-  // Tedesco
   [["januar","jan"],["februar","feb"],["märz","marz"],["april","apr"],["mai","mai"],["juni","jun"],["juli","jul"],["august","aug"],["september","sep"],["oktober","okt"],["november","nov"],["dezember","dez"]]
     .forEach(([full,short],i)=>{ m.set(full.normalize("NFD").replace(/\p{Diacritic}/gu,''),i+1); m.set(short.normalize("NFD").replace(/\p{Diacritic}/gu,''),i+1); });
   return m;
@@ -320,7 +333,8 @@ app.get(`${LINK_PREFIX}/:target/:token`, (req, res) => {
   res.type("html").send(landingHtml(target, targetDef.name, p));
 });
 
-// ====== /k3 landing + open (POST) — ⭐ PATCH SOLO PER Viale Trastevere
+// ====== /k3 landing + open (POST)
+// ⭐ Patch: canale 1 solo per Viale Trastevere; errore se Shelly non conferma
 app.post(`${LINK_PREFIX}/:target/:token/open`, async (req, res) => {
   const { target, token } = req.params;
   const targetDef = TARGETS[target];
@@ -335,24 +349,12 @@ app.post(`${LINK_PREFIX}/:target/:token/open`, async (req, res) => {
   if (p.tgt !== target) return res.status(400).json({ ok:false, error:"target_mismatch" });
   if (Date.now() > p.exp) return res.status(400).json({ ok:false, error:"expired" });
 
-  let result;
-  if (targetDef.ids.length === 1) result = await openOne(targetDef.ids[0]);
-  else result = await openSequence(targetDef.ids, 10000);
+  const result = await openTarget(target);
 
-  // ✅ Enforce solo per Viale Trastevere 108
-  const STRICT_TARGETS = new Set(["viale-trastevere-building", "viale-trastevere-door"]);
-  if (STRICT_TARGETS.has(target)) {
-    // Se Shelly non conferma, ritorniamo errore (così l'utente vede il messaggio in rosso)
-    if (!result || result.ok !== true) {
-      return res.status(502).json({
-        ok: false,
-        error: "shelly_open_failed",
-        target,
-        details: result
-      });
-    }
+  // Solo per TRST: se Shelly non conferma -> 502
+  if (CHANNEL_BY_TARGET[target] !== undefined && (!result || result.ok !== true)) {
+    return res.status(502).json({ ok:false, error:"shelly_open_failed", target, details: result });
   }
-
   return res.json({ ok:true, opened: result });
 });
 
