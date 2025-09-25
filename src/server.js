@@ -1,4 +1,4 @@
- import express from "express";
+import express from "express";
 import axios from "axios";
 import crypto from "crypto";
 import cors from "cors";
@@ -90,7 +90,7 @@ const TARGETS = {
   "portico-1d-door":          { name: "Portico d'Ottavia 1D — Apartment Door",     ids: ["3494547a887d"] },
   "portico-1d-building":      { name: "Portico d'Ottavia 1D — Building Door",      ids: ["3494547ab62b"] },
   "viale-trastevere-door":    { name: "Viale Trastevere 108 — Apartment Door",     ids: ["34945479fa35"] },
-  "viale-trastevere-building":{ name: "Building Door",                             ids: ["34945479fbbe"] },
+  "viale-trastevere-building":{ name: "Building Door",                             ids: ["34945479fd73"] },
 };
 
 const RELAY_CHANNEL = 0;
@@ -358,7 +358,7 @@ app.all("/api/open-now/:target", (req, res) => {
 app.use("/guides", express.static(path.join(PUBLIC_DIR, "guides"), { fallthrough: false }));
 
 // ====== SELF-CHECK-IN — VALIDI SOLO IL GIORNO DI CHECK-IN ======
-// Link breve: /checkin/:apt/?d=<data> (accetta più formati). Se ALLOW_TODAY_FALLBACK=1 e manca d, usa “oggi”.
+// Link breve: /checkin/:apt/?d=<data>
 app.get("/checkin/:apt/", (req, res) => {
   const apt = req.params.apt.toLowerCase();
   const today = tzToday();
@@ -379,7 +379,6 @@ app.get("/checkin/:apt/", (req, res) => {
   // 3) vincolo: valido SOLO nel giorno di check-in (Europe/Rome)
   if (day !== today) {
     return res.status(410).send("Questo link è valido solo nel giorno di check-in.");
-    // (opzione alternativa: 302 verso /checkin/:apt/?d=<oggi>)
   }
 
   const { token } = newTokenFor(`checkin-${apt}`, { windowMin: CHECKIN_WINDOW_MIN, max: 200, day });
