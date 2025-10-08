@@ -459,6 +459,45 @@ app.post("/hostaway-outbound", async (req, res) => {
     return res.status(500).json({ ok: false, error: "server_error" });
   }
 });
+// ------ Pagina di test per inviare un'email di prova ------
+app.get("/test-mail", (req, res) => {
+  res.type("html").send(`
+    <!doctype html><meta charset="utf-8">
+    <div style="font-family: system-ui; max-width: 680px; margin: 24px auto;">
+      <h2>Test invio email VRBO</h2>
+      <form method="post" action="/hostaway-outbound" style="display:grid; gap:8px;">
+        <label>Guest email
+          <input name="guestEmail" type="email" required style="width:100%;padding:8px">
+        </label>
+        <label>Guest name
+          <input name="guestName" type="text" style="width:100%;padding:8px">
+        </label>
+        <label>Reservation ID
+          <input name="reservationId" type="text" style="width:100%;padding:8px">
+        </label>
+        <label>Messaggio
+          <textarea name="message" rows="6" required style="width:100%;padding:8px">Ciao, confermo il tuo check-in!</textarea>
+        </label>
+        <button style="padding:10px 16px">Invia</button>
+      </form>
+    </div>
+    <script>
+      // trasforma il submit in JSON (il tuo endpoint si aspetta JSON)
+      const form = document.querySelector("form");
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const data = Object.fromEntries(new FormData(form).entries());
+        const resp = await fetch(form.action, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data)
+        });
+        const txt = await resp.text();
+        alert("Risposta server:\\n" + txt);
+      });
+    </script>
+  `);
+});
 const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => {
   console.log(
