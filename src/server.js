@@ -418,7 +418,47 @@ app.get("/health", (req, res) => {
     revokeBefore: REVOKE_BEFORE
   });
 });
+// ========== NUOVO ENDPOINT: HostAway → Email ospite VRBO ==========
 
+// Per inviare le email sfruttiamo un piccolo ponte (Apps Script o altro servizio Mail)
+const MAILER_URL = process.env.MAILER_URL || "https://script.google.com/macros/s/XXXXXXX/exec"; // <-- metterai il tuo URL Apps Script
+const MAIL_SHARED_SECRET = process.env.MAIL_SHARED_SECRET || "super-segreto-lungo";
+
+app.post("/hostaway-outbound", async (req, res) => {
+  try {
+    const { reservationId, guestEmail, guestName, message } = req.body || {};
+
+    if (!guestEmail || !message) {
+      console.log("❌ Dati insufficienti per invio email:", req.body);
+      return res.status(400).json({ ok: false, error: "missing_email_or_message" });
+    }
+
+    const subject = `Messaggio da NiceFlatInRome`;
+    const body = `
+      <p>Ciao ${guestName || "ospite"},</p>
+      <p>${message.replace(/\n/g, "<br>")}</p>
+      <p>Un saluto da Michele e dal team NiceFlatInRome.</p>
+    `;
+
+    // Invia la mail passando dal ponte (Apps Script o servizio esterno)
+    const response = await axios.post(
+      `${MAILER_URL}?secret=${encodeURIComponent(MAIL_SHARED_SECRET)}`,
+      { to: guestEmail, subject, body },
+      { headers: { "Content-Type": "application/json" }, timeout: 10000 }
+    );
+
+    if (String(response.data).trim() === "ok") {
+      console.log(`📤 Email inviata con successo a ${guestEmail}`);
+      return res.json({ ok: true });
+    } else {
+      console.error("❌ Errore dal mailer:", response.data);
+      return res.status(502).json({ ok: false, error: "mailer_failed" });
+    }
+  } catch (err) {
+    console.error("Errore invio email:", err.message);
+    return res.status(500).json({ ok: false, error: "server_error" });
+  }
+});
 const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => {
   console.log(
