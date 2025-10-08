@@ -497,6 +497,25 @@ app.get("/test-mail", (req, res) => {
       });
     </script>
   `);
+  // ====== VRBO MAILER BRIDGE ======
+app.post("/api/vbro-mail", async (req, res) => {
+  const { to, subject, body, secret } = req.body;
+  if (secret !== process.env.MAIL_SHARED_SECRET)
+    return res.status(403).json({ ok: false, error: "Unauthorized" });
+
+  try {
+    const response = await axios.post(
+      `${process.env.MAILER_URL}?secret=${process.env.MAIL_SHARED_SECRET}`,
+      { to, subject, htmlBody: body },
+      { headers: { "Content-Type": "application/json" } }
+    );
+    console.log("📨 Email VRBO inviata con successo", response.status);
+    return res.json({ ok: true });
+  } catch (err) {
+    console.error("❌ Errore invio mail:", err);
+    return res.status(500).json({ ok: false, error: String(err) });
+  }
+});
 });
 const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => {
