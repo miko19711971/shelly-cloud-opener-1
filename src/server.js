@@ -84,7 +84,7 @@ app.use((req, res, next) => {
 const TARGETS = {
   "arenula-building":         { name: "Arenula 16 — Building Door",                ids: ["3494547ab05e"] },
   "leonina-door":             { name: "Leonina 71 — Apartment Door",               ids: ["3494547a9395"] },
-  "leonina-building":         { name: "Building Door",                             ids: ["34945479fd73"] },
+  "leonina-building": { name: "Via Leonina 71 — Building Door",                    ids: ["34945479fbbe"] },
   "via-della-scala-door":     { name: "Via della Scala 17 — Apartment Door",       ids: ["3494547a1075"] },
   "via-della-scala-building": { name: "Via della Scala 17 — Building Door",        ids: ["3494547745ee", "3494547745ee"] },
   "portico-1d-door":          { name: "Portico d'Ottavia 1D — Apartment Door",     ids: ["3494547a887d"] },
