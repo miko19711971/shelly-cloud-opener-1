@@ -25,7 +25,8 @@ if (!TOKEN_SECRET) {
   process.exit(1);
 }
 const TIMEZONE        = process.env.TIMEZONE || "Europe/Rome";
-const ALLOW_TODAY_FALLBACK = process.env.ALLOW_TODAY_FALLBACK === "1";
+// 🔒 niente fallback automatico “oggi”
+const ALLOW_TODAY_FALLBACK = false;
 
 // ========= ROTAZIONE HARD-CODED =========
 const ROTATION_TAG   = "R-2025-09-18-final"; // revoca globale futura
@@ -84,7 +85,7 @@ app.use((req, res, next) => {
 const TARGETS = {
   "arenula-building":         { name: "Arenula 16 — Building Door",                ids: ["3494547ab05e"] },
   "leonina-door":             { name: "Leonina 71 — Apartment Door",               ids: ["3494547a9395"] },
-  "leonina-building": { name: "Via Leonina 71 — Building Door",                    ids: ["34945479fbbe"] },
+  "leonina-building":         { name: "Via Leonina 71 — Building Door",            ids: ["34945479fbbe"] },
   "via-della-scala-door":     { name: "Via della Scala 17 — Apartment Door",       ids: ["3494547a1075"] },
   "via-della-scala-building": { name: "Via della Scala 17 — Building Door",        ids: ["3494547745ee", "3494547745ee"] },
   "portico-1d-door":          { name: "Portico d'Ottavia 1D — Apartment Door",     ids: ["3494547a887d"] },
@@ -196,8 +197,11 @@ function normalizeCheckinDate(raw){
   if (raw == null) return null;
   let s = String(raw).trim();
   if (!s) return null;
-  // pulizia base: togli virgole, normalizza spazi e diacritici
-  const sClean = s.replace(/,/g," ").replace(/\s+/g," ").trim()
+  // pulizia base: tolgo virgole, PUNTI (es. "Oct."), normalizzo spazi e diacritici
+  const sClean = s
+    .replace(/,/g," ")
+    .replace(/\./g,"")
+    .replace(/\s+/g," ").trim()
     .toLowerCase().normalize("NFD").replace(/\p{Diacritic}/gu,'');
   // 1) YYYY-MM-DD
   if (/^\d{4}-\d{2}-\d{2}$/.test(sClean)) return sClean;
@@ -213,6 +217,13 @@ function normalizeCheckinDate(raw){
     const d = parseInt(m[1],10), monName = m[2];
     const y = parseInt(m[3],10);
     const mo = MONTHS_MAP.get(monName);
+    if (mo && d>=1 && d<=31) return `${y}-${pad2(mo)}-${pad2(d)}`;
+  }
+  // 4) MMM DD YYYY (alcuni PMS)
+  m = sClean.match(/^([a-z]+) (\d{1,2}) (\d{4})$/);
+  if (m) {
+    const mo = MONTHS_MAP.get(m[1]);
+    const d  = parseInt(m[2],10), y = parseInt(m[3],10);
     if (mo && d>=1 && d<=31) return `${y}-${pad2(mo)}-${pad2(d)}`;
   }
   return null;
@@ -320,6 +331,9 @@ app.get(`${LINK_PREFIX}/:target/:token`, (req, res) => {
   const p = parsed.payload;
   if (p.tgt !== target) return res.status(400).send("Invalid link");
   if (Date.now() > p.exp) return res.status(400).send("Link scaduto");
+  // 🔒 se il token include 'day', deve essere oggi (Europe/Rome)
+  if (p.day && p.day !== tzToday()) return res.status(410).send("Link valido solo nel giorno di check-in.");
+
   res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0");
   res.type("html").send(landingHtml(target, targetDef.name, p));
 });
@@ -337,6 +351,8 @@ app.post(`${LINK_PREFIX}/:target/:token/open`, async (req, res) => {
   const p = parsed.payload;
   if (p.tgt !== target) return res.status(400).json({ ok:false, error:"target_mismatch" });
   if (Date.now() > p.exp) return res.status(400).json({ ok:false, error:"expired" });
+  // 🔒 se presente 'day', deve essere oggi
+  if (p.day && p.day !== tzToday()) return res.status(410).json({ ok:false, error:"wrong_day" });
 
   let result;
   if (targetDef.ids.length === 1) result = await openOne(targetDef.ids[0]);
@@ -345,7 +361,7 @@ app.post(`${LINK_PREFIX}/:target/:token/open`, async (req, res) => {
   return res.json({ ok:true, opened: result });
 });
 
-// ✅ “apri subito” interno
+// ✅ “apri subito” interno (invariato)
 app.all("/api/open-now/:target", (req, res) => {
   const targetKey = req.params.target;
   const targetDef = TARGETS[targetKey];
@@ -367,13 +383,9 @@ app.get("/checkin/:apt/", (req, res) => {
   const raw = (req.query.d || "").toString();
   let day = normalizeCheckinDate(raw);
 
-  // 2) se mancante/non valida -> fallback opzionale a oggi
+  // 2) se mancante/non valida -> NESSUN fallback
   if (!day) {
-    if (ALLOW_TODAY_FALLBACK) {
-      day = today;
-    } else {
-      return res.status(410).send("Questo link richiede la data di check-in (?d), es. ?d=2025-09-22.");
-    }
+    return res.status(410).send("Questo link richiede una data di check-in valida (?d), es. ?d=2025-09-22.");
   }
 
   // 3) vincolo: valido SOLO nel giorno di check-in (Europe/Rome)
@@ -418,35 +430,29 @@ app.get("/health", (req, res) => {
     revokeBefore: REVOKE_BEFORE
   });
 });
-// ========== NUOVO ENDPOINT: HostAway → Email ospite VRBO ==========
 
-// Per inviare le email sfruttiamo un piccolo ponte (Apps Script o altro servizio Mail)
-const MAILER_URL = process.env.MAILER_URL || "https://script.google.com/macros/s/XXXXXXX/exec"; // <-- metterai il tuo URL Apps Script
+// ========== NUOVO ENDPOINT: HostAway → Email ospite VRBO ==========
+const MAILER_URL = process.env.MAILER_URL || "https://script.google.com/macros/s/XXXXXXX/exec";
 const MAIL_SHARED_SECRET = process.env.MAIL_SHARED_SECRET || "super-segreto-lungo";
 
 app.post("/hostaway-outbound", async (req, res) => {
   try {
     const { reservationId, guestEmail, guestName, message } = req.body || {};
-
     if (!guestEmail || !message) {
       console.log("❌ Dati insufficienti per invio email:", req.body);
       return res.status(400).json({ ok: false, error: "missing_email_or_message" });
     }
-
     const subject = `Messaggio da NiceFlatInRome`;
     const body = `
       <p>Ciao ${guestName || "ospite"},</p>
       <p>${message.replace(/\n/g, "<br>")}</p>
       <p>Un saluto da Michele e dal team NiceFlatInRome.</p>
     `;
-
-    // Invia la mail passando dal ponte (Apps Script o servizio esterno)
     const response = await axios.post(
       `${MAILER_URL}?secret=${encodeURIComponent(MAIL_SHARED_SECRET)}`,
       { to: guestEmail, subject, body },
       { headers: { "Content-Type": "application/json" }, timeout: 10000 }
     );
-
     if (String(response.data).trim() === "ok") {
       console.log(`📤 Email inviata con successo a ${guestEmail}`);
       return res.json({ ok: true });
@@ -459,6 +465,7 @@ app.post("/hostaway-outbound", async (req, res) => {
     return res.status(500).json({ ok: false, error: "server_error" });
   }
 });
+
 // ------ Pagina di test per inviare un'email di prova ------
 app.get("/test-mail", (req, res) => {
   res.type("html").send(`
@@ -482,7 +489,6 @@ app.get("/test-mail", (req, res) => {
       </form>
     </div>
     <script>
-      // trasforma il submit in JSON (il tuo endpoint si aspetta JSON)
       const form = document.querySelector("form");
       form.addEventListener("submit", async (e) => {
         e.preventDefault();
@@ -497,7 +503,9 @@ app.get("/test-mail", (req, res) => {
       });
     </script>
   `);
-  // ====== VRBO MAILER BRIDGE ======
+});
+
+// ====== VRBO MAILER BRIDGE ======
 app.post("/api/vbro-mail", async (req, res) => {
   const { to, subject, body, secret } = req.body;
   if (secret !== process.env.MAIL_SHARED_SECRET)
@@ -516,7 +524,7 @@ app.post("/api/vbro-mail", async (req, res) => {
     return res.status(500).json({ ok: false, error: String(err) });
   }
 });
-});
+
 const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => {
   console.log(
