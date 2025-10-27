@@ -41,8 +41,15 @@ input{flex:1;padding:12px;border:1px solid #cbd5e1;border-radius:10px;outline:no
 .fb-box button{border:1px solid #ddd;background:#fff;padding:6px 10px;border-radius:999px;cursor:pointer}
 .fb-box button:active{transform:scale(0.98)}
 .fb-done{font-size:12px;opacity:.8}
+
+/* --- Other dropdown (nuovo) --- */
+.other-wrap{position:relative;display:inline-block}
+.other-menu{position:absolute;top:100%;right:0;background:#fff;border:1px solid #e0e0e0;border-radius:10px;box-shadow:0 6px 20px rgba(0,0,0,.08);padding:6px 0;min-width:220px;z-index:9999;display:none}
+.other-menu a{display:block;padding:8px 12px;text-decoration:none;color:#333;white-space:nowrap}
+.other-menu a:hover{background:#f6f6f6}
 </style>
 </head>
+
 <body>
 <div class="wrap">
   <header>
@@ -77,6 +84,14 @@ input{flex:1;padding:12px;border:1px solid #cbd5e1;border-radius:10px;outline:no
 const APARTMENT_ID = "SCALA17";
 /* Usa lo stesso deployment della guida precedente (puoi sostituirlo se fai un nuovo deploy) */
 const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxt0ToaaC9TOrQMJjcWXpyL1a_FCugoVIgZpB5MFY_IsJTJGHOtloEq1sjKs_F-c7Sd/exec";
+
+/* === Other dropdown links (sempre in inglese) ===
+   Inserirai tu gli elementi in formato:
+   { label: "Title here", href: "https://example.com" }
+*/
+const OTHER_LINKS = [
+  // Esempio: { label: "Visit Roma Pass", href: "https://www.romapass.it/" }
+];
 
 /* ============ CONTENUTI LOCALIZZATI (SCALA 17) ============ */
 const DATA = {
@@ -425,117 +440,3 @@ function speak(t){
     speechSynthesis.speak(u);
   }catch{}
 }
-
-document.getElementById('voiceBtn').addEventListener('click',e=>{
-  voiceOn=!voiceOn; e.currentTarget.setAttribute('aria-pressed',String(voiceOn));
-  applyUI(); if(voiceOn) warm();
-});
-document.querySelector('.lang').addEventListener('click',e=>{
-  const btn=e.target.closest('[data-lang]'); if(!btn) return;
-  lang = btn.getAttribute('data-lang');
-  localStorage.setItem('lang',lang);
-  const u=new URL(location.href); u.searchParams.set('lang',lang); history.replaceState(null,'',u);
-  refreshVoice(); applyUI(); chatEl.innerHTML=''; welcome();
-  if(voiceOn) warm();
-});
-function applyUI(){
-  const L = DATA[lang].ui;
-  document.getElementById('aptLabel').textContent = L.apt_label;
-  document.getElementById('voiceBtn').textContent = voiceOn ? L.voice_on : L.voice_off;
-  input.placeholder = L.placeholder;
-  document.querySelectorAll('.lang [data-lang]').forEach(b=> b.setAttribute('aria-current', b.getAttribute('data-lang')===lang ? 'true':'false'));
-}
-
-/* ============ CHAT LOGIC + FEEDBACK ============ */
-function add(type, txt){
-  const d=document.createElement('div');
-  d.className='msg '+(type==='me'?'me':'wd');
-  d.textContent=txt;
-  chatEl.appendChild(d);
-  chatEl.scrollTop=chatEl.scrollHeight;
-  return d;
-}
-function detectIntent(text){
-  const L = DATA[lang]; const t = (text||'').toLowerCase();
-  let best=null,score=0;
-  for(const it of L.intents){
-    let s=0; for(const k of it.keys){ if(t.includes(k.toLowerCase())) s++; }
-    if(s>score){ score=s; best=it; }
-  }
-  return best;
-}
-function getAnswer(text){
-  const L = DATA[lang]; const apt=L.apt;
-  const m = detectIntent(text);
-  if(!m) return { text: L.ui.fallback, topic: 'fallback' };
-  try{ return { text: m.t(apt), topic: m.k }; }catch{ return { text: L.ui.fallback, topic: 'fallback' }; }
-}
-
-/* --- invio feedback al Google Sheet --- */
-function postFeedback(vote, topic, answerText){
-  try{
-    fetch(GOOGLE_SCRIPT_URL, {
-      method:'POST',
-      mode:'no-cors',
-      headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({
-        apartment_id: APARTMENT_ID,
-        language: (lang||'en').toUpperCase(),
-        topic: topic,
-        answer_text: answerText,
-        vote: vote
-      })
-    });
-  }catch{}
-}
-function attachFeedbackUI(container, topic, answerText){
-  const box = document.createElement('div');
-  box.className = 'fb-box';
-  const label = document.createElement('span');
-  label.className = 'fb-label';
-  label.textContent = 'Was this helpful?';
-  const likeBtn = document.createElement('button');
-  likeBtn.type='button'; likeBtn.textContent='👍 Like';
-  const dislikeBtn = document.createElement('button');
-  dislikeBtn.type='button'; dislikeBtn.textContent='👎 Dislike';
-  const done = document.createElement('span');
-  done.className='fb-done'; done.textContent='Thanks for your feedback!';
-  done.style.display='none';
-  function finish(v){
-    likeBtn.disabled = true; dislikeBtn.disabled = true;
-    likeBtn.style.opacity = 0.6; dislikeBtn.style.opacity = 0.6;
-    done.style.display = 'inline';
-    postFeedback(v, topic, answerText);
-  }
-  likeBtn.addEventListener('click', ()=>finish('like'));
-  dislikeBtn.addEventListener('click', ()=>finish('dislike'));
-  box.appendChild(label); box.appendChild(likeBtn); box.appendChild(dislikeBtn); box.appendChild(done);
-  container.appendChild(box);
-}
-
-function welcome(){
-  const L=DATA[lang].ui;
-  const intro=document.createElement('div'); intro.className='intro';
-  intro.innerHTML = `<b>${L.welcome}</b>`;
-  chatEl.appendChild(intro);
-  const q=document.createElement('div'); q.className='quick';
-  for(const key of L.quick){
-    const b=document.createElement('button'); b.textContent=key;
-    b.onclick=()=>{ input.value=key; send(); };
-    q.appendChild(b);
-  }
-  chatEl.appendChild(q);
-}
-function send(){
-  const text=(input.value||'').trim(); if(!text) return;
-  add('me',text); input.value='';
-  const {text:bot, topic} = getAnswer(text);
-  const botNode = add('wd',bot); speak(bot);
-  attachFeedbackUI(botNode, topic, bot);
-}
-sendBtn.addEventListener('click',send);
-input.addEventListener('keydown',e=>{ if(e.key==='Enter') send(); });
-applyUI(); welcome();
-</script>
-</body>
-</html>
