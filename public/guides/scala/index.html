@@ -77,7 +77,27 @@ input{flex:1;padding:12px;border:1px solid #cbd5e1;border-radius:10px;outline:no
 const APARTMENT_ID = "SCALA17";
 /* Usa lo stesso deployment della guida precedente (puoi sostituirlo se fai un nuovo deploy) */
 const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxt0ToaaC9TOrQMJjcWXpyL1a_FCugoVIgZpB5MFY_IsJTJGHOtloEq1sjKs_F-c7Sd/exec";
+/* === Other dropdown links (ALWAYS IN ENGLISH, grouped by topic) === */
+const OTHER_LINKS = [
+  // --- SPORTS ---
+  { label: "— SPORTS —", href: "#" },
+  { label: "AS Roma — Tickets", href: "https://www.asroma.com/en/tickets" },
+  { label: "SS Lazio — Tickets", href: "https://www.sslazio.it/en/tickets" },
 
+  // --- CONCERTS & THEATRE ---
+  { label: "— CONCERTS & THEATRE —", href: "#" },
+  { label: "TicketOne — Concerts & Events", href: "https://www.ticketone.it/en/city/roma-1876/" },
+  { label: "Teatro dell’Opera di Roma", href: "https://www.ticketone.it/en/artist/teatro-dell-opera-di-roma/" },
+
+  // --- MUSEUMS & CULTURE ---
+  { label: "— MUSEUMS & CULTURE —", href: "#" },
+  { label: "Colosseum — Official Tickets", href: "https://www.coopculture.it/en/products/colosseum-roman-forum-and-palatine-hill-ordinary-admission/" },
+  { label: "Vatican Museums — Official Tickets", href: "https://tickets.museivaticani.va/home" },
+
+  // --- WHAT’S ON IN ROME ---
+  { label: "— WHAT’S ON IN ROME —", href: "#" },
+  { label: "Romeing — Events in Rome", href: "https://www.romeing.it/events-in-rome/" }
+];
 /* ============ CONTENUTI LOCALIZZATI (SCALA 17) ============ */
 const DATA = {
 
