@@ -402,7 +402,27 @@ app.get("/checkin/:apt/", (req, res) => {
   const url = `${req.protocol}://${req.get("host")}/checkin/${apt}/index.html?t=${token}`;
   res.redirect(302, url);
 });
+// --- NEW: /checkin/:apt/today  (valido SOLO oggi) ---
+app.get("/checkin/:apt/today", (req, res) => {
+  const apt = req.params.apt.toLowerCase();
+  const day = tzToday(); // oggi nel fuso Europe/Rome
+  const { token } = newTokenFor(`checkin-${apt}`, { windowMin: CHECKIN_WINDOW_MIN, max: 200, day });
+  const url = `${req.protocol}://${req.get("host")}/checkin/${apt}/index.html?t=${token}`;
+  res.redirect(302, url);
+});
 
+// --- NEW: /checkin/:apt/:day  (data nel PATH, no query) ---
+app.get("/checkin/:apt/:day", (req, res) => {
+  const apt = req.params.apt.toLowerCase();
+  const raw = req.params.day || "";
+  const today = tzToday();
+  const day = normalizeCheckinDate(raw);
+  if (!day) return res.status(410).send("Questo link richiede una data valida nel percorso, es. /checkin/apt/2025-11-01");
+  if (day !== today) return res.status(410).send("Questo link è valido solo nel giorno di check-in.");
+  const { token } = newTokenFor(`checkin-${apt}`, { windowMin: CHECKIN_WINDOW_MIN, max: 200, day });
+  const url = `${req.protocol}://${req.get("host")}/checkin/${apt}/index.html?t=${token}`;
+  res.redirect(302, url);
+});
 // Pagina protetta: verifica token + giorno
 app.get("/checkin/:apt/index.html", (req, res) => {
   const apt = req.params.apt.toLowerCase();
