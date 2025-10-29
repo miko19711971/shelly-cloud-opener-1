@@ -374,11 +374,6 @@ app.all("/api/open-now/:target", (req, res) => {
 app.use("/guides", express.static(path.join(PUBLIC_DIR, "guides"), { fallthrough: false }));
 // ====== SELF-CHECK-IN — VALIDI SOLO IL GIORNO DI CHECK-IN ======
 // Link breve: /checkin/:apt/?d=<data>
-// ✅ Alias: /checkin/:apt/today → reindirizza alla data di oggi (YYYY-MM-DD)
-app.get("/checkin/:apt/today", (req, res) => {
-  const today = new Date().toISOString().split("T")[0]; // formato es: 2025-10-28
-  return res.redirect(`/checkin/${req.params.apt}/?d=${today}`);
-});
 app.get("/checkin/:apt/", (req, res) => {
   const apt = req.params.apt.toLowerCase();
   const today = tzToday();
