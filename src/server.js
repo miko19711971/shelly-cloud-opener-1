@@ -365,8 +365,13 @@ app.get("/checkin/:apt/today", (req, res) => {
   // Se non è mai stato usato, blocco al giorno corrente
   if (!TODAY_LOCK.has(apt)) TODAY_LOCK.set(apt, today);
 
-  // Se è cambiato il giorno → link scaduto
-  if (TODAY_LOCK.get(apt) !== today) {
+  // ✅ Consentiamo fino alle 04:00 del mattino successivo
+  const now = new Date();
+  const hour = now.getHours();
+  const sameDay = TODAY_LOCK.get(apt) === today;
+
+  // Se è un nuovo giorno ma dopo le 04:00 → link scaduto
+  if (!sameDay && hour >= 4) {
     return res.status(410).send("Link scaduto: valido solo nel giorno di check-in.");
   }
 
