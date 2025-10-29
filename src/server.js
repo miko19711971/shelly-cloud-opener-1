@@ -372,7 +372,6 @@ app.all("/api/open-now/:target", (req, res) => {
 
 // ====== GUIDES STATICHE SEMPRE ACCESSIBILI ======
 app.use("/guides", express.static(path.join(PUBLIC_DIR, "guides"), { fallthrough: false }));
-
 // ====== SELF-CHECK-IN — VALIDI SOLO IL GIORNO DI CHECK-IN ======
 // Link breve: /checkin/:apt/?d=<data>
 // ✅ Alias: /checkin/:apt/today → reindirizza alla data di oggi (YYYY-MM-DD)
