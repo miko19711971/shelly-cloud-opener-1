@@ -166,7 +166,7 @@ const fmtDay = new Intl.DateTimeFormat("en-CA", { timeZone: TIMEZONE, year: "num
 // YYYY-MM-DD nel fuso definito
 function tzToday() { return fmtDay.format(new Date()); }
 function isYYYYMMDD(s) { return typeof s === "string" && /^\d{4}-\d{2}-\d{2}$/.test(s); }
-
+const TODAY_LOCK = new Map(); // 🔒 memorizza il giorno di utilizzo di ogni appartamento
 // ====== Normalizzatore formati data Hostaway → YYYY-MM-DD ======
 const MONTHS_MAP = (() => {
   const m = new Map();
@@ -357,12 +357,27 @@ app.all("/api/open-now/:target", (req, res) => {
 // ====== GUIDES STATICHE SEMPRE ACCESSIBILI ======
 app.use("/guides", express.static(path.join(PUBLIC_DIR, "guides"), { fallthrough: false }));
 // --- ALIAS: /checkin/:apt/today  (valido SOLO oggi) ---
+// ✅ PATCH: /checkin/:apt/today — valido solo il giorno in cui viene usato
 app.get("/checkin/:apt/today", (req, res) => {
   const apt = req.params.apt.toLowerCase();
-  const day = tzToday(); // oggi Europe/Rome
-  const { token } = newTokenFor(`checkin-${apt}`, { windowMin: CHECKIN_WINDOW_MIN, max: 200, day });
+  const today = tzToday();
+
+  // Se non è mai stato usato, blocco al giorno corrente
+  if (!TODAY_LOCK.has(apt)) TODAY_LOCK.set(apt, today);
+
+  // Se è cambiato il giorno → link scaduto
+  if (TODAY_LOCK.get(apt) !== today) {
+    return res.status(410).send("Link scaduto: valido solo nel giorno di check-in.");
+  }
+
+  // Genera token valido solo oggi
+  const { token } = newTokenFor(`checkin-${apt}`, {
+    windowMin: CHECKIN_WINDOW_MIN,
+    max: 200,
+    day: today
+  });
   const url = `${req.protocol}://${req.get("host")}/checkin/${apt}/index.html?t=${token}`;
-  return res.redirect(302, url);
+  res.redirect(302, url);
 });
 // ====== SELF-CHECK-IN — VALIDI SOLO IL GIORNO DI CHECK-IN ======
 // Link breve: /checkin/:apt/?d=<data>
