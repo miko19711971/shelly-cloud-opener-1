@@ -356,7 +356,14 @@ app.all("/api/open-now/:target", (req, res) => {
 
 // ====== GUIDES STATICHE SEMPRE ACCESSIBILI ======
 app.use("/guides", express.static(path.join(PUBLIC_DIR, "guides"), { fallthrough: false }));
-
+// --- ALIAS: /checkin/:apt/today  (valido SOLO oggi) ---
+app.get("/checkin/:apt/today", (req, res) => {
+  const apt = req.params.apt.toLowerCase();
+  const day = tzToday(); // oggi Europe/Rome
+  const { token } = newTokenFor(`checkin-${apt}`, { windowMin: CHECKIN_WINDOW_MIN, max: 200, day });
+  const url = `${req.protocol}://${req.get("host")}/checkin/${apt}/index.html?t=${token}`;
+  return res.redirect(302, url);
+});
 // ====== SELF-CHECK-IN — VALIDI SOLO IL GIORNO DI CHECK-IN ======
 // Link breve: /checkin/:apt/?d=<data>
 app.get("/checkin/:apt/", (req, res) => {
