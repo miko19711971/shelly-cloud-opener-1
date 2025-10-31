@@ -81,6 +81,7 @@ const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxt0ToaaC9TOr
 /* ============ CONTENUTI LOCALIZZATI (SCALA 17) ============ */
 const DATA = {
 
+  /* ================= ENGLISH ================= */
   en: {
     ui: {
       welcome: "Hi, I am Samantha, your virtual guide. Tap a button to get a quick answer.",
@@ -88,7 +89,12 @@ const DATA = {
       apt_label: "Apartment",
       voice_on: "🔊 Voice: On",
       voice_off: "🔇 Voice: Off",
-      quick: ["wifi","check in","check out","water","bathroom","gas","eat","drink","shop","visit","experience","day trips","transport","services","emergency"],
+      /* qui abbiamo AGGIUNTO i 3 tasti */
+      quick: [
+        "wifi","check in","check out","water","bathroom","gas","eat","drink","shop","visit","experience","day trips",
+        "tickets & events","museums & sites","exhibitions",
+        "transport","services","emergency"
+      ],
       fallback: "I did not find a direct answer. Try a quick button (wifi, gas, transport, visit…)."
     },
     apt: {
@@ -137,16 +143,64 @@ const DATA = {
       {k:'visit',keys:['visit','see','sight','attraction','museum'],t:a=>a.visit},
       {k:'experience',keys:['experience','walk','tour','itinerary','sunset','romantic'],t:a=>`${a.experiences}\nRomantic route: ${a.romantic_walk}`},
       {k:'day trips',keys:['day trip','tivoli','ostia','castelli','excursion'],t:a=>a.daytrips},
+
+      /* === NEW ENGLISH BUTTONS === */
+      { 
+        k: 'tickets & events',
+        keys: ['tickets','events','concert','match','roma','lazio','football','soccer'],
+        t: a => 
+`TICKETS & EVENTS (Rome)
+• TicketOne (concerts, theatre, sports):
+https://www.ticketone.it/en/
+• AS Roma — Official tickets:
+https://www.asroma.com/en/tickets
+• SS Lazio — Official tickets:
+https://sslazio.it/en/tickets`
+      },
+      {
+        k: 'museums & sites',
+        keys: ['museums','sites','vatican','colosseum','forum','palatine','borghese'],
+        t: a =>
+`MUSEUMS & SITES — ROME
+• Vatican Museums:
+https://www.museivaticani.va/content/museivaticani/en.html
+• Colosseum, Roman Forum & Palatine Hill:
+https://parcocolosseo.it/en/
+• Galleria Borghese (reservation required):
+https://galleriaborghese.beniculturali.it/en/`
+      },
+      {
+        k: 'exhibitions',
+        keys: ['exhibition','exhibitions','maxxi','palazzo','scuderie','art'],
+        t: a =>
+`EXHIBITIONS — ROME
+• MAXXI — National Museum of 21st Century Arts:
+https://www.maxxi.art/en/
+• Palazzo delle Esposizioni:
+https://www.palazzoesposizioni.it/
+• Scuderie del Quirinale:
+https://www.scuderiequirinale.it/en
+• Palazzo Bonaparte (Arthemisia):
+https://www.arthemisia.it/site/en/palazzo-bonaparte.html`
+      },
+
       {k:'emergency',keys:['emergency','police','ambulance','fire','doctor','vet'],t:a=>a.emergency}
     ]
   },
-
+    /* ================= ITALIANO ================= */
   it: {
     ui:{
       welcome:"Ciao, sono Samantha, la tua guida virtuale. Tocca un pulsante per una risposta rapida.",
       placeholder:"Ciao, sono Samantha, la tua guida virtuale. Tocca un pulsante — oppure scrivi qui…",
-      apt_label:"Appartamento", voice_on:"🔊 Voce: On", voice_off:"🔇 Voce: Off",
-      quick:["wifi","check in","check out","acqua","bagno","gas","mangiare","bere","shopping","visitare","esperienze","gite di un giorno","trasporti","servizi","emergenza"],
+      apt_label:"Appartamento",
+      voice_on:"🔊 Voce: On",
+      voice_off:"🔇 Voce: Off",
+      /* aggiunti i 3 tasti in italiano */
+      quick:[
+        "wifi","check in","check out","acqua","bagno","gas","mangiare","bere","shopping","visitare","esperienze","gite di un giorno",
+        "biglietti & eventi","musei & siti","mostre",
+        "trasporti","servizi","emergenza"
+      ],
       fallback:"Non ho trovato una risposta diretta. Prova un pulsante (wifi, gas, trasporti, visitare…)."
     },
     apt:{
@@ -195,16 +249,63 @@ const DATA = {
       {k:'visitare',keys:['visitare','vedere','attrazioni','museo'],t:a=>a.visit},
       {k:'esperienze',keys:['esperienze','passeggiata','tour','itinerario','tramonto','romantico'],t:a=>`${a.experiences}\nPercorso romantico: ${a.romantic_walk}`},
       {k:'gite di un giorno',keys:['gite','gita','tivoli','ostia','castelli','escursione'],t:a=>a.daytrips},
+
+      /* === NUOVI 3 TASTI (contenuto in inglese) === */
+      {
+        k: 'biglietti & eventi',
+        keys: ['biglietti','eventi','ticket','concerti','partita','roma','lazio'],
+        t: a =>
+`TICKETS & EVENTS (Rome)
+• TicketOne (concerts, theatre, sports):
+https://www.ticketone.it/en/
+• AS Roma — Official tickets:
+https://www.asroma.com/en/tickets
+• SS Lazio — Official tickets:
+https://sslazio.it/en/tickets`
+      },
+      {
+        k: 'musei & siti',
+        keys: ['musei','siti','vaticano','colosseo','foro','palatino','borghese'],
+        t: a =>
+`MUSEUMS & SITES — ROME
+• Vatican Museums:
+https://www.museivaticani.va/content/museivaticani/en.html
+• Colosseum, Roman Forum & Palatine Hill:
+https://parcocolosseo.it/en/
+• Galleria Borghese (reservation required):
+https://galleriaborghese.beniculturali.it/en/`
+      },
+      {
+        k: 'mostre',
+        keys: ['mostre','exhibition','maxxi','palazzo','scuderie','arte'],
+        t: a =>
+`EXHIBITIONS — ROME
+• MAXXI — National Museum of 21st Century Arts:
+https://www.maxxi.art/en/
+• Palazzo delle Esposizioni:
+https://www.palazzoesposizioni.it/
+• Scuderie del Quirinale:
+https://www.scuderiequirinale.it/en
+• Palazzo Bonaparte (Arthemisia):
+https://www.arthemisia.it/site/en/palazzo-bonaparte.html`
+      },
+
       {k:'emergenza',keys:['emergenza','polizia','ambulanza','vigili','medico','veterinario'],t:a=>a.emergency}
     ]
   },
-
+    /* ================= FRANÇAIS ================= */
   fr: {
     ui:{
       welcome:"Bonjour, je suis Samantha, votre guide virtuel. Touchez un bouton pour une réponse rapide.",
       placeholder:"Bonjour, je suis Samantha, votre guide virtuel. Touchez un bouton — ou écrivez ici…",
-      apt_label:"Appartement", voice_on:"🔊 Voix : Activée", voice_off:"🔇 Voix : Désactivée",
-      quick:["wifi","check in","check out","eau","salle de bain","gaz","manger","boire","shopping","visiter","expériences","excursions","transports","services","urgence"],
+      apt_label:"Appartement",
+      voice_on:"🔊 Voix : Activée",
+      voice_off:"🔇 Voix : Désactivée",
+      quick:[
+        "wifi","check in","check out","eau","salle de bain","gaz","manger","boire","shopping","visiter","expériences","excursions",
+        "billets & événements","musées & sites","expositions",
+        "transports","services","urgence"
+      ],
       fallback:"Je n’ai pas trouvé de réponse directe. Essayez un bouton (wifi, gaz, transports, visiter…)."
     },
     apt:{
@@ -253,16 +354,63 @@ const DATA = {
       {k:'visiter',keys:['visiter','voir','attractions','musée'],t:a=>a.visit},
       {k:'expériences',keys:['expériences','balade','itinéraire','coucher de soleil','romantique'],t:a=>`${a.experiences}\nParcours romantique : ${a.romantic_walk}`},
       {k:'excursions',keys:['excursion','ostia','tivoli','castelli','journée'],t:a=>a.daytrips},
+
+      /* === NOUVEAUX 3 BOUTONS (contenu en anglais) === */
+      {
+        k: 'billets & événements',
+        keys: ['billets','événements','tickets','concert','match','roma','lazio'],
+        t: a =>
+`TICKETS & EVENTS (Rome)
+• TicketOne (concerts, theatre, sports):
+https://www.ticketone.it/en/
+• AS Roma — Official tickets:
+https://www.asroma.com/en/tickets
+• SS Lazio — Official tickets:
+https://sslazio.it/en/tickets`
+      },
+      {
+        k: 'musées & sites',
+        keys: ['musées','sites','vatican','colisée','forum','palatin','borghese'],
+        t: a =>
+`MUSEUMS & SITES — ROME
+• Vatican Museums:
+https://www.museivaticani.va/content/museivaticani/en.html
+• Colosseum, Roman Forum & Palatine Hill:
+https://parcocolosseo.it/en/
+• Galleria Borghese (reservation required):
+https://galleriaborghese.beniculturali.it/en/`
+      },
+      {
+        k: 'expositions',
+        keys: ['exposition','expositions','maxxi','palais','scuderie','art'],
+        t: a =>
+`EXHIBITIONS — ROME
+• MAXXI — National Museum of 21st Century Arts:
+https://www.maxxi.art/en/
+• Palazzo delle Esposizioni:
+https://www.palazzoesposizioni.it/
+• Scuderie del Quirinale:
+https://www.scuderiequirinale.it/en
+• Palazzo Bonaparte (Arthemisia):
+https://www.arthemisia.it/site/en/palazzo-bonaparte.html`
+      },
+
       {k:'urgence',keys:['urgence','police','ambulance','pompiers','médecin','vétérinaire'],t:a=>a.emergency}
     ]
   },
-
+    /* ================= DEUTSCH ================= */
   de: {
     ui:{
       welcome:"Hallo, ich bin Samantha, dein virtueller Guide. Tippe auf einen Button für eine schnelle Antwort.",
       placeholder:"Hallo, ich bin Samantha, dein virtueller Guide. Tippe auf einen Button — oder schreibe hier…",
-      apt_label:"Apartment", voice_on:"🔊 Stimme: An", voice_off:"🔇 Stimme: Aus",
-      quick:["WLAN","check in","check out","Wasser","Bad","Gas","Essen","Trinken","Shopping","Sehenswürdigkeiten","Erlebnisse","Tagesausflüge","Verkehr","Services","Notfall"],
+      apt_label:"Apartment",
+      voice_on:"🔊 Stimme: An",
+      voice_off:"🔇 Stimme: Aus",
+      quick:[
+        "WLAN","check in","check out","Wasser","Bad","Gas","Essen","Trinken","Shopping","Sehenswürdigkeiten","Erlebnisse","Tagesausflüge",
+        "Tickets & Events","Museen & Sehenswürdigkeiten","Ausstellungen",
+        "Verkehr","Services","Notfall"
+      ],
       fallback:"Keine direkte Antwort gefunden. Nutze einen Button (WLAN, Gas, Verkehr, Sehenswürdigkeiten…)."
     },
     apt:{
@@ -311,16 +459,64 @@ const DATA = {
       {k:'Sehenswürdigkeiten',keys:['sehen','besuchen','attraktionen','museum'],t:a=>a.visit},
       {k:'Erlebnisse',keys:['erlebnisse','spaziergang','tour','route','sonnenuntergang','romantisch'],t:a=>`${a.experiences}\nRomantische Route: ${a.romantic_walk}`},
       {k:'Tagesausflüge',keys:['tagesausflug','tivoli','ostia','castelli','ausflug'],t:a=>a.daytrips},
+
+      /* === 3 neue Buttons (Inhalt EN) === */
+      {
+        k: 'Tickets & Events',
+        keys: ['tickets','events','konzert','match','roma','lazio','fussball','fußball'],
+        t: a =>
+`TICKETS & EVENTS (Rome)
+• TicketOne (concerts, theatre, sports):
+https://www.ticketone.it/en/
+• AS Roma — Official tickets:
+https://www.asroma.com/en/tickets
+• SS Lazio — Official tickets:
+https://sslazio.it/en/tickets`
+      },
+      {
+        k: 'Museen & Sehenswürdigkeiten',
+        keys: ['museen','sehenswürdigkeiten','vatican','kolosseum','forum','palatin','borghese'],
+        t: a =>
+`MUSEUMS & SITES — ROME
+• Vatican Museums:
+https://www.museivaticani.va/content/museivaticani/en.html
+• Colosseum, Roman Forum & Palatine Hill:
+https://parcocolosseo.it/en/
+• Galleria Borghese (reservation required):
+https://galleriaborghese.beniculturali.it/en/`
+      },
+      {
+        k: 'Ausstellungen',
+        keys: ['ausstellung','ausstellungen','maxxi','palast','scuderie','kunst'],
+        t: a =>
+`EXHIBITIONS — ROME
+• MAXXI — National Museum of 21st Century Arts:
+https://www.maxxi.art/en/
+• Palazzo delle Esposizioni:
+https://www.palazzoesposizioni.it/
+• Scuderie del Quirinale:
+https://www.scuderiequirinale.it/en
+• Palazzo Bonaparte (Arthemisia):
+https://www.arthemisia.it/site/en/palazzo-bonaparte.html`
+      },
+
       {k:'Notfall',keys:['notfall','polizei','rettung','feuerwehr','arzt','tierarzt'],t:a=>a.emergency}
     ]
   },
 
+  /* ================= ESPAÑOL ================= */
   es: {
     ui:{
       welcome:"Hola, soy Samantha, tu guía virtual. Toca un botón para una respuesta rápida.",
       placeholder:"Hola, soy Samantha, tu guía virtual. Toca un botón — o escribe aquí…",
-      apt_label:"Apartamento", voice_on:"🔊 Voz: Activada", voice_off:"🔇 Voz: Desactivada",
-      quick:["wifi","check in","check out","agua","baño","gas","comer","beber","compras","visitar","experiencias","excursiones","transporte","servicios","emergencia"],
+      apt_label:"Apartamento",
+      voice_on:"🔊 Voz: Activada",
+      voice_off:"🔇 Voz: Desactivada",
+      quick:[
+        "wifi","check in","check out","agua","baño","gas","comer","beber","compras","visitar","experiencias","excursiones",
+        "entradas y eventos","museos y sitios","exposiciones",
+        "transporte","servicios","emergencia"
+      ],
       fallback:"No encontré una respuesta directa. Prueba un botón (wifi, gas, transporte, visitar…)."
     },
     apt:{
@@ -369,11 +565,52 @@ const DATA = {
       {k:'visitar',keys:['visitar','ver','atracciones','museo'],t:a=>a.visit},
       {k:'experiencias',keys:['experiencias','paseo','tour','itinerario','atardecer','romántico'],t:a=>`${a.experiences}\nRuta romántica: ${a.romantic_walk}`},
       {k:'excursiones',keys:['excursión','tivoli','ostia','castelli','día'],t:a=>a.daytrips},
+
+      /* === 3 NUEVOS BOTONES (contenido en inglés) === */
+      {
+        k: 'entradas y eventos',
+        keys: ['entradas','eventos','tickets','concierto','partido','roma','lazio'],
+        t: a =>
+`TICKETS & EVENTS (Rome)
+• TicketOne (concerts, theatre, sports):
+https://www.ticketone.it/en/
+• AS Roma — Official tickets:
+https://www.asroma.com/en/tickets
+• SS Lazio — Official tickets:
+https://sslazio.it/en/tickets`
+      },
+      {
+        k: 'museos y sitios',
+        keys: ['museos','sitios','vaticano','coliseo','foro','palatino','borghese'],
+        t: a =>
+`MUSEUMS & SITES — ROME
+• Vatican Museums:
+https://www.museivaticani.va/content/museivaticani/en.html
+• Colosseum, Roman Forum & Palatine Hill:
+https://parcocolosseo.it/en/
+• Galleria Borghese (reservation required):
+https://galleriaborghese.beniculturali.it/en/`
+      },
+      {
+        k: 'exposiciones',
+        keys: ['exposición','exposiciones','maxxi','palacio','scuderie','arte'],
+        t: a =>
+`EXHIBITIONS — ROME
+• MAXXI — National Museum of 21st Century Arts:
+https://www.maxxi.art/en/
+• Palazzo delle Esposizioni:
+https://www.palazzoesposizioni.it/
+• Scuderie del Quirinale:
+https://www.scuderiequirinale.it/en
+• Palazzo Bonaparte (Arthemisia):
+https://www.arthemisia.it/site/en/palazzo-bonaparte.html`
+      },
+
       {k:'emergencia',keys:['emergencia','policía','ambulancia','bomberos','médico','veterinario'],t:a=>a.emergency}
     ]
   }
-}; /* <-- CHIUDE const DATA */
 
+}; /* <-- CHIUDE const DATA */
 /* ============ RILEVAMENTO LINGUA + UI ============ */
 const chatEl = document.getElementById('chat');
 const input  = document.getElementById('input');
