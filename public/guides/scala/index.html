@@ -684,12 +684,19 @@ function applyUI(){
 }
 
 /* ============ CHAT LOGIC + FEEDBACK ============ */
+// trasforma http://... e https://... in <a>
+function linkify(str){
+  const urlRegex = /(https?:\/\/[^\s]+)/g;
+  return str.replace(urlRegex, url => `<a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>`);
+}
+
 function add(type, txt){
-  const d=document.createElement('div');
-  d.className='msg '+(type==='me'?'me':'wd');
-  d.textContent=txt;
+  const d = document.createElement('div');
+  d.className = 'msg ' + (type === 'me' ? 'me' : 'wd');
+  // usiamo innerHTML così i link sono cliccabili
+  d.innerHTML = linkify(txt);
   chatEl.appendChild(d);
-  chatEl.scrollTop=chatEl.scrollHeight;
+  chatEl.scrollTop = chatEl.scrollHeight;
   return d;
 }
 function detectIntent(text){
