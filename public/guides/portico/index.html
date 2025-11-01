@@ -34,7 +34,6 @@ input{flex:1;padding:12px;border:1px solid #cbd5e1;border-radius:10px;outline:no
 .intro{background:#fff;border:1px solid #e0e0e0;padding:12px;border-radius:12px;margin:12px 0}
 .intro b{display:block;margin-bottom:6px}
 .small{opacity:.7;font-size:12px;margin-top:6px}
-/* --- Feedback UI --- */
 .fb-box{margin-top:8px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .fb-box .fb-label{font-size:12px;opacity:.7;margin-right:4px}
 .fb-box button{border:1px solid #ddd;background:#fff;padding:6px 10px;border-radius:999px;cursor:pointer}
@@ -69,6 +68,7 @@ input{flex:1;padding:12px;border:1px solid #cbd5e1;border-radius:10px;outline:no
     <button id="sendBtn">Send</button>
   </footer>
 </div>
+
 <script>
 /* === CONFIG === */
 const APARTMENT_ID = "PORTICO1D";
@@ -106,25 +106,25 @@ const DATA = {
       registration_note:'Please send photos of two identity documents via WhatsApp for guest registration (required by law).',
       host_phone:'+39 335 5245756',
       supermarkets:'Carrefour Express – Via Arenula 41 • Conad City – Via di Santa Maria del Pianto 4 • Punto Simply – Via dei Falegnami 4',
-      pharmacies:'Farmacia della Reginella – Via della Reginella 25 • Farmacia Internazionale – Largo Arenula 14 (English speaking) • Farmacia San Salvatore – Piazza della Enciclopedia Italiana 53',
+      pharmacies:'Farmacia della Reginella – Via della Reginella 25 • Farmacia Internazionale – Largo Arenula 14 • Farmacia San Salvatore – Piazza dell’Enciclopedia Italiana 53',
       luggage:'Radical Storage – Largo di Torre Argentina (5 min walk)',
       laundry:'Self-service laundry – Via Arenula 47',
       hospital:'Fatebenefratelli Hospital – Tiber Island',
       atms:'Unicredit (Largo Arenula 1) • BNL (Via Arenula 41) • Intesa (Via Arenula 27)',
-      transport:"Tram 8 (stop: Arenula/Cairoli) → Trastevere or Piazza Venezia. Buses from Largo Argentina. Taxi: +39 06 3570 or use FreeNow app.",
-      airports:"Fiumicino: Tram 8 → Trastevere Station → FL1 train (~45 min). Ciampino: Terravision bus or taxi. Private transfer: Welcome Pickups.",
+      transport:"Tram 8 (stop: Arenula/Cairoli) → Trastevere or Piazza Venezia. Buses from Largo Argentina. Taxi: +39 06 3570 or FreeNow app.",
+      airports:"Fiumicino: Tram 8 → Trastevere Station → FL1 (~45 min). Ciampino: bus or taxi.",
       emergency:"EU Emergency 112 • Police 113 • Ambulance 118 • Fire 115 • English-speaking doctor +39 06 488 2371 • 24h vet +39 06 660 681",
-      eat:"Giggetto al Portico d’Ottavia • Ba’Ghetto (Main & Bistrot) • Nonna Betta • Rimessa Roscioli • Il Giardino Romano • Sora Margherita • Yotvata (dairy, kosher).",
-      drink:"Beppe e i Suoi Formaggi (wine & cheese) • Il Goccetto (historic wine bar) • Bar del Fico (cocktails) • Caffè del Portico • Bibliothè (tea room) • Antico Caffè del Teatro di Marcello.",
-      shop:"Via del Portico d’Ottavia (artisan shops & kosher bakeries) • Forno Boccione (no sign outside) • Via Arenula boutiques • Jewish Bookstore • Kosher Delight • Fish stalls at Piazza Costaguti (mornings).",
-      visit:"Portico d’Ottavia • Teatro di Marcello • Great Synagogue of Rome & Jewish Museum (closed Sat & Jewish holidays; museum usually 10:00–17:00) • Piazza Mattei (Turtle Fountain) • Tiber Island.",
-      hidden_gems:"Torre dei Grassi • Ponte Emilio “Ponte Rotto” (single remaining arch) • Via della Reginella (Rome’s narrow street).",
-      experiences:"Guided tours in the Jewish Ghetto • Jewish-Roman food tastings • Evening walk to Campo de’ Fiori & Piazza Navona • Photo walk through hidden squares • Bike ride around Tiber Island.",
-      daytrips:"Ostia Antica (~40 min) • Tivoli (Villa d’Este & Hadrian’s Villa ~1h) • Castelli Romani (villages & wine).",
-      checkout_note:"Before leaving: turn off lights/AC, close windows, leave keys on the table, gently close the door."
+      eat:"Giggetto al Portico d’Ottavia • Ba’Ghetto (Main & Bistrot) • Nonna Betta • Rimessa Roscioli • Il Giardino Romano • Sora Margherita • Yotvata.",
+      drink:"Beppe e i Suoi Formaggi • Il Goccetto • Bar del Fico • Caffè del Portico • Bibliothè • Antico Caffè del Teatro di Marcello.",
+      shop:"Via del Portico d’Ottavia (artisan + kosher) • Forno Boccione • Via Arenula boutiques • Jewish Bookstore • Kosher Delight • Fish stalls Piazza Costaguti (mornings).",
+      visit:"Portico d’Ottavia • Teatro di Marcello • Great Synagogue & Jewish Museum • Piazza Mattei (Turtle Fountain) • Tiber Island.",
+      hidden_gems:"Torre dei Grassi • Ponte Emilio “Ponte Rotto” • Via della Reginella (very narrow street).",
+      experiences:"Guided tours in the Jewish Ghetto • Jewish-Roman food tastings • Evening walk to Campo de’ Fiori & Piazza Navona • Photo walk • Bike around Tiber Island.",
+      daytrips:"Ostia Antica (~40 min) • Tivoli (Villa d’Este & Hadrian’s Villa) • Castelli Romani.",
+      checkout_note:"Before leaving: turn off lights/AC, close windows, leave keys on the table, close the door gently."
     },
     intents: [
-      {k:'wifi',keys:['wifi','wi-fi','internet','password','router'],t:a=>`Wi-Fi: ${a.wifi_note}\nNetwork: ${a.wifi_ssid}. Password: ${a.wifi_password}.`},
+      {k:'wifi',keys:['wifi','wi-fi','internet','password','router'],t:a=>`Wi-Fi: ${a.wifi_note}<br><br>Network: ${a.wifi_ssid}. Password: ${a.wifi_password}.`},
       {k:'check in',keys:['check in','arrival','self check-in','access','entrance','intercom','doorbell'],t:a=>`Check-in from ${a.checkin_time}.<br><br>Intercom: ${a.intercom_note}<br><br>Registration: ${a.registration_note}<br><br>Need help? Call ${a.host_phone}.`},
       {k:'check out',keys:['check out','leave','departure'],t:a=>a.checkout_note},
       {k:'water',keys:['water','hot water','drinkable','tap','shower'],t:a=>a.water_note},
@@ -141,10 +141,10 @@ const DATA = {
       {k:'experience',keys:['experience','walk','tour','itinerary','sunset','photo'],t:a=>a.experiences},
       {k:'day trips',keys:['day trip','tivoli','ostia','castelli','excursion'],t:a=>a.daytrips},
 
-      /* --- NEW EN BUTTONS --- */
+      /* NEW EN BUTTONS */
       {k:'tickets & events',keys:['ticket','tickets','event','events','concert','match','football'],t:()=>(
         `TICKETS & EVENTS — ROME<br><br>`+
-        `• TicketOne (concerts, theatre, sports): <a href="https://www.ticketone.it/en/" target="_blank" rel="noopener noreferrer">https://www.ticketone.it/en/</a><br><br>`+
+        `• TicketOne (concerts, theatre & sports): <a href="https://www.ticketone.it/en/" target="_blank" rel="noopener noreferrer">https://www.ticketone.it/en/</a><br><br>`+
         `• AS Roma — Official tickets: <a href="https://www.asroma.com/en/tickets" target="_blank" rel="noopener noreferrer">https://www.asroma.com/en/tickets</a><br><br>`+
         `• SS Lazio — Official tickets: <a href="https://sslazio.it/en/tickets" target="_blank" rel="noopener noreferrer">https://sslazio.it/en/tickets</a>`
       )},
@@ -152,11 +152,11 @@ const DATA = {
         `MUSEUMS & SITES — ROME<br><br>`+
         `• Vatican Museums: <a href="https://www.museivaticani.va/content/museivaticani/en.html" target="_blank" rel="noopener noreferrer">https://www.museivaticani.va/content/museivaticani/en.html</a><br><br>`+
         `• Colosseum, Roman Forum & Palatine Hill: <a href="https://parcocolosseo.it/en/" target="_blank" rel="noopener noreferrer">https://parcocolosseo.it/en/</a><br><br>`+
-        `• Galleria Borghese (reservation required): <a href="https://galleriaborghese.beniculturali.it/en/" target="_blank" rel="noopener noreferrer">https://galleriaborghese.beniculturali.it/en/</a>`
+        `• Galleria Borghese: <a href="https://galleriaborghese.beniculturali.it/en/" target="_blank" rel="noopener noreferrer">https://galleriaborghese.beniculturali.it/en/</a>`
       )},
       {k:'exhibitions',keys:['exhibition','exhibitions','maxxi','quirinale','art'],t:()=>(
         `EXHIBITIONS — ROME<br><br>`+
-        `• MAXXI — National Museum of 21st Century Arts: <a href="https://www.maxxi.art/en/" target="_blank" rel="noopener noreferrer">https://www.maxxi.art/en/</a><br><br>`+
+        `• MAXXI: <a href="https://www.maxxi.art/en/" target="_blank" rel="noopener noreferrer">https://www.maxxi.art/en/</a><br><br>`+
         `• Palazzo delle Esposizioni: <a href="https://www.palazzoesposizioni.it/" target="_blank" rel="noopener noreferrer">https://www.palazzoesposizioni.it/</a><br><br>`+
         `• Scuderie del Quirinale: <a href="https://www.scuderiequirinale.it/en" target="_blank" rel="noopener noreferrer">https://www.scuderiequirinale.it/en</a><br><br>`+
         `• Palazzo Bonaparte (Arthemisia): <a href="https://www.arthemisia.it/site/en/palazzo-bonaparte.html" target="_blank" rel="noopener noreferrer">https://www.arthemisia.it/site/en/palazzo-bonaparte.html</a>`
@@ -165,7 +165,8 @@ const DATA = {
       {k:'emergency',keys:['emergency','police','ambulance','fire','doctor','vet'],t:a=>a.emergency}
     ]
   },
-    it: {
+
+  it: {
     ui:{
       welcome:"Ciao, sono Samantha, la tua guida virtuale. Tocca un pulsante per una risposta rapida.",
       placeholder:"Ciao, sono Samantha, la tua guida virtuale. Tocca un pulsante — oppure scrivi qui…",
@@ -181,70 +182,70 @@ const DATA = {
       fb_dislike:"👎 Non mi piace",
       fb_thanks:"Grazie per il tuo feedback!"
     },
-    apt:{ /* (stesso contenuto che avevi) */ 
+    apt:{
       checkin_time:'15:00', checkout_time:'11:00',
       wifi_note:"Guarda il letto: sul lato destro c’è una panca contenitore con sopra il router. SSID e password sono sull’etichetta del router.",
       wifi_ssid:"Vedi etichetta del router", wifi_password:"Vedi etichetta del router",
       water_note:"L’acqua del rubinetto è potabile. L’acqua calda è sempre disponibile.",
-      ac_note:"L’aria condizionata funziona con telecomando. Spegnila quando esci, per favore.",
+      ac_note:"L’aria condizionata funziona con telecomando. Spegnila quando esci.",
       bathroom_amenities:"Carta igienica, sapone mani, tappetino, asciugacapelli.",
       towels_note:"Per ospite: 1 telo grande + 1 medio. Letto pronto all’arrivo.",
       kitchen_note:"Cucina completa e pronta all’uso.",
-      intercom_note:"Al portone, il nostro interno è il terzo pulsante dal basso.",
-      registration_note:"Invia per WhatsApp le foto di due documenti d’identità per la registrazione (obbligatoria).",
+      intercom_note:"Al portone il nostro interno è il terzo pulsante dal basso.",
+      registration_note:"Manda via WhatsApp le foto di due documenti per la registrazione (obbligatoria).",
       host_phone:"+39 335 5245756",
       supermarkets:"Carrefour Express – Via Arenula 41 • Conad City – Via di S. Maria del Pianto 4 • Punto Simply – Via dei Falegnami 4",
-      pharmacies:"Farmacia della Reginella – Via della Reginella 25 • Farmacia Internazionale – Largo Arenula 14 (English speaking) • Farmacia San Salvatore – Piazza dell’Enciclopedia Italiana 53",
+      pharmacies:"Farmacia della Reginella – Via della Reginella 25 • Farmacia Internazionale – Largo Arenula 14 • Farmacia San Salvatore – Piazza dell’Enciclopedia Italiana 53",
       luggage:"Radical Storage – Largo di Torre Argentina (5 min a piedi)",
       laundry:"Lavanderia self-service – Via Arenula 47",
       hospital:"Ospedale Fatebenefratelli – Isola Tiberina",
       atms:"Unicredit (Largo Arenula 1) • BNL (Via Arenula 41) • Intesa (Via Arenula 27)",
-      transport:"Tram 8 (fermata Arenula/Cairoli) → Trastevere o Piazza Venezia. Autobus da Largo Argentina. Taxi: +39 06 3570 o app FreeNow.",
-      airports:"Fiumicino: Tram 8 → Stazione Trastevere → treno FL1 (~45 min). Ciampino: bus Terravision o taxi. Transfer privato: Welcome Pickups.",
-      emergency:"Emergenze UE 112 • Polizia 113 • Ambulanza 118 • Vigili del Fuoco 115 • Medico in inglese +39 06 488 2371 • Veterinario 24h +39 06 660 681",
-      eat:"Giggetto al Portico d’Ottavia • Ba’Ghetto (Main & Bistrot) • Nonna Betta • Rimessa Roscioli • Il Giardino Romano • Sora Margherita • Yotvata (latteria kosher).",
-      drink:"Beppe e i Suoi Formaggi (vino & formaggi) • Il Goccetto • Bar del Fico • Caffè del Portico • Bibliothè (tea room) • Antico Caffè del Teatro di Marcello.",
-      shop:"Via del Portico d’Ottavia (artigianato & forni kosher) • Forno Boccione (senza insegna) • Boutique di Via Arenula • Libreria Ebraica • Kosher Delight • Banchi del pesce in Piazza Costaguti (mattina).",
-      visit:"Portico d’Ottavia • Teatro di Marcello • Grande Sinagoga & Museo Ebraico (chiuso sabato e feste ebraiche; museo di solito 10:00–17:00) • Piazza Mattei (Fontana delle Tartarughe) • Isola Tiberina.",
-      hidden_gems:"Torre dei Grassi • Ponte Emilio “Ponte Rotto” (arco superstite) • Via della Reginella (una delle vie più strette).",
-      experiences:"Tour nel Ghetto • Degustazioni giudaico-romane • Passeggiata serale verso Campo de’ Fiori & Piazza Navona • Photo walk fra piazze nascoste • Giro in bici attorno all’Isola Tiberina.",
-      daytrips:"Ostia Antica (~40 min) • Tivoli (Villa d’Este & Villa Adriana ~1h) • Castelli Romani.",
-      checkout_note:"Prima di partire: spegni luci/AC, chiudi le finestre, lascia le chiavi sul tavolo, chiudi la porta delicatamente."
+      transport:"Tram 8 (Arenula/Cairoli) → Trastevere o Piazza Venezia. Bus da Largo Argentina. Taxi: +39 06 3570 o app FreeNow.",
+      airports:"Fiumicino: Tram 8 → Stazione Trastevere → FL1 (~45 min). Ciampino: bus o taxi.",
+      emergency:"112 Emergenze UE • Polizia 113 • Ambulanza 118 • Vigili del Fuoco 115 • Medico in inglese +39 06 488 2371 • Vet 24h +39 06 660 681",
+      eat:"Giggetto al Portico d’Ottavia • Ba’Ghetto • Nonna Betta • Rimessa Roscioli • Il Giardino Romano • Sora Margherita • Yotvata.",
+      drink:"Beppe e i Suoi Formaggi • Il Goccetto • Bar del Fico • Caffè del Portico • Bibliothè • Antico Caffè del Teatro di Marcello.",
+      shop:"Via del Portico d’Ottavia (artigianato + kosher) • Forno Boccione • Boutique di Via Arenula • Libreria ebraica • Kosher Delight • Banchi del pesce in Piazza Costaguti (mattina).",
+      visit:"Portico d’Ottavia • Teatro di Marcello • Grande Sinagoga & Museo Ebraico • Piazza Mattei (Fontana delle Tartarughe) • Isola Tiberina.",
+      hidden_gems:"Torre dei Grassi • Ponte Emilio “Ponte Rotto” • Via della Reginella.",
+      experiences:"Tour nel Ghetto • Degustazioni giudaico-romane • Passeggiata serale verso Campo de’ Fiori e Piazza Navona • Photo walk • Giro in bici sull’Isola Tiberina.",
+      daytrips:"Ostia Antica • Tivoli (Villa d’Este & Adriana) • Castelli Romani.",
+      checkout_note:"Prima di partire: spegni luci/AC, chiudi le finestre, lascia le chiavi sul tavolo e chiudi delicatamente."
     },
     intents:[
       {k:'wifi',keys:['wifi','wi-fi','internet','password','router'],t:a=>`Wi-Fi: ${a.wifi_note}<br><br>Rete: ${a.wifi_ssid}. Password: ${a.wifi_password}.`},
-      {k:'check in',keys:['check in','arrivo','self check-in','accesso','ingresso','citofono','campanello'],t:a=>`Check-in dalle ${a.checkin_time}.<br><br>Citofono: ${a.intercom_note}<br><br>Registrazione: ${a.registration_note}<br><br>Aiuto? Chiama ${a.host_phone}.`},
+      {k:'check in',keys:['check in','arrivo','self check-in','accesso','ingresso','citofono','campanello'],t:a=>`Check-in dalle ${a.checkin_time}.<br><br>Citofono: ${a.intercom_note}<br><br>Registrazione: ${a.registration_note}<br><br>Aiuto? ${a.host_phone}.`},
       {k:'check out',keys:['check out','partenza','lasciare'],t:a=>a.checkout_note},
       {k:'acqua',keys:['acqua','acqua calda','potabile','rubinetto','doccia'],t:a=>a.water_note},
       {k:'aria condizionata',keys:['aria condizionata','clima','condizionatore','ac'],t:a=>a.ac_note},
-      {k:'bagno',keys:['bagno','asciugacapelli','asciugamani','amenities','sapone'],t:a=>`Bagno: ${a.bathroom_amenities}<br><br>Asciugamani: ${a.towels_note}`},
+      {k:'bagno',keys:['bagno','asciugacapelli','asciugamani','sapone'],t:a=>`Bagno: ${a.bathroom_amenities}<br><br>Asciugamani: ${a.towels_note}`},
       {k:'cucina',keys:['cucina','cucinare','fornelli','stufa'],t:a=>a.kitchen_note},
       {k:'servizi',keys:['farmacia','ospedale','bancomat','sim','lavanderia','bagagli','supermercato','spesa'],t:a=>`Supermercati: ${a.supermarkets}<br><br>Farmacie: ${a.pharmacies}<br><br>Ospedale: ${a.hospital}<br><br>Bancomat: ${a.atms}<br><br>Lavanderia: ${a.laundry}<br><br>Deposito bagagli: ${a.luggage}`},
       {k:'trasporti',keys:['trasporti','tram','bus','taxi','aeroporto','treno','metro'],t:a=>`${a.transport}<br><br>Aeroporti: ${a.airports}`},
-      {k:'mangiare',keys:['mangiare','ristorante','cena','pranzo','cibo'],t:a=>a.eat},
+      {k:'mangiare',keys:['mangiare','ristorante','cena','pranzo'],t:a=>a.eat},
       {k:'bere',keys:['bere','bar','vino','cocktail','aperitivo'],t:a=>a.drink},
-      {k:'shopping',keys:['shopping','mercato','negozi','forni','kosher'],t:a=>a.shop},
-      {k:'visitare',keys:['cosa vedere','visitare','attrazioni','museo','sinagoga'],t:a=>a.visit},
-      {k:'angoli nascosti',keys:['nascosti','segreti','gioielli','meno noti','fuori percorso'],t:a=>a.hidden_gems},
-      {k:'esperienze',keys:['esperienze','passeggiata','tour','itinerario','tramonto','foto'],t:a=>a.experiences},
+      {k:'shopping',keys:['shopping','mercato','negozi'],t:a=>a.shop},
+      {k:'visitare',keys:['visitare','cosa vedere','attrazioni','museo','sinagoga'],t:a=>a.visit},
+      {k:'angoli nascosti',keys:['angoli','nascosti','segreti','gioielli'],t:a=>a.hidden_gems},
+      {k:'esperienze',keys:['esperienze','passeggiata','tour','itinerario','foto'],t:a=>a.experiences},
       {k:'gite di un giorno',keys:['gite','gita','tivoli','ostia','castelli','escursione'],t:a=>a.daytrips},
 
-      /* --- NUOVI IT BUTTONS --- */
+      /* NUOVI IT BUTTONS */
       {k:'biglietti & eventi',keys:['biglietti','ticket','evento','eventi','concerto','partita'],t:()=>(
         `BIGLIETTI & EVENTI — ROMA<br><br>`+
         `• TicketOne (concerti, teatro, sport): <a href="https://www.ticketone.it/en/" target="_blank" rel="noopener noreferrer">https://www.ticketone.it/en/</a><br><br>`+
-        `• AS Roma — biglietti ufficiali: <a href="https://www.asroma.com/en/tickets" target="_blank" rel="noopener noreferrer">https://www.asroma.com/en/tickets</a><br><br>`+
-        `• SS Lazio — biglietti ufficiali: <a href="https://sslazio.it/en/tickets" target="_blank" rel="noopener noreferrer">https://sslazio.it/en/tickets</a>`
+        `• AS Roma — biglietteria ufficiale: <a href="https://www.asroma.com/en/tickets" target="_blank" rel="noopener noreferrer">https://www.asroma.com/en/tickets</a><br><br>`+
+        `• SS Lazio — biglietteria ufficiale: <a href="https://sslazio.it/en/tickets" target="_blank" rel="noopener noreferrer">https://sslazio.it/en/tickets</a>`
       )},
-      {k:'musei & siti',keys:['museo','musei','sito','siti','vaticano','colosseo'],t:()=>(
+      {k:'musei & siti',keys:['museo','musei','sito','siti','colosseo','vaticano'],t:()=>(
         `MUSEI & SITI — ROMA<br><br>`+
         `• Musei Vaticani: <a href="https://www.museivaticani.va/content/museivaticani/en.html" target="_blank" rel="noopener noreferrer">https://www.museivaticani.va/content/museivaticani/en.html</a><br><br>`+
         `• Colosseo, Foro Romano & Palatino: <a href="https://parcocolosseo.it/en/" target="_blank" rel="noopener noreferrer">https://parcocolosseo.it/en/</a><br><br>`+
-        `• Galleria Borghese (prenotazione obbligatoria): <a href="https://galleriaborghese.beniculturali.it/en/" target="_blank" rel="noopener noreferrer">https://galleriaborghese.beniculturali.it/en/</a>`
+        `• Galleria Borghese (prenotazione): <a href="https://galleriaborghese.beniculturali.it/en/" target="_blank" rel="noopener noreferrer">https://galleriaborghese.beniculturali.it/en/</a>`
       )},
       {k:'mostre',keys:['mostre','esposizioni','arte','maxxi','quirinale'],t:()=>(
         `MOSTRE — ROMA<br><br>`+
-        `• MAXXI – Museo nazionale delle arti del XXI secolo: <a href="https://www.maxxi.art/en/" target="_blank" rel="noopener noreferrer">https://www.maxxi.art/en/</a><br><br>`+
+        `• MAXXI: <a href="https://www.maxxi.art/en/" target="_blank" rel="noopener noreferrer">https://www.maxxi.art/en/</a><br><br>`+
         `• Palazzo delle Esposizioni: <a href="https://www.palazzoesposizioni.it/" target="_blank" rel="noopener noreferrer">https://www.palazzoesposizioni.it/</a><br><br>`+
         `• Scuderie del Quirinale: <a href="https://www.scuderiequirinale.it/en" target="_blank" rel="noopener noreferrer">https://www.scuderiequirinale.it/en</a><br><br>`+
         `• Palazzo Bonaparte (Arthemisia): <a href="https://www.arthemisia.it/site/en/palazzo-bonaparte.html" target="_blank" rel="noopener noreferrer">https://www.arthemisia.it/site/en/palazzo-bonaparte.html</a>`
@@ -269,40 +270,69 @@ const DATA = {
       fb_dislike:"👎 Je n’aime pas",
       fb_thanks:"Merci pour votre retour !"
     },
-    apt: DATA.it.apt, /* usiamo lo stesso contenuto base dell'italiano per non riscrivere tutto */
+    apt:{
+      checkin_time:'15:00', checkout_time:'11:00',
+      wifi_note:"Regardez près du lit : à droite, un banc-coffre avec le routeur dessus. SSID et mot de passe sur l’étiquette.",
+      wifi_ssid:"Voir l’étiquette du routeur", wifi_password:"Voir l’étiquette du routeur",
+      water_note:"L’eau du robinet est potable. L’eau chaude est toujours disponible.",
+      ac_note:"La clim fonctionne avec télécommande. Merci de l’éteindre en sortant.",
+      bathroom_amenities:"Papier toilette, savon pour les mains, tapis de bain, sèche-cheveux.",
+      towels_note:"Par personne : 1 grande + 1 moyenne. Lit prêt à l’arrivée.",
+      kitchen_note:"Cuisine entièrement équipée.",
+      intercom_note:"À la porte de l’immeuble, notre unité est le 3ᵉ bouton en partant du bas.",
+      registration_note:"Envoyez par WhatsApp les photos de deux pièces d’identité (enregistrement obligatoire).",
+      host_phone:"+39 335 5245756",
+      supermarkets:"Carrefour Express – Via Arenula 41 • Conad City – Via di S. Maria del Pianto 4 • Punto Simply – Via dei Falegnami 4",
+      pharmacies:"Farmacia della Reginella – Via della Reginella 25 • Farmacia Internazionale – Largo Arenula 14 • Farmacia San Salvatore – Piazza dell’Enciclopedia Italiana 53",
+      luggage:"Radical Storage – Largo di Torre Argentina (5 min à pied)",
+      laundry:"Laverie en libre-service – Via Arenula 47",
+      hospital:"Hôpital Fatebenefratelli – Île Tibérine",
+      atms:"Unicredit (Largo Arenula 1) • BNL (Via Arenula 41) • Intesa (Via Arenula 27)",
+      transport:"Tram 8 (Arenula/Cairoli) → Trastevere ou Piazza Venezia. Bus depuis Largo Argentina. Taxi : +39 06 3570 ou appli FreeNow.",
+      airports:"Fiumicino : Tram 8 → gare de Trastevere → FL1 (~45 min). Ciampino : bus ou taxi.",
+      emergency:"Urgences UE 112 • Police 113 • Ambulance 118 • Pompiers 115 • Médecin anglophone +39 06 488 2371 • Vétérinaire 24h +39 06 660 681",
+      eat:"Giggetto • Ba’Ghetto • Nonna Betta • Rimessa Roscioli • Il Giardino Romano • Sora Margherita • Yotvata.",
+      drink:"Beppe e i Suoi Formaggi • Il Goccetto • Bar del Fico • Caffè del Portico • Bibliothè • Antico Caffè del Teatro di Marcello.",
+      shop:"Via del Portico d’Ottavia (artisanat & boulangeries casher) • Forno Boccione • Boutiques de Via Arenula • Librairie juive • Kosher Delight • Poissonnerie Piazza Costaguti.",
+      visit:"Portique d’Octavie • Théâtre de Marcellus • Grande Synagogue & Musée Juif • Piazza Mattei (Fontaine des Tortues) • Île Tibérine.",
+      hidden_gems:"Torre dei Grassi • Ponte Emilio (“Ponte Rotto”) • Via della Reginella.",
+      experiences:"Visites guidées du Ghetto • Dégustations judéo-romaines • Balade du soir vers Campo de’ Fiori & Piazza Navona • Photo walk • Tour à vélo autour de l’Île.",
+      daytrips:"Ostia Antica • Tivoli • Castelli Romani.",
+      checkout_note:"Avant de partir : éteignez lumières/clim, fermez fenêtres, laissez les clés sur la table, fermez doucement."
+    },
     intents:[
       {k:'wifi',keys:['wifi','wi-fi','internet','mot de passe','routeur'],t:a=>`Wi-Fi : ${a.wifi_note}<br><br>Réseau : ${a.wifi_ssid}. Mot de passe : ${a.wifi_password}.`},
       {k:'check in',keys:['check in','arrivée','accès','self check-in','entrée','interphone','sonnette'],t:a=>`Arrivée à partir de ${a.checkin_time}.<br><br>Interphone : ${a.intercom_note}<br><br>Enregistrement : ${a.registration_note}<br><br>Besoin d’aide ? ${a.host_phone}.`},
       {k:'check out',keys:['check out','départ','quitter'],t:a=>a.checkout_note},
       {k:'eau',keys:['eau','chaude','potable','robinet','douche'],t:a=>a.water_note},
       {k:'climatisation',keys:['climatisation','clim','ac'],t:a=>a.ac_note},
-      {k:'salle de bain',keys:['salle de bain','serviettes','savon','sèche-cheveux','commodités'],t:a=>`Salle de bain : ${a.bathroom_amenities}<br><br>Serviettes : ${a.towels_note}`},
+      {k:'salle de bain',keys:['salle de bain','serviettes','savon','sèche-cheveux'],t:a=>`Salle de bain : ${a.bathroom_amenities}<br><br>Serviettes : ${a.towels_note}`},
       {k:'cuisine',keys:['cuisine','cuisiner','plaques','four'],t:a=>a.kitchen_note},
-      {k:'services',keys:['pharmacie','hôpital','dab','sim','laverie','consigne','supermarché','courses'],t:a=>`Supermarchés : ${a.supermarkets}<br><br>Pharmacies : ${a.pharmacies}<br><br>Hôpital : ${a.hospital}<br><br>DAB : ${a.atms}<br><br>Laverie : ${a.laundry}<br><br>Consigne : ${a.luggage}`},
+      {k:'services',keys:['pharmacie','hôpital','dab','laverie','consigne','supermarché','courses'],t:a=>`Supermarchés : ${a.supermarkets}<br><br>Pharmacies : ${a.pharmacies}<br><br>Hôpital : ${a.hospital}<br><br>DAB : ${a.atms}<br><br>Laverie : ${a.laundry}<br><br>Consigne : ${a.luggage}`},
       {k:'transports',keys:['transports','tram','bus','taxi','aéroport','train','métro'],t:a=>`${a.transport}<br><br>Aéroports : ${a.airports}`},
       {k:'manger',keys:['manger','restaurant','dîner','déjeuner'],t:a=>a.eat},
       {k:'boire',keys:['boire','bar','vin','cocktail','apéritif'],t:a=>a.drink},
-      {k:'shopping',keys:['shopping','marché','boutiques','boulangeries','casher'],t:a=>a.shop},
-      {k:'visiter',keys:['que visiter','visiter','voir','musée','synagogue','attractions'],t:a=>a.visit},
+      {k:'shopping',keys:['shopping','marché','boutiques','boulangeries'],t:a=>a.shop},
+      {k:'visiter',keys:['visiter','musée','attractions','voir'],t:a=>a.visit},
       {k:'trésors cachés',keys:['trésors','cachés','secrets','peu connus'],t:a=>a.hidden_gems},
-      {k:'expériences',keys:['expériences','balade','tour','itinéraire','coucher de soleil','photo'],t:a=>a.experiences},
+      {k:'expériences',keys:['expériences','balade','itinéraire','coucher de soleil','photo'],t:a=>a.experiences},
       {k:'excursions',keys:['excursion','tivoli','ostia','castelli','journée'],t:a=>a.daytrips},
 
-      {k:'billets & événements',keys:['billet','billets','événement','événements','concert','match'],t:()=>(
+      {k:'billets & événements',keys:['billets','billet','événement','événements','concert','match'],t:()=>(
         `BILLETS & ÉVÉNEMENTS — ROME<br><br>`+
-        `• TicketOne (concerts, théâtre, sports) : <a href="https://www.ticketone.it/en/" target="_blank" rel="noopener noreferrer">https://www.ticketone.it/en/</a><br><br>`+
+        `• TicketOne : <a href="https://www.ticketone.it/en/" target="_blank" rel="noopener noreferrer">https://www.ticketone.it/en/</a><br><br>`+
         `• AS Roma — billetterie officielle : <a href="https://www.asroma.com/en/tickets" target="_blank" rel="noopener noreferrer">https://www.asroma.com/en/tickets</a><br><br>`+
         `• SS Lazio — billetterie officielle : <a href="https://sslazio.it/en/tickets" target="_blank" rel="noopener noreferrer">https://sslazio.it/en/tickets</a>`
       )},
       {k:'musées & sites',keys:['musées','musée','sites','site','vatican','colisée'],t:()=>(
         `MUSÉES & SITES — ROME<br><br>`+
         `• Musées du Vatican : <a href="https://www.museivaticani.va/content/museivaticani/en.html" target="_blank" rel="noopener noreferrer">https://www.museivaticani.va/content/museivaticani/en.html</a><br><br>`+
-        `• Colisée, Forum Romain & Palatin : <a href="https://parcocolosseo.it/en/" target="_blank" rel="noopener noreferrer">https://parcocolosseo.it/en/</a><br><br>`+
-        `• Galerie Borghèse (réservation obligatoire) : <a href="https://galleriaborghese.beniculturali.it/en/" target="_blank" rel="noopener noreferrer">https://galleriaborghese.beniculturali.it/en/</a>`
+        `• Colisée / Forum / Palatin : <a href="https://parcocolosseo.it/en/" target="_blank" rel="noopener noreferrer">https://parcocolosseo.it/en/</a><br><br>`+
+        `• Galerie Borghèse : <a href="https://galleriaborghese.beniculturali.it/en/" target="_blank" rel="noopener noreferrer">https://galleriaborghese.beniculturali.it/en/</a>`
       )},
       {k:'expositions',keys:['exposition','expositions','maxxi','quirinale','art'],t:()=>(
         `EXPOSITIONS — ROME<br><br>`+
-        `• MAXXI – Musée national des arts du XXIᵉ siècle : <a href="https://www.maxxi.art/en/" target="_blank" rel="noopener noreferrer">https://www.maxxi.art/en/</a><br><br>`+
+        `• MAXXI : <a href="https://www.maxxi.art/en/" target="_blank" rel="noopener noreferrer">https://www.maxxi.art/en/</a><br><br>`+
         `• Palazzo delle Esposizioni : <a href="https://www.palazzoesposizioni.it/" target="_blank" rel="noopener noreferrer">https://www.palazzoesposizioni.it/</a><br><br>`+
         `• Scuderie del Quirinale : <a href="https://www.scuderiequirinale.it/en" target="_blank" rel="noopener noreferrer">https://www.scuderiequirinale.it/en</a><br><br>`+
         `• Palazzo Bonaparte (Arthemisia) : <a href="https://www.arthemisia.it/site/en/palazzo-bonaparte.html" target="_blank" rel="noopener noreferrer">https://www.arthemisia.it/site/en/palazzo-bonaparte.html</a>`
@@ -311,12 +341,13 @@ const DATA = {
       {k:'urgence',keys:['urgence','police','ambulance','pompiers','médecin','vétérinaire'],t:a=>a.emergency}
     ]
   },
-
-  de: {
+    de: {
     ui:{
       welcome:"Hallo, ich bin Samantha, dein virtueller Guide. Tippe auf einen Button für eine schnelle Antwort.",
       placeholder:"Hallo, ich bin Samantha, dein virtueller Guide. Tippe auf einen Button — oder schreibe hier…",
-      apt_label:"Apartment", voice_on:"🔊 Stimme: An", voice_off:"🔇 Stimme: Aus",
+      apt_label:"Apartment",
+      voice_on:"🔊 Stimme: An",
+      voice_off:"🔇 Stimme: Aus",
       quick:[
         "WLAN","check in","check out","Wasser","Klimaanlage","Bad","Küche","Essen","Trinken","Shopping","Sehenswürdigkeiten","versteckte Perlen","Erlebnisse","Tagesausflüge",
         "Tickets & Events","Museen & Sites","Ausstellungen",
@@ -328,40 +359,71 @@ const DATA = {
       fb_dislike:"👎 Dislike",
       fb_thanks:"Danke für dein Feedback!"
     },
-    apt: DATA.it.apt,
+    apt:{
+      checkin_time:'15:00', checkout_time:'11:00',
+      wifi_note:"Rechts neben dem Bett steht eine Truhenbank mit dem Router darauf. SSID & Passwort stehen auf dem Etikett.",
+      wifi_ssid:"Siehe Router-Etikett",
+      wifi_password:"Siehe Router-Etikett",
+      water_note:"Leitungswasser ist trinkbar. Warmwasser ist jederzeit verfügbar.",
+      ac_note:"Klimaanlage über Fernbedienung. Bitte ausschalten, wenn du gehst.",
+      bathroom_amenities:"Toilettenpapier, Handseife, Badematte, Föhn.",
+      towels_note:"Pro Gast: 1 großes + 1 mittleres Handtuch. Bett bei Ankunft gemacht.",
+      kitchen_note:"Voll ausgestattete Küche, bereit zur Nutzung.",
+      intercom_note:"Am Haustor ist unsere Klingel der dritte Knopf von unten.",
+      registration_note:"Bitte zwei Ausweise per WhatsApp zur Gästeregistrierung schicken (gesetzlich vorgeschrieben).",
+      host_phone:"+39 335 5245756",
+      supermarkets:"Carrefour Express – Via Arenula 41 • Conad City – Via di S. Maria del Pianto 4 • Punto Simply – Via dei Falegnami 4",
+      pharmacies:"Farmacia della Reginella – Via della Reginella 25 • Farmacia Internazionale – Largo Arenula 14 • Farmacia San Salvatore – Piazza dell’Enciclopedia Italiana 53",
+      luggage:"Radical Storage – Largo di Torre Argentina (≈5 Min zu Fuß)",
+      laundry:"Waschsalon – Via Arenula 47",
+      hospital:"Krankenhaus Fatebenefratelli – Tiberinsel",
+      atms:"Unicredit (Largo Arenula 1) • BNL (Via Arenula 41) • Intesa (Via Arenula 27)",
+      transport:"Tram 8 (Haltestelle Arenula/Cairoli) → Trastevere oder Piazza Venezia. Busse ab Largo Argentina. Taxi: +39 06 3570 oder FreeNow-App.",
+      airports:"Fiumicino: Tram 8 → Bahnhof Trastevere → FL1 (~45 Min). Ciampino: Bus oder Taxi.",
+      emergency:"EU-Notruf 112 • Polizei 113 • Rettung 118 • Feuerwehr 115 • Englischsprachiger Arzt +39 06 488 2371 • Tierarzt 24h +39 06 660 681",
+      eat:"Giggetto • Ba’Ghetto • Nonna Betta • Rimessa Roscioli • Il Giardino Romano • Sora Margherita • Yotvata.",
+      drink:"Beppe e i Suoi Formaggi • Il Goccetto • Bar del Fico • Caffè del Portico • Bibliothè.",
+      shop:"Via del Portico d’Ottavia (Handwerk + koschere Bäckereien) • Forno Boccione • Boutiquen in Via Arenula • Jüdische Buchhandlung • Kosher Delight.",
+      visit:"Portico d’Ottavia • Theater des Marcellus • Große Synagoge & Jüdisches Museum (Sa & jüdische Feiertage geschlossen) • Piazza Mattei (Schildkrötenbrunnen) • Tiberinsel.",
+      hidden_gems:"Torre dei Grassi • Ponte Emilio „Ponte Rotto“ (letzter Bogen) • Via della Reginella (schmale Gasse).",
+      experiences:"Geführte Touren im Ghetto • Jüdisch-römische Verkostungen • Abendspaziergang zu Campo de’ Fiori & Piazza Navona • Photo walk • Radtour um die Tiberinsel.",
+      daytrips:"Ostia Antica (~40 Min) • Tivoli (Villa d’Este & Hadriansvilla) • Castelli Romani.",
+      checkout_note:"Vor der Abreise: Licht/AC aus, Fenster schließen, Schlüssel auf den Tisch legen, Tür sanft schließen."
+    },
     intents:[
       {k:'WLAN',keys:['wlan','wifi','wi-fi','internet','passwort','router'],t:a=>`WLAN: ${a.wifi_note}<br><br>Netz: ${a.wifi_ssid}. Passwort: ${a.wifi_password}.`},
-      {k:'check in',keys:['check in','ankunft','zugang','self check-in','eingang','sprechanlage','klingel'],t:a=>`Check-in ab ${a.checkin_time}.<br><br>Sprechanlage: ${a.intercom_note}<br><br>Registrierung: ${a.registration_note}<br><br>Hilfe? ${a.host_phone}.`},
+      {k:'check in',keys:['check in','ankunft','zugang','selbst check-in','eingang','klingel','sprechanlage'],t:a=>`Check-in ab ${a.checkin_time}.<br><br>Sprechanlage: ${a.intercom_note}<br><br>Registrierung: ${a.registration_note}<br><br>Hilfe? ${a.host_phone}.`},
       {k:'check out',keys:['check out','abreise','verlassen'],t:a=>a.checkout_note},
       {k:'Wasser',keys:['wasser','warmwasser','trinkbar','hahn','dusche'],t:a=>a.water_note},
       {k:'Klimaanlage',keys:['klimaanlage','klima','ac'],t:a=>a.ac_note},
-      {k:'Bad',keys:['bad','handtücher','seife','föhn','ausstattung'],t:a=>`Bad: ${a.bathroom_amenities}<br><br>Handtücher: ${a.towels_note}`},
+      {k:'Bad',keys:['bad','handtücher','seife','föhn'],t:a=>`Bad: ${a.bathroom_amenities}<br><br>Handtücher: ${a.towels_note}`},
       {k:'Küche',keys:['küche','kochen','herd','ofen'],t:a=>a.kitchen_note},
-      {k:'Services',keys:['apotheke','krankenhaus','geldautomat','sim','wäscherei','gepäck','supermarkt','einkauf'],t:a=>`Supermärkte: ${a.supermarkets}<br><br>Apotheken: ${a.pharmacies}<br><br>Krankenhaus: ${a.hospital}<br><br>Geldautomaten: ${a.atms}<br><br>Waschsalon: ${a.laundry}<br><br>Gepäck: ${a.luggage}`},
+      {k:'Services',keys:['apotheke','krankenhaus','geldautomat','wäscherei','gepäck','supermarkt'],t:a=>`Supermärkte: ${a.supermarkets}<br><br>Apotheken: ${a.pharmacies}<br><br>Krankenhaus: ${a.hospital}<br><br>Geldautomaten: ${a.atms}<br><br>Waschsalon: ${a.laundry}<br><br>Gepäck: ${a.luggage}`},
       {k:'Verkehr',keys:['verkehr','tram','bus','taxi','flughafen','zug','metro'],t:a=>`${a.transport}<br><br>Flughäfen: ${a.airports}`},
       {k:'Essen',keys:['essen','restaurant','abendessen','mittagessen'],t:a=>a.eat},
       {k:'Trinken',keys:['trinken','bar','wein','cocktail','aperitif'],t:a=>a.drink},
-      {k:'Shopping',keys:['shopping','markt','geschäfte','bäckereien','koscher'],t:a=>a.shop},
-      {k:'Sehenswürdigkeiten',keys:['was sehen','besuchen','attraktionen','museum','synagoge'],t:a=>a.visit},
+      {k:'Shopping',keys:['shopping','markt','geschäfte','bäckereien'],t:a=>a.shop},
+      {k:'Sehenswürdigkeiten',keys:['sehenswürdigkeiten','besuchen','museum','attraktionen'],t:a=>a.visit},
       {k:'versteckte Perlen',keys:['versteckt','geheim','perlen','weniger bekannt'],t:a=>a.hidden_gems},
       {k:'Erlebnisse',keys:['erlebnisse','spaziergang','tour','route','sonnenuntergang','foto'],t:a=>a.experiences},
       {k:'Tagesausflüge',keys:['tagesausflug','tivoli','ostia','castelli','ausflug'],t:a=>a.daytrips},
 
-      {k:'Tickets & Events',keys:['ticket','tickets','event','events','konzert','spiel'],t:()=>(
+      /* 3 nuovi tasti in tedesco */
+      {k:'Tickets & Events',keys:['ticket','tickets','event','events','konzert','spiel','partie'],t:()=>(
         `TICKETS & EVENTS — ROM<br><br>`+
         `• TicketOne (Konzerte, Theater, Sport): <a href="https://www.ticketone.it/en/" target="_blank" rel="noopener noreferrer">https://www.ticketone.it/en/</a><br><br>`+
-        `• AS Roma — Offizielle Tickets: <a href="https://www.asroma.com/en/tickets" target="_blank" rel="noopener noreferrer">https://www.asroma.com/en/tickets</a><br><br>`+
-        `• SS Lazio — Offizielle Tickets: <a href="https://sslazio.it/en/tickets" target="_blank" rel="noopener noreferrer">https://sslazio.it/en/tickets</a>`
+        `• AS Roma — offizielle Tickets: <a href="https://www.asroma.com/en/tickets" target="_blank" rel="noopener noreferrer">https://www.asroma.com/en/tickets</a><br><br>`+
+        `• SS Lazio — offizielle Tickets: <a href="https://sslazio.it/en/tickets" target="_blank" rel="noopener noreferrer">https://sslazio.it/en/tickets</a>`
       )},
-      {k:'Museen & Sites',keys:['museum','museen','sites','site','vatican','kolosseum'],t:()=>(
+      {k:'Museen & Sites',keys:['museum','museen','site','sites','kolosseum','vatican'],t:()=>(
         `MUSEEN & SITES — ROM<br><br>`+
         `• Vatikanische Museen: <a href="https://www.museivaticani.va/content/museivaticani/en.html" target="_blank" rel="noopener noreferrer">https://www.museivaticani.va/content/museivaticani/en.html</a><br><br>`+
-        `• Kolosseum, Forum & Palatin: <a href="https://parcocolosseo.it/en/" target="_blank" rel="noopener noreferrer">https://parcocolosseo.it/en/</a><br><br>`+
-        `• Galleria Borghese (Reservierung): <a href="https://galleriaborghese.beniculturali.it/en/" target="_blank" rel="noopener noreferrer">https://galleriaborghese.beniculturali.it/en/</a>`
+        `• Kolosseum / Forum / Palatin: <a href="https://parcocolosseo.it/en/" target="_blank" rel="noopener noreferrer">https://parcocolosseo.it/en/</a><br><br>`+
+        `• Galleria Borghese: <a href="https://galleriaborghese.beniculturali.it/en/" target="_blank" rel="noopener noreferrer">https://galleriaborghese.beniculturali.it/en/</a>`
       )},
       {k:'Ausstellungen',keys:['ausstellung','ausstellungen','maxxi','quirinale','kunst'],t:()=>(
         `AUSSTELLUNGEN — ROM<br><br>`+
-        `• MAXXI – Museum für Kunst des 21. Jh.: <a href="https://www.maxxi.art/en/" target="_blank" rel="noopener noreferrer">https://www.maxxi.art/en/</a><br><br>`+
+        `• MAXXI: <a href="https://www.maxxi.art/en/" target="_blank" rel="noopener noreferrer">https://www.maxxi.art/en/</a><br><br>`+
         `• Palazzo delle Esposizioni: <a href="https://www.palazzoesposizioni.it/" target="_blank" rel="noopener noreferrer">https://www.palazzoesposizioni.it/</a><br><br>`+
         `• Scuderie del Quirinale: <a href="https://www.scuderiequirinale.it/en" target="_blank" rel="noopener noreferrer">https://www.scuderiequirinale.it/en</a><br><br>`+
         `• Palazzo Bonaparte (Arthemisia): <a href="https://www.arthemisia.it/site/en/palazzo-bonaparte.html" target="_blank" rel="noopener noreferrer">https://www.arthemisia.it/site/en/palazzo-bonaparte.html</a>`
@@ -375,7 +437,9 @@ const DATA = {
     ui:{
       welcome:"Hola, soy Samantha, tu guía virtual. Toca un botón para una respuesta rápida.",
       placeholder:"Hola, soy Samantha, tu guía virtual. Toca un botón — o escribe aquí…",
-      apt_label:"Apartamento", voice_on:"🔊 Voz: Activada", voice_off:"🔇 Voz: Desactivada",
+      apt_label:"Apartamento",
+      voice_on:"🔊 Voz: Activada",
+      voice_off:"🔇 Voz: Desactivada",
       quick:[
         "wifi","check in","check out","agua","aire acondicionado","baño","cocina","comer","beber","compras","visitar","joyas ocultas","experiencias","excursiones",
         "entradas y eventos","museos y sitios","exposiciones",
@@ -387,40 +451,71 @@ const DATA = {
       fb_dislike:"👎 No me gusta",
       fb_thanks:"¡Gracias por tu opinión!"
     },
-    apt: DATA.it.apt,
+    apt:{
+      checkin_time:'15:00', checkout_time:'11:00',
+      wifi_note:"Junto a la cama, a la derecha, hay un banco-baúl con el router encima. SSID y contraseña en la etiqueta.",
+      wifi_ssid:"Ver etiqueta del router",
+      wifi_password:"Ver etiqueta del router",
+      water_note:"El agua del grifo es potable. El agua caliente está siempre disponible.",
+      ac_note:"El aire acondicionado funciona con mando. Apágalo al salir.",
+      bathroom_amenities:"Papel higiénico, jabón de manos, alfombrilla, secador.",
+      towels_note:"Por huésped: 1 toalla grande + 1 mediana. Cama preparada a la llegada.",
+      kitchen_note:"Cocina completamente equipada.",
+      intercom_note:"En la puerta del edificio somos el tercer timbre empezando desde abajo.",
+      registration_note:"Envía por WhatsApp las fotos de dos documentos para el registro (obligatorio).",
+      host_phone:"+39 335 5245756",
+      supermarkets:"Carrefour Express – Via Arenula 41 • Conad City – Via di S. Maria del Pianto 4 • Punto Simply – Via dei Falegnami 4",
+      pharmacies:"Farmacia della Reginella • Farmacia Internazionale • Farmacia San Salvatore",
+      luggage:"Radical Storage – Largo di Torre Argentina (5 min a pie)",
+      laundry:"Lavandería autoservicio – Via Arenula 47",
+      hospital:"Hospital Fatebenefratelli – Isla Tiberina",
+      atms:"Unicredit (Largo Arenula 1) • BNL (Via Arenula 41) • Intesa (Via Arenula 27)",
+      transport:"Tranvía 8 (parada Arenula/Cairoli) → Trastevere o Piazza Venezia. Autobuses desde Largo Argentina. Taxi: +39 06 3570 o app FreeNow.",
+      airports:"Fiumicino: Tranvía 8 → Estación Trastevere → FL1 (~45 min). Ciampino: bus o taxi.",
+      emergency:"Emergencia UE 112 • Policía 113 • Ambulancia 118 • Bomberos 115 • Médico en inglés +39 06 488 2371 • Veterinario 24h +39 06 660 681",
+      eat:"Giggetto • Ba’Ghetto • Nonna Betta • Rimessa Roscioli • Il Giardino Romano • Sora Margherita • Yotvata.",
+      drink:"Beppe e i Suoi Formaggi • Il Goccetto • Bar del Fico • Caffè del Portico • Bibliothè.",
+      shop:"Via del Portico d’Ottavia (artesanía + panaderías kosher) • Forno Boccione • boutiques de Via Arenula • librería judía • Kosher Delight.",
+      visit:"Pórtico de Octavia • Teatro de Marcelo • Gran Sinagoga y Museo Judío (cerrado sábados y fiestas judías) • Piazza Mattei (Fuente de las Tortugas) • Isla Tiberina.",
+      hidden_gems:"Torre dei Grassi • Ponte Emilio “Ponte Rotto” • Via della Reginella.",
+      experiences:"Visitas guiadas por el Gueto • Degustaciones judeo-romanas • Paseo vespertino a Campo de’ Fiori y Piazza Navona • Photo walk • Ruta en bici alrededor de la Isla Tiberina.",
+      daytrips:"Ostia Antica (~40 min) • Tivoli (Villa d’Este y Villa Adriana) • Castelli Romani.",
+      checkout_note:"Antes de salir: apaga luces/AC, cierra ventanas, deja las llaves en la mesa y cierra la puerta suavemente."
+    },
     intents:[
       {k:'wifi',keys:['wifi','wi-fi','internet','contraseña','router'],t:a=>`Wi-Fi: ${a.wifi_note}<br><br>Red: ${a.wifi_ssid}. Contraseña: ${a.wifi_password}.`},
       {k:'check in',keys:['check in','llegada','self check-in','acceso','entrada','interfono','timbre'],t:a=>`Check-in desde las ${a.checkin_time}.<br><br>Interfono: ${a.intercom_note}<br><br>Registro: ${a.registration_note}<br><br>¿Necesitas ayuda? ${a.host_phone}.`},
       {k:'check out',keys:['check out','salida','marchar'],t:a=>a.checkout_note},
       {k:'agua',keys:['agua','caliente','potable','grifo','ducha'],t:a=>a.water_note},
       {k:'aire acondicionado',keys:['aire acondicionado','ac','clima'],t:a=>a.ac_note},
-      {k:'baño',keys:['baño','toallas','jabón','secador','amenities'],t:a=>`Baño: ${a.bathroom_amenities}<br><br>Toallas: ${a.towels_note}`},
+      {k:'baño',keys:['baño','toallas','jabón','secador'],t:a=>`Baño: ${a.bathroom_amenities}<br><br>Toallas: ${a.towels_note}`},
       {k:'cocina',keys:['cocina','cocinar','hornillos','estufa'],t:a=>a.kitchen_note},
-      {k:'servicios',keys:['farmacia','hospital','cajero','sim','lavandería','equipaje','supermercado','compras'],t:a=>`Supermercados: ${a.supermarkets}<br><br>Farmacias: ${a.pharmacies}<br><br>Hospital: ${a.hospital}<br><br>Cajeros: ${a.atms}<br><br>Lavandería: ${a.laundry}<br><br>Consigna: ${a.luggage}`},
+      {k:'servicios',keys:['farmacia','hospital','cajero','lavandería','equipaje','supermercado','compras'],t:a=>`Supermercados: ${a.supermarkets}<br><br>Farmacias: ${a.pharmacies}<br><br>Hospital: ${a.hospital}<br><br>Cajeros: ${a.atms}<br><br>Lavandería: ${a.laundry}<br><br>Consigna de equipaje: ${a.luggage}`},
       {k:'transporte',keys:['transporte','tranvía','bus','taxi','aeropuerto','tren','metro'],t:a=>`${a.transport}<br><br>Aeropuertos: ${a.airports}`},
       {k:'comer',keys:['comer','restaurante','cena','almuerzo'],t:a=>a.eat},
       {k:'beber',keys:['beber','bar','vino','cóctel','aperitivo'],t:a=>a.drink},
-      {k:'compras',keys:['compras','mercado','tiendas','panaderías','kosher'],t:a=>a.shop},
-      {k:'visitar',keys:['qué visitar','visitar','ver','museo','sinagoga','atracciones'],t:a=>a.visit},
-      {k:'joyas ocultas',keys:['oculto','secreto','joya','menos conocido'],t:a=>a.hidden_gems},
-      {k:'experiencias',keys:['experiencias','paseo','tour','itinerario','atardecer','foto'],t:a=>a.experiences},
+      {k:'compras',keys:['compras','tiendas','mercado','panaderías'],t:a=>a.shop},
+      {k:'visitar',keys:['visitar','qué ver','museo','sinagoga','atracciones'],t:a=>a.visit},
+      {k:'joyas ocultas',keys:['ocultas','secretas','joya','secreto'],t:a=>a.hidden_gems},
+      {k:'experiencias',keys:['experiencias','paseo','tour','itinerario','foto'],t:a=>a.experiences},
       {k:'excursiones',keys:['excursión','tivoli','ostia','castelli','día'],t:a=>a.daytrips},
 
-      {k:'entradas y eventos',keys:['entrada','entradas','evento','eventos','concierto','partido'],t:()=>(
+      /* 3 nuovi tasti in spagnolo */
+      {k:'entradas y eventos',keys:['entradas','entrada','ticket','eventos','concierto','partido'],t:()=>(
         `ENTRADAS Y EVENTOS — ROMA<br><br>`+
-        `• TicketOne (conciertos, teatro, deportes): <a href="https://www.ticketone.it/en/" target="_blank" rel="noopener noreferrer">https://www.ticketone.it/en/</a><br><br>`+
+        `• TicketOne (conciertos, teatro y deporte): <a href="https://www.ticketone.it/en/" target="_blank" rel="noopener noreferrer">https://www.ticketone.it/en/</a><br><br>`+
         `• AS Roma — entradas oficiales: <a href="https://www.asroma.com/en/tickets" target="_blank" rel="noopener noreferrer">https://www.asroma.com/en/tickets</a><br><br>`+
         `• SS Lazio — entradas oficiales: <a href="https://sslazio.it/en/tickets" target="_blank" rel="noopener noreferrer">https://sslazio.it/en/tickets</a>`
       )},
       {k:'museos y sitios',keys:['museo','museos','sitio','sitios','vaticano','coliseo'],t:()=>(
         `MUSEOS Y SITIOS — ROMA<br><br>`+
         `• Museos Vaticanos: <a href="https://www.museivaticani.va/content/museivaticani/en.html" target="_blank" rel="noopener noreferrer">https://www.museivaticani.va/content/museivaticani/en.html</a><br><br>`+
-        `• Coliseo, Foro Romano y Palatino: <a href="https://parcocolosseo.it/en/" target="_blank" rel="noopener noreferrer">https://parcocolosseo.it/en/</a><br><br>`+
-        `• Galería Borghese (reserva obligatoria): <a href="https://galleriaborghese.beniculturali.it/en/" target="_blank" rel="noopener noreferrer">https://galleriaborghese.beniculturali.it/en/</a>`
+        `• Coliseo, Foro y Palatino: <a href="https://parcocolosseo.it/en/" target="_blank" rel="noopener noreferrer">https://parcocolosseo.it/en/</a><br><br>`+
+        `• Galería Borghese: <a href="https://galleriaborghese.beniculturali.it/en/" target="_blank" rel="noopener noreferrer">https://galleriaborghese.beniculturali.it/en/</a>`
       )},
-      {k:'exposiciones',keys:['exposición','exposiciones','maxxi','quirinale','arte'],t:()=>(
+      {k:'exposiciones',keys:['exposiciones','exposición','arte','maxxi','quirinale'],t:()=>(
         `EXPOSICIONES — ROMA<br><br>`+
-        `• MAXXI – Museo nacional de las artes del siglo XXI: <a href="https://www.maxxi.art/en/" target="_blank" rel="noopener noreferrer">https://www.maxxi.art/en/</a><br><br>`+
+        `• MAXXI: <a href="https://www.maxxi.art/en/" target="_blank" rel="noopener noreferrer">https://www.maxxi.art/en/</a><br><br>`+
         `• Palazzo delle Esposizioni: <a href="https://www.palazzoesposizioni.it/" target="_blank" rel="noopener noreferrer">https://www.palazzoesposizioni.it/</a><br><br>`+
         `• Scuderie del Quirinale: <a href="https://www.scuderiequirinale.it/en" target="_blank" rel="noopener noreferrer">https://www.scuderiequirinale.it/en</a><br><br>`+
         `• Palazzo Bonaparte (Arthemisia): <a href="https://www.arthemisia.it/site/en/palazzo-bonaparte.html" target="_blank" rel="noopener noreferrer">https://www.arthemisia.it/site/en/palazzo-bonaparte.html</a>`
@@ -438,10 +533,11 @@ const sendBtn= document.getElementById('sendBtn');
 const url = new URL(location.href);
 let lang = (url.searchParams.get('lang') || localStorage.getItem('lang') || (navigator.language||'en').slice(0,2)).toLowerCase();
 if(!DATA[lang]) lang='en';
-url.searchParams.set('lang',lang); history.replaceState(null,'',url);
+url.searchParams.set('lang',lang);
+history.replaceState(null,'',url);
 localStorage.setItem('lang',lang);
 
-/* ============ TTS MULTILINGUA (voci preferite) ============ */
+/* ============ TTS MULTILINGUA ============ */
 let voiceOn=false, pick=null;
 const VOICE_PREFS = {
   en:['Samantha','Google US English','Google UK English Female','Microsoft Aria Online (Natural)'],
@@ -462,79 +558,112 @@ function selectVoice(){
   return byLang || all[0] || null;
 }
 function refreshVoice(){ pick = selectVoice(); }
-if('speechSynthesis' in window){ refreshVoice(); speechSynthesis.onvoiceschanged = refreshVoice; }
+if('speechSynthesis' in window){
+  refreshVoice();
+  speechSynthesis.onvoiceschanged = refreshVoice;
+}
 function warm(){
   if(!('speechSynthesis' in window)) return;
   try{
     speechSynthesis.cancel();
-    const dot = new SpeechSynthesisUtterance('.');
-    dot.volume=0.01; if(pick) dot.voice=pick; dot.lang = pick?.lang || lang;
+    const dot=new SpeechSynthesisUtterance('.');
+    dot.volume=0.01;
+    if(pick) dot.voice=pick;
+    dot.lang = pick?.lang || lang;
     speechSynthesis.speak(dot);
-  }catch{}
+  }catch(e){}
 }
 function speak(t){
   if(!voiceOn || !('speechSynthesis' in window)) return;
   try{
     speechSynthesis.cancel();
-    const u=new SpeechSynthesisUtterance(t);
-    if(pick) u.voice=pick; u.lang = pick?.lang || lang;
+    const u=new SpeechSynthesisUtterance(t.replace(/<[^>]+>/g,'')); // parla senza tag html
+    if(pick) u.voice=pick;
+    u.lang = pick?.lang || lang;
     speechSynthesis.speak(u);
-  }catch{}
+  }catch(e){}
 }
 
 document.getElementById('voiceBtn').addEventListener('click',e=>{
-  voiceOn=!voiceOn; e.currentTarget.setAttribute('aria-pressed',String(voiceOn));
-  applyUI(); if(voiceOn) warm();
-});
-document.querySelector('.lang').addEventListener('click',e=>{
-  const btn=e.target.closest('[data-lang]'); if(!btn) return;
-  lang = btn.getAttribute('data-lang');
-  localStorage.setItem('lang',lang);
-  const u=new URL(location.href); u.searchParams.set('lang',lang); history.replaceState(null,'',u);
-  refreshVoice(); applyUI(); chatEl.innerHTML=''; welcome();
+  voiceOn=!voiceOn;
+  e.currentTarget.setAttribute('aria-pressed',String(voiceOn));
+  applyUI();
   if(voiceOn) warm();
 });
+document.querySelector('.lang').addEventListener('click',e=>{
+  const btn=e.target.closest('[data-lang]');
+  if(!btn) return;
+  lang = btn.getAttribute('data-lang');
+  localStorage.setItem('lang',lang);
+  const u=new URL(location.href);
+  u.searchParams.set('lang',lang);
+  history.replaceState(null,'',u);
+  refreshVoice();
+  applyUI();
+  chatEl.innerHTML='';
+  welcome();
+  if(voiceOn) warm();
+});
+
 function applyUI(){
   const L = DATA[lang].ui;
   document.getElementById('aptLabel').textContent = L.apt_label;
   document.getElementById('voiceBtn').textContent = voiceOn ? L.voice_on : L.voice_off;
   input.placeholder = L.placeholder;
-  document.querySelectorAll('.lang [data-lang]').forEach(b=> b.setAttribute('aria-current', b.getAttribute('data-lang')===lang ? 'true':'false'));
+  document.querySelectorAll('.lang [data-lang]').forEach(b=>{
+    b.setAttribute('aria-current', b.getAttribute('data-lang')===lang ? 'true' : 'false');
+  });
 }
 
-/* ============ CHAT LOGIC + FEEDBACK ============ */
-/* trasforma ogni https://... in <a> */
-function linkify(str){
-  const urlRegex = /(https?:\/\/[^\s<]+)/g;
-  return str.replace(urlRegex, url => `<a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>`);
+/* ============ FUNZIONI CHAT ============ */
+
+/* rendo cliccabili eventuali URL grezzi */
+function linkify(html){
+  if(!html) return '';
+  return html.replace(/(https?:\/\/[^\s<]+)/g, '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>');
 }
 
 function add(type, txt){
   const d=document.createElement('div');
   d.className='msg '+(type==='me'?'me':'wd');
-  d.innerHTML = linkify(txt);
+  if(type==='me'){
+    d.textContent = txt;
+  }else{
+    d.innerHTML = linkify(txt);
+  }
   chatEl.appendChild(d);
-  chatEl.scrollTop=chatEl.scrollHeight;
+  chatEl.scrollTop = chatEl.scrollHeight;
   return d;
 }
 
 function detectIntent(text){
-  const L = DATA[lang]; const t = (text||'').toLowerCase();
+  const L = DATA[lang];
+  const t = (text||'').toLowerCase();
   let best=null,score=0;
   for(const it of L.intents){
-    let s=0; for(const k of it.keys){ if(t.includes(k.toLowerCase())) s++; }
+    let s=0;
+    for(const k of it.keys){
+      if(t.includes(k.toLowerCase())) s++;
+    }
     if(s>score){ score=s; best=it; }
   }
   return best;
 }
+
 function getAnswer(text){
-  const L = DATA[lang]; const apt=L.apt;
+  const L = DATA[lang];
+  const apt = L.apt;
   const m = detectIntent(text);
-  if(!m) return { text: L.ui.fallback, topic: 'fallback' };
-  try{ return { text: m.t(apt), topic: m.k }; }catch{ return { text: L.ui.fallback, topic: 'fallback' }; }
+  if(!m) return { text: L.ui.fallback, topic:'fallback' };
+  try{
+    const out = m.t(apt);
+    return { text: out, topic: m.k };
+  }catch(e){
+    return { text: L.ui.fallback, topic:'fallback' };
+  }
 }
 
-/* --- invio feedback al Google Sheet --- */
+/* --- feedback verso Google Apps Script --- */
 function postFeedback(vote, topic, answerText){
   try{
     fetch(GOOGLE_SCRIPT_URL, {
@@ -549,64 +678,81 @@ function postFeedback(vote, topic, answerText){
         vote: vote
       })
     });
-  }catch{}
+  }catch(e){}
 }
+
 function attachFeedbackUI(container, topic, answerText){
   const L = DATA[lang].ui;
   const box = document.createElement('div');
-  box.className = 'fb-box';
+  box.className='fb-box';
   const label = document.createElement('span');
-  label.className = 'fb-label';
-  label.textContent = L.fb_label;
+  label.className='fb-label';
+  label.textContent = L.fb_label || 'Was this helpful?';
   const likeBtn = document.createElement('button');
-  likeBtn.type='button'; likeBtn.textContent= L.fb_like;
+  likeBtn.type='button';
+  likeBtn.textContent = L.fb_like || '👍 Like';
   const dislikeBtn = document.createElement('button');
-  dislikeBtn.type='button'; dislikeBtn.textContent= L.fb_dislike;
+  dislikeBtn.type='button';
+  dislikeBtn.textContent = L.fb_dislike || '👎 Dislike';
   const done = document.createElement('span');
-  done.className='fb-done'; done.textContent= L.fb_thanks;
+  done.className='fb-done';
+  done.textContent = L.fb_thanks || 'Thanks!';
   done.style.display='none';
+
   function finish(v){
-    likeBtn.disabled = true; dislikeBtn.disabled = true;
-    likeBtn.style.opacity = 0.6; dislikeBtn.style.opacity = 0.6;
-    done.style.display = 'inline';
+    likeBtn.disabled = true;
+    dislikeBtn.disabled = true;
+    likeBtn.style.opacity = 0.6;
+    dislikeBtn.style.opacity = 0.6;
+    done.style.display='inline';
     postFeedback(v, topic, answerText);
   }
-  likeBtn.addEventListener('click', ()=>finish('like'));
-  dislikeBtn.addEventListener('click', ()=>finish('dislike'));
-  box.appendChild(label); box.appendChild(likeBtn); box.appendChild(dislikeBtn); box.appendChild(done);
+
+  likeBtn.addEventListener('click',()=>finish('like'));
+  dislikeBtn.addEventListener('click',()=>finish('dislike'));
+
+  box.appendChild(label);
+  box.appendChild(likeBtn);
+  box.appendChild(dislikeBtn);
+  box.appendChild(done);
   container.appendChild(box);
 }
 
 function welcome(){
-  const L=DATA[lang].ui;
-  const intro=document.createElement('div'); intro.className='intro';
+  const L = DATA[lang].ui;
+  const intro = document.createElement('div');
+  intro.className='intro';
   intro.innerHTML = `<b>${L.welcome}</b>`;
   chatEl.appendChild(intro);
-  const q=document.createElement('div'); q.className='quick';
+
+  const q = document.createElement('div');
+  q.className='quick';
   for(const key of L.quick){
-    const b=document.createElement('button'); b.textContent=key;
-    b.onclick=()=>{ input.value=key; send(); };
+    const b=document.createElement('button');
+    b.textContent = key;
+    b.onclick = ()=>{ input.value = key; send(); };
     q.appendChild(b);
   }
   chatEl.appendChild(q);
 }
 
-/* --- SEND --- */
 function send(){
-  const text=(input.value||'').trim(); 
+  const text = (input.value||'').trim();
   if(!text) return;
-  add('me',text); 
+  add('me', text);
   input.value='';
-  const {text:bot, topic} = getAnswer(text);
-  const botNode = add('wd',bot); 
+  const { text:bot, topic } = getAnswer(text);
+  const botNode = add('wd', bot);
   speak(bot);
   attachFeedbackUI(botNode, topic, bot);
 }
 
-sendBtn.addEventListener('click',send);
-input.addEventListener('keydown',e=>{ if(e.key==='Enter') send(); });
+sendBtn.addEventListener('click', send);
+input.addEventListener('keydown', e=>{
+  if(e.key==='Enter') send();
+});
 
-applyUI(); 
+applyUI();
 welcome();
 </script>
 </body>
