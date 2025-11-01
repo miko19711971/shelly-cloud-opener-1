@@ -682,6 +682,10 @@ function applyUI(){
 /* ============ CHAT LOGIC + FEEDBACK ============ */
 function linkify(html){
   if(!html) return "";
+  // se il testo contiene già un link HTML, non tocchiamo niente
+  if (html.includes("<a ") || html.includes("<A ")) {
+    return html;
+  }
   return html.replace(/(https?:\/\/[^\s<]+)/g, '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>');
 }
 
