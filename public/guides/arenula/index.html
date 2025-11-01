@@ -22,10 +22,9 @@ img.logo{height:36px;width:auto;display:block}
 #voiceBtn{padding:8px 10px;border:1px solid #ddd;background:#fff;border-radius:10px;cursor:pointer;font-size:14px}
 #voiceBtn[aria-pressed="true"]{background:#2b2118;color:#fff;border-color:#2b2118}
 main{flex:1;padding:12px}
-.msg{max-width:85%;line-height:1.35;border-radius:12px;padding:10px 12px;margin:8px 0;white-space:normal;word-break:break-word}
+.msg{max-width:85%;line-height:1.35;border-radius:12px;padding:10px 12px;margin:8px 0;white-space:pre-wrap}
 .msg.wd{background:#fff;border:1px solid #e0e0e0}
 .msg.me{background:#e8f0fe;border:1px solid #c5d5ff;margin-left:auto}
-.msg a{color:#a33;text-decoration:underline}
 .quick{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
 .quick button{border:1px solid #d6c5b8;background:#fff;color:#333;padding:6px 10px;border-radius:12px;cursor:pointer}
 .quick button:active{transform:translateY(1px)}
@@ -35,6 +34,7 @@ input{flex:1;padding:12px;border:1px solid #cbd5e1;border-radius:10px;outline:no
 .intro{background:#fff;border:1px solid #e0e0e0;padding:12px;border-radius:12px;margin:12px 0}
 .intro b{display:block;margin-bottom:6px}
 .small{opacity:.7;font-size:12px;margin-top:6px}
+/* --- Feedback UI --- */
 .fb-box{margin-top:8px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .fb-box .fb-label{font-size:12px;opacity:.7;margin-right:4px}
 .fb-box button{border:1px solid #ddd;background:#fff;padding:6px 10px;border-radius:999px;cursor:pointer}
@@ -71,18 +71,13 @@ input{flex:1;padding:12px;border:1px solid #cbd5e1;border-radius:10px;outline:no
     <button id="sendBtn">Send</button>
   </footer>
 </div>
+
 <script>
 /* === CONFIG === */
 const APARTMENT_ID = "ARENULA16";
+/* Usa lo stesso deployment Google Script già in uso per le altre guide */
 const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxt0ToaaC9TOrQMJjcWXpyL1a_FCugoVIgZpB5MFY_IsJTJGHOtloEq1sjKs_F-c7Sd/exec";
 
-/* lista tasti UNICA (in inglese) per tutte le lingue */
-const COMMON_QUICK = [
-  "wifi","check in","check out","water","AC","bathroom","gas","building",
-  "eat","drink","shop","visit","experience","day trips",
-  "tickets & events","museums & sites","exhibitions",
-  "transport","services","emergency"
-];
 /* ============ CONTENUTI LOCALIZZATI (ARENULA 16) ============ */
 const DATA = {
 
@@ -93,7 +88,7 @@ const DATA = {
       apt_label: "Apartment",
       voice_on: "🔊 Voice: On",
       voice_off: "🔇 Voice: Off",
-      quick: COMMON_QUICK,
+      quick: ["wifi","check in","check out","water","AC","bathroom","gas","building","eat","drink","shop","visit","experience","day trips","transport","services","emergency"],
       fallback: "I did not find a direct answer. Try a quick button (wifi, gas, transport, visit…).",
       fb_label:"Was this helpful?",
       fb_like:"👍 Like",
@@ -130,42 +125,22 @@ const DATA = {
       host_phone:'+39 335 5245756'
     },
     intents: [
-      {k:'wifi',keys:['wifi','wi-fi','internet','password','router'],t:a=>`Wi-Fi: ${a.wifi_note}<br><br>Network: ${a.wifi_ssid}. Password: ${a.wifi_password}.`},
-      {k:'check in',keys:['check in','arrival','access','intercom','code'],t:a=>`Check-in from ${a.checkin_time}.<br><br>Intercom code: ${a.intercom_code}.<br>Main door hours: ${a.main_door_hours}.<br>Concierge: ${a.concierge}.<br><br>Need help? Call ${a.host_phone}.`},
+      {k:'wifi',keys:['wifi','wi-fi','internet','password','router'],t:a=>`Wi-Fi: ${a.wifi_note}\nNetwork: ${a.wifi_ssid}. Password: ${a.wifi_password}.`},
+      {k:'check in',keys:['check in','arrival','access','intercom','code'],t:a=>`Check-in from ${a.checkin_time}.\nIntercom code: ${a.intercom_code}.\nMain door hours: ${a.main_door_hours}.\nConcierge: ${a.concierge}.\nNeed help? Call ${a.host_phone}.`},
       {k:'check out',keys:['check out','leave','departure'],t:a=>a.checkout_note},
       {k:'water',keys:['water','hot water','drinkable','tap'],t:a=>a.water_note},
       {k:'AC',keys:['ac','air conditioning','aircon','air'],t:a=>a.ac_note},
-      {k:'bathroom',keys:['bathroom','hairdryer','soap','towels'],t:a=>`Bathroom: ${a.bathroom_amenities}<br><br>Towels: ${a.towels_note}`},
+      {k:'bathroom',keys:['bathroom','hairdryer','soap','towels'],t:a=>`Bathroom: ${a.bathroom_amenities}\nTowels: ${a.towels_note}`},
       {k:'gas',keys:['gas','kitchen','cook','flame','burner'],t:a=>`Gas use: ${a.gas_steps}`},
-      {k:'building',keys:['building','elevator','door','hours','concierge'],t:a=>`Intercom: ${a.intercom_code}.<br>Elevator: ${a.elevator_note}.<br>Main door: ${a.main_door_hours}.<br>Concierge: ${a.concierge}.`},
-      {k:'services',keys:['pharmacy','hospital','atm','sim','laundry','luggage'],t:a=>`Pharmacy: ${a.pharmacy}<br>Hospital: ${a.hospital}<br>ATMs: ${a.atms}<br>SIMs: ${a.sims}<br>Laundry: ${a.laundry}<br>Luggage: ${a.luggage}`},
-      {k:'transport',keys:['transport','tram','bus','taxi','airport','train'],t:a=>`${a.transport}<br><br>Airports: ${a.airports}`},
+      {k:'building',keys:['building','elevator','door','hours','concierge'],t:a=>`Intercom: ${a.intercom_code}.\nElevator: ${a.elevator_note}.\nMain door: ${a.main_door_hours}.\nConcierge: ${a.concierge}.`},
+      {k:'services',keys:['pharmacy','hospital','atm','sim','laundry','luggage'],t:a=>`Pharmacy: ${a.pharmacy}\nHospital: ${a.hospital}\nATMs: ${a.atms}\nSIMs: ${a.sims}\nLaundry: ${a.laundry}\nLuggage: ${a.luggage}`},
+      {k:'transport',keys:['transport','tram','bus','taxi','airport','train'],t:a=>`${a.transport}\nAirports: ${a.airports}`},
       {k:'eat',keys:['eat','restaurant','dinner','lunch','food'],t:a=>a.eat},
       {k:'drink',keys:['drink','bar','wine','cocktail','aperitivo'],t:a=>a.drink},
       {k:'shop',keys:['shop','market','shopping'],t:a=>a.shop},
       {k:'visit',keys:['visit','visiting','what to visit','see','sight','attraction','museum','museums'],t:a=>a.visit},
       {k:'experience',keys:['experience','walk','tour','itinerary','sunset'],t:a=>a.experiences},
       {k:'day trips',keys:['day trips','day trip','tivoli','ostia','castelli','excursion','excursions'],t:a=>a.daytrips},
-      /* --- 3 NUOVI TASTI EN CON LINK SINGOLO --- */
-      {k:"tickets & events",keys:["ticket","tickets","event","events","concert","match","football","roma","lazio"],t:()=>
-        `TICKETS & EVENTS — ROME<br><br>
-        • TicketOne (concerts, theatre, sport): <a href="https://www.ticketone.it/en/" target="_blank" rel="noopener noreferrer">https://www.ticketone.it/en/</a><br><br>
-        • AS Roma — official tickets: <a href="https://www.asroma.com/en/tickets" target="_blank" rel="noopener noreferrer">https://www.asroma.com/en/tickets</a><br><br>
-        • SS Lazio — official tickets: <a href="https://sslazio.it/en/tickets" target="_blank" rel="noopener noreferrer">https://sslazio.it/en/tickets</a>`
-      },
-      {k:"museums & sites",keys:["museum","museums","site","sites","colosseum","vatican","borghese"],t:()=>
-        `MUSEUMS & SITES — ROME<br><br>
-        • Vatican Museums: <a href="https://www.museivaticani.va/content/museivaticani/en.html" target="_blank" rel="noopener noreferrer">https://www.museivaticani.va/content/museivaticani/en.html</a><br><br>
-        • Colosseum / Forum / Palatine: <a href="https://parcocolosseo.it/en/" target="_blank" rel="noopener noreferrer">https://parcocolosseo.it/en/</a><br><br>
-        • Borghese Gallery: <a href="https://galleriaborghese.beniculturali.it/en/" target="_blank" rel="noopener noreferrer">https://galleriaborghese.beniculturali.it/en/</a>`
-      },
-      {k:"exhibitions",keys:["exhibition","exhibitions","maxxi","quirinale","gallery","show"],t:()=>
-        `EXHIBITIONS — ROME<br><br>
-        • MAXXI: <a href="https://www.maxxi.art/en/" target="_blank" rel="noopener noreferrer">https://www.maxxi.art/en/</a><br><br>
-        • Palazzo delle Esposizioni: <a href="https://www.palazzoesposizioni.it/" target="_blank" rel="noopener noreferrer">https://www.palazzoesposizioni.it/</a><br><br>
-        • Scuderie del Quirinale: <a href="https://www.scuderiequirinale.it/en" target="_blank" rel="noopener noreferrer">https://www.scuderiequirinale.it/en</a><br><br>
-        • Palazzo Bonaparte (Arthemisia): <a href="https://www.arthemisia.it/site/en/palazzo-bonaparte.html" target="_blank" rel="noopener noreferrer">https://www.arthemisia.it/site/en/palazzo-bonaparte.html</a>`
-      },
       {k:'emergency',keys:['emergency','police','ambulance','fire','doctor','vet'],t:a=>a.emergency}
     ]
   },
@@ -174,17 +149,15 @@ const DATA = {
     ui:{
       welcome:"Ciao, sono Samantha, la tua guida virtuale. Tocca un pulsante per una risposta rapida.",
       placeholder:"Ciao, sono Samantha, la tua guida virtuale. Tocca un pulsante — oppure scrivi qui…",
-      apt_label:"Appartamento",
-      voice_on:"🔊 Voice: On",
-      voice_off:"🔇 Voice: Off",
-      quick: COMMON_QUICK,
-      fallback:"Non ho trovato una risposta diretta. Prova un pulsante (wifi, gas, transport, visit…).",
+      apt_label:"Appartamento", voice_on:"🔊 Voce: On", voice_off:"🔇 Voce: Off",
+      quick:["wifi","check in","check out","acqua","aria condizionata","bagno","gas","edificio","mangiare","bere","shopping","visitare","esperienze","gite di un giorno","trasporti","servizi","emergenza"],
+      fallback:"Non ho trovato una risposta diretta. Prova un pulsante (wifi, gas, trasporti, visitare…).",
       fb_label:"Ti è stato utile?",
       fb_like:"👍 Mi piace",
       fb_dislike:"👎 Non mi piace",
       fb_thanks:"Grazie per il tuo feedback!"
     },
-    apt:{ /* identico a prima */
+    apt:{
       checkin_time:'15:00', checkout_time:'11:00',
       wifi_note:"Router sulla scrivania vicino alla finestra. Giralo per leggere SSID e password.",
       wifi_ssid:"Vedi etichetta del router", wifi_password:"Vedi etichetta del router",
@@ -213,17 +186,17 @@ const DATA = {
       checkout_note:"Prima di partire: spegni luci/AC, chiudi le finestre, lascia le chiavi sul tavolo, chiudi delicatamente la porta.",
       host_phone:"+39 335 5245756"
     },
-    intents:[ /* qui NON aggiungo i 3 tasti in italiano, perché li vuoi in inglese: li lasciamo fuori e usi quelli EN */
-      {k:'wifi',keys:['wifi','wi-fi','internet','password','router'],t:a=>`Wi-Fi: ${a.wifi_note}<br><br>Rete: ${a.wifi_ssid}. Password: ${a.wifi_password}.`},
-      {k:'check in',keys:['check in','arrivo','accesso','citofono','codice'],t:a=>`Check-in dalle ${a.checkin_time}.<br><br>Codice citofono: ${a.intercom_code}.<br>Portone: ${a.main_door_hours}.<br>Portineria: ${a.concierge}.<br><br>Aiuto? Chiama ${a.host_phone}.`},
+    intents:[
+      {k:'wifi',keys:['wifi','wi-fi','internet','password','router'],t:a=>`Wi-Fi: ${a.wifi_note}\nRete: ${a.wifi_ssid}. Password: ${a.wifi_password}.`},
+      {k:'check in',keys:['check in','arrivo','accesso','citofono','codice'],t:a=>`Check-in dalle ${a.checkin_time}.\nCodice citofono: ${a.intercom_code}.\nPortone: ${a.main_door_hours}.\nPortineria: ${a.concierge}.\nAiuto? Chiama ${a.host_phone}.`},
       {k:'check out',keys:['check out','partenza','lasciare'],t:a=>a.checkout_note},
       {k:'acqua',keys:['acqua','acqua calda','potabile','rubinetto'],t:a=>a.water_note},
       {k:'aria condizionata',keys:['aria condizionata','clima','condizionatore','ac'],t:a=>a.ac_note},
-      {k:'bagno',keys:['bagno','asciugacapelli','sapone','asciugamani'],t:a=>`Bagno: ${a.bathroom_amenities}<br><br>Asciugamani: ${a.towels_note}`},
+      {k:'bagno',keys:['bagno','asciugacapelli','sapone','asciugamani'],t:a=>`Bagno: ${a.bathroom_amenities}\nAsciugamani: ${a.towels_note}`},
       {k:'gas',keys:['gas','cucina','fornello','fiamma','bruciatore'],t:a=>`Uso gas: ${a.gas_steps}`},
-      {k:'edificio',keys:['edificio','ascensore','portone','orari','portineria'],t:a=>`Citofono: ${a.intercom_code}.<br>Ascensore: ${a.elevator_note}.<br>Portone: ${a.main_door_hours}.<br>Portineria: ${a.concierge}.`},
-      {k:'servizi',keys:['farmacia','ospedale','bancomat','sim','lavanderia','bagagli'],t:a=>`Farmacia: ${a.pharmacy}<br>Ospedale: ${a.hospital}<br>Bancomat: ${a.atms}<br>SIM: ${a.sims}<br>Lavanderia: ${a.laundry}<br>Deposito bagagli: ${a.luggage}`},
-      {k:'trasporti',keys:['trasporti','tram','bus','taxi','aeroporto','treno'],t:a=>`${a.transport}<br><br>Aeroporti: ${a.airports}`},
+      {k:'edificio',keys:['edificio','ascensore','portone','orari','portineria'],t:a=>`Citofono: ${a.intercom_code}.\nAscensore: ${a.elevator_note}.\nPortone: ${a.main_door_hours}.\nPortineria: ${a.concierge}.`},
+      {k:'servizi',keys:['farmacia','ospedale','bancomat','sim','lavanderia','bagagli'],t:a=>`Farmacia: ${a.pharmacy}\nOspedale: ${a.hospital}\nBancomat: ${a.atms}\nSIM: ${a.sims}\nLavanderia: ${a.laundry}\nDeposito bagagli: ${a.luggage}`},
+      {k:'trasporti',keys:['trasporti','tram','bus','taxi','aeroporto','treno'],t:a=>`${a.transport}\nAeroporti: ${a.airports}`},
       {k:'mangiare',keys:['mangiare','ristorante','cena','pranzo','cibo'],t:a=>a.eat},
       {k:'bere',keys:['bere','bar','vino','cocktail','aperitivo'],t:a=>a.drink},
       {k:'shopping',keys:['shopping','mercato','negozi'],t:a=>a.shop},
@@ -233,61 +206,195 @@ const DATA = {
       {k:'emergenza',keys:['emergenza','polizia','ambulanza','vigili','medico','veterinario'],t:a=>a.emergency}
     ]
   },
-    fr: {
+
+  fr: {
     ui:{
       welcome:"Bonjour, je suis Samantha, votre guide virtuel. Touchez un bouton pour une réponse rapide.",
       placeholder:"Bonjour, je suis Samantha, votre guide virtuel. Touchez un bouton — ou écrivez ici…",
-      apt_label:"Appartement",
-      voice_on:"🔊 Voice: On",
-      voice_off:"🔇 Voice: Off",
-      quick: COMMON_QUICK,
-      fallback:"Je n’ai pas trouvé de réponse directe. Essayez un bouton.",
+      apt_label:"Appartement", voice_on:"🔊 Voix : Activée", voice_off:"🔇 Voix : Désactivée",
+      quick:["wifi","check in","check out","eau","climatisation","salle de bain","gaz","immeuble","manger","boire","shopping","visiter","expériences","excursions","transports","services","urgence"],
+      fallback:"Je n’ai pas trouvé de réponse directe. Essayez un bouton (wifi, gaz, transports, visiter…).",
       fb_label:"Cette réponse vous a-t-elle aidé·e ?",
       fb_like:"👍 J’aime",
       fb_dislike:"👎 Je n’aime pas",
       fb_thanks:"Merci pour votre retour !"
     },
-    apt: DATA.en.apt, /* usiamo gli stessi testi pratici in inglese */
-    intents: DATA.en.intents
+    apt:{
+      checkin_time:'15:00', checkout_time:'11:00',
+      wifi_note:"Routeur sur le bureau près de la fenêtre. Tournez-le pour lire le SSID et le mot de passe.",
+      wifi_ssid:"Voir l’étiquette du routeur", wifi_password:"Voir l’étiquette du routeur",
+      water_note:"L’eau du robinet est potable. L’eau chaude est toujours disponible.",
+      ac_note:"Merci d’éteindre la climatisation en sortant.",
+      bathroom_amenities:"Papier toilette, savon mains, tapis de bain, sèche-cheveux.",
+      towels_note:"Par personne : 1 grande + 1 moyenne. Lit prêt à l’arrivée.",
+      gas_steps:"Vanne de gaz : horizontale=ouvert, verticale=fermé. Choisir le brûleur, allumer une allumette/briquet, tourner et appuyer sur le bouton noir jusqu’à flamme stable, puis relâcher.",
+      intercom_code:"C8", elevator_note:"Ascenseur réservé aux propriétaires — merci de ne pas l’utiliser.",
+      main_door_hours:"08:00–13:00 et 15:30–18:00", concierge:"Paolo",
+      pharmacy:"Farmacia Arenula, Via Arenula 19–21 — +39 06 686 8815",
+      hospital:"Hôpital Fatebenefratelli, Île Tibérine 1",
+      atms:"Unicredit (Largo Arenula 1), BNL (Via Arenula 41), Intesa (Via Arenula 27)",
+      sims:"Vodafone (Corso Vittorio Emanuele II, 209), TIM (Piazza Venezia, 2), Iliad (Via del Corso, 282)",
+      laundry:"Laverie en libre-service : Via Arenula 47",
+      luggage:"Radical Storage — Largo di Torre Argentina (5 min)",
+      transport:"Tram 8 (Arenula/Cairoli) → Trastevere ou Piazza Venezia. Bus 40/64 → Termini & Vatican. Taxi : +39 06 3570 ou FreeNow.",
+      airports:"Fiumicino : Tram 8 → Trastevere → FL1 (~45 min). Ciampino : bus Terravision ou taxi.",
+      emergency:"Urgences UE 112 • Police 113 • Ambulance 118 • Pompiers 115 • Médecin anglophone +39 06 488 2371 • Vétérinaire 24h +39 06 660 681",
+      eat:"Roscioli; Emma Pizzeria; Ditirambo; Osteria da Fortunata; Pianostrada; Forno Campo de’ Fiori; Gelateria del Teatro.",
+      drink:"Caffè Camerino; Irish Pub (Largo Argentina); Modius Radisson Rooftop.",
+      shop:"Épiceries/boulangeries/glaces Via Arenula; marché aux poissons Piazza Costaguti; Forno Boccione; Mercato Monti (week-ends).",
+      visit:"Largo di Torre Argentina (temples & refuge pour chats); Portique d’Octavie; Île Tibérine; Piazza Farnese; églises cachées (Chiesa Nuova, S. Maria in Campitelli, S. Barbara dei Librari).",
+      experiences:"Balade du soir : Largo Argentina → Ghetto → Île Tibérine → Théâtre de Marcellus; apéritif chez Camerino ou Modius; pâtisseries au Forno Boccione; coucher de soleil sur le Lungotevere.",
+      daytrips:"Ostia Antica (~40 min) ; Tivoli (Villa d’Este & d’Hadrien ~1h) ; Castelli Romani.",
+      checkout_note:"Avant de partir : éteignez lumières/clim, fermez les fenêtres, laissez les clés sur la table, fermez doucement la porte.",
+      host_phone:"+39 335 5245756"
+    },
+    intents:[
+      {k:'wifi',keys:['wifi','wi-fi','internet','mot de passe','routeur'],t:a=>`Wi-Fi : ${a.wifi_note}\nRéseau : ${a.wifi_ssid}. Mot de passe : ${a.wifi_password}.`},
+      {k:'check in',keys:['check in','arrivée','accès','interphone','code'],t:a=>`Arrivée à partir de ${a.checkin_time}.\nCode interphone : ${a.intercom_code}.\nPorte : ${a.main_door_hours}.\nConcierge : ${a.concierge}.\nBesoin d’aide ? ${a.host_phone}.`},
+      {k:'check out',keys:['check out','départ','quitter'],t:a=>a.checkout_note},
+      {k:'eau',keys:['eau','chaude','potable','robinet'],t:a=>a.water_note},
+      {k:'climatisation',keys:['climatisation','clim','ac'],t:a=>a.ac_note},
+      {k:'salle de bain',keys:['salle de bain','serviettes','savon','sèche-cheveux'],t:a=>`Salle de bain : ${a.bathroom_amenities}\nServiettes : ${a.towels_note}`},
+      {k:'gaz',keys:['gaz','cuisine','brûleur','flamme'],t:a=>`Gaz : ${a.gas_steps}`},
+      {k:'immeuble',keys:['immeuble','ascenseur','porte','horaires','concierge'],t:a=>`Interphone : ${a.intercom_code}.\nAscenseur : ${a.elevator_note}.\nPorte : ${a.main_door_hours}.\nConcierge : ${a.concierge}.`},
+      {k:'services',keys:['pharmacie','hôpital','dab','sim','laverie','consigne'],t:a=>`Pharmacie : ${a.pharmacy}\nHôpital : ${a.hospital}\nDAB : ${a.atms}\nCartes SIM : ${a.sims}\nLaverie : ${a.laundry}\nConsigne : ${a.luggage}`},
+      {k:'transports',keys:['transports','tram','bus','taxi','aéroport','train'],t:a=>`${a.transport}\nAéroports : ${a.airports}`},
+      {k:'manger',keys:['manger','restaurant','dîner','déjeuner'],t:a=>a.eat},
+      {k:'boire',keys:['boire','bar','vin','cocktail','apéritif'],t:a=>a.drink},
+      {k:'shopping',keys:['shopping','marché','boutiques'],t:a=>a.shop},
+      {k:'visiter',keys:['visiter','musée','attractions','voir'],t:a=>a.visit},
+      {k:'expériences',keys:['expériences','balade','itinéraire','coucher de soleil'],t:a=>a.experiences},
+      {k:'excursions',keys:['excursions','ostia','tivoli','castelli','journée'],t:a=>a.daytrips},
+      {k:'urgence',keys:['urgence','police','ambulance','pompiers','médecin','vétérinaire'],t:a=>a.emergency}
+    ]
   },
 
   de: {
     ui:{
       welcome:"Hallo, ich bin Samantha, dein virtueller Guide. Tippe auf einen Button für eine schnelle Antwort.",
       placeholder:"Hallo, ich bin Samantha, dein virtueller Guide. Tippe auf einen Button — oder schreibe hier…",
-      apt_label:"Apartment",
-      voice_on:"🔊 Voice: On",
-      voice_off:"🔇 Voice: Off",
-      quick: COMMON_QUICK,
-      fallback:"Keine direkte Antwort gefunden. Bitte wähle einen Button.",
+      apt_label:"Apartment", voice_on:"🔊 Stimme: An", voice_off:"🔇 Stimme: Aus",
+      quick:["WLAN","check in","check out","Wasser","Klimaanlage","Bad","Gas","Gebäude","Essen","Trinken","Shopping","Sehenswürdigkeiten","Erlebnisse","Tagesausflüge","Verkehr","Services","Notfall"],
+      fallback:"Keine direkte Antwort gefunden. Nutze einen Button (WLAN, Gas, Verkehr, Sehenswürdigkeiten…).",
       fb_label:"War diese Antwort hilfreich?",
       fb_like:"👍 Like",
       fb_dislike:"👎 Dislike",
-      fb_thanks:"Danke!"
+      fb_thanks:"Danke für dein Feedback!"
     },
-    apt: DATA.en.apt,
-    intents: DATA.en.intents
+    apt:{
+      checkin_time:'15:00', checkout_time:'11:00',
+      wifi_note:"Router auf dem Schreibtisch am Fenster. Umdrehen, um SSID & Passwort zu sehen.",
+      wifi_ssid:"Siehe Router-Etikett", wifi_password:"Siehe Router-Etikett",
+      water_note:"Leitungswasser ist trinkbar. Warmwasser ist immer verfügbar.",
+      ac_note:"Bitte Klimaanlage ausschalten, wenn Sie ausgehen.",
+      bathroom_amenities:"Toilettenpapier, Handseife, Badematte, Föhn.",
+      towels_note:"Pro Gast: 1 großes + 1 mittleres Handtuch. Bett bei Ankunft gemacht.",
+      gas_steps:"Gashahn: waagrecht=offen, senkrecht=zu. Brenner wählen. Streichholz/Feuerzeug anzünden. Schwarzen Knopf drehen & drücken bis Flamme stabil, dann loslassen.",
+      intercom_code:"C8", elevator_note:"Aufzug nur für Eigentümer — bitte nicht benutzen.",
+      main_door_hours:"08:00–13:00 und 15:30–18:00", concierge:"Paolo",
+      pharmacy:"Farmacia Arenula, Via Arenula 19–21 — +39 06 686 8815",
+      hospital:"Krankenhaus Fatebenefratelli, Tiberinsel 1",
+      atms:"Unicredit (Largo Arenula 1), BNL (Via Arenula 41), Intesa (Via Arenula 27)",
+      sims:"Vodafone (Corso Vittorio Emanuele II, 209), TIM (Piazza Venezia, 2), Iliad (Via del Corso, 282)",
+      laundry:"Waschsalon: Via Arenula 47",
+      luggage:"Radical Storage — Largo di Torre Argentina (5 Min)",
+      transport:"Tram 8 (Arenula/Cairoli) → Trastevere/Piazza Venezia. Bus 40/64 → Termini & Vatikan. Taxi: +39 06 3570 oder FreeNow.",
+      airports:"Fiumicino: Tram 8 → Trastevere → FL1 (~45 Min). Ciampino: Terravision-Bus oder Taxi.",
+      emergency:"EU-Notruf 112 • Polizei 113 • Rettung 118 • Feuerwehr 115 • Arzt (EN) +39 06 488 2371 • Tierarzt 24h +39 06 660 681",
+      eat:"Roscioli; Emma Pizzeria; Ditirambo; Osteria da Fortunata; Pianostrada; Forno Campo de’ Fiori; Gelateria del Teatro.",
+      drink:"Caffè Camerino; Irish Pub (Largo Argentina); Modius Radisson Rooftop.",
+      shop:"Feinkost/Bäckereien/Eis Via Arenula; Fischmarkt Piazza Costaguti; Forno Boccione; Mercato Monti (Wochenende).",
+      visit:"Largo di Torre Argentina (Tempel & Katzenkolonie); Portico d’Ottavia; Tiberinsel; Piazza Farnese; versteckte Kirchen (Chiesa Nuova, S. Maria in Campitelli, S. Barbara dei Librari).",
+      experiences:"Abendrunde: Largo Argentina → Ghetto → Tiberinsel → Theater des Marcellus; Aperitivo bei Camerino oder Modius; Süßes im Forno Boccione; Sonnenuntergang am Lungotevere.",
+      daytrips:"Ostia Antica (~40 Min); Tivoli (Villa d’Este & Hadriansvilla ~1h); Castelli Romani.",
+      checkout_note:"Vor der Abreise: Licht/AC aus, Fenster schließen, Schlüssel auf dem Tisch lassen, Tür sanft schließen.",
+      host_phone:"+39 335 5245756"
+    },
+    intents:[
+      {k:'WLAN',keys:['wlan','wifi','wi-fi','internet','passwort','router'],t:a=>`WLAN: ${a.wifi_note}\nNetz: ${a.wifi_ssid}. Passwort: ${a.wifi_password}.`},
+      {k:'check in',keys:['check in','ankunft','zugang','sprechanlage','code'],t:a=>`Check-in ab ${a.checkin_time}.\nSprechanlagen-Code: ${a.intercom_code}.\nHaustür: ${a.main_door_hours}.\nHausmeister: ${a.concierge}.\nHilfe? ${a.host_phone}.`},
+      {k:'check out',keys:['check out','abreise','verlassen'],t:a=>a.checkout_note},
+      {k:'Wasser',keys:['wasser','warmwasser','trinkbar','hahn'],t:a=>a.water_note},
+      {k:'Klimaanlage',keys:['klimaanlage','klima','ac'],t:a=>a.ac_note},
+      {k:'Bad',keys:['bad','handtücher','seife','föhn'],t:a=>`Bad: ${a.bathroom_amenities}\nHandtücher: ${a.towels_note}`},
+      {k:'Gas',keys:['gas','küche','herd','flamme','brenner'],t:a=>`Gas: ${a.gas_steps}`},
+      {k:'Gebäude',keys:['gebäude','aufzug','tür','zeiten','hausmeister'],t:a=>`Sprechanlage: ${a.intercom_code}.\nAufzug: ${a.elevator_note}.\nTür: ${a.main_door_hours}.\nHausmeister: ${a.concierge}.`},
+      {k:'Services',keys:['apotheke','krankenhaus','geldautomat','sim','wäscherei','gepäck'],t:a=>`Apotheke: ${a.pharmacy}\nKrankenhaus: ${a.hospital}\nGeldautomaten: ${a.atms}\nSIM: ${a.sims}\nWaschsalon: ${a.laundry}\nGepäck: ${a.luggage}`},
+      {k:'Verkehr',keys:['verkehr','tram','bus','taxi','flughafen','zug'],t:a=>`${a.transport}\nFlughäfen: ${a.airports}`},
+      {k:'Essen',keys:['essen','restaurant','abendessen','mittagessen'],t:a=>a.eat},
+      {k:'Trinken',keys:['trinken','bar','wein','cocktail','aperitif'],t:a=>a.drink},
+      {k:'Shopping',keys:['shopping','markt','geschäfte'],t:a=>a.shop},
+      {k:'Sehenswürdigkeiten',keys:['sehenswürdigkeiten','museum','attraktionen','besuchen'],t:a=>a.visit},
+      {k:'Erlebnisse',keys:['erlebnisse','spaziergang','tour','route','sonnenuntergang'],t:a=>a.experiences},
+      {k:'Tagesausflüge',keys:['tagesausflug','ostia','tivoli','castelli'],t:a=>a.daytrips},
+      {k:'Notfall',keys:['notfall','polizei','rettung','feuerwehr','arzt','tierarzt'],t:a=>a.emergency}
+    ]
   },
 
   es: {
     ui:{
       welcome:"Hola, soy Samantha, tu guía virtual. Toca un botón para una respuesta rápida.",
       placeholder:"Hola, soy Samantha, tu guía virtual. Toca un botón — o escribe aquí…",
-      apt_label:"Apartamento",
-      voice_on:"🔊 Voice: On",
-      voice_off:"🔇 Voice: Off",
-      quick: COMMON_QUICK,
-      fallback:"No encontré una respuesta directa. Prueba un botón.",
+      apt_label:"Apartamento", voice_on:"🔊 Voz: Activada", voice_off:"🔇 Voz: Desactivada",
+      quick:["wifi","check in","check out","agua","aire acondicionado","baño","gas","edificio","comer","beber","compras","visitar","experiencias","excursiones","transporte","servicios","emergencia"],
+      fallback:"No encontré una respuesta directa. Prueba un botón (wifi, gas, transporte, visitar…).",
       fb_label:"¿Te resultó útil?",
       fb_like:"👍 Me gusta",
       fb_dislike:"👎 No me gusta",
-      fb_thanks:"¡Gracias!"
+      fb_thanks:"¡Gracias por tu opinión!"
     },
-    apt: DATA.en.apt,
-    intents: DATA.en.intents
+    apt:{
+      checkin_time:'15:00', checkout_time:'11:00',
+      wifi_note:"Router en el escritorio junto a la ventana. Gíralo para ver el SSID y la contraseña.",
+      wifi_ssid:"Ver etiqueta del router", wifi_password:"Ver etiqueta del router",
+      water_note:"El agua del grifo es potable. El agua caliente está siempre disponible.",
+      ac_note:"Apaga el aire acondicionado al salir.",
+      bathroom_amenities:"Papel higiénico, jabón de manos, alfombrilla, secador.",
+      towels_note:"Por huésped: 1 toalla grande + 1 mediana. Cama preparada a la llegada.",
+      gas_steps:"Llave del gas: horizontal=abierta, vertical=cerrada. Elegir fogón, encender cerilla/mechero, girar y presionar la perilla negra hasta que la llama sea estable, luego soltar.",
+      intercom_code:"C8", elevator_note:"Ascensor solo propietarios — por favor no usar.",
+      main_door_hours:"08:00–13:00 y 15:30–18:00", concierge:"Paolo",
+      pharmacy:"Farmacia Arenula, Via Arenula 19–21 — +39 06 686 8815",
+      hospital:"Hospital Fatebenefratelli, Isla Tiberina 1",
+      atms:"Unicredit (Largo Arenula 1), BNL (Via Arenula 41), Intesa (Via Arenula 27)",
+      sims:"Vodafone (Corso Vittorio Emanuele II, 209), TIM (Piazza Venezia, 2), Iliad (Via del Corso, 282)",
+      laundry:"Lavandería autoservicio: Via Arenula 47",
+      luggage:"Radical Storage — Largo di Torre Argentina (5 min)",
+      transport:"Tranvía 8 (Arenula/Cairoli) → Trastevere o Piazza Venezia. Bus 40/64 → Termini y Vaticano. Taxi: +39 06 3570 o app FreeNow.",
+      airports:"Fiumicino: Tranvía 8 → Trastevere → FL1 (~45 min). Ciampino: bus Terravision o taxi.",
+      emergency:"Emergencia UE 112 • Policía 113 • Ambulancia 118 • Bomberos 115 • Médico en inglés +39 06 488 2371 • Veterinario 24h +39 06 660 681",
+      eat:"Roscioli; Emma Pizzeria; Ditirambo; Osteria da Fortunata; Pianostrada; Forno Campo de’ Fiori; Gelateria del Teatro.",
+      drink:"Caffè Camerino; Irish Pub (Largo Argentina); Modius Radisson Rooftop.",
+      shop:"Delis/panaderías/helado en Via Arenula; mercado de pescado Piazza Costaguti; Forno Boccione; Mercato Monti (fines de semana).",
+      visit:"Largo di Torre Argentina (templos y colonia felina); Pórtico de Octavia; Isla Tiberina; Piazza Farnese; iglesias ocultas (Chiesa Nuova, S. Maria in Campitelli, S. Barbara dei Librari).",
+      experiences:"Paseo vespertino: Largo Argentina → Gueto → Isla Tiberina → Teatro de Marcelo; aperitivo en Camerino o Modius; dulces en Forno Boccione; atardecer en Lungotevere.",
+      daytrips:"Ostia Antica (~40 min); Tivoli (Villa d’Este y Villa Adriana ~1h); Castelli Romani.",
+      checkout_note:"Antes de salir: apaga luces/AC, cierra ventanas, deja las llaves en la mesa, cierra la puerta suavemente.",
+      host_phone:"+39 335 5245756"
+    },
+    intents:[
+      {k:'wifi',keys:['wifi','wi-fi','internet','contraseña','router'],t:a=>`Wi-Fi: ${a.wifi_note}\nRed: ${a.wifi_ssid}. Contraseña: ${a.wifi_password}.`},
+      {k:'check in',keys:['check in','llegada','acceso','portero','código','interfono'],t:a=>`Check-in desde las ${a.checkin_time}.\nCódigo del portero: ${a.intercom_code}.\nPuerta: ${a.main_door_hours}.\nConserje: ${a.concierge}.\n¿Necesitas ayuda? ${a.host_phone}.`},
+      {k:'check out',keys:['check out','salida','marchar'],t:a=>a.checkout_note},
+      {k:'agua',keys:['agua','caliente','potable','grifo'],t:a=>a.water_note},
+      {k:'aire acondicionado',keys:['aire acondicionado','ac','clima'],t:a=>a.ac_note},
+      {k:'baño',keys:['baño','toallas','jabón','secador'],t:a=>`Baño: ${a.bathroom_amenities}\nToallas: ${a.towels_note}`},
+      {k:'gas',keys:['gas','cocina','hornilla','llama'],t:a=>`Uso del gas: ${a.gas_steps}`},
+      {k:'edificio',keys:['edificio','ascensor','puerta','horarios','conserje'],t:a=>`Interfono: ${a.intercom_code}.\nAscensor: ${a.elevator_note}.\nPuerta: ${a.main_door_hours}.\nConserje: ${a.concierge}.`},
+      {k:'servicios',keys:['farmacia','hospital','cajero','sim','lavandería','equipaje'],t:a=>`Farmacia: ${a.pharmacy}\nHospital: ${a.hospital}\nCajeros: ${a.atms}\nSIM: ${a.sims}\nLavandería: ${a.laundry}\nConsigna: ${a.luggage}`},
+      {k:'transporte',keys:['transporte','tranvía','bus','taxi','aeropuerto','tren'],t:a=>`${a.transport}\nAeropuertos: ${a.airports}`},
+      {k:'comer',keys:['comer','restaurante','cena','almuerzo'],t:a=>a.eat},
+      {k:'beber',keys:['beber','bar','vino','cóctel','aperitivo'],t:a=>a.drink},
+      {k:'compras',keys:['compras','mercado','tiendas'],t:a=>a.shop},
+      {k:'visitar',keys:['visitar','museo','atracciones','ver'],t:a=>a.visit},
+      {k:'experiencias',keys:['experiencias','paseo','tour','itinerario','atardecer'],t:a=>a.experiences},
+      {k:'excursiones',keys:['excursión','ostia','tivoli','castelli','día'],t:a=>a.daytrips},
+      {k:'emergencia',keys:['emergencia','policía','ambulancia','bomberos','médico','veterinario'],t:a=>a.emergency}
+    ]
   }
+}; /* <-- chiude const DATA */
 
-}; /* fine DATA */
+/* ============ RILEVAMENTO LINGUA + UI ============ */
 const chatEl = document.getElementById('chat');
 const input  = document.getElementById('input');
 const sendBtn= document.getElementById('sendBtn');
@@ -298,14 +405,14 @@ if(!DATA[lang]) lang='en';
 url.searchParams.set('lang',lang); history.replaceState(null,'',url);
 localStorage.setItem('lang',lang);
 
-/* TTS */
+/* ============ TTS MULTILINGUA (voci preferite) ============ */
 let voiceOn=false, pick=null;
 const VOICE_PREFS = {
   en:['Samantha','Google US English','Google UK English Female','Microsoft Aria Online (Natural)'],
-  it:['Alice','Eloisa','Google italiano','Microsoft Elsa Online (Natural)'],
-  fr:['Amelie','Thomas','Google français'],
-  de:['Anna','Markus','Google Deutsch'],
-  es:['Monica','Jorge','Paulina','Google español']
+  it:['Alice','Eloisa','Google italiano','Microsoft Elsa Online (Natural)','Microsoft Isabella Online (Natural)'],
+  fr:['Amelie','Thomas','Google français','Microsoft Denise Online (Natural)','Microsoft Vivienne Online (Natural)'],
+  de:['Anna','Markus','Google Deutsch','Microsoft Katja Online (Natural)','Microsoft Conrad Online (Natural)'],
+  es:['Monica','Jorge','Paulina','Google español','Microsoft Alvaro Online (Natural)']
 };
 function selectVoice(){
   if(!('speechSynthesis' in window)) return null;
@@ -315,7 +422,8 @@ function selectVoice(){
     const v = all.find(v => (v.name||'').toLowerCase()===name.toLowerCase());
     if(v) return v;
   }
-  return all.find(v => (v.lang||'').toLowerCase().startsWith(lang)) || all[0] || null;
+  const byLang = all.find(v => (v.lang||'').toLowerCase().startsWith(lang));
+  return byLang || all[0] || null;
 }
 function refreshVoice(){ pick = selectVoice(); }
 if('speechSynthesis' in window){ refreshVoice(); speechSynthesis.onvoiceschanged = refreshVoice; }
@@ -323,143 +431,142 @@ function warm(){
   if(!('speechSynthesis' in window)) return;
   try{
     speechSynthesis.cancel();
-    const u=new SpeechSynthesisUtterance('.');
-    u.volume=0.01; if(pick) u.voice=pick; u.lang = pick?.lang || lang;
-    speechSynthesis.speak(u);
-  }catch(e){}
+    const dot = new SpeechSynthesisUtterance('.');
+    dot.volume=0.01; if(pick) dot.voice=pick; dot.lang = pick?.lang || lang;
+    speechSynthesis.speak(dot);
+  }catch{}
 }
 function speak(t){
   if(!voiceOn || !('speechSynthesis' in window)) return;
   try{
     speechSynthesis.cancel();
-    const u=new SpeechSynthesisUtterance(t.replace(/<[^>]+>/g,""));
+    const u=new SpeechSynthesisUtterance(t);
     if(pick) u.voice=pick; u.lang = pick?.lang || lang;
     speechSynthesis.speak(u);
-  }catch(e){}
+  }catch{}
 }
 
 document.getElementById('voiceBtn').addEventListener('click',e=>{
-  voiceOn=!voiceOn;
-  e.currentTarget.setAttribute('aria-pressed',String(voiceOn));
-  applyUI();
-  if(voiceOn) warm();
+  voiceOn=!voiceOn; e.currentTarget.setAttribute('aria-pressed',String(voiceOn));
+  applyUI(); if(voiceOn) warm();
 });
 document.querySelector('.lang').addEventListener('click',e=>{
-  const btn=e.target.closest('[data-lang]');
-  if(!btn) return;
+  const btn=e.target.closest('[data-lang]'); if(!btn) return;
   lang = btn.getAttribute('data-lang');
   localStorage.setItem('lang',lang);
   const u=new URL(location.href); u.searchParams.set('lang',lang); history.replaceState(null,'',u);
-  refreshVoice();
-  applyUI();
-  chatEl.innerHTML='';
-  welcome();
+  refreshVoice(); applyUI(); chatEl.innerHTML=''; welcome();
   if(voiceOn) warm();
 });
+
 function applyUI(){
   const L = DATA[lang].ui;
   document.getElementById('aptLabel').textContent = L.apt_label;
   document.getElementById('voiceBtn').textContent = voiceOn ? L.voice_on : L.voice_off;
   input.placeholder = L.placeholder;
-  document.querySelectorAll('.lang [data-lang]').forEach(b=>{
-    b.setAttribute('aria-current', b.getAttribute('data-lang')===lang ? 'true':'false');
-  });
+  document.querySelectorAll('.lang [data-lang]').forEach(b=> b.setAttribute('aria-current', b.getAttribute('data-lang')===lang ? 'true':'false'));
 }
 
-/* rende cliccabili i link ma SENZA duplicarli */
-function linkify(html){
-  if(!html) return "";
-  return html.replace(/(https?:\/\/[^\s<]+)/g, '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>');
-}
-
+/* ============ CHAT LOGIC + FEEDBACK ============ */
 function add(type, txt){
   const d=document.createElement('div');
   d.className='msg '+(type==='me'?'me':'wd');
-  if(type==='me'){
-    d.textContent = txt;
-  }else{
-    d.innerHTML = linkify(txt);
-  }
+  d.textContent=txt;
   chatEl.appendChild(d);
   chatEl.scrollTop=chatEl.scrollHeight;
   return d;
 }
-
 function detectIntent(text){
-  const L = DATA[lang];
-  const t = (text||'').toLowerCase();
+  const L = DATA[lang]; const t = (text||'').toLowerCase();
   let best=null,score=0;
   for(const it of L.intents){
-    let s=0;
-    for(const k of it.keys){
-      if(t.includes(k.toLowerCase())) s++;
-    }
-    if(s>score){
-      score=s;
-      best=it;
-    }
+    let s=0; for(const k of it.keys){ if(t.includes(k.toLowerCase())) s++; }
+    if(s>score){ score=s; best=it; }
   }
   return best;
 }
-
 function getAnswer(text){
-  const L = DATA[lang];
-  const apt = L.apt;
+  const L = DATA[lang]; const apt=L.apt;
   const m = detectIntent(text);
-  if(!m) return { text: L.ui.fallback, topic:'fallback' };
-  try{
-    const out = m.t(apt);
-    return { text: out, topic: m.k };
-  }catch(e){
-    return { text: L.ui.fallback, topic:'fallback' };
-  }
+  if(!m) return { text: L.ui.fallback, topic: 'fallback' };
+  try{ return { text: m.t(apt), topic: m.k }; }catch{ return { text: L.ui.fallback, topic: 'fallback' }; }
 }
 
-/* feedback */
+/* --- invio feedback al Google Sheet --- */
 function postFeedback(vote, topic, answerText){
   try{
     fetch(GOOGLE_SCRIPT_URL, {
-      method:"POST",
-      mode:"no-cors",
-      headers:{"Content-Type":"application/json"},
+      method:'POST',
+      mode:'no-cors',
+      headers:{'Content-Type':'application/json'},
       body: JSON.stringify({
         apartment_id: APARTMENT_ID,
-        language: (lang||"en").toUpperCase(),
+        language: (lang||'en').toUpperCase(),
         topic: topic,
         answer_text: answerText,
         vote: vote
       })
     });
-  }catch(e){}
+  }catch{}
 }
 function attachFeedbackUI(container, topic, answerText){
   const L = DATA[lang].ui;
-  const box = document.createElement("div");
-  box.className='fb-box';
-  const label=document.createElement("span");
-  label.className='fb-label';
+  const box = document.createElement('div');
+  box.className = 'fb-box';
+  const label = document.createElement('span');
+  label.className = 'fb-label';
   label.textContent = L.fb_label;
-  const like=document.createElement("button");
-  like.textContent = L.fb_like;
-  const dislike=document.createElement("button");
-  dislike.textContent = L.fb_dislike;
-  const done=document.createElement("span");
-  done.className='fb-done';
-  done.textContent = L.fb_thanks;
+  const likeBtn = document.createElement('button');
+  likeBtn.type='button'; likeBtn.textContent= L.fb_like;
+  const dislikeBtn = document.createElement('button');
+  dislikeBtn.type='button'; dislikeBtn.textContent= L.fb_dislike;
+  const done = document.createElement('span');
+  done.className='fb-done'; done.textContent= L.fb_thanks;
   done.style.display='none';
-
   function finish(v){
-    like.disabled=true; dislike.disabled=true;
-    like.style.opacity = 0.6; dislike.style.opacity = 0.6;
-    done.style.display='inline';
+    likeBtn.disabled = true; dislikeBtn.disabled = true;
+    likeBtn.style.opacity = 0.6; dislikeBtn.style.opacity = 0.6;
+    done.style.display = 'inline';
     postFeedback(v, topic, answerText);
   }
-  like.addEventListener("click",()=>finish("like"));
-  dislike.addEventListener("click",()=>finish("dislike"));
-
-  box.appendChild(label);
-  box.appendChild(like);
-  box.appendChild(dislike);
-  box.appendChild(done);
+  likeBtn.addEventListener('click', ()=>finish('like'));
+  dislikeBtn.addEventListener('click', ()=>finish('dislike'));
+  box.appendChild(label); box.appendChild(likeBtn); box.appendChild(dislikeBtn); box.appendChild(done);
   container.appendChild(box);
 }
+
+function welcome(){
+  const L=DATA[lang].ui;
+  const intro=document.createElement('div'); intro.className='intro';
+  intro.innerHTML = `<b>${L.welcome}</b>`;
+  chatEl.appendChild(intro);
+  const q=document.createElement('div'); q.className='quick';
+  for(const key of L.quick){
+    const b=document.createElement('button'); b.textContent=key;
+    b.onclick=()=>{ input.value=key; send(); };
+    q.appendChild(b);
+  }
+  chatEl.appendChild(q);
+}
+
+/* --- invio messaggio --- */
+function send(){
+  const text=(input.value||'').trim(); 
+  if(!text) return;
+  add('me',text); 
+  input.value='';
+  const {text:bot, topic} = getAnswer(text);
+  const botNode = add('wd',bot); 
+  speak(bot);
+  attachFeedbackUI(botNode, topic, bot);
+}
+
+/* --- eventi --- */
+sendBtn.addEventListener('click',send);
+input.addEventListener('keydown',e=>{ if(e.key==='Enter') send(); });
+
+applyUI(); 
+welcome();
+</script>
+</body>
+</html>
