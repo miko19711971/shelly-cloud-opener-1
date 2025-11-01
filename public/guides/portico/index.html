@@ -623,15 +623,23 @@ function applyUI(){
 // rende cliccabili gli URL e aggiunge un po' di spazio tra le righe
 function linkify(str){
   if (!str) return '';
-  // 1) trasforma gli URL in link cliccabili
+
+  // 1) se il testo ha già dei <a ...>, NON tocchiamo i link
+  // (vuol dire che viene dagli intents "tickets & events", "museums & sites", ecc.)
+  if (str.includes('<a ')) {
+    // però mettiamo comunque lo spazio tra le righe
+    return str.replace(/\n/g, '<br><br>');
+  }
+
+  // 2) altrimenti (testo scritto dall'utente) trasformiamo gli URL in link
   const withLinks = str.replace(
     /(https?:\/\/[^\s<]+)/g,
     '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>'
   );
-  // 2) ogni \n dei testi negli intents diventa una riga con spazio
+
+  // 3) e aggiungiamo lo spazio tra le righe
   return withLinks.replace(/\n/g, '<br><br>');
 }
-
 function add(type, txt){
   const d = document.createElement('div');
   d.className = 'msg ' + (type === 'me' ? 'me' : 'wd');
