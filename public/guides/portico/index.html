@@ -616,21 +616,32 @@ function applyUI(){
 }
 
 /* ============ FUNZIONI CHAT ============ */
-
-/* rendo cliccabili eventuali URL grezzi */
-function linkify(html){
-  if(!html) return '';
-  return html.replace(/(https?:\/\/[^\s<]+)/g, '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>');
+/* ============ CHAT LOGIC + FEEDBACK ============ */
+// Trasforma i link in <a> cliccabili con spazio tra le righe
+function linkify(str) {
+  if (!str) return "";
+  // Evita problemi di sicurezza e formatta correttamente
+  const escaped = str
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+  // Trasforma gli URL in link cliccabili blu
+  const withLinks = escaped.replace(
+    /(https?:\/\/[^\s]+)/g,
+    url =>
+      `<a href="${url}" target="_blank" rel="noopener noreferrer" 
+      style="color:#0645AD; text-decoration:underline;">${url}</a>`
+  );
+  // Aggiunge spazio verticale tra le righe per migliore leggibilità
+  return withLinks.replace(/\n/g, "<br><br>");
 }
 
-function add(type, txt){
-  const d=document.createElement('div');
-  d.className='msg '+(type==='me'?'me':'wd');
-  if(type==='me'){
-    d.textContent = txt;
-  }else{
-    d.innerHTML = linkify(txt);
-  }
+// Funzione per aggiungere i messaggi in chat
+function add(type, txt) {
+  const d = document.createElement("div");
+  d.className = "msg " + (type === "me" ? "me" : "wd");
+  // Usa innerHTML per rendere cliccabili i link
+  d.innerHTML = linkify(txt);
   chatEl.appendChild(d);
   chatEl.scrollTop = chatEl.scrollHeight;
   return d;
