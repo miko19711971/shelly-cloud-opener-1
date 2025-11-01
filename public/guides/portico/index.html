@@ -24,12 +24,6 @@ img.logo{height:36px;width:auto;display:block}
 main{flex:1;padding:12px}
 .msg{max-width:85%;line-height:1.35;border-radius:12px;padding:10px 12px;margin:8px 0;white-space:pre-wrap}
 .msg.wd{background:#fff;border:1px solid #e0e0e0}
-/* link dentro i messaggi del bot */
-.msg.wd a{
-  color:#0645AD;
-  text-decoration:underline;
-  word-break:break-word;
-}
 .msg.me{background:#e8f0fe;border:1px solid #c5d5ff;margin-left:auto}
 .quick{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
 .quick button{border:1px solid #d6c5b8;background:#fff;color:#333;padding:6px 10px;border-radius:12px;cursor:pointer}
@@ -623,28 +617,7 @@ function applyUI(){
 
 /* ============ FUNZIONI CHAT ============ */
 /* ============ CHAT LOGIC + FEEDBACK ============ */ 
-/* ============ FUNZIONI CHAT ============ */
-// rendo cliccabili gli URL e aggiungo un po’ di spazio tra le righe
-function linkify(str){
-  if(!str) return '';
-  // 1) link cliccabili
-  const withLinks = str.replace(
-    /(https?:\/\/[^\s]+)/g,
-    '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>'
-  );
-  // 2) ogni \n diventa una riga nuova con un po’ di spazio
-  return withLinks.replace(/\n/g, '<br><br>');
-}
-
-function add(type, txt){
-  const d = document.createElement('div');
-  d.className = 'msg ' + (type === 'me' ? 'me' : 'wd');
-  // per i bot usiamo HTML così i link restano cliccabili
-  d.innerHTML = linkify(txt);
-  chatEl.appendChild(d);
-  chatEl.scrollTop = chatEl.scrollHeight;
-  return d;
-}
+ 
   // Aggiunge spazio verticale tra le righe per migliore leggibilità
   return withLinks.replace(/\n/g, "<br><br>");
 }
