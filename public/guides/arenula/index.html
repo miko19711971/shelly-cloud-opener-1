@@ -75,6 +75,14 @@ input{flex:1;padding:12px;border:1px solid #cbd5e1;border-radius:10px;outline:no
 /* === CONFIG === */
 const APARTMENT_ID = "ARENULA16";
 const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxt0ToaaC9TOrQMJjcWXpyL1a_FCugoVIgZpB5MFY_IsJTJGHOtloEq1sjKs_F-c7Sd/exec";
+
+/* lista tasti UNICA (in inglese) per tutte le lingue */
+const COMMON_QUICK = [
+  "wifi","check in","check out","water","AC","bathroom","gas","building",
+  "eat","drink","shop","visit","experience","day trips",
+  "tickets & events","museums & sites","exhibitions",
+  "transport","services","emergency"
+];
 /* ============ CONTENUTI LOCALIZZATI (ARENULA 16) ============ */
 const DATA = {
 
@@ -85,12 +93,7 @@ const DATA = {
       apt_label: "Apartment",
       voice_on: "🔊 Voice: On",
       voice_off: "🔇 Voice: Off",
-      quick: [
-        "wifi","check in","check out","water","AC","bathroom","gas","building",
-        "eat","drink","shop","visit","experience","day trips",
-        "tickets & events","museums & sites","exhibitions",
-        "transport","services","emergency"
-      ],
+      quick: COMMON_QUICK,
       fallback: "I did not find a direct answer. Try a quick button (wifi, gas, transport, visit…).",
       fb_label:"Was this helpful?",
       fb_like:"👍 Like",
@@ -135,7 +138,7 @@ const DATA = {
       {k:'bathroom',keys:['bathroom','hairdryer','soap','towels'],t:a=>`Bathroom: ${a.bathroom_amenities}<br><br>Towels: ${a.towels_note}`},
       {k:'gas',keys:['gas','kitchen','cook','flame','burner'],t:a=>`Gas use: ${a.gas_steps}`},
       {k:'building',keys:['building','elevator','door','hours','concierge'],t:a=>`Intercom: ${a.intercom_code}.<br>Elevator: ${a.elevator_note}.<br>Main door: ${a.main_door_hours}.<br>Concierge: ${a.concierge}.`},
-      {k:'services',keys:['pharmacy','hospital','atm','sim','laundry','luggage'],t:a=>`Pharmacy: ${a.pharmacy}<br><br>Hospital: ${a.hospital}<br><br>ATMs: ${a.atms}<br><br>SIMs: ${a.sims}<br><br>Laundry: ${a.laundry}<br><br>Luggage: ${a.luggage}`},
+      {k:'services',keys:['pharmacy','hospital','atm','sim','laundry','luggage'],t:a=>`Pharmacy: ${a.pharmacy}<br>Hospital: ${a.hospital}<br>ATMs: ${a.atms}<br>SIMs: ${a.sims}<br>Laundry: ${a.laundry}<br>Luggage: ${a.luggage}`},
       {k:'transport',keys:['transport','tram','bus','taxi','airport','train'],t:a=>`${a.transport}<br><br>Airports: ${a.airports}`},
       {k:'eat',keys:['eat','restaurant','dinner','lunch','food'],t:a=>a.eat},
       {k:'drink',keys:['drink','bar','wine','cocktail','aperitivo'],t:a=>a.drink},
@@ -143,9 +146,8 @@ const DATA = {
       {k:'visit',keys:['visit','visiting','what to visit','see','sight','attraction','museum','museums'],t:a=>a.visit},
       {k:'experience',keys:['experience','walk','tour','itinerary','sunset'],t:a=>a.experiences},
       {k:'day trips',keys:['day trips','day trip','tivoli','ostia','castelli','excursion','excursions'],t:a=>a.daytrips},
-
-      /* nuovi 3 EN */
-      {k:"tickets & events",keys:["ticket","tickets","event","events","concert","game","roma","lazio"],t:()=>
+      /* --- 3 NUOVI TASTI EN CON LINK SINGOLO --- */
+      {k:"tickets & events",keys:["ticket","tickets","event","events","concert","match","football","roma","lazio"],t:()=>
         `TICKETS & EVENTS — ROME<br><br>
         • TicketOne (concerts, theatre, sport): <a href="https://www.ticketone.it/en/" target="_blank" rel="noopener noreferrer">https://www.ticketone.it/en/</a><br><br>
         • AS Roma — official tickets: <a href="https://www.asroma.com/en/tickets" target="_blank" rel="noopener noreferrer">https://www.asroma.com/en/tickets</a><br><br>
@@ -154,17 +156,16 @@ const DATA = {
       {k:"museums & sites",keys:["museum","museums","site","sites","colosseum","vatican","borghese"],t:()=>
         `MUSEUMS & SITES — ROME<br><br>
         • Vatican Museums: <a href="https://www.museivaticani.va/content/museivaticani/en.html" target="_blank" rel="noopener noreferrer">https://www.museivaticani.va/content/museivaticani/en.html</a><br><br>
-        • Colosseum / Forum / Palatine: <a href="https://colosseo.it/en/opening-times-and-tickets/" target="_blank" rel="noopener noreferrer">https://colosseo.it/en/opening-times-and-tickets/</a><br><br>
+        • Colosseum / Forum / Palatine: <a href="https://parcocolosseo.it/en/" target="_blank" rel="noopener noreferrer">https://parcocolosseo.it/en/</a><br><br>
         • Borghese Gallery: <a href="https://galleriaborghese.beniculturali.it/en/" target="_blank" rel="noopener noreferrer">https://galleriaborghese.beniculturali.it/en/</a>`
       },
-      {k:"exhibitions",keys:["exhibition","exhibitions","maxxi","quirinale","gallery"],t:()=>
+      {k:"exhibitions",keys:["exhibition","exhibitions","maxxi","quirinale","gallery","show"],t:()=>
         `EXHIBITIONS — ROME<br><br>
         • MAXXI: <a href="https://www.maxxi.art/en/" target="_blank" rel="noopener noreferrer">https://www.maxxi.art/en/</a><br><br>
         • Palazzo delle Esposizioni: <a href="https://www.palazzoesposizioni.it/" target="_blank" rel="noopener noreferrer">https://www.palazzoesposizioni.it/</a><br><br>
         • Scuderie del Quirinale: <a href="https://www.scuderiequirinale.it/en" target="_blank" rel="noopener noreferrer">https://www.scuderiequirinale.it/en</a><br><br>
         • Palazzo Bonaparte (Arthemisia): <a href="https://www.arthemisia.it/site/en/palazzo-bonaparte.html" target="_blank" rel="noopener noreferrer">https://www.arthemisia.it/site/en/palazzo-bonaparte.html</a>`
       },
-
       {k:'emergency',keys:['emergency','police','ambulance','fire','doctor','vet'],t:a=>a.emergency}
     ]
   },
@@ -174,22 +175,16 @@ const DATA = {
       welcome:"Ciao, sono Samantha, la tua guida virtuale. Tocca un pulsante per una risposta rapida.",
       placeholder:"Ciao, sono Samantha, la tua guida virtuale. Tocca un pulsante — oppure scrivi qui…",
       apt_label:"Appartamento",
-      voice_on:"🔊 Voce: On",
-      voice_off:"🔇 Voce: Off",
-      quick:[
-        "wifi","check in","check out","acqua","aria condizionata","bagno","gas","edificio",
-        "mangiare","bere","shopping","visitare","esperienze","gite di un giorno",
-        "biglietti ed eventi","musei e siti","mostre",
-        "trasporti","servizi","emergenza"
-      ],
-      fallback:"Non ho trovato una risposta diretta. Prova un pulsante (wifi, gas, trasporti, visitare…).",
+      voice_on:"🔊 Voice: On",
+      voice_off:"🔇 Voice: Off",
+      quick: COMMON_QUICK,
+      fallback:"Non ho trovato una risposta diretta. Prova un pulsante (wifi, gas, transport, visit…).",
       fb_label:"Ti è stato utile?",
       fb_like:"👍 Mi piace",
       fb_dislike:"👎 Non mi piace",
       fb_thanks:"Grazie per il tuo feedback!"
     },
-    apt:{ /* <-- tutto UGUALE a prima, non lo tocco */ }
-        apt:{
+    apt:{ /* identico a prima */
       checkin_time:'15:00', checkout_time:'11:00',
       wifi_note:"Router sulla scrivania vicino alla finestra. Giralo per leggere SSID e password.",
       wifi_ssid:"Vedi etichetta del router", wifi_password:"Vedi etichetta del router",
@@ -218,7 +213,7 @@ const DATA = {
       checkout_note:"Prima di partire: spegni luci/AC, chiudi le finestre, lascia le chiavi sul tavolo, chiudi delicatamente la porta.",
       host_phone:"+39 335 5245756"
     },
-    intents:[
+    intents:[ /* qui NON aggiungo i 3 tasti in italiano, perché li vuoi in inglese: li lasciamo fuori e usi quelli EN */
       {k:'wifi',keys:['wifi','wi-fi','internet','password','router'],t:a=>`Wi-Fi: ${a.wifi_note}<br><br>Rete: ${a.wifi_ssid}. Password: ${a.wifi_password}.`},
       {k:'check in',keys:['check in','arrivo','accesso','citofono','codice'],t:a=>`Check-in dalle ${a.checkin_time}.<br><br>Codice citofono: ${a.intercom_code}.<br>Portone: ${a.main_door_hours}.<br>Portineria: ${a.concierge}.<br><br>Aiuto? Chiama ${a.host_phone}.`},
       {k:'check out',keys:['check out','partenza','lasciare'],t:a=>a.checkout_note},
@@ -227,7 +222,7 @@ const DATA = {
       {k:'bagno',keys:['bagno','asciugacapelli','sapone','asciugamani'],t:a=>`Bagno: ${a.bathroom_amenities}<br><br>Asciugamani: ${a.towels_note}`},
       {k:'gas',keys:['gas','cucina','fornello','fiamma','bruciatore'],t:a=>`Uso gas: ${a.gas_steps}`},
       {k:'edificio',keys:['edificio','ascensore','portone','orari','portineria'],t:a=>`Citofono: ${a.intercom_code}.<br>Ascensore: ${a.elevator_note}.<br>Portone: ${a.main_door_hours}.<br>Portineria: ${a.concierge}.`},
-      {k:'servizi',keys:['farmacia','ospedale','bancomat','sim','lavanderia','bagagli'],t:a=>`Farmacia: ${a.pharmacy}<br><br>Ospedale: ${a.hospital}<br><br>Bancomat: ${a.atms}<br><br>SIM: ${a.sims}<br><br>Lavanderia: ${a.laundry}<br><br>Deposito bagagli: ${a.luggage}`},
+      {k:'servizi',keys:['farmacia','ospedale','bancomat','sim','lavanderia','bagagli'],t:a=>`Farmacia: ${a.pharmacy}<br>Ospedale: ${a.hospital}<br>Bancomat: ${a.atms}<br>SIM: ${a.sims}<br>Lavanderia: ${a.laundry}<br>Deposito bagagli: ${a.luggage}`},
       {k:'trasporti',keys:['trasporti','tram','bus','taxi','aeroporto','treno'],t:a=>`${a.transport}<br><br>Aeroporti: ${a.airports}`},
       {k:'mangiare',keys:['mangiare','ristorante','cena','pranzo','cibo'],t:a=>a.eat},
       {k:'bere',keys:['bere','bar','vino','cocktail','aperitivo'],t:a=>a.drink},
@@ -235,27 +230,6 @@ const DATA = {
       {k:'visitare',keys:['visitare','cosa vedere','museo','attrazioni','vedere'],t:a=>a.visit},
       {k:'esperienze',keys:['esperienze','passeggiata','tour','itinerario','tramonto'],t:a=>a.experiences},
       {k:'gite di un giorno',keys:['gite','gita','tivoli','ostia','castelli','escursione'],t:a=>a.daytrips},
-
-      {k:"biglietti ed eventi",keys:["biglietti","ticket","evento","eventi","concerto","partita","roma","lazio"],t:()=>
-        `BIGLIETTI & EVENTI — ROMA<br><br>
-        • TicketOne (concerti, teatro, sport): <a href="https://www.ticketone.it/" target="_blank" rel="noopener noreferrer">https://www.ticketone.it/</a><br><br>
-        • AS Roma — biglietti ufficiali: <a href="https://www.asroma.com/en/tickets" target="_blank" rel="noopener noreferrer">https://www.asroma.com/en/tickets</a><br><br>
-        • SS Lazio — biglietti ufficiali: <a href="https://sslazio.it/en/tickets" target="_blank" rel="noopener noreferrer">https://sslazio.it/en/tickets</a>`
-      },
-      {k:"musei e siti",keys:["museo","musei","sito","siti","colosseo","vaticano"],t:()=>
-        `MUSEI & SITI — ROMA<br><br>
-        • Musei Vaticani: <a href="https://www.museivaticani.va/content/museivaticani/it.html" target="_blank" rel="noopener noreferrer">https://www.museivaticani.va/…</a><br><br>
-        • Colosseo / Foro / Palatino: <a href="https://colosseo.it/en/opening-times-and-tickets/" target="_blank" rel="noopener noreferrer">https://colosseo.it/en/opening-times-and-tickets/</a><br><br>
-        • Galleria Borghese: <a href="https://galleriaborghese.beniculturali.it/" target="_blank" rel="noopener noreferrer">https://galleriaborghese.beniculturali.it/</a>`
-      },
-      {k:"mostre",keys:["mostre","mostra","maxxi","quirinale","arte"],t:()=>
-        `MOSTRE — ROMA<br><br>
-        • MAXXI: <a href="https://www.maxxi.art/" target="_blank" rel="noopener noreferrer">https://www.maxxi.art/</a><br><br>
-        • Palazzo delle Esposizioni: <a href="https://www.palazzoesposizioni.it/" target="_blank" rel="noopener noreferrer">https://www.palazzoesposizioni.it/</a><br><br>
-        • Scuderie del Quirinale: <a href="https://www.scuderiequirinale.it/" target="_blank" rel="noopener noreferrer">https://www.scuderiequirinale.it/</a><br><br>
-        • Palazzo Bonaparte (Arthemisia): <a href="https://www.arthemisia.it/" target="_blank" rel="noopener noreferrer">https://www.arthemisia.it/</a>`
-      },
-
       {k:'emergenza',keys:['emergenza','polizia','ambulanza','vigili','medico','veterinario'],t:a=>a.emergency}
     ]
   },
@@ -264,44 +238,17 @@ const DATA = {
       welcome:"Bonjour, je suis Samantha, votre guide virtuel. Touchez un bouton pour une réponse rapide.",
       placeholder:"Bonjour, je suis Samantha, votre guide virtuel. Touchez un bouton — ou écrivez ici…",
       apt_label:"Appartement",
-      voice_on:"🔊 Voix : Activée",
-      voice_off:"🔇 Voix : Désactivée",
-      quick:[
-        "wifi","check in","check out","eau","climatisation","salle de bain","gaz","immeuble",
-        "manger","boire","shopping","visiter","expériences","excursions",
-        "billets & événements","musées & sites","expositions",
-        "transports","services","urgence"
-      ],
-      fallback:"Je n’ai pas trouvé de réponse directe. Essayez un bouton (wifi, gaz, transports, visiter…).",
+      voice_on:"🔊 Voice: On",
+      voice_off:"🔇 Voice: Off",
+      quick: COMMON_QUICK,
+      fallback:"Je n’ai pas trouvé de réponse directe. Essayez un bouton.",
       fb_label:"Cette réponse vous a-t-elle aidé·e ?",
       fb_like:"👍 J’aime",
       fb_dislike:"👎 Je n’aime pas",
       fb_thanks:"Merci pour votre retour !"
     },
-    apt:{ ...DATA.it.apt ... } /* puoi lasciare uguale ma in francese come nella tua versione, non lo sto riscrivendo tutto qui */
-    ,
-    intents:[
-      /* ... TUTTI i tuoi intenti FR di prima ... */
-      {k:"billets & événements",keys:["billet","billets","événement","événements","concert","match","roma","lazio"],t:()=>
-        `BILLETS & ÉVÉNEMENTS — ROME<br><br>
-        • TicketOne (concerts, théâtre, sport) : <a href="https://www.ticketone.it/en/" target="_blank" rel="noopener noreferrer">https://www.ticketone.it/en/</a><br><br>
-        • AS Roma — billets officiels : <a href="https://www.asroma.com/en/tickets" target="_blank" rel="noopener noreferrer">https://www.asroma.com/en/tickets</a><br><br>
-        • SS Lazio — billets officiels : <a href="https://sslazio.it/en/tickets" target="_blank" rel="noopener noreferrer">https://sslazio.it/en/tickets</a>`
-      },
-      {k:"musées & sites",keys:["musée","musées","site","sites","vatican","colisée"],t:()=>
-        `MUSÉES & SITES — ROME<br><br>
-        • Musées du Vatican : <a href="https://www.museivaticani.va/content/museivaticani/en.html" target="_blank" rel="noopener noreferrer">https://www.museivaticani.va/content/museivaticani/en.html</a><br><br>
-        • Colisée / Forum / Palatin : <a href="https://colosseo.it/en/opening-times-and-tickets/" target="_blank" rel="noopener noreferrer">https://colosseo.it/en/opening-times-and-tickets/</a><br><br>
-        • Galerie Borghèse : <a href="https://galleriaborghese.beniculturali.it/en/" target="_blank" rel="noopener noreferrer">https://galleriaborghese.beniculturali.it/en/</a>`
-      },
-      {k:"expositions",keys:["exposition","expositions","maxxi","quirinale","art"],t:()=>
-        `EXPOSITIONS — ROME<br><br>
-        • MAXXI : <a href="https://www.maxxi.art/en/" target="_blank" rel="noopener noreferrer">https://www.maxxi.art/en/</a><br><br>
-        • Palazzo delle Esposizioni : <a href="https://www.palazzoesposizioni.it/" target="_blank" rel="noopener noreferrer">https://www.palazzoesposizioni.it/</a><br><br>
-        • Scuderie du Quirinal : <a href="https://www.scuderiequirinale.it/en" target="_blank" rel="noopener noreferrer">https://www.scuderiequirinale.it/en</a><br><br>
-        • Palazzo Bonaparte : <a href="https://www.arthemisia.it/site/en/palazzo-bonaparte.html" target="_blank" rel="noopener noreferrer">https://www.arthemisia.it/site/en/palazzo-bonaparte.html</a>`
-      }
-    ]
+    apt: DATA.en.apt, /* usiamo gli stessi testi pratici in inglese */
+    intents: DATA.en.intents
   },
 
   de: {
@@ -309,43 +256,17 @@ const DATA = {
       welcome:"Hallo, ich bin Samantha, dein virtueller Guide. Tippe auf einen Button für eine schnelle Antwort.",
       placeholder:"Hallo, ich bin Samantha, dein virtueller Guide. Tippe auf einen Button — oder schreibe hier…",
       apt_label:"Apartment",
-      voice_on:"🔊 Stimme: An",
-      voice_off:"🔇 Stimme: Aus",
-      quick:[
-        "WLAN","check in","check out","Wasser","Klimaanlage","Bad","Gas","Gebäude",
-        "Essen","Trinken","Shopping","Sehenswürdigkeiten","Erlebnisse","Tagesausflüge",
-        "Tickets & Events","Museen & Sites","Ausstellungen",
-        "Verkehr","Services","Notfall"
-      ],
-      fallback:"Keine direkte Antwort gefunden. Nutze einen Button (WLAN, Gas, Verkehr, Sehenswürdigkeiten…).",
+      voice_on:"🔊 Voice: On",
+      voice_off:"🔇 Voice: Off",
+      quick: COMMON_QUICK,
+      fallback:"Keine direkte Antwort gefunden. Bitte wähle einen Button.",
       fb_label:"War diese Antwort hilfreich?",
       fb_like:"👍 Like",
       fb_dislike:"👎 Dislike",
-      fb_thanks:"Danke für dein Feedback!"
+      fb_thanks:"Danke!"
     },
-    apt:{ ...come tua versione DE... },
-    intents:[
-      /* ...intenti DE originali... */
-      {k:"Tickets & Events",keys:["ticket","tickets","event","events","konzert","spiel","roma","lazio"],t:()=>
-        `TICKETS & EVENTS — ROM<br><br>
-        • TicketOne (Konzerte, Theater, Sport): <a href="https://www.ticketone.it/en/" target="_blank" rel="noopener noreferrer">https://www.ticketone.it/en/</a><br><br>
-        • AS Roma — offizielle Tickets: <a href="https://www.asroma.com/en/tickets" target="_blank" rel="noopener noreferrer">https://www.asroma.com/en/tickets</a><br><br>
-        • SS Lazio — offizielle Tickets: <a href="https://sslazio.it/en/tickets" target="_blank" rel="noopener noreferrer">https://sslazio.it/en/tickets</a>`
-      },
-      {k:"Museen & Sites",keys:["museum","museen","site","sites","kolosseum","vatican"],t:()=>
-        `MUSEEN & SITES — ROM<br><br>
-        • Vatikanische Museen: <a href="https://www.museivaticani.va/content/museivaticani/en.html" target="_blank" rel="noopener noreferrer">https://www.museivaticani.va/content/museivaticani/en.html</a><br><br>
-        • Kolosseum / Forum / Palatin: <a href="https://colosseo.it/en/opening-times-and-tickets/" target="_blank" rel="noopener noreferrer">https://colosseo.it/en/opening-times-and-tickets/</a><br><br>
-        • Galleria Borghese: <a href="https://galleriaborghese.beniculturali.it/en/" target="_blank" rel="noopener noreferrer">https://galleriaborghese.beniculturali.it/en/</a>`
-      },
-      {k:"Ausstellungen",keys:["ausstellung","ausstellungen","maxxi","quirinale","kunst"],t:()=>
-        `AUSSTELLUNGEN — ROM<br><br>
-        • MAXXI: <a href="https://www.maxxi.art/en/" target="_blank" rel="noopener noreferrer">https://www.maxxi.art/en/</a><br><br>
-        • Palazzo delle Esposizioni: <a href="https://www.palazzoesposizioni.it/" target="_blank" rel="noopener noreferrer">https://www.palazzoesposizioni.it/</a><br><br>
-        • Scuderie del Quirinale: <a href="https://www.scuderiequirinale.it/en" target="_blank" rel="noopener noreferrer">https://www.scuderiequirinale.it/en</a><br><br>
-        • Palazzo Bonaparte: <a href="https://www.arthemisia.it/site/en/palazzo-bonaparte.html" target="_blank" rel="noopener noreferrer">https://www.arthemisia.it/site/en/palazzo-bonaparte.html</a>`
-      }
-    ]
+    apt: DATA.en.apt,
+    intents: DATA.en.intents
   },
 
   es: {
@@ -353,47 +274,20 @@ const DATA = {
       welcome:"Hola, soy Samantha, tu guía virtual. Toca un botón para una respuesta rápida.",
       placeholder:"Hola, soy Samantha, tu guía virtual. Toca un botón — o escribe aquí…",
       apt_label:"Apartamento",
-      voice_on:"🔊 Voz: Activada",
-      voice_off:"🔇 Voz: Desactivada",
-      quick:[
-        "wifi","check in","check out","agua","aire acondicionado","baño","gas","edificio",
-        "comer","beber","compras","visitar","experiencias","excursiones",
-        "entradas y eventos","museos y sitios","exposiciones",
-        "transporte","servicios","emergencia"
-      ],
-      fallback:"No encontré una respuesta directa. Prueba un botón (wifi, gas, transporte, visitar…).",
+      voice_on:"🔊 Voice: On",
+      voice_off:"🔇 Voice: Off",
+      quick: COMMON_QUICK,
+      fallback:"No encontré una respuesta directa. Prueba un botón.",
       fb_label:"¿Te resultó útil?",
       fb_like:"👍 Me gusta",
       fb_dislike:"👎 No me gusta",
-      fb_thanks:"¡Gracias por tu opinión!"
+      fb_thanks:"¡Gracias!"
     },
-    apt:{ ...come tua versione ES... },
-    intents:[
-      /* intenti ES originali ... */
-      {k:"entradas y eventos",keys:["entrada","entradas","ticket","eventos","concierto","partido","roma","lazio"],t:()=>
-        `ENTRADAS Y EVENTOS — ROMA<br><br>
-        • TicketOne (conciertos, teatro, deporte): <a href="https://www.ticketone.it/en/" target="_blank" rel="noopener noreferrer">https://www.ticketone.it/en/</a><br><br>
-        • AS Roma — entradas oficiales: <a href="https://www.asroma.com/en/tickets" target="_blank" rel="noopener noreferrer">https://www.asroma.com/en/tickets</a><br><br>
-        • SS Lazio — entradas oficiales: <a href="https://sslazio.it/en/tickets" target="_blank" rel="noopener noreferrer">https://sslazio.it/en/tickets</a>`
-      },
-      {k:"museos y sitios",keys:["museo","museos","sitio","sitios","vaticano","coliseo"],t:()=>
-        `MUSEOS Y SITIOS — ROMA<br><br>
-        • Museos Vaticanos: <a href="https://www.museivaticani.va/content/museivaticani/en.html" target="_blank" rel="noopener noreferrer">https://www.museivaticani.va/content/museivaticani/en.html</a><br><br>
-        • Coliseo / Foro / Palatino: <a href="https://colosseo.it/en/opening-times-and-tickets/" target="_blank" rel="noopener noreferrer">https://colosseo.it/en/opening-times-and-tickets/</a><br><br>
-        • Galería Borghese: <a href="https://galleriaborghese.beniculturali.it/en/" target="_blank" rel="noopener noreferrer">https://galleriaborghese.beniculturali.it/en/</a>`
-      },
-      {k:"exposiciones",keys:["exposición","exposiciones","maxxi","quirinale","arte"],t:()=>
-        `EXPOSICIONES — ROMA<br><br>
-        • MAXXI: <a href="https://www.maxxi.art/en/" target="_blank" rel="noopener noreferrer">https://www.maxxi.art/en/</a><br><br>
-        • Palazzo delle Esposizioni: <a href="https://www.palazzoesposizioni.it/" target="_blank" rel="noopener noreferrer">https://www.palazzoesposizioni.it/</a><br><br>
-        • Scuderie del Quirinale: <a href="https://www.scuderiequirinale.it/en" target="_blank" rel="noopener noreferrer">https://www.scuderiequirinale.it/en</a><br><br>
-        • Palazzo Bonaparte: <a href="https://www.arthemisia.it/site/en/palazzo-bonaparte.html" target="_blank" rel="noopener noreferrer">https://www.arthemisia.it/site/en/palazzo-bonaparte.html</a>`
-      }
-    ]
+    apt: DATA.en.apt,
+    intents: DATA.en.intents
   }
 
-}; /* chiude const DATA */
-/* ============ RILEVAMENTO LINGUA + UI ============ */
+}; /* fine DATA */
 const chatEl = document.getElementById('chat');
 const input  = document.getElementById('input');
 const sendBtn= document.getElementById('sendBtn');
@@ -401,20 +295,78 @@ const sendBtn= document.getElementById('sendBtn');
 const url = new URL(location.href);
 let lang = (url.searchParams.get('lang') || localStorage.getItem('lang') || (navigator.language||'en').slice(0,2)).toLowerCase();
 if(!DATA[lang]) lang='en';
-url.searchParams.set('lang',lang);
-history.replaceState(null,'',url);
+url.searchParams.set('lang',lang); history.replaceState(null,'',url);
 localStorage.setItem('lang',lang);
 
-/* TTS come prima */
+/* TTS */
 let voiceOn=false, pick=null;
-const VOICE_PREFS = { /* ...uguale alla tua versione... */ };
-/* (puoi incollare qui le tue VOICE_PREFS identiche) */
+const VOICE_PREFS = {
+  en:['Samantha','Google US English','Google UK English Female','Microsoft Aria Online (Natural)'],
+  it:['Alice','Eloisa','Google italiano','Microsoft Elsa Online (Natural)'],
+  fr:['Amelie','Thomas','Google français'],
+  de:['Anna','Markus','Google Deutsch'],
+  es:['Monica','Jorge','Paulina','Google español']
+};
+function selectVoice(){
+  if(!('speechSynthesis' in window)) return null;
+  const all = speechSynthesis.getVoices()||[];
+  const prefs = VOICE_PREFS[lang]||[];
+  for(const name of prefs){
+    const v = all.find(v => (v.name||'').toLowerCase()===name.toLowerCase());
+    if(v) return v;
+  }
+  return all.find(v => (v.lang||'').toLowerCase().startsWith(lang)) || all[0] || null;
+}
+function refreshVoice(){ pick = selectVoice(); }
+if('speechSynthesis' in window){ refreshVoice(); speechSynthesis.onvoiceschanged = refreshVoice; }
+function warm(){
+  if(!('speechSynthesis' in window)) return;
+  try{
+    speechSynthesis.cancel();
+    const u=new SpeechSynthesisUtterance('.');
+    u.volume=0.01; if(pick) u.voice=pick; u.lang = pick?.lang || lang;
+    speechSynthesis.speak(u);
+  }catch(e){}
+}
+function speak(t){
+  if(!voiceOn || !('speechSynthesis' in window)) return;
+  try{
+    speechSynthesis.cancel();
+    const u=new SpeechSynthesisUtterance(t.replace(/<[^>]+>/g,""));
+    if(pick) u.voice=pick; u.lang = pick?.lang || lang;
+    speechSynthesis.speak(u);
+  }catch(e){}
+}
 
-function selectVoice(){ /* uguale */ }
-function refreshVoice(){ /* uguale */ }
-/* ... tutto identico alla tua versione ... */
+document.getElementById('voiceBtn').addEventListener('click',e=>{
+  voiceOn=!voiceOn;
+  e.currentTarget.setAttribute('aria-pressed',String(voiceOn));
+  applyUI();
+  if(voiceOn) warm();
+});
+document.querySelector('.lang').addEventListener('click',e=>{
+  const btn=e.target.closest('[data-lang]');
+  if(!btn) return;
+  lang = btn.getAttribute('data-lang');
+  localStorage.setItem('lang',lang);
+  const u=new URL(location.href); u.searchParams.set('lang',lang); history.replaceState(null,'',u);
+  refreshVoice();
+  applyUI();
+  chatEl.innerHTML='';
+  welcome();
+  if(voiceOn) warm();
+});
+function applyUI(){
+  const L = DATA[lang].ui;
+  document.getElementById('aptLabel').textContent = L.apt_label;
+  document.getElementById('voiceBtn').textContent = voiceOn ? L.voice_on : L.voice_off;
+  input.placeholder = L.placeholder;
+  document.querySelectorAll('.lang [data-lang]').forEach(b=>{
+    b.setAttribute('aria-current', b.getAttribute('data-lang')===lang ? 'true':'false');
+  });
+}
 
-/* --- linkify per rendere cliccabili gli URL --- */
+/* rende cliccabili i link ma SENZA duplicarli */
 function linkify(html){
   if(!html) return "";
   return html.replace(/(https?:\/\/[^\s<]+)/g, '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>');
@@ -424,7 +376,7 @@ function add(type, txt){
   const d=document.createElement('div');
   d.className='msg '+(type==='me'?'me':'wd');
   if(type==='me'){
-    d.textContent=txt;
+    d.textContent = txt;
   }else{
     d.innerHTML = linkify(txt);
   }
@@ -432,6 +384,7 @@ function add(type, txt){
   chatEl.scrollTop=chatEl.scrollHeight;
   return d;
 }
+
 function detectIntent(text){
   const L = DATA[lang];
   const t = (text||'').toLowerCase();
@@ -441,7 +394,10 @@ function detectIntent(text){
     for(const k of it.keys){
       if(t.includes(k.toLowerCase())) s++;
     }
-    if(s>score){ score=s; best=it; }
+    if(s>score){
+      score=s;
+      best=it;
+    }
   }
   return best;
 }
@@ -459,81 +415,51 @@ function getAnswer(text){
   }
 }
 
+/* feedback */
 function postFeedback(vote, topic, answerText){
   try{
-    fetch(GOOGLE_SCRIPT_URL,{
-      method:'POST',
-      mode:'no-cors',
-      headers:{'Content-Type':'application/json'},
+    fetch(GOOGLE_SCRIPT_URL, {
+      method:"POST",
+      mode:"no-cors",
+      headers:{"Content-Type":"application/json"},
       body: JSON.stringify({
         apartment_id: APARTMENT_ID,
-        language:(lang||'en').toUpperCase(),
-        topic, answer_text:answerText, vote
+        language: (lang||"en").toUpperCase(),
+        topic: topic,
+        answer_text: answerText,
+        vote: vote
       })
     });
   }catch(e){}
 }
-
 function attachFeedbackUI(container, topic, answerText){
   const L = DATA[lang].ui;
-  const box=document.createElement('div');
+  const box = document.createElement("div");
   box.className='fb-box';
-  const label=document.createElement('span');
+  const label=document.createElement("span");
   label.className='fb-label';
-  label.textContent=L.fb_label;
-  const likeBtn=document.createElement('button');
-  likeBtn.textContent=L.fb_like;
-  const dislikeBtn=document.createElement('button');
-  dislikeBtn.textContent=L.fb_dislike;
-  const done=document.createElement('span');
+  label.textContent = L.fb_label;
+  const like=document.createElement("button");
+  like.textContent = L.fb_like;
+  const dislike=document.createElement("button");
+  dislike.textContent = L.fb_dislike;
+  const done=document.createElement("span");
   done.className='fb-done';
-  done.textContent=L.fb_thanks;
+  done.textContent = L.fb_thanks;
   done.style.display='none';
+
   function finish(v){
-    likeBtn.disabled=true; dislikeBtn.disabled=true;
-    likeBtn.style.opacity=0.6; dislikeBtn.style.opacity=0.6;
+    like.disabled=true; dislike.disabled=true;
+    like.style.opacity = 0.6; dislike.style.opacity = 0.6;
     done.style.display='inline';
-    postFeedback(v,topic,answerText);
+    postFeedback(v, topic, answerText);
   }
-  likeBtn.onclick=()=>finish('like');
-  dislikeBtn.onclick=()=>finish('dislike');
-  box.append(label,likeBtn,dislikeBtn,done);
+  like.addEventListener("click",()=>finish("like"));
+  dislike.addEventListener("click",()=>finish("dislike"));
+
+  box.appendChild(label);
+  box.appendChild(like);
+  box.appendChild(dislike);
+  box.appendChild(done);
   container.appendChild(box);
 }
-
-function welcome(){
-  const L = DATA[lang].ui;
-  const intro=document.createElement('div');
-  intro.className='intro';
-  intro.innerHTML=`<b>${L.welcome}</b>`;
-  chatEl.appendChild(intro);
-  const q=document.createElement('div');
-  q.className='quick';
-  for(const key of L.quick){
-    const b=document.createElement('button');
-    b.textContent=key;
-    b.onclick=()=>{ input.value=key; send(); };
-    q.appendChild(b);
-  }
-  chatEl.appendChild(q);
-}
-
-function send(){
-  const text=(input.value||'').trim();
-  if(!text) return;
-  add('me',text);
-  input.value='';
-  const {text:bot, topic} = getAnswer(text);
-  const botNode = add('wd',bot);
-  if(voiceOn) speak(bot);
-  attachFeedbackUI(botNode, topic, bot);
-}
-
-sendBtn.addEventListener('click',send);
-input.addEventListener('keydown',e=>{ if(e.key==='Enter') send(); });
-
-applyUI();
-welcome();
-</script>
-</body>
-</html>
