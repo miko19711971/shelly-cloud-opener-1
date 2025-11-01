@@ -63,21 +63,17 @@ input{flex:1;padding:12px;border:1px solid #cbd5e1;border-radius:10px;outline:no
       </nav>
     </div>
   </header>
-
   <main id="chat" aria-live="polite"></main>
-
   <footer>
     <input id="input" placeholder="Hi, I am Samantha, your virtual guide. Tap a button for a quick answer — or type here…" autocomplete="off">
     <button id="sendBtn">Send</button>
   </footer>
 </div>
-
 <script>
 /* === CONFIG === */
 const APARTMENT_ID = "ARENULA16";
 /* Usa lo stesso deployment Google Script già in uso per le altre guide */
 const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxt0ToaaC9TOrQMJjcWXpyL1a_FCugoVIgZpB5MFY_IsJTJGHOtloEq1sjKs_F-c7Sd/exec";
-
 /* ============ CONTENUTI LOCALIZZATI (ARENULA 16) ============ */
 const DATA = {
 
@@ -144,8 +140,7 @@ const DATA = {
       {k:'emergency',keys:['emergency','police','ambulance','fire','doctor','vet'],t:a=>a.emergency}
     ]
   },
-
-  it: {
+    it: {
     ui:{
       welcome:"Ciao, sono Samantha, la tua guida virtuale. Tocca un pulsante per una risposta rapida.",
       placeholder:"Ciao, sono Samantha, la tua guida virtuale. Tocca un pulsante — oppure scrivi qui…",
@@ -206,8 +201,7 @@ const DATA = {
       {k:'emergenza',keys:['emergenza','polizia','ambulanza','vigili','medico','veterinario'],t:a=>a.emergency}
     ]
   },
-
-  fr: {
+    fr: {
     ui:{
       welcome:"Bonjour, je suis Samantha, votre guide virtuel. Touchez un bouton pour une réponse rapide.",
       placeholder:"Bonjour, je suis Samantha, votre guide virtuel. Touchez un bouton — ou écrivez ici…",
@@ -268,8 +262,7 @@ const DATA = {
       {k:'urgence',keys:['urgence','police','ambulance','pompiers','médecin','vétérinaire'],t:a=>a.emergency}
     ]
   },
-
-  de: {
+    de: {
     ui:{
       welcome:"Hallo, ich bin Samantha, dein virtueller Guide. Tippe auf einen Button für eine schnelle Antwort.",
       placeholder:"Hallo, ich bin Samantha, dein virtueller Guide. Tippe auf einen Button — oder schreibe hier…",
@@ -330,8 +323,7 @@ const DATA = {
       {k:'Notfall',keys:['notfall','polizei','rettung','feuerwehr','arzt','tierarzt'],t:a=>a.emergency}
     ]
   },
-
-  es: {
+    es: {
     ui:{
       welcome:"Hola, soy Samantha, tu guía virtual. Toca un botón para una respuesta rápida.",
       placeholder:"Hola, soy Samantha, tu guía virtual. Toca un botón — o escribe aquí…",
@@ -393,7 +385,6 @@ const DATA = {
     ]
   }
 }; /* <-- chiude const DATA */
-
 /* ============ RILEVAMENTO LINGUA + UI ============ */
 const chatEl = document.getElementById('chat');
 const input  = document.getElementById('input');
@@ -440,7 +431,7 @@ function speak(t){
   if(!voiceOn || !('speechSynthesis' in window)) return;
   try{
     speechSynthesis.cancel();
-    const u=new SpeechSynthesisUtterance(t);
+    const u=new SpeechSynthesisUtterance(t.replace(/<[^>]+>/g,""));
     if(pick) u.voice=pick; u.lang = pick?.lang || lang;
     speechSynthesis.speak(u);
   }catch{}
@@ -468,14 +459,29 @@ function applyUI(){
 }
 
 /* ============ CHAT LOGIC + FEEDBACK ============ */
+/* 👇 FIX: linkify che NON tocca i testi con <a ...> già dentro */
+function linkify(html){
+  if(!html) return "";
+  if (html.includes("<a ") || html.includes("<A ")) {
+    return html;
+  }
+  return html.replace(/(https?:\/\/[^\s<]+)/g, '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>');
+}
+
 function add(type, txt){
   const d=document.createElement('div');
   d.className='msg '+(type==='me'?'me':'wd');
-  d.textContent=txt;
+  if(type==='me'){
+    d.textContent=txt;
+  }else{
+    const html = (txt||'').replace(/\n/g,'<br>');
+    d.innerHTML = linkify(html);
+  }
   chatEl.appendChild(d);
   chatEl.scrollTop=chatEl.scrollHeight;
   return d;
 }
+
 function detectIntent(text){
   const L = DATA[lang]; const t = (text||'').toLowerCase();
   let best=null,score=0;
@@ -570,3 +576,4 @@ welcome();
 </script>
 </body>
 </html>
+  
