@@ -1,3 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Guest Help — Via Leonina 71</title>
+<link rel="icon" type="image/jpeg" href="logo-niceflatinrome.jpg">
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:#f6f6f6}
+.wrap{max-width:760px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column}
+header{position:sticky;top:0;background:#fff;border-bottom:1px solid #e0e0e0;padding:10px 14px;z-index:10}
+.h-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.h-left{display:flex;align-items:center;gap:10px}
+.brand{font-weight:700;color:#a33}
+.apt{margin-left:auto;opacity:.75}
+img.logo{height:36px;width:auto;display:block}
+.controls{display:flex;gap:8px;margin-top:8px;align-items:center;flex-wrap:wrap}
+.lang{display:flex;gap:6px;margin-left:auto}
+.lang button{border:1px solid #ddd;background:#fff;padding:6px 8px;border-radius:10px;cursor:pointer;font-size:13px}
+.lang button[aria-current="true"]{background:#2b2118;color:#fff;border-color:#2b2118}
+#voiceBtn{padding:8px 10px;border:1px solid #ddd;background:#fff;border-radius:10px;cursor:pointer;font-size:14px}
+#voiceBtn[aria-pressed="true"]{background:#2b2118;color:#fff;border-color:#2b2118}
+main{flex:1;padding:12px}
+.msg{max-width:85%;line-height:1.35;border-radius:12px;padding:10px 12px;margin:8px 0;white-space:normal;word-break:break-word}
+.msg.wd{background:#fff;border:1px solid #e0e0e0}
+.msg.me{background:#e8f0fe;border:1px solid #c5d5ff;margin-left:auto}
+.msg a{color:#a33;text-decoration:underline}
+.quick{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.quick button{border:1px solid #d6c5b8;background:#fff;color:#333;padding:6px 10px;border-radius:12px;cursor:pointer}
+.quick button:active{transform:translateY(1px)}
+footer{position:sticky;bottom:0;background:#fff;display:flex;gap:8px;padding:10px;border-top:1px solid #e0e0e0}
+input{flex:1;padding:12px;border:1px solid #cbd5e1;border-radius:10px;outline:none}
+#sendBtn{padding:12px 14px;border:1px solid #2b2118;background:#2b2118;color:#fff;border-radius:10px;cursor:pointer}
+.intro{background:#fff;border:1px solid #e0e0e0;padding:12px;border-radius:12px;margin:12px 0}
+.intro b{display:block;margin-bottom:6px}
+.small{opacity:.7;font-size:12px;margin-top:6px}
+/* --- Feedback UI --- */
+.fb-box{margin-top:8px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.fb-box .fb-label{font-size:12px;opacity:.7;margin-right:4px}
+.fb-box button{border:1px solid #ddd;background:#fff;padding:6px 10px;border-radius:999px;cursor:pointer}
+.fb-box button:active{transform:scale(0.98)}
+.fb-done{font-size:12px;opacity:.8}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="h-row">
+      <div class="h-left">
+        <img class="logo" src="logo-niceflatinrome.jpg" alt="NiceFlatInRome">
+        <div class="brand">niceflatinrome.com</div>
+      </div>
+      <div class="apt"><span id="aptLabel">Apartment</span>: LEONINA71</div>
+    </div>
+    <div class="controls">
+      <button id="voiceBtn" aria-pressed="false" title="Toggle voice">🔇 Voice: Off</button>
+      <nav class="lang" aria-label="Language">
+        <button data-lang="en" aria-current="true">EN</button>
+        <button data-lang="it">IT</button>
+        <button data-lang="fr">FR</button>
+        <button data-lang="de">DE</button>
+        <button data-lang="es">ES</button>
+      </nav>
+    </div>
+  </header>
+  <main id="chat" aria-live="polite"></main>
+  <footer>
+    <input id="input" placeholder="Hi, I am Samantha, your virtual guide. Tap a button for a quick answer — or type here…" autocomplete="off">
+    <button id="sendBtn">Send</button>
+  </footer>
+</div>
+<script>
+/* === CONFIG === */
+const APARTMENT_ID = "LEONINA71";
+/* stesso deployment Google Script che stai usando sugli altri */
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxt0ToaaC9TOrQMJjcWXpyL1a_FCugoVIgZpB5MFY_IsJTJGHOtloEq1sjKs_F-c7Sd/exec";
+
 /* ============ CONTENUTI LOCALIZZATI (LEONINA 71) ============ */
 const DATA = {
   en: {
@@ -42,17 +120,17 @@ const DATA = {
       luggage:"Radical Storage points around Termini and Largo Argentina (book online).",
       sims:"Iliad — Via Cavour 196 • TIM/Vodafone — Via Nazionale.",
       transport:"Metro B — Cavour station (~5 min). Bus 75, 117, 84 on Via Cavour. Walking is ideal in Monti.",
-      airports:"Fiumicino: Metro B Cavour → Termini → Leonardo Express (32 min). Ciampino: bus to Termini → Metro B Cavour.",
+      airports:"Fiumicino: Metro B Cavour → Termini → Leonardo Express (32 min) or FL1 from Trastevere. Ciampino: bus to Termini → Metro B Cavour. Private transfer: Welcome Pickups.",
       taxi:"Radio Taxi +39 06 3570 or FreeNow app.",
       emergency:"EU Emergency 112 • Police 113 • Ambulance 118 • Fire 115 • English-speaking doctor +39 06 488 2371 • 24h vet +39 06 660 681",
       eat:"La Carbonara • Ai Tre Scalini • Trattoria Vecchia Roma • Fafiuche Wine Bar • Al42 by Pasta Chef Monti • Broccoletti • Cuoco e Camicia",
       drink:"VinoRoma Wine Studio • La Bottega del Caffè (Piazza Madonna dei Monti) • Spritzeria Monti • Blackmarket Hall.",
       shop:"Mercato Monti Vintage Market (Via Leonina 46, weekends) • Via Urbana & Via del Boschetto boutiques • Panisperna Bookshop • Artisan leather & design stores in Monti.",
-      visit:"Piazza Madonna dei Monti • Santa Maria ai Monti • San Pietro in Vincoli (Michelangelo’s Moses) • Colle Oppio Park & Domus Aurea • Trajan’s Market & Forum.",
-      hidden_gems:"San Martino ai Monti underground • Santa Prassede (Chapel of St. Zeno) • Borgia stairs • Ancient Suburra streets • Roman houses under Santa Pudenziana.",
+      visit:"Piazza Madonna dei Monti • Santa Maria ai Monti • San Martino ai Monti • San Pietro in Vincoli (Michelangelo’s Moses) • Colle Oppio Park & Domus Aurea • Trajan’s Market & Forum.",
+      hidden_gems:"Sotterranei di San Martino ai Monti (guided) • Santa Prassede (Chapel of St. Zeno) • Scalinata dei Borgia • Ancient Suburra streets • Roman houses beneath Santa Pudenziana.",
       experiences:"Aperitivo in Piazza Madonna dei Monti • Vintage browsing at Mercato Monti • Sunset photos on rooftops/terrace • Stroll Via Urbana & Via dei Serpenti • Evening walk by the Roman Forum.",
-      romantic_walk:"Start: Via Leonina 71 → Colosseum → Arch of Constantine → Via dei Fori Imperiali → Campidoglio view → Fatamorgana Monti gelato → La Bottega del Caffè → back.",
-      daytrips:"Ostia Antica (~40 min) • Tivoli (Villa d’Este & Hadrian’s Villa) • Castelli Romani.",
+      romantic_walk:"Start: Via Leonina 71 → Colosseum → Arch of Constantine → Via dei Fori Imperiali → Campidoglio view → Fatamorgana Monti gelato → La Bottega del Caffè → back to Via Leonina 71.",
+      daytrips:"Ostia Antica (~40 min) • Tivoli (Villa d’Este & Hadrian’s Villa ~1h) • Castelli Romani (villages & wine).",
       checkout_note:"Before leaving: turn off lights/AC, close windows, leave keys on the table, gently close the door."
     },
     intents: [
@@ -78,18 +156,18 @@ const DATA = {
       {k:"experience",keys:["experience","walk","tour","itinerary","sunset","romantic"],t:a=>`${a.experiences}<br><br>Romantic route: ${a.romantic_walk}`},
       {k:"day trips",keys:["day trip","tivoli","ostia","castelli","excursion"],t:a=>a.daytrips},
 
-      /* 3 nuovi EN, senza doppioni */
+      /* --- cleaned EN buttons --- */
       {k:"tickets & events",keys:["ticket","tickets","event","events","match","concert","football","roma","lazio"],t:()=>
         `TICKETS & EVENTS — ROME<br><br>
-        • TicketOne (concerts, theatre & sports): <a href="https://www.ticketone.it/en/" target="_blank" rel="noopener noreferrer">https://www.ticketone.it/en/</a><br><br>
-        • AS Roma — Official tickets: <a href="https://www.asroma.com/en/tickets" target="_blank" rel="noopener noreferrer">https://www.asroma.com/en/tickets</a><br><br>
-        • SS Lazio — Official tickets: <a href="https://sslazio.it/en/tickets" target="_blank" rel="noopener noreferrer">https://sslazio.it/en/tickets</a>`
+        • TicketOne (concerts, theatre, sports): <a href="https://www.ticketone.it/en/" target="_blank" rel="noopener noreferrer">https://www.ticketone.it/en/</a><br><br>
+        • AS Roma — official tickets: <a href="https://www.asroma.com/en/tickets" target="_blank" rel="noopener noreferrer">https://www.asroma.com/en/tickets</a><br><br>
+        • SS Lazio — official tickets: <a href="https://sslazio.it/en/tickets" target="_blank" rel="noopener noreferrer">https://sslazio.it/en/tickets</a>`
       },
       {k:"museums & sites",keys:["museum","museums","site","sites","colosseum","vatican","borghese"],t:()=>
         `MUSEUMS & SITES — ROME<br><br>
         • Vatican Museums: <a href="https://www.museivaticani.va/content/museivaticani/en.html" target="_blank" rel="noopener noreferrer">https://www.museivaticani.va/content/museivaticani/en.html</a><br><br>
         • Colosseum, Roman Forum & Palatine Hill: <a href="https://parcocolosseo.it/en/" target="_blank" rel="noopener noreferrer">https://parcocolosseo.it/en/</a><br><br>
-        • Galleria Borghese (reservation required): <a href="https://galleriaborghese.beniculturali.it/en/" target="_blank" rel="noopener noreferrer">https://galleriaborghese.beniculturali.it/en/</a>`
+        • Galleria Borghese: <a href="https://galleriaborghese.beniculturali.it/en/" target="_blank" rel="noopener noreferrer">https://galleriaborghese.beniculturali.it/en/</a>`
       },
       {k:"exhibitions",keys:["exhibition","exhibitions","maxxi","quirinale","gallery"],t:()=>
         `EXHIBITIONS — ROME<br><br>
@@ -102,8 +180,7 @@ const DATA = {
       {k:"emergency",keys:["emergency","police","ambulance","fire","doctor","vet","help"],t:a=>a.emergency}
     ]
   },
-
-  it: {
+    it: {
     ui:{
       welcome:"Ciao, sono Samantha, la tua guida virtuale. Tocca un pulsante per una risposta rapida.",
       placeholder:"Ciao, sono Samantha, la tua guida virtuale. Tocca un pulsante — oppure scrivi qui…",
@@ -113,7 +190,7 @@ const DATA = {
       quick:[
         "wifi","check in","check out","acqua","aria condizionata","bagno","cucina","terrazzo",
         "mangiare","bere","shopping","visitare","angoli nascosti","esperienze","gite di un giorno",
-        "biglietti & eventi","musei & siti","mostre",
+        "biglietti ed eventi","musei e siti","mostre",
         "trasporti","servizi","emergenza"
       ],
       fallback:"Non ho trovato una risposta diretta. Prova un pulsante (wifi, terrazzo, trasporti, visitare…).",
@@ -145,13 +222,13 @@ const DATA = {
       luggage:"Radical Storage in zona Termini e Largo Argentina (prenota online).",
       sims:"Iliad — Via Cavour 196 • TIM/Vodafone — Via Nazionale.",
       transport:"Metro B — fermata Cavour (~5 min). Bus 75, 117, 84 su Via Cavour. A Monti ci si muove bene a piedi.",
-      airports:"Fiumicino: Metro B Cavour → Termini → Leonardo Express (32 min). Ciampino: bus per Termini → Metro B Cavour.",
+      airports:"Fiumicino: Metro B Cavour → Termini → Leonardo Express (32 min) o FL1 da Trastevere. Ciampino: bus per Termini → Metro B Cavour. Transfer privato: Welcome Pickups.",
       taxi:"Radio Taxi +39 06 3570 o app FreeNow.",
       emergency:"Emergenze UE 112 • Polizia 113 • Ambulanza 118 • Vigili del Fuoco 115 • Medico (EN) +39 06 488 2371 • Veterinario 24h +39 06 660 681",
       eat:"La Carbonara • Ai Tre Scalini • Trattoria Vecchia Roma • Fafiuche Wine Bar • Al42 by Pasta Chef Monti • Broccoletti • Cuoco e Camicia",
       drink:"VinoRoma • La Bottega del Caffè (Piazza Madonna dei Monti) • Spritzeria Monti • Blackmarket Hall.",
       shop:"Mercato Monti Vintage (Via Leonina 46, weekend) • Boutique Via Urbana & Via del Boschetto • Libreria Panisperna • Artigianato pelle & design.",
-      visit:"Piazza Madonna dei Monti • Santa Maria ai Monti • San Pietro in Vincoli (Mosè di Michelangelo) • Parco Colle Oppio & Domus Aurea • Mercati di Traiano & Fori.",
+      visit:"Piazza Madonna dei Monti • Santa Maria ai Monti • San Martino ai Monti • San Pietro in Vincoli (Mosè di Michelangelo) • Parco Colle Oppio & Domus Aurea • Mercati di Traiano & Fori.",
       hidden_gems:"Sotterranei di San Martino ai Monti (visite guidate) • Santa Prassede (Cappella di S. Zenone) • Scalinata dei Borgia • Antica Suburra • Case romane sotto S. Pudenziana.",
       experiences:"Aperitivo in Piazza Madonna dei Monti • Vintage al Mercato Monti • Foto al tramonto sui tetti/terrazzo • Passeggiata in Via Urbana & Via dei Serpenti • Serale lungo i Fori.",
       romantic_walk:"Partenza: Via Leonina 71 → Colosseo → Arco di Costantino → Via dei Fori Imperiali → Vista dal Campidoglio → gelato Fatamorgana Monti → La Bottega del Caffè → ritorno.",
@@ -181,232 +258,25 @@ const DATA = {
       {k:"esperienze",keys:["esperienze","passeggiata","tour","itinerario","tramonto","romantico"],t:a=>`${a.experiences}<br><br>Percorso romantico: ${a.romantic_walk}`},
       {k:"gite di un giorno",keys:["gite","gita","tivoli","ostia","castelli","escursione"],t:a=>a.daytrips},
 
-      /* 3 nuovi IT, stessi link di sopra, senza doppioni */
-      {k:"biglietti & eventi",keys:["biglietti","ticket","evento","eventi","concerto","partita"],t:()=>
+      /* --- puliti IT --- */
+      {k:"biglietti ed eventi",keys:["biglietti","ticket","evento","eventi","partita","concerto"],t:()=>
         `BIGLIETTI & EVENTI — ROMA<br><br>
-        • TicketOne (concerti, teatro, sport): <a href="https://www.ticketone.it/en/" target="_blank" rel="noopener noreferrer">https://www.ticketone.it/en/</a><br><br>
-        • AS Roma — biglietteria ufficiale: <a href="https://www.asroma.com/en/tickets" target="_blank" rel="noopener noreferrer">https://www.asroma.com/en/tickets</a><br><br>
-        • SS Lazio — biglietteria ufficiale: <a href="https://sslazio.it/en/tickets" target="_blank" rel="noopener noreferrer">https://sslazio.it/en/tickets</a>`
+        • TicketOne (concerti, teatro, sport): <a href="https://www.ticketone.it/" target="_blank" rel="noopener noreferrer">https://www.ticketone.it/</a><br><br>
+        • AS Roma — biglietti ufficiali: <a href="https://www.asroma.com/en/tickets" target="_blank" rel="noopener noreferrer">https://www.asroma.com/en/tickets</a><br><br>
+        • SS Lazio — biglietti ufficiali: <a href="https://sslazio.it/en/tickets" target="_blank" rel="noopener noreferrer">https://sslazio.it/en/tickets</a>`
       },
-      {k:"musei & siti",keys:["museo","musei","sito","siti","vaticano","colosseo"],t:()=>
+      {k:"musei e siti",keys:["museo","musei","sito","siti","vaticano","colosseo"],t:()=>
         `MUSEI & SITI — ROMA<br><br>
-        • Musei Vaticani: <a href="https://www.museivaticani.va/content/museivaticani/en.html" target="_blank" rel="noopener noreferrer">https://www.museivaticani.va/content/museivaticani/en.html</a><br><br>
-        • Colosseo / Foro Romano / Palatino: <a href="https://parcocolosseo.it/en/" target="_blank" rel="noopener noreferrer">https://parcocolosseo.it/en/</a><br><br>
-        • Galleria Borghese: <a href="https://galleriaborghese.beniculturali.it/en/" target="_blank" rel="noopener noreferrer">https://galleriaborghese.beniculturali.it/en/</a>`
+        • Musei Vaticani: <a href="https://www.museivaticani.va/content/museivaticani/it.html" target="_blank" rel="noopener noreferrer">https://www.museivaticani.va/content/museivaticani/it.html</a><br><br>
+        • Colosseo / Foro / Palatino: <a href="https://parcocolosseo.it/" target="_blank" rel="noopener noreferrer">https://parcocolosseo.it/</a><br><br>
+        • Galleria Borghese: <a href="https://galleriaborghese.beniculturali.it/" target="_blank" rel="noopener noreferrer">https://galleriaborghese.beniculturali.it/</a>`
       },
       {k:"mostre",keys:["mostre","mostra","maxxi","quirinale","arte"],t:()=>
         `MOSTRE — ROMA<br><br>
-        • MAXXI: <a href="https://www.maxxi.art/en/" target="_blank" rel="noopener noreferrer">https://www.maxxi.art/en/</a><br><br>
+        • MAXXI: <a href="https://www.maxxi.art/" target="_blank" rel="noopener noreferrer">https://www.maxxi.art/</a><br><br>
         • Palazzo delle Esposizioni: <a href="https://www.palazzoesposizioni.it/" target="_blank" rel="noopener noreferrer">https://www.palazzoesposizioni.it/</a><br><br>
-        • Scuderie del Quirinale: <a href="https://www.scuderiequirinale.it/en" target="_blank" rel="noopener noreferrer">https://www.scuderiequirinale.it/en</a><br><br>
-        • Palazzo Bonaparte (Arthemisia): <a href="https://www.arthemisia.it/site/en/palazzo-bonaparte.html" target="_blank" rel="noopener noreferrer">https://www.arthemisia.it/site/en/palazzo-bonaparte.html</a>`
-      },
-
-      {k:"emergenza",keys:["emergenza","polizia","ambulanza","vigili","medico","veterinario"],t:a=>a.emergency}
-    ]
-  },
-  /* ============ CONTENUTI LOCALIZZATI (LEONINA 71) ============ */
-const DATA = {
-  en: {
-    ui: {
-      welcome: "Hi, I am Samantha, your virtual guide. Tap a button to get a quick answer.",
-      placeholder: "Hi, I am Samantha, your virtual guide. Tap a button for a quick answer — or type here…",
-      apt_label: "Apartment",
-      voice_on: "🔊 Voice: On",
-      voice_off: "🔇 Voice: Off",
-      quick: [
-        "wifi","check in","check out","water","AC","bathroom","kitchen","terrace",
-        "eat","drink","shop","visit","hidden gems","experience","day trips",
-        "tickets & events","museums & sites","exhibitions",
-        "transport","services","emergency"
-      ],
-      fallback: "I did not find a direct answer. Try a quick button (wifi, terrace, transport, visit…).",
-      fb_label:"Was this helpful?",
-      fb_like:"👍 Like",
-      fb_dislike:"👎 Dislike",
-      fb_thanks:"Thanks for your feedback!"
-    },
-    apt: {
-      checkin_time:"15:00", checkout_time:"11:00",
-      wifi_note:"Router on the table. Turn it around to see the SSID and password on the label.",
-      wifi_ssid:"See router label", wifi_password:"See router label",
-      water_note:"Tap water is safe to drink. Hot water is always available.<br><br><b>IMPORTANT:</b> do NOT touch the switch on the left side of the bathroom mirror (it controls the hot water system).",
-      ac_note:"Air conditioning is available. Please turn it OFF when you leave the apartment.",
-      bathroom_amenities:"Hairdryer, bath mat, toilet paper, hand soap.",
-      towels_note:"Per guest: 1 large + 1 medium + 1 small towel. Beds are prepared on arrival.",
-      lighting_note:"Kitchen lights: switch on the right side of the stairs (facing the kitchen). Terrace lights: switch inside on the right before exiting to the terrace.",
-      kitchen_note:"Kitchen is fully equipped.<br><br><b>Electric hot plate:</b> always switch OFF after use and never leave pots unattended.",
-      terrace_note:"If you open the terrace umbrella, TIE it to the railing. Always close and untie it before leaving.",
-      plants_note:"If you like, you may water the plants once a day (except cacti).",
-      front_door_access:"Use the long key with the square end; pull the heavy door toward you and turn the key counter-clockwise to open.",
-      building_code:"Main door code (alternative to round key): <b>7171 + key symbol</b>.",
-      intercom_note:"—",
-      host_phone:"+39 335 5245756",
-      supermarkets:"Carrefour Express (Via Urbana) • Mini-markets on Via Leonina.",
-      pharmacies:"Farmacia Cavour (Via Cavour 84) • Pharmacy on Via Panisperna 40.",
-      atms:"BNL ATM (Via Cavour 84) • UniCredit ATM (Piazza della Suburra 5).",
-      laundry:"Wash & Dry Laundromat — Via Cavour 194 (self-service).",
-      luggage:"Radical Storage points around Termini and Largo Argentina (book online).",
-      sims:"Iliad — Via Cavour 196 • TIM/Vodafone — Via Nazionale.",
-      transport:"Metro B — Cavour station (~5 min). Bus 75, 117, 84 on Via Cavour. Walking is ideal in Monti.",
-      airports:"Fiumicino: Metro B Cavour → Termini → Leonardo Express (32 min). Ciampino: bus to Termini → Metro B Cavour.",
-      taxi:"Radio Taxi +39 06 3570 or FreeNow app.",
-      emergency:"EU Emergency 112 • Police 113 • Ambulance 118 • Fire 115 • English-speaking doctor +39 06 488 2371 • 24h vet +39 06 660 681",
-      eat:"La Carbonara • Ai Tre Scalini • Trattoria Vecchia Roma • Fafiuche Wine Bar • Al42 by Pasta Chef Monti • Broccoletti • Cuoco e Camicia",
-      drink:"VinoRoma Wine Studio • La Bottega del Caffè (Piazza Madonna dei Monti) • Spritzeria Monti • Blackmarket Hall.",
-      shop:"Mercato Monti Vintage Market (Via Leonina 46, weekends) • Via Urbana & Via del Boschetto boutiques • Panisperna Bookshop • Artisan leather & design stores in Monti.",
-      visit:"Piazza Madonna dei Monti • Santa Maria ai Monti • San Pietro in Vincoli (Michelangelo’s Moses) • Colle Oppio Park & Domus Aurea • Trajan’s Market & Forum.",
-      hidden_gems:"San Martino ai Monti underground • Santa Prassede (Chapel of St. Zeno) • Borgia stairs • Ancient Suburra streets • Roman houses under Santa Pudenziana.",
-      experiences:"Aperitivo in Piazza Madonna dei Monti • Vintage browsing at Mercato Monti • Sunset photos on rooftops/terrace • Stroll Via Urbana & Via dei Serpenti • Evening walk by the Roman Forum.",
-      romantic_walk:"Start: Via Leonina 71 → Colosseum → Arch of Constantine → Via dei Fori Imperiali → Campidoglio view → Fatamorgana Monti gelato → La Bottega del Caffè → back.",
-      daytrips:"Ostia Antica (~40 min) • Tivoli (Villa d’Este & Hadrian’s Villa) • Castelli Romani.",
-      checkout_note:"Before leaving: turn off lights/AC, close windows, leave keys on the table, gently close the door."
-    },
-    intents: [
-      {k:"wifi",keys:["wifi","wi-fi","internet","password","router"],t:a=>`Wi-Fi: ${a.wifi_note}<br><br>Network: ${a.wifi_ssid}. Password: ${a.wifi_password}.`},
-      {k:"check in",keys:["check in","arrival","access","entrance","door","front door","building","code","intercom"],t:a=>`Check-in from ${a.checkin_time}.<br><br>Access: ${a.front_door_access}<br><br>Building code: ${a.building_code}<br><br>Need help? Call ${a.host_phone}.`},
-      {k:"check out",keys:["check out","leave","departure"],t:a=>a.checkout_note},
-      {k:"water",keys:["water","hot water","drinkable","tap","mirror switch","boiler"],t:a=>a.water_note},
-      {k:"AC",keys:["ac","air conditioning","aircon","air conditioner"],t:a=>a.ac_note},
-      {k:"bathroom",keys:["bathroom","hairdryer","soap","towels","amenities"],t:a=>`Bathroom: ${a.bathroom_amenities}<br><br>Towels: ${a.towels_note}`},
-      {k:"kitchen",keys:["kitchen","cook","cooking","stove","hot plate"],t:a=>a.kitchen_note},
-      {k:"terrace",keys:["terrace","umbrella","plants","balcony","light"],t:a=>`Terrace: ${a.terrace_note}<br><br>Plants: ${a.plants_note}<br><br>Lights: ${a.lighting_note}`},
-      {k:"services",keys:["pharmacy","hospital","atm","sim","laundry","luggage","supermarket","groceries"],t:a=>
-        `Supermarkets: ${a.supermarkets}<br><br>Pharmacies: ${a.pharmacies}<br><br>ATMs: ${a.atms}<br><br>Laundry: ${a.laundry}<br><br>Luggage: ${a.luggage}<br><br>SIMs: ${a.sims}`
-      },
-      {k:"transport",keys:["transport","tram","bus","taxi","airport","train","metro"],t:a=>
-        `${a.transport}<br><br>Airports: ${a.airports}<br><br>Taxi: ${a.taxi}`
-      },
-      {k:"eat",keys:["eat","restaurant","dinner","lunch","food"],t:a=>a.eat},
-      {k:"drink",keys:["drink","bar","wine","cocktail","aperitivo"],t:a=>a.drink},
-      {k:"shop",keys:["shop","market","shopping","boutique","vintage"],t:a=>a.shop},
-      {k:"visit",keys:["visit","see","sight","attraction","museum","moses","domus aurea"],t:a=>a.visit},
-      {k:"hidden gems",keys:["hidden","secret","gem","less-known","underground","suburra","pudenziana"],t:a=>a.hidden_gems},
-      {k:"experience",keys:["experience","walk","tour","itinerary","sunset","romantic"],t:a=>`${a.experiences}<br><br>Romantic route: ${a.romantic_walk}`},
-      {k:"day trips",keys:["day trip","tivoli","ostia","castelli","excursion"],t:a=>a.daytrips},
-
-      /* 3 nuovi EN, senza doppioni */
-      {k:"tickets & events",keys:["ticket","tickets","event","events","match","concert","football","roma","lazio"],t:()=>
-        `TICKETS & EVENTS — ROME<br><br>
-        • TicketOne (concerts, theatre & sports): <a href="https://www.ticketone.it/en/" target="_blank" rel="noopener noreferrer">https://www.ticketone.it/en/</a><br><br>
-        • AS Roma — Official tickets: <a href="https://www.asroma.com/en/tickets" target="_blank" rel="noopener noreferrer">https://www.asroma.com/en/tickets</a><br><br>
-        • SS Lazio — Official tickets: <a href="https://sslazio.it/en/tickets" target="_blank" rel="noopener noreferrer">https://sslazio.it/en/tickets</a>`
-      },
-      {k:"museums & sites",keys:["museum","museums","site","sites","colosseum","vatican","borghese"],t:()=>
-        `MUSEUMS & SITES — ROME<br><br>
-        • Vatican Museums: <a href="https://www.museivaticani.va/content/museivaticani/en.html" target="_blank" rel="noopener noreferrer">https://www.museivaticani.va/content/museivaticani/en.html</a><br><br>
-        • Colosseum, Roman Forum & Palatine Hill: <a href="https://parcocolosseo.it/en/" target="_blank" rel="noopener noreferrer">https://parcocolosseo.it/en/</a><br><br>
-        • Galleria Borghese (reservation required): <a href="https://galleriaborghese.beniculturali.it/en/" target="_blank" rel="noopener noreferrer">https://galleriaborghese.beniculturali.it/en/</a>`
-      },
-      {k:"exhibitions",keys:["exhibition","exhibitions","maxxi","quirinale","gallery"],t:()=>
-        `EXHIBITIONS — ROME<br><br>
-        • MAXXI: <a href="https://www.maxxi.art/en/" target="_blank" rel="noopener noreferrer">https://www.maxxi.art/en/</a><br><br>
-        • Palazzo delle Esposizioni: <a href="https://www.palazzoesposizioni.it/" target="_blank" rel="noopener noreferrer">https://www.palazzoesposizioni.it/</a><br><br>
-        • Scuderie del Quirinale: <a href="https://www.scuderiequirinale.it/en" target="_blank" rel="noopener noreferrer">https://www.scuderiequirinale.it/en</a><br><br>
-        • Palazzo Bonaparte (Arthemisia): <a href="https://www.arthemisia.it/site/en/palazzo-bonaparte.html" target="_blank" rel="noopener noreferrer">https://www.arthemisia.it/site/en/palazzo-bonaparte.html</a>`
-      },
-
-      {k:"emergency",keys:["emergency","police","ambulance","fire","doctor","vet","help"],t:a=>a.emergency}
-    ]
-  },
-
-  it: {
-    ui:{
-      welcome:"Ciao, sono Samantha, la tua guida virtuale. Tocca un pulsante per una risposta rapida.",
-      placeholder:"Ciao, sono Samantha, la tua guida virtuale. Tocca un pulsante — oppure scrivi qui…",
-      apt_label:"Appartamento",
-      voice_on:"🔊 Voce: On",
-      voice_off:"🔇 Voce: Off",
-      quick:[
-        "wifi","check in","check out","acqua","aria condizionata","bagno","cucina","terrazzo",
-        "mangiare","bere","shopping","visitare","angoli nascosti","esperienze","gite di un giorno",
-        "biglietti & eventi","musei & siti","mostre",
-        "trasporti","servizi","emergenza"
-      ],
-      fallback:"Non ho trovato una risposta diretta. Prova un pulsante (wifi, terrazzo, trasporti, visitare…).",
-      fb_label:"Ti è stato utile?",
-      fb_like:"👍 Mi piace",
-      fb_dislike:"👎 Non mi piace",
-      fb_thanks:"Grazie per il tuo feedback!"
-    },
-    apt:{
-      checkin_time:"15:00", checkout_time:"11:00",
-      wifi_note:"Router sul tavolo. Giralo per leggere SSID e password sull’etichetta.",
-      wifi_ssid:"Vedi etichetta del router", wifi_password:"Vedi etichetta del router",
-      water_note:"L’acqua del rubinetto è potabile. L’acqua calda è sempre disponibile.<br><br><b>IMPORTANTE:</b> non toccare l’interruttore a sinistra dello specchio del bagno (comanda l’impianto dell’acqua calda).",
-      ac_note:"Aria condizionata presente. Spegnila quando esci dall’appartamento.",
-      bathroom_amenities:"Asciugacapelli, tappetino, carta igienica, sapone mani.",
-      towels_note:"Per ospite: 1 telo grande + 1 medio + 1 piccolo. Letti pronti all’arrivo.",
-      lighting_note:"Luci cucina: interruttore a destra delle scale (guardando la cucina). Luci terrazzo: interruttore interno a destra prima dell’uscita.",
-      kitchen_note:"Cucina attrezzata.<br><br><b>Piastra elettrica:</b> spegnerla SEMPRE dopo l’uso e non lasciare mai pentole incustodite.",
-      terrace_note:"Se apri l’ombrellone del terrazzo, LEGALO alla ringhiera. Chiudilo e scioglilo sempre prima di uscire.",
-      plants_note:"Se vuoi puoi bagnare le piante una volta al giorno (esclusi i cactus).",
-      front_door_access:"Usa la chiave lunga con punta quadrata; tira il portone verso di te e gira in senso antiorario.",
-      building_code:"Codice portone (alternativa alla chiave tonda): <b>7171 + simbolo chiave</b>.",
-      intercom_note:"—",
-      host_phone:"+39 335 5245756",
-      supermarkets:"Carrefour Express (Via Urbana) • Minimarket in Via Leonina.",
-      pharmacies:"Farmacia Cavour (Via Cavour 84) • Farmacia in Via Panisperna 40.",
-      atms:"BNL (Via Cavour 84) • UniCredit (Piazza della Suburra 5).",
-      laundry:"Lavanderia Wash & Dry — Via Cavour 194 (self-service).",
-      luggage:"Radical Storage in zona Termini e Largo Argentina (prenota online).",
-      sims:"Iliad — Via Cavour 196 • TIM/Vodafone — Via Nazionale.",
-      transport:"Metro B — fermata Cavour (~5 min). Bus 75, 117, 84 su Via Cavour. A Monti ci si muove bene a piedi.",
-      airports:"Fiumicino: Metro B Cavour → Termini → Leonardo Express (32 min). Ciampino: bus per Termini → Metro B Cavour.",
-      taxi:"Radio Taxi +39 06 3570 o app FreeNow.",
-      emergency:"Emergenze UE 112 • Polizia 113 • Ambulanza 118 • Vigili del Fuoco 115 • Medico (EN) +39 06 488 2371 • Veterinario 24h +39 06 660 681",
-      eat:"La Carbonara • Ai Tre Scalini • Trattoria Vecchia Roma • Fafiuche Wine Bar • Al42 by Pasta Chef Monti • Broccoletti • Cuoco e Camicia",
-      drink:"VinoRoma • La Bottega del Caffè (Piazza Madonna dei Monti) • Spritzeria Monti • Blackmarket Hall.",
-      shop:"Mercato Monti Vintage (Via Leonina 46, weekend) • Boutique Via Urbana & Via del Boschetto • Libreria Panisperna • Artigianato pelle & design.",
-      visit:"Piazza Madonna dei Monti • Santa Maria ai Monti • San Pietro in Vincoli (Mosè di Michelangelo) • Parco Colle Oppio & Domus Aurea • Mercati di Traiano & Fori.",
-      hidden_gems:"Sotterranei di San Martino ai Monti (visite guidate) • Santa Prassede (Cappella di S. Zenone) • Scalinata dei Borgia • Antica Suburra • Case romane sotto S. Pudenziana.",
-      experiences:"Aperitivo in Piazza Madonna dei Monti • Vintage al Mercato Monti • Foto al tramonto sui tetti/terrazzo • Passeggiata in Via Urbana & Via dei Serpenti • Serale lungo i Fori.",
-      romantic_walk:"Partenza: Via Leonina 71 → Colosseo → Arco di Costantino → Via dei Fori Imperiali → Vista dal Campidoglio → gelato Fatamorgana Monti → La Bottega del Caffè → ritorno.",
-      daytrips:"Ostia Antica (~40 min) • Tivoli (Villa d’Este & Villa Adriana ~1h) • Castelli Romani.",
-      checkout_note:"Prima di partire: spegni luci/AC, chiudi le finestre, lascia le chiavi sul tavolo, chiudi la porta delicatamente."
-    },
-    intents:[
-      {k:"wifi",keys:["wifi","wi-fi","internet","password","router"],t:a=>`Wi-Fi: ${a.wifi_note}<br><br>Rete: ${a.wifi_ssid}. Password: ${a.wifi_password}.`},
-      {k:"check in",keys:["check in","arrivo","accesso","ingresso","porta","portone","edificio","codice","citofono"],t:a=>`Check-in dalle ${a.checkin_time}.<br><br>Accesso: ${a.front_door_access}<br><br>Codice portone: ${a.building_code}<br><br>Aiuto? Chiama ${a.host_phone}.`},
-      {k:"check out",keys:["check out","partenza","lasciare"],t:a=>a.checkout_note},
-      {k:"acqua",keys:["acqua","acqua calda","potabile","rubinetto","interruttore specchio","boiler"],t:a=>a.water_note},
-      {k:"aria condizionata",keys:["aria condizionata","clima","ac","condizionatore"],t:a=>a.ac_note},
-      {k:"bagno",keys:["bagno","asciugacapelli","sapone","asciugamani","amenities"],t:a=>`Bagno: ${a.bathroom_amenities}<br><br>Asciugamani: ${a.towels_note}`},
-      {k:"cucina",keys:["cucina","cucinare","fornelli","piastra"],t:a=>a.kitchen_note},
-      {k:"terrazzo",keys:["terrazzo","ombrellone","piante","balcone","luci"],t:a=>`Terrazzo: ${a.terrace_note}<br><br>Piante: ${a.plants_note}<br><br>Luci: ${a.lighting_note}`},
-      {k:"servizi",keys:["farmacia","ospedale","bancomat","sim","lavanderia","bagagli","supermercato","spesa"],t:a=>
-        `Supermercati: ${a.supermarkets}<br><br>Farmacie: ${a.pharmacies}<br><br>Bancomat: ${a.atms}<br><br>Lavanderia: ${a.laundry}<br><br>Deposito bagagli: ${a.luggage}<br><br>SIM: ${a.sims}`
-      },
-      {k:"trasporti",keys:["trasporti","tram","bus","taxi","aeroporto","treno","metro"],t:a=>
-        `${a.transport}<br><br>Aeroporti: ${a.airports}<br><br>Taxi: ${a.taxi}`
-      },
-      {k:"mangiare",keys:["mangiare","ristorante","cena","pranzo","cibo"],t:a=>a.eat},
-      {k:"bere",keys:["bere","bar","vino","cocktail","aperitivo"],t:a=>a.drink},
-      {k:"shopping",keys:["shopping","mercato","boutique","vintage"],t:a=>a.shop},
-      {k:"visitare",keys:["visitare","vedere","attrazioni","museo","mosè","domus aurea"],t:a=>a.visit},
-      {k:"angoli nascosti",keys:["nascosti","segreti","gioielli","suburra","pudenziana"],t:a=>a.hidden_gems},
-      {k:"esperienze",keys:["esperienze","passeggiata","tour","itinerario","tramonto","romantico"],t:a=>`${a.experiences}<br><br>Percorso romantico: ${a.romantic_walk}`},
-      {k:"gite di un giorno",keys:["gite","gita","tivoli","ostia","castelli","escursione"],t:a=>a.daytrips},
-
-      /* 3 nuovi IT, stessi link di sopra, senza doppioni */
-      {k:"biglietti & eventi",keys:["biglietti","ticket","evento","eventi","concerto","partita"],t:()=>
-        `BIGLIETTI & EVENTI — ROMA<br><br>
-        • TicketOne (concerti, teatro, sport): <a href="https://www.ticketone.it/en/" target="_blank" rel="noopener noreferrer">https://www.ticketone.it/en/</a><br><br>
-        • AS Roma — biglietteria ufficiale: <a href="https://www.asroma.com/en/tickets" target="_blank" rel="noopener noreferrer">https://www.asroma.com/en/tickets</a><br><br>
-        • SS Lazio — biglietteria ufficiale: <a href="https://sslazio.it/en/tickets" target="_blank" rel="noopener noreferrer">https://sslazio.it/en/tickets</a>`
-      },
-      {k:"musei & siti",keys:["museo","musei","sito","siti","vaticano","colosseo"],t:()=>
-        `MUSEI & SITI — ROMA<br><br>
-        • Musei Vaticani: <a href="https://www.museivaticani.va/content/museivaticani/en.html" target="_blank" rel="noopener noreferrer">https://www.museivaticani.va/content/museivaticani/en.html</a><br><br>
-        • Colosseo / Foro Romano / Palatino: <a href="https://parcocolosseo.it/en/" target="_blank" rel="noopener noreferrer">https://parcocolosseo.it/en/</a><br><br>
-        • Galleria Borghese: <a href="https://galleriaborghese.beniculturali.it/en/" target="_blank" rel="noopener noreferrer">https://galleriaborghese.beniculturali.it/en/</a>`
-      },
-      {k:"mostre",keys:["mostre","mostra","maxxi","quirinale","arte"],t:()=>
-        `MOSTRE — ROMA<br><br>
-        • MAXXI: <a href="https://www.maxxi.art/en/" target="_blank" rel="noopener noreferrer">https://www.maxxi.art/en/</a><br><br>
-        • Palazzo delle Esposizioni: <a href="https://www.palazzoesposizioni.it/" target="_blank" rel="noopener noreferrer">https://www.palazzoesposizioni.it/</a><br><br>
-        • Scuderie del Quirinale: <a href="https://www.scuderiequirinale.it/en" target="_blank" rel="noopener noreferrer">https://www.scuderiequirinale.it/en</a><br><br>
-        • Palazzo Bonaparte (Arthemisia): <a href="https://www.arthemisia.it/site/en/palazzo-bonaparte.html" target="_blank" rel="noopener noreferrer">https://www.arthemisia.it/site/en/palazzo-bonaparte.html</a>`
+        • Scuderie del Quirinale: <a href="https://www.scuderiequirinale.it/" target="_blank" rel="noopener noreferrer">https://www.scuderiequirinale.it/</a><br><br>
+        • Palazzo Bonaparte (Arthemisia): <a href="https://www.arthemisia.it/" target="_blank" rel="noopener noreferrer">https://www.arthemisia.it/</a>`
       },
 
       {k:"emergenza",keys:["emergenza","polizia","ambulanza","vigili","medico","veterinario"],t:a=>a.emergency}
@@ -433,39 +303,39 @@ const DATA = {
     },
     apt:{
       checkin_time:"15:00", checkout_time:"11:00",
-      wifi_note:"Routeur sur la table. Tournez-le pour lire le SSID et le mot de passe.",
+      wifi_note:"Routeur sur la table. Tournez-le pour lire le SSID et le mot de passe sur l’étiquette.",
       wifi_ssid:"Voir l’étiquette du routeur", wifi_password:"Voir l’étiquette du routeur",
-      water_note:"L’eau du robinet est potable. Eau chaude toujours disponible.<br><br><b>IMPORTANT :</b> ne touchez pas l’interrupteur à gauche du miroir de la salle de bain.",
-      ac_note:"Clim disponible. Merci de l’éteindre en sortant.",
-      bathroom_amenities:"Sèche-cheveux, tapis, papier toilette, savon mains.",
+      water_note:"L’eau du robinet est potable. Eau chaude toujours disponible.<br><br><b>IMPORTANT :</b> ne touchez pas l’interrupteur à gauche du miroir de la salle de bain (contrôle l’eau chaude).",
+      ac_note:"Climatisation disponible. Merci de l’éteindre en sortant.",
+      bathroom_amenities:"Sèche-cheveux, tapis de bain, papier toilette, savon pour les mains.",
       towels_note:"Par personne : 1 grande + 1 moyenne + 1 petite. Lits prêts à l’arrivée.",
-      lighting_note:"Lumières cuisine : interrupteur à droite des escaliers. Lumières terrasse : interrupteur intérieur à droite avant de sortir.",
-      kitchen_note:"Cuisine équipée.<br><br><b>Plaque électrique :</b> toujours l’éteindre après usage, ne jamais laisser de casseroles sans surveillance.",
-      terrace_note:"Si vous ouvrez le parasol, attachez-le à la rambarde. Toujours le fermer / détacher avant de quitter.",
-      plants_note:"Vous pouvez arroser les plantes 1x par jour (sauf cactus).",
-      front_door_access:"Clé longue à bout carré ; tirez la porte vers vous et tournez dans le sens antihoraire.",
-      building_code:"Code portail (alternative) : <b>7171 + symbole clé</b>.",
+      lighting_note:"Lumières cuisine : interrupteur à droite des escaliers (face à la cuisine). Lumières terrasse : interrupteur intérieur à droite avant de sortir.",
+      kitchen_note:"Cuisine équipée.<br><br><b>Plaque électrique :</b> l’éteindre TOUJOURS après usage et ne jamais laisser de casseroles sans surveillance.",
+      terrace_note:"Si vous ouvrez le parasol, ATTACHEZ-le à la rambarde. Fermez/détachez toujours avant de partir.",
+      plants_note:"Vous pouvez arroser les plantes une fois par jour (sauf cactus).",
+      front_door_access:"Utilisez la longue clé à bout carré ; tirez la porte vers vous et tournez dans le sens antihoraire.",
+      building_code:"Code du portail (alternative à la clé ronde) : <b>7171 + symbole clé</b>.",
       intercom_note:"—",
       host_phone:"+39 335 5245756",
-      supermarkets:"Carrefour Express (Via Urbana) • petites épiceries Via Leonina.",
-      pharmacies:"Farmacia Cavour (Via Cavour 84) • pharmacie Via Panisperna 40.",
+      supermarkets:"Carrefour Express (Via Urbana) • Supérettes Via Leonina.",
+      pharmacies:"Farmacia Cavour (Via Cavour 84) • Pharmacie Via Panisperna 40.",
       atms:"BNL (Via Cavour 84) • UniCredit (Piazza della Suburra 5).",
-      laundry:"Laverie Wash & Dry — Via Cavour 194.",
-      luggage:"Radical Storage (Termini, Largo Argentina).",
+      laundry:"Laverie Wash & Dry — Via Cavour 194 (self-service).",
+      luggage:"Radical Storage près de Termini et Largo Argentina (réservation en ligne).",
       sims:"Iliad — Via Cavour 196 • TIM/Vodafone — Via Nazionale.",
-      transport:"Métro B — Cavour (~5 min) + bus 75/117/84.",
-      airports:"Fiumicino : métro B → Termini → Leonardo Express. Ciampino : bus → Termini → métro B.",
-      taxi:"Radio Taxi +39 06 3570 ou FreeNow.",
+      transport:"Métro B — station Cavour (~5 min). Bus 75, 117, 84 sur Via Cavour. Dans le quartier Monti on marche très bien.",
+      airports:"Fiumicino : Métro B Cavour → Termini → Leonardo Express (32 min) ou FL1 depuis Trastevere. Ciampino : bus jusqu’à Termini → Métro B Cavour.",
+      taxi:"Radio Taxi +39 06 3570 ou appli FreeNow.",
       emergency:"Urgences UE 112 • Police 113 • Ambulance 118 • Pompiers 115 • Médecin anglophone +39 06 488 2371 • Vétérinaire 24h +39 06 660 681",
-      eat:"La Carbonara • Ai Tre Scalini • Trattoria Vecchia Roma • Fafiuche • Al42 • Broccoletti • Cuoco e Camicia",
+      eat:"La Carbonara • Ai Tre Scalini • Trattoria Vecchia Roma • Fafiuche Wine Bar • Al42 by Pasta Chef Monti • Broccoletti • Cuoco e Camicia",
       drink:"VinoRoma • La Bottega del Caffè • Spritzeria Monti • Blackmarket Hall.",
-      shop:"Mercato Monti (week-end) • boutiques Via Urbana & Via del Boschetto • Librairie Panisperna • artisans.",
-      visit:"Piazza Madonna dei Monti • Santa Maria ai Monti • San Pietro in Vincoli (Moïse) • Colle Oppio & Domus Aurea • Forums de Trajan.",
-      hidden_gems:"Souterrains de San Martino ai Monti • Santa Prassede (chapelle de St Zénon) • Scalinata dei Borgia • ancienne Suburra • maisons romaines sous Santa Pudenziana.",
-      experiences:"Apéritif sur la place • Vintage au Mercato Monti • Photos au coucher du soleil • balade Via Urbana & Via dei Serpenti • soirée vers le Forum.",
-      romantic_walk:"Départ : Via Leonina 71 → Colisée → Arc de Constantin → Fori Imperiali → Capitole → gelato Fatamorgana → La Bottega del Caffè → retour.",
-      daytrips:"Ostia Antica • Tivoli • Castelli Romani.",
-      checkout_note:"Avant de partir : éteignez lumières/clim, fermez les fenêtres, laissez les clés sur la table, fermez doucement."
+      shop:"Mercato Monti Vintage (Via Leonina 46, week-end) • Boutiques Via Urbana & Via del Boschetto • Librairie Panisperna • Artisans cuir & design.",
+      visit:"Piazza Madonna dei Monti • Santa Maria ai Monti • San Martino ai Monti • San Pietro in Vincoli (Moïse) • Parc Colle Oppio & Domus Aurea • Marchés de Trajan & Forum.",
+      hidden_gems:"Souterrains de San Martino ai Monti (guidé) • Santa Prassede (chapelle de St Zénon) • Scalinata dei Borgia • Suburra antique • Maisons romaines sous Santa Pudenziana.",
+      experiences:"Apéritif Piazza Madonna dei Monti • Vintage au Mercato Monti • Photos coucher du soleil • Balade Via Urbana & Via dei Serpenti • Soirée le long des Forums.",
+      romantic_walk:"Départ : Via Leonina 71 → Colisée → Arc de Constantin → Via dei Fori Imperiali → belvédère du Capitole → gelato Fatamorgana Monti → La Bottega del Caffè → retour.",
+      daytrips:"Ostia Antica (~40 min) • Tivoli (Villa d’Este & d’Hadrien ~1h) • Castelli Romani.",
+      checkout_note:"Avant de partir : éteignez lumières/clim, fermez les fenêtres, laissez les clés sur la table, fermez la porte doucement."
     },
     intents:[
       {k:"wifi",keys:["wifi","wi-fi","internet","mot de passe","routeur"],t:a=>`Wi-Fi : ${a.wifi_note}<br><br>Réseau : ${a.wifi_ssid}. Mot de passe : ${a.wifi_password}.`},
@@ -490,7 +360,7 @@ const DATA = {
       {k:"expériences",keys:["expériences","balade","itinéraire","coucher de soleil","romantique"],t:a=>`${a.experiences}<br><br>Parcours romantique : ${a.romantic_walk}`},
       {k:"excursions",keys:["excursion","tivoli","ostia","castelli","journée"],t:a=>a.daytrips},
 
-      /* 3 nuovi FR, stessi link */
+      /* --- FR puliti --- */
       {k:"billets & événements",keys:["billet","billets","événement","événements","concert","match"],t:()=>
         `BILLETS & ÉVÉNEMENTS — ROME<br><br>
         • TicketOne (concerts, théâtre, sport) : <a href="https://www.ticketone.it/en/" target="_blank" rel="noopener noreferrer">https://www.ticketone.it/en/</a><br><br>
@@ -507,7 +377,7 @@ const DATA = {
         `EXPOSITIONS — ROME<br><br>
         • MAXXI : <a href="https://www.maxxi.art/en/" target="_blank" rel="noopener noreferrer">https://www.maxxi.art/en/</a><br><br>
         • Palazzo delle Esposizioni : <a href="https://www.palazzoesposizioni.it/" target="_blank" rel="noopener noreferrer">https://www.palazzoesposizioni.it/</a><br><br>
-        • Scuderie du Quirinal : <a href="https://www.scuderiequirinale.it/en" target="_blank" rel="noopener noreferrer">https://www.scuderiequirinale.it/en</a><br><br>
+        • Scuderie del Quirinale : <a href="https://www.scuderiequirinale.it/en" target="_blank" rel="noopener noreferrer">https://www.scuderiequirinale.it/en</a><br><br>
         • Palazzo Bonaparte (Arthemisia) : <a href="https://www.arthemisia.it/site/en/palazzo-bonaparte.html" target="_blank" rel="noopener noreferrer">https://www.arthemisia.it/site/en/palazzo-bonaparte.html</a>`
       },
 
@@ -515,18 +385,70 @@ const DATA = {
     ]
   },
     de: {
-    ui:{ /* già definito sopra */ },
-    apt:{ /* già definito sopra */ },
+    ui:{
+      welcome:"Hallo, ich bin Samantha, dein virtueller Guide. Tippe auf einen Button für eine schnelle Antwort.",
+      placeholder:"Hallo, ich bin Samantha, dein virtueller Guide. Tippe auf einen Button — oder schreibe hier…",
+      apt_label:"Apartment",
+      voice_on:"🔊 Stimme: An",
+      voice_off:"🔇 Stimme: Aus",
+      quick:[
+        "WLAN","check in","check out","Wasser","Klimaanlage","Bad","Küche","Terrasse",
+        "Essen","Trinken","Shopping","Sehenswürdigkeiten","versteckte Perlen","Erlebnisse","Tagesausflüge",
+        "Tickets & Events","Museen & Sites","Ausstellungen",
+        "Verkehr","Services","Notfall"
+      ],
+      fallback:"Keine direkte Antwort gefunden. Nutze einen Button (WLAN, Terrasse, Verkehr, Sehenswürdigkeiten…).",
+      fb_label:"War diese Antwort hilfreich?",
+      fb_like:"👍 Like",
+      fb_dislike:"👎 Dislike",
+      fb_thanks:"Danke für dein Feedback!"
+    },
+    apt:{
+      checkin_time:"15:00", checkout_time:"11:00",
+      wifi_note:"Router auf dem Tisch. Umdrehen, um SSID & Passwort auf dem Etikett zu sehen.",
+      wifi_ssid:"Siehe Router-Etikett", wifi_password:"Siehe Router-Etikett",
+      water_note:"Leitungswasser ist trinkbar. Warmwasser stets verfügbar.<br><br><b>WICHTIG:</b> Schalter links am Badspiegel NICHT betätigen (Warmwassersystem).",
+      ac_note:"Klimaanlage vorhanden. Bitte beim Verlassen AUSSCHALTEN.",
+      bathroom_amenities:"Föhn, Badematte, Toilettenpapier, Handseife.",
+      towels_note:"Pro Gast: 1 großes + 1 mittleres + 1 kleines Handtuch. Betten bei Ankunft gemacht.",
+      lighting_note:"Küchenlicht: Schalter rechts an der Treppe (zur Küche gewandt). Terrassenlicht: Schalter innen rechts vor der Tür.",
+      kitchen_note:"Ausgestattete Küche.<br><br><b>Elektrische Kochplatte:</b> immer nach Gebrauch ausschalten, nie unbeaufsichtigt lassen.",
+      terrace_note:"Wenn der Terrassenschirm offen ist, an das Geländer BINDEN. Vor dem Gehen immer schließen/losbinden.",
+      plants_note:"Wer mag, gießt die Pflanzen einmal täglich (keine Kakteen).",
+      front_door_access:"Langer Schlüssel mit quadratischem Ende; Tür zu sich ziehen, gegen den Uhrzeigersinn drehen.",
+      building_code:"Haustür-Code (Alternative zum runden Schlüssel): <b>7171 + Schlüssel-Symbol</b>.",
+      intercom_note:"—",
+      host_phone:"+39 335 5245756",
+      supermarkets:"Carrefour Express (Via Urbana) • Mini-Märkte Via Leonina.",
+      pharmacies:"Farmacia Cavour (Via Cavour 84) • Apotheke Via Panisperna 40.",
+      atms:"BNL (Via Cavour 84) • UniCredit (Piazza della Suburra 5).",
+      laundry:"Waschsalon Wash & Dry — Via Cavour 194 (Self-Service).",
+      luggage:"Radical Storage bei Termini & Largo Argentina (online buchen).",
+      sims:"Iliad — Via Cavour 196 • TIM/Vodafone — Via Nazionale.",
+      transport:"Metro B — Cavour (~5 Min). Bus 75, 117, 84 in der Via Cavour. In Monti geht man am besten zu Fuß.",
+      airports:"Fiumicino: Metro B Cavour → Termini → Leonardo Express (32 Min) oder FL1 ab Trastevere. Ciampino: Bus nach Termini → Metro B Cavour.",
+      taxi:"Radio Taxi +39 06 3570 oder FreeNow-App.",
+      emergency:"EU-Notruf 112 • Polizei 113 • Rettung 118 • Feuerwehr 115 • Arzt (EN) +39 06 488 2371 • Tierarzt 24h +39 06 660 681",
+      eat:"La Carbonara • Ai Tre Scalini • Trattoria Vecchia Roma • Fafiuche Wine Bar • Al42 by Pasta Chef Monti • Broccoletti • Cuoco e Camicia",
+      drink:"VinoRoma • La Bottega del Caffè • Spritzeria Monti • Blackmarket Hall.",
+      shop:"Mercato Monti Vintage (Via Leonina 46, Wochenende) • Boutiquen Via Urbana/Del Boschetto • Panisperna Libreria • Handwerk Leder & Design.",
+      visit:"Piazza Madonna dei Monti • Santa Maria ai Monti • San Martino ai Monti • San Pietro in Vincoli (Moses) • Colle Oppio & Domus Aurea • Trajansmärkte & Forum.",
+      hidden_gems:"Unterirdisch San Martino ai Monti (geführt) • Santa Prassede (Zenon-Kapelle) • Scalinata dei Borgia • antike Suburra • Römische Häuser unter Santa Pudenziana.",
+      experiences:"Aperitivo am Platz • Vintage-Shopping im Mercato Monti • Sonnenuntergangs-Fotos • Bummel Via Urbana & Via dei Serpenti • Abendrunde am Forum Romanum.",
+      romantic_walk:"Start: Via Leonina 71 → Kolosseum → Konstantinsbogen → Fori Imperiali → Kapitolsblick → Fatamorgana Monti → La Bottega del Caffè → zurück.",
+      daytrips:"Ostia Antica (~40 Min) • Tivoli (Villa d’Este & Hadriansvilla ~1h) • Castelli Romani.",
+      checkout_note:"Vor der Abreise: Licht/AC aus, Fenster schließen, Schlüssel auf dem Tisch lassen, Tür sanft schließen."
+    },
     intents:[
       {k:"WLAN",keys:["wlan","wifi","wi-fi","internet","passwort","router"],t:a=>`WLAN: ${a.wifi_note}<br><br>Netz: ${a.wifi_ssid}. Passwort: ${a.wifi_password}.`},
-      {k:"check in",keys:["check in","ankunft","zugang","eingang","tür","haustür","gebäude","code","sprechanlage"],t:a=>`Check-in ab ${a.checkin_time}.<br><br>Zugang: ${a.front_door_access}<br><br>Haustür-Code: ${a.building_code}<br><br>Hilfe? ${a.host_phone}.`},
+      {k:"check in",keys:["check in","ankunft","zugang","eingang","tür","haustür","gebäude","code","sprechanlage"],t:a=>`Check-in ab ${a.checkin_time}.<br><br>Zugang: ${a.front_door_access}<br><br>Tür-Code: ${a.building_code}<br><br>Hilfe? ${a.host_phone}.`},
       {k:"check out",keys:["check out","abreise","verlassen"],t:a=>a.checkout_note},
       {k:"Wasser",keys:["wasser","warmwasser","trinkbar","hahn","spiegel","boiler"],t:a=>a.water_note},
       {k:"Klimaanlage",keys:["klimaanlage","klima","ac"],t:a=>a.ac_note},
       {k:"Bad",keys:["bad","föhn","seife","handtücher"],t:a=>`Bad: ${a.bathroom_amenities}<br><br>Handtücher: ${a.towels_note}`},
       {k:"Küche",keys:["küche","kochen","kochplatte","herd"],t:a=>a.kitchen_note},
       {k:"Terrasse",keys:["terrasse","schirm","pflanzen","balkon","licht"],t:a=>`Terrasse: ${a.terrace_note}<br><br>Pflanzen: ${a.plants_note}<br><br>Licht: ${a.lighting_note}`},
-      {k:"Services",keys:["apotheke","krankenhaus","geldautomat","atm","sim","wäscherei","gepäck","supermarkt"],t:a=>
+      {k:"Services",keys:["apotheke","krankenhaus","geldautomat","sim","wäscherei","gepäck","supermarkt","einkauf"],t:a=>
         `Supermärkte: ${a.supermarkets}<br><br>Apotheken: ${a.pharmacies}<br><br>Geldautomaten: ${a.atms}<br><br>Waschsalon: ${a.laundry}<br><br>Gepäck: ${a.luggage}<br><br>SIM: ${a.sims}`
       },
       {k:"Verkehr",keys:["verkehr","tram","bus","taxi","flughafen","zug","metro"],t:a=>
@@ -540,7 +462,7 @@ const DATA = {
       {k:"Erlebnisse",keys:["erlebnisse","spaziergang","tour","route","sonnenuntergang","romantisch"],t:a=>`${a.experiences}<br><br>Romantische Route: ${a.romantic_walk}`},
       {k:"Tagesausflüge",keys:["tagesausflug","tivoli","ostia","castelli","ausflug"],t:a=>a.daytrips},
 
-      /* 3 neue Buttons DE, stessi link */
+      /* --- DE puliti --- */
       {k:"Tickets & Events",keys:["ticket","tickets","event","events","konzert","spiel","partie","match"],t:()=>
         `TICKETS & EVENTS — ROM<br><br>
         • TicketOne (Konzerte, Theater, Sport): <a href="https://www.ticketone.it/en/" target="_blank" rel="noopener noreferrer">https://www.ticketone.it/en/</a><br><br>
@@ -564,8 +486,7 @@ const DATA = {
       {k:"Notfall",keys:["notfall","polizei","rettung","feuerwehr","arzt","tierarzt"],t:a=>a.emergency}
     ]
   },
-
-  es: {
+    es: {
     ui:{
       welcome:"Hola, soy Samantha, tu guía virtual. Toca un botón para una respuesta rápida.",
       placeholder:"Hola, soy Samantha, tu guía virtual. Toca un botón — o escribe aquí…",
@@ -588,41 +509,41 @@ const DATA = {
       checkin_time:"15:00", checkout_time:"11:00",
       wifi_note:"Router sobre la mesa. Gíralo para ver SSID y contraseña en la etiqueta.",
       wifi_ssid:"Ver etiqueta del router", wifi_password:"Ver etiqueta del router",
-      water_note:"El agua del grifo es potable. Agua caliente siempre disponible.<br><br><b>IMPORTANTE:</b> no toques el interruptor a la izquierda del espejo del baño.",
+      water_note:"El agua del grifo es potable. Agua caliente siempre disponible.<br><br><b>IMPORTANTE:</b> no toques el interruptor a la izquierda del espejo del baño (controla el agua caliente).",
       ac_note:"Hay aire acondicionado. Apágalo al salir.",
       bathroom_amenities:"Secador, alfombrilla, papel higiénico, jabón de manos.",
-      towels_note:"Por huésped: 1 toalla grande + 1 mediana + 1 pequeña.",
-      lighting_note:"Luces cocina: interruptor a la derecha de las escaleras. Luces terraza: interruptor interior a la derecha antes de salir.",
-      kitchen_note:"Cocina equipada.<br><br><b>Placa eléctrica:</b> apagar SIEMPRE tras su uso y nunca dejar ollas solas.",
-      terrace_note:"Si abres la sombrilla de la terraza, ÁTALA a la barandilla. Siempre cerrarla antes de salir.",
-      plants_note:"Puedes regar las plantas 1 vez al día (excepto cactus).",
-      front_door_access:"Llave larga con punta cuadrada; tira de la puerta hacia ti y gira en sentido antihorario.",
-      building_code:"Código del portal (alternativa): <b>7171 + símbolo llave</b>.",
+      towels_note:"Por huésped: 1 toalla grande + 1 mediana + 1 pequeña. Camas preparadas a la llegada.",
+      lighting_note:"Luces cocina: interruptor a la derecha de las escaleras (mirando a la cocina). Luces terraza: interruptor interior a la derecha antes de salir.",
+      kitchen_note:"Cocina equipada.<br><br><b>Placa eléctrica:</b> apagar SIEMPRE tras su uso y no dejar ollas sin vigilancia.",
+      terrace_note:"Si abres la sombrilla de la terraza, ÁTALA a la barandilla. Ciérrala y desátala antes de salir.",
+      plants_note:"Si quieres, puedes regar las plantas una vez al día (excepto cactus).",
+      front_door_access:"Usa la llave larga con punta cuadrada; tira de la puerta hacia ti y gira en sentido antihorario.",
+      building_code:"Código de la puerta (alternativa a la llave redonda): <b>7171 + símbolo de llave</b>.",
       intercom_note:"—",
       host_phone:"+39 335 5245756",
-      supermarkets:"Carrefour Express (Via Urbana) • minimercados en Via Leonina.",
-      pharmacies:"Farmacia Cavour (Via Cavour 84) • farmacia en Via Panisperna 40.",
+      supermarkets:"Carrefour Express (Via Urbana) • Minimercados en Via Leonina.",
+      pharmacies:"Farmacia Cavour (Via Cavour 84) • Farmacia en Via Panisperna 40.",
       atms:"BNL (Via Cavour 84) • UniCredit (Piazza della Suburra 5).",
-      laundry:"Lavandería Wash & Dry — Via Cavour 194.",
-      luggage:"Radical Storage (Termini, Largo Argentina).",
+      laundry:"Lavandería Wash & Dry — Via Cavour 194 (autoservicio).",
+      luggage:"Radical Storage en Termini y Largo Argentina (reserva online).",
       sims:"Iliad — Via Cavour 196 • TIM/Vodafone — Via Nazionale.",
-      transport:"Metro B — Cavour (~5 min). Buses 75, 117, 84 en Via Cavour.",
-      airports:"Fiumicino: metro B → Termini → Leonardo Express. Ciampino: bus → Termini → metro B.",
+      transport:"Metro B — estación Cavour (~5 min). Buses 75, 117, 84 en Via Cavour. En Monti se camina muy bien.",
+      airports:"Fiumicino: Metro B Cavour → Termini → Leonardo Express (32 min) o FL1 desde Trastevere. Ciampino: bus a Termini → Metro B Cavour.",
       taxi:"Radio Taxi +39 06 3570 o app FreeNow.",
       emergency:"Emergencia UE 112 • Policía 113 • Ambulancia 118 • Bomberos 115 • Médico en inglés +39 06 488 2371 • Veterinario 24h +39 06 660 681",
-      eat:"La Carbonara • Ai Tre Scalini • Trattoria Vecchia Roma • Fafiuche • Al42 • Broccoletti • Cuoco e Camicia",
+      eat:"La Carbonara • Ai Tre Scalini • Trattoria Vecchia Roma • Fafiuche Wine Bar • Al42 by Pasta Chef Monti • Broccoletti • Cuoco e Camicia",
       drink:"VinoRoma • La Bottega del Caffè • Spritzeria Monti • Blackmarket Hall.",
-      shop:"Mercato Monti (fin de semana) • Via Urbana & Via del Boschetto • Librería Panisperna • Artesanía cuero & diseño.",
-      visit:"Piazza Madonna dei Monti • Santa Maria ai Monti • San Pietro in Vincoli (Moisés) • Colle Oppio & Domus Aurea • Mercados de Trajano & Foro.",
-      hidden_gems:"Subterráneos de San Martino ai Monti • Santa Práxedes (capilla) • Escalinata dei Borgia • antigua Suburra • casas romanas bajo Santa Pudenziana.",
-      experiences:"Aperitivo en la plaza • Vintage en Mercato Monti • Fotos al atardecer • Paseo Via Urbana & Via dei Serpenti • Paseo nocturno por el Foro.",
-      romantic_walk:"Inicio: Via Leonina 71 → Coliseo → Arco de Constantino → Fori Imperiali → Campidoglio → helado Fatamorgana → La Bottega del Caffè → regreso.",
-      daytrips:"Ostia Antica • Tivoli • Castelli Romani.",
-      checkout_note:"Antes de salir: apaga luces/AC, cierra ventanas, deja las llaves en la mesa y cierra suavemente."
+      shop:"Mercato Monti Vintage (Via Leonina 46, fines de semana) • Boutiques Via Urbana & Via del Boschetto • Librería Panisperna • Artesanía cuero & diseño.",
+      visit:"Piazza Madonna dei Monti • Santa Maria ai Monti • San Martino ai Monti • San Pietro in Vincoli (Moisés) • Colle Oppio & Domus Aurea • Mercados de Trajano & Foro.",
+      hidden_gems:"Subterráneos de San Martino ai Monti (guía) • Santa Práxedes (capilla de San Zenón) • Scalinata dei Borgia • antigua Suburra • Casas romanas bajo Santa Pudenciana.",
+      experiences:"Aperitivo en la plaza • Vintage en Mercato Monti • Fotos al atardecer • Paseo por Via Urbana & Via dei Serpenti • Ruta nocturna junto al Foro.",
+      romantic_walk:"Inicio: Via Leonina 71 → Coliseo → Arco de Constantino → Fori Imperiali → vista del Campidoglio → Fatamorgana Monti → La Bottega del Caffè → regreso.",
+      daytrips:"Ostia Antica (~40 min) • Tivoli (Villa d’Este y Villa Adriana ~1h) • Castelli Romani.",
+      checkout_note:"Antes de salir: apaga luces/AC, cierra ventanas, deja las llaves en la mesa y cierra la puerta suavemente."
     },
     intents:[
       {k:"wifi",keys:["wifi","wi-fi","internet","contraseña","router"],t:a=>`Wi-Fi: ${a.wifi_note}<br><br>Red: ${a.wifi_ssid}. Contraseña: ${a.wifi_password}.`},
-      {k:"check in",keys:["check in","llegada","acceso","entrada","puerta","edificio","código","interfono"],t:a=>`Check-in desde las ${a.checkin_time}.<br><br>Acceso: ${a.front_door_access}<br><br>Código del portal: ${a.building_code}<br><br>¿Ayuda? ${a.host_phone}.`},
+      {k:"check in",keys:["check in","llegada","acceso","entrada","puerta","edificio","código","interfono"],t:a=>`Check-in desde las ${a.checkin_time}.<br><br>Acceso: ${a.front_door_access}<br><br>Código puerta: ${a.building_code}<br><br>¿Ayuda? ${a.host_phone}.`},
       {k:"check out",keys:["check out","salida","irse"],t:a=>a.checkout_note},
       {k:"agua",keys:["agua","caliente","potable","grifo","espejo","caldera"],t:a=>a.water_note},
       {k:"aire acondicionado",keys:["aire acondicionado","ac","clima"],t:a=>a.ac_note},
@@ -636,14 +557,14 @@ const DATA = {
         `${a.transport}<br><br>Aeropuertos: ${a.airports}<br><br>Taxi: ${a.taxi}`
       },
       {k:"comer",keys:["comer","restaurante","cena","almuerzo"],t:a=>a.eat},
-      {k:"beber",keys:["beber","bar","vino","cóctel","aperitivo"],t:a=>a.drink},
+      {k:"beber",keys:["beber","bar","vino","cóctel"],t:a=>a.drink},
       {k:"compras",keys:["compras","mercado","boutique","vintage"],t:a=>a.shop},
       {k:"visitar",keys:["visitar","ver","atracciones","museo","moisés","domus aurea"],t:a=>a.visit},
-      {k:"joyas ocultas",keys:["oculto","ocultas","secreto","suburra","pudenciana"],t:a=>a.hidden_gems},
+      {k:"joyas ocultas",keys:["oculto","secreto","suburra","pudenciana"],t:a=>a.hidden_gems},
       {k:"experiencias",keys:["experiencias","paseo","tour","itinerario","atardecer","romántico"],t:a=>`${a.experiences}<br><br>Ruta romántica: ${a.romantic_walk}`},
       {k:"excursiones",keys:["excursión","tivoli","ostia","castelli","día"],t:a=>a.daytrips},
 
-      /* 3 nuevos ES, stessi link */
+      /* --- ES puliti --- */
       {k:"entradas y eventos",keys:["entrada","entradas","ticket","eventos","concierto","partido","match"],t:()=>
         `ENTRADAS Y EVENTOS — ROMA<br><br>
         • TicketOne (conciertos, teatro, deporte): <a href="https://www.ticketone.it/en/" target="_blank" rel="noopener noreferrer">https://www.ticketone.it/en/</a><br><br>
@@ -680,7 +601,7 @@ url.searchParams.set("lang",lang);
 history.replaceState(null,"",url);
 localStorage.setItem("lang",lang);
 
-/* ============ TTS MULTILINGUA ============ */
+/* ============ TTS MULTILINGUA (voci preferite) ============ */
 let voiceOn=false, pick=null;
 const VOICE_PREFS = {
   en:["Samantha","Google US English","Google UK English Female","Microsoft Aria Online (Natural)"],
@@ -759,10 +680,8 @@ function applyUI(){
 }
 
 /* ============ CHAT LOGIC + FEEDBACK ============ */
-/* linkify che NON duplica i link già con <a ...> */
 function linkify(html){
   if(!html) return "";
-  if(html.includes("<a ")) return html;  // se è già formattato non toccare
   return html.replace(/(https?:\/\/[^\s<]+)/g, '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>');
 }
 
