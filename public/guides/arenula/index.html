@@ -75,9 +75,8 @@ input{flex:1;padding:12px;border:1px solid #cbd5e1;border-radius:10px;outline:no
 <script>
 /* === CONFIG === */
 const APARTMENT_ID = "ARENULA16";
-/* Usa lo stesso deployment Google Script già in uso per le altre guide */
 const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxt0ToaaC9TOrQMJjcWXpyL1a_FCugoVIgZpB5MFY_IsJTJGHOtloEq1sjKs_F-c7Sd/exec";
-/* ============ CONTENUTI LOCALIZZATI (ARENULA 16) ============ */
+  /* ============ CONTENUTI LOCALIZZATI (ARENULA 16) ============ */
 const DATA = {
 
   en: {
@@ -87,8 +86,8 @@ const DATA = {
       apt_label: "Apartment",
       voice_on: "🔊 Voice: On",
       voice_off: "🔇 Voice: Off",
-      /* AGGIUNTO: "tickets & events" in coda */
-      quick: ["wifi","check in","check out","water","AC","bathroom","gas","building","eat","drink","shop","visit","experience","day trips","transport","services","emergency","tickets & events"],
+      /* aggiunti i 3 tasti alla fine */
+      quick: ["wifi","check in","check out","water","AC","bathroom","gas","building","eat","drink","shop","visit","experience","day trips","transport","services","emergency","tickets & events","museums & sites","exhibitions"],
       fallback: "I did not find a direct answer. Try a quick button (wifi, gas, transport, visit…).",
       fb_label:"Was this helpful?",
       fb_like:"👍 Like",
@@ -125,27 +124,49 @@ const DATA = {
       host_phone:'+39 335 5245756'
     },
     intents: [
-      {k:'wifi',keys:['wifi','wi-fi','internet','password','router'],t:a=>`Wi-Fi: ${a.wifi_note}\nNetwork: ${a.wifi_ssid}. Password: ${a.wifi_password}.`},
-      {k:'check in',keys:['check in','arrival','access','intercom','code'],t:a=>`Check-in from ${a.checkin_time}.\nIntercom code: ${a.intercom_code}.\nMain door hours: ${a.main_door_hours}.\nConcierge: ${a.concierge}.\nNeed help? Call ${a.host_phone}.`},
+      {k:'wifi',keys:['wifi','wi-fi','internet','password','router'],t:a=>`Wi-Fi: ${a.wifi_note}<br>Network: ${a.wifi_ssid}. Password: ${a.wifi_password}.`},
+      {k:'check in',keys:['check in','arrival','access','intercom','code'],t:a=>`Check-in from ${a.checkin_time}.<br>Intercom code: ${a.intercom_code}.<br>Main door hours: ${a.main_door_hours}.<br>Concierge: ${a.concierge}.<br>Need help? Call ${a.host_phone}.`},
       {k:'check out',keys:['check out','leave','departure'],t:a=>a.checkout_note},
       {k:'water',keys:['water','hot water','drinkable','tap'],t:a=>a.water_note},
       {k:'AC',keys:['ac','air conditioning','aircon','air'],t:a=>a.ac_note},
-      {k:'bathroom',keys:['bathroom','hairdryer','soap','towels'],t:a=>`Bathroom: ${a.bathroom_amenities}\nTowels: ${a.towels_note}`},
+      {k:'bathroom',keys:['bathroom','hairdryer','soap','towels'],t:a=>`Bathroom: ${a.bathroom_amenities}<br>Towels: ${a.towels_note}`},
       {k:'gas',keys:['gas','kitchen','cook','flame','burner'],t:a=>`Gas use: ${a.gas_steps}`},
-      {k:'building',keys:['building','elevator','door','hours','concierge'],t:a=>`Intercom: ${a.intercom_code}.\nElevator: ${a.elevator_note}.\nMain door: ${a.main_door_hours}.\nConcierge: ${a.concierge}.`},
-      {k:'services',keys:['pharmacy','hospital','atm','sim','laundry','luggage'],t:a=>`Pharmacy: ${a.pharmacy}\nHospital: ${a.hospital}\nATMs: ${a.atms}\nSIMs: ${a.sims}\nLaundry: ${a.laundry}\nLuggage: ${a.luggage}`},
-      {k:'transport',keys:['transport','tram','bus','taxi','airport','train'],t:a=>`${a.transport}\nAirports: ${a.airports}`},
+      {k:'building',keys:['building','elevator','door','hours','concierge'],t:a=>`Intercom: ${a.intercom_code}.<br>Elevator: ${a.elevator_note}.<br>Main door: ${a.main_door_hours}.<br>Concierge: ${a.concierge}.`},
+      {k:'services',keys:['pharmacy','hospital','atm','sim','laundry','luggage'],t:a=>`Pharmacy: ${a.pharmacy}<br>Hospital: ${a.hospital}<br>ATMs: ${a.atms}<br>SIMs: ${a.sims}<br>Laundry: ${a.laundry}<br>Luggage: ${a.luggage}`},
+      {k:'transport',keys:['transport','tram','bus','taxi','airport','train'],t:a=>`${a.transport}<br>Airports: ${a.airports}`},
       {k:'eat',keys:['eat','restaurant','dinner','lunch','food'],t:a=>a.eat},
       {k:'drink',keys:['drink','bar','wine','cocktail','aperitivo'],t:a=>a.drink},
       {k:'shop',keys:['shop','market','shopping'],t:a=>a.shop},
       {k:'visit',keys:['visit','visiting','what to visit','see','sight','attraction','museum','museums'],t:a=>a.visit},
       {k:'experience',keys:['experience','walk','tour','itinerary','sunset'],t:a=>a.experiences},
       {k:'day trips',keys:['day trips','day trip','tivoli','ostia','castelli','excursion','excursions'],t:a=>a.daytrips},
-      /* NUOVO INTENT: SOLO LINK SINGOLI */
-      {k:'tickets & events',keys:['tickets','ticket','event','events','concert','match','football','roma','lazio'],t:()=>
-        `TICKETS & EVENTS — ROME\n• TicketOne (concerts, theatre, sport): https://www.ticketone.it/en/\n• AS Roma — official tickets: https://www.asroma.com/en/tickets\n• SS Lazio — official tickets: https://sslazio.it/en/tickets`
+      {k:'emergency',keys:['emergency','police','ambulance','fire','doctor','vet'],t:a=>a.emergency},
+
+      /* --- NUOVI 3 PULSANTI --- */
+      {
+        k:'tickets & events',
+        keys:['tickets & events','tickets','events','concert','match','roma','lazio'],
+        t:()=>`<b>TICKETS &amp; EVENTS — ROME</b><br>
+        • TicketOne (concerts, theatre, sport): <a href="https://www.ticketone.it/en/" target="_blank" rel="noopener noreferrer">https://www.ticketone.it/en/</a><br>
+        • AS Roma — official tickets: <a href="https://www.asroma.com/en/tickets" target="_blank" rel="noopener noreferrer">https://www.asroma.com/en/tickets</a><br>
+        • SS Lazio — official tickets: <a href="https://sslazio.it/en/tickets" target="_blank" rel="noopener noreferrer">https://sslazio.it/en/tickets</a>`
       },
-      {k:'emergency',keys:['emergency','police','ambulance','fire','doctor','vet'],t:a=>a.emergency}
+      {
+        k:'museums & sites',
+        keys:['museums & sites','museums','sites','colosseum','vatican'],
+        t:()=>`<b>MUSEUMS &amp; SITES — ROME</b><br>
+        • Colosseum, Roman Forum &amp; Palatine: <a href="https://colosseo.it/en" target="_blank" rel="noopener noreferrer">https://colosseo.it/en</a><br>
+        • Vatican Museums &amp; Sistine Chapel: <a href="https://tickets.museivaticani.va/" target="_blank" rel="noopener noreferrer">https://tickets.museivaticani.va/</a><br>
+        • Museums of Rome (Capitoline, Ara Pacis, etc.): <a href="https://www.museiincomuneroma.it/en" target="_blank" rel="noopener noreferrer">https://www.museiincomuneroma.it/en</a>`
+      },
+      {
+        k:'exhibitions',
+        keys:['exhibitions','exhibition','art','shows','temporary'],
+        t:()=>`<b>EXHIBITIONS — ROME (current)</b><br>
+        • Musei in Comune — exhibitions: <a href="https://www.museiincomuneroma.it/en/exhibitions" target="_blank" rel="noopener noreferrer">https://www.museiincomuneroma.it/en/exhibitions</a><br>
+        • Scuderie del Quirinale: <a href="https://www.scuderiequirinale.it/" target="_blank" rel="noopener noreferrer">https://www.scuderiequirinale.it/</a><br>
+        • MAXXI — Museum of 21st Century Arts: <a href="https://www.maxxi.art/en/" target="_blank" rel="noopener noreferrer">https://www.maxxi.art/en/</a>`
+      }
     ]
   },
     it: {
@@ -153,8 +174,7 @@ const DATA = {
       welcome:"Ciao, sono Samantha, la tua guida virtuale. Tocca un pulsante per una risposta rapida.",
       placeholder:"Ciao, sono Samantha, la tua guida virtuale. Tocca un pulsante — oppure scrivi qui…",
       apt_label:"Appartamento", voice_on:"🔊 Voce: On", voice_off:"🔇 Voce: Off",
-      /* aggiunto "tickets & events" ma RESTA in inglese */
-      quick:["wifi","check in","check out","acqua","aria condizionata","bagno","gas","edificio","mangiare","bere","shopping","visitare","esperienze","gite di un giorno","trasporti","servizi","emergenza","tickets & events"],
+      quick:["wifi","check in","check out","acqua","aria condizionata","bagno","gas","edificio","mangiare","bere","shopping","visitare","esperienze","gite di un giorno","trasporti","servizi","emergenza","tickets & events","museums & sites","exhibitions"],
       fallback:"Non ho trovato una risposta diretta. Prova un pulsante (wifi, gas, trasporti, visitare…).",
       fb_label:"Ti è stato utile?",
       fb_like:"👍 Mi piace",
@@ -191,35 +211,57 @@ const DATA = {
       host_phone:"+39 335 5245756"
     },
     intents:[
-      {k:'wifi',keys:['wifi','wi-fi','internet','password','router'],t:a=>`Wi-Fi: ${a.wifi_note}\nRete: ${a.wifi_ssid}. Password: ${a.wifi_password}.`},
-      {k:'check in',keys:['check in','arrivo','accesso','citofono','codice'],t:a=>`Check-in dalle ${a.checkin_time}.\nCodice citofono: ${a.intercom_code}.\nPortone: ${a.main_door_hours}.\nPortineria: ${a.concierge}.\nAiuto? Chiama ${a.host_phone}.`},
+      {k:'wifi',keys:['wifi','wi-fi','internet','password','router'],t:a=>`Wi-Fi: ${a.wifi_note}<br>Rete: ${a.wifi_ssid}. Password: ${a.wifi_password}.`},
+      {k:'check in',keys:['check in','arrivo','accesso','citofono','codice'],t:a=>`Check-in dalle ${a.checkin_time}.<br>Codice citofono: ${a.intercom_code}.<br>Portone: ${a.main_door_hours}.<br>Portineria: ${a.concierge}.<br>Aiuto? Chiama ${a.host_phone}.`},
       {k:'check out',keys:['check out','partenza','lasciare'],t:a=>a.checkout_note},
       {k:'acqua',keys:['acqua','acqua calda','potabile','rubinetto'],t:a=>a.water_note},
       {k:'aria condizionata',keys:['aria condizionata','clima','condizionatore','ac'],t:a=>a.ac_note},
-      {k:'bagno',keys:['bagno','asciugacapelli','sapone','asciugamani'],t:a=>`Bagno: ${a.bathroom_amenities}\nAsciugamani: ${a.towels_note}`},
+      {k:'bagno',keys:['bagno','asciugacapelli','sapone','asciugamani'],t:a=>`Bagno: ${a.bathroom_amenities}<br>Asciugamani: ${a.towels_note}`},
       {k:'gas',keys:['gas','cucina','fornello','fiamma','bruciatore'],t:a=>`Uso gas: ${a.gas_steps}`},
-      {k:'edificio',keys:['edificio','ascensore','portone','orari','portineria'],t:a=>`Citofono: ${a.intercom_code}.\nAscensore: ${a.elevator_note}.\nPortone: ${a.main_door_hours}.\nPortineria: ${a.concierge}.`},
-      {k:'servizi',keys:['farmacia','ospedale','bancomat','sim','lavanderia','bagagli'],t:a=>`Farmacia: ${a.pharmacy}\nOspedale: ${a.hospital}\nBancomat: ${a.atms}\nSIM: ${a.sims}\nLavanderia: ${a.laundry}\nDeposito bagagli: ${a.luggage}`},
-      {k:'trasporti',keys:['trasporti','tram','bus','taxi','aeroporto','treno'],t:a=>`${a.transport}\nAeroporti: ${a.airports}`},
+      {k:'edificio',keys:['edificio','ascensore','portone','orari','portineria'],t:a=>`Citofono: ${a.intercom_code}.<br>Ascensore: ${a.elevator_note}.<br>Portone: ${a.main_door_hours}.<br>Portineria: ${a.concierge}.`},
+      {k:'servizi',keys:['farmacia','ospedale','bancomat','sim','lavanderia','bagagli'],t:a=>`Farmacia: ${a.pharmacy}<br>Ospedale: ${a.hospital}<br>Bancomat: ${a.atms}<br>SIM: ${a.sims}<br>Lavanderia: ${a.laundry}<br>Deposito bagagli: ${a.luggage}`},
+      {k:'trasporti',keys:['trasporti','tram','bus','taxi','aeroporto','treno'],t:a=>`${a.transport}<br>Aeroporti: ${a.airports}`},
       {k:'mangiare',keys:['mangiare','ristorante','cena','pranzo','cibo'],t:a=>a.eat},
       {k:'bere',keys:['bere','bar','vino','cocktail','aperitivo'],t:a=>a.drink},
       {k:'shopping',keys:['shopping','mercato','negozi'],t:a=>a.shop},
       {k:'visitare',keys:['visitare','cosa vedere','museo','attrazioni','vedere'],t:a=>a.visit},
       {k:'esperienze',keys:['esperienze','passeggiata','tour','itinerario','tramonto'],t:a=>a.experiences},
       {k:'gite di un giorno',keys:['gite','gita','tivoli','ostia','castelli','escursione'],t:a=>a.daytrips},
-      /* nuovo intent in inglese, come richiesto */
-      {k:'tickets & events',keys:['tickets','ticket','event','events','concert','match','roma','lazio'],t:()=>
-        `TICKETS & EVENTS — ROME\n• TicketOne (concerts, theatre, sport): https://www.ticketone.it/en/\n• AS Roma — official tickets: https://www.asroma.com/en/tickets\n• SS Lazio — official tickets: https://sslazio.it/en/tickets`
+      {k:'emergenza',keys:['emergenza','polizia','ambulanza','vigili','medico','veterinario'],t:a=>a.emergency},
+
+      /* 3 nuovi, in inglese */
+      {
+        k:'tickets & events',
+        keys:['tickets & events','tickets','events','concerto','partita'],
+        t:()=>`<b>TICKETS &amp; EVENTS — ROME</b><br>
+        • TicketOne (concerts, theatre, sport): <a href="https://www.ticketone.it/en/" target="_blank" rel="noopener noreferrer">https://www.ticketone.it/en/</a><br>
+        • AS Roma — official tickets: <a href="https://www.asroma.com/en/tickets" target="_blank" rel="noopener noreferrer">https://www.asroma.com/en/tickets</a><br>
+        • SS Lazio — official tickets: <a href="https://sslazio.it/en/tickets" target="_blank" rel="noopener noreferrer">https://sslazio.it/en/tickets</a>`
       },
-      {k:'emergenza',keys:['emergenza','polizia','ambulanza','vigili','medico','veterinario'],t:a=>a.emergency}
+      {
+        k:'museums & sites',
+        keys:['museums & sites','musei','siti','colosseo'],
+        t:()=>`<b>MUSEUMS &amp; SITES — ROME</b><br>
+        • Colosseum, Roman Forum &amp; Palatine: <a href="https://colosseo.it/en" target="_blank" rel="noopener noreferrer">https://colosseo.it/en</a><br>
+        • Vatican Museums &amp; Sistine Chapel: <a href="https://tickets.museivaticani.va/" target="_blank" rel="noopener noreferrer">https://tickets.museivaticani.va/</a><br>
+        • Museums of Rome: <a href="https://www.museiincomuneroma.it/en" target="_blank" rel="noopener noreferrer">https://www.museiincomuneroma.it/en</a>`
+      },
+      {
+        k:'exhibitions',
+        keys:['exhibitions','mostre','mostra','arte'],
+        t:()=>`<b>EXHIBITIONS — ROME</b><br>
+        • Musei in Comune — exhibitions: <a href="https://www.museiincomuneroma.it/en/exhibitions" target="_blank" rel="noopener noreferrer">https://www.museiincomuneroma.it/en/exhibitions</a><br>
+        • Scuderie del Quirinale: <a href="https://www.scuderiequirinale.it/" target="_blank" rel="noopener noreferrer">https://www.scuderiequirinale.it/</a><br>
+        • MAXXI — Museum of 21st Century Arts: <a href="https://www.maxxi.art/en/" target="_blank" rel="noopener noreferrer">https://www.maxxi.art/en/</a>`
+      }
     ]
   },
-  fr: {
+    fr: {
     ui:{
       welcome:"Bonjour, je suis Samantha, votre guide virtuel. Touchez un bouton pour une réponse rapide.",
       placeholder:"Bonjour, je suis Samantha, votre guide virtuel. Touchez un bouton — ou écrivez ici…",
       apt_label:"Appartement", voice_on:"🔊 Voix : Activée", voice_off:"🔇 Voix : Désactivée",
-      quick:["wifi","check in","check out","eau","climatisation","salle de bain","gaz","immeuble","manger","boire","shopping","visiter","expériences","excursions","transports","services","urgence","tickets & events"],
+      quick:["wifi","check in","check out","eau","climatisation","salle de bain","gaz","immeuble","manger","boire","shopping","visiter","expériences","excursions","transports","services","urgence","tickets & events","museums & sites","exhibitions"],
       fallback:"Je n’ai pas trouvé de réponse directe. Essayez un bouton (wifi, gaz, transports, visiter…).",
       fb_label:"Cette réponse vous a-t-elle aidé·e ?",
       fb_like:"👍 J’aime",
@@ -256,27 +298,48 @@ const DATA = {
       host_phone:"+39 335 5245756"
     },
     intents:[
-      {k:'wifi',keys:['wifi','wi-fi','internet','mot de passe','routeur'],t:a=>`Wi-Fi : ${a.wifi_note}\nRéseau : ${a.wifi_ssid}. Mot de passe : ${a.wifi_password}.`},
-      {k:'check in',keys:['check in','arrivée','accès','interphone','code'],t:a=>`Arrivée à partir de ${a.checkin_time}.\nCode interphone : ${a.intercom_code}.\nPorte : ${a.main_door_hours}.\nConcierge : ${a.concierge}.\nBesoin d’aide ? ${a.host_phone}.`},
+      {k:'wifi',keys:['wifi','wi-fi','internet','mot de passe','routeur'],t:a=>`Wi-Fi : ${a.wifi_note}<br>Réseau : ${a.wifi_ssid}. Mot de passe : ${a.wifi_password}.`},
+      {k:'check in',keys:['check in','arrivée','accès','interphone','code'],t:a=>`Arrivée à partir de ${a.checkin_time}.<br>Code interphone : ${a.intercom_code}.<br>Porte : ${a.main_door_hours}.<br>Concierge : ${a.concierge}.<br>Besoin d’aide ? ${a.host_phone}.`},
       {k:'check out',keys:['check out','départ','quitter'],t:a=>a.checkout_note},
       {k:'eau',keys:['eau','chaude','potable','robinet'],t:a=>a.water_note},
       {k:'climatisation',keys:['climatisation','clim','ac'],t:a=>a.ac_note},
-      {k:'salle de bain',keys:['salle de bain','serviettes','savon','sèche-cheveux'],t:a=>`Salle de bain : ${a.bathroom_amenities}\nServiettes : ${a.towels_note}`},
+      {k:'salle de bain',keys:['salle de bain','serviettes','savon','sèche-cheveux'],t:a=>`Salle de bain : ${a.bathroom_amenities}<br>Serviettes : ${a.towels_note}`},
       {k:'gaz',keys:['gaz','cuisine','brûleur','flamme'],t:a=>`Gaz : ${a.gas_steps}`},
-      {k:'immeuble',keys:['immeuble','ascenseur','porte','horaires','concierge'],t:a=>`Interphone : ${a.intercom_code}.\nAscenseur : ${a.elevator_note}.\nPorte : ${a.main_door_hours}.\nConcierge : ${a.concierge}.`},
-      {k:'services',keys:['pharmacie','hôpital','dab','sim','laverie','consigne'],t:a=>`Pharmacie : ${a.pharmacy}\nHôpital : ${a.hospital}\nDAB : ${a.atms}\nCartes SIM : ${a.sims}\nLaverie : ${a.laundry}\nConsigne : ${a.luggage}`},
-      {k:'transports',keys:['transports','tram','bus','taxi','aéroport','train'],t:a=>`${a.transport}\nAéroports : ${a.airports}`},
+      {k:'immeuble',keys:['immeuble','ascenseur','porte','horaires','concierge'],t:a=>`Interphone : ${a.intercom_code}.<br>Ascenseur : ${a.elevator_note}.<br>Porte : ${a.main_door_hours}.<br>Concierge : ${a.concierge}.`},
+      {k:'services',keys:['pharmacie','hôpital','dab','sim','laverie','consigne'],t:a=>`Pharmacie : ${a.pharmacy}<br>Hôpital : ${a.hospital}<br>DAB : ${a.atms}<br>Cartes SIM : ${a.sims}<br>Laverie : ${a.laundry}<br>Consigne : ${a.luggage}`},
+      {k:'transports',keys:['transports','tram','bus','taxi','aéroport','train'],t:a=>`${a.transport}<br>Aéroports : ${a.airports}`},
       {k:'manger',keys:['manger','restaurant','dîner','déjeuner'],t:a=>a.eat},
       {k:'boire',keys:['boire','bar','vin','cocktail','apéritif'],t:a=>a.drink},
       {k:'shopping',keys:['shopping','marché','boutiques'],t:a=>a.shop},
       {k:'visiter',keys:['visiter','musée','attractions','voir'],t:a=>a.visit},
       {k:'expériences',keys:['expériences','balade','itinéraire','coucher de soleil'],t:a=>a.experiences},
       {k:'excursions',keys:['excursions','ostia','tivoli','castelli','journée'],t:a=>a.daytrips},
-      /* stesso intent inglese */
-      {k:'tickets & events',keys:['tickets','ticket','event','events','concert','match','roma','lazio'],t:()=>
-        `TICKETS & EVENTS — ROME\n• TicketOne (concerts, theatre, sport): https://www.ticketone.it/en/\n• AS Roma — official tickets: https://www.asroma.com/en/tickets\n• SS Lazio — official tickets: https://sslazio.it/en/tickets`
+      {k:'urgence',keys:['urgence','police','ambulance','pompiers','médecin','vétérinaire'],t:a=>a.emergency},
+
+      {
+        k:'tickets & events',
+        keys:['tickets & events','tickets','events','billets','concert','match'],
+        t:()=>`<b>TICKETS &amp; EVENTS — ROME</b><br>
+        • TicketOne (concerts, theatre, sport): <a href="https://www.ticketone.it/en/" target="_blank" rel="noopener noreferrer">https://www.ticketone.it/en/</a><br>
+        • AS Roma — official tickets: <a href="https://www.asroma.com/en/tickets" target="_blank" rel="noopener noreferrer">https://www.asroma.com/en/tickets</a><br>
+        • SS Lazio — official tickets: <a href="https://sslazio.it/en/tickets" target="_blank" rel="noopener noreferrer">https://sslazio.it/en/tickets</a>`
       },
-      {k:'urgence',keys:['urgence','police','ambulance','pompiers','médecin','vétérinaire'],t:a=>a.emergency}
+      {
+        k:'museums & sites',
+        keys:['museums & sites','musées','sites','colisée'],
+        t:()=>`<b>MUSEUMS &amp; SITES — ROME</b><br>
+        • Colosseum, Roman Forum &amp; Palatine: <a href="https://colosseo.it/en" target="_blank" rel="noopener noreferrer">https://colosseo.it/en</a><br>
+        • Vatican Museums &amp; Sistine Chapel: <a href="https://tickets.museivaticani.va/" target="_blank" rel="noopener noreferrer">https://tickets.museivaticani.va/</a><br>
+        • Museums of Rome: <a href="https://www.museiincomuneroma.it/en" target="_blank" rel="noopener noreferrer">https://www.museiincomuneroma.it/en</a>`
+      },
+      {
+        k:'exhibitions',
+        keys:['exhibitions','exposition','expo','art'],
+        t:()=>`<b>EXHIBITIONS — ROME</b><br>
+        • Musei in Comune — exhibitions: <a href="https://www.museiincomuneroma.it/en/exhibitions" target="_blank" rel="noopener noreferrer">https://www.museiincomuneroma.it/en/exhibitions</a><br>
+        • Scuderie del Quirinale: <a href="https://www.scuderiequirinale.it/" target="_blank" rel="noopener noreferrer">https://www.scuderiequirinale.it/</a><br>
+        • MAXXI — Museum of 21st Century Arts: <a href="https://www.maxxi.art/en/" target="_blank" rel="noopener noreferrer">https://www.maxxi.art/en/</a>`
+      }
     ]
   },
     de: {
@@ -284,7 +347,7 @@ const DATA = {
       welcome:"Hallo, ich bin Samantha, dein virtueller Guide. Tippe auf einen Button für eine schnelle Antwort.",
       placeholder:"Hallo, ich bin Samantha, dein virtueller Guide. Tippe auf einen Button — oder schreibe hier…",
       apt_label:"Apartment", voice_on:"🔊 Stimme: An", voice_off:"🔇 Stimme: Aus",
-      quick:["WLAN","check in","check out","Wasser","Klimaanlage","Bad","Gas","Gebäude","Essen","Trinken","Shopping","Sehenswürdigkeiten","Erlebnisse","Tagesausflüge","Verkehr","Services","Notfall","tickets & events"],
+      quick:["WLAN","check in","check out","Wasser","Klimaanlage","Bad","Gas","Gebäude","Essen","Trinken","Shopping","Sehenswürdigkeiten","Erlebnisse","Tagesausflüge","Verkehr","Services","Notfall","tickets & events","museums & sites","exhibitions"],
       fallback:"Keine direkte Antwort gefunden. Nutze einen Button (WLAN, Gas, Verkehr, Sehenswürdigkeiten…).",
       fb_label:"War diese Antwort hilfreich?",
       fb_like:"👍 Like",
@@ -321,26 +384,48 @@ const DATA = {
       host_phone:"+39 335 5245756"
     },
     intents:[
-      {k:'WLAN',keys:['wlan','wifi','wi-fi','internet','passwort','router'],t:a=>`WLAN: ${a.wifi_note}\nNetz: ${a.wifi_ssid}. Passwort: ${a.wifi_password}.`},
-      {k:'check in',keys:['check in','ankunft','zugang','sprechanlage','code'],t:a=>`Check-in ab ${a.checkin_time}.\nSprechanlagen-Code: ${a.intercom_code}.\nHaustür: ${a.main_door_hours}.\nHausmeister: ${a.concierge}.\nHilfe? ${a.host_phone}.`},
+      {k:'WLAN',keys:['wlan','wifi','wi-fi','internet','passwort','router'],t:a=>`WLAN: ${a.wifi_note}<br>Netz: ${a.wifi_ssid}. Passwort: ${a.wifi_password}.`},
+      {k:'check in',keys:['check in','ankunft','zugang','sprechanlage','code'],t:a=>`Check-in ab ${a.checkin_time}.<br>Sprechanlagen-Code: ${a.intercom_code}.<br>Haustür: ${a.main_door_hours}.<br>Hausmeister: ${a.concierge}.<br>Hilfe? ${a.host_phone}.`},
       {k:'check out',keys:['check out','abreise','verlassen'],t:a=>a.checkout_note},
       {k:'Wasser',keys:['wasser','warmwasser','trinkbar','hahn'],t:a=>a.water_note},
       {k:'Klimaanlage',keys:['klimaanlage','klima','ac'],t:a=>a.ac_note},
-      {k:'Bad',keys:['bad','handtücher','seife','föhn'],t:a=>`Bad: ${a.bathroom_amenities}\nHandtücher: ${a.towels_note}`},
+      {k:'Bad',keys:['bad','handtücher','seife','föhn'],t:a=>`Bad: ${a.bathroom_amenities}<br>Handtücher: ${a.towels_note}`},
       {k:'Gas',keys:['gas','küche','herd','flamme','brenner'],t:a=>`Gas: ${a.gas_steps}`},
-      {k:'Gebäude',keys:['gebäude','aufzug','tür','zeiten','hausmeister'],t:a=>`Sprechanlage: ${a.intercom_code}.\nAufzug: ${a.elevator_note}.\nTür: ${a.main_door_hours}.\nHausmeister: ${a.concierge}.`},
-      {k:'Services',keys:['apotheke','krankenhaus','geldautomat','sim','wäscherei','gepäck'],t:a=>`Apotheke: ${a.pharmacy}\nKrankenhaus: ${a.hospital}\nGeldautomaten: ${a.atms}\nSIM: ${a.sims}\nWaschsalon: ${a.laundry}\nGepäck: ${a.luggage}`},
-      {k:'Verkehr',keys:['verkehr','tram','bus','taxi','flughafen','zug'],t:a=>`${a.transport}\nFlughäfen: ${a.airports}`},
+      {k:'Gebäude',keys:['gebäude','aufzug','tür','zeiten','hausmeister'],t:a=>`Sprechanlage: ${a.intercom_code}.<br>Aufzug: ${a.elevator_note}.<br>Tür: ${a.main_door_hours}.<br>Hausmeister: ${a.concierge}.`},
+      {k:'Services',keys:['apotheke','krankenhaus','geldautomat','sim','wäscherei','gepäck'],t:a=>`Apotheke: ${a.pharmacy}<br>Krankenhaus: ${a.hospital}<br>Geldautomaten: ${a.atms}<br>SIM: ${a.sims}<br>Waschsalon: ${a.laundry}<br>Gepäck: ${a.luggage}`},
+      {k:'Verkehr',keys:['verkehr','tram','bus','taxi','flughafen','zug'],t:a=>`${a.transport}<br>Flughäfen: ${a.airports}`},
       {k:'Essen',keys:['essen','restaurant','abendessen','mittagessen'],t:a=>a.eat},
       {k:'Trinken',keys:['trinken','bar','wein','cocktail','aperitif'],t:a=>a.drink},
       {k:'Shopping',keys:['shopping','markt','geschäfte'],t:a=>a.shop},
       {k:'Sehenswürdigkeiten',keys:['sehenswürdigkeiten','museum','attraktionen','besuchen'],t:a=>a.visit},
       {k:'Erlebnisse',keys:['erlebnisse','spaziergang','tour','route','sonnenuntergang'],t:a=>a.experiences},
       {k:'Tagesausflüge',keys:['tagesausflug','ostia','tivoli','castelli'],t:a=>a.daytrips},
-      {k:'tickets & events',keys:['tickets','ticket','event','events','concert','match','roma','lazio'],t:()=>
-        `TICKETS & EVENTS — ROME\n• TicketOne (concerts, theatre, sport): https://www.ticketone.it/en/\n• AS Roma — official tickets: https://www.asroma.com/en/tickets\n• SS Lazio — official tickets: https://sslazio.it/en/tickets`
+      {k:'Notfall',keys:['notfall','polizei','rettung','feuerwehr','arzt','tierarzt'],t:a=>a.emergency},
+
+      {
+        k:'tickets & events',
+        keys:['tickets & events','tickets','events','konzert','spiel'],
+        t:()=>`<b>TICKETS &amp; EVENTS — ROME</b><br>
+        • TicketOne (concerts, theatre, sport): <a href="https://www.ticketone.it/en/" target="_blank" rel="noopener noreferrer">https://www.ticketone.it/en/</a><br>
+        • AS Roma — official tickets: <a href="https://www.asroma.com/en/tickets" target="_blank" rel="noopener noreferrer">https://www.asroma.com/en/tickets</a><br>
+        • SS Lazio — official tickets: <a href="https://sslazio.it/en/tickets" target="_blank" rel="noopener noreferrer">https://sslazio.it/en/tickets</a>`
       },
-      {k:'Notfall',keys:['notfall','polizei','rettung','feuerwehr','arzt','tierarzt'],t:a=>a.emergency}
+      {
+        k:'museums & sites',
+        keys:['museums & sites','museen','sites','kolosseum'],
+        t:()=>`<b>MUSEUMS &amp; SITES — ROME</b><br>
+        • Colosseum, Roman Forum &amp; Palatine: <a href="https://colosseo.it/en" target="_blank" rel="noopener noreferrer">https://colosseo.it/en</a><br>
+        • Vatican Museums &amp; Sistine Chapel: <a href="https://tickets.museivaticani.va/" target="_blank" rel="noopener noreferrer">https://tickets.museivaticani.va/</a><br>
+        • Museums of Rome: <a href="https://www.museiincomuneroma.it/en" target="_blank" rel="noopener noreferrer">https://www.museiincomuneroma.it/en</a>`
+      },
+      {
+        k:'exhibitions',
+        keys:['exhibitions','ausstellung','kunst'],
+        t:()=>`<b>EXHIBITIONS — ROME</b><br>
+        • Musei in Comune — exhibitions: <a href="https://www.museiincomuneroma.it/en/exhibitions" target="_blank" rel="noopener noreferrer">https://www.museiincomuneroma.it/en/exhibitions</a><br>
+        • Scuderie del Quirinale: <a href="https://www.scuderiequirinale.it/" target="_blank" rel="noopener noreferrer">https://www.scuderiequirinale.it/</a><br>
+        • MAXXI — Museum of 21st Century Arts: <a href="https://www.maxxi.art/en/" target="_blank" rel="noopener noreferrer">https://www.maxxi.art/en/</a>`
+      }
     ]
   },
     es: {
@@ -348,7 +433,7 @@ const DATA = {
       welcome:"Hola, soy Samantha, tu guía virtual. Toca un botón para una respuesta rápida.",
       placeholder:"Hola, soy Samantha, tu guía virtual. Toca un botón — o escribe aquí…",
       apt_label:"Apartamento", voice_on:"🔊 Voz: Activada", voice_off:"🔇 Voz: Desactivada",
-      quick:["wifi","check in","check out","agua","aire acondicionado","baño","gas","edificio","comer","beber","compras","visitar","experiencias","excursiones","transporte","servicios","emergencia","tickets & events"],
+      quick:["wifi","check in","check out","agua","aire acondicionado","baño","gas","edificio","comer","beber","compras","visitar","experiencias","excursiones","transporte","servicios","emergencia","tickets & events","museums & sites","exhibitions"],
       fallback:"No encontré una respuesta directa. Prueba un botón (wifi, gas, transporte, visitar…).",
       fb_label:"¿Te resultó útil?",
       fb_like:"👍 Me gusta",
@@ -385,31 +470,53 @@ const DATA = {
       host_phone:"+39 335 5245756"
     },
     intents:[
-      {k:'wifi',keys:['wifi','wi-fi','internet','contraseña','router'],t:a=>`Wi-Fi: ${a.wifi_note}\nRed: ${a.wifi_ssid}. Contraseña: ${a.wifi_password}.`},
-      {k:'check in',keys:['check in','llegada','acceso','portero','código','interfono'],t:a=>`Check-in desde las ${a.checkin_time}.\nCódigo del portero: ${a.intercom_code}.\nPuerta: ${a.main_door_hours}.\nConserje: ${a.concierge}.\n¿Necesitas ayuda? ${a.host_phone}.`},
+      {k:'wifi',keys:['wifi','wi-fi','internet','contraseña','router'],t:a=>`Wi-Fi: ${a.wifi_note}<br>Red: ${a.wifi_ssid}. Contraseña: ${a.wifi_password}.`},
+      {k:'check in',keys:['check in','llegada','acceso','portero','código','interfono'],t:a=>`Check-in desde las ${a.checkin_time}.<br>Código del portero: ${a.intercom_code}.<br>Puerta: ${a.main_door_hours}.<br>Conserje: ${a.concierge}.<br>¿Necesitas ayuda? ${a.host_phone}.`},
       {k:'check out',keys:['check out','salida','marchar'],t:a=>a.checkout_note},
       {k:'agua',keys:['agua','caliente','potable','grifo'],t:a=>a.water_note},
       {k:'aire acondicionado',keys:['aire acondicionado','ac','clima'],t:a=>a.ac_note},
-      {k:'baño',keys:['baño','toallas','jabón','secador'],t:a=>`Baño: ${a.bathroom_amenities}\nToallas: ${a.towels_note}`},
+      {k:'baño',keys:['baño','toallas','jabón','secador'],t:a=>`Baño: ${a.bathroom_amenities}<br>Toallas: ${a.towels_note}`},
       {k:'gas',keys:['gas','cocina','hornilla','llama'],t:a=>`Uso del gas: ${a.gas_steps}`},
-      {k:'edificio',keys:['edificio','ascensor','puerta','horarios','conserje'],t:a=>`Interfono: ${a.intercom_code}.\nAscensor: ${a.elevator_note}.\nPuerta: ${a.main_door_hours}.\nConserje: ${a.concierge}.`},
-      {k:'servicios',keys:['farmacia','hospital','cajero','sim','lavandería','equipaje'],t:a=>`Farmacia: ${a.pharmacy}\nHospital: ${a.hospital}\nCajeros: ${a.atms}\nSIM: ${a.sims}\nLavandería: ${a.laundry}\nConsigna: ${a.luggage}`},
-      {k:'transporte',keys:['transporte','tranvía','bus','taxi','aeropuerto','tren'],t:a=>`${a.transport}\nAeropuertos: ${a.airports}`},
+      {k:'edificio',keys:['edificio','ascensor','puerta','horarios','conserje'],t:a=>`Interfono: ${a.intercom_code}.<br>Ascensor: ${a.elevator_note}.<br>Puerta: ${a.main_door_hours}.<br>Conserje: ${a.concierge}.`},
+      {k:'servicios',keys:['farmacia','hospital','cajero','sim','lavandería','equipaje'],t:a=>`Farmacia: ${a.pharmacy}<br>Hospital: ${a.hospital}<br>Cajeros: ${a.atms}<br>SIM: ${a.sims}<br>Lavandería: ${a.laundry}<br>Consigna: ${a.luggage}`},
+      {k:'transporte',keys:['transporte','tranvía','bus','taxi','aeropuerto','tren'],t:a=>`${a.transport}<br>Aeropuertos: ${a.airports}`},
       {k:'comer',keys:['comer','restaurante','cena','almuerzo'],t:a=>a.eat},
       {k:'beber',keys:['beber','bar','vino','cóctel','aperitivo'],t:a=>a.drink},
       {k:'compras',keys:['compras','mercado','tiendas'],t:a=>a.shop},
       {k:'visitar',keys:['visitar','museo','atracciones','ver'],t:a=>a.visit},
       {k:'experiencias',keys:['experiencias','paseo','tour','itinerario','atardecer'],t:a=>a.experiences},
       {k:'excursiones',keys:['excursión','ostia','tivoli','castelli','día'],t:a=>a.daytrips},
-      {k:'tickets & events',keys:['tickets','ticket','event','events','concert','match','roma','lazio'],t:()=>
-        `TICKETS & EVENTS — ROME\n• TicketOne (concerts, theatre, sport): https://www.ticketone.it/en/\n• AS Roma — official tickets: https://www.asroma.com/en/tickets\n• SS Lazio — official tickets: https://sslazio.it/en/tickets`
+      {k:'emergencia',keys:['emergencia','policía','ambulancia','bomberos','médico','veterinario'],t:a=>a.emergency},
+
+      {
+        k:'tickets & events',
+        keys:['tickets & events','tickets','events','entradas','concierto','partido'],
+        t:()=>`<b>TICKETS &amp; EVENTS — ROME</b><br>
+        • TicketOne (concerts, theatre, sport): <a href="https://www.ticketone.it/en/" target="_blank" rel="noopener noreferrer">https://www.ticketone.it/en/</a><br>
+        • AS Roma — official tickets: <a href="https://www.asroma.com/en/tickets" target="_blank" rel="noopener noreferrer">https://www.asroma.com/en/tickets</a><br>
+        • SS Lazio — official tickets: <a href="https://sslazio.it/en/tickets" target="_blank" rel="noopener noreferrer">https://sslazio.it/en/tickets</a>`
       },
-      {k:'emergencia',keys:['emergencia','policía','ambulancia','bomberos','médico','veterinario'],t:a=>a.emergency}
+      {
+        k:'museums & sites',
+        keys:['museums & sites','museos','sitios','coliseo'],
+        t:()=>`<b>MUSEUMS &amp; SITES — ROME</b><br>
+        • Colosseum, Roman Forum &amp; Palatine: <a href="https://colosseo.it/en" target="_blank" rel="noopener noreferrer">https://colosseo.it/en</a><br>
+        • Vatican Museums &amp; Sistine Chapel: <a href="https://tickets.museivaticani.va/" target="_blank" rel="noopener noreferrer">https://tickets.museivaticani.va/</a><br>
+        • Museums of Rome: <a href="https://www.museiincomuneroma.it/en" target="_blank" rel="noopener noreferrer">https://www.museiincomuneroma.it/en</a>`
+      },
+      {
+        k:'exhibitions',
+        keys:['exhibitions','exposición','exposiciones','arte'],
+        t:()=>`<b>EXHIBITIONS — ROME</b><br>
+        • Musei in Comune — exhibitions: <a href="https://www.museiincomuneroma.it/en/exhibitions" target="_blank" rel="noopener noreferrer">https://www.museiincomuneroma.it/en/exhibitions</a><br>
+        • Scuderie del Quirinale: <a href="https://www.scuderiequirinale.it/" target="_blank" rel="noopener noreferrer">https://www.scuderiequirinale.it/</a><br>
+        • MAXXI — Museum of 21st Century Arts: <a href="https://www.maxxi.art/en/" target="_blank" rel="noopener noreferrer">https://www.maxxi.art/en/</a>`
+      }
     ]
   }
-}; /* <-- chiude const DATA */
 
-/* ============ RILEVAMENTO LINGUA + UI ============ */
+}; /* <-- chiude const DATA */
+  /* ============ RILEVAMENTO LINGUA + UI ============ */
 const chatEl = document.getElementById('chat');
 const input  = document.getElementById('input');
 const sendBtn= document.getElementById('sendBtn');
@@ -455,7 +562,7 @@ function speak(t){
   if(!voiceOn || !('speechSynthesis' in window)) return;
   try{
     speechSynthesis.cancel();
-    const u=new SpeechSynthesisUtterance(t);
+    const u=new SpeechSynthesisUtterance(t.replace(/<[^>]+>/g,'')); // legge senza tag
     if(pick) u.voice=pick; u.lang = pick?.lang || lang;
     speechSynthesis.speak(u);
   }catch{}
@@ -486,7 +593,11 @@ function applyUI(){
 function add(type, txt){
   const d=document.createElement('div');
   d.className='msg '+(type==='me'?'me':'wd');
-  d.textContent=txt;
+  if(type==='me'){
+    d.textContent = txt;
+  } else {
+    d.innerHTML = txt;  // <<< QUI: il bot può mostrare link cliccabili
+  }
   chatEl.appendChild(d);
   chatEl.scrollTop=chatEl.scrollHeight;
   return d;
