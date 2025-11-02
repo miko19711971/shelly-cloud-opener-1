@@ -77,7 +77,6 @@ input{flex:1;padding:12px;border:1px solid #cbd5e1;border-radius:10px;outline:no
 const APARTMENT_ID = "ARENULA16";
 /* Usa lo stesso deployment Google Script già in uso per le altre guide */
 const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxt0ToaaC9TOrQMJjcWXpyL1a_FCugoVIgZpB5MFY_IsJTJGHOtloEq1sjKs_F-c7Sd/exec";
-
 /* ============ CONTENUTI LOCALIZZATI (ARENULA 16) ============ */
 const DATA = {
 
@@ -88,7 +87,8 @@ const DATA = {
       apt_label: "Apartment",
       voice_on: "🔊 Voice: On",
       voice_off: "🔇 Voice: Off",
-      quick: ["wifi","check in","check out","water","AC","bathroom","gas","building","eat","drink","shop","visit","experience","day trips","transport","services","emergency"],
+      /* AGGIUNTO: "tickets & events" in coda */
+      quick: ["wifi","check in","check out","water","AC","bathroom","gas","building","eat","drink","shop","visit","experience","day trips","transport","services","emergency","tickets & events"],
       fallback: "I did not find a direct answer. Try a quick button (wifi, gas, transport, visit…).",
       fb_label:"Was this helpful?",
       fb_like:"👍 Like",
@@ -141,16 +141,20 @@ const DATA = {
       {k:'visit',keys:['visit','visiting','what to visit','see','sight','attraction','museum','museums'],t:a=>a.visit},
       {k:'experience',keys:['experience','walk','tour','itinerary','sunset'],t:a=>a.experiences},
       {k:'day trips',keys:['day trips','day trip','tivoli','ostia','castelli','excursion','excursions'],t:a=>a.daytrips},
+      /* NUOVO INTENT: SOLO LINK SINGOLI */
+      {k:'tickets & events',keys:['tickets','ticket','event','events','concert','match','football','roma','lazio'],t:()=>
+        `TICKETS & EVENTS — ROME\n• TicketOne (concerts, theatre, sport): https://www.ticketone.it/en/\n• AS Roma — official tickets: https://www.asroma.com/en/tickets\n• SS Lazio — official tickets: https://sslazio.it/en/tickets`
+      },
       {k:'emergency',keys:['emergency','police','ambulance','fire','doctor','vet'],t:a=>a.emergency}
     ]
   },
-
-  it: {
+    it: {
     ui:{
       welcome:"Ciao, sono Samantha, la tua guida virtuale. Tocca un pulsante per una risposta rapida.",
       placeholder:"Ciao, sono Samantha, la tua guida virtuale. Tocca un pulsante — oppure scrivi qui…",
       apt_label:"Appartamento", voice_on:"🔊 Voce: On", voice_off:"🔇 Voce: Off",
-      quick:["wifi","check in","check out","acqua","aria condizionata","bagno","gas","edificio","mangiare","bere","shopping","visitare","esperienze","gite di un giorno","trasporti","servizi","emergenza"],
+      /* aggiunto "tickets & events" ma RESTA in inglese */
+      quick:["wifi","check in","check out","acqua","aria condizionata","bagno","gas","edificio","mangiare","bere","shopping","visitare","esperienze","gite di un giorno","trasporti","servizi","emergenza","tickets & events"],
       fallback:"Non ho trovato una risposta diretta. Prova un pulsante (wifi, gas, trasporti, visitare…).",
       fb_label:"Ti è stato utile?",
       fb_like:"👍 Mi piace",
@@ -203,16 +207,19 @@ const DATA = {
       {k:'visitare',keys:['visitare','cosa vedere','museo','attrazioni','vedere'],t:a=>a.visit},
       {k:'esperienze',keys:['esperienze','passeggiata','tour','itinerario','tramonto'],t:a=>a.experiences},
       {k:'gite di un giorno',keys:['gite','gita','tivoli','ostia','castelli','escursione'],t:a=>a.daytrips},
+      /* nuovo intent in inglese, come richiesto */
+      {k:'tickets & events',keys:['tickets','ticket','event','events','concert','match','roma','lazio'],t:()=>
+        `TICKETS & EVENTS — ROME\n• TicketOne (concerts, theatre, sport): https://www.ticketone.it/en/\n• AS Roma — official tickets: https://www.asroma.com/en/tickets\n• SS Lazio — official tickets: https://sslazio.it/en/tickets`
+      },
       {k:'emergenza',keys:['emergenza','polizia','ambulanza','vigili','medico','veterinario'],t:a=>a.emergency}
     ]
   },
-
   fr: {
     ui:{
       welcome:"Bonjour, je suis Samantha, votre guide virtuel. Touchez un bouton pour une réponse rapide.",
       placeholder:"Bonjour, je suis Samantha, votre guide virtuel. Touchez un bouton — ou écrivez ici…",
       apt_label:"Appartement", voice_on:"🔊 Voix : Activée", voice_off:"🔇 Voix : Désactivée",
-      quick:["wifi","check in","check out","eau","climatisation","salle de bain","gaz","immeuble","manger","boire","shopping","visiter","expériences","excursions","transports","services","urgence"],
+      quick:["wifi","check in","check out","eau","climatisation","salle de bain","gaz","immeuble","manger","boire","shopping","visiter","expériences","excursions","transports","services","urgence","tickets & events"],
       fallback:"Je n’ai pas trouvé de réponse directe. Essayez un bouton (wifi, gaz, transports, visiter…).",
       fb_label:"Cette réponse vous a-t-elle aidé·e ?",
       fb_like:"👍 J’aime",
@@ -265,16 +272,19 @@ const DATA = {
       {k:'visiter',keys:['visiter','musée','attractions','voir'],t:a=>a.visit},
       {k:'expériences',keys:['expériences','balade','itinéraire','coucher de soleil'],t:a=>a.experiences},
       {k:'excursions',keys:['excursions','ostia','tivoli','castelli','journée'],t:a=>a.daytrips},
+      /* stesso intent inglese */
+      {k:'tickets & events',keys:['tickets','ticket','event','events','concert','match','roma','lazio'],t:()=>
+        `TICKETS & EVENTS — ROME\n• TicketOne (concerts, theatre, sport): https://www.ticketone.it/en/\n• AS Roma — official tickets: https://www.asroma.com/en/tickets\n• SS Lazio — official tickets: https://sslazio.it/en/tickets`
+      },
       {k:'urgence',keys:['urgence','police','ambulance','pompiers','médecin','vétérinaire'],t:a=>a.emergency}
     ]
   },
-
-  de: {
+    de: {
     ui:{
       welcome:"Hallo, ich bin Samantha, dein virtueller Guide. Tippe auf einen Button für eine schnelle Antwort.",
       placeholder:"Hallo, ich bin Samantha, dein virtueller Guide. Tippe auf einen Button — oder schreibe hier…",
       apt_label:"Apartment", voice_on:"🔊 Stimme: An", voice_off:"🔇 Stimme: Aus",
-      quick:["WLAN","check in","check out","Wasser","Klimaanlage","Bad","Gas","Gebäude","Essen","Trinken","Shopping","Sehenswürdigkeiten","Erlebnisse","Tagesausflüge","Verkehr","Services","Notfall"],
+      quick:["WLAN","check in","check out","Wasser","Klimaanlage","Bad","Gas","Gebäude","Essen","Trinken","Shopping","Sehenswürdigkeiten","Erlebnisse","Tagesausflüge","Verkehr","Services","Notfall","tickets & events"],
       fallback:"Keine direkte Antwort gefunden. Nutze einen Button (WLAN, Gas, Verkehr, Sehenswürdigkeiten…).",
       fb_label:"War diese Antwort hilfreich?",
       fb_like:"👍 Like",
@@ -327,16 +337,18 @@ const DATA = {
       {k:'Sehenswürdigkeiten',keys:['sehenswürdigkeiten','museum','attraktionen','besuchen'],t:a=>a.visit},
       {k:'Erlebnisse',keys:['erlebnisse','spaziergang','tour','route','sonnenuntergang'],t:a=>a.experiences},
       {k:'Tagesausflüge',keys:['tagesausflug','ostia','tivoli','castelli'],t:a=>a.daytrips},
+      {k:'tickets & events',keys:['tickets','ticket','event','events','concert','match','roma','lazio'],t:()=>
+        `TICKETS & EVENTS — ROME\n• TicketOne (concerts, theatre, sport): https://www.ticketone.it/en/\n• AS Roma — official tickets: https://www.asroma.com/en/tickets\n• SS Lazio — official tickets: https://sslazio.it/en/tickets`
+      },
       {k:'Notfall',keys:['notfall','polizei','rettung','feuerwehr','arzt','tierarzt'],t:a=>a.emergency}
     ]
   },
-
-  es: {
+    es: {
     ui:{
       welcome:"Hola, soy Samantha, tu guía virtual. Toca un botón para una respuesta rápida.",
       placeholder:"Hola, soy Samantha, tu guía virtual. Toca un botón — o escribe aquí…",
       apt_label:"Apartamento", voice_on:"🔊 Voz: Activada", voice_off:"🔇 Voz: Desactivada",
-      quick:["wifi","check in","check out","agua","aire acondicionado","baño","gas","edificio","comer","beber","compras","visitar","experiencias","excursiones","transporte","servicios","emergencia"],
+      quick:["wifi","check in","check out","agua","aire acondicionado","baño","gas","edificio","comer","beber","compras","visitar","experiencias","excursiones","transporte","servicios","emergencia","tickets & events"],
       fallback:"No encontré una respuesta directa. Prueba un botón (wifi, gas, transporte, visitar…).",
       fb_label:"¿Te resultó útil?",
       fb_like:"👍 Me gusta",
@@ -389,6 +401,9 @@ const DATA = {
       {k:'visitar',keys:['visitar','museo','atracciones','ver'],t:a=>a.visit},
       {k:'experiencias',keys:['experiencias','paseo','tour','itinerario','atardecer'],t:a=>a.experiences},
       {k:'excursiones',keys:['excursión','ostia','tivoli','castelli','día'],t:a=>a.daytrips},
+      {k:'tickets & events',keys:['tickets','ticket','event','events','concert','match','roma','lazio'],t:()=>
+        `TICKETS & EVENTS — ROME\n• TicketOne (concerts, theatre, sport): https://www.ticketone.it/en/\n• AS Roma — official tickets: https://www.asroma.com/en/tickets\n• SS Lazio — official tickets: https://sslazio.it/en/tickets`
+      },
       {k:'emergencia',keys:['emergencia','policía','ambulancia','bomberos','médico','veterinario'],t:a=>a.emergency}
     ]
   }
