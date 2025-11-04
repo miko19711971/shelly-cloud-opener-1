@@ -76,100 +76,42 @@ input{flex:1;padding:12px;border:1px solid #cbd5e1;border-radius:10px;outline:no
 /* === CONFIG === */
 const APARTMENT_ID = "ARENULA16";
 const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxt0ToaaC9TOrQMJjcWXpyL1a_FCugoVIgZpB5MFY_IsJTJGHOtloEq1sjKs_F-c7Sd/exec";
-  /* ============ CONTENUTI LOCALIZZATI (ARENULA 16) ============ */
-const DATA = {
+<body>
+<div class="wrap">
+  <header>
+    <div class="h-row">
+      <div class="h-left">
+        <img class="logo" src="logo-niceflatinrome.jpg" alt="NiceFlatInRome">
+        <div class="brand">niceflatinrome.com</div>
+      </div>
+      <div class="apt"><span id="aptLabel">Apartment</span>: ARENULA16</div>
+    </div>
+    <div class="controls">
+      <button id="voiceBtn" aria-pressed="false" title="Toggle voice">🔇 Voice: Off</button>
+      <nav class="lang" aria-label="Language">
+        <button data-lang="en" aria-current="true">EN</button>
+        <button data-lang="it">IT</button>
+        <button data-lang="fr">FR</button>
+        <button data-lang="de">DE</button>
+        <button data-lang="es">ES</button>
+      </nav>
+    </div>
+  </header>
 
-  en: {
-    ui: {
-      welcome: "Hi, I am Samantha, your virtual guide. Tap a button to get a quick answer.",
-      placeholder: "Hi, I am Samantha, your virtual guide. Tap a button for a quick answer — or type here…",
-      apt_label: "Apartment",
-      voice_on: "🔊 Voice: On",
-      voice_off: "🔇 Voice: Off",
-      /* aggiunti i 3 tasti alla fine */
-      quick: ["wifi","check in","check out","water","AC","bathroom","gas","building","eat","drink","shop","visit","experience","day trips","transport","services","emergency","tickets & events","museums & sites","exhibitions"],
-      fallback: "I did not find a direct answer. Try a quick button (wifi, gas, transport, visit…).",
-      fb_label:"Was this helpful?",
-      fb_like:"👍 Like",
-      fb_dislike:"👎 Dislike",
-      fb_thanks:"Thanks for your feedback!"
-    },
-    apt: {
-      checkin_time:'15:00', checkout_time:'11:00',
-      wifi_note:'Router on the desk by the window. Turn it to see SSID & password.',
-      wifi_ssid:'See router label', wifi_password:'See router label',
-      water_note:'Tap water is safe to drink. Hot water is always available.',
-      ac_note:'Please switch off the air conditioning when you go out.',
-      bathroom_amenities:'Toilet paper, hand soap, bath mat, hairdryer.',
-      towels_note:'Per guest: 1 large + 1 medium towel. Bed is prepared on arrival.',
-      gas_steps:'Gas valve: horizontal=open, vertical=closed. Choose burner. Light a match/lighter. Turn & press the black knob until the flame is steady, then release.',
-      intercom_code:'C8', elevator_note:'Elevator for owners only — please do not use.',
-      main_door_hours:'08:00–13:00 and 15:30–18:00', concierge:'Paolo',
-      pharmacy:'Farmacia Arenula, Via Arenula 19–21 — +39 06 686 8815',
-      hospital:'Fatebenefratelli Hospital, Tiber Island 1',
-      atms:'Unicredit (Largo Arenula 1), BNL (Via Arenula 41), Intesa (Via Arenula 27)',
-      sims:'Vodafone (Corso Vittorio Emanuele II, 209), TIM (Piazza Venezia, 2), Iliad (Via del Corso, 282)',
-      laundry:'Self-service laundry: Via Arenula 47',
-      luggage:'Radical Storage at Largo di Torre Argentina (5 min)',
-      transport:'Tram 8 (Arenula/Cairoli) → Trastevere or Piazza Venezia. Bus 40/64 → Termini & Vatican. Taxi: +39 06 3570 or FreeNow app.',
-      airports:'Fiumicino: Tram 8 → Trastevere → FL1 train (~45 min). Ciampino: Terravision bus or taxi. Private transfer: Welcome Pickups.',
-      emergency:'EU Emergency 112 • Police 113 • Ambulance 118 • Fire 115 • English doctor +39 06 488 2371 • 24h vet +39 06 660 681',
-      eat:'Roscioli; Emma Pizzeria; Ditirambo; Osteria da Fortunata; Pianostrada; Forno Campo de’ Fiori; Gelateria del Teatro.',
-      drink:'Caffè Camerino (Largo Arenula 30); Irish Pub (Largo Argentina); Modius Radisson Rooftop.',
-      shop:'Via Arenula delis/bakeries/gelato; Piazza Costaguti fish market; Forno Boccione; Mercato Monti (weekends).',
-      visit:'Largo di Torre Argentina (temples & cat sanctuary); Portico d’Ottavia; Tiber Island; Piazza Farnese; hidden churches (Chiesa Nuova, S. Maria in Campitelli, S. Barbara dei Librari).',
-      experiences:'Evening walk: Largo Argentina → Ghetto → Tiber Island → Teatro di Marcello; aperitivo at Camerino or Modius; pastries at Forno Boccione; sunset on Lungotevere.',
-      daytrips:'Ostia Antica (~40 min); Tivoli (Villa d’Este & Hadrian’s Villa ~1h); Castelli Romani (villages & wine).',
-      checkout_note:'Before leaving: turn off lights/AC, close windows, leave keys on the table, gently close the door.',
-      host_phone:'+39 335 5245756'
-    },
-    intents: [
-      {k:'wifi',keys:['wifi','wi-fi','internet','password','router'],t:a=>`Wi-Fi: ${a.wifi_note}<br>Network: ${a.wifi_ssid}. Password: ${a.wifi_password}.`},
-      {k:'check in',keys:['check in','arrival','access','intercom','code'],t:a=>`Check-in from ${a.checkin_time}.<br>Intercom code: ${a.intercom_code}.<br>Main door hours: ${a.main_door_hours}.<br>Concierge: ${a.concierge}.<br>Need help? Call ${a.host_phone}.`},
-      {k:'check out',keys:['check out','leave','departure'],t:a=>a.checkout_note},
-      {k:'water',keys:['water','hot water','drinkable','tap'],t:a=>a.water_note},
-      {k:'AC',keys:['ac','air conditioning','aircon','air'],t:a=>a.ac_note},
-      {k:'bathroom',keys:['bathroom','hairdryer','soap','towels'],t:a=>`Bathroom: ${a.bathroom_amenities}<br>Towels: ${a.towels_note}`},
-      {k:'gas',keys:['gas','kitchen','cook','flame','burner'],t:a=>`Gas use: ${a.gas_steps}`},
-      {k:'building',keys:['building','elevator','door','hours','concierge'],t:a=>`Intercom: ${a.intercom_code}.<br>Elevator: ${a.elevator_note}.<br>Main door: ${a.main_door_hours}.<br>Concierge: ${a.concierge}.`},
-      {k:'services',keys:['pharmacy','hospital','atm','sim','laundry','luggage'],t:a=>`Pharmacy: ${a.pharmacy}<br>Hospital: ${a.hospital}<br>ATMs: ${a.atms}<br>SIMs: ${a.sims}<br>Laundry: ${a.laundry}<br>Luggage: ${a.luggage}`},
-      {k:'transport',keys:['transport','tram','bus','taxi','airport','train'],t:a=>`${a.transport}<br>Airports: ${a.airports}`},
-      {k:'eat',keys:['eat','restaurant','dinner','lunch','food'],t:a=>a.eat},
-      {k:'drink',keys:['drink','bar','wine','cocktail','aperitivo'],t:a=>a.drink},
-      {k:'shop',keys:['shop','market','shopping'],t:a=>a.shop},
-      {k:'visit',keys:['visit','visiting','what to visit','see','sight','attraction','museum','museums'],t:a=>a.visit},
-      {k:'experience',keys:['experience','walk','tour','itinerary','sunset'],t:a=>a.experiences},
-      {k:'day trips',keys:['day trips','day trip','tivoli','ostia','castelli','excursion','excursions'],t:a=>a.daytrips},
-      {k:'emergency',keys:['emergency','police','ambulance','fire','doctor','vet'],t:a=>a.emergency},
+  <main id="chat" aria-live="polite"></main>
 
-      /* --- NUOVI 3 PULSANTI --- */
-      {
-        k:'tickets & events',
-        keys:['tickets & events','tickets','events','concert','match','roma','lazio'],
-        t:()=>`<b>TICKETS &amp; EVENTS — ROME</b><br>
-        • TicketOne (concerts, theatre, sport): <a href="https://www.ticketone.it/en/" target="_blank" rel="noopener noreferrer">https://www.ticketone.it/en/</a><br>
-        • AS Roma — official tickets: <a href="https://www.asroma.com/en/tickets" target="_blank" rel="noopener noreferrer">https://www.asroma.com/en/tickets</a><br>
-  
-      },
-      {
-        k:'museums & sites',
-        keys:['museums & sites','museums','sites','colosseum','vatican'],
-        t:()=>`<b>MUSEUMS &amp; SITES — ROME</b><br>
-        • Colosseum, Roman Forum &amp; Palatine: <a href="https://colosseo.it/en" target="_blank" rel="noopener noreferrer">https://colosseo.it/en</a><br>
-        • Vatican Museums &amp; Sistine Chapel: <a href="https://tickets.museivaticani.va/" target="_blank" rel="noopener noreferrer">https://tickets.museivaticani.va/</a><br>
-        • Museums of Rome (Capitoline, Ara Pacis, etc.): <a href="https://www.museiincomuneroma.it/en" target="_blank" rel="noopener noreferrer">https://www.museiincomuneroma.it/en</a>`
-      },
-      {
-        k:'exhibitions',
-        keys:['exhibitions','exhibition','art','shows','temporary'],
-        t:()=>`<b>EXHIBITIONS — ROME (current)</b><br>
-        • Musei in Comune — exhibitions: <a href="https://www.museiincomuneroma.it/en/exhibitions" target="_blank" rel="noopener noreferrer">https://www.museiincomuneroma.it/en/exhibitions</a><br>
-        • Scuderie del Quirinale: <a href="https://www.scuderiequirinale.it/en/" target="_blank" rel="noopener noreferrer">https://www.scuderiequirinale.it/</a><br>
-        • MAXXI — Museum of 21st Century Arts: <a href="https://www.maxxi.art/en/" target="_blank" rel="noopener noreferrer">https://www.maxxi.art/en/</a>`
-      }
-    ]
-  },
-    it: {
+  <footer>
+    <input id="input" placeholder="Hi, I am Samantha, your virtual guide. Tap a button for a quick answer — or type here…" autocomplete="off">
+    <button id="sendBtn">Send</button>
+  </footer>
+</div>
+
+<script>
+/* === CONFIG === */
+const APARTMENT_ID = "ARENULA16";
+/* Usa lo stesso deployment Google Script già in uso per le altre guide */
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxt0ToaaC9TOrQMJjcWXpyL1a_FCugoVIgZpB5MFY_IsJTJGHOtloEq1sjKs_F-c7Sd/exec";
+  it: {
     ui:{
       welcome:"Ciao, sono Samantha, la tua guida virtuale. Tocca un pulsante per una risposta rapida.",
       placeholder:"Ciao, sono Samantha, la tua guida virtuale. Tocca un pulsante — oppure scrivi qui…",
@@ -236,7 +178,7 @@ const DATA = {
         t:()=>`<b>TICKETS &amp; EVENTS — ROME</b><br>
         • TicketOne (concerts, theatre, sport): <a href="https://www.ticketone.it/en/" target="_blank" rel="noopener noreferrer">https://www.ticketone.it/en/</a><br>
         • AS Roma — official tickets: <a href="https://www.asroma.com/en/tickets" target="_blank" rel="noopener noreferrer">https://www.asroma.com/en/tickets</a><br>
-      
+        • SS Lazio — official tickets: <a href="https://sslazio.it/en/tickets" target="_blank" rel="noopener noreferrer">https://sslazio.it/en/tickets</a>`
       },
       {
         k:'museums & sites',
@@ -251,7 +193,7 @@ const DATA = {
         keys:['exhibitions','mostre','mostra','arte'],
         t:()=>`<b>EXHIBITIONS — ROME</b><br>
         • Musei in Comune — exhibitions: <a href="https://www.museiincomuneroma.it/en/exhibitions" target="_blank" rel="noopener noreferrer">https://www.museiincomuneroma.it/en/exhibitions</a><br>
-        • Scuderie del Quirinale: <a href="https://www.scuderiequirinale.it/en/" target="_blank" rel="noopener noreferrer">https://www.scuderiequirinale.it/</a><br>
+        • Scuderie del Quirinale: <a href="https://www.scuderiequirinale.it/" target="_blank" rel="noopener noreferrer">https://www.scuderiequirinale.it/</a><br>
         • MAXXI — Museum of 21st Century Arts: <a href="https://www.maxxi.art/en/" target="_blank" rel="noopener noreferrer">https://www.maxxi.art/en/</a>`
       }
     ]
@@ -321,8 +263,8 @@ const DATA = {
         keys:['tickets & events','tickets','events','billets','concert','match'],
         t:()=>`<b>TICKETS &amp; EVENTS — ROME</b><br>
         • TicketOne (concerts, theatre, sport): <a href="https://www.ticketone.it/en/" target="_blank" rel="noopener noreferrer">https://www.ticketone.it/en/</a><br>
-        • AS Roma — official tickets: <a href="https://www.asroma.com/en/tickets" target="_blank" rel="noopener noreferrer">https://www.asroma.com/en/tickets</a><br> 
-        
+        • AS Roma — official tickets: <a href="https://www.asroma.com/en/tickets" target="_blank" rel="noopener noreferrer">https://www.asroma.com/en/tickets</a><br>
+        • SS Lazio — official tickets: <a href="https://sslazio.it/en/tickets" target="_blank" rel="noopener noreferrer">https://sslazio.it/en/tickets</a>`
       },
       {
         k:'museums & sites',
@@ -337,7 +279,7 @@ const DATA = {
         keys:['exhibitions','exposition','expo','art'],
         t:()=>`<b>EXHIBITIONS — ROME</b><br>
         • Musei in Comune — exhibitions: <a href="https://www.museiincomuneroma.it/en/exhibitions" target="_blank" rel="noopener noreferrer">https://www.museiincomuneroma.it/en/exhibitions</a><br>
-        • Scuderie del Quirinale: <a href="https://www.scuderiequirinale.it/en/" target="_blank" rel="noopener noreferrer">https://www.scuderiequirinale.it/</a><br>
+        • Scuderie del Quirinale: <a href="https://www.scuderiequirinale.it/" target="_blank" rel="noopener noreferrer">https://www.scuderiequirinale.it/</a><br>
         • MAXXI — Museum of 21st Century Arts: <a href="https://www.maxxi.art/en/" target="_blank" rel="noopener noreferrer">https://www.maxxi.art/en/</a>`
       }
     ]
@@ -408,7 +350,7 @@ const DATA = {
         t:()=>`<b>TICKETS &amp; EVENTS — ROME</b><br>
         • TicketOne (concerts, theatre, sport): <a href="https://www.ticketone.it/en/" target="_blank" rel="noopener noreferrer">https://www.ticketone.it/en/</a><br>
         • AS Roma — official tickets: <a href="https://www.asroma.com/en/tickets" target="_blank" rel="noopener noreferrer">https://www.asroma.com/en/tickets</a><br>
-        
+        • SS Lazio — official tickets: <a href="https://sslazio.it/en/tickets" target="_blank" rel="noopener noreferrer">https://sslazio.it/en/tickets</a>`
       },
       {
         k:'museums & sites',
@@ -423,7 +365,7 @@ const DATA = {
         keys:['exhibitions','ausstellung','kunst'],
         t:()=>`<b>EXHIBITIONS — ROME</b><br>
         • Musei in Comune — exhibitions: <a href="https://www.museiincomuneroma.it/en/exhibitions" target="_blank" rel="noopener noreferrer">https://www.museiincomuneroma.it/en/exhibitions</a><br>
-        • Scuderie del Quirinale: <a href="https://www.scuderiequirinale.it/en/" target="_blank" rel="noopener noreferrer">https://www.scuderiequirinale.it/</a><br>
+        • Scuderie del Quirinale: <a href="https://www.scuderiequirinale.it/" target="_blank" rel="noopener noreferrer">https://www.scuderiequirinale.it/</a><br>
         • MAXXI — Museum of 21st Century Arts: <a href="https://www.maxxi.art/en/" target="_blank" rel="noopener noreferrer">https://www.maxxi.art/en/</a>`
       }
     ]
@@ -494,7 +436,7 @@ const DATA = {
         t:()=>`<b>TICKETS &amp; EVENTS — ROME</b><br>
         • TicketOne (concerts, theatre, sport): <a href="https://www.ticketone.it/en/" target="_blank" rel="noopener noreferrer">https://www.ticketone.it/en/</a><br>
         • AS Roma — official tickets: <a href="https://www.asroma.com/en/tickets" target="_blank" rel="noopener noreferrer">https://www.asroma.com/en/tickets</a><br>
-       
+        • SS Lazio — official tickets: <a href="https://sslazio.it/en/tickets" target="_blank" rel="noopener noreferrer">https://sslazio.it/en/tickets</a>`
       },
       {
         k:'museums & sites',
@@ -509,7 +451,7 @@ const DATA = {
         keys:['exhibitions','exposición','exposiciones','arte'],
         t:()=>`<b>EXHIBITIONS — ROME</b><br>
         • Musei in Comune — exhibitions: <a href="https://www.museiincomuneroma.it/en/exhibitions" target="_blank" rel="noopener noreferrer">https://www.museiincomuneroma.it/en/exhibitions</a><br>
-        • Scuderie del Quirinale: <a href="https://www.scuderiequirinale.it/en/" target="_blank" rel="noopener noreferrer">https://www.scuderiequirinale.it/</a><br>
+        • Scuderie del Quirinale: <a href="https://www.scuderiequirinale.it/" target="_blank" rel="noopener noreferrer">https://www.scuderiequirinale.it/</a><br>
         • MAXXI — Museum of 21st Century Arts: <a href="https://www.maxxi.art/en/" target="_blank" rel="noopener noreferrer">https://www.maxxi.art/en/</a>`
       }
     ]
