@@ -384,6 +384,43 @@ app.get("/checkin/:apt/today", (req, res) => {
   const url = `${req.protocol}://${req.get("host")}/checkin/${apt}/index.html?t=${token}`;
   res.redirect(302, url);
 });
+
+
+// ✅ NUOVO: /checkin/:apt/:rawDate — pensato per HostAway {{checkin_date}}
+app.get("/checkin/:apt/:rawDate([^/.]+)", (req, res) => {
+  const apt   = req.params.apt.toLowerCase();
+  const today = tzToday();
+
+  // rawDate arriva da HostAway, es: "2025-11-21" oppure "21 Nov 2025"
+  const raw = String(req.params.rawDate || "");
+  let day = normalizeCheckinDate(raw);
+
+  // se data non valida → errore (o fallback opzionale a oggi)
+  if (!day) {
+    if (ALLOW_TODAY_FALLBACK) {
+      day = today;
+    } else {
+      return res
+        .status(410)
+        .send("Questo link richiede una data valida di check-in nel percorso, es. /checkin/arenula/2025-11-21.");
+    }
+  }
+
+  // valido SOLO nel giorno di check-in (Europe/Rome)
+  if (day !== today) {
+    return res.status(410).send("Questo link è valido solo nel giorno di check-in.");
+  }
+
+  const { token } = newTokenFor(`checkin-${apt}`, {
+    windowMin: CHECKIN_WINDOW_MIN,
+    max: 200,
+    day
+  });
+  const url = `${req.protocol}://${req.get("host")}/checkin/${apt}/index.html?t=${token}`;
+  res.redirect(302, url);
+});
+
+
 // ====== SELF-CHECK-IN — VALIDI SOLO IL GIORNO DI CHECK-IN ======
 // Link breve: /checkin/:apt/?d=<data>
 app.get("/checkin/:apt/", (req, res) => {
