@@ -679,7 +679,7 @@ app.post("/api/hostaway-ai-bridge", async (req, res) => {
     });
   }
 });
-    }
+    
 
     // Risposta "pulita" per HostAway
     return res.json({
