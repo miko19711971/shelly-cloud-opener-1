@@ -662,6 +662,8 @@ app.get("/health", (req, res) => {
     revokeBefore: REVOKE_BEFORE
   });
 });
+// Guest Assistant AI → JSON dinamico (guides-v2)
+guideAI(app);
 // ========== NUOVO ENDPOINT: HostAway → Email ospite VRBO ==========
 
 // Per inviare le email sfruttiamo un piccolo ponte (Apps Script o altro servizio Mail)
