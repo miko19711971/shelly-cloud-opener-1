@@ -5,7 +5,8 @@ import cors from "cors";
 import path from "path";
 import { fileURLToPath } from "url";
 import fs from "fs/promises";
-
+// Guest Assistant AI → JSON dinamico (guides-v2)
+import guideAI from "./guide-ai.js";
 const app = express();
 app.set("trust proxy", true);
 app.use(express.urlencoded({ extended: true }));
