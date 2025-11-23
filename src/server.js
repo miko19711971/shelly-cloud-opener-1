@@ -651,7 +651,8 @@ app.post("/api/guest-assistant", async (req, res) => {
     });
   }
 });
- // ======== HOSTAWAY AI BRIDGE - SOLO TEST =========
+// ======== HOSTAWAY AI BRIDGE =========
+// → Bridge HostAway → Guest Assistant
 app.post("/api/hostaway-ai-bridge", async (req, res) => {
   try {
     const { guestName, apartment, language, message } = req.body || {};
@@ -660,36 +661,41 @@ app.post("/api/hostaway-ai-bridge", async (req, res) => {
       return res.status(400).json({
         ok: false,
         error: "missing_params",
-        message: "Servono ‘apartment’, ‘language’ e ‘message’."
+        message: "Servono 'apartment', 'language' e 'message'."
       });
     }
-// CHIAMO IL VERO GUEST ASSISTANT
-const url = `${req.protocol}://${req.get("host")}/api/guest-assistant`;
 
-const aiResponse = await axios.post(url, {
-  apartment,
-  language,
-  message,
-  guestName,
-  source: "hostaway"
-}, { timeout: 8000 });
+    // CHIAMO IL VERO GUEST ASSISTANT
+    const url = `${req.protocol}://${req.get("host")}/api/guest-assistant`;
 
-const data = aiResponse.data || {};
+    const aiResponse = await axios.post(
+      url,
+      {
+        apartment,
+        language,
+        message,
+        guestName,
+        source: "hostaway",
+      },
+      { timeout: 8000 }
+    );
 
-if (!data.ok || !data.answer) {
-  return res.status(502).json({
-    ok: false,
-    error: "guest_assistant_failed",
-    details: data
-  });
-}
+    const data = aiResponse.data || {};
 
-// RISPOSTA FINALE PULITA PER HOSTAWAY → SOLO TESTO
-return res.json({
-  ok: true,
-  answer: data.answer
-});
-  
+    if (!data.ok || !data.answer) {
+      return res.status(502).json({
+        ok: false,
+        error: "guest_assistant_failed",
+        details: data,
+      });
+    }
+
+    // RISPOSTA FINALE PULITA PER HOSTAWAY → SOLO TESTO
+    return res.json({
+      ok: true,
+      answer: data.answer,
+    });
+
   } catch (err) {
     return res.status(500).json({
       ok: false,
@@ -697,7 +703,7 @@ return res.json({
       message: err.message,
     });
   }
-});   // ←  questa graffa FUORI dal catch mancava!
+});
 
 // ========= HEALTH & START =========
 app.get("/health", (req, res) => {
