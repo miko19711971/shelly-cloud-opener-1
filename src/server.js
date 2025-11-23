@@ -469,7 +469,183 @@ app.get("/checkin/:apt/index.html", (req, res) => {
 app.use("/checkin", express.static(path.join(PUBLIC_DIR, "checkin"), { fallthrough: false }));
 app.use("/guest-assistant", express.static(path.join(PUBLIC_DIR, "guest-assistant"), { fallthrough: false }));
 app.use(express.static(PUBLIC_DIR));
+// ====== GUEST ASSISTANT AI (JSON → risposta) ======
 
+// directory delle guide v2 (json)
+const GUIDES_V2_DIR = path.join(PUBLIC_DIR, "guides-v2");
+
+// cache in memoria per non rileggere i file ogni volta
+const guidesCache = new Map();
+
+/**
+ * Carica il JSON della guida per un appartamento.
+ * Si aspetta un file tipo: public/guides-v2/arenula.json, leonina.json, ecc.
+ */
+async function loadGuideJson(apt) {
+  const aptKey = String(apt || "").toLowerCase();
+  if (!aptKey) return null;
+
+  if (guidesCache.has(aptKey)) {
+    return guidesCache.get(aptKey);
+  }
+
+  const filePath = path.join(GUIDES_V2_DIR, `${aptKey}.json`);
+  try {
+    const raw = await fs.readFile(filePath, "utf8");
+    const json = JSON.parse(raw);
+    guidesCache.set(aptKey, json);
+    return json;
+  } catch (err) {
+    console.error("❌ Impossibile leggere guida JSON per", aptKey, filePath, err.message);
+    return null;
+  }
+}
+
+/**
+ * Normalizza la lingua richiesta (it/en/fr/de/es) e la confronta con quelle disponibili nel JSON.
+ */
+function normalizeLang(lang, availableFromJson) {
+  const fallback = "en";
+  const requested = (lang || "").toLowerCase().slice(0, 2);
+
+  const known = ["it", "en", "fr", "de", "es"];
+
+  // Se il JSON espone la proprietà "languages": [...]
+  if (Array.isArray(availableFromJson) && availableFromJson.length) {
+    if (availableFromJson.includes(requested)) return requested;
+    if (availableFromJson.includes(fallback)) return fallback;
+    return availableFromJson[0]; // prima disponibile
+  }
+
+  // Se non c'è "languages", prova a usare un codice pulito
+  if (known.includes(requested)) return requested;
+  return fallback;
+}
+
+/**
+ * Cerca il "miglior intent" in base alle parole chiave nel testo domanda.
+ * Usa la struttura:
+ *   guide.intents[lang][intentKey] = ["wifi","password",...]
+ */
+function findBestIntent(guide, lang, question) {
+  if (!guide || !guide.intents) return null;
+
+  const intentsByLang = guide.intents[lang];
+  if (!intentsByLang) return null;
+
+  const text = String(question || "").toLowerCase();
+  if (!text.trim()) return null;
+
+  let bestKey = null;
+  let bestScore = 0;
+
+  for (const [intentKey, synonyms] of Object.entries(intentsByLang)) {
+    if (!Array.isArray(synonyms)) continue;
+
+    let score = 0;
+    for (const raw of synonyms) {
+      const w = String(raw || "").toLowerCase().trim();
+      if (!w) continue;
+      if (text.includes(w)) score++;
+    }
+
+    if (score > bestScore) {
+      bestScore = score;
+      bestKey = intentKey;
+    }
+  }
+
+  if (!bestKey || bestScore === 0) return null;
+  return bestKey;
+}
+
+/**
+ * Endpoint API chiamato dalla Virtual Guide.
+ *
+ * BODY atteso (JSON):
+ * {
+ *   "apartment": "arenula" | "leonina" | "ottavia" | "scala" | "trastevere",
+ *   "lang": "it" | "en" | "fr" | "de" | "es",
+ *   "question": "testo domanda dell'ospite"
+ * }
+ *
+ * Risposta:
+ * {
+ *   ok: true,
+ *   apartment: "...",
+ *   language: "it",
+ *   intent: "wifi",
+ *   answer: "testo da mostrare all'ospite"
+ * }
+ */
+app.post("/api/guest-assistant", async (req, res) => {
+  try {
+    const { apartment, lang, question } = req.body || {};
+
+    if (!apartment || !question) {
+      return res.status(400).json({
+        ok: false,
+        error: "missing_params",
+        message: "Servono 'apartment' e 'question' nel body."
+      });
+    }
+
+    const aptKey = String(apartment).toLowerCase();
+    const guide = await loadGuideJson(aptKey);
+
+    if (!guide) {
+      return res.status(404).json({
+        ok: false,
+        error: "guide_not_found",
+        message: `Nessuna guida JSON trovata per '${aptKey}'.`
+      });
+    }
+
+    const language = normalizeLang(lang, guide.languages);
+    const answersForLang =
+      (guide.answers && guide.answers[language]) ||
+      guide[language] || // fallback vecchia struttura (se mai servisse)
+      {};
+
+    let intentKey = null;
+
+    // Se la guida ha la sezione "intents", proviamo il match "intelligente"
+    if (guide.intents && guide.intents[language]) {
+      intentKey = findBestIntent(guide, language, question);
+    }
+
+    // Se non abbiamo trovato un intent, usiamo "services" o il primo disponibile
+    if (!intentKey) {
+      if (answersForLang.services) {
+        intentKey = "services";
+      } else {
+        const keys = Object.keys(answersForLang);
+        if (keys.length > 0) {
+          intentKey = keys[0];
+        }
+      }
+    }
+
+    const answerText =
+      (intentKey && answersForLang[intentKey]) ||
+      "I didn’t find a direct answer. Try one of the quick buttons in the guide.";
+
+    return res.json({
+      ok: true,
+      apartment: guide.apartment || aptKey,
+      language,
+      intent: intentKey || null,
+      answer: answerText
+    });
+  } catch (err) {
+    console.error("❌ Errore /api/guest-assistant:", err);
+    return res.status(500).json({
+      ok: false,
+      error: "server_error",
+      message: "Errore interno nel guest assistant."
+    });
+  }
+});
 // ========= HEALTH & START =========
 app.get("/health", (req, res) => {
   res.json({
