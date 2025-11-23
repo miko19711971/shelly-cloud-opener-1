@@ -650,6 +650,34 @@ app.post("/api/guest-assistant", async (req, res) => {
     });
   }
 });
+// ========= HOSTAWAY AI BRIDGE (risposta automatica solo testo) =========
+app.post("/api/hostaway-ai-bridge", async (req, res) => {
+  try {
+    const { apartment, language, question } = req.body || {};
+
+    if (!apartment || !language || !question) {
+      return res.status(400).json({ ok: false, error: "missing_parameters" });
+    }
+
+    // Simuliamo la chiamata interna all’AI assistant
+    const response = await axios.post(
+      `${req.protocol}://${req.get("host")}/api/guest-assistant`,
+      { apartment, language, question },
+      { timeout: 10000 }
+    );
+
+    const answerOnly = response.data?.answer || "Non ho trovato una risposta precisa.";
+    return res.json({ ok: true, answer: answerOnly });
+
+  } catch (err) {
+    console.error("❌ Errore /api/hostaway-ai-bridge:", err);
+    return res.status(500).json({
+      ok: false,
+      error: "server_error",
+      message: "Errore nel bridge AI HostAway."
+    });
+  }
+});
 // ========= HEALTH & START =========
 app.get("/health", (req, res) => {
   res.json({
