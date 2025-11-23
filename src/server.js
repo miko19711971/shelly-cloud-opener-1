@@ -651,62 +651,57 @@ app.post("/api/guest-assistant", async (req, res) => {
     });
   }
 });
-// ======== HOSTAWAY AI BRIDGE =========
-// → Bridge HostAway → Guest Assistant
+ // ========= HOSTAWAY AI BRIDGE =========
+// Riceve JSON da HostAway e chiama il vero Guest Assistant
 app.post("/api/hostaway-ai-bridge", async (req, res) => {
   try {
     const { guestName, apartment, language, message } = req.body || {};
 
+    // Controllo parametri minimi
     if (!apartment || !language || !message) {
       return res.status(400).json({
         ok: false,
         error: "missing_params",
-        message: "Servono 'apartment', 'language' e 'message'."
+        message: "Servono 'apartment', 'language' e 'message' nel body."
       });
     }
 
- // CHIAMO IL VERO GUEST ASSISTANT
-const url = `${req.protocol}://${req.get("host")}/api/guest-assistant`;
+    // CHIAMO IL VERO GUEST ASSISTANT
+    const url = `${req.protocol}://${req.get("host")}/api/guest-assistant`;
 
-const aiResponse = await axios.post(
-  url,
-  {
-    apartment,
-    language,
-    // 👇 QUI LA COSA IMPORTANTE: il guest assistant si aspetta "query"
-    query: message,
-    guestName,
-    source: "hostaway"
-  },
-  { timeout: 8000 }
-);
+    const aiResponse = await axios.post(
+      url,
+      {
+        apartment,
+        language,
+        // ⚠️ QUI LA DIFFERENZA: il Guest Assistant vuole "question"
+        question: message,
+        guestName,
+        source: "hostaway"
+      },
+      { timeout: 8000 }
+    );
 
-const data = aiResponse.data || {};
+    const data = aiResponse.data || {};
 
-if (!data.ok || !data.answer) {
-  return res.status(502).json({
-    ok: false,
-    error: "guest_assistant_failed",
-    details: data
-  });
-}
+    if (!data.ok || !data.answer) {
+      return res.status(502).json({
+        ok: false,
+        error: "guest_assistant_failed",
+        details: data
+      });
+    }
 
-// RISPOSTA FINALE PULITA PER HOSTAWAY → SOLO TESTO
-return res.json({
-  ok: true,
-  answer: data.answer
-});
     // RISPOSTA FINALE PULITA PER HOSTAWAY → SOLO TESTO
     return res.json({
       ok: true,
-      answer: data.answer,
+      answer: data.answer
     });
-
   } catch (err) {
     return res.status(500).json({
       ok: false,
       error: "server_error",
-      message: err.message,
+      message: err.message
     });
   }
 });
