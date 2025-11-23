@@ -663,13 +663,33 @@ app.post("/api/hostaway-ai-bridge", async (req, res) => {
         message: "Servono ‘apartment’, ‘language’ e ‘message’."
       });
     }
+// CHIAMO IL VERO GUEST ASSISTANT
+const url = `${req.protocol}://${req.get("host")}/api/guest-assistant`;
 
-    // Risposta di test funzionante
-    return res.json({
-      ok: true,
-      answer: `TEST OK: Ricevuto "${message}" per ${apartment} in lingua ${language}.`
-    });
+const aiResponse = await axios.post(url, {
+  apartment,
+  language,
+  message,
+  guestName,
+  source: "hostaway"
+}, { timeout: 8000 });
 
+const data = aiResponse.data || {};
+
+if (!data.ok || !data.answer) {
+  return res.status(502).json({
+    ok: false,
+    error: "guest_assistant_failed",
+    details: data
+  });
+}
+
+// RISPOSTA FINALE PULITA PER HOSTAWAY → SOLO TESTO
+return res.json({
+  ok: true,
+  answer: data.answer
+});
+  
   } catch (err) {
     return res.status(500).json({
       ok: false,
