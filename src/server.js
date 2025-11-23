@@ -651,8 +651,7 @@ app.post("/api/guest-assistant", async (req, res) => {
     });
   }
 });
-// ========= HOSTAWAY AI BRIDGE - SOLO TEST =========
-// Risponde sempre conferma test – per verificare POST e Body
+ // ======== HOSTAWAY AI BRIDGE - SOLO TEST =========
 app.post("/api/hostaway-ai-bridge", async (req, res) => {
   try {
     const { guestName, apartment, language, message } = req.body || {};
@@ -675,28 +674,11 @@ app.post("/api/hostaway-ai-bridge", async (req, res) => {
     return res.status(500).json({
       ok: false,
       error: "server_error",
-      message: err.message
+      message: err.message,
     });
   }
-});
-    
+});   // ←  questa graffa FUORI dal catch mancava!
 
-    // Risposta "pulita" per HostAway
-    return res.json({
-      ok: true,
-      apartment: data.apartment || apartment,
-      language: data.language || language,
-      answer: data.answer
-    });
-  } catch (err) {
-    console.error("❌ Errore /api/hostaway-ai-bridge:", err);
-    return res.status(500).json({
-      ok: false,
-      error: "server_error",
-      message: "Errore interno nel bridge HostAway."
-    });
-  }
-});
 // ========= HEALTH & START =========
 app.get("/health", (req, res) => {
   res.json({
