@@ -357,6 +357,8 @@ app.all("/api/open-now/:target", (req, res) => {
 
 // ====== GUIDES STATICHE SEMPRE ACCESSIBILI ======
 app.use("/guides", express.static(path.join(PUBLIC_DIR, "guides"), { fallthrough: false }));
+// ====== VIRTUAL GUIDE AI (JSON + risposte automatiche) ======
+app.use("/guides-v2", express.static(path.join(PUBLIC_DIR, "guides-v2"), { fallthrough: false }));
 // --- ALIAS: /checkin/:apt/today  (valido SOLO oggi) ---
 // ✅ PATCH: /checkin/:apt/today — valido solo il giorno in cui viene usato
 app.get("/checkin/:apt/today", (req, res) => {
