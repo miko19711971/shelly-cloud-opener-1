@@ -362,6 +362,7 @@ app.use("/guides", express.static(path.join(PUBLIC_DIR, "guides"), { fallthrough
 // ====== VIRTUAL GUIDE AI (JSON + risposte automatiche) ======
 app.use("/guest-assistant", express.static(path.join(PUBLIC_DIR, "guides"), { fallthrough: false }));
 app.use("/guides-v2", express.static(path.join(PUBLIC_DIR, "guides-v2"), { fallthrough: false }));
+app.use("/public-test-ai-html", express.static(path.join(PUBLIC_DIR, "public-test-ai-html"), { fallthrough: false }));
 // --- ALIAS: /checkin/:apt/today  (valido SOLO oggi) ---
 // ✅ PATCH: /checkin/:apt/today — valido solo il giorno in cui viene usato
 app.get("/checkin/:apt/today", (req, res) => {
