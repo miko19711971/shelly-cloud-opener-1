@@ -651,49 +651,34 @@ app.post("/api/guest-assistant", async (req, res) => {
     });
   }
 });
-// ========= HOSTAWAY AI BRIDGE (risposta automatica solo testo) =========
-// 🔗 Bridge HostAway → Guest Assistant
+// ========= HOSTAWAY AI BRIDGE - SOLO TEST =========
+// Risponde sempre conferma test – per verificare POST e Body
 app.post("/api/hostaway-ai-bridge", async (req, res) => {
   try {
-    const body = req.body || {};
-
-    // accettiamo il formato "semplice" che stai usando con ReqBin
-    const guestName = body.guestName || body.guest_name || "guest";
-    const apartment = body.apartment || body.apartmentKey || "";
-    const language  = (body.language || body.lang || "en").toLowerCase();
-    const message   = body.message || body.text || body.body || "";
+    const { guestName, apartment, language, message } = req.body || {};
 
     if (!apartment || !language || !message) {
-      console.log("❌ hostaway-ai-bridge: missing params", {
-        apartment, language, messageType: typeof message
+      return res.status(400).json({
+        ok: false,
+        error: "missing_params",
+        message: "Servono ‘apartment’, ‘language’ e ‘message’."
       });
-      return res.status(400).json({ ok: false, error: "missing_parameters" });
     }
 
-    // chiamiamo l'endpoint interno già esistente /api/guest-assistant
-    const url = `${req.protocol}://${req.get("host")}/api/guest-assistant`;
+    // Risposta di test funzionante
+    return res.json({
+      ok: true,
+      answer: `TEST OK: Ricevuto "${message}" per ${apartment} in lingua ${language}.`
+    });
 
-    const gaResp = await axios.post(
-      url,
-      {
-        apartment,
-        language,
-        message,
-        guestName,
-        source: "hostaway"
-      },
-      { timeout: 8000 }
-    );
-
-    const data = gaResp.data || {};
-
-    if (!data.ok) {
-      console.error("❌ guest-assistant error:", data);
-      return res.status(502).json({
-        ok: false,
-        error: "guest_assistant_failed",
-        details: data
-      });
+  } catch (err) {
+    return res.status(500).json({
+      ok: false,
+      error: "server_error",
+      message: err.message
+    });
+  }
+});
     }
 
     // Risposta "pulita" per HostAway
