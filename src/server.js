@@ -681,6 +681,14 @@ app.post("/api/hostaway-ai-bridge", async (req, res) => {
     const listingId = String(payload.listingMapId || payload.listingId || "");
 
     let apartment = "arenula"; // default
+    // ==== MAPPATURA LISTING → APARTMENT (per il Guest Assistant) ====
+const LISTING_TO_APARTMENT = {
+  "194162": "trastevere",        // NiceFlatInRome Trastevere, Trilussa (Top floor)
+  "194163": "scala",             // Via della Scala 17
+  "194164": "trastevere",        // Brand new flat in Trastevere, 4 min
+  "194165": "portico",           // Portico d'Ottavia the heart of Rome
+  "194166": "arenula"            // Near Pantheon and Piazza Argentina
+};
     if (listingId === "194164") apartment = "scala";
     else if (listingId === "194165") apartment = "portico";
     else if (listingId === "194166") apartment = "arenula";
