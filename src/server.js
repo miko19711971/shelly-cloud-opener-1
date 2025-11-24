@@ -651,16 +651,97 @@ app.post("/api/guest-assistant", async (req, res) => {
     });
   }
 });
-// ======== HOSTAWAY AI BRIDGE – DEBUG SOLO LOG ========
-app.post("/api/hostaway-ai-bridge", (req, res) => {
-  console.log("🔵 Hostaway webhook body:");
-  console.log(JSON.stringify(req.body, null, 2));
+ // ========= HOSTAWAY AI BRIDGE =========
+// Riceve JSON da HostAway e chiama il vero Guest Assistant
+app.post("/api/hostaway-ai-bridge", async (req, res) => {
+  try {
+    // LOG per vedere sempre cosa arriva da HostAway
+    console.log("🔔 Hostaway webhook body:");
+    console.log(JSON.stringify(req.body, null, 2));
 
-  // rispondiamo 200 così Hostaway è contento
-  return res.json({
-    ok: true,
-    received: req.body || null,
-  });
+    const payload = req.body || {};
+
+    // 1) Testo del messaggio dell'ospite (nei log si vede come "body")
+    const message =
+      payload.body ||
+      payload.message ||
+      (payload.communicationBody && payload.communicationBody.body) ||
+      "";
+
+    if (!message) {
+      return res.status(400).json({
+        ok: false,
+        error: "missing_message",
+        message:
+          "Nel JSON non trovo il testo del messaggio (es. campo 'body').",
+      });
+    }
+
+    // 2) Listing → nome appartamento interno
+    const listingId = String(payload.listingMapId || payload.listingId || "");
+
+    let apartment = "arenula"; // default
+    if (listingId === "194164") apartment = "scala";
+    else if (listingId === "194165") apartment = "portico";
+    else if (listingId === "194166") apartment = "arenula";
+
+    // 3) Lingua (fallback 'en')
+    const languageRaw =
+      payload.language || payload.locale || payload.guestLocale || "en";
+    const language = String(languageRaw).slice(0, 2).toLowerCase();
+
+    // 4) Nome guest se presente
+    const guestName =
+      payload.guestName ||
+      payload.guest_first_name ||
+      payload.firstName ||
+      "Guest";
+
+    // 5) CHIAMO IL VERO GUEST ASSISTANT INTERNO
+    const url = `${req.protocol}://${req.get("host")}/api/guest-assistant`;
+
+    const aiResponse = await axios.post(
+      url,
+      {
+        apartment,
+        language,
+        // Il Guest Assistant si aspetta "question"
+        question: message,
+        guestName,
+        source: "hostaway",
+      },
+      { timeout: 8000 }
+    );
+
+    const data = aiResponse.data || {};
+
+    if (!data.ok || !data.answer) {
+      console.error("❌ guest-assistant error:", data);
+      return res.status(502).json({
+        ok: false,
+        error: "guest_assistant_failed",
+        details: data,
+      });
+    }
+
+    console.log("✅ AI answer for Hostaway:", data.answer);
+
+    // 6) Risposta finale (per ora solo JSON, HostAway NON la usa ancora)
+    return res.json({
+      ok: true,
+      apartment,
+      language,
+      question: message,
+      answer: data.answer,
+    });
+  } catch (err) {
+    console.error("❌ Errore /api/hostaway-ai-bridge:", err);
+    return res.status(500).json({
+      ok: false,
+      error: "server_error",
+      message: err.message,
+    });
+  }
 });
 // ========= HEALTH & START =========
 app.get("/health", (req, res) => {
