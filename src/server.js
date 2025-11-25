@@ -12,7 +12,6 @@ app.set("trust proxy", true);
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cors());
-app.use(express.json());
 
 // ========= STATIC PATHS =========
 const __filename = fileURLToPath(import.meta.url);
