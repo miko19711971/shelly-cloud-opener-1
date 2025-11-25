@@ -885,7 +885,7 @@ app.post("/hostaway-incoming", async (req, res) => {
     const apt = LISTINGS[listingId] || "Appartamento";
 
     // 🧠 Richiesta risposta AI a guide-ai.js
-    const aiReply = await guideAI.reply({ apartment: apt, language, message });
+    const aiReply = await guideAIreply({ apartment: apt, language, message });
 
     // 📩 COSTRUZIONE RISPOSTA EMAIL
     const subject = `Messaggio da NiceFlatInRome`;
