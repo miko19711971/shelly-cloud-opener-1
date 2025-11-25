@@ -865,6 +865,56 @@ app.post("/api/vbro-mail", async (req, res) => {
   }
 });
 });
+// ========== HOSTAWAY → AUTO RISPOSTA AI PER MESSAGGI ==========
+app.post("/hostaway-incoming", async (req, res) => {
+  try {
+    const { listingId, message, guestName, guestEmail, language } = req.body || {};
+
+    // 🔐 Controllo dati minimi
+    if (!listingId || !message || !guestEmail) {
+      return res.status(400).json({ ok: false, error: "missing_fields" });
+    }
+
+    // 🔎 Mappa appartamento con gli ID REALI
+    const LISTINGS = {
+      194166: "Via Arenula 16",
+      194164: "Via della Scala 17",
+      194165: "Portico d'Ottavia 1D",
+      194167: "Viale Trastevere 108",
+      194168: "Via Leonina 71"
+    };
+
+    const apt = LISTINGS[listingId] || "Appartamento";
+
+    // 🧠 Richiesta risposta AI a guide-ai.js
+    const aiReply = await guideAI.reply({ apartment: apt, language, message });
+
+    // 📩 COSTRUZIONE RISPOSTA EMAIL
+    const subject = `Messaggio da NiceFlatInRome`;
+    const body = `
+      <p>Ciao ${guestName || "ospite"},</p>
+      <p>${aiReply}</p>
+      <p>Un saluto da Michele<br>NiceFlatInRome</p>
+    `;
+
+    // 📤 INVIO EMAIL TRAMITE APPS SCRIPT
+    const mailResp = await axios.post(
+      `${MAILER_URL}?secret=${encodeURIComponent(MAIL_SHARED_SECRET)}`,
+      { to: guestEmail, subject, body },
+      { headers: { "Content-Type": "application/json" } }
+    );
+
+    if (String(mailResp.data).trim() === "ok") {
+      console.log(`📤 Email inviata con successo a ${guestEmail}`);
+      return res.json({ ok: true });
+    } else {
+      return res.status(502).json({ ok: false, error: "mailer_failed" });
+    }
+  } catch (err) {
+    console.error("❌ ERRORE HOSTAWAY:", err);
+    return res.status(500).json({ ok: false, error: String(err) });
+  }
+});
 const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => {
   console.log(
