@@ -895,12 +895,17 @@ app.post("/hostaway-incoming", async (req, res) => {
       <p>Un saluto da Michele<br>NiceFlatInRome</p>
     `;
 
-    // 📤 INVIO EMAIL TRAMITE APPS SCRIPT
-    const mailResp = await axios.post(
-      `${MAILER_URL}?secret=${encodeURIComponent(MAIL_SHARED_SECRET)}`,
-      { to: guestEmail, subject, body },
-      { headers: { "Content-Type": "application/json" } }
-    );
+        // 📤 SOLO TEST: niente invio email, rispondo in JSON
+    console.log("📤 (TEST) email che manderei a", guestEmail);
+    console.log("Soggetto:", subject);
+    console.log("Corpo:", body);
+
+    return res.json({
+      ok: true,
+      apartment: apt,
+      language,
+      aiReply
+    });
 
     if (String(mailResp.data).trim() === "ok") {
       console.log(`📤 Email inviata con successo a ${guestEmail}`);
