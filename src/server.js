@@ -868,7 +868,6 @@ app.post("/api/vbro-mail", async (req, res) => {
 app.post("/hostaway-incoming", async (req, res) => {
   try {
     const { listingId, message, guestName, guestEmail, language } = req.body || {};
-const aiReply = await guideAIreply({ apartment: apt, language, message });
     // 🔐 Controllo dati minimi
     if (!listingId || !message || !guestEmail) {
       return res.status(400).json({ ok: false, error: "missing_fields" });
