@@ -868,12 +868,13 @@ app.post("/api/vbro-mail", async (req, res) => {
 app.post("/hostaway-incoming", async (req, res) => {
   try {
     const { listingId, message, guestName, guestEmail, language } = req.body || {};
+
     // 🔐 Controllo dati minimi
     if (!listingId || !message || !guestEmail) {
       return res.status(400).json({ ok: false, error: "missing_fields" });
     }
 
-    // 🔎 Mappa appartamento con gli ID REALI
+    // 🔎 Mappa appartamento con gli ID REALI (solo per info umana nel log / risposta)
     const LISTINGS = {
       194166: "Via Arenula 16",
       194164: "Via della Scala 17",
@@ -881,38 +882,54 @@ app.post("/hostaway-incoming", async (req, res) => {
       194167: "Viale Trastevere 108",
       194168: "Via Leonina 71"
     };
-
     const apt = LISTINGS[listingId] || "Appartamento";
 
-    // 🧠 Richiesta risposta AI a guide-ai.js
-    const aiReply = await guideAIreply({ apartment: apt, language, message });
+    // 🔁 Mappa LISTING → chiave usata dalla Virtual Guide
+    const LISTING_TO_APARTMENT = {
+      "194166": "arenula",
+      "194164": "scala",
+      "194165": "portico",
+      "194167": "trastevere",
+      "194168": "leonina"
+    };
+    const listingStr = String(listingId);
+    const apartmentKey = LISTING_TO_APARTMENT[listingStr] || "arenula";
 
-    // 📩 COSTRUZIONE RISPOSTA EMAIL
-    const subject = `Messaggio da NiceFlatInRome`;
-    const body = `
-      <p>Ciao ${guestName || "ospite"},</p>
-      <p>${aiReply}</p>
-      <p>Un saluto da Michele<br>NiceFlatInRome</p>
-    `;
+    // 🌍 Normalizzo lingua (it/en/fr/de/es) per la Virtual Guide
+    const langCode = String(language || "en").slice(0, 2).toLowerCase();
 
-        // 📤 SOLO TEST: niente invio email, rispondo in JSON
-    console.log("📤 (TEST) email che manderei a", guestEmail);
-    console.log("Soggetto:", subject);
-    console.log("Corpo:", body);
+    // 🧠 Chiamo la Virtual Guide interna /api/guest-assistant
+    let aiReply = "Errore interno. Posso risponderti a breve.";
+    try {
+      const url = `${req.protocol}://${req.get("host")}/api/guest-assistant`;
 
+      const aiResp = await axios.post(
+        url,
+        {
+          apartment: apartmentKey,
+          lang: langCode,
+          question: message
+        },
+        { timeout: 8000 }
+      );
+
+      const data = aiResp.data || {};
+      if (data.ok && data.answer) {
+        aiReply = data.answer;
+      } else {
+        console.error("guest-assistant risposta non valida:", data);
+      }
+    } catch (err) {
+      console.error("❌ Errore chiamata /api/guest-assistant:", err.message);
+    }
+
+    // 🔙 Risposta JSON finale (per ora niente email, solo test)
     return res.json({
       ok: true,
       apartment: apt,
-      language,
+      language: langCode,
       aiReply
     });
-
-    if (String(mailResp.data).trim() === "ok") {
-      console.log(`📤 Email inviata con successo a ${guestEmail}`);
-      return res.json({ ok: true });
-    } else {
-      return res.status(502).json({ ok: false, error: "mailer_failed" });
-    }
   } catch (err) {
     console.error("❌ ERRORE HOSTAWAY:", err);
     return res.status(500).json({ ok: false, error: String(err) });
