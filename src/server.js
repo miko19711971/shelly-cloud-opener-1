@@ -622,7 +622,7 @@ function findAnswerByKeywords(question, answersForLang) {
     intentKey = match.intent;   // ✔ CORRETTO
     answerText = match.answer;  // ✔ CORRETTO
   }
-
+     }
     // 3) Se ancora nulla, usa "services" o la prima chiave disponibile
     if (!answerText) {
       if (!intentKey && answersForLang.services) {
