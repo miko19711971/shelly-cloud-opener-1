@@ -611,11 +611,10 @@ function findAnswerByKeywords(question, answersForLang) {
     let intentKey = null;
     let answerText = null;
 
-    // 1) Se esistono gli "intents" strutturati, prova il match intelligente
-    if (guide.intents && guide.intents[language]) {
+        // 1) (TEMP) salta il match "intents" se non abbiamo findBestIntent
+    if (guide.intents && guide.intents[language] && typeof findBestIntent === "function") {
       intentKey = findBestIntent(guide, language, question);
     }
-
     // 2) Se non abbiamo trovato nulla, prova le parole chiave globali
     if (!answerText) {
       const match = findAnswerByKeywords(question, answersForLang);
