@@ -933,8 +933,10 @@ app.post("/hostaway-incoming", async (req, res) => {
       ok: true,
       apartment: apt,
       language: langCode,
-      aiReply
-    });
+      aiReply,
+      guestName,
+      guestEmail
+});
   } catch (err) {
     console.error("❌ ERRORE HOSTAWAY:", err);
     return res.status(500).json({ ok: false, error: String(err) });
