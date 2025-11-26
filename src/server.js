@@ -616,13 +616,12 @@ function findAnswerByKeywords(question, answersForLang) {
       intentKey = findBestIntent(guide, language, question);
     }
     // 2) Se non abbiamo trovato nulla, prova le parole chiave globali
-    if (!answerText) {
-      const match = findAnswerByKeywords(question, answersForLang);
-      if (match) {
-        intentKey = match.intentKey;
-        answerText = match.answerText;
-      }
-    }
+     if (!answerText) {
+  const match = findAnswerByKeywords(question, answersForLang);
+  if (match) {
+    intentKey = match.intent;   // ✔ CORRETTO
+    answerText = match.answer;  // ✔ CORRETTO
+  }
 
     // 3) Se ancora nulla, usa "services" o la prima chiave disponibile
     if (!answerText) {
