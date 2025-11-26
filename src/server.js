@@ -579,7 +579,7 @@ function findAnswerByKeywords(question, answersForLang) {
  *   answer: "testo da mostrare all'ospite"
  * }
  */
-app.post("/api/guest-assistant", async (req, res) => {
+ app.post("/api/guest-assistant", async (req, res) => {
   try {
     const { apartment, lang, question } = req.body || {};
 
@@ -605,31 +605,41 @@ app.post("/api/guest-assistant", async (req, res) => {
     const language = normalizeLang(lang, guide.languages);
     const answersForLang =
       (guide.answers && guide.answers[language]) ||
-      guide[language] || // fallback vecchia struttura (se mai servisse)
+      guide[language] ||   // fallback vecchia struttura
       {};
 
     let intentKey = null;
+    let answerText = null;
 
-    // Se la guida ha la sezione "intents", proviamo il match "intelligente"
+    // 1) Se esistono gli "intents" strutturati, prova il match intelligente
     if (guide.intents && guide.intents[language]) {
       intentKey = findBestIntent(guide, language, question);
     }
 
-    // Se non abbiamo trovato un intent, usiamo "services" o il primo disponibile
-    if (!intentKey) {
-      if (answersForLang.services) {
+    // 2) Se non abbiamo trovato nulla, prova le parole chiave globali
+    if (!answerText) {
+      const match = findAnswerByKeywords(question, answersForLang);
+      if (match) {
+        intentKey = match.intentKey;
+        answerText = match.answerText;
+      }
+    }
+
+    // 3) Se ancora nulla, usa "services" o la prima chiave disponibile
+    if (!answerText) {
+      if (!intentKey && answersForLang.services) {
         intentKey = "services";
-      } else {
+      } else if (!intentKey) {
         const keys = Object.keys(answersForLang);
         if (keys.length > 0) {
           intentKey = keys[0];
         }
       }
-    }
 
-    const answerText =
-      (intentKey && answersForLang[intentKey]) ||
-      "I didn’t find a direct answer. Try one of the quick buttons in the guide.";
+      answerText =
+        (intentKey && answersForLang[intentKey]) ||
+        "I didn’t find a direct answer. Try one of the quick buttons in the guide.";
+    }
 
     return res.json({
       ok: true,
