@@ -927,7 +927,25 @@ app.post("/hostaway-incoming", async (req, res) => {
     } catch (err) {
       console.error("❌ Errore chiamata /api/guest-assistant:", err.message);
     }
+    // 7) INVIO EMAIL AUTOMATICO AL GUEST
+    try {
+      const subject = `NiceFlatInRome – ${apt}`;
+      const bodyHtml = `
+        <p>Ciao ${guestName || "ospite"},</p>
+        <p>${aiReply.replace(/\n/g, "<br>")}</p>
+        <p>Un saluto da Michele e dal team NiceFlatInRome.</p>
+      `;
 
+      await axios.post(
+        `${MAILER_URL}?secret=${encodeURIComponent(MAIL_SHARED_SECRET)}`,
+        { to: guestEmail, subject, body: bodyHtml },
+        { headers: { "Content-Type": "application/json" }, timeout: 10000 }
+      );
+
+      console.log("📤 Email automatica inviata a", guestEmail);
+    } catch (err) {
+      console.error("❌ Errore invio email automatica:", err.message);
+    }
     // 🔙 Risposta JSON finale (per ora niente email, solo test)
     return res.json({
       ok: true,
