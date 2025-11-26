@@ -526,41 +526,38 @@ function normalizeLang(lang, availableFromJson) {
   return fallback;
 }
 
-/**
- * Cerca il "miglior intent" in base alle parole chiave nel testo domanda.
- * Usa la struttura:
- *   guide.intents[lang][intentKey] = ["wifi","password",...]
- */
-function findBestIntent(guide, lang, question) {
-  if (!guide || !guide.intents) return null;
+// 🔎 Match con parole chiave globali (vale per tutte le guide JSON)
+function findAnswerByKeywords(question, answersForLang) {
+  const text = String(question || "")
+    .toLowerCase()
+    .replace(/[^\p{L}\p{N}\s]/gu, " ")
+    .replace(/\s+/g, " ")
+    .trim();
 
-  const intentsByLang = guide.intents[lang];
-  if (!intentsByLang) return null;
+  if (!text) return null;
 
-  const text = String(question || "").toLowerCase();
-  if (!text.trim()) return null;
+  // Le chiavi devono corrispondere a quelle dei JSON (wifi, bathroom, gas, AC, transport, emergency, check_in, check_out, ecc.)
+  const KEYWORDS = {
+    wifi: ["wifi", "wi fi", "internet", "wireless", "password"],
+    bathroom: ["bathroom", "toilet", "wc", "restroom"],
+    gas: ["gas", "stove", "hob", "cooktop", "fornello"],
+    AC: ["ac", "air conditioning", "aircon", "condizionata", "climate"],
+    transport: ["bus", "tram", "metro", "subway", "train", "transport", "taxi"],
+    emergency: ["emergency", "doctor", "hospital", "ambulance", "help"],
+    check_in: ["check in", "check-in", "arrival", "arrive", "come in", "access"],
+    check_out: ["check out", "checkout", "leave", "departure"],
+    water: ["water", "hot water", "shower"],
+  };
 
-  let bestKey = null;
-  let bestScore = 0;
-
-  for (const [intentKey, synonyms] of Object.entries(intentsByLang)) {
-    if (!Array.isArray(synonyms)) continue;
-
-    let score = 0;
-    for (const raw of synonyms) {
-      const w = String(raw || "").toLowerCase().trim();
-      if (!w) continue;
-      if (text.includes(w)) score++;
-    }
-
-    if (score > bestScore) {
-      bestScore = score;
-      bestKey = intentKey;
+  for (const [key, synonyms] of Object.entries(KEYWORDS)) {
+    for (const word of synonyms) {
+      if (text.includes(word) && answersForLang[key]) {
+        return { intent: key, answer: answersForLang[key] };
+      }
     }
   }
 
-  if (!bestKey || bestScore === 0) return null;
-  return bestKey;
+  return null;
 }
 
 /**
