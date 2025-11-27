@@ -786,18 +786,18 @@ app.post("/hostaway-outbound", async (req, res) => {
     }
 
     const subject = `Messaggio da NiceFlatInRome`;
-    const body = `
-      <p>Ciao ${guestName || "ospite"},</p>
-      <p>${message.replace(/\n/g, "<br>")}</p>
-      <p>Un saluto da Michele e dal team NiceFlatInRome.</p>
-    `;
+const htmlBody = `
+  <p>Ciao ${guestName || "ospite"},</p>
+  <p>${message.replace(/\n/g, "<br>")}</p>
+  <p>Un saluto da Michele e dal team NiceFlatInRome.</p>
+`;
 
-    // Invia la mail passando dal ponte (Apps Script o servizio esterno)
-    const response = await axios.post(
-      `${MAILER_URL}?secret=${encodeURIComponent(MAIL_SHARED_SECRET)}`,
-      { to: guestEmail, subject, body },
-      { headers: { "Content-Type": "application/json" }, timeout: 10000 }
-    );
+// Invia la mail passando dal ponte (Apps Script o servizio esterno)
+const response = await axios.post(
+  `${MAILER_URL}?secret=${encodeURIComponent(MAIL_SHARED_SECRET)}`,
+  { to: guestEmail, subject, htmlBody },
+  { headers: { "Content-Type": "application/json" }, timeout: 10000 }
+);
 
     if (String(response.data).trim() === "ok") {
       console.log(`📤 Email inviata con successo a ${guestEmail}`);
