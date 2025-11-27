@@ -933,6 +933,7 @@ try {
   const htmlBody = `
     <p>Ciao ${guestName || "ospite"},</p>
     <p>${aiReply.replace(/\n/g, "<br>")}</p>
+    <p><strong>Guest question:</strong> ${message || ''}</p>
     <!-- ITALIANO -->
 <p>
   Se il problema non è risolto, contattami al
