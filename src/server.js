@@ -975,10 +975,20 @@ try {
     <p>Un saluto da Michele e dal team NiceFlatInRome.</p>
   `;
 
-  await axios.post(
-    `${MAILER_URL}?secret=${encodeURIComponent(MAIL_SHARED_SECRET)}`,
-    { to: guestEmail, subject, htmlBody },
-    { headers: { "Content-Type": "application/json" }, timeout: 10000 }
+ await axios.post(
+  `${MAILER_URL}?secret=${encodeURIComponent(MAIL_SHARED_SECRET)}`,
+  {
+    to: "mikbondi@gmail.com",           // tua email in copia
+    subject: `Copia risposta al guest – ${apt}`,
+    htmlBody: `
+      <p>Hai inviato automaticamente questa risposta al guest:</p>
+      <p><strong>Guest:</strong> ${guestName} (${guestEmail})</p>
+      <p><strong>Domanda:</strong> ${message}</p>
+      <p><strong>Risposta inviata:</strong></p>
+      <p>${aiReply.replace(/\n/g, "<br>")}</p>
+    `
+  },
+  { headers: { "Content-Type": "application/json" }, timeout: 10000 }
   );
 
       console.log("📤 Email automatica inviata a", guestEmail);
