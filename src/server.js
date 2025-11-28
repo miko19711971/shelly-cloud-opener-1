@@ -889,14 +889,14 @@ app.post("/hostaway-incoming", async (req, res) => {
     };
     const apt = LISTINGS[listingId] || "Appartamento";
 
-    // 🔁 Mappa LISTING → chiave usata dalla Virtual Guide
-    const LISTING_TO_APARTMENT = {
-      "194166": "arenula",
-      "194164": "scala",
-      "194165": "portico",
-      "194167": "trastevere",
-      "194168": "leonina"
-    };
+    // 🔐 Mappa LISTING → chiave usata dalla Virtual Guide
+const LISTING_TO_APARTMENT = {
+  "194166": "arenula",
+  "194164": "scala",
+  "194165": "ottavia",   // <-- CAMBIATA QUI
+  "194167": "trastevere",
+  "194168": "leonina"
+};
     const listingStr = String(listingId);
     const apartmentKey = LISTING_TO_APARTMENT[listingStr] || "arenula";
 
