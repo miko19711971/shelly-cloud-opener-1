@@ -869,17 +869,24 @@ app.post("/api/vbro-mail", async (req, res) => {
   }
 });
 });
-// ========== HOSTAWAY → AUTO RISPOSTA AI PER MESSAGGI ==========
+ // ========== HOSTAWAY → AUTO RISPOSTA AI PER MESSAGGI ==========
 app.post("/hostaway-incoming", async (req, res) => {
   try {
-    const { listingId, message, guestName, guestEmail, language, conversationId } = req.body || {};
+    const {
+      listingId,
+      message,
+      guestName,
+      guestEmail,
+      language,
+      conversationId
+    } = req.body || {};
 
     // 🔐 Controllo dati minimi
     if (!listingId || !message || !guestEmail) {
       return res.status(400).json({ ok: false, error: "missing_fields" });
     }
 
-    // 🔎 Mappa appartamento con gli ID REALI (solo per info umana nel log / risposta)
+    // 🔎 Mappa appartamento con gli ID REALI (solo per info nei log / email)
     const LISTINGS = {
       194166: "Via Arenula 16",
       194164: "Via della Scala 17",
@@ -890,13 +897,13 @@ app.post("/hostaway-incoming", async (req, res) => {
     const apt = LISTINGS[listingId] || "Appartamento";
 
     // 🔐 Mappa LISTING → chiave usata dalla Virtual Guide
-const LISTING_TO_APARTMENT = {
-  "194166": "arenula",
-  "194164": "scala",
-  "194165": "ottavia",   // <-- CAMBIATA QUI
-  "194167": "trastevere",
-  "194168": "leonina"
-};
+    const LISTING_TO_APARTMENT = {
+      "194166": "arenula",
+      "194164": "scala",
+      "194165": "ottavia",
+      "194167": "trastevere",
+      "194168": "leonina"
+    };
     const listingStr = String(listingId);
     const apartmentKey = LISTING_TO_APARTMENT[listingStr] || "arenula";
 
@@ -921,135 +928,134 @@ const LISTING_TO_APARTMENT = {
       const data = aiResp.data || {};
       if (data.ok && data.answer) {
         aiReply = data.answer;
-         // 🔁 INVIA RISPOSTA DIRETTAMENTE SU HOSTAWAY (thread del guest)
-if (conversationId) {
-  try {
-    await axios.post(
-      "https://api.hostaway.com/v1/conversations/sendMessage",
-      {
-        conversationId,       // ricevuto dal webhook
-        message: aiReply,     // risposta AI
-        type: "guest"         // scrive nella chat del guest
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${process.env.HOSTAWAY_TOKEN}`,
-          "Content-Type": "application/json"
-        },
-        timeout: 10000
+      } else {
+        console.error("guest-assistant risposta non valida:", data);
       }
-    );
-    console.log("📨 Messaggio AI inviato su HostAway!");
-  } catch (err) {
-    console.error("❌ Errore invio su HostAway:", err.message);
-  }
-}
-    // 7) INVIO EMAIL AUTOMATICO AL GUEST
-try {
-  const subject = `NiceFlatInRome – ${apt}`;
-  const htmlBody = `
-    <p>Ciao ${guestName || "ospite"},</p>
-    <p>${aiReply.replace(/\n/g, "<br>")}</p>
-    <p><strong>Guest question:</strong> ${message || ''}</p>
-    <!-- ITALIANO -->
-<p>
-  Se il problema non è risolto, contattami al
-  <strong>+39 335 5245 756 (Michele)</strong> oppure al
-  <strong>+39 347 784 7205 (Marco)</strong>, oppure via e-mail a
-  <a href="mailto:info@niceflatinrome.com">info@niceflatinrome.com</a>.
-</p>
-
-<!-- ENGLISH -->
-<p>
-  If the problem is not solved, please contact me at
-  <strong>+39 335 5245 756 (Michele)</strong> or
-  <strong>+39 347 784 7205 (Marco)</strong>, or by e-mail at
-  <a href="mailto:info@niceflatinrome.com">info@niceflatinrome.com</a>.
-</p>
-
-<!-- FRANÇAIS -->
-<p>
-  Si le problème n’est pas résolu, veuillez me contacter au
-  <strong>+39 335 5245 756 (Michele)</strong> ou au
-  <strong>+39 347 784 7205 (Marco)</strong>, ou par e-mail à
-  <a href="mailto:info@niceflatinrome.com">info@niceflatinrome.com</a>.
-</p>
-
-<!-- DEUTSCH -->
-<p>
-  Wenn das Problem nicht gelöst ist, kontaktieren Sie mich bitte unter
-  <strong>+39 335 5245 756 (Michele)</strong> oder
-  <strong>+39 347 784 7205 (Marco)</strong> oder per E-Mail an
-  <a href="mailto:info@niceflatinrome.com">info@niceflatinrome.com</a>.
-</p>
-
-<!-- ESPAÑOL -->
-<p>
-  Si el problema no está resuelto, por favor contáctame al
-  <strong>+39 335 5245 756 (Michele)</strong> o al
-  <strong>+39 347 784 7205 (Marco)</strong>, o por correo electrónico en
-  <a href="mailto:info@niceflatinrome.com">info@niceflatinrome.com</a>.
-</p>
-    <p>Un saluto da Michele e dal team NiceFlatInRome.</p>
-  `;
-
- await axios.post(
-  `${MAILER_URL}?secret=${encodeURIComponent(MAIL_SHARED_SECRET)}`,
-  {
-    to: "mikbondi@gmail.com",           // tua email in copia
-    subject: `Copia risposta al guest – ${apt}`,
-    htmlBody: `
-      <p>Hai inviato automaticamente questa risposta al guest:</p>
-      <p><strong>Guest:</strong> ${guestName} (${guestEmail})</p>
-      <p><strong>Domanda:</strong> ${message}</p>
-      <p><strong>Risposta inviata:</strong></p>
-      <p>${aiReply.replace(/\n/g, "<br>")}</p>
-    `
-  },
-  { headers: { "Content-Type": "application/json" }, timeout: 10000 }
-  );
-
-          console.log("📧 Email automatica inviata a", guestEmail);
-  } catch (err) {
-    console.error("❌ Errore invio email automatica:", err.message);
-  }
-
-  // === INVIA RISPOSTA AI GUEST SU HOSTAWAY ===
-  if (conversationId) {
-    try {
-      await axios.post(
-        "https://api.hostaway.com/v1/conversations/sendMessage",
-        {
-          conversationId,        // preso dal webhook
-          message: aiReply,      // risposta AI
-          type: "guest"          // oppure "email" se vuoi forzare email
-        },
-        {
-          headers: {
-            "Authorization": `Bearer ${process.env.HOSTAWAY_TOKEN}`,
-            "Content-Type": "application/json"
-          }
-        }
-      );
-      console.log("📤 Messaggio AI inviato su HostAway!");
     } catch (err) {
-      console.error("❌ ERRORE invio su HostAway:", err.message);
+      console.error("❌ Errore chiamata /api/guest-assistant:", err.message);
     }
-  }
 
-  // 📌 Risposta JSON finale (per ora niente email, solo test)
-  return res.json({
-    ok: true,
-    apartment: apt,
-    language: langCode,
-    aiReply,
-    guestName,
-    guestEmail
-  });
-} catch (err) {
-  console.error("❌ ERRORE HOSTAWAY:", err);
-  return res.status(500).json({ ok: false, error: String(err) });
-}
+    // 🔁 INVIA RISPOSTA DIRETTAMENTE SU HOSTAWAY (thread del guest)
+    if (conversationId) {
+      try {
+        await axios.post(
+          "https://api.hostaway.com/v1/conversations/sendMessage",
+          {
+            conversationId,   // ricevuto dal webhook
+            message: aiReply, // risposta AI
+            type: "guest"     // scrive nella chat del guest
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${process.env.HOSTAWAY_TOKEN}`,
+              "Content-Type": "application/json"
+            },
+            timeout: 10000
+          }
+        );
+        console.log("📨 Messaggio AI inviato su HostAway!");
+      } catch (err) {
+        console.error("❌ Errore invio su HostAway:", err.message);
+      }
+    }
+
+    // 7) INVIO EMAIL AUTOMATICO AL GUEST + COPIA A TE
+    try {
+      const subject = `NiceFlatInRome – ${apt}`;
+      const htmlBody = `
+        <p>Ciao ${guestName || "ospite"},</p>
+        <p>${aiReply.replace(/\n/g, "<br>")}</p>
+        <p><strong>Guest question:</strong> ${message || ""}</p>
+
+        <!-- ITALIANO -->
+        <p>
+          Se il problema non è risolto, contattami al
+          <strong>+39 335 5245 756 (Michele)</strong> oppure al
+          <strong>+39 347 784 7205 (Marco)</strong>, oppure via e-mail a
+          <a href="mailto:info@niceflatinrome.com">info@niceflatinrome.com</a>.
+        </p>
+
+        <!-- ENGLISH -->
+        <p>
+          If the problem is not solved, please contact me at
+          <strong>+39 335 5245 756 (Michele)</strong> or
+          <strong>+39 347 784 7205 (Marco)</strong>, or by e-mail at
+          <a href="mailto:info@niceflatinrome.com">info@niceflatinrome.com</a>.
+        </p>
+
+        <!-- FRANÇAIS -->
+        <p>
+          Si le problème n’est pas résolu, veuillez me contacter au
+          <strong>+39 335 5245 756 (Michele)</strong> ou au
+          <strong>+39 347 784 7205 (Marco)</strong>, ou par e-mail à
+          <a href="mailto:info@niceflatinrome.com">info@niceflatinrome.com</a>.
+        </p>
+
+        <!-- DEUTSCH -->
+        <p>
+          Wenn das Problem nicht gelöst ist, kontaktieren Sie mich bitte unter
+          <strong>+39 335 5245 756 (Michele)</strong> oder
+          <strong>+39 347 784 7205 (Marco)</strong> oder per E-Mail an
+          <a href="mailto:info@niceflatinrome.com">info@niceflatinrome.com</a>.
+        </p>
+
+        <!-- ESPAÑOL -->
+        <p>
+          Si el problema no está resuelto, por favor contáctame al
+          <strong>+39 335 5245 756 (Michele)</strong> o al
+          <strong>+39 347 784 7205 (Marco)</strong>, o por correo electrónico en
+          <a href="mailto:info@niceflatinrome.com">info@niceflatinrome.com</a>.
+        </p>
+
+        <p>Un saluto da Michele e dal team NiceFlatInRome.</p>
+      `;
+
+      // mail al guest
+      await axios.post(
+        `${MAILER_URL}?secret=${encodeURIComponent(MAIL_SHARED_SECRET)}`,
+        {
+          to: guestEmail,
+          subject,
+          htmlBody
+        },
+        { headers: { "Content-Type": "application/json" }, timeout: 10000 }
+      );
+
+      // copia a te
+      await axios.post(
+        `${MAILER_URL}?secret=${encodeURIComponent(MAIL_SHARED_SECRET)}`,
+        {
+          to: "mikbondi@gmail.com",
+          subject: `Copia risposta al guest – ${apt}`,
+          htmlBody: `
+            <p>Hai inviato automaticamente questa risposta al guest:</p>
+            <p><strong>Guest:</strong> ${guestName} (${guestEmail})</p>
+            <p><strong>Domanda:</strong> ${message}</p>
+            <p><strong>Risposta inviata:</strong></p>
+            <p>${aiReply.replace(/\n/g, "<br>")}</p>
+          `
+        },
+        { headers: { "Content-Type": "application/json" }, timeout: 10000 }
+      );
+
+      console.log("📧 Email automatica inviata a", guestEmail);
+    } catch (err) {
+      console.error("❌ Errore invio email automatica:", err.message);
+    }
+
+    // 📌 Risposta JSON finale
+    return res.json({
+      ok: true,
+      apartment: apt,
+      language: langCode,
+      aiReply,
+      guestName,
+      guestEmail
+    });
+  } catch (err) {
+    console.error("❌ ERRORE HOSTAWAY:", err);
+    return res.status(500).json({ ok: false, error: String(err) });
+  }
 });
   } catch (err) {
     console.error("❌ ERRORE HOSTAWAY:", err);
