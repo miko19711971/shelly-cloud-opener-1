@@ -1009,19 +1009,47 @@ try {
   { headers: { "Content-Type": "application/json" }, timeout: 10000 }
   );
 
-      console.log("📤 Email automatica inviata a", guestEmail);
-}
+          console.log("📧 Email automatica inviata a", guestEmail);
+  } catch (err) {
+    console.error("❌ Errore invio email automatica:", err.message);
+  }
+
+  // === INVIA RISPOSTA AI GUEST SU HOSTAWAY ===
+  if (conversationId) {
+    try {
+      await axios.post(
+        "https://api.hostaway.com/v1/conversations/sendMessage",
+        {
+          conversationId,        // preso dal webhook
+          message: aiReply,      // risposta AI
+          type: "guest"          // oppure "email" se vuoi forzare email
+        },
+        {
+          headers: {
+            "Authorization": `Bearer ${process.env.HOSTAWAY_TOKEN}`,
+            "Content-Type": "application/json"
+          }
+        }
+      );
+      console.log("📤 Messaggio AI inviato su HostAway!");
     } catch (err) {
-      console.error("❌ Errore invio email automatica:", err.message);
+      console.error("❌ ERRORE invio su HostAway:", err.message);
     }
-    // 🔙 Risposta JSON finale (per ora niente email, solo test)
-    return res.json({
-      ok: true,
-      apartment: apt,
-      language: langCode,
-      aiReply,
-      guestName,
-      guestEmail
+  }
+
+  // 📌 Risposta JSON finale (per ora niente email, solo test)
+  return res.json({
+    ok: true,
+    apartment: apt,
+    language: langCode,
+    aiReply,
+    guestName,
+    guestEmail
+  });
+} catch (err) {
+  console.error("❌ ERRORE HOSTAWAY:", err);
+  return res.status(500).json({ ok: false, error: String(err) });
+}
 });
   } catch (err) {
     console.error("❌ ERRORE HOSTAWAY:", err);
