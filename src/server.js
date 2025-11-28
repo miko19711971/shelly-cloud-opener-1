@@ -921,6 +921,31 @@ const LISTING_TO_APARTMENT = {
       const data = aiResp.data || {};
       if (data.ok && data.answer) {
         aiReply = data.answer;
+        // === INVIA RISPOSTA AL GUEST SU HOSTAWAY ===
+// Serve conversationId dal webhook:
+const { conversationId } = req.body || {};
+
+if (conversationId) {
+  try {
+    await axios.post(
+      "https://api.hostaway.com/v1/conversations/sendMessage",
+      {
+        conversationId,
+        message: aiReply,
+        type: "guest" // oppure "email" per forzare email
+      },
+      {
+        headers: {
+          "Authorization": `Bearer ${process.env.HOSTAWAY_TOKEN}`,
+          "Content-Type": "application/json"
+        }
+      }
+    );
+    console.log("📨 Messaggio AI inviato su HostAway!");
+  } catch (err) {
+    console.error("❌ ERRORE invio su HostAway:", err.message);
+  }
+}
       } else {
         console.error("guest-assistant risposta non valida:", data);
       }
