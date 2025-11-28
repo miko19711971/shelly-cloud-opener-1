@@ -921,37 +921,29 @@ const LISTING_TO_APARTMENT = {
       const data = aiResp.data || {};
       if (data.ok && data.answer) {
         aiReply = data.answer;
-        // === INVIA RISPOSTA AL GUEST SU HOSTAWAY ===
-// Serve conversationId dal webhook:
-const { conversationId } = req.body || {};
-
+         // 🔁 INVIA RISPOSTA DIRETTAMENTE SU HOSTAWAY (thread del guest)
 if (conversationId) {
   try {
     await axios.post(
       "https://api.hostaway.com/v1/conversations/sendMessage",
       {
-        conversationId,
-        message: aiReply,
-        type: "guest" // oppure "email" per forzare email
+        conversationId,       // ricevuto dal webhook
+        message: aiReply,     // risposta AI
+        type: "guest"         // scrive nella chat del guest
       },
       {
         headers: {
-          "Authorization": `Bearer ${process.env.HOSTAWAY_TOKEN}`,
+          Authorization: `Bearer ${process.env.HOSTAWAY_TOKEN}`,
           "Content-Type": "application/json"
-        }
+        },
+        timeout: 10000
       }
     );
     console.log("📨 Messaggio AI inviato su HostAway!");
   } catch (err) {
-    console.error("❌ ERRORE invio su HostAway:", err.message);
+    console.error("❌ Errore invio su HostAway:", err.message);
   }
 }
-      } else {
-        console.error("guest-assistant risposta non valida:", data);
-      }
-    } catch (err) {
-      console.error("❌ Errore chiamata /api/guest-assistant:", err.message);
-    }
     // 7) INVIO EMAIL AUTOMATICO AL GUEST
 try {
   const subject = `NiceFlatInRome – ${apt}`;
