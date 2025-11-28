@@ -1056,6 +1056,7 @@ try {
     return res.status(500).json({ ok: false, error: String(err) });
   }
 });
+}
 const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => {
   console.log(
