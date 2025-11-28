@@ -1043,26 +1043,21 @@ app.post("/hostaway-incoming", async (req, res) => {
       console.error("❌ Errore invio email automatica:", err.message);
     }
 
-    // 📌 Risposta JSON finale
-    return res.json({
-      ok: true,
-      apartment: apt,
-      language: langCode,
-      aiReply,
-      guestName,
-      guestEmail
-    });
-  } catch (err) {
-    console.error("❌ ERRORE HOSTAWAY:", err);
-    return res.status(500).json({ ok: false, error: String(err) });
-  }
-});
-  } catch (err) {
-    console.error("❌ ERRORE HOSTAWAY:", err);
-    return res.status(500).json({ ok: false, error: String(err) });
-  }
-});
+      // 📌 Risposta JSON finale (per ora niente email, solo test)
+  return res.json({
+    ok: true,
+    apartment: apt,
+    language: langCode,
+    aiReply,
+    guestName,
+    guestEmail
+  });
+} catch (err) {
+  console.error("❌ ERRORE HOSTAWAY:", err);
+  return res.status(500).json({ ok: false, error: String(err) });
 }
+});
+
 const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => {
   console.log(
