@@ -1010,6 +1010,7 @@ try {
   );
 
       console.log("📤 Email automatica inviata a", guestEmail);
+}
     } catch (err) {
       console.error("❌ Errore invio email automatica:", err.message);
     }
