@@ -869,15 +869,17 @@ app.post("/api/vbro-mail", async (req, res) => {
   }
 });
 });
- // ========== HOSTAWAY → AUTO RISPOSTA AI PER MESSAGGI ===========
+ // ========== HOSTAWAY → AUTO RISPOSTA AI PER MESSAGGI ==========
 app.post("/hostaway-incoming", async (req, res) => {
   try {
-    const { listingId, message, guestName, guestEmail, language } = req.body || {};
-
-    // 🧠 Controllo dati minimi
-    if (!listingId || !message || !guestEmail) {
-      return res.status(400).json({ ok: false, error: "missing_fields" }); // <-- QUI VA BENE
-    }
+    const {
+      listingId,
+      message,
+      guestName,
+      guestEmail,
+      language,
+      conversationId
+    } = req.body || {};
 
     // 🔐 Controllo dati minimi
     if (!listingId || !message || !guestEmail) {
@@ -929,28 +931,6 @@ app.post("/hostaway-incoming", async (req, res) => {
       } else {
         console.error("guest-assistant risposta non valida:", data);
       }
-      // 🔁 Se ho conversationId → rispondo dentro HostAway (inbox)
-if (conversationId) {
-  try {
-    await axios.post(
-      "https://api.hostaway.com/v1/conversations/sendMessage",
-      {
-        conversationId: conversationId,
-        message: aiReply,
-        type: "guest"
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${process.env.HOSTAWAY_TOKEN}`,
-          "Content-Type": "application/json"
-        }
-      }
-    );
-    console.log("📥 Risposta HostAway inviata in conversazione:", conversationId);
-  } catch (err) {
-    console.error("❌ Errore invio risposta su HostAway:", err.message);
-  }
-}
     } catch (err) {
       console.error("❌ Errore chiamata /api/guest-assistant:", err.message);
     }
