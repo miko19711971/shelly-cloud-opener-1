@@ -931,6 +931,28 @@ app.post("/api/vbro-mail", async (req, res) => {
       } else {
         console.error("guest-assistant risposta non valida:", data);
       }
+      // 🔁 Se ho conversationId → rispondo dentro HostAway (inbox)
+if (conversationId) {
+  try {
+    await axios.post(
+      "https://api.hostaway.com/v1/conversations/sendMessage",
+      {
+        conversationId: conversationId,
+        message: aiReply,
+        type: "guest"
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${process.env.HOSTAWAY_TOKEN}`,
+          "Content-Type": "application/json"
+        }
+      }
+    );
+    console.log("📥 Risposta HostAway inviata in conversazione:", conversationId);
+  } catch (err) {
+    console.error("❌ Errore invio risposta su HostAway:", err.message);
+  }
+}
     } catch (err) {
       console.error("❌ Errore chiamata /api/guest-assistant:", err.message);
     }
