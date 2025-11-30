@@ -869,17 +869,15 @@ app.post("/api/vbro-mail", async (req, res) => {
   }
 });
 });
- // ========== HOSTAWAY → AUTO RISPOSTA AI PER MESSAGGI ==========
-    const { listingId, message, guestName, guestEmail, language, conversationId } = req.body || {};
+ // ========== HOSTAWAY → AUTO RISPOSTA AI PER MESSAGGI ===========
+app.post("/hostaway-incoming", async (req, res) => {
   try {
-    const {
-      listingId,
-      message,
-      guestName,
-      guestEmail,
-      language,
-      conversationId
-    } = req.body || {};
+    const { listingId, message, guestName, guestEmail, language } = req.body || {};
+
+    // 🧠 Controllo dati minimi
+    if (!listingId || !message || !guestEmail) {
+      return res.status(400).json({ ok: false, error: "missing_fields" }); // <-- QUI VA BENE
+    }
 
     // 🔐 Controllo dati minimi
     if (!listingId || !message || !guestEmail) {
