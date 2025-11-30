@@ -939,17 +939,52 @@ app.post("/hostaway-incoming", async (req, res) => {
     try {
       const subject = `NiceFlatInRome – ${apt}`;
       const htmlBody = `
-  <p>Hi ${guestName || "guest"},</p>
-  <p>${aiReply.replace(/\n/g, "<br>")}</p>
-  <p><strong>Guest question:</strong> ${message || ''}</p>
-  <p>
-    If the problem is not solved, please contact me at
-    <strong>+39 335 5245 756 (Michele)</strong> or
-    <strong>+39 347 784 7205 (Marco)</strong>, or by e-mail at
-    <a href="mailto:info@niceflatinrome.com">info@niceflatinrome.com</a>.
-  </p>
-  <p>Best regards from Michele and the NiceFlatInRome team.</p>
-`;
+        <p>Ciao ${guestName || "ospite"},</p>
+        <p>${aiReply.replace(/\n/g, "<br>")}</p>
+        <p><strong>Guest question:</strong> ${message || ""}</p>
+
+        <!-- ITALIANO -->
+        <p>
+          Se il problema non è risolto, contattami al
+          <strong>+39 335 5245 756 (Michele)</strong> oppure al
+          <strong>+39 347 784 7205 (Marco)</strong>, oppure via e-mail a
+          <a href="mailto:info@niceflatinrome.com">info@niceflatinrome.com</a>.
+        </p>
+
+        <!-- ENGLISH -->
+        <p>
+          If the problem is not solved, please contact me at
+          <strong>+39 335 5245 756 (Michele)</strong> or
+          <strong>+39 347 784 7205 (Marco)</strong>, or by e-mail at
+          <a href="mailto:info@niceflatinrome.com">info@niceflatinrome.com</a>.
+        </p>
+
+        <!-- FRANÇAIS -->
+        <p>
+          Si le problème n’est pas résolu, veuillez me contacter au
+          <strong>+39 335 5245 756 (Michele)</strong> ou au
+          <strong>+39 347 784 7205 (Marco)</strong>, ou par e-mail à
+          <a href="mailto:info@niceflatinrome.com">info@niceflatinrome.com</a>.
+        </p>
+
+        <!-- DEUTSCH -->
+        <p>
+          Wenn das Problem nicht gelöst ist, kontaktieren Sie mich bitte unter
+          <strong>+39 335 5245 756 (Michele)</strong> oder
+          <strong>+39 347 784 7205 (Marco)</strong> oder per E-Mail an
+          <a href="mailto:info@niceflatinrome.com">info@niceflatinrome.com</a>.
+        </p>
+
+        <!-- ESPAÑOL -->
+        <p>
+          Si el problema no está resuelto, por favor contáctame al
+          <strong>+39 335 5245 756 (Michele)</strong> o al
+          <strong>+39 347 784 7205 (Marco)</strong>, o por correo electrónico en
+          <a href="mailto:info@niceflatinrome.com">info@niceflatinrome.com</a>.
+        </p>
+
+        <p>Un saluto da Michele e dal team NiceFlatInRome.</p>
+      `;
 
       // mail al guest
       await axios.post(
