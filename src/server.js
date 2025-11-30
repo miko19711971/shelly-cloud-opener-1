@@ -936,7 +936,26 @@ app.post("/hostaway-incoming", async (req, res) => {
     } catch (err) {
       console.error("❌ Errore chiamata /api/guest-assistant:", err.message);
     }
-
+// ===== INVIO RISPOSTA AI NELLA CHAT DI HOSTAWAY =====
+try {
+  const sendResp = await axios.post(
+    "https://api.hostaway.com/v1/conversations/sendMessage",
+    {
+      conversationId: conversationId,  // <-- viene dal webhook
+      message: aiReply,
+      type: "guest"
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${HOSTAWAY_TOKEN}`,
+        "Content-Type": "application/json"
+      }
+    }
+  );
+  console.log("📨 Messaggio inviato a HostAway:", sendResp.data);
+} catch (err) {
+  console.error("❌ Errore invio a HostAway:", err.response?.data || err.message);
+}
     // 7) INVIO EMAIL AUTOMATICO AL GUEST + COPIA A TE
     try {
       const subject = `NiceFlatInRome – ${apt}`;
