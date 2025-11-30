@@ -882,7 +882,8 @@ app.post("/hostaway-incoming", async (req, res) => {
       language,
       conversationId
     } = req.body || {};
-
+// 🔍 LOG COMPLETO DEL WEBHOOK
+console.log("👉 HostAway webhook data:", req.body);
     // 🔐 Controllo dati minimi
     if (!listingId || !message || !guestEmail) {
       return res.status(400).json({ ok: false, error: "missing_fields" });
