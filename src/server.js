@@ -870,7 +870,7 @@ app.post("/api/vbro-mail", async (req, res) => {
 });
 });
  // ========== HOSTAWAY → AUTO RISPOSTA AI PER MESSAGGI ==========
-app.post("/hostaway-incoming", async (req, res) => {
+    const { listingId, message, guestName, guestEmail, language, conversationId } = req.body || {};
   try {
     const {
       listingId,
