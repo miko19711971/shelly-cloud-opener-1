@@ -22,6 +22,7 @@ const PUBLIC_DIR = path.join(__dirname, "..", "public");
 const SHELLY_API_KEY  = process.env.SHELLY_API_KEY;
 const SHELLY_BASE_URL = process.env.SHELLY_BASE_URL || "https://shelly-api-eu.shelly.cloud";
 const TOKEN_SECRET    = process.env.TOKEN_SECRET;
+const HOSTAWAY_TOKEN = process.env.HOSTAWAY_TOKEN;   // <-- nome come messo su render
 if (!TOKEN_SECRET) {
   console.error("❌ Missing TOKEN_SECRET env var");
   process.exit(1);
