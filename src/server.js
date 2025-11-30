@@ -935,6 +935,42 @@ console.log("👉 HostAway webhook data:", req.body);
         console.error("guest-assistant risposta non valida:", data);
       }
     } catch (err) {
+      // 6bis) Invio risposta AI dentro la conversazione Hostaway
+if (HOSTAWAY_TOKEN && conversationId) {
+  try {
+    const hostawayResp = await axios.post(
+      "https://api.hostaway.com/v1/conversations/sendMessage",
+      {
+        conversationId,      // preso dal webhook Hostaway
+        message: aiReply,    // testo generato dall'AI
+        type: "guest"        // viene mostrato come messaggio verso l'ospite
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${HOSTAWAY_TOKEN}`,
+          "Content-Type": "application/json"
+        },
+        timeout: 8000
+      }
+    );
+
+    console.log(
+      "📨 Hostaway reply sent:",
+      hostawayResp.status,
+      hostawayResp.data
+    );
+  } catch (err) {
+    console.error(
+      "❌ Errore invio messaggio Hostaway:",
+      err.response?.status,
+      err.response?.data || err.message
+    );
+  }
+} else {
+  console.warn(
+    "⚠️ Nessun HOSTAWAY_TOKEN o conversationId: salto invio messaggio Hostaway"
+  );
+}
       console.error("❌ Errore chiamata /api/guest-assistant:", err.message);
     }
 // ===== INVIO RISPOSTA AI NELLA CHAT DI HOSTAWAY =====
