@@ -882,6 +882,7 @@ app.post("/hostaway-incoming", async (req, res) => {
       language,
       conversationId
     } = req.body || {};
+    console.log("🔎 BODY COMPLETO ARRIVATO DA HOSTAWAY:", JSON.stringify(req.body, null, 2));
 // 🔍 LOG COMPLETO DEL WEBHOOK
 console.log("👉 HostAway webhook data:", req.body);
     // 🔐 Controllo dati minimi
