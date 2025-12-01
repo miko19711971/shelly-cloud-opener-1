@@ -3,7 +3,10 @@
   "languages": ["it","en","fr","de","es"],
   "intents": {
     "it": {
-      "wifi": ["wifi","wi-fi","rete","password","internet"],
+  "trash": "Spazzatura: Prima di lasciare l’appartamento assicurati di chiudere bene i sacchetti e di depositarli nell’isola ecologica di fronte a Piazza delle Cinque Scole, lato Lungotevere. Ricordati che facciamo raccolta differenziata (WeDoRecycling).",
+  "heating": "Riscaldamento: L’appartamento è provvisto di una stufa elettrica. Usala solo quando sei in casa e spegnila SEMPRE quando esci a visitare la città, per motivi di sicurezza.",
+  "electric_panel": "Quadro elettrico: Se va via la corrente, prima della porta d’uscita dell’appartamento, sulla destra trovi il quadro elettrico: tutti gli interruttori, incluso il piccolo bianco, devono essere verso l’alto. Se il problema continua, all’uscita del palazzo, prima della porta d’ingresso, sulla sinistra ci sono gli sportelli bianchi: apri quello del tuo contatore, rialza l’interruttore abbassato e la corrente tornerà."
+  "wifi": ["wifi","wi-fi","rete","password","internet"],
       "check_in": ["check in","arrivo","ingresso","portone","codice","chiavi"],
       "check_out": ["check out","partenza","uscire","chiavi"],
       "water": ["acqua","calda","potabile"],
