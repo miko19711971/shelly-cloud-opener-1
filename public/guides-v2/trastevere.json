@@ -85,6 +85,9 @@
     },
 
     "de": {
+  "heating": "Heizung: Um die Heizung einzuschalten, gehen Sie in den Flur direkt nach der Küche; an der rechten Wand befindet sich ein kleiner Thermostat mit Drehregler. Stellen Sie den kleinen Schalter auf ON und den Regler auf 26 °C: Alle Heizkörper in der Wohnung schalten sich ein.",
+  "trash": "Müll: In diesem Haus gibt es KEINE Mülltrennung. Bitte entsorgen Sie Ihren Müll vor dem Check-out in den Containern rechts, direkt außerhalb des Gebäudes.",
+  "electric_panel": "Sicherungskasten: Bei Stromausfall befindet sich der Kasten im Vorraum zum Bad, gleich rechts beim Eingang: Alle Schalter müssen nach oben stehen. Wenn noch kein Strom da ist, gehen Sie auf Etage -1 vor die Tür des ‘New York Institute’, öffnen Sie den Elektroschrank, suchen Sie ‘Bondi int. 9’ und legen Sie den heruntergefallenen Schalter wieder nach oben.
       "wifi": ["wlan","wifi","netz","internet","passwort"],
       "check_in": ["check in","ankunft","eingang","schlüssel","code"],
       "check_out": ["check out","abreise","schlüssel"],
