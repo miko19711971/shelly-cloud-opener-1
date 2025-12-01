@@ -27,6 +27,9 @@
       "emergency": ["emergenza","polizia","ambulanza","vigili"]
     },
     "en": {
+  "trash": "Trash: Before leaving the apartment, make sure you close the garbage bags properly and take them to the recycling point (isola ecologica) in front of Piazza delle Cinque Scole, on the Lungotevere side. We recycle (WeDoRecycling), so please follow these instructions.",
+  "heating": "Heating: The apartment has an electric heater. Use it only when you are inside and ALWAYS switch it off when you go out to visit the city, for safety reasons.",
+  "electric_panel": "Electric panel: If the power goes off, just before the apartment door on the right you will find the electric panel: all switches, including the small white one, must be in the up position. If the problem persists, at the building entrance on the left there are white doors: open the one with your meter, push the lowered switch back up and the electricity will return."
       "wifi": ["wifi","wi-fi","network","password","internet"],
       "check_in": ["check in","arrival","door","entrance","code","keys"],
       "check_out": ["check out","departure","leave","keys"],
