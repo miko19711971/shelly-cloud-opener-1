@@ -54,6 +54,9 @@
     },
 
     "fr": {
+  "heating": "Chauffage : Pour allumer le chauffage, allez dans la chambre ; face au lit, en regardant la fenêtre, sur la gauche se trouve un petit thermostat. Le petit interrupteur supérieur doit être sur ON et la molette réglée sur 26 °C ; après quelques minutes, les radiateurs chaufferont.",
+  "trash": "Déchets : Avant de quitter l’appartement, vérifiez que vous avez mis les ordures dans les poubelles prévues. Nous faisons le tri (WeDoRecycling) : apportez les sacs au bout de Via della Scala, à l’angle avec Via Garibaldi, chaque jour entre 8h00 et 9h30.",
+  "electric_panel": "Tableau électrique : En cas de coupure de courant, à la sortie de l’appartement, en regardant la porte, le tableau électrique se trouve à droite : tous les disjoncteurs doivent être en position haute. Si le courant ne revient pas, au-dessus du tableau il y a un petit panneau en bois : appuyez dessus, derrière se trouve un autre interrupteur général à remonter pour rétablir l’électricité."
       "wifi": ["wifi","wi-fi","réseau","mot de passe"],
       "check_in": ["check in","arrivée","interphone","porte","clé","code"],
       "check_out": ["check out","départ","clés"],
