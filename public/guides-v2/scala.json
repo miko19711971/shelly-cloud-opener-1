@@ -3,7 +3,10 @@
   "languages": ["it", "en", "fr", "de", "es"],
 
   "intents": {
-    "it": {
+ "it": {
+  "heating": "Riscaldamento: Per accendere il riscaldamento vai in camera da letto; di fronte al letto, guardando la finestra, sul lato sinistro c’è un piccolo termostato. Il piccolo interruttore in alto deve essere su ON e la ghiera va impostata a 26 °C: dopo qualche minuto i termosifoni si scalderanno.",
+  "trash": "Spazzatura: Prima di lasciare l’appartamento controlla di aver messo i rifiuti negli appositi cestini. Noi ricicliamo (WeDoRecycling): porta il contenuto alla fine di Via della Scala, angolo Via Garibaldi, tutti i giorni dalle 8:00 alle 9:30.",
+  "electric_panel": "Quadro elettrico: Se va via la corrente, all’uscita dell’appartamento, guardando la porta, sulla destra trovi il quadro elettrico: tutti gli interruttori devono essere verso l’alto. Se ancora non c’è elettricità, sopra il quadro c’è uno sportello di legno: premilo, dietro c’è un altro interruttore generale da alzare per ripristinare la corrente."
       "wifi": ["wifi","wi-fi","rete","password","internet"],
       "check_in": ["check in","arrivo","ingresso","citofono","porte","chiavi","codice"],
       "check_out": ["check out","partenza","uscire","chiavi"],
