@@ -206,6 +206,9 @@
       "emergency": "112 Notfall • 113 Polizei • 118 Rettung • 115 Feuerwehr."
     },
     "es": {
+  "trash": "Basura: Antes de dejar el apartamento, cierre bien las bolsas de basura y llévelas al punto ecológico (isola ecologica) que está frente a Piazza delle Cinque Scole, del lado del Lungotevere. Reciclamos (WeDoRecycling), por favor siga estas indicaciones.",
+  "heating": "Calefacción: El apartamento dispone de una estufa eléctrica. Úsela solo cuando esté dentro del apartamento y apáguela SIEMPRE cuando salga a visitar la ciudad, por seguridad.",
+  "electric_panel": "Cuadro eléctrico: Si se corta la luz, antes de la puerta de salida del apartamento, a la derecha, encontrará el cuadro eléctrico: todos los interruptores, incluido el pequeño blanco, deben estar hacia arriba. Si el problema continúa, en la salida del edificio, antes de la puerta de entrada, a la izquierda hay unas tapas blancas: abra la de su contador, suba el interruptor bajado y la electricidad volverá."
       "wifi": "Wi-Fi: Router sobre la mesa. Gíralo para ver SSID y contraseña.",
       "check_in": "Check-in desde las 15:00.\nAcceso: Puerta pesada; usa la llave principal. Código: 7171 + llave.\nAyuda: +39 335 5245756.",
       "check_out": "Antes de salir: apaga luces/AC, cierra ventanas, deja llaves.",
