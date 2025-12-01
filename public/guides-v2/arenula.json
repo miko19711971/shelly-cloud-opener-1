@@ -1,5 +1,8 @@
 {
-  "en": {
+    "en": {
+    "trash": "Trash: Use the garbage bags in the kitchen, close them well and take them to the bins in the inner courtyard before the exit. We separate waste (WeDoRecycling), so please follow the indications and do not leave garbage in the staircase or outside the apartment door.",
+    "heating": "Heating: Use the A/C remote, press MODE until you see the sun symbol and set 26°C with power level 1. Always switch off the unit when you leave the apartment.",
+    "electric_panel": "Electric panel: Going towards the bathroom, on the right before the door you find the panel. If the power goes off, raise any switch that is down; if they are all up, remove the cover above, raise the main switch and turn off one or more appliances."
     "wifi": "Wi-Fi: Router is on the desk near the window. Turn it around to read the SSID and password on the label.\nNetwork: See router label. Password: See router label.",
     "check_in": "Check-in from 15:00.\nIntercom code: C8.\nMain door: 08:00–13:00 and 15:30–18:00.\nConcierge: Paolo.\nNeed help? Call +39 335 5245756.",
     "check_out": "Before leaving: turn off lights/AC, close windows, leave keys on the table, gently close the door.",
