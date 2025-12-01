@@ -58,6 +58,9 @@
     },
 
     "fr": {
+  "heating": "Chauffage : Pour allumer le chauffage, allez dans le couloir juste après la cuisine ; sur le mur de droite se trouve un petit thermostat avec molette. Mettez le petit interrupteur sur ON et réglez la molette sur 26 °C : tous les radiateurs de l’appartement se mettront en marche.",
+  "trash": "Déchets : Dans cet immeuble il n’y a PAS de tri sélectif. Avant le départ, jetez vos déchets dans les conteneurs prévus en sortant de l’immeuble, sur la droite.",
+  "electric_panel": "Tableau électrique : En cas de coupure de courant, le tableau se trouve dans l’antichambre de la salle de bain, immédiatement à droite en entrant : tous les disjoncteurs doivent être en position haute. Si le courant ne revient pas, descendez à l’étage -1, en face de la porte du ‘New York Institute’, ouvrez l’armoire électrique, cherchez ‘Bondi int. 9’ et remontez l’interrupteur baissé."
       "wifi": ["wifi","wi-fi","réseau","internet","mot de passe"],
       "check_in": ["check in","arrivée","entrée","clé","code"],
       "check_out": ["check out","départ","clés"],
