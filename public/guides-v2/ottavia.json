@@ -51,6 +51,9 @@
       "emergency": ["emergency","police","ambulance","fire"]
     },
     "fr": {
+  "trash": "Déchets : Avant de quitter l’appartement, fermez bien les sacs poubelle et déposez-les au point de collecte (isola ecologica) situé en face de Piazza delle Cinque Scole, côté Lungotevere. Nous trions les déchets (WeDoRecycling), merci de suivre ces indications.",
+  "heating": "Chauffage : L’appartement est équipé d’un radiateur électrique. Utilisez-le uniquement lorsque vous êtes dans l’appartement et éteignez-le TOUJOURS en sortant visiter la ville, pour des raisons de sécurité.",
+  "electric_panel": "Tableau électrique : En cas de coupure de courant, juste avant la porte de l’appartement, sur la droite, vous trouverez le tableau électrique : tous les disjoncteurs, y compris le petit blanc, doivent être en position haute. Si le problème persiste, à la sortie de l’immeuble, avant la porte d’entrée, sur la gauche se trouvent des panneaux blancs : ouvrez celui de votre compteur, remontez l’interrupteur baissé et le courant reviendra."
       "wifi": ["wifi","wi-fi","réseau","mot de passe"],
       "check_in": ["check in","arrivée","porte","entrée","code","clé"],
       "check_out": ["check out","départ","clés"],
