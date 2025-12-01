@@ -75,6 +75,9 @@
       "emergency": ["urgence","police","ambulance","pompiers"]
     },
     "de": {
+  "trash": "Müll: Bevor Sie die Wohnung verlassen, verschließen Sie die Müllbeutel gut und bringen Sie sie zum Recyclingpunkt (isola ecologica) gegenüber der Piazza delle Cinque Scole auf der Lungotevere-Seite. Wir trennen den Müll (WeDoRecycling), bitte halten Sie sich an diese Hinweise.",
+  "heating": "Heizung: Die Wohnung verfügt über eine Elektroheizung. Bitte benutzen Sie sie nur, wenn Sie in der Wohnung sind, und schalten Sie sie IMMER aus, wenn Sie zur Stadtbesichtigung aufbrechen, aus Sicherheitsgründen.",
+  "electric_panel": "Sicherungskasten: Wenn der Strom ausfällt, befindet sich direkt vor der Wohnungstür auf der rechten Seite der Sicherungskasten: Alle Schalter, auch der kleine weiße, müssen nach oben stehen. Wenn das Problem bleibt, finden Sie am Eingang des Hauses links weiße Kästen: Öffnen Sie den Kasten mit Ihrem Zähler, legen Sie den heruntergefallenen Schalter wieder nach oben und der Strom kehrt zurück."
       "wifi": ["wlan","wifi","netz","passwort","internet"],
       "check_in": ["check in","ankunft","eingang","tür","code","schlüssel"],
       "check_out": ["check out","abreise","schlüssel"],
