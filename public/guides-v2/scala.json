@@ -216,6 +216,9 @@
     },
 
     "es": {
+  "heating": "Calefacción: Para encender la calefacción, vaya al dormitorio; frente a la cama, mirando hacia la ventana, en el lado izquierdo hay un pequeño termostato. El pequeño interruptor superior debe estar en ON y el dial ajustado a 26 °C; después de unos minutos los radiadores se calentarán.",
+  "trash": "Basura: Antes de dejar el apartamento, compruebe que ha puesto la basura en los cubos correspondientes. Reciclamos (WeDoRecycling): lleve las bolsas al final de Via della Scala, esquina Via Garibaldi, todos los días entre las 8:00 y las 9:30.",
+  "electric_panel": "Cuadro eléctrico: Si se corta la luz, a la salida del apartamento, mirando la puerta, a la derecha está el cuadro eléctrico: todos los interruptores deben estar hacia arriba. Si aún no hay electricidad, encima del cuadro hay una puertecita de madera: presiónela, detrás hay otro interruptor general que debe subir para restablecer la corriente."
       "wifi": "Wi-Fi: Router en el lado derecho del salón. SSID y contraseña en la etiqueta.",
       "check_in": "Check-in desde las 15:00. Portero: columna izquierda, primero abajo. Segundo portero: A/1.",
       "check_out": "Antes de salir: apaga luces, cierra ventanas, deja llaves.",
