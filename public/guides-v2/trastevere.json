@@ -31,6 +31,9 @@
     },
 
     "en": {
+  "heating": "Heating: To turn on the heating, go to the corridor just after the kitchen; on the right-hand wall there is a small thermostat with a dial. Put the small switch to ON and set the dial to 26°C: all radiators in the apartment will turn on.",
+  "trash": "Trash: In this building there is NO recycling. Before check-out, please throw your rubbish in the containers just outside the building on the right-hand side.",
+  "electric_panel": "Electric panel: If the power goes off, the panel is in the small room before the bathroom, immediately on the right as you enter: all switches must be in the up position. If there is still no electricity, go to floor -1 in front of the ‘New York Institute’ door, open the electrical cabinet, find ‘Bondi int. 9’ and push the lowered switch back up."
       "wifi": ["wifi","wi-fi","network","internet","password"],
       "check_in": ["check in","arrival","enter","door","code","keys"],
       "check_out": ["check out","departure","leave","keys"],
