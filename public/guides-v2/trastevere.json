@@ -234,6 +234,9 @@
     },
 
     "es": {
+  "heating": "Calefacción: Para encender la calefacción, vaya al pasillo justo después de la cocina; en la pared derecha hay un pequeño termostato con rueda. Ponga el pequeño interruptor en ON y ajuste la rueda a 26 °C: todos los radiadores del apartamento se encenderán.",
+  "trash": "Basura: En este edificio NO hay reciclaje. Antes del check-out, tire la basura en los contenedores que están al salir del edificio, en el lado derecho.",
+  "electric_panel": "Cuadro eléctrico: Si se corta la luz, el cuadro está en el antibaño, nada más entrar en el apartamento, a la derecha: todos los interruptores deben estar hacia arriba. Si la electricidad no vuelve, baje al piso -1, frente a la puerta del ‘New York Institute’, abra el armario eléctrico, busque ‘Bondi int. 9’ y suba el interruptor bajado."
       "wifi": "Wi-Fi: Router en la entrada. Gíralo para ver SSID y contraseña.",
       "check_in": "Check-in desde las 15:00. Llave o código 7171 + llave.",
       "check_out": "Apaga luces/AC, cierra ventanas, deja las llaves.",
