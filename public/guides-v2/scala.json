@@ -79,6 +79,9 @@
     },
 
     "de": {
+  "heating": "Heizung: Um die Heizung einzuschalten, gehen Sie ins Schlafzimmer; vom Bett aus zur Fensterseite gesehen befindet sich links ein kleiner Thermostat. Der kleine obere Schalter muss auf ON stehen und der Drehregler auf 26 °C; nach einigen Minuten werden die Heizkörper warm.",
+  "trash": "Müll: Bevor Sie die Wohnung verlassen, prüfen Sie, ob der Müll in den vorgesehenen Behältern liegt. Wir trennen den Müll (WeDoRecycling): Bringen Sie die Beutel ans Ende der Via della Scala, Ecke Via Garibaldi, täglich zwischen 8:00 und 9:30 Uhr.",
+  "electric_panel": "Sicherungskasten: Bei Stromausfall befindet sich an der Wohnungstür, rechts, der Sicherungskasten: Alle Schalter müssen nach oben stehen. Wenn weiterhin kein Strom da ist, befindet sich über dem Kasten eine kleine Holztür: Drücken Sie darauf, dahinter ist ein weiterer Hauptschalter, den Sie nach oben legen müssen, damit der Strom zurückkehrt."
       "wifi": ["wlan","wifi","netz","passwort","internet"],
       "check_in": ["check in","ankunft","sprechanlage","tür","schlüssel","code"],
       "check_out": ["check out","abreise","schlüssel"],
