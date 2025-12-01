@@ -4,6 +4,9 @@
 
   "intents": {
     "it": {
+  "heating": "Riscaldamento: Per accendere il riscaldamento vai nel corridoio subito dopo la cucina; sul lato destro del muro c’è un termostato con una ghiera. Metti il piccolo interruttore su ON e imposta la ghiera su 26 °C: tutti i termosifoni dell’appartamento si accenderanno.",
+  "trash": "Spazzatura: In questo stabile NON si fa raccolta differenziata. Prima del check-out getta la spazzatura negli appositi contenitori che trovi uscendo dall’edificio, sul lato destro.",
+  "electric_panel": "Quadro elettrico: Se manca la corrente, il quadro si trova nell’antibagno appena entri in casa, subito a destra: tutti gli interruttori devono essere verso l’alto. Se non torna l’elettricità, vai al piano -1, davanti alla porta del New York Institute, apri lo sportello elettrico, cerca ‘Bondi int. 9’ e rialza l’interruttore abbassato."
       "wifi": ["wifi","wi-fi","rete","internet","password"],
       "check_in": ["check in","arrivo","ingresso","codice","chiavi","portone"],
       "check_out": ["check out","partenza","uscita","chiavi","lasciare"],
