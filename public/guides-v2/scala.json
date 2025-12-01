@@ -29,6 +29,9 @@
     },
 
     "en": {
+  "heating": "Heating: To turn on the heating, go to the bedroom; facing the bed, looking at the window, on the left side there is a small thermostat. The small upper switch must be ON and the dial set to 26°C; after a few minutes the radiators will become warm.",
+  "trash": "Trash: Before leaving the apartment, make sure you have put all rubbish in the bins. We recycle (WeDoRecycling): take the bags to the end of Via della Scala, on the corner with Via Garibaldi, every day between 8:00 and 9:30.",
+  "electric_panel": "Electric panel: If the power goes off, at the apartment exit, facing the door, on the right you will find the electric panel: all switches must be in the up position. If there is still no electricity, above the panel there is a wooden door: press it, behind you will find another main switch to lift and restore power."
       "wifi": ["wifi","wi-fi","network","password","internet"],
       "check_in": ["check in","arrival","intercom","door","keys","code"],
       "check_out": ["check out","departure","leave","keys"],
