@@ -877,14 +877,35 @@ app.post("/hostaway-incoming", async (req, res) => {
     console.log("🔔 Hostaway message webhook:");
     console.log(JSON.stringify(req.body, null, 2));
 
-    const {
-      listingId,
-      message,
-      guestName,
-      guestEmail,
-      language,
-      conversationId
-    } = req.body || {};
+        const payload = req.body || {};
+
+    const listingId = payload.listingId || payload.listingMapId;
+    const conversationId = payload.conversationId;
+
+    const guestName =
+      payload.guestName ||
+      payload.guest_first_name ||
+      payload.firstName ||
+      "Guest";
+
+    const guestEmail =
+      payload.guestEmail ||
+      payload.guestEmailAddress ||
+      payload.email ||
+      "";
+
+    const language =
+      payload.language ||
+      payload.locale ||
+      payload.guestLocale ||
+      "en";
+
+    // testo vero del messaggio del guest
+    const message =
+      payload.message ||
+      payload.body ||
+      (payload.communicationBody && payload.communicationBody.body) ||
+      "";
 
     // Controllo minimo: deve esserci almeno listingId e message
     if (!listingId || !message) {
