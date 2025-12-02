@@ -974,26 +974,34 @@ if (HOSTAWAY_TOKEN && conversationId) {
 }
       console.error("❌ Errore chiamata /api/guest-assistant:", err.message);
     }
-// ===== INVIO RISPOSTA AI NELLA CHAT DI HOSTAWAY =====
-try {
-  const sendResp = await axios.post(
-    "https://api.hostaway.com/v1/conversations/sendMessage",
-    {
-      conversationId: conversationId,  // <-- viene dal webhook
-      message: aiReply,
-      type: "guest"
-    },
-    {
-      headers: {
-        Authorization: `Bearer ${HOSTAWAY_TOKEN}`,
-        "Content-Type": "application/json"
+     // ====== INVIO RISPOSTA A HOSTAWAY (CHAT) ======
+    if (!conversationId) {
+      console.warn("⚠️ Nessun conversationId: salto invio a HostAway");
+    } else {
+      const hostawayUrl = `https://api.hostaway.com/v1/conversations/${conversationId}/messages`;
+
+      const hostawayBody = {
+        body: aiReply,
+        communicationType: "email"
+      };
+
+      try {
+        const haRes = await axios.post(hostawayUrl, hostawayBody, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${process.env.HOSTAWAY_API_TOKEN}`
+          },
+          timeout: 10000
+        });
+
+        console.log("✅ HostAway API response:", haRes.data);
+      } catch (err) {
+        console.error(
+          "❌ Errore invio a HostAway:",
+          err.response?.data || err.message
+        );
       }
     }
-  );
-  console.log("📨 Messaggio inviato a HostAway:", sendResp.data);
-} catch (err) {
-  console.error("❌ Errore invio a HostAway:", err.response?.data || err.message);
-}
     // 7) INVIO EMAIL AUTOMATICO AL GUEST + COPIA A TE
     try {
       const subject = `NiceFlatInRome – ${apt}`;
