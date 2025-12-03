@@ -1,8 +1,8 @@
 {
-"it": {
-  "trash": "Spazzatura: Prima di lasciare l’appartamento chiudi bene i sacchetti della spazzatura e portali tra le 8:00 e le 9:30 all’isola ecologica all’angolo tra Via Leonina e Via dei Serpenti. Ricorda che facciamo raccolta differenziata (WeDoRecycling).",
-  "heating": "Riscaldamento: Per accendere il riscaldamento usa il telecomando dell’aria condizionata, premi MODE finché la freccia è sul simbolo del sole, imposta potenza 1 e 26 °C. Dopo circa 5 minuti l’aria calda inizierà a uscire. Ricordati di spegnerlo quando esci a visitare la città, per motivi di sicurezza.",
-  "umbrella": "Ombrellone: Se apri l’ombrellone sul terrazzo, legalo sempre alla grata della finestra con lo spago che trovi all’interno dell’ombrellone. Quando esci chiudilo sempre: in caso di vento forte potrebbe volare e causare danni a persone o cose."
+  "it": {
+    "trash": "Spazzatura: Prima di lasciare l’appartamento chiudi bene i sacchetti della spazzatura e portali tra le 8:00 e le 9:30 all’isola ecologica all’angolo tra Via Leonina e Via dei Serpenti. Ricorda che facciamo raccolta differenziata (WeDoRecycling).",
+    "heating": "Riscaldamento: Per accendere il riscaldamento usa il telecomando dell’aria condizionata, premi MODE finché la freccia è sul simbolo del sole, imposta potenza 1 e 26 °C. Dopo circa 5 minuti l’aria calda inizierà a uscire. Ricordati di spegnerlo quando esci a visitare la città, per motivi di sicurezza.",
+    "umbrella": "Ombrellone: Se apri l’ombrellone sul terrazzo, legalo sempre alla grata della finestra con lo spago che trovi all’interno dell’ombrellone. Quando esci chiudilo sempre: in caso di vento forte potrebbe volare e causare danni a persone o cose.",
     "wifi": "Wi-Fi: Router sul tavolo. Giralo per leggere SSID e password sull’etichetta.\nRete: Vedi etichetta del router.",
     "check_in": "Check-in dalle 15:00.\nAccesso: Usa la chiave lunga con punta quadrata; tira il portone verso di te e gira in senso antiorario.\nCodice portone: 7171 + simbolo chiave.\nAiuto? +39 335 5245756.",
     "check_out": "Prima di partire: spegni luci/AC, chiudi le finestre, lascia le chiavi sul tavolo, chiudi la porta delicatamente.",
@@ -26,9 +26,9 @@
     "emergency": "112 • Polizia 113 • Ambulanza 118 • Vigili 115 • Medico EN +39 06 488 2371 • Veterinario 24h +39 06 660 681"
   },
   "en": {
-  "trash": "Trash: Before leaving the apartment, close the garbage bags well and take them between 8:00 and 9:30 to the recycling point (isola ecologica) on the corner of Via Leonina and Via dei Serpenti. We recycle (WeDoRecycling), so please follow these instructions.",
-  "heating": "Heating: To turn on the heating, use the A/C remote, press MODE until the arrow points to the sun symbol, set power level 1 and 26°C. After about 5 minutes warm air will start to come out. Please switch it off when you go out to visit the city, for safety reasons.",
-  "umbrella": "Umbrella: If you open the umbrella on the terrace, always tie it to the window grate with the string inside the umbrella. When you leave, always close it: on windy days it could fly away and cause damage to people or property."
+    "trash": "Trash: Before leaving the apartment, close the garbage bags well and take them between 8:00 and 9:30 to the recycling point (isola ecologica) on the corner of Via Leonina and Via dei Serpenti. We recycle (WeDoRecycling), so please follow these instructions.",
+    "heating": "Heating: To turn on the heating, use the A/C remote, press MODE until the arrow points to the sun symbol, set power level 1 and 26°C. After about 5 minutes warm air will start to come out. Please switch it off when you go out to visit the city, for safety reasons.",
+    "umbrella": "Umbrella: If you open the umbrella on the terrace, always tie it to the window grate with the string inside the umbrella. When you leave, always close it: on windy days it could fly away and cause damage to people or property.",
     "wifi": "Wi-Fi: Router on the table. Turn it to see SSID & password on the label.\nNetwork: See router label.",
     "check_in": "Check-in from 15:00.\nAccess: Use the long square-key; pull door toward you and turn counter-clockwise.\nMain door code: 7171 + key symbol.\nNeed help? +39 335 5245756.",
     "check_out": "Before leaving: turn off lights/AC, close windows, leave keys on the table, gently close the door.",
@@ -52,9 +52,9 @@
     "emergency": "112 • Police 113 • Ambulance 118 • Fire 115 • English doctor +39 06 488 2371 • Vet 24h +39 06 660 681"
   },
   "fr": {
-  "trash": "Déchets : Avant de quitter l’appartement, fermez bien les sacs poubelle et déposez-les entre 8h00 et 9h30 au point de collecte (isola ecologica) situé à l’angle de Via Leonina et Via dei Serpenti. Nous trions les déchets (WeDoRecycling), merci de suivre ces indications.",
-  "heating": "Chauffage : Pour allumer le chauffage, utilisez la télécommande de la climatisation, appuyez sur MODE jusqu’à ce que la flèche indique le symbole du soleil, réglez la puissance sur 1 et la température à 26 °C. Après environ 5 minutes, de l’air chaud commencera à sortir. Merci d’éteindre l’appareil lorsque vous sortez visiter la ville, pour des raisons de sécurité.",
-  "umbrella": "Parasol : Si vous ouvrez le parasol sur la terrasse, attachez-le toujours à la grille de la fenêtre avec la ficelle à l’intérieur du parasol. Quand vous quittez l’appartement, fermez-le systématiquement : en cas de vent, il pourrait s’envoler et causer des dégâts à des personnes ou à des biens."
+    "trash": "Déchets : Avant de quitter l’appartement, fermez bien les sacs poubelle et déposez-les entre 8h00 et 9h30 au point de collecte (isola ecologica) situé à l’angle de Via Leonina et Via dei Serpenti. Nous trions les déchets (WeDoRecycling), merci de suivre ces indications.",
+    "heating": "Chauffage : Pour allumer le chauffage, utilisez la télécommande de la climatisation, appuyez sur MODE jusqu’à ce que la flèche indique le symbole du soleil, réglez la puissance sur 1 et la température à 26 °C. Après environ 5 minutes, de l’air chaud commencera à sortir. Merci d’éteindre l’appareil lorsque vous sortez visiter la ville, pour des raisons de sécurité.",
+    "umbrella": "Parasol : Si vous ouvrez le parasol sur la terrasse, attachez-le toujours à la grille de la fenêtre avec la ficelle à l’intérieur du parasol. Quand vous quittez l’appartement, fermez-le systématiquement : en cas de vent, il pourrait s’envoler et causer des dégâts à des personnes ou à des biens.",
     "wifi": "Wi-Fi : Routeur sur la table. Tournez-le pour lire SSID et mot de passe.\nRéseau : Voir l’étiquette du routeur.",
     "check_in": "Arrivée à partir de 15:00.\nAccès : Longue clé carrée ; tirez la porte et tournez antihoraire.\nCode du portail : 7171 + clé.\nAide ? +39 335 5245756.",
     "check_out": "Avant de partir : éteignez lumières/clim, fermez fenêtres, laissez les clés sur la table.",
@@ -78,9 +78,9 @@
     "emergency": "Urgences 112 • Police 113 • Ambulance 118 • Pompiers 115 • Médecin anglophone +39 06 488 2371 • Vétérinaire 24h +39 06 660 681"
   },
   "de": {
-  "trash": "Müll: Bevor Sie die Wohnung verlassen, verschließen Sie die Müllbeutel gut und bringen Sie sie zwischen 8:00 und 9:30 Uhr zum Recyclingpunkt (isola ecologica) an der Ecke Via Leonina / Via dei Serpenti. Wir trennen den Müll (WeDoRecycling), bitte halten Sie sich an diese Hinweise.",
-  "heating": "Heizung: Um die Heizung einzuschalten, benutzen Sie die Fernbedienung der Klimaanlage, drücken Sie MODE, bis der Pfeil auf das Sonnensymbol zeigt, und stellen Sie Leistungsstufe 1 und 26 °C ein. Nach etwa 5 Minuten beginnt warme Luft auszuströmen. Bitte schalten Sie das Gerät aus, wenn Sie zur Stadtbesichtigung aufbrechen, aus Sicherheitsgründen.",
-  "umbrella": "Sonnenschirm: Wenn Sie den Sonnenschirm auf der Terrasse öffnen, binden Sie ihn immer mit der im Schirm vorhandenen Schnur an das Fenstergitter. Wenn Sie die Wohnung verlassen, schließen Sie ihn immer: An windigen Tagen könnte er davonfliegen und Personen oder Sachen beschädigen."
+    "trash": "Müll: Bevor Sie die Wohnung verlassen, verschließen Sie die Müllbeutel gut und bringen Sie sie zwischen 8:00 und 9:30 Uhr zum Recyclingpunkt (isola ecologica) an der Ecke Via Leonina / Via dei Serpenti. Wir trennen den Müll (WeDoRecycling), bitte halten Sie sich an diese Hinweise.",
+    "heating": "Heizung: Um die Heizung einzuschalten, benutzen Sie die Fernbedienung der Klimaanlage, drücken Sie MODE, bis der Pfeil auf das Sonnensymbol zeigt, und stellen Sie Leistungsstufe 1 und 26 °C ein. Nach etwa 5 Minuten beginnt warme Luft auszuströmen. Bitte schalten Sie das Gerät aus, wenn Sie zur Stadtbesichtigung aufbrechen, aus Sicherheitsgründen.",
+    "umbrella": "Sonnenschirm: Wenn Sie den Sonnenschirm auf der Terrasse öffnen, binden Sie ihn immer mit der im Schirm vorhandenen Schnur an das Fenstergitter. Wenn Sie die Wohnung verlassen, schließen Sie ihn immer: An windigen Tagen könnte er davonfliegen und Personen oder Sachen beschädigen.",
     "wifi": "WLAN: Router auf dem Tisch. Drehen für SSID & Passwort.\nNetz: Siehe Router-Etikett.",
     "check_in": "Check-in ab 15:00.\nZugang: Langer quadratischer Schlüssel; Tür ziehen, gegen Uhrzeigersinn drehen.\nTür-Code: 7171 + Schlüssel.\nHilfe? +39 335 5245756.",
     "check_out": "Vor Abreise: Licht/AC aus, Fenster zu, Schlüssel auf Tisch, Tür sanft schließen.",
@@ -104,9 +104,9 @@
     "emergency": "112 • Polizei 113 • Rettung 118 • Feuerwehr 115 • Arzt EN +39 06 488 2371 • Tierarzt +39 06 660 681"
   },
   "es": {
-  "trash": "Basura: Antes de dejar el apartamento, cierre bien las bolsas de basura y llévelas entre las 8:00 y las 9:30 al punto ecológico (isola ecologica) en la esquina entre Via Leonina y Via dei Serpenti. Reciclamos (WeDoRecycling), por favor siga estas indicaciones.",
-  "heating": "Calefacción: Para encender la calefacción, utilice el mando del aire acondicionado, pulse MODE hasta que la flecha apunte al símbolo del sol y ajuste potencia 1 y 26 °C. Después de unos 5 minutos empezará a salir aire caliente. Recuerde apagarlo cuando salga a visitar la ciudad, por seguridad.",
-  "umbrella": "Sombrilla: Si abre la sombrilla en la terraza, átela siempre a la reja de la ventana con la cuerda que hay dentro de la sombrilla. Cuando salga, ciérrela siempre: en un día de viento podría volar y causar daños a personas o cosas."
+    "trash": "Basura: Antes de dejar el apartamento, cierre bien las bolsas de basura y llévelas entre las 8:00 y las 9:30 al punto ecológico (isola ecologica) en la esquina entre Via Leonina y Via dei Serpenti. Reciclamos (WeDoRecycling), por favor siga estas indicaciones.",
+    "heating": "Calefacción: Para encender la calefacción, utilice el mando del aire acondicionado, pulse MODE hasta que la flecha apunte al símbolo del sol y ajuste potencia 1 y 26 °C. Después de unos 5 minutos empezará a salir aire caliente. Recuerde apagarlo cuando salga a visitar la ciudad, por seguridad.",
+    "umbrella": "Sombrilla: Si abre la sombrilla en la terraza, átela siempre a la reja de la ventana con la cuerda que hay dentro de la sombrilla. Cuando salga, ciérrela siempre: en un día de viento podría volar y causar daños a personas o cosas.",
     "wifi": "Wi-Fi: Router sobre la mesa. Gíralo para ver SSID y contraseña.\nRed: Ver etiqueta del router.",
     "check_in": "Check-in desde las 15:00.\nAcceso: Llave larga cuadrada; tira la puerta y gira antihorario.\nCódigo: 7171 + llave.\n¿Ayuda? +39 335 5245756.",
     "check_out": "Antes de salir: apaga luces/AC, cierra ventanas, deja las llaves en la mesa.",
