@@ -5,7 +5,7 @@
     "it": {
   "trash": "Spazzatura: Prima di lasciare l’appartamento assicurati di chiudere bene i sacchetti e di depositarli nell’isola ecologica di fronte a Piazza delle Cinque Scole, lato Lungotevere. Ricordati che facciamo raccolta differenziata (WeDoRecycling).",
   "heating": "Riscaldamento: L’appartamento è provvisto di una stufa elettrica. Usala solo quando sei in casa e spegnila SEMPRE quando esci a visitare la città, per motivi di sicurezza.",
-  "electric_panel": "Quadro elettrico: Se va via la corrente, prima della porta d’uscita dell’appartamento, sulla destra trovi il quadro elettrico: tutti gli interruttori, incluso il piccolo bianco, devono essere verso l’alto. Se il problema continua, all’uscita del palazzo, prima della porta d’ingresso, sulla sinistra ci sono gli sportelli bianchi: apri quello del tuo contatore, rialza l’interruttore abbassato e la corrente tornerà."
+  "electric_panel": "Quadro elettrico: Se va via la corrente, prima della porta d’uscita dell’appartamento, sulla destra trovi il quadro elettrico: tutti gli interruttori, incluso il piccolo bianco, devono essere verso l’alto. Se il problema continua, all’uscita del palazzo, prima della porta d’ingresso, sulla sinistra ci sono gli sportelli bianchi: apri quello del tuo contatore, rialza l’interruttore abbassato e la corrente tornerà.",
   "wifi": ["wifi","wi-fi","rete","password","internet"],
       "check_in": ["check in","arrivo","ingresso","portone","codice","chiavi"],
       "check_out": ["check out","partenza","uscire","chiavi"],
@@ -29,7 +29,7 @@
     "en": {
   "trash": "Trash: Before leaving the apartment, make sure you close the garbage bags properly and take them to the recycling point (isola ecologica) in front of Piazza delle Cinque Scole, on the Lungotevere side. We recycle (WeDoRecycling), so please follow these instructions.",
   "heating": "Heating: The apartment has an electric heater. Use it only when you are inside and ALWAYS switch it off when you go out to visit the city, for safety reasons.",
-  "electric_panel": "Electric panel: If the power goes off, just before the apartment door on the right you will find the electric panel: all switches, including the small white one, must be in the up position. If the problem persists, at the building entrance on the left there are white doors: open the one with your meter, push the lowered switch back up and the electricity will return."
+  "electric_panel": "Electric panel: If the power goes off, just before the apartment door on the right you will find the electric panel: all switches, including the small white one, must be in the up position. If the problem persists, at the building entrance on the left there are white doors: open the one with your meter, push the lowered switch back up and the electricity will return.",
       "wifi": ["wifi","wi-fi","network","password","internet"],
       "check_in": ["check in","arrival","door","entrance","code","keys"],
       "check_out": ["check out","departure","leave","keys"],
@@ -53,7 +53,7 @@
     "fr": {
   "trash": "Déchets : Avant de quitter l’appartement, fermez bien les sacs poubelle et déposez-les au point de collecte (isola ecologica) situé en face de Piazza delle Cinque Scole, côté Lungotevere. Nous trions les déchets (WeDoRecycling), merci de suivre ces indications.",
   "heating": "Chauffage : L’appartement est équipé d’un radiateur électrique. Utilisez-le uniquement lorsque vous êtes dans l’appartement et éteignez-le TOUJOURS en sortant visiter la ville, pour des raisons de sécurité.",
-  "electric_panel": "Tableau électrique : En cas de coupure de courant, juste avant la porte de l’appartement, sur la droite, vous trouverez le tableau électrique : tous les disjoncteurs, y compris le petit blanc, doivent être en position haute. Si le problème persiste, à la sortie de l’immeuble, avant la porte d’entrée, sur la gauche se trouvent des panneaux blancs : ouvrez celui de votre compteur, remontez l’interrupteur baissé et le courant reviendra."
+  "electric_panel": "Tableau électrique : En cas de coupure de courant, juste avant la porte de l’appartement, sur la droite, vous trouverez le tableau électrique : tous les disjoncteurs, y compris le petit blanc, doivent être en position haute. Si le problème persiste, à la sortie de l’immeuble, avant la porte d’entrée, sur la gauche se trouvent des panneaux blancs : ouvrez celui de votre compteur, remontez l’interrupteur baissé et le courant reviendra.",
       "wifi": ["wifi","wi-fi","réseau","mot de passe"],
       "check_in": ["check in","arrivée","porte","entrée","code","clé"],
       "check_out": ["check out","départ","clés"],
@@ -77,7 +77,7 @@
     "de": {
   "trash": "Müll: Bevor Sie die Wohnung verlassen, verschließen Sie die Müllbeutel gut und bringen Sie sie zum Recyclingpunkt (isola ecologica) gegenüber der Piazza delle Cinque Scole auf der Lungotevere-Seite. Wir trennen den Müll (WeDoRecycling), bitte halten Sie sich an diese Hinweise.",
   "heating": "Heizung: Die Wohnung verfügt über eine Elektroheizung. Bitte benutzen Sie sie nur, wenn Sie in der Wohnung sind, und schalten Sie sie IMMER aus, wenn Sie zur Stadtbesichtigung aufbrechen, aus Sicherheitsgründen.",
-  "electric_panel": "Sicherungskasten: Wenn der Strom ausfällt, befindet sich direkt vor der Wohnungstür auf der rechten Seite der Sicherungskasten: Alle Schalter, auch der kleine weiße, müssen nach oben stehen. Wenn das Problem bleibt, finden Sie am Eingang des Hauses links weiße Kästen: Öffnen Sie den Kasten mit Ihrem Zähler, legen Sie den heruntergefallenen Schalter wieder nach oben und der Strom kehrt zurück."
+  "electric_panel": "Sicherungskasten: Wenn der Strom ausfällt, befindet sich direkt vor der Wohnungstür auf der rechten Seite der Sicherungskasten: Alle Schalter, auch der kleine weiße, müssen nach oben stehen. Wenn das Problem bleibt, finden Sie am Eingang des Hauses links weiße Kästen: Öffnen Sie den Kasten mit Ihrem Zähler, legen Sie den heruntergefallenen Schalter wieder nach oben und der Strom kehrt zurück.",
       "wifi": ["wlan","wifi","netz","passwort","internet"],
       "check_in": ["check in","ankunft","eingang","tür","code","schlüssel"],
       "check_out": ["check out","abreise","schlüssel"],
@@ -102,6 +102,7 @@
       "wifi": ["wifi","wi-fi","red","contraseña"],
       "check_in": ["check in","llegada","puerta","entrada","código","llaves"],
       "check_out": ["check out","salida","llaves"],
+      “Cuadro eléctrico: Si se corta la luz, el cuadro eléctrico se encuentra justo delante de la puerta del apartamento, a la derecha. Todos los interruptores, incluido el pequeño blanco, deben estar hacia arriba. Si el problema persiste, en la entrada del edificio a la izquierda encontrará unas cajas blancas: abra la caja de su contador, vuelva a subir el interruptor que se ha bajado y la luz volverá.”,
       "water": ["agua","caliente","potable"],
       "ac": ["aire acondicionado","ac"],
       "bathroom": ["baño","toallas","secador","jabón"],
