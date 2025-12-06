@@ -936,30 +936,37 @@ app.post("/hostaway-incoming", async (req, res) => {
     const name = guestName || "Guest";
     const email = guestEmail || "";
 
-    // 1) Chiamo la Virtual Guide interna
-    let aiReply =
-    “Late check-out depends on availability and must be approved manually. Michele will answer you as soon as possible.”;
+ // Fallback multi-lingua
+const FALLBACK_MESSAGES = {
+  en: "I'm sorry, I couldn't find an automatic answer to your question. Michele will reply to you personally as soon as possible.",
+  it: "Mi dispiace, non ho trovato una risposta automatica alla tua domanda. Michele ti risponderà personalmente il prima possibile.",
+  fr: "Je suis désolé, je n’ai pas trouvé de réponse automatique à votre question. Michele vous répondra personnellement dès que possible.",
+  de: "Es tut mir leid, ich habe keine automatische Antwort auf Ihre Frage gefunden. Michele wird Ihnen so schnell wie möglich persönlich antworten.",
+  es: "Lo siento, no he encontrado una respuesta automática a su pregunta. Michele le responderá personalmente lo antes posible."
+};
 
-    try {
-      const gaResp = await axios.post(
-        `${req.protocol}://${req.get("host")}/api/guest-assistant`,
-        {
-          apartment: apartmentKey,
-          lang: langCode,
-          question: message
-        },
-        { timeout: 8000 }
-      );
+// 1) Chiamo la Virtual Guide interna
+let aiReply = FALLBACK_MESSAGES[langCode] || FALLBACK_MESSAGES.en;
 
-      const data = gaResp.data || {};
-      if (data.ok && data.answer) {
-        aiReply = data.answer;
-      } else {
-        console.error("guest-assistant risposta non valida:", data);
-      }
-    } catch (err) {
-      console.error("❌ Errore chiamata /api/guest-assistant:", err.message);
-    }
+try {
+  const gaResp = await axios.post(
+    `${req.protocol}://${req.get("host")}/api/guest-assistant`,
+    {
+      apartment: apartmentKey,
+      lang: langCode,
+      question: message
+    },
+    { timeout: 8000 }
+  );
+
+  const data = gaResp.data || {};
+  if (data.ok && data.answer) {
+    aiReply = data.answer;
+  }
+} catch (err) {
+  console.error("Errore Virtual Guide:", err.message);
+  // aiReply resta il fallback
+}
 
     // 2) Invio risposta nella chat Hostaway
     if (HOSTAWAY_TOKEN && conversationId) {
