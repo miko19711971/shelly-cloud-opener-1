@@ -938,7 +938,7 @@ app.post("/hostaway-incoming", async (req, res) => {
 
     // 1) Chiamo la Virtual Guide interna
     let aiReply =
-      "I'm sorry, something went wrong. I will answer you manually as soon as possible.";
+    “Late check-out depends on availability and must be approved manually. Michele will answer you as soon as possible.”;
 
     try {
       const gaResp = await axios.post(
