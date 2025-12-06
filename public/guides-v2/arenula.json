@@ -2,7 +2,7 @@
     "en": {
     "trash": "Trash: Use the garbage bags in the kitchen, close them well and take them to the bins in the inner courtyard before the exit. We separate waste (WeDoRecycling), so please follow the indications and do not leave garbage in the staircase or outside the apartment door.",
     "heating": "Heating: Use the A/C remote, press MODE until you see the sun symbol and set 26°C with power level 1. Always switch off the unit when you leave the apartment.",
-    "electric_panel": "Electric panel: Going towards the bathroom, on the right before the door you find the panel. If the power goes off, raise any switch that is down; if they are all up, remove the cover above, raise the main switch and turn off one or more appliances."
+    "electric_panel": "Electric panel: Going towards the bathroom, on the right before the door you find the panel. If the power goes off, raise any switch that is down; if they are all up, remove the cover above, raise the main switch and turn off one or more appliances.",
     "wifi": "Wi-Fi: Router is on the desk near the window. Turn it around to read the SSID and password on the label.\nNetwork: See router label. Password: See router label.",
     "check_in": "Check-in from 15:00.\nIntercom code: C8.\nMain door: 08:00–13:00 and 15:30–18:00.\nConcierge: Paolo.\nNeed help? Call +39 335 5245756.",
     "check_out": "Before leaving: turn off lights/AC, close windows, leave keys on the table, gently close the door.",
@@ -27,7 +27,7 @@
   "it": {
   "trash": "Spazzatura: Usa le buste in cucina, chiudi bene i sacchetti e portali nei cassonetti nella corte prima dell’uscita. Facciamo raccolta differenziata (WeDoRecycling), quindi ti chiediamo di seguire le indicazioni e di non lasciare immondizia nel vano scala o fuori dalla porta dell’appartamento.",
   "heating": "Riscaldamento: Usa il telecomando dell’aria condizionata, premi MODE finché non compare il simbolo del sole e imposta 26 °C con potenza 1. Spegni sempre il condizionatore quando esci dall’appartamento.",
-  "electric_panel": "Quadro elettrico: Andando verso il bagno, sulla destra prima della porta trovi il quadro. Se manca la corrente alza gli interruttori abbassati; se sono già tutti su, togli il pannello sopra, rialza l’interruttore generale e spegni qualche elettrodomestico."
+  "electric_panel": "Quadro elettrico: Andando verso il bagno, sulla destra prima della porta trovi il quadro. Se manca la corrente alza gli interruttori abbassati; se sono già tutti su, togli il pannello sopra, rialza l’interruttore generale e spegni qualche elettrodomestico.",
     "wifi": "Wi-Fi: Router sulla scrivania vicino alla finestra. Giralo per leggere SSID e password.\nRete: Vedi etichetta del router. Password: Vedi etichetta del router.",
     "check_in": "Check-in dalle 15:00.\nCodice citofono: C8.\nPortone: 08:00–13:00 e 15:30–18:00.\nPortineria: Paolo.\nAiuto? Chiama +39 335 5245756.",
     "check_out": "Prima di partire: spegni luci/AC, chiudi le finestre, lascia le chiavi sul tavolo, chiudi delicatamente la porta.",
@@ -52,7 +52,7 @@
   "fr": {
   "trash": "Poubelles : Utilisez les sacs poubelle de la cuisine, fermez-les bien et déposez-les dans les conteneurs de la cour intérieure avant la sortie. Nous faisons le tri sélectif (WeDoRecycling), merci donc de suivre les indications et de ne pas laisser de déchets dans la cage d’escalier ni devant la porte de l’appartement.",
   "heating": "Chauffage : Utilisez la télécommande de la climatisation, appuyez sur MODE jusqu’au symbole du soleil et réglez à 26 °C avec puissance 1. Éteignez toujours la climatisation lorsque vous quittez l’appartement.",
-  "electric_panel": "Tableau électrique : En allant vers la salle de bain, sur la droite avant la porte se trouve le tableau. En cas de coupure, relevez les disjoncteurs baissés ; s’ils sont tous en haut, retirez le panneau au-dessus, remontez l’interrupteur principal et éteignez un ou plusieurs appareils."
+  "electric_panel": "Tableau électrique : En allant vers la salle de bain, sur la droite avant la porte se trouve le tableau. En cas de coupure, relevez les disjoncteurs baissés ; s’ils sont tous en haut, retirez le panneau au-dessus, remontez l’interrupteur principal et éteignez un ou plusieurs appareils.",
     "wifi": "Wi-Fi : Routeur sur le bureau près de la fenêtre. Tournez-le pour lire le SSID et le mot de passe.\nRéseau : Voir l’étiquette du routeur. Mot de passe : Voir l’étiquette du routeur.",
     "check_in": "Arrivée à partir de 15:00.\nCode interphone : C8.\nPorte : 08:00–13:00 et 15:30–18:00.\nConcierge : Paolo.\nBesoin d’aide ? +39 335 5245756.",
     "check_out": "Avant de partir : éteignez lumières/clim, fermez les fenêtres, laissez les clés sur la table, fermez doucement la porte.",
@@ -77,7 +77,7 @@
     "de": {
   "trash": "Müll: Bitte verwenden Sie die Müllbeutel in der Küche, verschließen Sie sie gut und bringen Sie sie zu den Containern im Innenhof vor dem Ausgang. Wir trennen den Müll (WeDoRecycling), daher bitten wir Sie, die Hinweise zu beachten und keinen Müll im Treppenhaus oder vor der Wohnungstür zu lassen.",
   "heating": "Heizung: Nutzen Sie die Fernbedienung der Klimaanlage, drücken Sie MODE, bis das Sonnensymbol erscheint, und stellen Sie 26 °C mit Leistungsstufe 1 ein. Schalten Sie das Gerät immer aus, wenn Sie die Wohnung verlassen.",
-  "electric_panel": "Sicherungskasten: Auf dem Weg zum Bad, rechts vor der Tür, befindet sich der Kasten. Bei Stromausfall legen Sie heruntergefallene Schalter wieder nach oben; wenn alle oben sind, entfernen Sie die Abdeckung darüber, legen Sie den Hauptschalter um und schalten Sie einige Geräte aus."
+  "electric_panel": "Sicherungskasten: Auf dem Weg zum Bad, rechts vor der Tür, befindet sich der Kasten. Bei Stromausfall legen Sie heruntergefallene Schalter wieder nach oben; wenn alle oben sind, entfernen Sie die Abdeckung darüber, legen Sie den Hauptschalter um und schalten Sie einige Geräte aus.",
    "wifi": "WLAN: Router auf dem Schreibtisch am Fenster. Umdrehen, um SSID & Passwort zu sehen.\nNetz: Siehe Router-Etikett. Passwort: Siehe Router-Etikett.",
     "check_in": "Check-in ab 15:00.\nSprechanlagen-Code: C8.\nHaustür: 08:00–13:00 und 15:30–18:00.\nHausmeister: Paolo.\nHilfe? +39 335 5245756.",
     "check_out": "Vor der Abreise: Licht/AC aus, Fenster schließen, Schlüssel auf dem Tisch lassen, Tür sanft schließen.",
@@ -102,7 +102,7 @@
   "es": {
   "trash": "Basura: Utilice las bolsas de basura de la cocina, ciérrelas bien y llévelas a los contenedores del patio interior antes de la salida. Hacemos recogida selectiva (WeDoRecycling), por favor siga las indicaciones y no deje basura en la escalera ni delante de la puerta del apartamento.",
   "heating": "Calefacción: Use el mando del aire acondicionado, pulse MODE hasta ver el símbolo del sol y ajuste a 26 °C con potencia 1. Apague siempre el aire acondicionado cuando salga del apartamento.",
-  "electric_panel": "Cuadro eléctrico: Yendo hacia el baño, a la derecha antes de la puerta está el cuadro. Si se corta la luz, suba los interruptores bajados; si ya están arriba, quite el panel de arriba, suba el interruptor general y apague algunos aparatos."
+  "electric_panel": "Cuadro eléctrico: Yendo hacia el baño, a la derecha antes de la puerta está el cuadro. Si se corta la luz, suba los interruptores bajados; si ya están arriba, quite el panel de arriba, suba el interruptor general y apague algunos aparatos.",
     "wifi": "Wi-Fi: Router en el escritorio junto a la ventana. Gíralo para ver el SSID y la contraseña.\nRed: Ver etiqueta del router. Contraseña: Ver etiqueta del router.",
     "check_in": "Check-in desde las 15:00.\nCódigo del portero: C8.\nPuerta: 08:00–13:00 y 15:30–18:00.\nConserje: Paolo.\n¿Necesitas ayuda? +39 335 5245756.",
     "check_out": "Antes de salir: apaga luces/AC, cierra ventanas, deja las llaves en la mesa, cierra la puerta suavemente.",
