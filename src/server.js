@@ -559,7 +559,7 @@ function findAnswerByKeywords(question, answersForLang) {
     wifi: ["wifi", "wi fi", "wi-fi", "internet", "wireless", "password", "router", "wlan"],
     bathroom: ["bathroom", "toilet", "wc", "restroom", "bagno"],
     gas: ["gas", "stove", "hob", "cooktop", "fornello", "fornelli"],
-    AC: ["air conditioning", "aria condizionata", "clima", "aircon"],
+    ac: ["air conditioning", "aria condizionata", "clima", "aircon"],
     heating: ["heating", "riscaldamento", "radiatori", "termosifoni"],
     trash: ["trash", "garbage", "rubbish", "spazzatura", "immondizia", "bin"],
     transport: ["bus", "tram", "metro", "subway", "train", "transport", "taxi", "aeroporto", "airport", "stazione", "station"],
