@@ -600,7 +600,55 @@ function findAnswerByKeywords(question, answersForLang) {
  *   answer: "testo da mostrare all'ospite"
  * }
  */
-app.post("/api/guest-assistant", async (req, res) => {
+// Rileva in modo semplice la lingua dalla domanda
+function detectLanguageFromQuestion(question, supported = []) {
+  const text = (question || "").toLowerCase();
+  const langs = supported.length ? supported : ["it", "en", "fr", "de", "es"];
+
+  const scores = {};
+  for (const l of langs) scores[l] = 0;
+
+  const bump = (l, v) => {
+    if (!langs.includes(l)) return;
+    scores[l] = (scores[l] || 0) + v;
+  };
+
+  // caratteri accentati tipici
+  if (/[àèìòù]/.test(text)) bump("it", 2);
+  if (/[éàèùçôêîûïë]/.test(text)) bump("fr", 2);
+  if (/[ñáéíóúü]/.test(text)) bump("es", 2);
+  if (/[äöüß]/.test(text)) bump("de", 2);
+
+  // parole molto frequenti
+  const keywords = {
+    it: ["ciao", "non", "perché", "dove", "appartamento", "tassa di soggiorno", "grazie"],
+    en: ["hello", "hi ", "please", "where", "apartment", "city tax", "thank you"],
+    fr: ["bonjour", "merci", "combien", "appartement", "taxe de séjour"],
+    de: ["hallo", "danke", "wo ", "wohnung", "steuer"],
+    es: ["hola", "gracias", "dónde", "apartamento", "impuesto", "basura"]
+  };
+
+  for (const [lang, words] of Object.entries(keywords)) {
+    if (!langs.includes(lang)) continue;
+    for (const w of words) {
+      if (text.includes(w)) bump(lang, 1);
+    }
+  }
+
+  let bestLang = null;
+  let bestScore = 0;
+  for (const l of langs) {
+    const s = scores[l] || 0;
+    if (s > bestScore) {
+      bestScore = s;
+      bestLang = l;
+    }
+  }
+
+  if (!bestLang || bestScore === 0) return null;
+  return bestLang;
+}
+ app.post("/api/guest-assistant", async (req, res) => {
   try {
     const { apartment, lang, question } = req.body || {};
 
@@ -623,10 +671,19 @@ app.post("/api/guest-assistant", async (req, res) => {
       });
     }
 
-    const language = normalizeLang(lang, guide.languages);
+    // 🔑 1) prova a rilevare la lingua dal testo della domanda
+    const availableLangs = guide.languages || ["it", "en", "fr", "de", "es"];
+    const detectedFromQuestion = detectLanguageFromQuestion(question, availableLangs);
+
+    // 🔑 2) se la rilevazione fallisce, usa il lang passato da HostAway/front-end
+    const language = normalizeLang(
+      detectedFromQuestion || lang || "en",
+      availableLangs
+    );
+
     const answersForLang =
       (guide.answers && guide.answers[language]) ||
-      guide[language] ||   // fallback vecchia struttura
+      guide[language] ||   // fallback vecchia struttura (come Arenula)
       {};
 
     let intentKey = null;
@@ -653,12 +710,29 @@ app.post("/api/guest-assistant", async (req, res) => {
       }
     }
 
-    // 3) Se ANCORA non abbiamo match:
-    //    - segnaliamo noMatch = true (per HostAway)
-    //    - lasciamo comunque una frase generica per la guida web
+    // 3) Se ancora non abbiamo match: messaggio di fallback (per la guida web)
     if (!matched) {
-      answerText =
-        "I didn’t find a direct answer. Michele will reply to you personally as soon as possible or you can try one of the quick buttons in the guide.";
+      switch (language) {
+        case "it":
+          answerText =
+            "Non ho trovato una risposta diretta nella guida. Michele ti risponderà personalmente il prima possibile oppure puoi provare uno dei pulsanti rapidi.";
+          break;
+        case "fr":
+          answerText =
+            "Je n’ai pas trouvé de réponse directe dans le guide. Michele vous répondra personnellement dès que possible ou vous pouvez essayer l’un des boutons rapides.";
+          break;
+        case "de":
+          answerText =
+            "Ich habe im Guide keine direkte Antwort gefunden. Michele wird Ihnen so bald wie möglich persönlich antworten oder Sie probieren einen der Schnellknöpfe.";
+          break;
+        case "es":
+          answerText =
+            "No he encontrado una respuesta directa en la guía. Michele te responderá personalmente lo antes posible o puedes probar uno de los botones rápidos.";
+          break;
+        default:
+          answerText =
+            "I didn’t find a direct answer in the guide. Michele will reply to you personally as soon as possible or you can try one of the quick buttons.";
+      }
     }
 
     return res.json({
@@ -667,7 +741,7 @@ app.post("/api/guest-assistant", async (req, res) => {
       language,
       intent: matched ? intentKey : null,
       answer: answerText,
-      noMatch: !matched   // 👈 flag che useremo per NON rispondere da HostAway
+      noMatch: !matched
     });
   } catch (err) {
     console.error("❌ Errore /api/guest-assistant:", err);
