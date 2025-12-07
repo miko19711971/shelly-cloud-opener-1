@@ -600,54 +600,7 @@ function findAnswerByKeywords(question, answersForLang) {
  *   answer: "testo da mostrare all'ospite"
  * }
  */
-// Rileva in modo semplice la lingua dalla domanda
-function detectLanguageFromQuestion(question, supported = []) {
-  const text = (question || "").toLowerCase();
-  const langs = supported.length ? supported : ["it", "en", "fr", "de", "es"];
-
-  const scores = {};
-  for (const l of langs) scores[l] = 0;
-
-  const bump = (l, v) => {
-    if (!langs.includes(l)) return;
-    scores[l] = (scores[l] || 0) + v;
-  };
-
-  // caratteri accentati tipici
-  if (/[àèìòù]/.test(text)) bump("it", 2);
-  if (/[éàèùçôêîûïë]/.test(text)) bump("fr", 2);
-  if (/[ñáéíóúü]/.test(text)) bump("es", 2);
-  if (/[äöüß]/.test(text)) bump("de", 2);
-
-  // parole molto frequenti
-  const keywords = {
-    it: ["ciao", "non", "perché", "dove", "appartamento", "tassa di soggiorno", "grazie"],
-    en: ["hello", "hi ", "please", "where", "apartment", "city tax", "thank you"],
-    fr: ["bonjour", "merci", "combien", "appartement", "taxe de séjour"],
-    de: ["hallo", "danke", "wo ", "wohnung", "steuer"],
-    es: ["hola", "gracias", "dónde", "apartamento", "impuesto", "basura"]
-  };
-
-  for (const [lang, words] of Object.entries(keywords)) {
-    if (!langs.includes(lang)) continue;
-    for (const w of words) {
-      if (text.includes(w)) bump(lang, 1);
-    }
-  }
-
-  let bestLang = null;
-  let bestScore = 0;
-  for (const l of langs) {
-    const s = scores[l] || 0;
-    if (s > bestScore) {
-      bestScore = s;
-      bestLang = l;
-    }
-  }
-
-  if (!bestLang || bestScore === 0) return null;
-  return bestLang;
-}
+ 
   app.post("/api/guest-assistant", async (req, res) => {
   try {
     const { apartment, lang, question } = req.body || {};
