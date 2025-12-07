@@ -581,7 +581,6 @@ function findAnswerByKeywords(question, answersForLang) {
 
   return null;
 }
-
 /**
  * Endpoint API chiamato dalla Virtual Guide.
  *
@@ -601,7 +600,7 @@ function findAnswerByKeywords(question, answersForLang) {
  *   answer: "testo da mostrare all'ospite"
  * }
  */
- app.post("/api/guest-assistant", async (req, res) => {
+app.post("/api/guest-assistant", async (req, res) => {
   try {
     const { apartment, lang, question } = req.body || {};
 
@@ -632,41 +631,43 @@ function findAnswerByKeywords(question, answersForLang) {
 
     let intentKey = null;
     let answerText = null;
+    let matched = false;
 
-        // 1) (TEMP) salta il match "intents" se non abbiamo findBestIntent
+    // 1) (futuro) se un domani usi findBestIntent
     if (guide.intents && guide.intents[language] && typeof findBestIntent === "function") {
-      intentKey = findBestIntent(guide, language, question);
-    }
-    // 2) Se non abbiamo trovato nulla, prova le parole chiave globali
-     if (!answerText) {
-  const match = findAnswerByKeywords(question, answersForLang);
-  if (match) {
-    intentKey = match.intent;   // ✔ CORRETTO
-    answerText = match.answer;  // ✔ CORRETTO
-  }
-     }
-    // 3) Se ancora nulla, usa "services" o la prima chiave disponibile
-    if (!answerText) {
-      if (!intentKey && answersForLang.services) {
-        intentKey = "services";
-      } else if (!intentKey) {
-        const keys = Object.keys(answersForLang);
-        if (keys.length > 0) {
-          intentKey = keys[0];
-        }
+      const k = findBestIntent(guide, language, question);
+      if (k && answersForLang[k]) {
+        intentKey = k;
+        answerText = answersForLang[k];
+        matched = true;
       }
+    }
 
+    // 2) Se non abbiamo ancora match, usa le parole chiave globali
+    if (!matched) {
+      const match = findAnswerByKeywords(question, answersForLang);
+      if (match) {
+        intentKey = match.intent;
+        answerText = match.answer;
+        matched = true;
+      }
+    }
+
+    // 3) Se ANCORA non abbiamo match:
+    //    - segnaliamo noMatch = true (per HostAway)
+    //    - lasciamo comunque una frase generica per la guida web
+    if (!matched) {
       answerText =
-        (intentKey && answersForLang[intentKey]) ||
-        "I didn’t find a direct answer. Try one of the quick buttons in the guide.";
+        "I didn’t find a direct answer. Michele will reply to you personally as soon as possible or you can try one of the quick buttons in the guide.";
     }
 
     return res.json({
       ok: true,
       apartment: guide.apartment || aptKey,
       language,
-      intent: intentKey || null,
-      answer: answerText
+      intent: matched ? intentKey : null,
+      answer: answerText,
+      noMatch: !matched   // 👈 flag che useremo per NON rispondere da HostAway
     });
   } catch (err) {
     console.error("❌ Errore /api/guest-assistant:", err);
@@ -677,6 +678,7 @@ function findAnswerByKeywords(question, answersForLang) {
     });
   }
 });
+ 
  // ========= HOSTAWAY AI BRIDGE =========
 // Riceve JSON da HostAway e chiama il vero Guest Assistant
 app.post("/api/hostaway-ai-bridge", async (req, res) => {
