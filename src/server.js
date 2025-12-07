@@ -899,7 +899,7 @@ app.post("/hostaway-incoming", async (req, res) => {
     console.log("🔔 Hostaway message webhook:");
     console.log(JSON.stringify(req.body, null, 2));
 
-        const payload = req.body || {};
+    const payload = req.body || {};
 
     const listingId = payload.listingId || payload.listingMapId;
     const conversationId = payload.conversationId;
@@ -958,40 +958,35 @@ app.post("/hostaway-incoming", async (req, res) => {
     const name = guestName || "Guest";
     const email = guestEmail || "";
 
- // Fallback multi-lingua
-const FALLBACK_MESSAGES = {
-  en: "I'm sorry, I couldn't find an automatic answer to your question. Michele will reply to you personally as soon as possible.",
-  it: "Mi dispiace, non ho trovato una risposta automatica alla tua domanda. Michele ti risponderà personalmente il prima possibile.",
-  fr: "Je suis désolé, je n’ai pas trouvé de réponse automatique à votre question. Michele vous répondra personnellement dès que possible.",
-  de: "Es tut mir leid, ich habe keine automatische Antwort auf Ihre Frage gefunden. Michele wird Ihnen so schnell wie möglich persönlich antworten.",
-  es: "Lo siento, no he encontrado una respuesta automática a su pregunta. Michele le responderá personalmente lo antes posible."
-};
+    // 👉 Da ora: NESSUNA risposta automatica se la guida non trova un match
+    let aiReply = null;
+    let aiMatched = false;
 
-// 1) Chiamo la Virtual Guide interna
-let aiReply = FALLBACK_MESSAGES[langCode] || FALLBACK_MESSAGES.en;
+    try {
+      const gaResp = await axios.post(
+        `${req.protocol}://${req.get("host")}/api/guest-assistant`,
+        {
+          apartment: apartmentKey,
+          lang: langCode,
+          question: message
+        },
+        { timeout: 8000 }
+      );
 
-try {
-  const gaResp = await axios.post(
-    `${req.protocol}://${req.get("host")}/api/guest-assistant`,
-    {
-      apartment: apartmentKey,
-      lang: langCode,
-      question: message
-    },
-    { timeout: 8000 }
-  );
+      const data = gaResp.data || {};
+      if (data.ok && data.answer && !data.noMatch) {
+        aiReply = data.answer;
+        aiMatched = true;
+      } else {
+        console.log("⚠️ Nessun match diretto nella guida: nessuna risposta automatica verrà inviata.");
+      }
+    } catch (err) {
+      console.error("Errore Virtual Guide:", err.message);
+      // nessun fallback: risponderai tu a mano dalla dashboard
+    }
 
-  const data = gaResp.data || {};
-  if (data.ok && data.answer) {
-    aiReply = data.answer;
-  }
-} catch (err) {
-  console.error("Errore Virtual Guide:", err.message);
-  // aiReply resta il fallback
-}
-
-    // 2) Invio risposta nella chat Hostaway
-    if (HOSTAWAY_TOKEN && conversationId) {
+    // 2) Invio risposta nella chat Hostaway SOLO se abbiamo una risposta AI valida
+    if (aiReply && HOSTAWAY_TOKEN && conversationId) {
       try {
         const hostawayUrl = `https://api.hostaway.com/v1/conversations/${conversationId}/messages`;
         const hostawayBody = {
@@ -1015,13 +1010,11 @@ try {
         );
       }
     } else {
-      console.warn(
-        "⚠️ Nessun HOSTAWAY_TOKEN o conversationId: salto invio messaggio Hostaway"
-      );
+      console.log("ℹ️ Nessuna risposta AI da inviare in HostAway (aiReply vuota o mancano token/conversationId).");
     }
 
-    // 3) Email al guest + copia a te (se abbiamo l'email)
-    if (email) {
+    // 3) Email al guest SOLO se abbiamo una risposta AI valida
+    if (email && aiReply) {
       try {
         const subject = `NiceFlatInRome – ${apt}`;
         const htmlBody = `
@@ -1104,6 +1097,8 @@ try {
       } catch (err) {
         console.error("❌ Errore invio email automatica:", err.message);
       }
+    } else {
+      console.log("ℹ️ Nessuna email inviata (manca aiReply o indirizzo email).");
     }
 
     // Risposta JSON finale
@@ -1112,6 +1107,7 @@ try {
       apartment: apt,
       language: langCode,
       aiReply,
+      matched: aiMatched,
       guestName: name,
       guestEmail: email
     });
