@@ -956,7 +956,7 @@ app.post("/hostaway-incoming", async (req, res) => {
       payload.guestLocale ||
       "en";
 
-    const langCode = detectLangFromMessage(message, languageRaw);
+   
 
     // Controllo minimo: deve esserci almeno listingId e message
     if (!listingId || !message) {
