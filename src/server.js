@@ -735,18 +735,17 @@ app.post("/api/hostaway-ai-bridge", async (req, res) => {
     // 5) CHIAMO IL VERO GUEST ASSISTANT INTERNO
     const url = `${req.protocol}://${req.get("host")}/api/guest-assistant`;
 
-    const aiResponse = await axios.post(
-      url,
-      {
-        apartment,
-        language,
-        // Il Guest Assistant si aspetta "question"
-        question: message,
-        guestName,
-        source: "hostaway",
-      },
-      { timeout: 8000 }
-    );
+     const aiResponse = await axios.post(
+  `${req.protocol}://${req.get("host")}/api/guest-assistant`,
+  {
+    apartment,        // es. "arenula"
+    lang: language,   // 👈 importante: chiave "lang"
+    question: message,
+    guestName,
+    source: "hostaway",
+  },
+  { timeout: 8000 }
+);
 
     const data = aiResponse.data || {};
 
