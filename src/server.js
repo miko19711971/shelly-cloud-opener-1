@@ -539,7 +539,33 @@ function findAnswerByKeywords(question, answersForLang) {
   if (!text) return null;
 
   const words = text.split(" ");
+// ====== Riconoscimento lingua dal testo del messaggio ======
+function detectLangFromMessage(message, fallback = "en") {
+  const text = String(message || "").toLowerCase();
 
+  // Italiano
+  if (/ciao|non riesco|appartamento|rete|password|acqua calda|bagno|spazzatura/.test(text)) {
+    return "it";
+  }
+
+  // Spagnolo
+  if (/hola|calefaccion|calefacción|puedes|no consigo|apartamento|contraseña|contrasena/.test(text)) {
+    return "es";
+  }
+
+  // Francese
+  if (/bonjour|combien|sejour|séjour|appartement|chauffage|poubelle/.test(text)) {
+    return "fr";
+  }
+
+  // Tedesco
+  if (/hallo|guten tag|wohnung|heizung|mull|müll/.test(text)) {
+    return "de";
+  }
+
+  // Fallback: quello che arriva da HostAway (prime 2 lettere)
+  return String(fallback || "en").slice(0, 2).toLowerCase();
+}
   // match per token, NON per semplice substring (così "ac" non prende "accende")
   const hasToken = (syn) => {
     const s = String(syn || "").toLowerCase().trim();
