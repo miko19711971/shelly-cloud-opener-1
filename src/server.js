@@ -942,18 +942,21 @@ app.post("/hostaway-incoming", async (req, res) => {
       payload.email ||
       "";
 
-    const language =
-      payload.language ||
-      payload.locale ||
-      payload.guestLocale ||
-      "en";
-
-    // testo vero del messaggio del guest
+        // testo vero del messaggio del guest
     const message =
       payload.message ||
       payload.body ||
       (payload.communicationBody && payload.communicationBody.body) ||
       "";
+
+    // Lingua: partiamo da HostAway ma la correggiamo in base al testo
+    const languageRaw =
+      payload.language ||
+      payload.locale ||
+      payload.guestLocale ||
+      "en";
+
+    const langCode = detectLangFromMessage(message, languageRaw);
 
     // Controllo minimo: deve esserci almeno listingId e message
     if (!listingId || !message) {
