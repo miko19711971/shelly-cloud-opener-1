@@ -538,22 +538,42 @@ function findAnswerByKeywords(question, answersForLang) {
 
   if (!text) return null;
 
-  // Le chiavi devono corrispondere a quelle dei JSON (wifi, bathroom, gas, AC, transport, emergency, check_in, check_out, ecc.)
+  const words = text.split(" ");
+
+  // match per token, NON per semplice substring (così "ac" non prende "accende")
+  const hasToken = (syn) => {
+    const s = String(syn || "").toLowerCase().trim();
+    if (!s) return false;
+
+    // frasi con spazio: cerco nella stringa intera
+    if (s.includes(" ")) {
+      return text.includes(s);
+    }
+
+    // singola parola: match solo come token intero
+    return words.includes(s);
+  };
+
+  // Le chiavi devono corrispondere a quelle nei JSON "answers"
   const KEYWORDS = {
-    wifi: ["wifi", "wi fi", "internet", "wireless", "password"],
-    bathroom: ["bathroom", "toilet", "wc", "restroom"],
-    gas: ["gas", "stove", "hob", "cooktop", "fornello"],
-    AC: ["ac", "air conditioning", "aircon", "condizionata", "climate"],
-    transport: ["bus", "tram", "metro", "subway", "train", "transport", "taxi"],
-    emergency: ["emergency", "doctor", "hospital", "ambulance", "help"],
-    check_in: ["check in", "check-in", "arrival", "arrive", "come in", "access"],
-    check_out: ["check out", "checkout", "leave", "departure"],
-    water: ["water", "hot water", "shower"],
+    wifi: ["wifi", "wi fi", "wi-fi", "internet", "wireless", "password", "router", "wlan"],
+    bathroom: ["bathroom", "toilet", "wc", "restroom", "bagno"],
+    gas: ["gas", "stove", "hob", "cooktop", "fornello", "fornelli"],
+    AC: ["air conditioning", "aria condizionata", "clima", "aircon"],
+    heating: ["heating", "riscaldamento", "radiatori", "termosifoni"],
+    trash: ["trash", "garbage", "rubbish", "spazzatura", "immondizia", "bin"],
+    transport: ["bus", "tram", "metro", "subway", "train", "transport", "taxi", "aeroporto", "airport", "stazione", "station"],
+    emergency: ["emergency", "doctor", "hospital", "ambulance", "help", "emergenza"],
+    check_in: ["check in", "check-in", "checkin", "arrival", "arrive", "access", "ingresso"],
+    check_out: ["check out", "checkout", "leave", "departure", "partenza"],
+    water: ["water", "hot water", "shower", "acqua", "doccia"]
   };
 
   for (const [key, synonyms] of Object.entries(KEYWORDS)) {
+    if (!answersForLang[key]) continue; // se non esiste una risposta per quell'intent, salto
+
     for (const word of synonyms) {
-      if (text.includes(word) && answersForLang[key]) {
+      if (hasToken(word)) {
         return { intent: key, answer: answersForLang[key] };
       }
     }
