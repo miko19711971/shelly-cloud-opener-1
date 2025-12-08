@@ -1205,41 +1205,7 @@ if (aiReply) {
       <p>Un saluto da Michele e dal team NiceFlatInRome.</p>
     `;
 
-    // 3a) mail al guest (solo se HostAway ci passa l'indirizzo)
-    if (email) {
-      await axios.post(
-        `${MAILER_URL}?secret=${encodeURIComponent(MAIL_SHARED_SECRET)}`,
-        { to: email, subject, htmlBody },
-        { headers: { "Content-Type": "application/json" }, timeout: 10000 }
-      );
-      console.log("📧 Email automatica inviata al guest", email);
-    } else {
-      console.log("⚠️ Nessun indirizzo email guest nel payload: invio solo copia a Michele.");
-    }
-
-    // 3b) copia a te (sempre, così vedi SEMPRE la risposta AI)
-    await axios.post(
-      `${MAILER_URL}?secret=${encodeURIComponent(MAIL_SHARED_SECRET)}`,
-      {
-        to: "mikbondi@gmail.com",
-        subject: `Copia risposta al guest – ${apt}`,
-        htmlBody: `
-          <p>Hai inviato automaticamente questa risposta al guest:</p>
-          <p><strong>Guest:</strong> ${name} (${email || "email non disponibile dal webhook"})</p>
-          <p><strong>Domanda:</strong> ${message}</p>
-          <p><strong>Risposta inviata:</strong></p>
-          <p>${aiReply.replace(/\n/g, "<br>")}</p>
-        `
-      },
-      { headers: { "Content-Type": "application/json" }, timeout: 10000 }
-    );
-
-  } catch (err) {
-    console.error("❌ Errore invio email automatica:", err.message);
-  }
-} else {
-  console.log("ℹ️ Nessuna email inviata: aiReply vuota (guest-assistant non ha risposto).");
-}
+  
     // Risposta JSON finale
     return res.json({
       ok: true,
