@@ -1192,94 +1192,54 @@ if (data.ok && data.answer) {
       console.log("ℹ️ Nessuna risposta AI da inviare in HostAway (aiReply vuota o mancano token/conversationId).");
     }
 
-    // 3) Email al guest SOLO se abbiamo una risposta AI valida
-    if (email && aiReply) {
-      try {
-        const subject = `NiceFlatInRome – ${apt}`;
-        const htmlBody = `
-          <p>Ciao ${name},</p>
-          <p>${aiReply.replace(/\n/g, "<br>")}</p>
-          <p><strong>Guest question:</strong> ${message || ""}</p>
+    // 3) Email: se ho una risposta AI, mando SEMPRE una copia a Michele.
+// Se ho anche l'email del guest, la mando anche a lui.
+if (aiReply) {
+  try {
+    const subject = `NiceFlatInRome – ${apt}`;
+    const htmlBody = `
+      <p>Ciao ${name},</p>
+      <p>${aiReply.replace(/\n/g, "<br>")}</p>
+      <p><strong>Guest question:</strong> ${message || ""}</p>
+      ...
+      <p>Un saluto da Michele e dal team NiceFlatInRome.</p>
+    `;
 
-          <!-- ITALIANO -->
-          <p>
-            Se il problema non è risolto, contattami al
-            <strong>+39 335 5245 756 (Michele)</strong> oppure al
-            <strong>+39 347 784 7205 (Marco)</strong>, oppure via e-mail a
-            <a href="mailto:info@niceflatinrome.com">info@niceflatinrome.com</a>.
-          </p>
-
-          <!-- ENGLISH -->
-          <p>
-            If the problem is not solved, please contact me at
-            <strong>+39 335 5245 756 (Michele)</strong> or
-            <strong>+39 347 784 7205 (Marco)</strong>, or by e-mail at
-            <a href="mailto:info@niceflatinrome.com">info@niceflatinrome.com</a>.
-          </p>
-
-          <!-- FRANÇAIS -->
-          <p>
-            Si le problème n’est pas résolu, veuillez me contacter au
-            <strong>+39 335 5245 756 (Michele)</strong> ou au
-            <strong>+39 347 784 7205 (Marco)</strong>, ou par e-mail à
-            <a href="mailto:info@niceflatinrome.com">info@niceflatinrome.com</a>.
-          </p>
-
-          <!-- DEUTSCH -->
-          <p>
-            Wenn das Problem nicht gelöst ist, kontaktieren Sie mich bitte unter
-            <strong>+39 335 5245 756 (Michele)</strong> oder
-            <strong>+39 347 784 7205 (Marco)</strong> oder per E-Mail an
-            <a href="mailto:info@niceflatinrome.com">info@niceflatinrome.com</a>.
-          </p>
-
-          <!-- ESPAÑOL -->
-          <p>
-            Si el problema no está resuelto, por favor contáctame al
-            <strong>+39 335 5245 756 (Michele)</strong> o al
-            <strong>+39 347 784 7205 (Marco)</strong>, o por correo electrónico en
-            <a href="mailto:info@niceflatinrome.com">info@niceflatinrome.com</a>.
-          </p>
-
-          <p>Un saluto da Michele e dal team NiceFlatInRome.</p>
-        `;
-
-        // mail al guest
-        await axios.post(
-          `${MAILER_URL}?secret=${encodeURIComponent(MAIL_SHARED_SECRET)}`,
-          {
-            to: email,
-            subject,
-            htmlBody
-          },
-          { headers: { "Content-Type": "application/json" }, timeout: 10000 }
-        );
-
-        // copia a te
-        await axios.post(
-          `${MAILER_URL}?secret=${encodeURIComponent(MAIL_SHARED_SECRET)}`,
-          {
-            to: "mikbondi@gmail.com",
-            subject: `Copia risposta al guest – ${apt}`,
-            htmlBody: `
-              <p>Hai inviato automaticamente questa risposta al guest:</p>
-              <p><strong>Guest:</strong> ${name} (${email})</p>
-              <p><strong>Domanda:</strong> ${message}</p>
-              <p><strong>Risposta inviata:</strong></p>
-              <p>${aiReply.replace(/\n/g, "<br>")}</p>
-            `
-          },
-          { headers: { "Content-Type": "application/json" }, timeout: 10000 }
-        );
-
-        console.log("📧 Email automatica inviata a", email);
-      } catch (err) {
-        console.error("❌ Errore invio email automatica:", err.message);
-      }
+    // 3a) mail al guest (solo se HostAway ci passa l'indirizzo)
+    if (email) {
+      await axios.post(
+        `${MAILER_URL}?secret=${encodeURIComponent(MAIL_SHARED_SECRET)}`,
+        { to: email, subject, htmlBody },
+        { headers: { "Content-Type": "application/json" }, timeout: 10000 }
+      );
+      console.log("📧 Email automatica inviata al guest", email);
     } else {
-      console.log("ℹ️ Nessuna email inviata (manca aiReply o indirizzo email).");
+      console.log("⚠️ Nessun indirizzo email guest nel payload: invio solo copia a Michele.");
     }
 
+    // 3b) copia a te (sempre, così vedi SEMPRE la risposta AI)
+    await axios.post(
+      `${MAILER_URL}?secret=${encodeURIComponent(MAIL_SHARED_SECRET)}`,
+      {
+        to: "mikbondi@gmail.com",
+        subject: `Copia risposta al guest – ${apt}`,
+        htmlBody: `
+          <p>Hai inviato automaticamente questa risposta al guest:</p>
+          <p><strong>Guest:</strong> ${name} (${email || "email non disponibile dal webhook"})</p>
+          <p><strong>Domanda:</strong> ${message}</p>
+          <p><strong>Risposta inviata:</strong></p>
+          <p>${aiReply.replace(/\n/g, "<br>")}</p>
+        `
+      },
+      { headers: { "Content-Type": "application/json" }, timeout: 10000 }
+    );
+
+  } catch (err) {
+    console.error("❌ Errore invio email automatica:", err.message);
+  }
+} else {
+  console.log("ℹ️ Nessuna email inviata: aiReply vuota (guest-assistant non ha risposto).");
+}
     // Risposta JSON finale
     return res.json({
       ok: true,
