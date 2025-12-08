@@ -1093,11 +1093,16 @@ app.post("/hostaway-incoming", async (req, res) => {
       "";
 
     // Lingua: partiamo da HostAway ma la correggiamo in base al testo
-    const languageRaw =
-      payload.language ||
-      payload.locale ||
-      payload.guestLocale ||
-      "en";
+     const languageRaw =
+  payload.language ||
+  payload.locale ||
+  payload.guestLocale ||
+  "en";
+
+const langCode = detectLangFromMessage(message, languageRaw);
+// oppure, se vuoi solo il codice grezzo:
+// const langCode = String(languageRaw || "en").slice(0, 2).toLowerCase();
+    
 
    
 
