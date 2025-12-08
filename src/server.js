@@ -527,7 +527,6 @@ function normalizeLang(lang, availableFromJson) {
   if (known.includes(requested)) return requested;
   return fallback;
 }
-
 // 🔎 Match con parole chiave globali (vale per tutte le guide JSON)
 function findAnswerByKeywords(question, answersForLang) {
   const text = String(question || "")
@@ -539,6 +538,191 @@ function findAnswerByKeywords(question, answersForLang) {
   if (!text) return null;
 
   const words = text.split(" ");
+
+  // match per token, NON per semplice substring (così "ac" non prende "accende")
+  const hasToken = (syn) => {
+    const s = String(syn || "").toLowerCase().trim();
+    if (!s) return false;
+
+    // frasi con spazio: cerco nella stringa intera
+    if (s.includes(" ")) {
+      return text.includes(s);
+    }
+
+    // singola parola: match solo come token intero
+    return words.includes(s);
+  };
+
+  // Le chiavi devono corrispondere a quelle nei JSON "answers"
+  const KEYWORDS = {
+    // WIFI
+    wifi: [
+      // EN
+      "wifi","wi fi","wi-fi","internet","wireless","password","router","wlan","network","ssid",
+      // IT
+      "rete wifi","rete wi-fi","rete internet",
+      // ES
+      "red wifi","clave wifi","contraseña wifi","internet wifi",
+      // FR
+      "connexion wifi","connexion wi-fi","reseau wifi","mot de passe wifi",
+      // DE
+      "wlan verbindung","w-lan","wlan passwort","internetverbindung"
+    ],
+
+    // TRASH / SPAZZATURA
+    trash: [
+      // EN
+      "trash","garbage","rubbish","waste","trashcan","trash can","garbage can","trash bin","garbage bin","rubbish bin","recycling",
+      // IT
+      "spazzatura","immondizia","rifiuti","pattumiera","bidone","cestino","sacchetto","sacchetto della spazzatura",
+      // ES
+      "basura","residuos","papelera","cubo","contenedor","bolsa de basura",
+      // FR
+      "poubelle","ordures","dechets","sac poubelle","tri selectif",
+      // DE
+      "müll","abfall","mülleimer","mülltonne","abfalleimer","restmüll"
+    ],
+
+    // HEATING / RISCALDAMENTO
+    heating: [
+      // EN
+      "heating","heater","radiator","central heating","heating system","warm air",
+      // IT
+      "riscaldamento","radiatori","termosifoni","caloriferi","impianto di riscaldamento","termosifone",
+      // ES
+      "calefaccion","radiador","calor","calefaccion central","caldera",
+      // FR
+      "chauffage","radiateur","chauffage central",
+      // DE
+      "heizung","heizkörper","heizanlage","wärme"
+    ],
+
+    // GAS / FORNELLO
+    gas: [
+      // EN
+      "gas","gas stove","stove","hob","cooktop","burner","cooker","gas cooker","gas on","gas off","flame",
+      // IT
+      "fornello","fornelli","piano cottura","fuochi","manopola gas","rubinetto gas","valvola gas","accendere il gas",
+      // ES
+      "cocina de gas","fogon","hornilla","fuego","llama gas","encender gas",
+      // FR
+      "gaziniere","cuisiniere gaz","bruleur","feu gaz",
+      // DE
+      "gasherd","kochfeld","brenner","gasflamme"
+    ],
+
+    // AC / ARIA CONDIZIONATA
+    AC: [
+      // EN
+      "air conditioning","air conditioner","ac","a/c","aircon","cooling","cold air","fan mode",
+      // IT
+      "aria condizionata","clima","condizionatore","aria fredda","aria calda","pompa di calore",
+      // ES
+      "aire acondicionado","ac","aire frio","aire caliente",
+      // FR
+      "clim","climatisation","air climatise",
+      // DE
+      "klima","klimaanlage","klimaanlage","klimaanlage kalt","klimaanlage warm"
+    ],
+
+    // BATHROOM / BAGNO
+    bathroom: [
+      // EN
+      "bathroom","toilet","wc","restroom","toilette","bath","shower","lavatory","washroom",
+      // IT
+      "bagno","wc","doccia","toilette","servizi","servizio",
+      // ES
+      "bano","baño","aseo","ducha","servicio",
+      // FR
+      "salle de bain","salle de bains","toilettes","wc","douche",
+      // DE
+      "bad","badezimmer","wc","toilette","dusche"
+    ],
+
+    // TRANSPORT / TRASPORTI
+    transport: [
+      // EN
+      "bus","tram","tramway","metro","subway","underground","train","public transport","transport","taxi","airport","station","shuttle","airport transfer",
+      // IT
+      "autobus","tram","tramvia","metropolitana","treno","trasporti","fermata","capolinea","aeroporto","stazione",
+      // ES
+      "autobus","bus","metro","tranvia","parada","estacion","taxi","aeropuerto",
+      // FR
+      "bus","tramway","metro","gare","station","aeroport","taxi",
+      // DE
+      "bus","straßenbahn","bahn","ubahn","s-bahn","haltestelle","flughafen","bahnhof"
+    ],
+
+    // EMERGENCY / EMERGENZE
+    emergency: [
+      // EN
+      "emergency","urgent","urgency","er","a&e","emergency room","hospital","doctor","ambulance","help",
+      // IT
+      "emergenza","urgenza","pronto soccorso","ospedale","medico","ambulanza","aiuto",
+      // ES
+      "emergencia","urgencias","hospital","ambulancia","ayuda",
+      // FR
+      "urgence","urgences","hopital","ambulance","besoin d aide",
+      // DE
+      "notfall","notruf","krankenhaus","rettungswagen","ambulanz","hilfe"
+    ],
+
+    // CHECK-IN
+    check_in: [
+      // EN
+      "check in","check-in","checkin","arrival","arrive","check in time","self check in","early check in","keys","key collection","access",
+      // IT
+      "check in","arrivo","orario di arrivo","accesso","ingresso","codice portone","ritiro chiavi",
+      // ES
+      "check in","llegada","hora de llegada","entrada","codigo puerta",
+      // FR
+      "check in","arrivee","heure d arrivee","entree","code porte",
+      // DE
+      "check in","ankunft","ankunftszeit","einchecken","zugang","türcode"
+    ],
+
+    // CHECK-OUT
+    check_out: [
+      // EN
+      "check out","check-out","checkout","leave","departure","departure time","check out time","late check out",
+      // IT
+      "check out","uscita","partenza","orario di uscita","late check out","rilascio appartamento",
+      // ES
+      "check out","salida","hora de salida","dejar apartamento","late check out",
+      // FR
+      "check out","depart","heure de depart","sortie","late check out",
+      // DE
+      "check out","abreise","auschecken","abfahrtszeit","wohnung verlassen","spater check out"
+    ],
+
+    // WATER / ACQUA
+    water: [
+      // EN
+      "water","hot water","cold water","no water","tap water","water pressure","boiler","water heater","shower water",
+      // IT
+      "acqua","acqua calda","acqua fredda","manca acqua","senza acqua","pressione acqua","caldaia","scaldabagno","rubinetto","doccia senza acqua",
+      // ES
+      "agua","agua caliente","agua fria","sin agua","ducha sin agua","presion agua","termo","calentador",
+      // FR
+      "eau","eau chaude","eau froide","pas d eau","pression eau","chauffe eau","robinet",
+      // DE
+      "wasser","warmwasser","kaltwasser","kein wasser","wasserdruck","boiler","wasserboiler","durchlauferhitzer"
+    ]
+  };
+
+  for (const [key, synonyms] of Object.entries(KEYWORDS)) {
+    if (!answersForLang[key]) continue;
+
+    for (const word of synonyms) {
+      if (hasToken(word)) {
+        return { intent: key, answer: answersForLang[key] };
+      }
+    }
+  }
+
+  return null;
+}
+
 // ====== Riconoscimento lingua dal testo del messaggio ======
 function detectLangFromMessage(message, fallback = "en") {
   const text = String(message || "").toLowerCase();
@@ -563,192 +747,8 @@ function detectLangFromMessage(message, fallback = "en") {
     return "de";
   }
 
-  // Fallback: quello che arriva da HostAway (prime 2 lettere)
+  // Fallback
   return String(fallback || "en").slice(0, 2).toLowerCase();
-}
-  // match per token, NON per semplice substring (così "ac" non prende "accende")
-  const hasToken = (syn) => {
-    const s = String(syn || "").toLowerCase().trim();
-    if (!s) return false;
-
-    // frasi con spazio: cerco nella stringa intera
-    if (s.includes(" ")) {
-      return text.includes(s);
-    }
-
-    // singola parola: match solo come token intero
-    return words.includes(s);
-  };
-
-  // Le chiavi devono corrispondere a quelle nei JSON "answers"
-  const KEYWORDS = {
-    // WIFI
-wifi: [
-  // EN
-  "wifi","wi fi","wi-fi","internet","wireless","password","router","wlan","network","ssid",
-  // IT
-  "rete wifi","rete wi-fi","rete internet",
-  // ES
-  "red wifi","clave wifi","contraseña wifi","internet wifi",
-  // FR
-  "connexion wifi","connexion wi-fi","reseau wifi","mot de passe wifi",
-  // DE
-  "wlan verbindung","w-lan","wlan passwort","internetverbindung"
-],
-
-// TRASH / SPAZZATURA
-trash: [
-  // EN
-  "trash","garbage","rubbish","waste","trashcan","trash can","garbage can","trash bin","garbage bin","rubbish bin","recycling",
-  // IT
-  "spazzatura","immondizia","rifiuti","pattumiera","bidone","cestino","sacchetto","sacchetto della spazzatura",
-  // ES
-  "basura","residuos","papelera","cubo","contenedor","bolsa de basura",
-  // FR
-  "poubelle","ordures","dechets","sac poubelle","tri selectif",
-  // DE
-  "müll","abfall","mülleimer","mülltonne","abfalleimer","restmüll"
-],
-
-// HEATING / RISCALDAMENTO
-heating: [
-  // EN
-  "heating","heater","radiator","central heating","heating system","warm air",
-  // IT
-  "riscaldamento","radiatori","termosifoni","caloriferi","impianto di riscaldamento","termosifone",
-  // ES
-  "calefaccion","radiador","calor","calefaccion central","caldera",
-  // FR
-  "chauffage","radiateur","chauffage central",
-  // DE
-  "heizung","heizkörper","heizanlage","wärme"
-],
-
-// GAS / FORNELLO
-gas: [
-  // EN
-  "gas","gas stove","stove","hob","cooktop","burner","cooker","gas cooker","gas on","gas off","flame",
-  // IT
-  "fornello","fornelli","piano cottura","fuochi","manopola gas","rubinetto gas","valvola gas","accendere il gas",
-  // ES
-  "cocina de gas","fogon","hornilla","fuego","llama gas","encender gas",
-  // FR
-  "gaziniere","cuisiniere gaz","bruleur","feu gaz",
-  // DE
-  "gasherd","kochfeld","brenner","gasflamme"
-],
-
-// AC / ARIA CONDIZIONATA
-AC: [
-  // EN
-  "air conditioning","air conditioner","ac","a/c","aircon","cooling","cold air","fan mode",
-  // IT
-  "aria condizionata","clima","condizionatore","aria fredda","aria calda","pompa di calore",
-  // ES
-  "aire acondicionado","ac","aire frio","aire caliente",
-  // FR
-  "clim","climatisation","air climatise",
-  // DE
-  "klima","klimaanlage","klimaanlage","klimaanlage kalt","klimaanlage warm"
-],
-
-// BATHROOM / BAGNO
-bathroom: [
-  // EN
-  "bathroom","toilet","wc","restroom","toilette","bath","shower","lavatory","washroom",
-  // IT
-  "bagno","wc","doccia","toilette","servizi","servizio",
-  // ES
-  "bano","baño","aseo","ducha","servicio",
-  // FR
-  "salle de bain","salle de bains","toilettes","wc","douche",
-  // DE
-  "bad","badezimmer","wc","toilette","dusche"
-],
-
-// TRANSPORT / TRASPORTI
-transport: [
-  // EN
-  "bus","tram","tramway","metro","subway","underground","train","public transport","transport","taxi","airport","station","shuttle","airport transfer",
-  // IT
-  "autobus","tram","tramvia","metropolitana","treno","trasporti","fermata","capolinea","aeroporto","stazione",
-  // ES
-  "autobus","bus","metro","tranvia","parada","estacion","taxi","aeropuerto",
-  // FR
-  "bus","tramway","metro","gare","station","aeroport","taxi",
-  // DE
-  "bus","straßenbahn","bahn","ubahn","s-bahn","haltestelle","flughafen","bahnhof"
-],
-
-// EMERGENCY / EMERGENZE
-emergency: [
-  // EN
-  "emergency","urgent","urgency","er","a&e","emergency room","hospital","doctor","ambulance","help",
-  // IT
-  "emergenza","urgenza","pronto soccorso","ospedale","medico","ambulanza","aiuto",
-  // ES
-  "emergencia","urgencias","hospital","ambulancia","ayuda",
-  // FR
-  "urgence","urgences","hopital","ambulance","besoin d aide",
-  // DE
-  "notfall","notruf","krankenhaus","rettungswagen","ambulanz","hilfe"
-],
-
-// CHECK-IN
-check_in: [
-  // EN
-  "check in","check-in","checkin","arrival","arrive","check in time","self check in","early check in","keys","key collection","access",
-  // IT
-  "check in","arrivo","orario di arrivo","accesso","ingresso","codice portone","ritiro chiavi",
-  // ES
-  "check in","llegada","hora de llegada","entrada","codigo puerta",
-  // FR
-  "check in","arrivee","heure d arrivee","entree","code porte",
-  // DE
-  "check in","ankunft","ankunftszeit","einchecken","zugang","türcode"
-],
-
-// CHECK-OUT
-check_out: [
-  // EN
-  "check out","check-out","checkout","leave","departure","departure time","check out time","late check out",
-  // IT
-  "check out","uscita","partenza","orario di uscita","late check out","rilascio appartamento",
-  // ES
-  "check out","salida","hora de salida","dejar apartamento","late check out",
-  // FR
-  "check out","depart","heure de depart","sortie","late check out",
-  // DE
-  "check out","abreise","auschecken","abfahrtszeit","wohnung verlassen","spater check out"
-],
-
-// WATER / ACQUA
-water: [
-  // EN
-  "water","hot water","cold water","no water","tap water","water pressure","boiler","water heater","shower water",
-  // IT
-  "acqua","acqua calda","acqua fredda","manca acqua","senza acqua","pressione acqua","caldaia","scaldabagno","rubinetto","doccia senza acqua",
-  // ES
-  "agua","agua caliente","agua fria","sin agua","ducha sin agua","presion agua","termo","calentador",
-  // FR
-  "eau","eau chaude","eau froide","pas d eau","pression eau","chauffe eau","robinet",
-  // DE
-  "wasser","warmwasser","kaltwasser","kein wasser","wasserdruck","boiler","wasserboiler","durchlauferhitzer"
-]
-  };
-    
-
-  for (const [key, synonyms] of Object.entries(KEYWORDS)) {
-    if (!answersForLang[key]) continue; // se non esiste una risposta per quell'intent, salto
-
-    for (const word of synonyms) {
-      if (hasToken(word)) {
-        return { intent: key, answer: answersForLang[key] };
-      }
-    }
-  }
-
-  return null;
 }
 /**
  * Endpoint API chiamato dalla Virtual Guide.
