@@ -1150,13 +1150,15 @@ const langCode = detectLangFromMessage(message, languageRaw);
         { timeout: 8000 }
       );
 
-      const data = gaResp.data || {};
-      if (data.ok && data.answer && !data.noMatch) {
-        aiReply = data.answer;
-        aiMatched = true;
-      } else {
-        console.log("⚠️ Nessun match diretto nella guida: nessuna risposta automatica verrà inviata.");
-      }
+       const data = gaResp.data || {};
+
+// ✅ Come prima: se il guest-assistant restituisce un answer, lo usiamo sempre
+if (data.ok && data.answer) {
+  aiReply = data.answer;
+  aiMatched = !data.noMatch;   // solo info per i log
+} else {
+  console.log("⚠️ guest-assistant senza risposta valida:", data);
+}
     } catch (err) {
       console.error("Errore Virtual Guide:", err.message);
       // nessun fallback: risponderai tu a mano dalla dashboard
