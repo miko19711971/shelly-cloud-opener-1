@@ -1187,12 +1187,16 @@ if (data.ok && data.answer) {
       // nessun fallback: risponderai tu a mano dalla dashboard
     }
 
-    // 2) Invio risposta nella chat Hostaway SOLO se abbiamo una risposta AI valida
+     // 2) Invio risposta nella chat Hostaway SOLO se abbiamo una risposta AI valida
     if (aiReply && HOSTAWAY_TOKEN && conversationId) {
+      // aggiungo il saluto personalizzato
+      const greeting = makeGreeting(langCode, name);
+      const fullReply = `${greeting}\n\n${aiReply}`;
+
       try {
         const hostawayUrl = `https://api.hostaway.com/v1/conversations/${conversationId}/messages`;
         const hostawayBody = {
-          body: aiReply,
+          body: fullReply,
           communicationType: "email"
         };
 
