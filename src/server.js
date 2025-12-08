@@ -1131,7 +1131,7 @@ const langCode = detectLangFromMessage(message, languageRaw);
     };
     const apartmentKey = LISTING_TO_APARTMENT[String(listingId)] || "arenula";
 
-    const langCode = String(language || "en").slice(0, 2).toLowerCase();
+     
     const name = guestName || "Guest";
     const email = guestEmail || "";
 
