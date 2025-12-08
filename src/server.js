@@ -536,21 +536,16 @@ function normalizeNoAccents(str) {
     .replace(/\s+/g, " ")
     .trim();
 }
-// 🔎 Match con parole chiave globali (vale per tutte le guide JSON)
+ // 🔎 Match con parole chiave globali (vale per tutte le guide JSON)
 function findAnswerByKeywords(question, answersForLang) {
-  const text = String(question || "")
-    .toLowerCase()
-    .replace(/[^\p{L}\p{N}\s]/gu, " ")
-    .replace(/\s+/g, " ")
-    .trim();
-
+  const text = normalizeNoAccents(question);
   if (!text) return null;
 
   const words = text.split(" ");
 
   // match per token, NON per semplice substring (così "ac" non prende "accende")
   const hasToken = (syn) => {
-    const s = String(syn || "").toLowerCase().trim();
+    const s = normalizeNoAccents(syn);
     if (!s) return false;
 
     // frasi con spazio: cerco nella stringa intera
@@ -561,6 +556,7 @@ function findAnswerByKeywords(question, answersForLang) {
     // singola parola: match solo come token intero
     return words.includes(s);
   };
+  // Le chiavi devono corrispondere a quelle nei JSON "answers"
 
   // Le chiavi devono corrispondere a quelle nei JSON "answers"
   const KEYWORDS = {
