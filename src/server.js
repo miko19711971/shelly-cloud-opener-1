@@ -1194,16 +1194,41 @@ if (data.ok && data.answer) {
 
     // 3) Email: se ho una risposta AI, mando SEMPRE una copia a Michele.
 // Se ho anche l'email del guest, la mando anche a lui.
-if (aiReply) {
+ if (aiReply) {
   try {
     const subject = `NiceFlatInRome – ${apt}`;
     const htmlBody = `
       <p>Ciao ${name},</p>
       <p>${aiReply.replace(/\n/g, "<br>")}</p>
       <p><strong>Guest question:</strong> ${message || ""}</p>
-      ...
       <p>Un saluto da Michele e dal team NiceFlatInRome.</p>
+    `;
+
+    // Copia la risposta anche via email a Michele
+    await axios.post(
+      `${MAILER_URL}?secret=${encodeURIComponent(MAIL_SHARED_SECRET)}`,
+      {
+        to: "mikbondi@gmail.com",
+        subject: `Copia risposta guest – ${apt}`,
+        htmlBody
+      },
+      { headers: { "Content-Type": "application/json" }, timeout: 10000 }
+    );
+
+    // Invia al guest solo se l’email è presente
+    if (email) {
+      await axios.post(
+        `${MAILER_URL}?secret=${encodeURIComponent(MAIL_SHARED_SECRET)}`,
+        { to: email, subject, htmlBody },
+        { headers: { "Content-Type": "application/json" }, timeout: 10000 }
+      );
     }
+
+    console.log("📧 Email inviata a guest e copia a Michele");
+  } catch (err) {
+    console.error("❌ Errore invio email:", err.message);
+  }
+}
 
   
     // Risposta JSON finale
