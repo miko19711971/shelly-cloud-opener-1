@@ -1164,14 +1164,16 @@ const langCode = detectLangFromMessage(message, languageRaw);
 
     try {
       const gaResp = await axios.post(
-        `${req.protocol}://${req.get("host")}/api/guest-assistant`,
-        {
-          apartment: apartmentKey,
-          lang: langCode,
-          question: message
-        },
-        { timeout: 8000 }
-      );
+  `${req.protocol}://${req.get("host")}/api/guest-assistant`,
+  {
+    apartment: apartmentKey,
+    lang: langCode,
+    question: message,
+    guestName: name,          // 👈 qui passiamo il nome reale
+    source: "hostaway"        // opzionale, solo per log
+  },
+  { timeout: 8000 }
+);
 
        const data = gaResp.data || {};
 
