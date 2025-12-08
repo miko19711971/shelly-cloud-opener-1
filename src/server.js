@@ -1203,7 +1203,7 @@ if (aiReply) {
       <p><strong>Guest question:</strong> ${message || ""}</p>
       ...
       <p>Un saluto da Michele e dal team NiceFlatInRome.</p>
-    `;
+    `}
 
   
     // Risposta JSON finale
