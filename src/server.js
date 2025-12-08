@@ -735,7 +735,7 @@ water: [
   // DE
   "wasser","warmwasser","kaltwasser","kein wasser","wasserdruck","boiler","wasserboiler","durchlauferhitzer"
 ]
-  },
+  };
     
 
   for (const [key, synonyms] of Object.entries(KEYWORDS)) {
