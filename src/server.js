@@ -755,6 +755,24 @@ function detectLangFromMessage(message, fallback = "en") {
   // Fallback
   return String(fallback || "en").slice(0, 2).toLowerCase();
 }
+// Saluto in base alla lingua
+function makeGreeting(lang, name) {
+  const n = name || "Guest";
+  const code = String(lang || "en").slice(0, 2).toLowerCase();
+
+  switch (code) {
+    case "it":
+      return `Caro ${n},`;
+    case "es":
+      return `Hola ${n},`;
+    case "fr":
+      return `Bonjour ${n},`;
+    case "de":
+      return `Hallo ${n},`;
+    default:
+      return `Hi ${n},`;
+  }
+}
 /**
  * Endpoint API chiamato dalla Virtual Guide.
  *
