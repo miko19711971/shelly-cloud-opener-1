@@ -1219,18 +1219,18 @@ if (data.ok && data.answer) {
       console.log("ℹ️ Nessuna risposta AI da inviare in HostAway (aiReply vuota o mancano token/conversationId).");
     }
 
-    // 3) Email: se ho una risposta AI, mando SEMPRE una copia a Michele.
-// Se ho anche l'email del guest, la mando anche a lui.
- if (aiReply) {
-  try {
-    const subject = `NiceFlatInRome – ${apt}`;
-    const htmlBody = `
-      <p>Ciao ${name},</p>
-      <p>${aiReply.replace(/\n/g, "<br>")}</p>
-      <p><strong>Guest question:</strong> ${message || ""}</p>
-      <p>Un saluto da Michele e dal team NiceFlatInRome.</p>
-    `;
-
+        // 3) Email: se ho una risposta AI, mando SEMPRE una copia a Michele.
+    // Se ho anche l'email del guest, la mando anche a lui.
+    if (aiReply) {
+      try {
+        const greeting = makeGreeting(langCode, name);
+        const subject = `NiceFlatInRome – ${apt}`;
+        const htmlBody = `
+          <p>${greeting}</p>
+          <p>${aiReply.replace(/\n/g, "<br>")}</p>
+          <p><strong>Guest question:</strong> ${message || ""}</p>
+          <p>Un saluto da Michele e dal team NiceFlatInRome.</p>
+        `;
     // Copia la risposta anche via email a Michele
     await axios.post(
       `${MAILER_URL}?secret=${encodeURIComponent(MAIL_SHARED_SECRET)}`,
