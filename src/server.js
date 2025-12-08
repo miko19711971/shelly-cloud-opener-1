@@ -527,6 +527,15 @@ function normalizeLang(lang, availableFromJson) {
   if (known.includes(requested)) return requested;
   return fallback;
 }
+function normalizeNoAccents(str) {
+  return String(str || "")
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/\p{Diacritic}/gu, "")   // toglie gli accenti: calefacción -> calefaccion
+    .replace(/[^\p{L}\p{N}\s]/gu, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
 // 🔎 Match con parole chiave globali (vale per tutte le guide JSON)
 function findAnswerByKeywords(question, answersForLang) {
   const text = String(question || "")
