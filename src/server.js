@@ -1092,7 +1092,14 @@ app.post("/hostaway-incoming", async (req, res) => {
     console.log(JSON.stringify(req.body, null, 2));
 
     const payload = req.body || {};
-
+console.log("🔍 Name fields in payload:", {
+  guestName: payload.guestName,
+  guest_first_name: payload.guest_first_name,
+  firstName: payload.firstName,
+  guestFullName: payload.guestFullName,
+  travellerName: payload.travellerName,
+  contactName: payload.contactName
+});
     const listingId = payload.listingId || payload.listingMapId;
     const conversationId = payload.conversationId;
 
