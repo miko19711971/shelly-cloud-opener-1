@@ -146,4 +146,43 @@
       "receipt_rental": "Recibo de estancia: podemos emitir un recibo con tu nombre, fechas e importe total pagado.",
       "receipt_city_tax": "Recibo de tasa turística: disponible bajo petición después del pago (online o en efectivo)."
     },
+        "de": {
+      "trash": "Müll: Bitte verwenden Sie die Müllbeutel in der Küche, verschließen Sie sie gut und bringen Sie sie zu den Containern, die sich etwa 50 Meter links befinden, wenn Sie das Gebäude verlassen. Wir trennen den Müll (WeDoRecycling), daher bitten wir Sie, die Hinweise zu beachten und keinen Müll im Treppenhaus oder vor der Wohnungstür zu lassen.",
+      "heating": "Heizung: Nutzen Sie die Fernbedienung der Klimaanlage, drücken Sie MODE, bis das Sonnensymbol erscheint, und stellen Sie 26 °C mit Leistungsstufe 1 ein. Schalten Sie das Gerät immer aus, wenn Sie die Wohnung verlassen.",
+      "electric_panel": "Sicherungskasten: Er befindet sich auf der linken Seite, wenn Sie von innen auf die Wohnungstür schauen. Bei Stromausfall legen Sie heruntergefallene Schalter wieder nach oben und schalten Sie ein oder mehrere Geräte aus.",
+      "wifi": "WLAN: Der Router steht auf dem Schreibtisch am Fenster. Drehen Sie ihn, um SSID und Passwort auf dem Etikett zu lesen.\nNetz: siehe Router-Etikett. Passwort: siehe Router-Etikett.",
+      "check_in": "Check-in ab 15:00.\nSprechanlage: Int. 16.\nHaustürcode: 7171 + Schlüsselsymbol.\nHilfe? +39 335 5245756.",
+      "check_out": "Vor der Abreise: Licht und Klimaanlage ausschalten, Fenster schließen, Schlüssel auf dem Tisch lassen und die Tür sanft schließen, dabei prüfen, dass sie richtig zu ist.",
+      "water": "Leitungswasser ist trinkbar. Warmwasser ist immer verfügbar.",
+      "AC": "Bitte schalten Sie die Klimaanlage aus, wenn Sie die Wohnung verlassen.",
+      "bathroom": "Bad: Toilettenpapier, Handseife, Badematte, Föhn.\nHandtücher pro Gast: 1 großes + 1 mittleres Handtuch. Das Bett ist bei Ankunft bereits gemacht.",
+      "gas": "Küche: Die Wohnung hat kein Gas, sondern ein Elektrokochfeld. Bitte entfernen Sie vor dem Verlassen alle Töpfe und Pfannen von den Kochplatten, aus Sicherheitsgründen.",
+      "building": "Sprechanlage: Int. 16.\nAufzug: Bitte öffnen und schließen Sie die Türen beim Ein- und Aussteigen immer manuell. Der Aufzug fährt bis in den 4. Stock; wenn Sie aussteigen, liegt Ihre Wohnung links.",
+      "eat": "Restaurants: Bitte sehen Sie im Guide nach, den ich Ihnen per E-Mail geschickt habe. Öffnen Sie den Link unter dem Namen 'Virtual Tour Guide'.",
+      "drink": "Etwas trinken: Caffè Camerino (Largo Arenula 30); Irish Pub an der Piazza/Largo Argentina; Modius Radisson Rooftop.",
+      "shop": "Einkaufen: siehe den per E-Mail gesendeten Guide ('Virtual Tour Guide').",
+      "visit": "Zu Fuß erreichbar: Kolosseum (~4 Min), Forum Romanum (~5 Min), Piazza Venezia (~7 Min) und San Pietro in Vincoli mit Michelangelos Moses (~4 Min).",
+      "experience": "Abendliche Erlebnisse: siehe den Guide, den ich Ihnen per E-Mail geschickt habe ('Virtual Tour Guide').",
+      "day_trips": "Tagesausflüge: Ostia Antica (~40 Min); Tivoli (Villa d’Este & Villa Adriana ~1 Std.); Castelli Romani.",
+      "transport": "Verkehr:\nVon Fiumicino: Zug bis Bahnhof Termini, dann U-Bahn Linie B bis Cavour. Überqueren Sie die Straße, dort finden Sie die Via Leonina direkt darunter.\nVon Ciampino: Terravision-Bus oder Taxi.",
+      "services": "Dienstleistungen in der Umgebung: Wäscherei, Post, Apotheke, Bank, Reisebüro und weitere Geschäfte im Viertel.",
+      "emergency": "Notfälle: EU-Notruf 112 • Polizei 113 • Rettung 118 • Feuerwehr 115 • Englischsprachiger Arzt +39 06 488 2371 • Tierarzt 24h +39 06 660 681",
+      "tickets_events": "Tickets & Events — Rom:\nTicketOne (Konzerte, Theater, Sport) https://www.ticketone.it/en/\nAS Roma https://www.asroma.com/en/tickets\nSS Lazio https://sslazio.it/en/tickets",
+      "museums_sites": "Museen & Sites — Rom:\nKolosseum, Forum & Palatin https://colosseo.it/en\nVatikanische Museen https://tickets.museivaticani.va/\nMuseen von Rom https://www.museiincomuneroma.it/en",
+      "exhibitions": "Ausstellungen — Rom:\nMusei in Comune https://www.museiincomuneroma.it/en/exhibitions\nScuderie del Quirinale https://www.scuderiequirinale.it/\nMAXXI https://www.maxxi.art/en/",
+      "house_rules": "Hausordnung: Bitte respektieren Sie die Nachbarn, keine Partys, keine laute Musik nach 22:00 Uhr, Rauchen in der Wohnung ist verboten. Wenn Sie am Fenster rauchen, werfen Sie keine Zigarettenstummel hinaus.",
+      "laundry": "Wäsche: Sie können die Waschmaschine in der Wohnung benutzen oder mich nach einem Waschsalon in der Nähe fragen.",
+      "wifi_troubleshooting": "WLAN funktioniert nicht: 1) Prüfen Sie, ob der Router eingeschaltet ist (Lämpchen ON). 2) Stecker 30 Sekunden ziehen und wieder einstecken. 3) Netz und Passwort kontrollieren. Wenn es dann immer noch nicht funktioniert, schreiben Sie mir.",
+      "late_checkout_policy": "Später Check-out: Standardzeit 11:00. Eine Verlängerung ist nur möglich, wenn keine Anreise am selben Tag erfolgt. Fragen Sie immer vorher nach einer Bestätigung.",
+      "luggage_storage": "Gepäckaufbewahrung: möglich, wenn der Reinigungsplan es zulässt. Schreiben Sie mir, dann bestätige ich oder empfehle eine Gepäckaufbewahrung in der Nähe.",
+      "id_documents": "Ausweisdokumente: Nach italienischem Recht müssen alle Gäste registriert werden (Ausweis oder Reisepass für jede Person).",
+      "payment_methods": "Zahlungen: Die Kosten für den Aufenthalt werden in der Regel über die Buchungsplattform (Airbnb, Booking usw.) abgerechnet. Die Kurtaxe zahlen Sie per Stripe/PayPal-Link oder bar.",
+      "city_tax_info": "Kurtaxe: 6 € pro Person und Nacht (max. 10 Nächte), eingezogen im Namen der Stadt Rom.",
+      "city_tax_payment_issue": "Probleme bei der Kurtaxe: Wenn der Betrag im Link nicht korrekt erscheint, teilen Sie mir bitte Anzahl der Erwachsenen und Nächte mit, dann bestätige ich den richtigen Betrag.",
+      "receipt_rental": "Beleg für den Aufenthalt: Wir können einen Beleg mit Ihrem Namen, den Daten und dem Gesamtbetrag ausstellen.",
+      "receipt_city_tax": "Beleg für die Kurtaxe: auf Wunsch nach der Zahlung (online oder bar) erhältlich."
+    }
+  }
+}
+    
     
