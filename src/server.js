@@ -902,12 +902,12 @@ app.post("/api/hostaway-ai-bridge", async (req, res) => {
     const listingId = String(payload.listingMapId || payload.listingId || "");
 
     // ==== MAPPATURA LISTING → APARTMENT (per il Guest Assistant) ====
- const LISTING_TO_APARTMENT = {
-  "194166": "arenula",
-  "194164": "scala",
-  "194165": "portico",
-  "194163": "leonina",
-  "194162": "trastevere"
+  const LISTING_TO_APARTMENT = {
+  "194166": "arenula",    // Via Arenula 16
+  "194162": "scala",      // Via della Scala 17
+  "194165": "portico",    // Portico d'Ottavia 1D
+  "194163": "leonina",    // Via Leonina 71
+  "194164": "trastevere"  // Viale Trastevere 108
 };
     // Usa la mappa; se qualcosa non torna, default "arenula"
     const apartment = LISTING_TO_APARTMENT[listingId] || "arenula";
