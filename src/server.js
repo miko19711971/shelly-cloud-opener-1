@@ -728,30 +728,33 @@ function findAnswerByKeywords(question, answersForLang) {
   return null;
 }
 
-// ====== Riconoscimento lingua dal testo del messaggio ======
-function detectLangFromMessage(message, fallback = "en") {
+ // ====== Riconoscimento lingua dal testo del messaggio ======
+function detectLangFromMessage(message) {
   const text = String(message || "").toLowerCase();
 
   // Italiano
-  if (/ciao|non riesco|appartamento|rete|password|acqua calda|bagno|spazzatura/.test(text)) {
+  if (/\b(ciao|buongiorno|buonasera|appartamento|rete|password|acqua calda|bagno|spazzatura|tassa di soggiorno)\b/.test(text)) {
     return "it";
   }
 
   // Spagnolo
-  if (/hola|calefaccion|calefacción|puedes|no consigo|apartamento|contraseña|contrasena/.test(text)) {
+  if (/\b(hola|buenos dias|buenas tardes|apartamento|calefaccion|calefacción|contrasena|contraseña|tasa turistica)\b/.test(text)) {
     return "es";
   }
 
   // Francese
-  if (/bonjour|combien|sejour|séjour|appartement|chauffage|poubelle/.test(text)) {
+  if (/\b(bonjour|bonsoir|sejour|séjour|appartement|chauffage|poubelle|taxe de sejour|taxe de séjour)\b/.test(text)) {
     return "fr";
   }
 
   // Tedesco
-  if (/hallo|guten tag|wohnung|heizung|mull|müll/.test(text)) {
+  if (/\b(hallo|guten tag|guten morgen|wohnung|heizung|mull|müll|touristensteuer)\b/.test(text)) {
     return "de";
   }
 
+  // Se non riconosco nulla di specifico → default inglese
+  return "en";
+}
   // Fallback
   return String(fallback || "en").slice(0, 2).toLowerCase();
 }
