@@ -728,8 +728,8 @@ function findAnswerByKeywords(question, answersForLang) {
   return null;
 }
 
- // ====== Riconoscimento lingua dal testo del messaggio ======
-function detectLangFromMessage(message) {
+  // ====== Riconoscimento lingua dal testo del messaggio ======
+function detectLangFromMessage(message, fallback = "en") {
   const text = String(message || "").toLowerCase();
 
   // Italiano
@@ -752,10 +752,7 @@ function detectLangFromMessage(message) {
     return "de";
   }
 
-  // Se non riconosco nulla di specifico → default inglese
-  return "en";
-}
-  // Fallback
+  // Se non riconosco nulla di specifico → uso il fallback (di solito lingua HostAway)
   return String(fallback || "en").slice(0, 2).toLowerCase();
 }
 // Saluto in base alla lingua
