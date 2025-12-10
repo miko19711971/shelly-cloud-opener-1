@@ -916,9 +916,7 @@ app.post("/api/hostaway-ai-bridge", async (req, res) => {
     const apartment = LISTING_TO_APARTMENT[listingId] || "arenula";
 
        // 3) Lingua (fallback 'en', ma corretta dal testo)
-    const languageRaw =
-      payload.language || payload.locale || payload.guestLocale || "en";
-    const language = detectLangFromMessage(message, languageRaw);
+    const language = detectLangFromMessage(message);
 
     // 4) Nome guest se presente
     const guestName =
