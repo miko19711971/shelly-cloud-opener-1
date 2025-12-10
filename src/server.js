@@ -1142,13 +1142,13 @@ const langCode = detectLangFromMessage(message, languageRaw);
     }
 
     // Mappa ID listing → nome appartamento (solo per log / email)
-    const LISTINGS = {
-      194166: "Via Arenula 16",
-      194164: "Via della Scala 17",
-      194165: "Portico d'Ottavia 1D",
-      194163: "Via Leonina 71",
-      194162: "Viale Trastevere 108"
-    };
+  const LISTING_TO_APARTMENT = {
+  "194166": "arenula",    // Via Arenula 16
+  "194162": "scala",      // Via della Scala 17
+  "194165": "portico",    // Portico d'Ottavia 1D
+  "194163": "leonina",    // Via Leonina 71
+  "194164": "trastevere"  // Viale Trastevere 108
+};
     const apt = LISTINGS[listingId] || "Appartamento";
 
     // Mappa ID listing → chiave usata dalla Virtual Guide
