@@ -1152,12 +1152,7 @@ const langCode = detectLangFromMessage(message, languageRaw);
     const apt = LISTINGS[listingId] || "Appartamento";
 
     // Mappa ID listing → chiave usata dalla Virtual Guide
-    const LISTING_TO_APARTMENT = {
-  "194166": "arenula",
-  "194164": "scala",
-  "194165": "portico",
-  "194163": "leonina",
-  "194162": "trastevere"
+   
 };
     const apartmentKey = LISTING_TO_APARTMENT[String(listingId)] || "arenula";
 
