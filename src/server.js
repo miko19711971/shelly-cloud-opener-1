@@ -873,7 +873,14 @@ function makeGreeting(lang, name) {
 });
  
  // ========= HOSTAWAY AI BRIDGE =========
-// Riceve JSON da HostAway e chiama il vero Guest Assistant
+// Mappa condivisa listingId Hostaway → apartment key
+const LISTING_TO_APARTMENT = {
+  "194166": "arenula",
+  "194164": "scala",
+  "194165": "portico",
+  "194163": "leonina",
+  "194162": "trastevere"
+};
 app.post("/api/hostaway-ai-bridge", async (req, res) => {
   try {
     // LOG per vedere sempre cosa arriva da HostAway
