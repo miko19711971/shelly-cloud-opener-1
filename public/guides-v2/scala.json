@@ -131,7 +131,7 @@
     "transport": ["transporte","bus","tranvía","metro","aeropuerto","taxi"],
     "services": ["servicios","farmacia","hospital","cajero","sim","lavandería"],
     "emergency": ["emergencia","policía","ambulancia","bomberos"]
-  },
+  }
 
   "answers": {
   "it": {
