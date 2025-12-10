@@ -903,11 +903,11 @@ app.post("/api/hostaway-ai-bridge", async (req, res) => {
 
     // ==== MAPPATURA LISTING → APARTMENT (per il Guest Assistant) ====
  const LISTING_TO_APARTMENT = {
-  "194166": "arenula",    // Via Arenula 16
-  "194164": "scala",      // Via della Scala 17
-  "194165": "portico",    // Portico d'Ottavia 1D
-  "194163": "leonina",    // Via Leonina 71
-  "194162": "trastevere"  // Viale Trastevere 108
+  "194166": "arenula",
+  "194164": "scala",
+  "194165": "portico",
+  "194163": "leonina",
+  "194162": "trastevere"
 };
     // Usa la mappa; se qualcosa non torna, default "arenula"
     const apartment = LISTING_TO_APARTMENT[listingId] || "arenula";
@@ -1153,12 +1153,12 @@ const langCode = detectLangFromMessage(message, languageRaw);
 
     // Mappa ID listing → chiave usata dalla Virtual Guide
     const LISTING_TO_APARTMENT = {
-      "194166": "arenula",
-      "194164": "scala",
-      "194165": "portico",
-      "194163": "leonina",
-      "194162": "trastevere"
-    };
+  "194166": "arenula",
+  "194164": "scala",
+  "194165": "portico",
+  "194163": "leonina",
+  "194162": "trastevere"
+};
     const apartmentKey = LISTING_TO_APARTMENT[String(listingId)] || "arenula";
 
      
