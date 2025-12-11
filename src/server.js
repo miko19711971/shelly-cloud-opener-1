@@ -919,12 +919,8 @@ app.post("/api/hostaway-ai-bridge", async (req, res) => {
        // 3) Lingua (fallback 'en', ma corretta dal testo)
     const language = detectLangFromMessage(message);
 
-    // 4) Nome guest se presente
-    const guestName =
-      payload.guestName ||
-      payload.guest_first_name ||
-      payload.firstName ||
-      "Guest";
+      // 4) Nome guest se presente (estrazione robusta)
+    const guestName = extractGuestName(payload);
 
     // 5) CHIAMO IL VERO GUEST ASSISTANT INTERNO
     const url = `${req.protocol}://${req.get("host")}/api/guest-assistant`;
