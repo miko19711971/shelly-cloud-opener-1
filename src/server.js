@@ -728,71 +728,29 @@ function findAnswerByKeywords(question, answersForLang) {
   return null;
 }
 
- // ====== Riconoscimento lingua dal testo del messaggio ======
-function detectLangFromMessage(message) {
-  // normalizzo togliendo accenti
-  const text = String(message || "")
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/\p{Diacritic}/gu, ""); // es. “è” -> “e”
+      const payload = req.body || {};
+console.log("🔍 Name fields in payload:", {
+  guestName: payload.guestName,
+  guest_first_name: payload.guest_first_name,
+  firstName: payload.firstName,
+  guestFullName: payload.guestFullName,
+  travellerName: payload.travellerName,
+  contactName: payload.contactName
+});
+    const listingId = payload.listingId || payload.listingMapId;
+    const conversationId = payload.conversationId;
 
-  // Italiano
-  if (/\b(ciao|buongiorno|buonasera|grazie|per favore|appartamento|riscaldamento|termosifon[ei]|bagno|spazzatura|immondizia|rifiuti|tassa di soggiorno|acqua calda)\b/.test(text)) {
-    return "it";
-  }
+    const guestName =
+      payload.guestName ||
+      payload.guest_first_name ||
+      payload.firstName ||
+      "Guest";
 
-  // Spagnolo
-  if (/\b(hola|buenos dias|buenas tardes|gracias|apartamento|calefaccion|ban[oos]|basura|tasa turistica)\b/.test(text)) {
-    return "es";
-  }
-
-  // Francese
-  if (/\b(bonjour|bonsoir|merci|sejour|sejour|appartement|chauffage|poubelle|taxe de sejour|taxe de sejour)\b/.test(text)) {
-    return "fr";
-  }
-
-  // Tedesco
-  if (/\b(hallo|guten tag|guten morgen|danke|wohnung|heizung|mull|muell|touristensteuer)\b/.test(text)) {
-    return "de";
-  }
-
-  // Default: inglese
-  return "en";
-}
-// ====== Estrazione robusta del nome guest dal payload HostAway ======
-function extractGuestName(payload) {
-  if (!payload || typeof payload !== "object") return "Guest";
-
-  // Possibili campi "piatti"
-  const direct =
-    payload.guestName ||
-    payload.guest_full_name ||
-    payload.guestFullName ||
-    payload.travellerName ||
-    payload.contactName ||
-    payload.firstName ||
-    payload.first_name ||
-    payload.guest_first_name;
-
-  // Possibili campi annidati dentro guest
-  const nested =
-    (payload.guest && (
-      payload.guest.firstName ||
-      payload.guest.first_name ||
-      payload.guest.fullName ||
-      payload.guest.name
-    )) ||
-    null;
-
-  const name = direct || nested;
-
-  if (!name || typeof name !== "string") return "Guest";
-
-  // Usa solo il primo nome (prima parola)
-  const trimmed = name.trim();
-  const firstWord = trimmed.split(/\s+/)[0];
-  return firstWord || "Guest";
-}
+    const guestEmail =
+      payload.guestEmail ||
+      payload.guestEmailAddress ||
+      payload.email ||
+      "";
 // Saluto in base alla lingua
 function makeGreeting(lang, name) {
   const n = name || "Guest";
