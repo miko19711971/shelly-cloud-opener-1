@@ -728,32 +728,36 @@ function findAnswerByKeywords(question, answersForLang) {
   return null;
 }
 
-  // ====== Riconoscimento lingua dal testo del messaggio ======
-function detectLangFromMessage(message, fallback = "en") {
-  const text = String(message || "").toLowerCase();
+ // ====== Riconoscimento lingua dal testo del messaggio ======
+function detectLangFromMessage(message) {
+  // normalizzo togliendo accenti
+  const text = String(message || "")
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/\p{Diacritic}/gu, ""); // es. “è” -> “e”
 
   // Italiano
-  if (/\b(ciao|buongiorno|buonasera|appartamento|rete|password|acqua calda|bagno|spazzatura|tassa di soggiorno)\b/.test(text)) {
+  if (/\b(ciao|buongiorno|buonasera|grazie|per favore|appartamento|riscaldamento|termosifon[ei]|bagno|spazzatura|immondizia|rifiuti|tassa di soggiorno|acqua calda)\b/.test(text)) {
     return "it";
   }
 
   // Spagnolo
-  if (/\b(hola|buenos dias|buenas tardes|apartamento|calefaccion|calefacción|contrasena|contraseña|tasa turistica)\b/.test(text)) {
+  if (/\b(hola|buenos dias|buenas tardes|gracias|apartamento|calefaccion|ban[oos]|basura|tasa turistica)\b/.test(text)) {
     return "es";
   }
 
   // Francese
-  if (/\b(bonjour|bonsoir|sejour|séjour|appartement|chauffage|poubelle|taxe de sejour|taxe de séjour)\b/.test(text)) {
+  if (/\b(bonjour|bonsoir|merci|sejour|sejour|appartement|chauffage|poubelle|taxe de sejour|taxe de sejour)\b/.test(text)) {
     return "fr";
   }
 
   // Tedesco
-  if (/\b(hallo|guten tag|guten morgen|wohnung|heizung|mull|müll|touristensteuer)\b/.test(text)) {
+  if (/\b(hallo|guten tag|guten morgen|danke|wohnung|heizung|mull|muell|touristensteuer)\b/.test(text)) {
     return "de";
   }
 
-  // Se non riconosco nulla di specifico → uso il fallback (di solito lingua HostAway)
-  return String(fallback || "en").slice(0, 2).toLowerCase();
+  // Default: inglese
+  return "en";
 }
 // Saluto in base alla lingua
 function makeGreeting(lang, name) {
