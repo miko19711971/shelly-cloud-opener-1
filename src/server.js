@@ -976,105 +976,99 @@ function extractGuestName(payload) {
   return firstWord || "Guest";
 }
 
- // ====== Rilevamento lingua dal testo (it / en / fr / de / es) ======
+ // ====== Riconoscimento lingua dal testo (IT / EN / FR / DE / ES) ======
 function detectLangFromMessage(msg) {
-  const textRaw = msg || "";
-  const text = normalizeNoAccents(textRaw);
+  const text = normalizeNoAccents(msg || "");
   if (!text) return "en";
 
-  const t = ` ${text} `; // spazi ai lati per aiutare i match
-  const hasAny = (list) => list.some(w => t.includes(w));
+  const has = (p) => text.includes(p);
+
+  // 🇩🇪 Tedesco – parole tipiche
+  if (
+    has("hallo") ||
+    has("guten tag") ||
+    has("guten morgen") ||
+    has("guten abend") ||
+    has("danke") ||
+    has("bitte") ||
+    has("wohnung") ||
+    has("warmwasser") ||
+    has("kaltwasser") ||
+    has("heizung") ||
+    has("schlossel") || has("schlussel") || has("schluessel") ||
+    has("tur") || has("tuer")
+  ) {
+    return "de";
+  }
 
   // 🇮🇹 Italiano
-  const IT_HINTS = [
-    " ciao "," buongiorno "," buonasera "," grazie "," per favore ",
-    " appartamento "," casa "," stanza "," soggiorno ",
-    " spazzatura "," immondizia "," rifiuti "," pattumiera ",
-    " riscaldamento "," termosifoni "," termosifone "," caloriferi ",
-    " aria condizionata "," condizionatore "," clima ",
-    " acqua calda "," acqua fredda "," doccia "," bagno "," wc ",
-    " chiave "," chiavi "," porta "," portone ",
-    " check in "," checkin "," check-out "," check out ",
-    " tassa di soggiorno "," tassa soggiorno ",
-    " lenzuola "," asciugamani "," asciugamano ",
-    " lavatrice "," lavastoviglie ",
-    " aeroporto "," stazione "," fermata "," fermata bus "," fermata autobus ",
-    " deposito bagagli "," lasciare i bagagli "
-  ];
+  if (
+    has("ciao") ||
+    has("buongiorno") ||
+    has("buonasera") ||
+    has("grazie") ||
+    has("appartamento") ||
+    has("casa") ||
+    has("spazzatura") ||
+    has("immondizia") ||
+    has("pattumiera") ||
+    has("riscaldamento") ||
+    has("termosifone") ||
+    has("doccia") ||
+    has("bagno")
+  ) {
+    return "it";
+  }
 
   // 🇪🇸 Spagnolo
-  const ES_HINTS = [
-    " hola "," buenos dias "," buenas tardes "," buenas noches ",
-    " gracias "," por favor ",
-    " apartamento "," piso "," habitacion ",
-    " basura "," residuos "," papelera "," cubo "," contenedor ",
-    " calefaccion "," radiador ",
-    " aire acondicionado "," ac ",
-    " agua caliente "," agua fria "," ducha "," bano "," baño ",
-    " llave "," llaves "," puerta ",
-    " check in "," checkin "," check out ",
-    " llegada "," salida ",
-    " equipaje "," maletas ",
-    " cocina "," horno "," fogones "," fogon "," hornilla "
-  ];
+  if (
+    has("hola") ||
+    has("buenos dias") ||
+    has("buenas tardes") ||
+    has("gracias") ||
+    has("apartamento") ||
+    has("piso") ||
+    has("ducha") ||
+    has("bano") ||
+    has("baño") ||
+    has("basura")
+  ) {
+    return "es";
+  }
 
   // 🇫🇷 Francese
-  const FR_HINTS = [
-    " bonjour "," bonsoir "," salut ",
-    " merci "," s il vous plait ",
-    " appartement "," logement "," chambre ",
-    " poubelle "," ordures "," dechets "," sac poubelle ",
-    " chauffage "," radiateur ",
-    " climatisation "," clim "," air climatise ",
-    " eau chaude "," eau froide "," douche "," salle de bain "," toilettes ",
-    " cle "," cles "," clef "," clefs "," porte ",
-    " taxe de sejour ",
-    " centre ville "," aller au centre ville ",
-    " transports publics "," transport public "," arret de bus "," arret de tram ",
-    " station de metro "
-  ];
+  if (
+    has("bonjour") ||
+    has("salut") ||
+    has("merci") ||
+    has("appartement") ||
+    has("logement") ||
+    has("poubelle") ||
+    has("ordures") ||
+    has("chauffage") ||
+    has("eau chaude") ||
+    has("eau froide")
+  ) {
+    return "fr";
+  }
 
-  // 🇩🇪 Tedesco
-  const DE_HINTS = [
-    " hallo "," guten tag "," guten morgen "," guten abend ",
-    " danke "," bitte ",
-    " wohnung "," apartment "," zimmer ",
-    " mull "," muell "," abfall "," mulleimer "," mulltonne "," abfalleimer ",
-    " heizung "," heizkorper "," heizkörper ",
-    " klimaanlage "," klima ",
-    " warmwasser "," kaltwasser "," wasser ",
-    " dusche "," bad "," badezimmer "," wc "," toilette ",
-    " schlussel "," schluessel "," tur "," tuer ",
-    " check in "," checkin "," check out ",
-    " ankunft "," abreise ",
-    " um wie viel uhr "," wann ist der check out ",
-    " wo soll ich die schlussel lassen "," schlussel abgeben ",
-    " gepack "," gepaeck "
-  ];
+  // 🇬🇧 Inglese – se troviamo marker tipici
+  if (
+    has("hello") ||
+    has("hi,") || has("hi ") ||
+    has("thanks") ||
+    has("thank you") ||
+    has("apartment") ||
+    has("trash") ||
+    has("garbage") ||
+    has("wifi") ||
+    has("wi fi") ||
+    has("wi-fi")
+  ) {
+    return "en";
+  }
 
-  // 🇬🇧 / 🇺🇸 Inglese (ci basta il fallback, ma aggiungo qualche parola tipica)
-  const EN_HINTS = [
-    " hello "," hi "," good morning "," good afternoon "," good evening ",
-    " thanks "," thank you "," please ",
-    " apartment "," flat "," room ",
-    " trash "," garbage "," rubbish "," bin ",
-    " heating "," radiator "," thermostat ",
-    " air conditioning "," air conditioner "," ac ",
-    " hot water "," cold water "," shower "," bathroom "," toilet "," restroom ",
-    " key "," keys "," door "," front door ",
-    " check in "," checkin "," check out "," checkout ",
-    " city center "," city centre "," downtown ",
-    " luggage "," bags "
-  ];
-
-  // Ordine di priorità: IT -> ES -> FR -> DE -> EN
-  if (hasAny(IT_HINTS)) return "it";
-  if (hasAny(ES_HINTS)) return "es";
-  if (hasAny(FR_HINTS)) return "fr";
-  if (hasAny(DE_HINTS)) return "de";
-  if (hasAny(EN_HINTS)) return "en";
-
-  // Se non riconosce nulla di specifico → inglese di default
+  // Fallback: inglese
   return "en";
 }
 // Saluto in base alla lingua
