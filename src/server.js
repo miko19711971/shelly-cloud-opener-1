@@ -976,102 +976,107 @@ function extractGuestName(payload) {
   return firstWord || "Guest";
 }
 
-// ====== Riconoscimento approssimativo della lingua dal testo ======
+ // ====== Rilevamento lingua dal testo (it / en / fr / de / es) ======
 function detectLangFromMessage(msg) {
-  const text = normalizeNoAccents(msg || "");
+  const textRaw = msg || "";
+  const text = normalizeNoAccents(textRaw);
   if (!text) return "en";
 
-  const has = (pattern) => text.includes(pattern);
+  const t = ` ${text} `; // spazi ai lati per aiutare i match
+  const hasAny = (list) => list.some(w => t.includes(w));
 
   // 🇮🇹 Italiano
-  if (
-    has("ciao") || has("buongiorno") || has("buonasera") ||
-    has("grazie") || has("per favore") ||
-    has("appartamento") || has("casa") || has("stanza") ||
-    has("check in") || has("checkin") || has("check-out") || has("check out") ||
-    has("spazzatura") || has("immondizia") || has("rifiuti") || has("pattumiera") ||
-    has("riscaldamento") || has("termosifoni") || has("termosifone") ||
-    has("aria condizionata") || has("condizionatore") || has("clima") ||
-    has("acqua calda") || has("acqua fredda") || has("acqua") ||
-    has("doccia") || has("bagno") || has("wc") ||
-    has("rete wifi") || has("wi fi") || has("wi-fi") || has("internet") ||
-    has("chiave") || has("chiavi") || has("porta") || has("portone") ||
-    has("tassa di soggiorno") || has("tassa soggiorno") || has("city tax") ||
-    has("lenzuola") || has("asciugamani") || has("asciugamano") ||
-    has("lavatrice") || has("lavastoviglie") ||
-    has("taxi") || has("aeroporto") || has("stazione") ||
-    has("deposito bagagli") || has("lasciare i bagagli")
-  ) {
-    return "it";
-  }
+  const IT_HINTS = [
+    " ciao "," buongiorno "," buonasera "," grazie "," per favore ",
+    " appartamento "," casa "," stanza "," soggiorno ",
+    " spazzatura "," immondizia "," rifiuti "," pattumiera ",
+    " riscaldamento "," termosifoni "," termosifone "," caloriferi ",
+    " aria condizionata "," condizionatore "," clima ",
+    " acqua calda "," acqua fredda "," doccia "," bagno "," wc ",
+    " chiave "," chiavi "," porta "," portone ",
+    " check in "," checkin "," check-out "," check out ",
+    " tassa di soggiorno "," tassa soggiorno ",
+    " lenzuola "," asciugamani "," asciugamano ",
+    " lavatrice "," lavastoviglie ",
+    " aeroporto "," stazione "," fermata "," fermata bus "," fermata autobus ",
+    " deposito bagagli "," lasciare i bagagli "
+  ];
 
   // 🇪🇸 Spagnolo
-  if (
-    has("hola") || has("buenos dias") || has("buenas tardes") || has("buenas noches") ||
-    has("gracias") || has("por favor") ||
-    has("apartamento") || has("piso") || has("habitacion") ||
-    has("check in") || has("checkin") || has("check out") ||
-    has("basura") || has("residuos") || has("papelera") ||
-    has("calefaccion") || has("radiador") ||
-    has("aire acondicionado") || has("ac") ||
-    has("agua caliente") || has("agua fria") || has("agua") ||
-    has("ducha") || has("baño") || has("bano") ||
-    has("wifi") || has("wi fi") || has("wi-fi") || has("internet") ||
-    has("llave") || has("llaves") || has("puerta") ||
-    has("tasa turistica") || has("impuesto turistico") ||
-    has("llegada") || has("salida") ||
-    has("equipaje") || has("maletas") ||
-    has("cocina") || has("horno") || has("gas")
-  ) {
-    return "es";
-  }
+  const ES_HINTS = [
+    " hola "," buenos dias "," buenas tardes "," buenas noches ",
+    " gracias "," por favor ",
+    " apartamento "," piso "," habitacion ",
+    " basura "," residuos "," papelera "," cubo "," contenedor ",
+    " calefaccion "," radiador ",
+    " aire acondicionado "," ac ",
+    " agua caliente "," agua fria "," ducha "," bano "," baño ",
+    " llave "," llaves "," puerta ",
+    " check in "," checkin "," check out ",
+    " llegada "," salida ",
+    " equipaje "," maletas ",
+    " cocina "," horno "," fogones "," fogon "," hornilla "
+  ];
 
   // 🇫🇷 Francese
-  if (
-    has("bonjour") || has("bonsoir") || has("salut") ||
-    has("merci") || has("s il vous plait") ||
-    has("appartement") || has("logement") || has("chambre") ||
-    has("check in") || has("checkin") || has("check out") ||
-    has("poubelle") || has("ordures") || has("dechets") ||
-    has("chauffage") || has("radiateur") ||
-    has("climatisation") || has("clim") ||
-    has("eau chaude") || has("eau froide") || has("eau") ||
-    has("douche") || has("salle de bain") || has("toilettes") ||
-    has("wifi") || has("wi fi") || has("wi-fi") || has("connexion") || has("reseau") ||
-    has("cle") || has("cles") || has("porte") ||
-    has("taxe de sejour") ||
-    has("arrivee") || has("depart") ||
-    has("bagages") ||
-    has("cuisine") || has("four") || has("gaz")
-  ) {
-    return "fr";
-  }
+  const FR_HINTS = [
+    " bonjour "," bonsoir "," salut ",
+    " merci "," s il vous plait ",
+    " appartement "," logement "," chambre ",
+    " poubelle "," ordures "," dechets "," sac poubelle ",
+    " chauffage "," radiateur ",
+    " climatisation "," clim "," air climatise ",
+    " eau chaude "," eau froide "," douche "," salle de bain "," toilettes ",
+    " cle "," cles "," clef "," clefs "," porte ",
+    " taxe de sejour ",
+    " centre ville "," aller au centre ville ",
+    " transports publics "," transport public "," arret de bus "," arret de tram ",
+    " station de metro "
+  ];
 
   // 🇩🇪 Tedesco
-  if (
-    has("hallo") || has("guten tag") || has("guten morgen") || has("guten abend") ||
-    has("danke") || has("bitte") ||
-    has("wohnung") || has("apartment") || has("zimmer") ||
-    has("mull") || has("muell") || has("abfall") || has("mulleimer") || has("mülltonne") ||
-    has("heizung") || has("heizkorper") || has("heizkörper") ||
-    has("klimaanlage") || has("klima") ||
-    has("warmwasser") || has("kaltwasser") || has("wasser") ||
-    has("dusche") || has("bad") || has("badezimmer") || has("wc") ||
-    has("wlan") || has("wi fi") || has("wi-fi") || has("internet") ||
-    has("schlussel") || has("schluessel") || has("schlüssel") ||
-    has("tur") || has("tuer") || has("tür") ||
-    has("touristensteuer") ||
-    has("check in") || has("checkin") || has("check out") ||
-    has("ankunft") || has("abreise") ||
-    has("gepack") || has("gepaeck") || has("gepäck")
-  ) {
-    return "de";
-  }
+  const DE_HINTS = [
+    " hallo "," guten tag "," guten morgen "," guten abend ",
+    " danke "," bitte ",
+    " wohnung "," apartment "," zimmer ",
+    " mull "," muell "," abfall "," mulleimer "," mulltonne "," abfalleimer ",
+    " heizung "," heizkorper "," heizkörper ",
+    " klimaanlage "," klima ",
+    " warmwasser "," kaltwasser "," wasser ",
+    " dusche "," bad "," badezimmer "," wc "," toilette ",
+    " schlussel "," schluessel "," tur "," tuer ",
+    " check in "," checkin "," check out ",
+    " ankunft "," abreise ",
+    " um wie viel uhr "," wann ist der check out ",
+    " wo soll ich die schlussel lassen "," schlussel abgeben ",
+    " gepack "," gepaeck "
+  ];
 
-  // 🇬🇧 Inglese (fallback)
+  // 🇬🇧 / 🇺🇸 Inglese (ci basta il fallback, ma aggiungo qualche parola tipica)
+  const EN_HINTS = [
+    " hello "," hi "," good morning "," good afternoon "," good evening ",
+    " thanks "," thank you "," please ",
+    " apartment "," flat "," room ",
+    " trash "," garbage "," rubbish "," bin ",
+    " heating "," radiator "," thermostat ",
+    " air conditioning "," air conditioner "," ac ",
+    " hot water "," cold water "," shower "," bathroom "," toilet "," restroom ",
+    " key "," keys "," door "," front door ",
+    " check in "," checkin "," check out "," checkout ",
+    " city center "," city centre "," downtown ",
+    " luggage "," bags "
+  ];
+
+  // Ordine di priorità: IT -> ES -> FR -> DE -> EN
+  if (hasAny(IT_HINTS)) return "it";
+  if (hasAny(ES_HINTS)) return "es";
+  if (hasAny(FR_HINTS)) return "fr";
+  if (hasAny(DE_HINTS)) return "de";
+  if (hasAny(EN_HINTS)) return "en";
+
+  // Se non riconosce nulla di specifico → inglese di default
   return "en";
 }
-
 // Saluto in base alla lingua
 function makeGreeting(lang, name) {
   const n    = name || "Guest";
