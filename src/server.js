@@ -1054,12 +1054,15 @@ app.post("/api/vbro-mail", async (req, res) => {
 });
 });
  // ========== HOSTAWAY → AUTO RISPOSTA AI PER MESSAGGI ==========
-app.post("/hostaway-incoming", async (req, res) => {
+ app.post("/hostaway-incoming", async (req, res) => {
   try {
     console.log("🔔 Hostaway message webhook:");
     console.log(JSON.stringify(req.body, null, 2));
 
-              const payload = req.body || {};
+    const payload = req.body || {};
+
+    const listingId = payload.listingId || payload.listingMapId;
+    const conversationId = payload.conversationId;
 
     // Estrai subito nome ed email
     const guestName = extractGuestName(payload);
@@ -1083,15 +1086,7 @@ app.post("/hostaway-incoming", async (req, res) => {
       extracted_guestName: guestName
     });
 
-    const listingId = payload.listingId || payload.listingMapId;
-    const conversationId = payload.conversationId;
-    const listingId = payload.listingId || payload.listingMapId;
-    const conversationId = payload.conversationId;
-    const guestEmail =
-      payload.guestEmail ||
-      payload.guestEmailAddress ||
-      payload.email ||
-      "";
+    // ... il resto della route come ce l’hai ora (message, langCode, chiamata a /api/guest-assistant, ecc.)
 
         // testo vero del messaggio del guest
     const message =
