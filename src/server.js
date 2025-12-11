@@ -709,7 +709,7 @@ function findAnswerByKeywords(question, answersForLang) {
       // ES
       "agua","agua caliente","agua fria","sin agua","ducha sin agua","presion agua","termo","calentador",
       // FR
-      "eau","eau chaude","eau froide","pas d eau","pression eau","chauffe eau","robinet",
+      "eau","eau chaude","eau froide","pas d eau","pression eau","chauffe eau","robinet",  
       // DE
       "wasser","warmwasser","kaltwasser","kein wasser","wasserdruck","boiler","wasserboiler","durchlauferhitzer"
     ]
@@ -727,7 +727,62 @@ function findAnswerByKeywords(question, answersForLang) {
 
   return null;
 }
-// ====== Riconoscimento approssimativo della lingua dal testo ======
+// ====== Estrazione robusta del nome guest dal payload HostAway ======
+function extractGuestName(payload) {
+if (!payload || typeof payload !== "object") return "Guest";
+
+const direct =
+ payload.guestName ||
+ payload.guest_full_name ||
+ payload.guestFullName ||
+ payload.travellerName ||
+ payload.contactName ||
+ payload.firstName ||
+ payload.first_name ||
+ payload.guest_first_name;
+
+const nested =
+ (payload.guest && (
+   payload.guest.firstName ||
+   payload.guest.first_name ||
+   payload.guest.fullName ||
+   payload.guest.name
+ )) ||
+ null;
+
+const name = direct || nested;
+if (!name || typeof name !== "string") return "Guest";
+
+const trimmed = name.trim();
+const firstWord = trimmed.split(/\s+/)[0];
+return firstWord || "Guest";
+}
+
+// 🔤 Rilevazione molto semplice della lingua dal testo del messaggio
+function detectLangFromMessage(text) {
+const t = (text || "").toLowerCase();
+
+// Italianissimo
+if (/ (non|ciao|grazie|per favore|dove|quando|appartamento|spazzatura|riscaldamento|chiave) /i.test(" " + t + " ")) {
+ return "it";
+}
+// Spagnolo
+if (/ (hola|gracias|por favor|apartamento|basura|calefaccion) /i.test(" " + t + " ")) {
+ return "es";
+}
+// Francese
+if (/ (bonjour|merci|s il vous plait|appartement|poubelle|chauffage) /i.test(" " + t + " ")) {
+ return "fr";
+}
+// Tedesco
+if (/ (hallo|danke|bitte|wohnung|mull|heizung) /i.test(" " + t + " ")) {
+ return "de";
+}
+
+// fallback
+return "en";
+}
+/ ====== Riconoscimento approssimativo della lingua dal testo ======
 function detectLangFromMessage(msg) {
   const text = normalizeNoAccents(msg || "");
   if (!text) return "en";
