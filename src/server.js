@@ -1101,11 +1101,7 @@ console.log("🔍 Name fields in payload:", {
     const listingId = payload.listingId || payload.listingMapId;
     const conversationId = payload.conversationId;
 
-    const guestName =
-      payload.guestName ||
-      payload.guest_first_name ||
-      payload.firstName ||
-      "Guest";
+         const guestName = extractGuestName(payload);
 
     const guestEmail =
       payload.guestEmail ||
