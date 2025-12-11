@@ -1395,15 +1395,31 @@ app.post("/hostaway-incoming", async (req, res) => {
       extracted_guestName:    guestName
     });
 
-    // testo vero del messaggio del guest
+     // ==== TESTO VERO DEL MESSAGGIO DEL GUEST (SOLO ULTIMO MESSAGGIO) ====
+    const communication = payload.communicationBody || {};
+
+    // Usare SEMPRE prima il body della singola comunicazione
     const message =
-      payload.message ||
-      payload.body ||
-      (payload.communicationBody && payload.communicationBody.body) ||
+      (communication && communication.body) ||
       "";
 
-    // Lingua: sempre rilevata dal testo
-    const langCode = detectLangFromMessage(message);
+
+    // Se proprio non c'è (caso estremo), come fallback usiamo gli altri campi
+    const finalMessage =
+      (message && message.trim()) ||
+      payload.message ||
+      payload.body ||
+      "";
+
+    // Lingua: proviamo a leggere da HostAway, poi dal testo
+    const languageRaw =
+      communication.language ||
+      payload.language ||
+      "";
+
+    const langCode =
+      detectLangFromMessage(finalMessage) ||
+      String(languageRaw || "en").slice(0, 2).toLowerCase();
 
     // Controllo minimo: deve esserci almeno listingId e message
     if (!listingId || !message) {
