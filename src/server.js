@@ -875,7 +875,40 @@ function makeGreeting(lang, name) {
     });
   }
 });
- 
+ // ====== Estrazione robusta del nome guest dal payload HostAway ======
+function extractGuestName(payload) {
+  if (!payload || typeof payload !== "object") return "Guest";
+
+  // Possibili campi "piatti"
+  const direct =
+    payload.guestName ||
+    payload.guest_full_name ||
+    payload.guestFullName ||
+    payload.travellerName ||
+    payload.contactName ||
+    payload.firstName ||
+    payload.first_name ||
+    payload.guest_first_name;
+
+  // Possibili campi annidati dentro guest
+  const nested =
+    (payload.guest && (
+      payload.guest.firstName ||
+      payload.guest.first_name ||
+      payload.guest.fullName ||
+      payload.guest.name
+    )) ||
+    null;
+
+  const name = direct || nested;
+
+  if (!name || typeof name !== "string") return "Guest";
+
+  // Usa solo il primo nome (prima parola)
+  const trimmed = name.trim();
+  const firstWord = trimmed.split(/\s+/)[0];
+  return firstWord || "Guest";
+}
  // ========= HOSTAWAY AI BRIDGE =========
 // Mappa condivisa listingId Hostaway → apartment key
  const LISTING_TO_APARTMENT = {
