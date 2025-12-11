@@ -728,29 +728,7 @@ function findAnswerByKeywords(question, answersForLang) {
   return null;
 }
 
-      const payload = req.body || {};
-console.log("🔍 Name fields in payload:", {
-  guestName: payload.guestName,
-  guest_first_name: payload.guest_first_name,
-  firstName: payload.firstName,
-  guestFullName: payload.guestFullName,
-  travellerName: payload.travellerName,
-  contactName: payload.contactName
-});
-    const listingId = payload.listingId || payload.listingMapId;
-    const conversationId = payload.conversationId;
-
-    const guestName =
-      payload.guestName ||
-      payload.guest_first_name ||
-      payload.firstName ||
-      "Guest";
-
-    const guestEmail =
-      payload.guestEmail ||
-      payload.guestEmailAddress ||
-      payload.email ||
-      "";
+ 
 // Saluto in base alla lingua
 function makeGreeting(lang, name) {
   const n = name || "Guest";
