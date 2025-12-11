@@ -1081,23 +1081,32 @@ app.post("/hostaway-incoming", async (req, res) => {
     console.log("🔔 Hostaway message webhook:");
     console.log(JSON.stringify(req.body, null, 2));
 
-         const payload = req.body || {};
+              const payload = req.body || {};
 
-    // nuovo: estraiamo il nome con l’helper
+    // Estrai subito nome ed email
     const guestName = extractGuestName(payload);
+    const guestEmail =
+      payload.guestEmail ||
+      payload.guestEmailAddress ||
+      payload.email ||
+      "";
 
-    // nuovo log completo per debug
+    // Log di debug per capire dove sta il nome
     console.log("🔍 Name fields in payload:", {
-      guestName: payload.guestName,
-      guest_first_name: payload.guest_first_name,
-      firstName: payload.firstName,
-      guestFullName: payload.guestFullName,
-      travellerName: payload.travellerName,
-      contactName: payload.contactName,
-      nestedGuest: payload.guest,
-      extracted: guestName
+      guestName_raw: payload.guestName,
+      guest_first_name_raw: payload.guest_first_name,
+      firstName_raw: payload.firstName,
+      guestFullName_raw: payload.guestFullName,
+      travellerName_raw: payload.travellerName,
+      contactName_raw: payload.contactName,
+      nested_guest: payload.guest || null,
+      nested_contact: payload.contact || null,
+      email_raw: guestEmail,
+      extracted_guestName: guestName
     });
 
+    const listingId = payload.listingId || payload.listingMapId;
+    const conversationId = payload.conversationId;
     const listingId = payload.listingId || payload.listingMapId;
     const conversationId = payload.conversationId;
     const guestEmail =
