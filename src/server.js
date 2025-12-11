@@ -727,6 +727,101 @@ function findAnswerByKeywords(question, answersForLang) {
 
   return null;
 }
+// ====== Riconoscimento approssimativo della lingua dal testo ======
+function detectLangFromMessage(msg) {
+  const text = normalizeNoAccents(msg || "");
+  if (!text) return "en";
+
+  const has = (pattern) => text.includes(pattern);
+
+  // 🇮🇹 Italiano – parole tipiche dell'appartamento
+  if (
+    has("ciao") || has("buongiorno") || has("buonasera") ||
+    has("grazie") || has("per favore") ||
+    has("appartamento") || has("casa") || has("stanza") ||
+    has("check in") || has("checkin") || has("check-out") || has("check out") ||
+    has("spazzatura") || has("immondizia") || has("rifiuti") || has("pattumiera") ||
+    has("riscaldamento") || has("termosifoni") || has("termosifone") ||
+    has("aria condizionata") || has("condizionatore") || has("clima") ||
+    has("acqua calda") || has("acqua fredda") || has("acqua") ||
+    has("doccia") || has("bagno") || has("wc") ||
+    has("wifi") || has("wi fi") || has("wi-fi") || has("internet") || has("rete wifi") ||
+    has("chiave") || has("chiavi") || has("porta") || has("portone") ||
+    has("tassa di soggiorno") || has("tassa soggiorno") || has("city tax") ||
+    has("lenzuola") || has("asciugamani") || has("asciugamano") ||
+    has("lavatrice") || has("lavastoviglie") ||
+    has("taxi") || has("aeroporto") || has("stazione") ||
+    has("deposito bagagli") || has("lasciare i bagagli")
+  ) {
+    return "it";
+  }
+
+  // 🇪🇸 Spagnolo
+  if (
+    has("hola") || has("buenos dias") || has("buenas tardes") || has("buenas noches") ||
+    has("gracias") || has("por favor") ||
+    has("apartamento") || has("piso") || has("habitacion") ||
+    has("check in") || has("checkin") || has("check out") ||
+    has("basura") || has("residuos") || has("papelera") ||
+    has("calefaccion") || has("radiador") ||
+    has("aire acondicionado") || has("ac") ||
+    has("agua caliente") || has("agua fria") || has("agua") ||
+    has("ducha") || has("bano") || has("baño") ||
+    has("wifi") || has("wi fi") || has("wi-fi") || has("internet") ||
+    has("llave") || has("llaves") || has("puerta") ||
+    has("tasa turistica") || has("impuesto turistico") ||
+    has("llegada") || has("salida") ||
+    has("equipaje") || has("maletas") ||
+    has("cocina") || has("horno") || has("gas")
+  ) {
+    return "es";
+  }
+
+  // 🇫🇷 Francese
+  if (
+    has("bonjour") || has("bonsoir") || has("salut") ||
+    has("merci") || has("s il vous plait") ||
+    has("appartement") || has("logement") || has("chambre") ||
+    has("check in") || has("checkin") || has("check out") ||
+    has("poubelle") || has("ordures") || has("dechets") ||
+    has("chauffage") || has("radiateur") ||
+    has("climatisation") || has("clim") ||
+    has("eau chaude") || has("eau froide") || has("eau") ||
+    has("douche") || has("salle de bain") || has("toilettes") ||
+    has("wifi") || has("wi fi") || has("wi-fi") || has("connexion") || has("reseau") ||
+    has("cle") || has("cles") || has("porte") ||
+    has("taxe de sejour") ||
+    has("arrivee") || has("depart") ||
+    has("bagages") ||
+    has("cuisine") || has("four") || has("gaz")
+  ) {
+    return "fr";
+  }
+
+  // 🇩🇪 Tedesco
+  if (
+    has("hallo") || has("guten tag") || has("guten morgen") || has("guten abend") ||
+    has("danke") || has("bitte") ||
+    has("wohnung") || has("apartment") || has("zimmer") ||
+    has("mull") || has("abfall") || has("mulleimer") || has("muell") ||
+    has("heizung") || has("heizkorper") ||
+    has("klimaanlage") || has("klima") ||
+    has("warmwasser") || has("kaltwasser") || has("wasser") ||
+    has("dusche") || has("bad") || has("badezimmer") || has("wc") ||
+    has("wlan") || has("wi fi") || has("wi-fi") || has("internet") ||
+    has("schlussel") || has("schluessel") || has("tur") || has("tuer") ||
+    has("touristensteuer") ||
+    has("check in") || has("checkin") || has("check out") ||
+    has("ankunft") || has("abreise") ||
+    has("gepack") || has("gepaeck")
+  ) {
+    return "de";
+  }
+
+  // 🇬🇧 Inglese (fallback se nessuna lingua specifica viene riconosciuta)
+  return "en";
+}
+
 // ====== Estrazione robusta del nome guest dal payload HostAway ======
 function extractGuestName(payload) {
   if (!payload || typeof payload !== "object") return "Guest";
