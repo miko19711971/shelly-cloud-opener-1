@@ -758,7 +758,37 @@ function extractGuestName(payload) {
   return firstWord || "Guest";
 }
 
+// ====== Rilevamento molto semplice della lingua dal testo ======
+function detectLangFromMessage(msg) {
+  const text = normalizeNoAccents(msg || "");
 
+  if (!text) return "en";
+
+  const has = (w) => text.includes(w);
+
+  // Tedesco
+  if (has("strasse") || has("straße") || has("danke") || has("bitte") || has("wie funktioniert") || has("wohnung")) {
+    return "de";
+  }
+
+  // Italiano
+  if (has("ciao") || has("buongiorno") || has("appartamento") || has("riscaldamento") || has("doccia") || has("grazie")) {
+    return "it";
+  }
+
+  // Spagnolo
+  if (has("hola") || has("gracias") || has("apartamento") || has("calefaccion") || has("agua caliente")) {
+    return "es";
+  }
+
+  // Francese
+  if (has("bonjour") || has("merci") || has("appartement") || has("chauffage") || has("eau chaude")) {
+    return "fr";
+  }
+
+  // Default: inglese
+  return "en";
+}
  
 // Saluto in base alla lingua
 function makeGreeting(lang, name) {
