@@ -1364,13 +1364,15 @@ app.get("/test-mail", (req, res) => {
 });
 
 // ========== HOSTAWAY → AUTO RISPOSTA AI PER MESSAGGI ==========
+ 
 app.post("/hostaway-incoming", async (req, res) => {
   try {
     console.log("🔔 Hostaway message webhook:");
     console.log(JSON.stringify(req.body, null, 2));
 
-    const payload        = req.body || {};
-    const listingId      = payload.listingId || payload.listingMapId;
+    const payload = req.body || {};
+
+    const listingId = payload.listingId || payload.listingMapId;
     const conversationId = payload.conversationId;
 
     // Estrai subito nome ed email
@@ -1383,35 +1385,32 @@ app.post("/hostaway-incoming", async (req, res) => {
 
     // Log di debug per capire dove sta il nome
     console.log("🔍 Name fields in payload:", {
-      guestName_raw:          payload.guestName,
-      guest_first_name_raw:   payload.guest_first_name,
-      firstName_raw:          payload.firstName,
-      guestFullName_raw:      payload.guestFullName,
-      travellerName_raw:      payload.travellerName,
-      contactName_raw:        payload.contactName,
-      nested_guest:           payload.guest || null,
-      nested_contact:         payload.contact || null,
-      email_raw:              guestEmail,
-      extracted_guestName:    guestName
+      guestName_raw: payload.guestName,
+      guest_first_name_raw: payload.guest_first_name,
+      firstName_raw: payload.firstName,
+      guestFullName_raw: payload.guestFullName,
+      travellerName_raw: payload.travellerName,
+      contactName_raw: payload.contactName,
+      nested_guest: payload.guest || null,
+      nested_contact: payload.contact || null,
+      email_raw: guestEmail,
+      extracted_guestName: guestName
     });
 
-     // ==== TESTO VERO DEL MESSAGGIO DEL GUEST (SOLO ULTIMO MESSAGGIO) ====
+    // ==== TESTO VERO DEL MESSAGGIO DEL GUEST (SOLO ULTIMA COMUNICAZIONE) ====
     const communication = payload.communicationBody || {};
 
-    // Usare SEMPRE prima il body della singola comunicazione
-    const message =
-      (communication && communication.body) ||
-      "";
+    const bodyFromCommunication =
+      (communication && communication.body) || "";
 
-
-    // Se proprio non c'è (caso estremo), come fallback usiamo gli altri campi
+    // fallback sugli altri campi solo se proprio vuoto
     const finalMessage =
-      (message && message.trim()) ||
+      (bodyFromCommunication && bodyFromCommunication.trim()) ||
       payload.message ||
       payload.body ||
       "";
 
-    // Lingua: proviamo a leggere da HostAway, poi dal testo
+    // ---- LINGUA: prima proviamo a leggere dal payload, poi dal testo ----
     const languageRaw =
       communication.language ||
       payload.language ||
@@ -1421,13 +1420,13 @@ app.post("/hostaway-incoming", async (req, res) => {
       detectLangFromMessage(finalMessage) ||
       String(languageRaw || "en").slice(0, 2).toLowerCase();
 
-    // Controllo minimo: deve esserci almeno listingId e message
-    if (!listingId || !message) {
+    // Controllo minimo: deve esserci almeno listingId e finalMessage
+    if (!listingId || !finalMessage) {
       return res.status(400).json({ ok: false, error: "missing_fields" });
     }
 
     // Mappa ID listing → nome appartamento (solo per log / email)
-    const LOCAL_LISTING_TO_APT = {
+    const LISTING_TO_APARTMENT = {
       "194166": "arenula",     // Via Arenula 16
       "194165": "portico",     // Portico d'Ottavia 1D
       "194163": "leonina",     // Via Leonina 71
@@ -1435,14 +1434,16 @@ app.post("/hostaway-incoming", async (req, res) => {
       "194162": "scala"        // Via della Scala 17
     };
 
-    const apt          = LOCAL_LISTING_TO_APT[String(listingId)] || "Appartamento";
-    const apartmentKey = LOCAL_LISTING_TO_APT[String(listingId)] || "arenula";
+    const apt = LISTING_TO_APARTMENT[String(listingId)] || "Appartamento";
 
-    const name  = guestName || "Guest";
+    // Chiave usata dalla Virtual Guide
+    const apartmentKey = LISTING_TO_APARTMENT[String(listingId)] || "arenula";
+
+    const name = guestName || "Guest";
     const email = guestEmail || "";
 
-    // 👉 NESSUNA risposta automatica se la guida non trova un match
-    let aiReply  = null;
+    // 👉 Da ora: nessuna risposta se la guida non trova un match
+    let aiReply = null;
     let aiMatched = false;
 
     try {
@@ -1450,20 +1451,19 @@ app.post("/hostaway-incoming", async (req, res) => {
         `${req.protocol}://${req.get("host")}/api/guest-assistant`,
         {
           apartment: apartmentKey,
-          lang:      langCode,
-          question:  message,
-          guestName: name,     // nome reale
-          source:    "hostaway"
+          lang: langCode,
+          question: finalMessage,
+          guestName: name,          // nome reale
+          source: "hostaway"        // solo per log
         },
         { timeout: 8000 }
       );
 
       const data = gaResp.data || {};
 
-      // Se il guest-assistant restituisce un answer, lo usiamo
       if (data.ok && data.answer) {
-        aiReply   = data.answer;
-        aiMatched = !data.noMatch;   // solo info per i log
+        aiReply = data.answer;
+        aiMatched = !data.noMatch;   // info di log
       } else {
         console.log("⚠️ guest-assistant senza risposta valida:", data);
       }
@@ -1474,11 +1474,11 @@ app.post("/hostaway-incoming", async (req, res) => {
 
     // 2) Invio risposta nella chat Hostaway SOLO se abbiamo una risposta AI valida
     if (aiReply && HOSTAWAY_TOKEN && conversationId) {
-      const greeting  = makeGreeting(langCode, name);
+      const greeting = makeGreeting(langCode, name);
       const fullReply = `${greeting}\n\n${aiReply}`;
 
       try {
-        const hostawayUrl  = `https://api.hostaway.com/v1/conversations/${conversationId}/messages`;
+        const hostawayUrl = `https://api.hostaway.com/v1/conversations/${conversationId}/messages`;
         const hostawayBody = {
           body: fullReply,
           communicationType: "email"
@@ -1504,15 +1504,15 @@ app.post("/hostaway-incoming", async (req, res) => {
     }
 
     // 3) Email: se ho una risposta AI, mando SEMPRE una copia a Michele.
-    // Se ho anche l'email del guest, la mando anche a lui.
+    //    Se ho anche l'email del guest, la mando anche a lui.
     if (aiReply) {
       try {
         const greeting = makeGreeting(langCode, name);
-        const subject  = `NiceFlatInRome – ${apt}`;
+        const subject = `NiceFlatInRome – ${apt}`;
         const htmlBody = `
           <p>${greeting}</p>
           <p>${aiReply.replace(/\n/g, "<br>")}</p>
-          <p><strong>Guest question:</strong> ${message || ""}</p>
+          <p><strong>Guest question:</strong> ${finalMessage || ""}</p>
           <p>Un saluto da Michele e dal team NiceFlatInRome.</p>
         `;
 
@@ -1557,7 +1557,6 @@ app.post("/hostaway-incoming", async (req, res) => {
     return res.status(500).json({ ok: false, error: String(err) });
   }
 });
-
 const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => {
   console.log(
