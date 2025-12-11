@@ -727,6 +727,37 @@ function findAnswerByKeywords(question, answersForLang) {
 
   return null;
 }
+// ====== Estrazione robusta del nome guest dal payload HostAway ======
+function extractGuestName(payload) {
+  if (!payload || typeof payload !== "object") return "Guest";
+
+  const direct =
+    payload.guestName ||
+    payload.guest_full_name ||
+    payload.guestFullName ||
+    payload.travellerName ||
+    payload.contactName ||
+    payload.firstName ||
+    payload.first_name ||
+    payload.guest_first_name;
+
+  const nested =
+    (payload.guest && (
+      payload.guest.firstName ||
+      payload.guest.first_name ||
+      payload.guest.fullName ||
+      payload.guest.name
+    )) ||
+    null;
+
+  const name = direct || nested;
+  if (!name || typeof name !== "string") return "Guest";
+
+  const trimmed = name.trim();
+  const firstWord = trimmed.split(/\s+/)[0];
+  return firstWord || "Guest";
+}
+
 
  
 // Saluto in base alla lingua
