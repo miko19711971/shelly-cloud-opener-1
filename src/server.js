@@ -1089,20 +1089,25 @@ app.post("/hostaway-incoming", async (req, res) => {
     console.log("🔔 Hostaway message webhook:");
     console.log(JSON.stringify(req.body, null, 2));
 
-    const payload = req.body || {};
-console.log("🔍 Name fields in payload:", {
-  guestName: payload.guestName,
-  guest_first_name: payload.guest_first_name,
-  firstName: payload.firstName,
-  guestFullName: payload.guestFullName,
-  travellerName: payload.travellerName,
-  contactName: payload.contactName
-});
+         const payload = req.body || {};
+
+    // nuovo: estraiamo il nome con l’helper
+    const guestName = extractGuestName(payload);
+
+    // nuovo log completo per debug
+    console.log("🔍 Name fields in payload:", {
+      guestName: payload.guestName,
+      guest_first_name: payload.guest_first_name,
+      firstName: payload.firstName,
+      guestFullName: payload.guestFullName,
+      travellerName: payload.travellerName,
+      contactName: payload.contactName,
+      nestedGuest: payload.guest,
+      extracted: guestName
+    });
+
     const listingId = payload.listingId || payload.listingMapId;
     const conversationId = payload.conversationId;
-
-         const guestName = extractGuestName(payload);
-
     const guestEmail =
       payload.guestEmail ||
       payload.guestEmailAddress ||
