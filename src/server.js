@@ -1110,16 +1110,21 @@ function makeGreeting(lang, name) {
       }
     }
 
-    // 2) Se non abbiamo ancora match, usa le parole chiave globali
+         // 2) Se non abbiamo ancora match, usa le parole chiave globali (multi-intent)
     if (!matched) {
       const match = findAnswerByKeywords(question, answersForLang);
-      if (match) {
-        intentKey  = match.intent;
-        answerText = match.answer;
+      if (match && match.answer) {
+        // prendiamo come "intent principale" il primo della lista
+        const primary =
+          Array.isArray(match.intents) && match.intents.length
+            ? match.intents[0]
+            : null;
+
+        intentKey  = primary;
+        answerText = match.answer;   // contiene già 1 o 2 risposte combinate
         matched    = true;
       }
     }
-
     // 3) Se ANCORA non abbiamo match:
     //    - segnaliamo noMatch = true (per HostAway)
     //    - lasciamo comunque una frase generica per la guida web
