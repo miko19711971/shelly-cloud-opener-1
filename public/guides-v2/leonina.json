@@ -1,4 +1,4 @@
- {
+{
   "apartment": "Via Leonina 71",
   "languages": ["it", "en", "fr", "de", "es"],
   "answers": {
@@ -9,7 +9,7 @@
       "wifi": "Wi-Fi: The router is on the desk near the window. Turn it around to read the SSID and password on the label.\nNetwork: See router label. Password: See router label.",
       "check_in": "Check-in from 15:00.\nIntercom: apt. 16.\nBuilding code: 7171 + key symbol.\nNeed help? Call +39 335 5245756.",
       "check_out": "Before leaving: switch off lights and A/C, close all windows, leave the keys on the table and gently close the door, making sure it is properly closed.",
-      "water": "Tap water is safe to drink. Hot water is always available.",
+      "water": "Water: Tap water is safe to drink. Normally hot water is always available. If you only get cold water or no water from the shower or taps, first turn the mixer fully to the hot side and let it run for 1–2 minutes. If it is still cold or there is no water, please write to me immediately and tell me if the problem is in the shower, the sink or the whole apartment, so we can check the boiler/water supply as quickly as possible.",
       "AC": "Please switch OFF the air conditioning when you go out.",
       "bathroom": "Bathroom: Toilet paper, hand soap, bath mat, hairdryer.\nTowels: Per guest: 1 large + 1 medium towel. Bed is prepared on arrival.",
       "gas": "Kitchen: The apartment does not have gas but an electric hob. Before leaving, please remove all pans and pots from the electric burners for safety reasons.",
@@ -21,7 +21,7 @@
       "experience": "Evening experiences: Please check the guide I sent you by email. Open the link you find under the name \"Virtual Tour Guide\".",
       "day_trips": "Day trips: Ostia Antica (~40 min); Tivoli (Villa d’Este & Hadrian’s Villa ~1h); Castelli Romani.",
       "transport": "Transport:\nFrom Fiumicino: Take the train to Termini station, then metro line B (check the direction) and get off at the first stop, Cavour. Cross the street and you will find Via Leonina just below. For departure, follow the route in reverse.\nFrom Ciampino: Terravision bus or taxi.",
-      "services": "Services in the area: In the neighborhood you can find many services, including a laundromat, post office, travel agency, pharmacy, bank and more.",
+      "services": "I did not find a direct answer to your question. Please try one of the quick buttons (wifi, water, heating, bathroom, transport, city tax…) or send me a few more details.",
       "emergency": "Emergencies: EU Emergency 112 • Police 113 • Ambulance 118 • Fire brigade 115 • English-speaking doctor +39 06 488 2371 • 24h vet +39 06 660 681",
       "tickets_events": "TICKETS & EVENTS — ROME\n• TicketOne (concerts, theatre, sport): https://www.ticketone.it/en/\n• AS Roma — official tickets: https://www.asroma.com/en/tickets\n• SS Lazio — official tickets: https://sslazio.it/en/tickets",
       "museums_sites": "MUSEUMS & SITES — ROME\n• Colosseum, Roman Forum & Palatine: https://colosseo.it/en\n• Vatican Museums & Sistine Chapel: https://tickets.museivaticani.va/\n• Museums of Rome: https://www.museiincomuneroma.it/en",
@@ -38,7 +38,6 @@
       "receipt_rental": "Stay receipt: We can issue a receipt for the apartment stay (short-term rental) with your name, dates and total amount paid. It is not a VAT invoice, but a simple receipt for tourist rental. If you need it, send me the details you want to appear (name/surname or company name, address, tax code if applicable) and I will send you the receipt in digital format.",
       "receipt_city_tax": "City tax receipt: We can also issue a separate receipt for the city tax, showing number of guests, nights and total amount paid. If you need this receipt, let me know after payment (online or cash) and I will prepare a dedicated summary."
     },
-
        "it": {
       "trash": "Spazzatura: Usa i sacchi in cucina, chiudili bene e portali nei cassonetti situati a 50 metri a sinistra dell’uscita del portone del palazzo; facciamo raccolta differenziata (WeDoRecycling), quindi ti chiediamo di seguire le indicazioni e di non lasciare immondizia nel vano scala o fuori dalla porta dell’appartamento.",
       "heating": "Riscaldamento: Usa il telecomando dell’aria condizionata, premi MODE finché non compare il simbolo del sole e imposta 26 °C con potenza 1. Spegni sempre il condizionatore quando esci dall’appartamento.",
@@ -46,7 +45,7 @@
       "wifi": "Wi-Fi: Router sulla scrivania vicino alla finestra. Giralo per leggere SSID e password.\nRete: Vedi etichetta del router. Password: Vedi etichetta del router.",
       "check_in": "Check-in dalle 15:00.\nCitofono: int. 16.\nCodice portone: 7171 + simbolo della chiave.\nAiuto? Chiama +39 335 5245756.",
       "check_out": "Prima di partire: spegni luci e AC, chiudi le finestre, lascia le chiavi sul tavolo e chiudi delicatamente la porta, controllando che sia ben chiusa.",
-      "water": "L’acqua del rubinetto è potabile. L’acqua calda è sempre disponibile.",
+      "water": "Acqua: L’acqua del rubinetto è potabile. Normalmente l’acqua calda è sempre disponibile. Se dalla doccia o dai rubinetti esce solo acqua fredda o non esce proprio, sposta la manopola tutta sul caldo e lascia scorrere 1–2 minuti. Se rimane fredda o non esce acqua, scrivimi subito indicando se il problema è solo in doccia, al lavandino o in tutta la casa, così possiamo controllare subito caldaia/fornitura.",
       "AC": "Spegni l’aria condizionata quando esci.",
       "bathroom": "Bagno: Carta igienica, sapone mani, tappetino, asciugacapelli.\nAsciugamani: Per ospite: 1 telo grande + 1 medio. Letto pronto all’arrivo.",
       "gas": "Cucina: L’appartamento non è provvisto di gas ma di piastra elettrica. Prima di andare via ricordati di togliere tutte le pentole dai fornelli elettrici per motivi di sicurezza.",
@@ -58,7 +57,7 @@
       "experience": "Esperienze serali: Consulta la guida che ti ho inviato via email. Apri il link che trovi sotto il nome \"Virtual Tour Guide\".",
       "day_trips": "Gite fuori porta: Ostia Antica (~40 min); Tivoli (Villa d’Este & Villa Adriana ~1h); Castelli Romani.",
       "transport": "Trasporti:\nDa Fiumicino: treno fino alla stazione Termini, poi metro B (controlla la direzione) e scendi alla prima fermata Cavour. Attraversa la strada e sotto trovi Via Leonina. Per la partenza fai il percorso inverso.\nDa Ciampino: servizio bus Terravision o taxi.",
-      "services": "Servizi in zona: Nel quartiere puoi trovare numerosi servizi, tra cui lavanderia, ufficio postale, agenzia di viaggi, farmacia, banca e molto altro.",
+      "services": "Non ho trovato una risposta diretta alla tua domanda. Prova un pulsante rapido (wifi, acqua, riscaldamento, bagno, trasporti, tassa di soggiorno…) oppure scrivimi qualche dettaglio in più.",
       "emergency": "Emergenze: UE 112 • Polizia 113 • Ambulanza 118 • Vigili del fuoco 115 • Medico (EN) +39 06 488 2371 • Veterinario 24h +39 06 660 681",
       "tickets_events": "TICKETS & EVENTS — ROME\n• TicketOne (concerti, teatro, sport): https://www.ticketone.it/en/\n• AS Roma — biglietti ufficiali: https://www.asroma.com/en/tickets\n• SS Lazio — biglietti ufficiali: https://sslazio.it/en/tickets",
       "museums_sites": "MUSEUMS & SITES — ROME\n• Colosseo, Foro Romano & Palatino: https://colosseo.it/en\n• Musei Vaticani & Cappella Sistina: https://tickets.museivaticani.va/\n• Musei di Roma: https://www.museiincomuneroma.it/en",
@@ -83,7 +82,7 @@
       "wifi": "Wi-Fi : Routeur sur le bureau près de la fenêtre. Tournez-le pour lire le SSID et le mot de passe.\nRéseau : Voir l’étiquette du routeur. Mot de passe : Voir l’étiquette du routeur.",
       "check_in": "Arrivée à partir de 15:00.\nInterphone : int. 16.\nCode de l’immeuble : 7171 + symbole de la clé.\nBesoin d’aide ? +39 335 5245756.",
       "check_out": "Avant de partir : éteignez lumières et clim, fermez les fenêtres, laissez les clés sur la table et fermez la porte doucement en vérifiant qu’elle soit bien fermée.",
-      "water": "L’eau du robinet est potable. L’eau chaude est toujours disponible.",
+      "water": "Eau : L’eau du robinet est potable. Normalement l’eau chaude est toujours disponible. Si la douche ou les robinets ne donnent que de l’eau froide ou pas d’eau, tournez le mitigeur entièrement vers le chaud et laissez couler 1–2 minutes. Si c’est toujours froid ou qu’il n’y a pas d’eau, écrivez-moi immédiatement en précisant si le problème concerne uniquement la douche, le lavabo ou tout l’appartement, afin que nous puissions vérifier rapidement la chaudière/l’alimentation en eau.",
       "AC": "Merci d’éteindre la climatisation en sortant.",
       "bathroom": "Salle de bain : Papier toilette, savon pour les mains, tapis de bain, sèche-cheveux.\nServiettes : Par personne : 1 grande + 1 moyenne. Lit prêt à l’arrivée.",
       "gas": "Cuisine : L’appartement ne dispose pas de gaz mais de plaques électriques. Avant de partir, pensez à retirer toutes les casseroles et poêles des plaques pour des raisons de sécurité.",
@@ -95,7 +94,7 @@
       "experience": "Balades & soirées : Consultez le guide que je vous ai envoyé par email. Ouvrez le lien que vous trouverez sous le nom « Virtual Tour Guide ».",
       "day_trips": "Excursions à la journée : Ostia Antica (~40 min) ; Tivoli (Villa d’Este & Villa d’Hadrien ~1h) ; Castelli Romani.",
       "transport": "Transports :\nDepuis Fiumicino : Prenez le train jusqu’à la gare Termini, puis le métro ligne B (vérifiez la direction) et descendez à la première station, Cavour. Traversez la rue et vous trouverez Via Leonina juste en dessous. Pour le retour, faites le trajet en sens inverse.\nDepuis Ciampino : Bus Terravision ou taxi.",
-      "services": "Services dans le quartier : Vous trouverez de nombreux services à proximité, notamment une laverie, un bureau de poste, une agence de voyages, une pharmacie, une banque et bien plus encore.",
+      "services": "Je n’ai pas trouvé de réponse directe à votre question. Essayez un bouton rapide (wifi, eau, chauffage, salle de bain, transports, taxe de séjour…) ou envoyez-moi quelques précisions supplémentaires.",
       "emergency": "Urgences : UE 112 • Police 113 • Ambulance 118 • Pompiers 115 • Médecin anglophone +39 06 488 2371 • Vétérinaire 24h +39 06 660 681",
       "tickets_events": "TICKETS & EVENTS — ROME\n• TicketOne (concerts, theatre, sport): https://www.ticketone.it/en/\n• AS Roma — official tickets: https://www.asroma.com/en/tickets\n• SS Lazio — official tickets: https://sslazio.it/en/tickets",
       "museums_sites": "MUSEUMS & SITES — ROME\n• Colosseum, Roman Forum & Palatine: https://colosseo.it/en\n• Vatican Museums & Sistine Chapel: https://tickets.museivaticani.va/\n• Museums of Rome: https://www.museiincomuneroma.it/en",
@@ -112,6 +111,7 @@
       "receipt_rental": "Reçu de séjour : Nous pouvons émettre un reçu pour le séjour dans l’appartement (location de courte durée) avec votre nom, les dates et le montant total payé. Il ne s’agit pas d’une facture avec TVA, mais d’un reçu simple pour location touristique. Si vous en avez besoin, envoyez-moi les données à indiquer (nom/prénom ou raison sociale, adresse, éventuel code fiscal) et je vous enverrai le reçu en format numérique.",
       "receipt_city_tax": "Reçu de taxe de séjour : Nous pouvons également émettre un reçu séparé pour la taxe de séjour, indiquant le nombre de personnes, les nuits et le montant total versé. Si vous avez besoin de ce reçu, informez-moi après le paiement (en ligne ou en espèces) et je préparerai un récapitulatif dédié."
     },
+
        "de": {
       "trash": "Müll: Bitte verwenden Sie die Müllbeutel in der Küche, verschließen Sie sie gut und bringen Sie sie zu den Containern, die sich etwa 50 Meter links befinden, wenn Sie die Haustür des Gebäudes verlassen. Wir trennen den Müll (WeDoRecycling), daher bitten wir Sie, die Hinweise zu beachten und keinen Müll im Treppenhaus oder vor der Wohnungstür zu lassen.",
       "heating": "Heizung: Nutzen Sie die Fernbedienung der Klimaanlage, drücken Sie MODE, bis das Sonnensymbol erscheint, und stellen Sie 26 °C mit Leistungsstufe 1 ein. Schalten Sie das Gerät immer aus, wenn Sie die Wohnung verlassen.",
@@ -119,7 +119,7 @@
       "wifi": "WLAN: Der Router steht auf dem Schreibtisch am Fenster. Drehen Sie ihn um, um SSID und Passwort auf dem Etikett zu lesen.\nNetz: Siehe Router-Etikett. Passwort: Siehe Router-Etikett.",
       "check_in": "Check-in ab 15:00.\nSprechanlage: Int. 16.\nHaustürcode: 7171 + Schlüsselsymbol.\nHilfe? +39 335 5245756.",
       "check_out": "Vor der Abreise: Licht und Klimaanlage ausschalten, Fenster schließen, Schlüssel auf dem Tisch liegen lassen und die Tür sanft schließen, dabei prüfen, dass sie richtig zu ist.",
-      "water": "Leitungswasser ist trinkbar. Warmwasser ist immer verfügbar.",
+      "water": "Wasser: Leitungswasser ist trinkbar. Normalerweise ist Warmwasser immer verfügbar. Wenn aus Dusche oder Wasserhähnen nur kaltes Wasser kommt oder gar kein Wasser, drehen Sie den Mischer ganz auf „heiß“ und lassen Sie das Wasser 1–2 Minuten laufen. Bleibt es kalt oder kommt gar kein Wasser, schreiben Sie mir bitte sofort und sagen Sie mir, ob das Problem nur in der Dusche, am Waschbecken oder in der ganzen Wohnung auftritt, damit wir Boiler/Wasserversorgung schnell prüfen können.",
       "AC": "Bitte schalten Sie die Klimaanlage aus, wenn Sie die Wohnung verlassen.",
       "bathroom": "Bad: Toilettenpapier, Handseife, Badematte, Föhn.\nHandtücher: Pro Gast 1 großes + 1 mittleres Handtuch. Das Bett ist bei Ankunft bereits gemacht.",
       "gas": "Küche: Die Wohnung hat kein Gas, sondern ein Elektrokochfeld. Bitte entfernen Sie vor dem Verlassen alle Töpfe und Pfannen von den Kochplatten, aus Sicherheitsgründen.",
@@ -131,14 +131,14 @@
       "experience": "Abendliche Erlebnisse: Bitte sehen Sie im Guide nach, den ich Ihnen per E-Mail geschickt habe. Öffnen Sie den Link unter dem Namen „Virtual Tour Guide“.",
       "day_trips": "Tagesausflüge: Ostia Antica (~40 Min); Tivoli (Villa d’Este & Villa Adriana ~1 Std.); Castelli Romani.",
       "transport": "Verkehr:\nVon Fiumicino: Nehmen Sie den Zug bis zum Bahnhof Termini, dann die U-Bahn-Linie B (Richtung prüfen) und steigen Sie an der ersten Station Cavour aus. Überqueren Sie die Straße, dort finden Sie die Via Leonina direkt darunter. Für die Abreise nehmen Sie denselben Weg zurück.\nVon Ciampino: Terravision-Bus oder Taxi.",
-      "services": "Dienstleistungen in der Umgebung: Im Viertel finden Sie zahlreiche Services, darunter eine Wäscherei, ein Postamt, ein Reisebüro, eine Apotheke, eine Bank und vieles mehr.",
+      "services": "Ich habe keine direkte Antwort auf Ihre Frage gefunden. Bitte versuchen Sie einen Schnell-Button (WLAN, Wasser, Heizung, Bad, Verkehr, Kurtaxe …) oder schreiben Sie mir ein paar zusätzliche Details.",
       "emergency": "Notfälle: EU-Notruf 112 • Polizei 113 • Rettung 118 • Feuerwehr 115 • Englischsprachiger Arzt +39 06 488 2371 • Tierarzt 24h +39 06 660 681",
       "tickets_events": "TICKETS & EVENTS — ROME\n• TicketOne (concerts, theatre, sport): https://www.ticketone.it/en/\n• AS Roma — official tickets: https://www.asroma.com/en/tickets\n• SS Lazio — official tickets: https://sslazio.it/en/tickets",
       "museums_sites": "MUSEUMS & SITES — ROME\n• Colosseum, Roman Forum & Palatine: https://colosseo.it/en\n• Vatican Museums & Sistine Chapel: https://tickets.museivaticani.va/\n• Museums of Rome: https://www.museiincomuneroma.it/en",
       "exhibitions": "EXHIBITIONS — ROME\n• Musei in Comune — exhibitions: https://www.museiincomuneroma.it/en/exhibitions\n• Scuderie del Quirinale: https://www.scuderiequirinale.it/\n• MAXXI — Museum of 21st Century Arts: https://www.maxxi.art/en/",
       "house_rules": "Hausordnung: Bitte respektieren Sie die Nachbarn: keine Partys, keine laute Musik und kein Lärm nach 22:00 Uhr. Rauchen ist in der Wohnung nicht erlaubt; wenn Sie am Fenster rauchen, werfen Sie keine Zigarettenstummel hinaus. Zusätzliche, nicht registrierte Gäste sind nicht erlaubt. Bei Unklarheiten schreiben Sie mir bitte vorher – besser vorher klären als hinterher.",
       "laundry": "Wäsche: Sie können die Waschmaschine in der Wohnung benutzen. Alternativ können Sie mir schreiben, und ich empfehle Ihnen je nach Zeitplan den besten Service (SB-Waschsalon oder Wäscheservice in der Nähe).",
-      "wifi_troubleshooting": "WLAN funktioniert nicht: 1) Prüfen Sie, ob der Router eingeschaltet ist (Kontrolllampen an). 2) Ziehen Sie den Stecker des Routers für 30 Sekunden und stecken Sie ihn wieder ein. 3) Stellen Sie sicher, dass Sie mit dem richtigen Netz laut Router-Etikett verbunden sind und dass Sie das Passwort exakt wie geschrieben eingegeben haben (Groß-/Kleinschreibung). Wenn es dann immer noch nicht funktioniert, schreiben Sie mir und wir prüfen es gemeinsam.",
+      "wifi_troubleshooting": "WLAN funktioniert nicht: 1) Prüfen Sie, ob der Router eingeschaltet ist (Kontrolllampen an). 2) Ziehen Sie den Stecker des Routers für 30 Sekunden und stecken Sie ihn wieder ein. 3) Stellen Sie sicher, dass Sie mit dem richtigen Netz laut Router-Etikett verbunden sind und dass Sie das Passwort exakt wie geschrieben eingegeben haben (Groß-/Kleinschreibung). Wenn es dann immer noch funktioniert, schreiben Sie mir und wir prüfen es gemeinsam.",
       "late_checkout_policy": "Später Check-out: Die reguläre Check-out-Zeit ist 11:00 Uhr. Manchmal können wir eine kleine Verlängerung erlauben, das hängt aber immer von Anreisen am gleichen Tag und vom Reinigungsteam ab. Ein später Check-out kann niemals automatisch bestätigt werden: Wenn Sie später auschecken möchten, teilen Sie mir bitte die gewünschte Zeit mit, und ich bestätige persönlich je nach Verfügbarkeit.",
       "luggage_storage": "Gepäckaufbewahrung: Wenn möglich, können wir eine Lösung finden, Ihr Gepäck nach dem Check-out aufzubewahren, es hängt aber von Reinigung und neuen Gästen ab. Teilen Sie mir bitte die Zeiten mit, zu denen Sie Ihr Gepäck abstellen/abholen möchten, und ich sage Ihnen, ob es in der Wohnung bleiben kann oder empfehle Ihnen eine Gepäckaufbewahrung in der Nähe.",
       "id_documents": "Ausweisdokumente: Nach italienischem Gesetz müssen Gäste registriert werden. Vor oder beim Check-in benötige ich für jeden Gast ein gültiges Ausweisdokument (Ausweis oder Reisepass). Die Dokumente können über das von mir gesendete Portal/den Link oder als klare Fotos (Vorder-/Rückseite) per Nachricht/E-Mail geschickt werden. Die Daten werden nur für die gesetzlichen Meldepflichten verwendet.",
@@ -155,7 +155,7 @@
       "wifi": "Wi-Fi: El router está en el escritorio cerca de la ventana. Gíralo para leer el SSID y la contraseña en la etiqueta.\nRed: ver etiqueta del router. Contraseña: ver etiqueta del router.",
       "check_in": "Check-in a partir de las 15:00.\nPortero: int. 16.\nCódigo del portal: 7171 + símbolo de la llave.\n¿Necesitas ayuda? Llama al +39 335 5245756.",
       "check_out": "Antes de salir: apaga luces y aire acondicionado, cierra las ventanas, deja las llaves sobre la mesa y cierra la puerta con cuidado comprobando que esté bien cerrada.",
-      "water": "El agua del grifo es potable. El agua caliente está siempre disponible.",
+      "water": "Agua: El agua del grifo es potable. Normalmente el agua caliente está siempre disponible. Si en la ducha o en los grifos solo sale agua fría o no sale agua, gira el mando totalmente hacia el lado caliente y deja correr el agua 1–2 minutos. Si sigue fría o no sale nada, escríbeme enseguida indicando si el problema es solo en la ducha, en el lavabo o en todo el apartamento, para que podamos comprobar rápidamente el calentador/suministro de agua.",
       "AC": "Por favor, apaga el aire acondicionado cuando salgas.",
       "bathroom": "Baño: Papel higiénico, jabón de manos, alfombrilla, secador de pelo.\nToallas: Por huésped: 1 grande + 1 mediana. La cama está preparada a la llegada.",
       "gas": "Cocina: El apartamento no tiene gas, sino placa eléctrica. Antes de salir recuerda quitar todas las ollas y sartenes de los fuegos eléctricos por seguridad.",
@@ -167,7 +167,7 @@
       "experience": "Experiencias por la tarde/noche: Consulta la guía que te envié por email. Abre el enlace \"Virtual Tour Guide\".",
       "day_trips": "Excursiones de un día: Ostia Antica (~40 min); Tivoli (Villa d’Este y Villa Adriana ~1 h); Castelli Romani.",
       "transport": "Transporte:\nDesde Fiumicino: Tren hasta la estación Termini, luego metro línea B (comprueba la dirección) y bájate en la primera parada, Cavour. Cruza la calle y encontrarás Via Leonina justo debajo. Para la salida, sigue el camino a la inversa.\nDesde Ciampino: bus Terravision o taxi.",
-      "services": "Servicios en la zona: En el barrio encontrarás muchos servicios, como lavandería, oficina de correos, agencia de viajes, farmacia, banco y más.",
+      "services": "No he encontrado una respuesta directa a tu pregunta. Prueba con uno de los botones rápidos (wifi, agua, calefacción, baño, transporte, tasa turística…) o escríbeme con algún detalle más.",
       "emergency": "Emergencias: Número único UE 112 • Policía 113 • Ambulancia 118 • Bomberos 115 • Médico de habla inglesa +39 06 488 2371 • Veterinario 24 h +39 06 660 681",
       "tickets_events": "TICKETS & EVENTS — ROME\n• TicketOne (conciertos, teatro, deporte): https://www.ticketone.it/en/\n• AS Roma — entradas oficiales: https://www.asroma.com/en/tickets\n• SS Lazio — entradas oficiales: https://sslazio.it/en/tickets",
       "museums_sites": "MUSEOS Y SITIOS — ROMA\n• Coliseo, Foro Romano y Palatino: https://colosseo.it/en\n• Museos Vaticanos y Capilla Sixtina: https://tickets.museivaticani.va/\n• Museos de Roma: https://www.museiincomuneroma.it/en",
@@ -187,4 +187,3 @@
   }
 }
    
-
