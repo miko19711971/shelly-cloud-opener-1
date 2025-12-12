@@ -1,4 +1,4 @@
- {
+{
   "apartment": "Viale Trastevere 108",
   "languages": ["it", "en", "fr", "de", "es"],
   "intents": {
@@ -32,7 +32,12 @@
       "city_tax_info": ["tassa di soggiorno","tassa comunale","city tax","quanto devo pagare","costo tassa"],
       "city_tax_payment_issue": ["problema pagamento tassa","link tassa","errore importo","link non funziona","link tassa non va"],
       "receipt_rental": ["ricevuta soggiorno","ricevuta affitto","ricevuta appartamento","prova di pagamento"],
-      "receipt_city_tax": ["ricevuta tassa di soggiorno","ricevuta city tax","ricevuta tassa comunale"]
+      "receipt_city_tax": ["ricevuta tassa di soggiorno","ricevuta city tax","ricevuta tassa comunale"],
+      "house_rules": ["regole","regole casa","rumore","feste","musica","fumare","ospiti"],
+      "laundry": ["lavanderia","lavare vestiti","lavatrice","lavare asciugamani"],
+      "wifi_troubleshooting": ["wifi non funziona","problema wifi","internet non va","rete non va"],
+      "late_checkout_policy": ["late check out","late checkout","uscire più tardi","check out tardi"],
+      "luggage_storage": ["bagagli","lasciare valigie","deposito bagagli","tenere valigie"]
     },
     "en": {
       "heating": ["heating","thermostat","radiators","cold","temperature"],
@@ -64,7 +69,12 @@
       "city_tax_info": ["city tax","tourist tax","how much tax","tax amount","municipal tax"],
       "city_tax_payment_issue": ["city tax link problem","tax payment issue","wrong amount","link not working","tax link error"],
       "receipt_rental": ["receipt stay","rental receipt","apartment receipt","proof of payment"],
-      "receipt_city_tax": ["city tax receipt","tourist tax receipt","municipal tax receipt"]
+      "receipt_city_tax": ["city tax receipt","tourist tax receipt","municipal tax receipt"],
+      "house_rules": ["house rules","rules","noise","party","music","smoking","guests"],
+      "laundry": ["laundry","wash clothes","washing machine","wash towels"],
+      "wifi_troubleshooting": ["wifi not working","internet not working","no wifi","wifi problem"],
+      "late_checkout_policy": ["late check out","late checkout","leave later","late departure"],
+      "luggage_storage": ["luggage","leave bags","store luggage","baggage storage"]
     },
     "fr": {
       "heating": ["chauffage","thermostat","radiateurs","froid","température"],
@@ -96,7 +106,12 @@
       "city_tax_info": ["taxe de séjour","taxe communale","city tax","montant taxe"],
       "city_tax_payment_issue": ["problème paiement taxe","lien taxe","montant incorrect","lien ne fonctionne pas"],
       "receipt_rental": ["reçu de séjour","reçu de location","reçu appartement"],
-      "receipt_city_tax": ["reçu taxe de séjour","reçu city tax","reçu taxe communale"]
+      "receipt_city_tax": ["reçu taxe de séjour","reçu city tax","reçu taxe communale"],
+      "house_rules": ["règles","règles maison","bruit","fête","musique","fumer","invités"],
+      "laundry": ["blanchisserie","laver vêtements","laverie","machine à laver"],
+      "wifi_troubleshooting": ["wifi ne fonctionne pas","problème wifi","internet ne marche pas","pas de wifi"],
+      "late_checkout_policy": ["late check out","départ tardif","check out tard","partir plus tard"],
+      "luggage_storage": ["bagages","laisser valises","consigne bagages","garder valises"]
     },
     "de": {
       "heating": ["heizung","thermostat","heizkörper","kalt","temperatur"],
@@ -128,7 +143,12 @@
       "city_tax_info": ["kurtaxe","stadtsteuer","city tax","steuerbetrag"],
       "city_tax_payment_issue": ["problem bei zahlung der kurtaxe","link kurtaxe","falscher betrag","link funktioniert nicht"],
       "receipt_rental": ["mietbeleg","beleg für aufenthalt","quittung wohnung"],
-      "receipt_city_tax": ["quittung kurtaxe","beleg city tax","stadtsteuerbeleg"]
+      "receipt_city_tax": ["quittung kurtaxe","beleg city tax","stadtsteuerbeleg"],
+      "house_rules": ["hausordnung","regeln","lärm","party","musik","rauchen","gäste"],
+      "laundry": ["wäsche","wäsche waschen","waschmaschine","waschsalon"],
+      "wifi_troubleshooting": ["wlan funktioniert nicht","kein wlan","internet geht nicht","wlan problem"],
+      "late_checkout_policy": ["late check out","später check-out","spät auschecken","späte abreise"],
+      "luggage_storage": ["gepäck","gepäck abstellen","gepäckaufbewahrung","koffer lassen"]
     },
     "es": {
       "heating": ["calefacción","termostato","radiadores","frío","temperatura"],
@@ -160,10 +180,16 @@
       "city_tax_info": ["tasa turística","city tax","impuesto municipal","cuánto tengo que pagar"],
       "city_tax_payment_issue": ["problema pago tasa","enlace tasa","importe incorrecto","enlace no funciona"],
       "receipt_rental": ["recibo estancia","recibo alquiler","recibo apartamento"],
-      "receipt_city_tax": ["recibo tasa turística","recibo city tax","recibo impuesto municipal"]
+      "receipt_city_tax": ["recibo tasa turística","recibo city tax","recibo impuesto municipal"],
+      "house_rules": ["normas casa","reglas","ruido","fiesta","música","fumar","invitados"],
+      "laundry": ["lavandería","lavar ropa","lavadora","lavar toallas"],
+      "wifi_troubleshooting": ["wifi no funciona","problema wifi","internet no va","sin wifi"],
+      "late_checkout_policy": ["late check out","late checkout","salida tardía","salir más tarde"],
+      "luggage_storage": ["equipaje","dejar maletas","consigna","guardar equipaje"]
     }
   },
-   "answers": {
+
+  "answers": {
     "it": {
       "heating": "Riscaldamento: Per accendere il riscaldamento vai nel corridoio subito dopo la cucina; sul lato destro del muro c’è un termostato con una ghiera. Metti il piccolo interruttore su ON e imposta la ghiera su 26 °C: tutti i termosifoni dell’appartamento si accenderanno.",
       "trash": "Spazzatura: In questo stabile NON si fa raccolta differenziata. Prima del check-out getta la spazzatura negli appositi contenitori che trovi uscendo dall’edificio, sul lato destro.",
@@ -171,9 +197,9 @@
       "wifi": "Wi-Fi: Router sul mobile d’ingresso. Gira il dispositivo per leggere SSID e password.",
       "check_in": "Check-in dalle 15:00.",
       "check_out": "Spegni luci/AC, chiudi finestre, lascia le chiavi sul tavolo. Chiudi la porta manualmente e assicurati che sia ben chiusa.",
-      "water": "L’acqua è potabile e l’acqua calda è sempre attiva.",
+      "water": "Acqua: L’acqua del rubinetto è potabile e si può bere. L’acqua calda è sempre disponibile, ma può impiegare qualche minuto ad arrivare, soprattutto al mattino. Se non arriva acqua calda o la pressione è bassa: 1) apri un solo rubinetto alla volta (per esempio solo la doccia); 2) controlla che i miscelatori di caldo/freddo siano completamente aperti; 3) aspetta 1–2 minuti perché l’acqua calda arrivi. Se dopo questi passaggi non hai ancora acqua calda o non hai proprio acqua, scrivimi subito e verifichiamo.",
       "ac": "Aria condizionata disponibile. Spegnerla quando si esce.",
-      "bathroom": "Bagno completo: asciugamani, phon, sapone.",
+      "bathroom": "Bagno: In bagno trovi asciugamani, phon, tappetino, carta igienica e sapone.\nAsciugamani: per ospite 1 telo grande + 1 medio; il letto è pronto all’arrivo. Se lo scarico del WC non funziona bene, tieni premuto il pulsante qualche secondo e non gettare nel water salviette, assorbenti o altri oggetti (solo carta igienica). Se noti acqua sul pavimento o la doccia scarica lentamente, avvisami il prima possibile così possiamo intervenire.",
       "kitchen": "Cucina attrezzata. Spegnere SEMPRE i fornelli e controllare che siano ben chiusi dopo aver cucinato.",
       "terrace": "Chiudi sempre le finestre e non lasciare nulla sul parapetto.",
       "eat": "Tonnarello • Grazia & Graziella • Nannarella • Da Enzo 29 • Otello.",
@@ -194,18 +220,23 @@
       "city_tax_info": "Tassa di soggiorno: A Roma è obbligatoria una tassa comunale per gli ospiti non residenti. Per questo appartamento l’importo è di 5 € a persona per notte, fino a un massimo di 10 notti. La tassa viene incassata da noi per conto del Comune di Roma. Eventuali esenzioni dipendono dalle regole comunali: se hai dubbi, scrivimi e verifichiamo insieme.",
       "city_tax_payment_issue": "Problemi con il pagamento della tassa: Se l’importo che vedi nel link o sul portale non ti sembra corretto, oppure il link non funziona, non ti preoccupare: il check-in e le chiavi non vengono bloccati. Scrivimi il numero di persone adulte, le notti effettive e quanto hai già pagato (se hai effettuato un pagamento) e ti confermerò l’importo giusto. Eventuali differenze si possono regolare con un nuovo link o in contanti.",
       "receipt_rental": "Ricevuta soggiorno: Possiamo rilasciare una ricevuta per il soggiorno in appartamento (affitto breve) con il tuo nome, le date e l’importo totale pagato. Non è una fattura con partita IVA, ma una ricevuta semplice per locazione turistica. Se ti serve, mandami i dati che vuoi inserire (nome/cognome o ragione sociale, indirizzo, eventuale codice fiscale) e ti invierò la ricevuta in formato digitale.",
-      "receipt_city_tax": "Ricevuta tassa di soggiorno: Possiamo rilasciare anche una ricevuta separata per la tassa di soggiorno, con indicazione di numero di persone, notti e importo totale versato. Se ti serve questa ricevuta, avvisami dopo il pagamento (online o in contanti) e preparerò un riepilogo dedicato."
+      "receipt_city_tax": "Ricevuta tassa di soggiorno: Possiamo rilasciare anche una ricevuta separata per la tassa di soggiorno, con indicazione di numero di persone, notti e importo totale versato. Se ti serve questa ricevuta, avvisami dopo il pagamento (online o in contanti) e preparerò un riepilogo dedicato.",
+      "house_rules": "Regole della casa: Ti chiediamo di rispettare il vicinato: niente feste, niente musica ad alto volume e nessun rumore dopo le 22:00. Vietato fumare all’interno dell’appartamento; se fumi vicino alle finestre, non buttare mozziconi fuori. Non sono ammessi ospiti extra non registrati. Per qualsiasi dubbio scrivimi prima, è sempre meglio chiarire in anticipo.",
+      "laundry": "Lavanderia: Se hai bisogno di lavare vestiti o asciugamani, scrivimi e ti indico la soluzione migliore in zona Trastevere (lavanderia self-service o servizio tradizionale) in base ai tuoi orari.",
+      "wifi_troubleshooting": "Wi-Fi non funziona: 1) Controlla che il router sia acceso (luci frontali accese). 2) Stacca la spina del router per 30 secondi e ricollegala. 3) Verifica di essere connesso alla rete indicata sull’etichetta del router e di aver inserito la password esattamente come scritta (maiuscole/minuscole contano). Se ancora non va, scrivimi e verifichiamo insieme.",
+      "late_checkout_policy": "Late check-out: L’orario standard di check-out è alle 11:00. In alcuni casi possiamo concedere un piccolo prolungamento, ma dipende dagli arrivi dello stesso giorno e dalla squadra di pulizia. Il late check-out non può mai essere confermato in automatico: se ti serve uscire più tardi, scrivimi l’orario che ti sarebbe comodo e ti confermerò io personalmente in base alla disponibilità.",
+      "luggage_storage": "Deposito bagagli: Quando possibile, possiamo trovare una soluzione per tenere le valigie dopo il check-out, ma dipende da pulizie e nuovi arrivi. Scrivimi l’orario in cui vorresti lasciare/ritirare i bagagli e ti dirò se è possibile tenerli in appartamento o ti suggerirò un deposito bagagli vicino."
     },
-     "en": {
+    "en": {
       "heating": "Heating: To turn on the heating, go to the corridor just after the kitchen; on the right-hand wall there is a small thermostat with a dial. Put the small switch to ON and set the dial to 26°C: all radiators in the apartment will turn on.",
       "trash": "Trash: In this building there is NO recycling. Before check-out, please throw your rubbish in the containers just outside the building on the right-hand side.",
       "electric_panel": "Electric panel: If the power goes off, the panel is in the small room before the bathroom, immediately on the right as you enter: all switches must be in the up position. If there is still no electricity, go to floor -1 in front of the ‘New York Institute’ door, open the electrical cabinet, find ‘Bondi int. 9’ and push the lowered switch back up.",
       "wifi": "Wi-Fi: Router on the entrance cabinet. Turn it to read SSID and password on the label.",
       "check_in": "Check-in from 15:00.",
       "check_out": "Before leaving: turn off lights/AC, close windows, leave the keys on the table. Close the door manually and make sure it is properly locked.",
-      "water": "Tap water is drinkable and hot water is always available.",
+      "water": "Water: Tap water is drinkable and safe. Hot water is always available, but it may take a couple of minutes to arrive, especially in the morning. If you do not get hot water or the pressure is low: 1) open only one tap at a time (for example just the shower); 2) check that the hot/cold mixers are fully open; 3) wait 1–2 minutes for the hot water to reach the tap. If after this you still have no hot water or no water at all, please message me immediately and we will check it.",
       "ac": "Air conditioning is available. Please switch it off when you go out.",
-      "bathroom": "Bathroom: complete set with towels, hairdryer and soap.",
+      "bathroom": "Bathroom: You will find towels, hairdryer, bath mat, toilet paper and soap.\nTowels: per guest: 1 large + 1 medium towel; the bed is prepared on arrival. If the toilet does not flush properly, keep the button pressed for a few seconds and please do not throw wipes, sanitary products or other items into the WC (toilet paper only). If you see water on the floor or the shower is not draining well, let me know as soon as possible so we can fix it.",
       "kitchen": "Equipped kitchen. ALWAYS switch off the burners and check they are properly closed after cooking.",
       "terrace": "Always close the windows and do not leave anything on the ledge.",
       "eat": "Tonnarello • Grazia & Graziella • Nannarella • Da Enzo 29 • Otello.",
@@ -226,8 +257,14 @@
       "city_tax_info": "City tax: In Rome there is a mandatory municipal tax for non-resident guests. For this apartment the amount is 5 € per person per night, up to a maximum of 10 nights. The tax is collected by us on behalf of the City of Rome. Possible exemptions depend on municipal rules: if you are unsure, write to me and we will check together.",
       "city_tax_payment_issue": "City tax payment issues: If the amount you see in the link or portal does not look correct, or the link does not work, do not worry: check-in and keys are not blocked. Send me the number of adult guests, the actual nights and how much you have already paid (if any), and I will confirm the correct amount. Any difference can be adjusted with a new link or in cash.",
       "receipt_rental": "Stay receipt: We can issue a receipt for the apartment stay (short-term rental) with your name, dates and total amount paid. It is not a VAT invoice, but a simple receipt for tourist rental. If you need it, send me the details you want to appear (name/surname or company name, address, tax code if applicable) and I will send you the receipt in digital format.",
-      "receipt_city_tax": "City tax receipt: We can also issue a separate receipt for the city tax, showing number of guests, nights and total amount paid. If you need this receipt, let me know after payment (online or cash) and I will prepare a dedicated summary."
+      "receipt_city_tax": "City tax receipt: We can also issue a separate receipt for the city tax, showing number of guests, nights and total amount paid. If you need this receipt, let me know after payment (online or cash) and I will prepare a dedicated summary.",
+      "house_rules": "House rules: Please respect the neighbours: no parties, no loud music and no noise after 22:00. Smoking is not allowed inside the apartment; if you smoke near the windows, do not throw cigarette butts outside. No unregistered extra guests are allowed. If you are unsure about anything, write to me first – it is always better to clarify in advance.",
+      "laundry": "Laundry: If you need to wash clothes or towels, write to me and I will suggest the best option in Trastevere (self-service laundromat or laundry service) according to your schedule.",
+      "wifi_troubleshooting": "Wi-Fi not working: 1) Check that the router is ON (front lights on). 2) Unplug the router for 30 seconds and plug it back in. 3) Make sure you are connected to the correct network shown on the router label and that you entered the password exactly as written (upper/lowercase matters). If it still does not work, send me a message and we will check together.",
+      "late_checkout_policy": "Late check-out: Standard check-out time is 11:00. Sometimes we can allow a small extension, but it always depends on same-day arrivals and the cleaning team. Late check-out can never be confirmed automatically: if you need to leave later, tell me the time you would like and I will personally confirm it based on availability.",
+      "luggage_storage": "Luggage storage: When possible, we can try to find a solution to keep your luggage after check-out, but it depends on cleaning and new arrivals. Tell me the time when you would like to leave/pick up your bags and I will let you know if they can stay in the apartment or I will suggest a luggage storage nearby."
     },
+
     "fr": {
       "heating": "Chauffage : Pour allumer le chauffage, allez dans le couloir juste après la cuisine ; sur le mur de droite se trouve un petit thermostat avec molette. Mettez le petit interrupteur sur ON et réglez la molette sur 26 °C : tous les radiateurs de l’appartement se mettront en marche.",
       "trash": "Déchets : Dans cet immeuble il n’y a PAS de tri sélectif. Avant le départ, jetez vos déchets dans les conteneurs prévus en sortant de l’immeuble, sur la droite.",
@@ -235,9 +272,9 @@
       "wifi": "Wi-Fi : Routeur à l’entrée. Tournez-le pour lire SSID et mot de passe.",
       "check_in": "Arrivée à partir de 15h00.",
       "check_out": "Avant de partir : éteignez lumières/clim, fermez les fenêtres et laissez les clés sur la table. Fermez la porte manuellement et assurez-vous qu’elle soit bien verrouillée.",
-      "water": "Eau du robinet potable et eau chaude toujours disponible.",
+      "water": "Eau : L’eau du robinet est potable et peut être bue. L’eau chaude est toujours disponible, mais elle peut mettre quelques minutes à arriver, surtout le matin. Si vous n’avez pas d’eau chaude ou si la pression est faible : 1) n’ouvrez qu’un seul robinet à la fois (par exemple seulement la douche) ; 2) vérifiez que les mélangeurs chaud/froid sont bien ouverts ; 3) attendez 1–2 minutes pour que l’eau chaude arrive. Si après cela vous n’avez toujours pas d’eau chaude ou pas d’eau du tout, écrivez-moi immédiatement et nous vérifierons.",
       "ac": "Climatisation disponible. Merci de l’éteindre en sortant.",
-      "bathroom": "Salle de bain complète : serviettes, sèche-cheveux, savon.",
+      "bathroom": "Salle de bain : Vous y trouverez des serviettes, un sèche-cheveux, un tapis de bain, du papier toilette et du savon.\nServiettes : par personne : 1 grande + 1 moyenne ; le lit est prêt à l’arrivée. Si la chasse d’eau ne fonctionne pas bien, maintenez le bouton appuyé quelques secondes et ne jetez pas de lingettes, protections hygiéniques ou autres objets dans les toilettes (papier toilette uniquement). Si vous voyez de l’eau au sol ou si la douche évacue mal, prévenez-moi au plus vite afin que nous puissions intervenir.",
       "kitchen": "Cuisine équipée. ÉTEIGNEZ TOUJOURS les plaques/feux et vérifiez qu’ils soient bien fermés après avoir cuisiné.",
       "terrace": "Fermez toujours les fenêtres et ne laissez rien sur la rambarde.",
       "eat": "Tonnarello • Grazia & Graziella • Nannarella • Da Enzo 29 • Otello.",
@@ -258,18 +295,23 @@
       "city_tax_info": "Taxe de séjour : À Rome, il existe une taxe communale obligatoire pour les invités non résidents. Pour cet appartement, le montant est de 5 € par personne et par nuit, jusqu’à un maximum de 10 nuits. La taxe est encaissée par nous pour le compte de la Ville de Rome. D’éventuelles exonérations dépendent des règles de la commune : en cas de doute, écrivez-moi et nous vérifierons ensemble.",
       "city_tax_payment_issue": "Problèmes de paiement de la taxe : Si le montant indiqué dans le lien ou le portail ne vous semble pas correct, ou si le lien ne fonctionne pas, ne vous inquiétez pas : le check-in et les clés ne sont pas bloqués. Envoyez-moi le nombre d’adultes, les nuits effectives et le montant déjà payé (le cas échéant) et je vous confirmerai le montant correct. Toute différence pourra être régularisée avec un nouveau lien ou en espèces.",
       "receipt_rental": "Reçu de séjour : Nous pouvons émettre un reçu pour le séjour dans l’appartement (location de courte durée) avec votre nom, les dates et le montant total payé. Il ne s’agit pas d’une facture avec TVA, mais d’un reçu simple pour location touristique. Si vous en avez besoin, envoyez-moi les données à indiquer (nom/prénom ou raison sociale, adresse, éventuel code fiscal) et je vous enverrai le reçu en format numérique.",
-      "receipt_city_tax": "Reçu de taxe de séjour : Nous pouvons également émettre un reçu séparé pour la taxe de séjour, indiquant le nombre de personnes, les nuits et le montant total versé. Si vous avez besoin de ce reçu, informez-moi après le paiement (en ligne ou en espèces) et je préparerai un récapitulatif dédié."
+      "receipt_city_tax": "Reçu de taxe de séjour : Nous pouvons également émettre un reçu séparé pour la taxe de séjour, indiquant le nombre de personnes, les nuits et le montant total versé. Si vous avez besoin de ce reçu, informez-moi après le paiement (en ligne ou en espèces) et je préparerai un récapitulatif dédié.",
+      "house_rules": "Règles de la maison : Merci de respecter le voisinage : pas de fêtes, pas de musique forte et pas de bruit après 22h00. Il est interdit de fumer à l’intérieur de l’appartement ; si vous fumez près des fenêtres, ne jetez pas les mégots dehors. Aucun invité supplémentaire non enregistré n’est autorisé. En cas de doute, écrivez-moi d’abord : il vaut toujours mieux clarifier avant.",
+      "laundry": "Blanchisserie : Si vous devez laver des vêtements ou des serviettes, écrivez-moi et je vous indiquerai la meilleure solution à Trastevere (laverie libre-service ou service de blanchisserie) en fonction de vos horaires.",
+      "wifi_troubleshooting": "Wi-Fi ne fonctionne pas : 1) Vérifiez que le routeur est allumé (voyants allumés). 2) Débranchez le routeur pendant 30 secondes puis rebranchez-le. 3) Assurez-vous d’être connecté au bon réseau indiqué sur l’étiquette du routeur et d’avoir saisi le mot de passe exactement comme écrit (majuscules/minuscules). Si cela ne fonctionne toujours pas, envoyez-moi un message et nous vérifierons ensemble.",
+      "late_checkout_policy": "Départ tardif : L’heure standard de départ est 11h00. Parfois nous pouvons accorder un léger prolongement, mais cela dépend toujours des arrivées le même jour et de l’équipe de ménage. Un départ tardif ne peut jamais être confirmé automatiquement : si vous avez besoin de partir plus tard, indiquez-moi l’heure souhaitée et je vous confirmerai personnellement en fonction des disponibilités.",
+      "luggage_storage": "Consigne bagages : Lorsque c’est possible, nous pouvons essayer de trouver une solution pour garder vos bagages après le départ, mais cela dépend du ménage et des nouveaux arrivants. Indiquez-moi l’heure à laquelle vous souhaitez laisser/récupérer les valises et je vous dirai si elles peuvent rester dans l’appartement ou je vous proposerai une consigne à proximité."
     },
-     "de": {
+    "de": {
       "heating": "Heizung: Um die Heizung einzuschalten, gehen Sie in den Flur direkt nach der Küche; an der rechten Wand befindet sich ein kleiner Thermostat mit Drehregler. Stellen Sie den kleinen Schalter auf ON und den Regler auf 26 °C: Alle Heizkörper in der Wohnung schalten sich ein.",
       "trash": "Müll: In diesem Haus gibt es KEINE Mülltrennung. Bitte entsorgen Sie Ihren Müll vor dem Check-out in den Containern rechts, direkt außerhalb des Gebäudes.",
       "electric_panel": "Sicherungskasten: Bei Stromausfall befindet sich der Kasten im Vorraum zum Bad, gleich rechts beim Eingang: Alle Schalter müssen nach oben stehen. Wenn noch kein Strom da ist, gehen Sie auf Etage -1 vor die Tür des ‘New York Institute’, öffnen Sie den Elektroschrank, suchen Sie ‘Bondi int. 9’ und legen Sie den heruntergefallenen Schalter wieder nach oben.",
       "wifi": "WLAN: Router im Eingangsbereich. Umdrehen, um SSID und Passwort auf dem Etikett zu lesen.",
       "check_in": "Check-in ab 15:00 Uhr.",
       "check_out": "Vor der Abreise: Licht/AC ausschalten, Fenster schließen, Schlüssel auf dem Tisch lassen. Tür manuell schließen und prüfen, dass sie richtig zu ist.",
-      "water": "Leitungswasser ist trinkbar und Warmwasser ist jederzeit verfügbar.",
+      "water": "Wasser: Leitungswasser ist trinkbar und sicher. Warmwasser ist immer verfügbar, kann aber vor allem morgens ein bis zwei Minuten brauchen, bis es ankommt. Wenn kein Warmwasser kommt oder der Druck sehr gering ist: 1) öffnen Sie nur einen Hahn gleichzeitig (z.B. nur die Dusche); 2) prüfen Sie, ob die Warm/Kalt-Mischer ganz geöffnet sind; 3) warten Sie 1–2 Minuten, bis das Warmwasser ankommt. Wenn Sie danach immer noch kein Warmwasser oder überhaupt kein Wasser haben, schreiben Sie mir bitte sofort, dann prüfen wir es.",
       "ac": "Klimaanlage vorhanden. Bitte ausschalten, wenn Sie die Wohnung verlassen.",
-      "bathroom": "Bad: vollständige Ausstattung mit Handtüchern, Föhn und Seife.",
+      "bathroom": "Bad: Im Bad finden Sie Handtücher, Föhn, Badematte, Toilettenpapier und Seife.\nHandtücher: pro Gast 1 großes + 1 mittleres Handtuch; das Bett ist bei Ankunft bereits gemacht. Wenn die Toilette nicht richtig spült, halten Sie den Knopf ein paar Sekunden gedrückt und werfen Sie bitte keine Feuchttücher, Damenbinden oder andere Gegenstände in die Toilette (nur Toilettenpapier). Wenn Sie Wasser auf dem Boden bemerken oder die Dusche schlecht abläuft, sagen Sie mir bitte so schnell wie möglich Bescheid, damit wir es beheben können.",
       "kitchen": "Ausgestattete Küche. Schalten Sie die Herdplatten IMMER aus und prüfen Sie, dass alle Regler nach dem Kochen geschlossen sind.",
       "terrace": "Fenster immer schließen und nichts auf die Brüstung legen.",
       "eat": "Tonnarello • Grazia & Graziella • Nannarella • Da Enzo 29 • Otello.",
@@ -290,8 +332,14 @@
       "city_tax_info": "Kurtaxe: In Rom gibt es eine obligatorische kommunale Steuer für nicht ansässige Gäste. Für diese Wohnung beträgt sie 5 € pro Person und Nacht, bis maximal 10 Nächte. Die Steuer wird von uns im Namen der Stadt Rom eingezogen. Mögliche Befreiungen richten sich nach den kommunalen Regeln – bei Fragen schreiben Sie mir bitte, dann prüfen wir es gemeinsam.",
       "city_tax_payment_issue": "Probleme bei der Zahlung der Kurtaxe: Wenn der Betrag im Link/Portal nicht korrekt erscheint oder der Link nicht funktioniert, keine Sorge: Check-in und Schlüssel werden nicht blockiert. Schreiben Sie mir die Anzahl der erwachsenen Gäste, die tatsächlichen Nächte und den bereits gezahlten Betrag (falls vorhanden), und ich bestätige Ihnen den korrekten Betrag. Etwaige Differenzen können wir mit einem neuen Link oder in bar ausgleichen.",
       "receipt_rental": "Beleg für den Aufenthalt: Wir können einen Beleg für den Aufenthalt in der Wohnung (Kurzzeitmiete) mit Ihrem Namen, den Daten und dem Gesamtbetrag ausstellen. Es handelt sich nicht um eine Rechnung mit Mehrwertsteuer, sondern um einen einfachen Beleg für touristische Vermietung. Wenn Sie ihn benötigen, senden Sie mir bitte die gewünschten Daten (Name/Firma, Adresse, ggf. Steuernummer), und ich sende Ihnen den Beleg digital zu.",
-      "receipt_city_tax": "Beleg für die Kurtaxe: Wir können auch einen separaten Beleg für die Kurtaxe ausstellen, mit Angabe der Personenzahl, Nächte und des Gesamtbetrags. Wenn Sie diesen Beleg benötigen, informieren Sie mich nach der Zahlung (online oder bar), und ich bereite eine entsprechende Übersicht vor."
+      "receipt_city_tax": "Beleg für die Kurtaxe: Wir können auch einen separaten Beleg für die Kurtaxe ausstellen, mit Angabe der Personenzahl, Nächte und des Gesamtbetrags. Wenn Sie diesen Beleg benötigen, informieren Sie mich nach der Zahlung (online oder bar), und ich bereite eine entsprechende Übersicht vor.",
+      "house_rules": "Hausordnung: Bitte respektieren Sie die Nachbarn: keine Partys, keine laute Musik und kein Lärm nach 22:00 Uhr. Rauchen ist in der Wohnung nicht erlaubt; wenn Sie am Fenster rauchen, werfen Sie keine Zigarettenstummel hinaus. Zusätzliche, nicht registrierte Gäste sind nicht erlaubt. Bei Unklarheiten schreiben Sie mir bitte vorher – besser vorher klären als nachher.",
+      "laundry": "Wäsche: Wenn Sie Kleidung oder Handtücher waschen müssen, schreiben Sie mir und ich empfehle Ihnen je nach Zeitplan den besten Service in Trastevere (SB-Waschsalon oder Wäscherei in der Nähe).",
+      "wifi_troubleshooting": "WLAN funktioniert nicht: 1) Prüfen Sie, ob der Router eingeschaltet ist (Kontrolllampen an). 2) Ziehen Sie den Stecker des Routers für 30 Sekunden und stecken Sie ihn wieder ein. 3) Stellen Sie sicher, dass Sie mit dem richtigen Netz laut Router-Etikett verbunden sind und dass Sie das Passwort exakt wie geschrieben eingegeben haben (Groß-/Kleinschreibung). Wenn es dann immer noch nicht funktioniert, schreiben Sie mir und wir prüfen es gemeinsam.",
+      "late_checkout_policy": "Später Check-out: Die reguläre Check-out-Zeit ist 11:00 Uhr. Manchmal können wir eine kleine Verlängerung erlauben, das hängt aber immer von Anreisen am gleichen Tag und vom Reinigungsteam ab. Ein später Check-out kann niemals automatisch bestätigt werden: Wenn Sie später auschecken möchten, teilen Sie mir bitte die gewünschte Zeit mit, und ich bestätige persönlich je nach Verfügbarkeit.",
+      "luggage_storage": "Gepäckaufbewahrung: Wenn möglich, können wir eine Lösung finden, Ihr Gepäck nach dem Check-out aufzubewahren, es hängt aber von Reinigung und neuen Gästen ab. Teilen Sie mir bitte die Zeiten mit, zu denen Sie Ihr Gepäck abstellen/abholen möchten, und ich sage Ihnen, ob es in der Wohnung bleiben kann oder empfehle Ihnen eine Gepäckaufbewahrung in der Nähe."
     },
+
     "es": {
       "heating": "Calefacción: Para encender la calefacción, vaya al pasillo justo después de la cocina; en la pared derecha hay un pequeño termostato con rueda. Ponga el pequeño interruptor en ON y ajuste la rueda a 26 °C: todos los radiadores del apartamento se encenderán.",
       "trash": "Basura: En este edificio NO hay reciclaje. Antes del check-out, tire la basura en los contenedores que están al salir del edificio, en el lado derecho.",
@@ -299,9 +347,9 @@
       "wifi": "Wi-Fi: Router en la entrada. Gírelo para ver SSID y contraseña en la etiqueta.",
       "check_in": "Check-in desde las 15:00.",
       "check_out": "Antes de salir: apague luces/AC, cierre las ventanas y deje las llaves sobre la mesa. Cierre la puerta manualmente y asegúrese de que esté bien cerrada.",
-      "water": "El agua del grifo es potable y el agua caliente está siempre disponible.",
+      "water": "Agua: El agua del grifo es potable y se puede beber. El agua caliente está siempre disponible, pero puede tardar unos minutos en llegar, sobre todo por la mañana. Si no sale agua caliente o la presión es baja: 1) abre solo un grifo a la vez (por ejemplo, solo la ducha); 2) comprueba que los mandos de agua caliente/fría estén totalmente abiertos; 3) espera 1–2 minutos para que llegue el agua caliente. Si después de esto sigues sin agua caliente o sin agua, escríbeme de inmediato y lo revisamos.",
       "ac": "Aire acondicionado disponible. Apagar siempre al salir del apartamento.",
-      "bathroom": "Baño completo: toallas, secador de pelo y jabón.",
+      "bathroom": "Baño: En el baño encontrarás toallas, secador de pelo, alfombrilla, papel higiénico y jabón.\nToallas: por huésped: 1 toalla grande + 1 mediana; la cama está preparada a la llegada. Si el inodoro no descarga bien, mantén pulsado el botón unos segundos y no tires toallitas, compresas u otros objetos al WC (solo papel higiénico). Si ves agua en el suelo o la ducha no traga bien, avísame lo antes posible para que podamos intervenir.",
       "kitchen": "Cocina equipada. Apague SIEMPRE los fuegos y compruebe que estén bien cerrados después de cocinar.",
       "terrace": "Cierre siempre las ventanas y no deje nada sobre la barandilla.",
       "eat": "Tonnarello • Grazia & Graziella • Nannarella • Da Enzo 29 • Otello.",
@@ -322,7 +370,15 @@
       "city_tax_info": "Tasa turística: En Roma hay una tasa municipal obligatoria para los huéspedes no residentes. Para este apartamento el importe es de 5 € por persona y noche, hasta un máximo de 10 noches. La tasa la cobramos nosotros en nombre del Ayuntamiento de Roma. Posibles exenciones dependen de las normas municipales: si tienes dudas, escríbeme y lo comprobamos juntos.",
       "city_tax_payment_issue": "Problemas con el pago de la tasa: Si el importe que ves en el enlace o en el portal no te parece correcto, o el enlace no funciona, no te preocupes: el check-in y las llaves no se bloquean. Escríbeme el número de adultos, las noches reales y cuánto has pagado ya (si has hecho un pago) y te confirmaré el importe correcto. Cualquier diferencia se puede ajustar con un nuevo enlace o en efectivo.",
       "receipt_rental": "Recibo de estancia: Podemos emitir un recibo por la estancia en el apartamento (alquiler de corta duración) con tu nombre, las fechas y el importe total pagado. No es una factura con IVA, sino un recibo sencillo de alquiler turístico. Si lo necesitas, mándame los datos que quieres que aparezcan (nombre/apellidos o empresa, dirección, posible NIF) y te enviaré el recibo en formato digital.",
-      "receipt_city_tax": "Recibo de tasa turística: También podemos emitir un recibo separado para la tasa turística, indicando número de personas, noches e importe total pagado. Si necesitas este recibo, avísame después del pago (online o en efectivo) y prepararé un resumen específico."
+      "receipt_city_tax": "Recibo de tasa turística: También podemos emitir un recibo separado para la tasa turística, indicando número de personas, noches e importe total pagado. Si necesitas este recibo, avísame después del pago (online o en efectivo) y prepararé un resumen específico.",
+      "house_rules": "Normas de la casa: Te pedimos que respetes a los vecinos: nada de fiestas, nada de música alta y nada de ruido después de las 22:00. No está permitido fumar dentro del apartamento; si fumas cerca de las ventanas, no tires las colillas fuera. No se permiten huéspedes adicionales no registrados. Si tienes dudas sobre algo, escríbeme antes: es mejor aclararlo de antemano.",
+      "laundry": "Lavandería: Si necesitas lavar ropa o toallas, escríbeme y te indicaré la mejor opción en Trastevere (lavandería autoservicio o servicio tradicional) según tus horarios.",
+      "wifi_troubleshooting": "Wi-Fi no funciona: 1) Comprueba que el router esté encendido (luces frontales encendidas). 2) Desenchufa el router durante 30 segundos y vuelve a enchufarlo. 3) Asegúrate de estar conectado a la red indicada en la etiqueta del router y de haber escrito la contraseña exactamente como aparece (mayúsculas/minúsculas). Si sigue sin funcionar, mándame un mensaje y lo revisamos juntos.",
+      "late_checkout_policy": "Late check-out: La hora estándar de salida es a las 11:00. A veces podemos permitir una pequeña extensión, pero siempre depende de las llegadas del mismo día y del equipo de limpieza. El late check-out nunca se puede confirmar de forma automática: si necesitas salir más tarde, dime la hora que te gustaría y te lo confirmaré personalmente según la disponibilidad.",
+      "luggage_storage": "Consigna de equipaje: Cuando es posible, podemos buscar una solución para guardar el equipaje después del check-out, pero depende de la limpieza y de nuevas llegadas. Dime la hora a la que te gustaría dejar/recoger las maletas y te diré si pueden quedarse en el apartamento o te recomendaré una consigna cercana."
     }
   }
- }
+}
+
+   
+ 
