@@ -984,100 +984,61 @@ function extractGuestName(payload) {
   return firstWord || "Guest";
 }
 
- // ====== Riconoscimento lingua dal testo (IT / EN / FR / DE / ES) ======
+  // ====== Riconoscimento lingua dal testo (IT / EN / FR / DE / ES) ======
 function detectLangFromMessage(msg) {
   const text = normalizeNoAccents(msg || "");
   if (!text) return "en";
 
-  const has = (p) => text.includes(p);
+  const tokens = text.split(" ");
+  const has = (t) => tokens.includes(t);
 
-  // 🇩🇪 Tedesco – parole tipiche
-  if (
-    has("hallo") ||
-    has("guten tag") ||
-    has("guten morgen") ||
-    has("guten abend") ||
-    has("danke") ||
-    has("bitte") ||
-    has("wohnung") ||
-    has("warmwasser") ||
-    has("kaltwasser") ||
-    has("heizung") ||
-    has("schlossel") || has("schlussel") || has("schluessel") ||
-    has("tur") || has("tuer")
-  ) {
-    return "de";
-  }
+  const scores = { de: 0, it: 0, es: 0, fr: 0, en: 0 };
+
+  // 🇩🇪 Tedesco
+  ["hallo", "guten", "danke", "bitte", "wohnung",
+   "warmwasser", "kaltwasser", "heizung",
+   "schlossel", "schlussel", "schluessel",
+   "tur", "tuer", "abreise"
+  ].forEach(t => { if (has(t)) scores.de++; });
 
   // 🇮🇹 Italiano
-  if (
-    has("ciao") ||
-    has("buongiorno") ||
-    has("buonasera") ||
-    has("grazie") ||
-    has("appartamento") ||
-    has("casa") ||
-    has("spazzatura") ||
-    has("immondizia") ||
-    has("pattumiera") ||
-    has("riscaldamento") ||
-    has("termosifone") ||
-    has("doccia") ||
-    has("bagno")
-  ) {
-    return "it";
-  }
+  ["ciao", "buongiorno", "buonasera", "grazie",
+   "appartamento", "casa", "spazzatura", "immondizia",
+   "pattumiera", "riscaldamento", "termosifone",
+   "doccia", "bagno", "uscita", "chiavi"
+  ].forEach(t => { if (has(t)) scores.it++; });
 
   // 🇪🇸 Spagnolo
-  if (
-    has("hola") ||
-    has("buenos dias") ||
-    has("buenas tardes") ||
-    has("gracias") ||
-    has("apartamento") ||
-    has("piso") ||
-    has("ducha") ||
-    has("bano") ||
-    has("baño") ||
-    has("basura")
-  ) {
-    return "es";
-  }
+  ["hola", "gracias", "apartamento", "piso",
+   "ducha", "bano", "basura", "salida", "llaves"
+  ].forEach(t => { if (has(t)) scores.es++; });
 
   // 🇫🇷 Francese
-  if (
-    has("bonjour") ||
-    has("salut") ||
-    has("merci") ||
-    has("appartement") ||
-    has("logement") ||
-    has("poubelle") ||
-    has("ordures") ||
-    has("chauffage") ||
-    has("eau chaude") ||
-    has("eau froide")
-  ) {
-    return "fr";
+  ["bonjour", "salut", "merci", "appartement", "logement",
+   "poubelle", "ordures", "chauffage", "eau",
+   "sortie", "cle", "cles"
+  ].forEach(t => { if (has(t)) scores.fr++; });
+
+  // 🇬🇧 Inglese
+  ["hi", "hello", "thanks", "thank",
+   "apartment", "trash", "garbage",
+   "wifi", "network", "password",
+   "check", "shower", "bathroom", "keys"
+  ].forEach(t => { if (has(t)) scores.en++; });
+
+  // Scegli la lingua col punteggio più alto, con un ordine fisso
+  const order = ["de", "it", "es", "fr", "en"];
+  let best = "en";
+  let bestScore = 0;
+
+  for (const lang of order) {
+    if (scores[lang] > bestScore) {
+      bestScore = scores[lang];
+      best = lang;
+    }
   }
 
-  // 🇬🇧 Inglese – se troviamo marker tipici
-  if (
-    has("hello") ||
-    has("hi,") || has("hi ") ||
-    has("thanks") ||
-    has("thank you") ||
-    has("apartment") ||
-    has("trash") ||
-    has("garbage") ||
-    has("wifi") ||
-    has("wi fi") ||
-    has("wi-fi")
-  ) {
-    return "en";
-  }
-
-  // Fallback: inglese
-  return "en";
+  return bestScore > 0 ? best : "en";
 }
 // Saluto in base alla lingua
 function makeGreeting(lang, name) {
