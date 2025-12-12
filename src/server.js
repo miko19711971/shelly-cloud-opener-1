@@ -728,47 +728,39 @@ function normalizeNoAccents(str) {
     .trim();
 }
 
-// 🔎 Match con parole chiave globali (vale per tutte le guide JSON)
+// 🔎 Match con parole chiave globali (multi-intent, max 2, emergenza prioritaria)
 function findAnswerByKeywords(question, answersForLang) {
   const text = normalizeNoAccents(question);
   if (!text) return null;
 
   const words = text.split(" ");
 
-  // match per token, NON per semplice substring (così "ac" non prende "accende")
+  // match per token, NON per semplice substring
   const hasToken = (syn) => {
     const s = normalizeNoAccents(syn);
     if (!s) return false;
 
-    // frasi con spazio: cerco nella stringa intera
     if (s.includes(" ")) {
-      return text.includes(s);
+      return text.includes(s);        // frasi
     }
-
-    // singola parola: match solo come token intero
-    return words.includes(s);
+    return words.includes(s);         // singola parola
   };
 
-     const KEYWORDS = {
+  const KEYWORDS = {
     // WIFI / INTERNET
     wifi: [
-      // EN
       "wifi","wi fi","wi-fi","internet","wireless","router","wlan","network","ssid",
       "wifi password","wifi code","internet connection","connection","no connection","no internet",
       "slow wifi","slow internet","weak signal","no signal",
-      // IT
       "rete wifi","rete wi-fi","rete internet","password wifi","codice wifi",
       "connessione internet","connessione","nessuna connessione","niente internet",
       "segnale debole","nessun segnale","wifi lento","internet lento",
-      // ES
       "red wifi","clave wifi","contrasena wifi","internet wifi",
       "conexion internet","conexion","sin conexion","sin internet",
       "senal debil","sin senal","wifi lento","internet lento",
-      // FR
       "connexion wifi","connexion wi-fi","reseau wifi","mot de passe wifi","code wifi",
       "connexion internet","reseau","pas de connexion","pas d internet",
       "signal faible","pas de signal","wifi lent","internet lent",
-      // DE
       "wlan","w-lan","wlan verbindung","wlan passwort","wlan code",
       "internetverbindung","keine verbindung","kein internet",
       "schlechtes signal","kein signal","langsames wlan","langsames internet"
@@ -776,116 +768,72 @@ function findAnswerByKeywords(question, answersForLang) {
 
     // TRASH / SPAZZATURA / RIFIUTI
     trash: [
-      // EN
       "trash","garbage","rubbish","waste","trashcan","trash can","garbage can","trash bin","garbage bin","rubbish bin",
       "recycling","recycle","bin","trash bags","garbage bags",
-      // IT
       "spazzatura","immondizia","rifiuti","pattumiera","bidone","cestino","sacchetto","sacchetto della spazzatura",
       "raccolta differenziata","differenziata","secchio dell immondizia",
-      // ES
       "basura","residuos","papelera","cubo","contenedor","bolsa de basura",
       "reciclaje","reciclar",
-      // FR
       "poubelle","ordures","dechets","sac poubelle","tri selectif","poubelles",
-      // DE
       "mull","muell","abfall","mulleimer","mulltonne","abfalleimer","restmull","papierkorb"
     ],
 
     // HEATING / RISCALDAMENTO
     heating: [
-      // EN
       "heating","heater","radiator","central heating","heating system","warm air","turn on heating","temperature","thermostat",
-      // IT
       "riscaldamento","radiatori","termosifoni","caloriferi","impianto di riscaldamento","termosifone",
       "alzare la temperatura","abbassare la temperatura","termostato",
-      // ES
       "calefaccion","radiador","calor","calefaccion central","caldera","subir la temperatura","bajar la temperatura",
-      // FR
       "chauffage","radiateur","chauffage central","augmenter la temperature","baisser la temperature","thermostat",
-      // DE
       "heizung","heizkorper","heizanlage","heizung anmachen","heizung ausmachen","thermostat"
     ],
 
     // GAS / STOVE / COOKTOP
     gas: [
-      // EN
       "gas","gas stove","stove","hob","cooktop","burner","cooker","gas cooker","gas on","gas off","flame","ignite","ignition",
-      // IT
       "fornello","fornelli","piano cottura","fuochi","manopola gas","rubinetto gas","valvola gas",
       "accendere il gas","accendere i fornelli","spegnere il gas",
-      // ES
       "cocina de gas","fogones","fogon","hornilla","fuego","llama gas","encender gas","apagar gas",
-      // FR
       "gaziniere","cuisiniere gaz","bruleur","feu gaz","allumer le gaz","eteindre le gaz",
-      // DE
       "gasherd","kochfeld","brenner","gasflamme","gas anmachen","gas ausmachen"
     ],
 
     // AC / ARIA CONDIZIONATA
     AC: [
-      // EN
       "air conditioning","air conditioner","ac","a c","aircon","cooling","cold air","fan mode","turn on ac","turn off ac",
-      // IT
       "aria condizionata","clima","condizionatore","aria fredda","aria calda","pompa di calore",
       "accendere il clima","spegnere il clima","accendere l aria condizionata","spegnere l aria condizionata",
-      // ES
       "aire acondicionado","ac","aire frio","aire caliente","encender aire acondicionado","apagar aire acondicionado",
-      // FR
       "clim","climatisation","air climatise","allumer la clim","eteindre la clim",
-      // DE
       "klima","klimaanlage","klima anmachen","klima ausmachen","kalte luft","warme luft"
     ],
-       
-    // WATER / ACQUA
+
+    // WATER / ACQUA  ← ORA VIENE PRIMA DI BATHROOM
     water: [
-      // EN
       "water","hot water","cold water","no water","tap water","water pressure","boiler","water heater","shower water",
       "shower is cold","no hot water","no pressure",
-      // IT
       "acqua","acqua calda","acqua fredda","manca acqua","senza acqua","pressione acqua",
       "caldaia","scaldabagno","rubinetto","doccia senza acqua","doccia fredda","non esce acqua",
-      // ES
       "agua","agua caliente","agua fria","sin agua","ducha sin agua","ducha fria",
       "presion agua","termo","calentador","no sale agua",
-      // FR
       "eau","eau chaude","eau froide","pas d eau","pression eau","chauffe eau","robinet",
       "pas d eau chaude","douche froide","pas d eau dans la douche",
-      // DE
       "wasser","warmwasser","kaltwasser","kein wasser","wasserdruck","boiler","wasserboiler","durchlauferhitzer",
       "dusche kalt","kein warmwasser","kein wasser im bad"
     ],
 
-    // BATHROOM / BAGNO
-    bathroom: [
-      // EN
-      "bathroom","toilet","wc","restroom","bath","shower","lavatory","washroom","toilet not flushing","no flush","bathroom problem",
-      // IT
-      "bagno","wc","doccia","toilette","servizi","servizio","water","scarico non funziona","wc non scarica",
-      // ES
-      "bano","baño","aseo","servicio","wc","inodoro","no descarga",
-      // FR
-      "salle de bain","salle de bains","toilettes","wc","douche","toilette bouchee","ne chasse pas",
-      // DE
-      "bad","badezimmer","wc","toilette","dusche","toilette verstopft","spulung funktioniert nicht"
-    ],
-
     // TRANSPORT / TRASPORTI
     transport: [
-      // EN
       "bus","tram","tramway","metro","subway","underground","train","public transport","transport","taxi","airport","station",
       "bus stop","tram stop","metro station","go to center","go to city centre","go downtown",
-      // IT
       "autobus","bus","tram","tramvia","metropolitana","metro","treno","trasporti","trasporto pubblico","mezzi pubblici",
       "fermata","fermata autobus","fermata bus","fermata tram","fermata metro",
       "come andare in centro","andare in centro","centro citta","aeroporto","stazione",
-      // ES
-      "autobus","bus","metro","tranvia","parada","parada de autobus","parada de bus","parada de metro",
+      "autobus","metro","tranvia","parada","parada de autobus","parada de bus","parada de metro",
       "transporte publico","ir al centro","centro ciudad","aeropuerto","estacion",
-      // FR
       "bus","tramway","metro","gare","station","aeroport","taxi",
       "transports publics","transport public","arret de bus","arret de tram","station de metro",
       "aller au centre ville","centre ville",
-      // DE
       "bus","strassenbahn","straßenbahn","bahn","ubahn","u bahn","s bahn","sbahn","haltestelle",
       "offentliche verkehrsmittel","oeffentliche verkehrsmittel",
       "bahnhof","flughafen","ins zentrum","stadtzentrum"
@@ -893,65 +841,99 @@ function findAnswerByKeywords(question, answersForLang) {
 
     // EMERGENCY / EMERGENZE
     emergency: [
-      // EN
       "emergency","urgent","urgency","er","a e","emergency room","hospital","doctor","ambulance","help",
-      // IT
       "emergenza","urgenza","pronto soccorso","ospedale","medico","ambulanza","aiuto","ho bisogno di aiuto",
-      // ES
       "emergencia","urgencias","hospital","ambulancia","ayuda","necesito ayuda",
-      // FR
       "urgence","urgences","hopital","hospital","ambulance","besoin d aide","au secours",
-      // DE
       "notfall","notruf","krankenhaus","rettungswagen","ambulanz","hilfe","ich brauche hilfe"
     ],
 
     // CHECK-IN
     check_in: [
-      // EN
       "check in","check-in","checkin","arrival","arrive","check in time","self check in","early check in",
       "keys","key collection","access code","door code",
-      // IT
       "check in","arrivo","orario di arrivo","accesso","ingresso","codice portone","codice porta","ritiro chiavi",
       "come faccio il check in","self check in",
-      // ES
       "check in","llegada","hora de llegada","entrada","codigo puerta","codigo de acceso","self check in",
-      // FR
       "check in","arrivee","heure d arrivee","entree","code porte","code d acces","self check in",
-      // DE
       "check in","einchecken","ankunft","ankunftszeit","zugang","turcode","tuer code","schloss code"
     ],
 
     // CHECK-OUT
     check_out: [
-      // EN
       "check out","check-out","checkout","leave","departure","departure time","check out time","late check out",
       "what time is check out","leave the keys","where to leave the keys",
-      // IT
       "check out","uscita","partenza","orario di uscita","late check out","rilascio appartamento",
       "a che ora e il check out","dove lascio le chiavi","lasciare le chiavi",
-      // ES
       "check out","salida","hora de salida","dejar apartamento","late check out",
       "a que hora es el check out","donde dejo las llaves","dejar las llaves",
-      // FR
       "check out","depart","heure de depart","sortie","late check out",
       "a quelle heure est le check out","ou laisser les cles","laisser les cles",
-      // DE
       "check out","auschecken","abreise","abfahrtszeit","wohnung verlassen","spater check out",
       "um wie viel uhr ist der check out","wann ist der check out","wo soll ich die schlussel lassen","schlussel abgeben"
+    ],
+
+    // BATHROOM / BAGNO  ← ORA IN FONDO, E SENZA "baño"
+    bathroom: [
+      "bathroom","toilet","wc","restroom","bath","shower","lavatory","washroom","toilet not flushing","no flush","bathroom problem",
+      "bagno","wc","doccia","toilette","servizi","servizio","water","scarico non funziona","wc non scarica",
+      "bano","aseo","ducha","servicio","wc","inodoro","no descarga",
+      "salle de bain","salle de bains","toilettes","wc","douche","toilette bouchee","ne chasse pas",
+      "bad","badezimmer","wc","toilette","dusche","toilette verstopft","spulung funktioniert nicht"
     ]
- 
   };
+
+  // trova TUTTI gli intent che matchano
+  const foundIntents = [];
   for (const [key, synonyms] of Object.entries(KEYWORDS)) {
     if (!answersForLang[key]) continue;
-
-    for (const word of synonyms) {
-      if (hasToken(word)) {
-        return { intent: key, answer: answersForLang[key] };
-      }
+    if (synonyms.some(hasToken)) {
+      foundIntents.push(key);
     }
   }
 
-  return null;
+  if (!foundIntents.length) return null;
+
+  // deduplica
+  const unique = [...new Set(foundIntents)];
+
+  // priorità (emergency in testa, max 2 intent totali)
+  const PRIORITY = [
+    "emergency",
+    "water",
+    "heating",
+    "gas",
+    "wifi",
+    "AC",
+    "bathroom",
+    "trash",
+    "check_in",
+    "check_out",
+    "transport"
+  ];
+
+  unique.sort((a, b) => {
+    const ia = PRIORITY.indexOf(a);
+    const ib = PRIORITY.indexOf(b);
+    if (ia === -1 && ib === -1) return 0;
+    if (ia === -1) return 1;
+    if (ib === -1) return -1;
+    return ia - ib;
+  });
+
+  const selectedIntents = unique.slice(0, 2);
+  const answers = selectedIntents
+    .map((intent) => String(answersForLang[intent] || "").trim())
+    .filter(Boolean);
+
+  if (!answers.length) return null;
+
+  const combinedAnswer = answers.join("\n\n");
+
+  return {
+    intents: selectedIntents,
+    answer: combinedAnswer
+  };
 }
 
 // ====== Estrazione robusta del nome guest dal payload HostAway ======
