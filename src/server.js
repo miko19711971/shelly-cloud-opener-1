@@ -1108,7 +1108,7 @@ function makeGreeting(lang, name) {
  *   "question": "testo domanda dell'ospite"
  * }
  */
-app.post("/api/guest-assistant", async (req, res) => {
+ app.post("/api/guest-assistant", async (req, res) => {
   try {
     const { apartment, lang, question } = req.body || {};
 
@@ -1131,17 +1131,25 @@ app.post("/api/guest-assistant", async (req, res) => {
       });
     }
 
-    // 👇 Se lang manca o è "auto", rilevo la lingua dalla domanda
+    // 👇 se lang manca o è "auto", rilevo dal testo
     let requestedLang = lang;
     if (!requestedLang || requestedLang === "auto") {
       requestedLang = detectLangFromMessage(question);
     }
 
-    const language = normalizeLang(requestedLang, guide.languages);
+    // 👇 ricavo le lingue disponibili dal JSON (compatibile con entrambe le strutture)
+    const availableLangs =
+      Array.isArray(guide.languages) && guide.languages.length
+        ? guide.languages
+        : guide.answers
+          ? Object.keys(guide.answers)
+          : Object.keys(guide);
+
+    const language = normalizeLang(requestedLang, availableLangs);
 
     const answersForLang =
       (guide.answers && guide.answers[language]) ||
-      guide[language] ||   // fallback vecchia struttura
+      guide[language] ||   // fallback vecchia struttura (come il tuo JSON di Arenula)
       {};
 
     let intentKey  = null;
