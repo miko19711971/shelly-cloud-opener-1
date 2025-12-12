@@ -690,26 +690,34 @@ async function loadGuideJson(apt) {
   }
 }
 
-/**
- * Normalizza la lingua richiesta (it/en/fr/de/es) e la confronta con quelle disponibili nel JSON.
+ /**
+ * Normalizza la lingua richiesta rispetto a quelle disponibili nel JSON.
+ * - lang: stringa richiesta (es. "en", "de-DE", "auto" già risolta prima)
+ * - availableFromJson: array di lingue disponibili (es. ["en","it","fr","de","es"])
  */
 function normalizeLang(lang, availableFromJson) {
   const fallback  = "en";
-  const requested = (lang || "").toLowerCase().slice(0, 2);
   const known     = ["it", "en", "fr", "de", "es"];
+  const requested = (lang || "").toLowerCase().slice(0, 2);
 
-  // Se il JSON espone la proprietà "languages": [...]
-  if (Array.isArray(availableFromJson) && availableFromJson.length) {
-    if (availableFromJson.includes(requested)) return requested;
-    if (availableFromJson.includes(fallback))  return fallback;
-    return availableFromJson[0]; // prima disponibile
+  const list = Array.isArray(availableFromJson)
+    ? availableFromJson.map(l => String(l).toLowerCase().slice(0, 2))
+    : [];
+
+  // Tieni solo lingue “serie”, deduplicate
+  const available = [...new Set(list.filter(code => known.includes(code)))];
+
+  // Se il JSON espone lingue disponibili, cerco di restare dentro a quelle
+  if (available.length) {
+    if (available.includes(requested)) return requested;   // lingua richiesta supportata
+    if (available.includes(fallback))  return fallback;    // altrimenti inglese, se c’è
+    return available[0];                                   // altrimenti la prima disponibile
   }
 
-  // Se non c'è "languages", prova a usare un codice pulito
+  // Se il JSON non dichiara lingue, uso solo la richiesta se è “nota”
   if (known.includes(requested)) return requested;
   return fallback;
 }
-
 function normalizeNoAccents(str) {
   return String(str || "")
     .toLowerCase()
