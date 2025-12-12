@@ -835,6 +835,25 @@ function findAnswerByKeywords(question, answersForLang) {
       // DE
       "klima","klimaanlage","klima anmachen","klima ausmachen","kalte luft","warme luft"
     ],
+       
+    // WATER / ACQUA
+    water: [
+      // EN
+      "water","hot water","cold water","no water","tap water","water pressure","boiler","water heater","shower water",
+      "shower is cold","no hot water","no pressure",
+      // IT
+      "acqua","acqua calda","acqua fredda","manca acqua","senza acqua","pressione acqua",
+      "caldaia","scaldabagno","rubinetto","doccia senza acqua","doccia fredda","non esce acqua",
+      // ES
+      "agua","agua caliente","agua fria","sin agua","ducha sin agua","ducha fria",
+      "presion agua","termo","calentador","no sale agua",
+      // FR
+      "eau","eau chaude","eau froide","pas d eau","pression eau","chauffe eau","robinet",
+      "pas d eau chaude","douche froide","pas d eau dans la douche",
+      // DE
+      "wasser","warmwasser","kaltwasser","kein wasser","wasserdruck","boiler","wasserboiler","durchlauferhitzer",
+      "dusche kalt","kein warmwasser","kein wasser im bad"
+    ],
 
     // BATHROOM / BAGNO
     bathroom: [
@@ -919,26 +938,8 @@ function findAnswerByKeywords(question, answersForLang) {
       // DE
       "check out","auschecken","abreise","abfahrtszeit","wohnung verlassen","spater check out",
       "um wie viel uhr ist der check out","wann ist der check out","wo soll ich die schlussel lassen","schlussel abgeben"
-    ],
-
-    // WATER / ACQUA
-    water: [
-      // EN
-      "water","hot water","cold water","no water","tap water","water pressure","boiler","water heater","shower water",
-      "shower is cold","no hot water","no pressure",
-      // IT
-      "acqua","acqua calda","acqua fredda","manca acqua","senza acqua","pressione acqua",
-      "caldaia","scaldabagno","rubinetto","doccia senza acqua","doccia fredda","non esce acqua",
-      // ES
-      "agua","agua caliente","agua fria","sin agua","ducha sin agua","ducha fria",
-      "presion agua","termo","calentador","no sale agua",
-      // FR
-      "eau","eau chaude","eau froide","pas d eau","pression eau","chauffe eau","robinet",
-      "pas d eau chaude","douche froide","pas d eau dans la douche",
-      // DE
-      "wasser","warmwasser","kaltwasser","kein wasser","wasserdruck","boiler","wasserboiler","durchlauferhitzer",
-      "dusche kalt","kein warmwasser","kein wasser im bad"
     ]
+ 
   };
   for (const [key, synonyms] of Object.entries(KEYWORDS)) {
     if (!answersForLang[key]) continue;
