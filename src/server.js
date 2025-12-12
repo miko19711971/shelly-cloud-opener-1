@@ -862,7 +862,7 @@ function findAnswerByKeywords(question, answersForLang) {
       // IT
       "bagno","wc","doccia","toilette","servizi","servizio","water","scarico non funziona","wc non scarica",
       // ES
-      "bano","baño","aseo","ducha","servicio","wc","inodoro","no descarga",
+      "bano","baño","aseo","servicio","wc","inodoro","no descarga",
       // FR
       "salle de bain","salle de bains","toilettes","wc","douche","toilette bouchee","ne chasse pas",
       // DE
