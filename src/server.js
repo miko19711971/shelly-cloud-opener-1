@@ -933,7 +933,7 @@ const hasToken = (syn) => {
     return ia - ib;
   });
 
-  const selectedIntents = unique.slice(0, 2);
+  const selectedIntents = unique.slice(0, 3);
   const answers = selectedIntents
     .map((intent) => String(answersForLang[intent] || "").trim())
     .filter(Boolean);
