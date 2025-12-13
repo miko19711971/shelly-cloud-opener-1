@@ -812,7 +812,7 @@ const hasToken = (syn) => {
 
     // AC / ARIA CONDIZIONATA
     AC: [
-      "air conditioning","air conditioner","ac","a c","aircon","cooling","cold air","fan mode","turn on ac","turn off ac",
+      "air conditioning","air conditioner","ac","aircon","cooling","cold air","fan mode","turn on ac","turn off ac",
       "aria condizionata","clima","condizionatore","aria fredda","aria calda","pompa di calore",
       "accendere il clima","spegnere il clima","accendere l aria condizionata","spegnere l aria condizionata",
       "aire acondicionado","ac","aire frio","aire caliente","encender aire acondicionado","apagar aire acondicionado",
@@ -853,7 +853,7 @@ const hasToken = (syn) => {
 
     // EMERGENCY / EMERGENZE
     emergency: [
-      "emergency","urgent","urgency","er","a e","emergency room","hospital","doctor","ambulance","help",
+      "emergency","urgent","urgency","er","emergency room","hospital","doctor","ambulance","help",
       "emergenza","urgenza","pronto soccorso","ospedale","medico","ambulanza","aiuto","ho bisogno di aiuto",
       "emergencia","urgencias","hospital","ambulancia","ayuda","necesito ayuda",
       "urgence","urgences","hopital","hospital","ambulance","besoin d aide","au secours",
