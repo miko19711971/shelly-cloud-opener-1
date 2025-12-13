@@ -735,17 +735,29 @@ function findAnswerByKeywords(question, answersForLang) {
 
   const words = text.split(" ");
 
-  // match per token, NON per semplice substring
-  const hasToken = (syn) => {
-    const s = normalizeNoAccents(syn);
-    if (!s) return false;
+   // dentro findAnswerByKeywords()
 
-    if (s.includes(" ")) {
-      return text.includes(s);        // frasi
+const hasToken = (syn) => {
+  const s = normalizeNoAccents(syn);
+  if (!s) return false;
+
+  const synTokens = s.split(" ").filter(Boolean);
+
+  // 1 parola: match esatto sul token
+  if (synTokens.length === 1) {
+    return words.includes(synTokens[0]);
+  }
+
+  // frasi: match su token contigui (NO substring)
+  for (let i = 0; i <= words.length - synTokens.length; i++) {
+    let ok = true;
+    for (let j = 0; j < synTokens.length; j++) {
+      if (words[i + j] !== synTokens[j]) { ok = false; break; }
     }
-    return words.includes(s);         // singola parola
-  };
-
+    if (ok) return true;
+  }
+  return false;
+};
   const KEYWORDS = {
     // WIFI / INTERNET
     wifi: [
