@@ -1139,8 +1139,8 @@ function extractGuestName(payload) {
   return firstWord || "Guest";
 }
 
-  // ====== Riconoscimento lingua dal testo (IT / EN / FR / DE / ES) ======
- function detectLangFromMessage(msg) {
+ // ====== Riconoscimento lingua dal testo (IT / EN / FR / DE / ES) ======
+function detectLangFromMessage(msg) {
   let text = normalizeNoAccents(msg || "");
   if (!text) return "en";
 
@@ -1153,31 +1153,36 @@ function extractGuestName(payload) {
   const scores = { de: 0, it: 0, es: 0, fr: 0, en: 0 };
 
   // 🇩🇪
-  ["hallo","guten","danke","bitte","wohnung","warmwasser","kaltwasser","heizung",
-   "schlussel","schluessel","tur","tuer","abreise","wlan","wasser"
+  [
+    "hallo","guten","danke","bitte","wohnung","warmwasser","kaltwasser","heizung",
+    "schlussel","schluessel","tur","tuer","abreise","wlan","wasser"
   ].forEach(t => { if (has(t)) scores.de++; });
 
-  // 🇮🇹 (aggiunte “vere” per i tuoi casi)
-  ["ciao","buongiorno","buonasera","grazie","appartamento","casa",
-   "spazzatura","immondizia","pattumiera","riscaldamento","termosifone",
-   "doccia","bagno","uscita","chiavi",
-   "non","riesco","collegarmi","connettermi","connessione",
-   "acqua","rubinetto","potabile","calda","fredda","pressione","wifi","rete"
+  // 🇮🇹 (token “veri” per i tuoi casi) — tolto "non" perché troppo generico
+  [
+    "ciao","buongiorno","buonasera","grazie","appartamento","casa",
+    "spazzatura","immondizia","pattumiera","riscaldamento","termosifone",
+    "doccia","bagno","uscita","chiavi",
+    "riesco","collegarmi","connettermi","connessione",
+    "acqua","rubinetto","potabile","calda","fredda","pressione","wifi","rete"
   ].forEach(t => { if (has(t)) scores.it++; });
 
   // 🇪🇸
-  ["hola","gracias","apartamento","piso","ducha","bano","basura","salida","llaves",
-   "agua","potable","caliente","fria","wifi","conexion"
+  [
+    "hola","gracias","apartamento","piso","ducha","bano","basura","salida","llaves",
+    "agua","potable","caliente","fria","wifi","conexion"
   ].forEach(t => { if (has(t)) scores.es++; });
 
   // 🇫🇷
-  ["bonjour","salut","merci","appartement","logement","poubelle","ordures","chauffage","eau",
-   "sortie","cle","cles","wifi","connexion"
+  [
+    "bonjour","salut","merci","appartement","logement","poubelle","ordures","chauffage","eau",
+    "sortie","cle","cles","wifi","connexion"
   ].forEach(t => { if (has(t)) scores.fr++; });
 
-  // 🇬🇧
-  ["hi","hello","thanks","thank","apartment","trash","garbage","wifi","network","password",
-   "check","shower","bathroom","keys","water"
+  // 🇬🇧 — tolto "wifi" per non spingere verso EN quando la frase è italiana
+  [
+    "hi","hello","thanks","thank","apartment","trash","garbage","network","password",
+    "check","shower","bathroom","keys","water"
   ].forEach(t => { if (has(t)) scores.en++; });
 
   const order = ["it","es","fr","de","en"]; // preferisci IT quando i punteggi sono vicini
