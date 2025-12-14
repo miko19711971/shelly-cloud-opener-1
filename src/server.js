@@ -1249,14 +1249,25 @@ function makeGreeting(lang, name) {
     }
      
 
-    return res.json({
-      ok: true,
-      apartment: guide.apartment || aptKey,
-      language,
-      intent: matched ? intentKey : null,
-      answer: answerText,
-      noMatch: !matched   // 👈 flag per capire se l'intent è stato trovato oppure no
-    });
+     if (!matched) {
+  return res.json({
+    ok: true,
+    apartment: guide.apartment || aptKey,
+    language,
+    intent: null,
+    answer: null,
+    noMatch: true
+  });
+}
+
+return res.json({
+  ok: true,
+  apartment: guide.apartment || aptKey,
+  language,
+  intent: intentKey,
+  answer: answerText,
+  noMatch: false
+});
   } catch (err) {
     console.error("❌ Errore /api/guest-assistant:", err);
     return res.status(500).json({
