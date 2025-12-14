@@ -778,6 +778,16 @@ const hasToken = (syn) => {
       "schlechtes signal","kein signal","langsames wlan","langsames internet"
     ],
 
+    wifi_troubleshooting: [
+      "wifi not working","internet not working","no internet","no connection",
+      "slow wifi","slow internet","weak signal","wifi keeps disconnecting",
+      "wifi non funziona","internet non funziona","non c e internet","nessuna connessione",
+      "wifi lento","internet lento","segnale debole","si disconnette",
+      "pas d internet","pas de connexion","wifi lent","signal faible",
+      "kein internet","keine verbindung","langsames wlan","schlechtes signal",
+      "sin internet","sin conexion","wifi lento","senal debil"
+    ],
+
     // TRASH / SPAZZATURA / RIFIUTI
     trash: [
       "trash","garbage","rubbish","waste","trashcan","trash can","garbage can","trash bin","garbage bin","rubbish bin",
