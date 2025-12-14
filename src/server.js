@@ -1565,6 +1565,21 @@ app.post("/hostaway-incoming", async (req, res) => {
 
     const payload = req.body || {};
 
+    // ✅ Webhook secret check (blocca ReqBin / chiamate esterne non autorizzate)
+    const incomingSecret =
+      req.get("x-hwwb-secret") ||            // header consigliato
+      req.query.hwwb || req.query.secret ||  // fallback querystring
+      payload.hwwb || payload.secret || "";  // fallback body
+
+    if (!HOSTAWAY_WEBHOOK_BOOKING_SECRET) {
+      console.error("❌ Missing HOSTAWAY_WEBHOOK_BOOKING_SECRET env var");
+      return res.status(500).json({ ok: false, error: "server_misconfigured" });
+    }
+
+    if (incomingSecret !== HOSTAWAY_WEBHOOK_BOOKING_SECRET) {
+      return res.status(403).json({ ok: false, error: "unauthorized" });
+    }
+
     const listingId = payload.listingId || payload.listingMapId;
     const conversationId = payload.conversationId;
 
