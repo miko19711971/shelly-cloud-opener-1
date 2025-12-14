@@ -1582,9 +1582,9 @@ app.post("/hostaway-incoming", async (req, res) => {
 
       const data = gaResp.data || {};
 
-      if (data.ok && data.answer) {
-        aiReply = data.answer;
-        aiMatched = !data.noMatch;   // info di log
+       if (data.ok && data.answer && !data.noMatch) {
+  aiReply = data.answer;
+  aiMatched = true;
       } else {
         console.log("⚠️ guest-assistant senza risposta valida:", data);
       }
