@@ -718,11 +718,15 @@ function normalizeLang(lang, availableFromJson) {
   if (known.includes(requested)) return requested;
   return fallback;
 }
-function normalizeNoAccents(str) {
+ function normalizeNoAccents(str) {
   return String(str || "")
     .toLowerCase()
     .normalize("NFD")
-    .replace(/\p{Diacritic}/gu, "")   // toglie gli accenti: calefacción -> calefaccion
+    .replace(/\p{Diacritic}/gu, "")
+    // ✅ unifica varianti Wi-Fi / Wi Fi
+    .replace(/\bwi\s+fi\b/g, "wifi")
+    // ✅ unifica W LAN / W-LAN
+    .replace(/\bw\s+lan\b/g, "wlan")
     .replace(/[^\p{L}\p{N}\s]/gu, " ")
     .replace(/\s+/g, " ")
     .trim();
