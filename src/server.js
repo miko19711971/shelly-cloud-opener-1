@@ -1573,12 +1573,29 @@ app.post("/hostaway-incoming", async (req, res) => {
     const payload = req.body || {};
 
      // ✅ Webhook secret check — SOLO header (niente query/body)
-const incomingSecret = req.get("x-hwwb-secret") || "";
+ // ✅ Legge il secret da:
+// 1) header custom x-hwwb-secret (utile per ReqBin)
+// 2) Basic Auth (HostAway usa i campi Login/Password)
+function getIncomingSecret(req) {
+  const h = req.get("x-hwwb-secret");
+  if (h) return h;
 
-if (!HOSTAWAY_WEBHOOK_BOOKING_SECRET) {
-  console.error("❌ Missing HOSTAWAY_WEBHOOK_BOOKING_SECRET env var");
-  return res.status(500).json({ ok: false, error: "server_misconfigured" });
+  const auth = req.get("authorization") || "";
+  const m = auth.match(/^Basic\s+(.+)$/i);
+  if (!m) return "";
+
+  try {
+    const decoded = Buffer.from(m[1], "base64").toString("utf8"); // "user:pass"
+    const idx = decoded.indexOf(":");
+    if (idx < 0) return "";
+    const pass = decoded.slice(idx + 1);
+    return pass || "";
+  } catch {
+    return "";
+  }
 }
+
+const incomingSecret = getIncomingSecret(req);
 
 if (!safeEqual(incomingSecret, HOSTAWAY_WEBHOOK_BOOKING_SECRET)) {
   return res.status(403).json({ ok: false, error: "unauthorized" });
