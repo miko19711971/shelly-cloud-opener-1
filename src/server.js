@@ -1441,6 +1441,7 @@ app.post("/hostaway-outbound", async (req, res) => {
 });
 
 // ------ Pagina di test per inviare un'email di prova ------
+ // ------ Pagina di test per inviare un'email di prova ------
 app.get("/test-mail", (req, res) => {
   res.type("html").send(`
     <!doctype html><meta charset="utf-8">
@@ -1463,7 +1464,6 @@ app.get("/test-mail", (req, res) => {
       </form>
     </div>
     <script>
-      // trasforma il submit in JSON (il tuo endpoint si aspetta JSON)
       const form = document.querySelector("form");
       form.addEventListener("submit", async (e) => {
         e.preventDefault();
@@ -1477,9 +1477,7 @@ app.get("/test-mail", (req, res) => {
         alert("Risposta server:\\n" + txt);
       });
     </script>
-  );
-
-   
+  `);
 });
 
 // ====== VRBO MAILER BRIDGE ======
