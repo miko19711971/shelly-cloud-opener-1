@@ -1585,8 +1585,8 @@ app.post("/hostaway-incoming", async (req, res) => {
        if (data.ok && data.answer && !data.noMatch) {
   aiReply = data.answer;
   aiMatched = true;
-      } else {
-        console.log("⚠️ guest-assistant senza risposta valida:", data);
+      } else { 
+         console.log("⚠️ guest-assistant: noMatch o risposta mancante:", data);
       }
     } catch (err) {
       console.error("Errore Virtual Guide:", err.message);
