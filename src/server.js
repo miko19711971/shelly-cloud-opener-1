@@ -1247,13 +1247,7 @@ function makeGreeting(lang, name) {
         matched    = true;
       }
     }
-    // 3) Se ANCORA non abbiamo match:
-    //    - segnaliamo noMatch = true (per HostAway)
-    //    - lasciamo comunque una frase generica per la guida web
-    if (!matched) {
-      answerText =
-        "I didn’t find a direct answer. Michele will reply to you personally as soon as possible or you can try one of the quick buttons in the guide.";
-    }
+     
 
     return res.json({
       ok: true,
