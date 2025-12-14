@@ -778,15 +778,106 @@ const hasToken = (syn) => {
       "schlechtes signal","kein signal","langsames wlan","langsames internet"
     ],
 
-    wifi_troubleshooting: [
-      "wifi not working","internet not working","no internet","no connection",
-      "slow wifi","slow internet","weak signal","wifi keeps disconnecting",
-      "wifi non funziona","internet non funziona","non c e internet","nessuna connessione",
-      "wifi lento","internet lento","segnale debole","si disconnette",
-      "pas d internet","pas de connexion","wifi lent","signal faible",
-      "kein internet","keine verbindung","langsames wlan","schlechtes signal",
-      "sin internet","sin conexion","wifi lento","senal debil"
-    ],
+     wifi_troubleshooting: [
+  // EN
+  "wifi not working","internet not working","no internet","no connection",
+  "slow wifi","slow internet","weak signal","wifi keeps disconnecting","wifi disconnects","unstable wifi",
+  // IT
+  "wifi non funziona","internet non funziona","non c e internet","nessuna connessione",
+  "wifi lento","internet lento","segnale debole","si disconnette","wifi si disconnette","wifi instabile",
+  // FR
+  "wifi ne marche pas","internet ne marche pas","pas d internet","pas de connexion",
+  "wifi lent","internet lent","signal faible","wifi se deconnecte","connexion instable",
+  // DE
+  "wlan funktioniert nicht","internet funktioniert nicht","kein internet","keine verbindung",
+  "langsames wlan","langsames internet","schlechtes signal","wlan trennt sich","wlan instabil",
+  // ES
+  "wifi no funciona","internet no funciona","sin internet","sin conexion",
+  "wifi lento","internet lento","senal debil","se desconecta","wifi inestable"
+],
+
+water_troubleshooting: [
+  // EN
+  "no hot water","no water","water not working","low pressure","cold shower","shower is cold","no pressure",
+  // IT
+  "acqua calda non c e","non esce acqua","doccia fredda","pressione bassa","manca acqua","acqua non funziona","niente acqua",
+  // FR
+  "pas d eau chaude","pas d eau","eau ne marche pas","pression faible","douche froide","pas de pression",
+  // DE
+  "kein warmwasser","kein wasser","wasser funktioniert nicht","niedriger wasserdruck","dusche kalt","kein druck",
+  // ES
+  "no hay agua caliente","no hay agua","el agua no funciona","poca presion","ducha fria","no sale agua","sin presion"
+],
+
+electric_panel_troubleshooting: [
+  // EN
+  "power outage","no power","electricity is out","breaker","trip","tripped breaker","fuse box","electrical panel",
+  // IT
+  "salta la luce","manca la corrente","non c e corrente","quadro elettrico","interruttore generale","contatore","è saltata la luce",
+  // FR
+  "coupure de courant","pas de courant","plus d electricite","disjoncteur","tableau electrique","le disjoncteur a saute",
+  // DE
+  "stromausfall","kein strom","sicherung","sicherungen","sicherungskasten","strom ist weg","sicherung rausgeflogen",
+  // ES
+  "corte de luz","no hay luz","no hay electricidad","se fue la luz","cuadro electrico","interruptor general","disyuntor","saltaron los plomos"
+],
+
+heating_troubleshooting: [
+  // EN
+  "heating not working","heater not working","radiator not working","no heating","heating doesn t work","radiator is cold",
+  // IT
+  "riscaldamento non funziona","termosifoni non funzionano","non va il riscaldamento","non parte il riscaldamento","termosifoni freddi",
+  // FR
+  "chauffage ne marche pas","chauffage ne fonctionne pas","radiateur ne marche pas","pas de chauffage","radiateur froid",
+  // DE
+  "heizung funktioniert nicht","heizung geht nicht","heizkorper funktioniert nicht","keine heizung","heizkorper kalt",
+  // ES
+  "calefaccion no funciona","no funciona la calefaccion","no hay calefaccion","radiador no funciona","radiador frio","la calefaccion no arranca"
+],
+
+AC_troubleshooting: [
+  // EN
+  "ac not working","air conditioning not working","air conditioner not working","no cold air","no hot air",
+  "ac doesn t work","not blowing cold","not blowing hot",
+  // IT
+  "aria condizionata non funziona","condizionatore non va","non esce aria fredda","non esce aria calda",
+  "clima non funziona","non raffredda","non riscalda",
+  // FR
+  "clim ne marche pas","climatisation ne fonctionne pas","pas d air froid","pas d air chaud",
+  "la clim ne refroidit pas","la clim ne chauffe pas",
+  // DE
+  "klima funktioniert nicht","klimaanlage geht nicht","keine kalte luft","keine warme luft",
+  "klima kuehlt nicht","klima heizt nicht",
+  // ES
+  "aire acondicionado no funciona","el aire no funciona","no sale aire frio","no sale aire caliente",
+  "no enfria","no calienta","el aire no enfria","el aire no calienta"
+],
+
+gas_troubleshooting: [
+  // EN
+  "gas not working","stove not working","cooktop not working","no flame","burner not working","won t ignite","doesn t ignite",
+  // IT
+  "gas non funziona","non esce gas","fornello non funziona","non si accende","fiamma non esce","non si accende il fornello",
+  // FR
+  "gaz ne marche pas","la cuisiniere ne marche pas","feu ne s allume pas","pas de flamme","bruleur ne marche pas",
+  // DE
+  "gas funktioniert nicht","kochfeld geht nicht","flamme","brenner funktioniert nicht","zuendet nicht","gasherd geht nicht",
+  // ES
+  "el gas no funciona","la cocina no funciona","no sale gas","no se enciende","no hay llama","el fuego no enciende","el quemador no funciona"
+],
+
+bathroom_troubleshooting: [
+  // EN
+  "toilet not working","toilet not flushing","clogged","blocked","toilet is blocked","sink is blocked","shower drain clogged",
+  // IT
+  "wc non scarica","scarico non funziona","water closet","bagno problema","wc intasato","lavandino intasato","scarico doccia intasato",
+  // FR
+  "toilettes bouchees","ne chasse pas","wc bouche","evacuation bouchee","lavabo bouche","douche bouchee",
+  // DE
+  "toilette verstopft","spulung funktioniert nicht","wc verstopft","abfluss verstopft","waschbecken verstopft","dusche verstopft",
+  // ES
+  "el bano no funciona","el inodoro no descarga","no tira la cadena","inodoro atascado","wc atascado","desague atascado","lavabo atascado","ducha atascada"
+],
 
     // TRASH / SPAZZATURA / RIFIUTI
     trash: [
