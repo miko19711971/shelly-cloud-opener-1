@@ -655,7 +655,7 @@ app.get("/checkin/:apt/index.html", (req, res) => {
 
 // ========= STATIC (asset) =========
 app.use("/checkin",        express.static(path.join(PUBLIC_DIR, "checkin"), { fallthrough: false }));
-app.use("/guest-assistant",express.static(path.join(PUBLIC_DIR, "guest-assistant"), { fallthrough: false }));
+ 
 app.use(express.static(PUBLIC_DIR));
 
 // ====== GUEST ASSISTANT AI (JSON → risposta) ======
