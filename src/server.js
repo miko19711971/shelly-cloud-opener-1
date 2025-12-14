@@ -1477,9 +1477,12 @@ app.get("/test-mail", (req, res) => {
         alert("Risposta server:\\n" + txt);
       });
     </script>
-  `);
+  );
 
-  // ====== VRBO MAILER BRIDGE ======
+   
+});
+
+// ====== VRBO MAILER BRIDGE ======
   app.post("/api/vbro-mail", async (req, resInner) => {
     const { to, subject, body, secret } = req.body;
     if (secret !== process.env.MAIL_SHARED_SECRET) {
@@ -1499,7 +1502,6 @@ app.get("/test-mail", (req, res) => {
       return resInner.status(500).json({ ok: false, error: String(err) });
     }
   });
-});
 
 // ========== HOSTAWAY → AUTO RISPOSTA AI PER MESSAGGI ==========
  
