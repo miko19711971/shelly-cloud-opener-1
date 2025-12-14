@@ -951,19 +951,27 @@ bathroom_troubleshooting: [
   const unique = [...new Set(foundIntents)];
 
   // priorità (emergency in testa, max 2 intent totali)
-  const PRIORITY = [
-    "emergency",
-    "water",
-    "heating",
-    "gas",
-    "wifi",
-    "AC",
-    "bathroom",
-    "trash",
-    "check_in",
-    "check_out",
-    "transport"
-  ];
+   const PRIORITY = [
+  "emergency",
+  "wifi_troubleshooting",
+  "water_troubleshooting",
+  "electric_panel_troubleshooting",
+  "heating_troubleshooting",
+  "AC_troubleshooting",
+  "gas_troubleshooting",
+  "bathroom_troubleshooting",
+  "wifi",
+  "water",
+  "electric_panel",
+  "heating",
+  "AC",
+  "gas",
+  "bathroom",
+  "trash",
+  "check_in",
+  "check_out",
+  "transport"
+];
 
   unique.sort((a, b) => {
     const ia = PRIORITY.indexOf(a);
