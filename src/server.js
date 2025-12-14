@@ -25,6 +25,8 @@ const SHELLY_BASE_URL = process.env.SHELLY_BASE_URL || "https://shelly-api-eu.sh
 const TOKEN_SECRET    = process.env.TOKEN_SECRET;
 const HOSTAWAY_TOKEN  = process.env.HOSTAWAY_TOKEN;   // <-- nome come messo su render
 
+const HOSTAWAY_WEBHOOK_BOOKING_SECRET = process.env.HOSTAWAY_WEBHOOK_BOOKING_SECRET;
+
 console.log("🔥 Hostaway token caricato:", HOSTAWAY_TOKEN ? "OK" : "MANCANTE");
 
 if (!TOKEN_SECRET) {
