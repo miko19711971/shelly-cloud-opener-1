@@ -1572,7 +1572,7 @@ app.post("/hostaway-incoming", async (req, res) => {
 
     const payload = req.body || {};
 
-    // ✅ Webhook secret check (SOLO header: blocca ReqBin / chiamate non autorizzate)
+     // ✅ Webhook secret check — SOLO header (niente query/body)
 const incomingSecret = req.get("x-hwwb-secret") || "";
 
 if (!HOSTAWAY_WEBHOOK_BOOKING_SECRET) {
