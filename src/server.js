@@ -782,22 +782,68 @@ const hasToken = (syn) => {
       "schlechtes signal","kein signal","langsames wlan","langsames internet"
     ],
 
-     wifi_troubleshooting: [
+      wifi_troubleshooting: [
   // EN
   "wifi not working","internet not working","no internet","no connection",
   "slow wifi","slow internet","weak signal","wifi keeps disconnecting","wifi disconnects","unstable wifi",
+
   // IT
   "wifi non funziona","internet non funziona","non c e internet","nessuna connessione",
   "wifi lento","internet lento","segnale debole","si disconnette","wifi si disconnette","wifi instabile",
+
   // FR
   "wifi ne marche pas","internet ne marche pas","pas d internet","pas de connexion",
   "wifi lent","internet lent","signal faible","wifi se deconnecte","connexion instable",
+
   // DE
   "wlan funktioniert nicht","internet funktioniert nicht","kein internet","keine verbindung",
   "langsames wlan","langsames internet","schlechtes signal","wlan trennt sich","wlan instabil",
+
   // ES
   "wifi no funciona","internet no funciona","sin internet","sin conexion",
-  "wifi lento","internet lento","senal debil","se desconecta","wifi inestable"
+  "wifi lento","internet lento","senal debil","se desconecta","wifi inestable",
+
+  // IT (extra)
+  "non riesco a collegarmi",
+  "non riesco a connettermi",
+  "non si collega",
+  "non si connette",
+  "non mi connetto",
+  "non va il wifi",
+  "il wifi non va",
+  "wifi non prende",
+  "internet non va",
+
+  // EN (extra)
+  "i can't connect",
+  "can't connect",
+  "cannot connect",
+  "won't connect",
+  "it won't connect",
+  "wifi won't connect",
+  "wifi doesn't work",
+  "internet doesn't work",
+
+  // FR (extra)
+  "je n'arrive pas a me connecter",
+  "impossible de se connecter",
+  "ca ne se connecte pas",
+  "le wifi ne marche pas",
+  "pas d'internet",
+
+  // DE (extra)
+  "ich kann mich nicht verbinden",
+  "kann mich nicht verbinden",
+  "verbindung klappt nicht",
+  "es verbindet sich nicht",
+  "wlan geht nicht",
+
+  // ES (extra)
+  "no puedo conectarme",
+  "no me puedo conectar",
+  "no conecta",
+  "no se conecta",
+  "el wifi no funciona"
 ],
 
 water_troubleshooting: [
