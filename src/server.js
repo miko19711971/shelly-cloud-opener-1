@@ -1338,14 +1338,26 @@ app.post("/api/hostaway-ai-bridge", async (req, res) => {
 
     const data = aiResponse.data || {};
 
-    if (!data.ok || !data.answer) {
-      console.error("❌ guest-assistant error:", data);
-      return res.status(502).json({
-        ok: false,
-        error: "guest_assistant_failed",
-        details: data
-      });
-    }
+     // ✅ gestione corretta: se noMatch o answer mancante → NON è un errore
+if (!data.ok) {
+  console.error("❌ guest-assistant error:", data);
+  return res.status(502).json({
+    ok: false,
+    error: "guest_assistant_failed",
+    details: data
+  });
+}
+
+if (data.noMatch || !data.answer) {
+  return res.json({
+    ok: true,
+    apartment,
+    language,
+    question: message,
+    answer: null,
+    noMatch: true
+  });
+}
 
     console.log("✅ AI answer for Hostaway:", data.answer);
 
