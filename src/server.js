@@ -1644,9 +1644,9 @@ if (!safeEqual(incomingSecret, HOSTAWAY_WEBHOOK_BOOKING_SECRET)) {
       payload.language ||
       "";
 
-    const langCode =
-      detectLangFromMessage(finalMessage) ||
-      String(languageRaw || "en").slice(0, 2).toLowerCase();
+     const known = new Set(["it","en","fr","de","es"]);
+const raw2 = String(languageRaw || "").slice(0, 2).toLowerCase();
+const langCode = known.has(raw2) ? raw2 : detectLangFromMessage(finalMessage);
 
     // Controllo minimo: deve esserci almeno listingId e finalMessage
     if (!listingId || !finalMessage) {
