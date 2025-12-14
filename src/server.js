@@ -993,48 +993,8 @@ bathroom_troubleshooting: [
       "bano","aseo","ducha","servicio","wc","inodoro","no descarga",
       "salle de bain","salle de bains","toilettes","wc","douche","toilette bouchee","ne chasse pas",
       "bad","badezimmer","wc","toilette","dusche","toilette verstopft","spulung funktioniert nicht"
-    ],
-    heating_troubleshooting: [
-  "heating not working","heater not working","radiator not working",
-  "riscaldamento non funziona","termosifoni non funzionano","non va il riscaldamento",
-  "chauffage ne marche pas","chauffage ne fonctionne pas",
-  "heizung funktioniert nicht","heizung geht nicht"
-],
-
-electric_panel_troubleshooting: [
-  "power outage","no power","electricity is out","breaker","trip",
-  "salta la luce","manca la corrente","non c e corrente","quadro elettrico","interruttore generale",
-  "coupure de courant","disjoncteur",
-  "stromausfall","sicherung","sicherungen"
-],
-
-water_troubleshooting: [
-  "no hot water","no water","water not working","low pressure","cold shower",
-  "acqua calda non c e","non esce acqua","doccia fredda","pressione bassa","manca acqua",
-  "pas d eau chaude","pas d eau","douche froide",
-  "kein warmwasser","kein wasser","dusche kalt","wasserdruck"
-],
-
-AC_troubleshooting: [
-  "ac not working","air conditioning not working","no cold air","no hot air",
-  "aria condizionata non funziona","condizionatore non va","non esce aria fredda","non esce aria calda",
-  "clim ne marche pas","climatisation ne fonctionne pas",
-  "klima funktioniert nicht","klimaanlage geht nicht"
-],
-
-gas_troubleshooting: [
-  "gas not working","stove not working","no flame","burner not working",
-  "gas non funziona","non esce gas","fornello non funziona","non si accende","fiamma non esce",
-  "gaz ne marche pas","feu ne s allume pas",
-  "gas funktioniert nicht","kochfeld geht nicht","flamme"
-],
-
-bathroom_troubleshooting: [
-  "toilet not working","toilet not flushing","clogged","blocked",
-  "wc non scarica","scarico non funziona","water closet","bagno problema",
-  "toilettes bouchees","ne chasse pas",
-  "toilette verstopft","spulung funktioniert nicht"
-]
+    ]
+     
   };
 
   // trova TUTTI gli intent che matchano
