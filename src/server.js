@@ -1173,7 +1173,7 @@ function detectLangFromMessage(msg) {
     "spazzatura","immondizia","pattumiera","riscaldamento","termosifone",
     "doccia","bagno","uscita","chiavi",
     "riesco","collegarmi","connettermi","connessione",
-    "acqua","rubinetto","potabile","calda","fredda","pressione","wifi","rete"
+    "acqua","rubinetto","potabile","calda","fredda","pressione","rete"
   ].forEach(t => { if (has(t)) scores.it++; });
 
   // 🇪🇸
@@ -1204,6 +1204,10 @@ function detectLangFromMessage(msg) {
       best = lang;
     }
   }
+
+// ✅ Se EN è a pari merito col migliore, preferisco EN
+const top = Math.max(...Object.values(scores));
+if (top > 0 && scores.en === top) return "en";
 
   return bestScore > 0 ? best : "en";
 }
