@@ -1572,7 +1572,9 @@ app.post("/hostaway-outbound", async (req, res) => {
 
 // ------ Pagina di test per inviare un'email di prova ------
  // ------ Pagina di test per inviare un'email di prova ------
-app.get("/test-mail", (req, res) => {
+
+app.get("/test-mail", requireAdmin, (req, res) => {
+
   res.type("html").send(`
     <!doctype html><meta charset="utf-8">
     <div style="font-family: system-ui; max-width: 680px; margin: 24px auto;">
