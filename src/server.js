@@ -1574,9 +1574,9 @@ app.get("/test-mail", (req, res) => {
 // ====== VRBO MAILER BRIDGE ======
   app.post("/api/vbro-mail", async (req, resInner) => {
     const { to, subject, body, secret } = req.body;
-    if (secret !== process.env.MAIL_SHARED_SECRET) {
-      return resInner.status(403).json({ ok: false, error: "Unauthorized" });
-    }
+   if (!safeEqual(secret, process.env.MAIL_SHARED_SECRET)) {
+  return resInner.status(403).json({ ok: false, error: "Unauthorized" });
+}
 
     try {
       const response = await axios.post(
