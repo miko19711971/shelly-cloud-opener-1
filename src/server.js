@@ -540,14 +540,7 @@ app.get(`${LINK_PREFIX}/:target/:token`, (req, res) => {
   if (p.tgt !== target) return res.status(400).send("Invalid link");
   if (Date.now() > p.exp) return res.status(400).send("Link scaduto");
 
-// ✅ LIMITA RIUSO TOKEN (server-side, per jti)
-const max = Number(p.max || 0); // 0 = illimitato
-if (max > 0) {
-  const u = getUsage(p);
-  if (u.count >= max) {
-    return res.status(429).json({ ok: false, error: "max_opens_reached" });
-  }
-}
+ 
 
   res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0");
   res.type("html").send(landingHtml(target, targetDef.name, p));
