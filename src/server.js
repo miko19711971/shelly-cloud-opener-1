@@ -549,12 +549,10 @@ app.get(`${LINK_PREFIX}/:target/:token`, (req, res) => {
   res.type("html").send(landingHtml(target, targetDef.name, p));
 });
 
-app.post(`${LINK_PREFIX}/:target/:token/open`, async (req, res) => {
+ app.post(`${LINK_PREFIX}/:target/:token/open`, async (req, res) => {
   const { target, token } = req.params;
   const targetDef = TARGETS[target];
-  if (!targetDef) {
-    return res.status(404).json({ ok: false, error: "unknown_target" });
-  }
+  if (!targetDef) return res.status(404).json({ ok: false, error: "unknown_target" });
 
   const parsed = parseToken(token);
   if (!parsed.ok) {
@@ -566,22 +564,33 @@ app.post(`${LINK_PREFIX}/:target/:token/open`, async (req, res) => {
   if (p.tgt !== target) return res.status(400).json({ ok: false, error: "target_mismatch" });
   if (Date.now() > p.exp) return res.status(400).json({ ok: false, error: "expired" });
 
-// ✅ LIMITA RIUSO TOKEN (server-side, per jti)
-const max = Number(p.max || 0); // 0 = illimitato
-if (max > 0) {
+  // ✅ Se il token ha un "day" (check-in), applica vincolo giorno
+  if (p.day && isYYYYMMDD(p.day) && p.day !== tzToday()) {
+    return res.status(410).json({ ok: false, error: "wrong_day" });
+  }
+
+  const max = Number(p.max || 0); // 0 = illimitato
   const u = getUsage(p);
-  if (u.count >= max) {
+
+  if (max > 0 && u.count >= max) {
     return res.status(429).json({ ok: false, error: "max_opens_reached" });
   }
 
-  let result;
-  if (targetDef.ids.length === 1) {
-    result = await openOne(targetDef.ids[0]);
-  } else {
-    result = await openSequence(targetDef.ids, 10000);
+  const result = (targetDef.ids.length === 1)
+    ? await openOne(targetDef.ids[0])
+    : await openSequence(targetDef.ids, 10000);
+
+  if (!result.ok) {
+    return res.status(502).json({ ok: false, error: "open_failed", details: result });
   }
 
-  return res.json({ ok: true, opened: result });
+  // ✅ incrementa uso server-side
+  const newCount = (max > 0) ? (u.count + 1) : u.count;
+  OPEN_USAGE.set(usageKey(p), { count: newCount, exp: p.exp });
+
+  const remaining = (max > 0) ? Math.max(0, max - newCount) : null;
+
+  return res.json({ ok: true, remaining, opened: result });
 });
 
 // ✅ “apri subito” interno
