@@ -1768,6 +1768,10 @@ const langCode = known.has(raw2) ? raw2 : detectLangFromMessage(finalMessage);
     //    Se ho anche l'email del guest, la mando anche a lui.
     if (aiReply) {
       try {
+        if (!MAILER_URL || !MAIL_SHARED_SECRET) {
+  console.log("ℹ️ Mailer disattivato: MAILER_URL/MAIL_SHARED_SECRET mancanti.");
+  return res.json({ ok: true, mailer: "disabled" });
+}
         const greeting = makeGreeting(langCode, name);
         const subject = `NiceFlatInRome – ${apt}`;
         const htmlBody = `
