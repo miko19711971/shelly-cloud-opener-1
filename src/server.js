@@ -199,7 +199,8 @@ function makeToken(payload) {
   return `${header}.${body}.${sig}`;
 }
 
-function parseToken(token) {
+if (!safeEqual(sig, s)) return { ok: false, error: "bad_signature" };
+
   const [h, b, s] = (token || "").split(".");
   if (!h || !b || !s) return { ok: false, error: "bad_format" };
 
