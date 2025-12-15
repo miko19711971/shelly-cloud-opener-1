@@ -585,7 +585,9 @@ if (max > 0) {
 });
 
 // ✅ “apri subito” interno
-app.all("/api/open-now/:target", (req, res) => {
+
+app.all("/api/open-now/:target", requireAdmin, (req, res) => {
+
   const targetKey = req.params.target;
   const targetDef = TARGETS[targetKey];
   if (!targetDef) return res.status(404).send("Unknown target");
