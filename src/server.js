@@ -255,6 +255,26 @@ const fmtDay = new Intl.DateTimeFormat("en-CA", {
   day: "2-digit"
 });
 
+const TODAY_LOCK = new Map(); // 🔒 memorizza il giorno di utilizzo di ogni appartamento
+
+// 🔒 Limita riuso token /k3 (per jti) — in memoria
+const OPEN_USAGE = new Map(); // key -> { count, exp }
+
+function usageKey(p) {
+  return `${p.tgt}:${p.jti}`;
+}
+
+function getUsage(p) {
+  const key = usageKey(p);
+  const u = OPEN_USAGE.get(key);
+  // se scaduto, pulisci
+  if (u && u.exp && Date.now() > u.exp) {
+    OPEN_USAGE.delete(key);
+    return { count: 0, exp: p.exp };
+  }
+  return u || { count: 0, exp: p.exp };
+}
+
 // YYYY-MM-DD nel fuso definito
 function tzToday() {
   return fmtDay.format(new Date());
