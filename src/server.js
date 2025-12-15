@@ -1489,9 +1489,13 @@ app.get("/health", (req, res) => {
 // ========== NUOVO ENDPOINT: HostAway → Email ospite VRBO ==========
 
 // Per inviare le email sfruttiamo un piccolo ponte (Apps Script o altro servizio Mail)
-const MAILER_URL        = process.env.MAILER_URL        || "https://script.google.com/macros/s/XXXXXXX/exec"; // <-- metterai il tuo URL Apps Script
-const MAIL_SHARED_SECRET = process.env.MAIL_SHARED_SECRET || "super-segreto-lungo";
+ const MAILER_URL         = process.env.MAILER_URL || "https://script.google.com/macros/s/XXXXXXX/exec";
+const MAIL_SHARED_SECRET = process.env.MAIL_SHARED_SECRET;
 
+if (!MAIL_SHARED_SECRET) {
+  console.error("❌ Missing MAIL_SHARED_SECRET env var");
+  process.exit(1);
+}
 app.post("/hostaway-outbound", async (req, res) => {
   try {
     const { reservationId, guestEmail, guestName, message } = req.body || {};
