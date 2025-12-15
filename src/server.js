@@ -20,7 +20,20 @@ app.disable("x-powered-by");
 app.set("trust proxy", true);
 app.use(express.urlencoded({ extended: true, limit: "50kb" }));
 app.use(express.json({ limit: "100kb" }));
-app.use(cors());
+
+// ✅ CORS solo dove serve (non globale)
+const corsOptions = {
+  origin: (origin, cb) => {
+    // Se non c’è Origin (curl/server-to-server) -> OK
+    if (!origin) return cb(null, true);
+
+    // Default: blocca TUTTO cross-origin (le tue pagine chiamano in same-origin, quindi non si rompe nulla)
+    return cb(null, false);
+  },
+  methods: ["GET", "POST"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+  maxAge: 86400
+};
 
 // ========= STATIC PATHS =========
 const __filename = fileURLToPath(import.meta.url);
