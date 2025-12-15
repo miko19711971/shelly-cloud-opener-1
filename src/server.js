@@ -489,7 +489,9 @@ app.get("/", requireAdmin, (req, res) => {
 });
 
 // ====== Genera smart link /token/:target ======
-app.get("/token/:target", (req, res) => {
+
+app.get("/token/:target", requireAdmin, (req, res) => {
+
   const targetKey = req.params.target;
   const target    = TARGETS[targetKey];
   if (!target) {
