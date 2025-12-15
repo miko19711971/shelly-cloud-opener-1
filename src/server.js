@@ -36,6 +36,14 @@ const HOSTAWAY_WEBHOOK_BOOKING_SECRET = process.env.HOSTAWAY_WEBHOOK_BOOKING_SEC
 
 console.log("🔥 Hostaway token caricato:", HOSTAWAY_TOKEN ? "OK" : "MANCANTE");
 
+if (!HOSTAWAY_TOKEN) {
+  console.error("❌ Missing HOSTAWAY_TOKEN env var (risposte automatiche HostAway disattivate).");
+}
+
+if (!HOSTAWAY_WEBHOOK_BOOKING_SECRET) {
+  console.error("❌ Missing HOSTAWAY_WEBHOOK_BOOKING_SECRET env var (webhook HostAway: tutte le richieste verranno rifiutate).");
+}
+
 if (!TOKEN_SECRET) {
   console.error("❌ Missing TOKEN_SECRET env var");
   process.exit(1);
