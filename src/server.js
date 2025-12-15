@@ -177,39 +177,22 @@ async function openSequence(ids, delayMs = 10000) {
 }
 
 // ========== TOKEN MONOUSO ==========
-function b64url(buf) {
-  return Buffer.from(buf).toString("base64")
-    .replace(/\+/g, "-")
-    .replace(/\//g, "_")
-    .replace(/=+$/g, "");
+ function b64urlToBuf(s) {
+  s = String(s || "").replace(/-/g, "+").replace(/_/g, "/");
+  while (s.length % 4) s += "=";
+  return Buffer.from(s, "base64");
 }
 
-function hmac_raw(str) {
-  return crypto.createHmac("sha256", SIGNING_SECRET).update(str).digest();
-}
-
-function hmac(str) {
-  return b64url(hmac_raw(str));
-}
-
-function makeToken(payload) {
-  const header = b64url(JSON.stringify({ alg: "HS256", typ: "TOK" }));
-  const body   = b64url(JSON.stringify(payload));
-  const sig    = hmac(`${header}.${body}`);
-  return `${header}.${body}.${sig}`;
-}
-
-if (!safeEqual(sig, s)) return { ok: false, error: "bad_signature" };
-
+function parseToken(token) {
   const [h, b, s] = (token || "").split(".");
   if (!h || !b || !s) return { ok: false, error: "bad_format" };
 
   const sig = hmac(`${h}.${b}`);
-  if (sig !== s) return { ok: false, error: "bad_signature" };
+  if (!safeEqual(sig, s)) return { ok: false, error: "bad_signature" };
 
   let payload;
   try {
-    payload = JSON.parse(Buffer.from(b, "base64").toString("utf8"));
+    payload = JSON.parse(b64urlToBuf(b).toString("utf8"));
   } catch {
     return { ok: false, error: "bad_payload" };
   }
