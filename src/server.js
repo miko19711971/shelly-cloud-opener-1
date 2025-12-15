@@ -563,6 +563,14 @@ app.post(`${LINK_PREFIX}/:target/:token/open`, async (req, res) => {
   if (p.tgt !== target) return res.status(400).json({ ok: false, error: "target_mismatch" });
   if (Date.now() > p.exp) return res.status(400).json({ ok: false, error: "expired" });
 
+// ✅ LIMITA RIUSO TOKEN (server-side, per jti)
+const max = Number(p.max || 0); // 0 = illimitato
+if (max > 0) {
+  const u = getUsage(p);
+  if (u.count >= max) {
+    return res.status(429).json({ ok: false, error: "max_opens_reached" });
+  }
+
   let result;
   if (targetDef.ids.length === 1) {
     result = await openOne(targetDef.ids[0]);
