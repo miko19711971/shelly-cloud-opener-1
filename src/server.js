@@ -15,10 +15,11 @@ function safeEqual(a, b) {
   return crypto.timingSafeEqual(aa, bb);
 }
 
-const app = express();
+ const app = express();
+app.disable("x-powered-by");
 app.set("trust proxy", true);
-app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
+app.use(express.urlencoded({ extended: true, limit: "50kb" }));
+app.use(express.json({ limit: "100kb" }));
 app.use(cors());
 
 // ========= STATIC PATHS =========
