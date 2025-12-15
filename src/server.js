@@ -50,6 +50,22 @@ const HOSTAWAY_TOKEN  = process.env.HOSTAWAY_TOKEN;   // <-- nome come messo su 
 
 const HOSTAWAY_WEBHOOK_BOOKING_SECRET = process.env.HOSTAWAY_WEBHOOK_BOOKING_SECRET;
 
+// ========= ADMIN (route sensibili) =========
+const ADMIN_SECRET = process.env.ADMIN_SECRET;
+
+if (!ADMIN_SECRET) {
+  console.error("❌ Missing ADMIN_SECRET env var");
+  process.exit(1);
+}
+
+function requireAdmin(req, res, next) {
+  const h = req.get("x-admin-secret") || "";
+  if (!safeEqual(h, ADMIN_SECRET)) {
+    return res.status(403).json({ ok: false, error: "unauthorized" });
+  }
+  return next();
+}
+
 console.log("🔥 Hostaway token caricato:", HOSTAWAY_TOKEN ? "OK" : "MANCANTE");
 
 if (!HOSTAWAY_TOKEN) {
