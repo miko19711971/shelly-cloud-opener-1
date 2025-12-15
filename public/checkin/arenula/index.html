@@ -216,12 +216,18 @@ const T = {
   const t=T[code]||T.en;
 
   // barra lingue
-  const base=location.pathname.replace(/\/+$/,'');
-  document.getElementById('langbar').innerHTML =
-    `${t.langLabel}: ` +
-    Object.entries(T).map(([k,v])=>{
-      const cls=(k===code)?'active':''; return `<a class="${cls}" href="${base}?lang=${k}">${v.langName}</a>`;
-    }).join(' · ');
+   const params = new URLSearchParams(location.search);
+const token = params.get('t') || '';
+
+document.getElementById('langbar').innerHTML =
+  `${t.langLabel}: ` +
+  Object.entries(T).map(([k,v])=>{
+    const cls=(k===code)?'active':'';
+    const p = new URLSearchParams(location.search);
+    p.set('lang', k);
+    if(token) p.set('t', token);
+    return `<a class="${cls}" href="${base}?${p.toString()}">${v.langName}</a>`;
+  }).join(' · ');
 
   const setText=(id,txt)=>{const el=document.getElementById(id); if(el) el.textContent=txt;};
   const setHTML=(id,html)=>{const el=document.getElementById(id); if(el) el.innerHTML=html;};
