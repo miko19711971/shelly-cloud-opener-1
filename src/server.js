@@ -1617,7 +1617,7 @@ app.get("/test-mail", requireAdmin, (req, res) => {
 // ====== VRBO MAILER BRIDGE ======
   app.post("/api/vbro-mail", requireAdmin, async (req, resInner) => {
     const { to, subject, body, secret } = req.body;
-   if (!safeEqual(secret, process.env.MAIL_SHARED_SECRET)) {
+   
   return resInner.status(403).json({ ok: false, error: "Unauthorized" });
 }
 
