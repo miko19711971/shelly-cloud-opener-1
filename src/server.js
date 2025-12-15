@@ -30,10 +30,12 @@ const corsOptions = {
     // Default: blocca TUTTO cross-origin (le tue pagine chiamano in same-origin, quindi non si rompe nulla)
     return cb(null, false);
   },
-  methods: ["GET", "POST"],
+  methods: ["GET","POST","OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
   maxAge: 86400
 };
+
+const corsMw = cors(corsOptions);
 
 // ========= STATIC PATHS =========
 const __filename = fileURLToPath(import.meta.url);
