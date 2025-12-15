@@ -459,7 +459,9 @@ function landingHtml(targetKey, targetName, tokenPayload) {
 }
 
 // ====== Home di servizio (facoltativa) ======
-app.get("/", (req, res) => {
+
+app.get("/", requireAdmin, (req, res) => {
+
   const rows = Object.entries(TARGETS)
     .map(([key, t]) => {
       const ids = t.ids.join(", ");
