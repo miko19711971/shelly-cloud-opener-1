@@ -124,15 +124,29 @@
 </main>
 
 <script>
-async function openWith(statusId, path){
-  const s=document.getElementById(statusId);
+ async function openWith(statusId, target){
+  const s = document.getElementById(statusId);
   try{
-    s.textContent='Generating one-time key…';
-    const r=await fetch(path,{cache:'no-store'});
-    const j=await r.json();
-    if(j && j.url){ s.textContent='Key OK. Opening…'; location.href=j.url; }
-    else{ s.textContent=(j && (j.error||j.message)) ? String(j.error||j.message) : 'No URL returned.'; }
-  }catch(e){ s.textContent='Network error. Try again.'; }
+    const params = new URLSearchParams(location.search);
+    const token = params.get('t');   // 👈 token del check-in
+
+    if(!token){
+      s.textContent = 'Link non valido (token mancante).';
+      return;
+    }
+
+    s.textContent='Opening…';
+    const r = await fetch(`/k3/${target}/${token}/open`, { method:'POST', cache:'no-store' });
+    const j = await r.json().catch(()=> ({}));
+
+    if(r.ok && j.ok){
+      s.textContent='Done.';
+    } else {
+      s.textContent = (j.error || j.message) ? String(j.error || j.message) : `Error (${r.status})`;
+    }
+  } catch(e){
+    s.textContent='Network error. Try again.';
+  }
 }
 
 /* 5 lingue + bottoni */
