@@ -1531,7 +1531,9 @@ if (!MAIL_SHARED_SECRET) {
   console.error("❌ Missing MAIL_SHARED_SECRET env var");
   process.exit(1);
 }
-app.post("/hostaway-outbound", async (req, res) => {
+
+app.post("/hostaway-outbound", requireAdmin, async (req, res) => {
+
   try {
     const { reservationId, guestEmail, guestName, message } = req.body || {};
 
