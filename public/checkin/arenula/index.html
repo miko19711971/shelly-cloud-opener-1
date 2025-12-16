@@ -212,29 +212,23 @@ const T = {
       footer:'niceflatinrome.com • Guía visual rápida para llegar a Via Arenula 16',langLabel:'Idioma',langName:'Español'}
 };
 
- /* render lingue */
+  /* render lingue */
 (function(){
   const params = new URLSearchParams(location.search);
-
-  // token: DEVE restare l’unico parametro in query per non far fallire il server
-  const token = params.get('t') || '';
-
-  // lingua: la prendiamo dall'hash (#it, #fr, ecc.). Se non c'è, fallback a ?lang=...
-  const hashLang = (location.hash || '').replace('#','').toLowerCase();
-  const code = (hashLang || (params.get('lang')||'en')).toLowerCase();
+  const code = (params.get('lang') || 'en').toLowerCase();
   const t = T[code] || T.en;
 
-  const base = location.pathname.replace(/\/+$/,'');
+  const token = params.get('t') || '';
+  const base  = location.pathname.replace(/\/+$/,'');
 
-  // barra lingue (lingua in HASH, token in QUERY)
   document.getElementById('langbar').innerHTML =
     `${t.langLabel}: ` +
     Object.entries(T).map(([k,v])=>{
-      const cls = (k===code)?'active':'';
-      const href = token
-        ? `${base}?t=${encodeURIComponent(token)}#${k}`
-        : `${base}#${k}`;
-      return `<a class="${cls}" href="${href}">${v.langName}</a>`;
+      const cls = (k===code) ? 'active' : '';
+      const p = new URLSearchParams(location.search);
+      p.set('lang', k);
+      if (token) p.set('t', token); else p.delete('t');
+      return `<a class="${cls}" href="${base}?${p.toString()}">${v.langName}</a>`;
     }).join(' · ');
 
   const setText=(id,txt)=>{const el=document.getElementById(id); if(el) el.textContent=txt;};
@@ -251,6 +245,3 @@ const T = {
   setText('btn_building', t.btn_building); setText('btn_apartment', t.btn_apartment);
   setText('footer', t.footer);
 })();
-</script>
-</body>
-</html>
