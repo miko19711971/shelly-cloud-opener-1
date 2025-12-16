@@ -212,22 +212,22 @@ const T = {
       footer:'niceflatinrome.com • Guía visual rápida para llegar a Via Arenula 16',langLabel:'Idioma',langName:'Español'}
 };
 
-  /* render lingue */
+ /* render lingue */
 (function(){
-  const params = new URLSearchParams(location.search);
-  const code = (params.get('lang') || 'en').toLowerCase();
-  const t = T[code] || T.en;
+  const params=new URLSearchParams(location.search);
+  const code=(params.get('lang')||'en').toLowerCase();
+  const t=T[code]||T.en;
 
   const token = params.get('t') || '';
-  const base  = location.pathname.replace(/\/+$/,'');
+  const base  = 'index.html';  // ✅ sempre sul file giusto (non /today, non la cartella)
 
   document.getElementById('langbar').innerHTML =
     `${t.langLabel}: ` +
     Object.entries(T).map(([k,v])=>{
-      const cls = (k===code) ? 'active' : '';
-      const p = new URLSearchParams(location.search);
+      const cls=(k===code)?'active':'';
+      const p = new URLSearchParams();
       p.set('lang', k);
-      if (token) p.set('t', token); else p.delete('t');
+      if(token) p.set('t', token);
       return `<a class="${cls}" href="${base}?${p.toString()}">${v.langName}</a>`;
     }).join(' · ');
 
@@ -245,3 +245,6 @@ const T = {
   setText('btn_building', t.btn_building); setText('btn_apartment', t.btn_apartment);
   setText('footer', t.footer);
 })();
+</script>
+</body>
+</html>
