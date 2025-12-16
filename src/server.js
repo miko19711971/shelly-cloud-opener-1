@@ -1627,7 +1627,9 @@ app.get("/test-mail", requireAdmin, (req, res) => {
   app.post("/api/vbro-mail", requireAdmin, async (req, resInner) => {
     const { to, subject, body, secret } = req.body;
    
-  return resInner.status(403).json({ ok: false, error: "Unauthorized" });
+  if (/* tua condizione di blocco */) {
+  return resInner.status(403).json({ ok: false });
+}
 }
 
     try {
