@@ -121,29 +121,35 @@
 </main>
 
 <script>
+   <script>
   async function openWith(statusId, path){
-    const s=document.getElementById(statusId);
-
+    const s = document.getElementById(statusId);
     try{
-      // ✅ PATCH: Scala richiede la data ?d=YYYY-MM-DD → la prendiamo dalla URL e la passiamo a /token/...
       const params = new URLSearchParams(location.search);
-      const d = params.get('d');
+      const d = params.get('d'); // 👈 prende la data dal link /checkin/scala/?d=...
+
       if(!d){
         s.textContent = 'Questo link richiede la data di check-in (?d=YYYY-MM-DD).';
         return;
       }
 
-      s.textContent='Generating one-time key…';
-      const url = path + (path.includes('?') ? '&' : '?') + 'd=' + encodeURIComponent(d);
+      s.textContent = 'Generating one-time key…';
+      const url = `${path}?d=${encodeURIComponent(d)}`; // 👈 inoltra la data al backend
 
-      const r=await fetch(url,{cache:'no-store'});
-      const j=await r.json();
-      if(j && j.url){ s.textContent='Key OK. Opening…'; location.href=j.url; }
-      else{ s.textContent=(j && (j.error||j.message)) ? String(j.error||j.message) : 'No URL returned.'; }
-    }catch(e){
-      s.textContent='Network error. Try again.';
+      const r = await fetch(url, { method:'GET', cache:'no-store' });
+      const j = await r.json().catch(()=> ({}));
+
+      if (r.ok && j && j.url){
+        s.textContent = 'Key OK. Opening…';
+        location.href = j.url;
+      } else {
+        s.textContent = (j && (j.error || j.message)) ? String(j.error || j.message) : `Error (${r.status})`;
+      }
+    } catch(e){
+      s.textContent = 'Network error. Try again.';
     }
   }
+</script>
 
   /* ----------- Dizionario testi: 5 lingue (s3_lock) ----------- */
   const T = {
