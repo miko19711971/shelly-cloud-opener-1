@@ -1623,28 +1623,28 @@ app.get("/test-mail", requireAdmin, (req, res) => {
   `);
 });
 
-// ====== VRBO MAILER BRIDGE ======
-  app.post("/api/vbro-mail", requireAdmin, async (req, resInner) => {
-    const { to, subject, body, secret } = req.body;
-   
-  if (/* tua condizione di blocco */) {
-  return resInner.status(403).json({ ok: false });
-}
-}
+ // ====== VRBO MAILER BRIDGE ======
+app.post("/api/vbro-mail", requireAdmin, async (req, resInner) => {
+  try {
+    const { to, subject, body } = req.body || {};
 
-    try {
-      const response = await axios.post(
-        `${process.env.MAILER_URL}?secret=${process.env.MAIL_SHARED_SECRET}`,
-        { to, subject, htmlBody: body },
-        { headers: { "Content-Type": "application/json" } }
-      );
-      console.log("📨 Email VRBO inviata con successo", response.status);
-      return resInner.json({ ok: true });
-    } catch (err) {
-      console.error("❌ Errore invio mail:", err);
-      return resInner.status(500).json({ ok: false, error: String(err) });
+    if (!to || !subject || !body) {
+      return resInner.status(400).json({ ok: false, error: "missing_fields" });
     }
-  });
+
+    const response = await axios.post(
+      `${MAILER_URL}?secret=${encodeURIComponent(MAIL_SHARED_SECRET)}`,
+      { to, subject, htmlBody: body },
+      { headers: { "Content-Type": "application/json" }, timeout: 10000 }
+    );
+
+    console.log("📨 Email VRBO inviata con successo", response.status);
+    return resInner.json({ ok: true });
+  } catch (err) {
+    console.error("❌ Errore invio mail:", err);
+    return resInner.status(500).json({ ok: false, error: String(err?.message || err) });
+  }
+});
 
 // ========== HOSTAWAY → AUTO RISPOSTA AI PER MESSAGGI ==========
  
