@@ -1,4 +1,4 @@
-<!doctype html>
+ <!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -92,8 +92,7 @@
       </div>
     </div>
   </section>
-
-  <!-- 3 -->
+    <!-- 3 -->
   <section class="card">
     <div class="step">
       <div class="num">3</div>
@@ -124,12 +123,36 @@
 async function openWith(statusId, path){
   const s=document.getElementById(statusId);
   try{
-    s.textContent='Generating one-time key…';
-    const r=await fetch(path,{cache:'no-store'});
-    const j=await r.json();
-    if(j && j.url){ s.textContent='Key OK. Opening…'; location.href=j.url; }
-    else{ s.textContent=(j && (j.error||j.message)) ? String(j.error||j.message) : 'No URL returned.'; }
-  }catch(e){ s.textContent='Network error. Try again.'; }
+    const params = new URLSearchParams(window.location.search);
+    const t = params.get("t");
+
+    if(!t){
+      s.textContent = "Link non valido (token mancante).";
+      return;
+    }
+
+    // mappa dei vecchi /token/... -> nuovi endpoint check-in (pubblici)
+    let endpoint = "";
+    if(String(path||"").includes("portico-1d-building")) endpoint = "/checkin/portico/open/building";
+    if(String(path||"").includes("portico-1d-door"))     endpoint = "/checkin/portico/open/door";
+
+    if(!endpoint){
+      s.textContent = "Errore configurazione (endpoint mancante).";
+      return;
+    }
+
+    s.textContent='Opening…';
+    const r = await fetch(`${endpoint}?t=${encodeURIComponent(t)}`, { method:"POST", cache:"no-store" });
+    const j = await r.json().catch(()=> ({}));
+
+    if(r.ok && j && j.ok){
+      s.textContent='Done.';
+    } else {
+      s.textContent = (j && (j.error||j.message)) ? String(j.error||j.message) : `Error (${r.status})`;
+    }
+  }catch(e){
+    s.textContent='Network error. Try again.';
+  }
 }
 
 /* ---------- 5 lingue (solo testi) ---------- */
@@ -176,11 +199,20 @@ const T = {
       btn_building:"➜ Abrir puerta del edificio",btn_apartment:"➜ Abrir puerta del apartamento",
       footer:"niceflatinrome.com • Guía visual rápida para llegadas a Via del Portico d’Ottavia 1D"}
 };
-
-(function(){
+  (function(){
   const params=new URLSearchParams(location.search);
   const L=(params.get('lang')||'en').toLowerCase();
+  const token = params.get('t') || '';
   const t=T[L]||T.en;
+
+  // mantieni token nei link lingua
+  document.querySelectorAll('#langbar a').forEach(a=>{
+    const code = a.getAttribute('data-lang') || 'en';
+    const p = new URLSearchParams();
+    p.set('lang', code);
+    if(token) p.set('t', token);
+    a.setAttribute('href', `?${p.toString()}`);
+  });
 
   // attiva la lingua selezionata
   document.querySelectorAll('#langbar a').forEach(a=>{
@@ -216,3 +248,5 @@ const T = {
 </script>
 </body>
 </html>
+  
+  
