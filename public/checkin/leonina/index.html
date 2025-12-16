@@ -52,8 +52,8 @@
         <h2 id="s1_t">Open the Building Door</h2>
         <p id="s1_p">Press the button below to open the building door.</p>
 
-        <!-- corretto: punta a Leonina -->
-        <a class="cta" href="#" onclick="openWith('statusBuilding','/token/leonina-building');return false;" id="btn_building">➜ Open Building Door</a>
+        <!-- ✅ PATCH: non usare /token (admin). Usa /checkin/... con token t -->
+        <a class="cta" href="#" onclick="openWith('statusBuilding','building');return false;" id="btn_building">➜ Open Building Door</a>
         <div class="status" id="statusBuilding"></div>
 
         <!-- foto locale -->
@@ -101,8 +101,8 @@
         <h2 id="s4_t">This is your apartment door</h2>
         <p id="s4_p">Press the button only once when you are sure it’s the correct door.</p>
 
-        <!-- corretto: punta a Leonina -->
-        <a class="cta" href="#" onclick="openWith('statusApartment','/token/leonina-door');return false;" id="btn_apartment">➜ Open Apartment Door</a>
+        <!-- ✅ PATCH: non usare /token (admin). Usa /checkin/... con token t -->
+        <a class="cta" href="#" onclick="openWith('statusApartment','apartment');return false;" id="btn_apartment">➜ Open Apartment Door</a>
         <div class="status" id="statusApartment"></div>
 
         <figure>
@@ -122,18 +122,47 @@
 </main>
 
 <script>
-async function openWith(statusId, path){
+async function openWith(statusId, which){
   const s=document.getElementById(statusId);
   try{
-    s.textContent='Generating one-time key…';
-    const r=await fetch(path,{cache:'no-store'});
-    const j=await r.json();
-    if(j && j.url){ s.textContent='Key OK. Opening…'; location.href=j.url; }
-    else{ s.textContent=(j && (j.error||j.message)) ? String(j.error||j.message) : 'No URL returned.'; }
-  }catch(e){ s.textContent='Network error. Try again.'; }
-}
+    const params = new URLSearchParams(window.location.search);
+    const t = params.get("t") || "";
 
-/* -------- 5 lingue (bottoni inclusi) -------- */
+    if(!t){
+      s.textContent = "Link non valido (token mancante).";
+      return;
+    }
+
+    s.textContent='Opening…';
+
+    // ✅ robusto: per la porta prova "apartment" e se non esiste prova "door"
+    const tries = (which === "building") ? ["building"] : ["apartment","door"];
+
+    for (const kind of tries) {
+      const r = await fetch(`/checkin/leonina/open/${kind}?t=${encodeURIComponent(t)}`, {
+        method: "POST",
+        cache: "no-store"
+      });
+
+      // se endpoint non esiste, prova il prossimo
+      if (r.status === 404) continue;
+
+      const j = await r.json().catch(()=> ({}));
+
+      if(r.ok && j.ok){
+        s.textContent = "Done.";
+      } else {
+        s.textContent = (j.error || j.message) ? String(j.error || j.message) : `Error (${r.status})`;
+      }
+      return; // ✅ finito (ok o errore “vero”)
+    }
+
+    s.textContent = "Error (endpoint not found).";
+  }catch(e){
+    s.textContent='Network error. Try again.';
+  }
+}
+  /* -------- 5 lingue (bottoni inclusi) -------- */
 const T = {
   en: {
     title:'Check-in Guide — Via Leonina 71',
@@ -250,13 +279,18 @@ const T = {
   const L=(params.get('lang')||'en').toLowerCase();
   const t=T[L]||T.en;
 
-  // barra lingue con link reali
-  const base=location.pathname.replace(/\/+$/,'');
+  const token = params.get('t') || '';
+  const base  = 'index.html';  // ✅ sempre sul file giusto
+
+  // barra lingue con token preservato
   document.getElementById('langbar').innerHTML =
     `${t.langLabel}: ` +
     Object.entries(T).map(([k,v])=>{
       const cls=(k===L)?'active':'';
-      return `<a class="${cls}" href="${base}?lang=${k}">${v.langName}</a>`;
+      const p = new URLSearchParams();
+      p.set('lang', k);
+      if(token) p.set('t', token);
+      return `<a class="${cls}" href="${base}?${p.toString()}">${v.langName}</a>`;
     }).join(' · ');
 
   // applica testi
@@ -282,3 +316,6 @@ const T = {
 </script>
 </body>
 </html>
+
+  
+  
