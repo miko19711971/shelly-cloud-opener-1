@@ -139,20 +139,25 @@
     }
 
     s.textContent='Opening…';
-    const r = await fetch(`/k3/${target}/${token}/open`, { method:'POST', cache:'no-store' });
-    const j = await r.json().catch(()=> ({}));
 
-    if(r.ok && j.ok){
+    const params2 = new URLSearchParams(window.location.search);
+    const t = params2.get("t");
+
+    const res = await fetch(`/checkin/arenula/open/building?t=${encodeURIComponent(t)}`, {
+      method: "POST"
+    });
+    const j = await res.json();
+
+    if(res.ok && j.ok){
       s.textContent='Done.';
     } else {
-      s.textContent = (j.error || j.message) ? String(j.error || j.message) : `Error (${r.status})`;
+      s.textContent = (j.error || j.message) ? String(j.error || j.message) : `Error (${res.status})`;
     }
   } catch(e){
     s.textContent='Network error. Try again.';
   }
 }
-
-/* 5 lingue + bottoni */
+  /* 5 lingue + bottoni */
 const T = {
   en:{title:'Check-in Guide — Via Arenula 16',addr:'Address: Via Arenula 16, Rome • Intercom: C8 • Elevator: private, do not use',
       s1_t:'Arriving at the Building',s1_p:'When you reach Via Arenula 16, look for the large wooden entrance door with the number 16 engraved on the stone frame.',s1_cap:'Façade and main entrance — Via Arenula 16.',
@@ -188,7 +193,8 @@ const T = {
       help_h:'Besoin d’aide ?',help_p:'Appeler ou WhatsApp : <a class="cta" href="tel:+393355245756">+39 335 524 5756</a>',
       btn_building:'Ouvrir le portail',btn_apartment:"Ouvrir la porte de l’appartement",
       footer:'niceflatinrome.com • Guide visuel rapide pour l’arrivée à Via Arenula 16',langLabel:'Langue',langName:'Français'},
-  de:{title:'Check-in-Leitfaden — Via Arenula 16',addr:'Adresse: Via Arenula 16, Rom • Gegensprechanlage: C8 • Aufzug: privat, nicht benutzen',
+
+    de:{title:'Check-in-Leitfaden — Via Arenula 16',addr:'Adresse: Via Arenula 16, Rom • Gegensprechanlage: C8 • Aufzug: privat, nicht benutzen',
       s1_t:'Ankunft am Gebäude',s1_p:'Suchen Sie an der Via Arenula 16 das große Holztor mit der Zahl 16 im Stein.',s1_cap:'Fassade und Haupteingang — Via Arenula 16.',
       s2_t:'Gegensprechanlage benutzen',s2_p:'Drücken Sie C8 an der Gegensprechanlage.',s2_cap:'Gegensprechanlage — C8 drücken.',
       s3_t:'Durch das Haupttor eintreten',s3_p:'Drücken Sie die Tür, sobald sie entriegelt ist.',
