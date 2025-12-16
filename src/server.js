@@ -192,11 +192,33 @@ async function openSequence(ids, delayMs = 10000) {
   return { ok: logs.every(l => l.ok), logs };
 }
 
-// ========== TOKEN MONOUSO ==========
- function b64urlToBuf(s) {
+ // ========== TOKEN MONOUSO ==========
+function b64urlToBuf(s) {
   s = String(s || "").replace(/-/g, "+").replace(/_/g, "/");
   while (s.length % 4) s += "=";
   return Buffer.from(s, "base64");
+}
+
+function b64url(input) {
+  const buf = Buffer.isBuffer(input) ? input : Buffer.from(String(input), "utf8");
+  return buf
+    .toString("base64")
+    .replace(/\+/g, "-")
+    .replace(/\//g, "_")
+    .replace(/=+$/g, "");
+}
+
+function hmac(str) {
+  return b64url(
+    crypto.createHmac("sha256", SIGNING_SECRET).update(String(str)).digest()
+  );
+}
+
+function makeToken(payload) {
+  const header = b64url(JSON.stringify({ alg: "HS256", typ: "JWT" }));
+  const body   = b64url(JSON.stringify(payload));
+  const sig    = hmac(`${header}.${body}`);
+  return `${header}.${body}.${sig}`;
 }
 
 function parseToken(token) {
