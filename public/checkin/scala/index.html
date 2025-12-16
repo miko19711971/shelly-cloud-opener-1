@@ -1,4 +1,4 @@
-<!doctype html>
+ <!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -61,10 +61,7 @@
           </div>
           <figcaption id="s1_cap">Main entrance — Via della Scala 17.</figcaption>
         </figure>
-
-        <!-- ✅ PATCH: da token a checkin/scala/open/building?d=... -->
-        <a class="cta" href="#" onclick="openWith('statusBuilding','building');return false;" id="btn_building">➜ Open Building Gates</a>
-
+        <a class="cta" href="#" onclick="openWith('statusBuilding','/token/via-della-scala-building');return false;" id="btn_building">➜ Open Building Gates</a>
         <span style="float:right; font-weight:700; text-transform:uppercase; margin-left:10px;">
  At the second gate, press “A-1” and then press “Open the Building Gates” again..
 </span>
@@ -90,7 +87,7 @@
       </div>
     </div>
   </section>
-   <!-- 3. APARTMENT DOOR -->
+    <!-- 3. APARTMENT DOOR -->
   <section class="card">
     <div class="step">
       <div class="num">3</div>
@@ -109,10 +106,7 @@
           </div>
           <figcaption id="s3_cap">Green door = your apartment entrance.</figcaption>
         </figure>
-
-        <!-- ✅ PATCH: da token a checkin/scala/open/apartment?d=... -->
-        <a class="cta" href="#" onclick="openWith('statusApartment','apartment');return false;" id="btn_apartment">➜ Open Apartment Door</a>
-
+        <a class="cta" href="#" onclick="openWith('statusApartment','/token/via-della-scala-door');return false;" id="btn_apartment">➜ Open Apartment Door</a>
         <span class="status" id="statusApartment"></span>
       </div>
     </div>
@@ -127,38 +121,29 @@
 </main>
 
 <script>
-  /* ✅ PATCH: usa ?d=YYYY-MM-DD e chiama /checkin/scala/open/... in POST */
-  
+  async function openWith(statusId, path){
+    const s=document.getElementById(statusId);
 
-<script>
-async function openWith(statusId, path){
-  const s = document.getElementById(statusId);
-  try{
-    const params = new URLSearchParams(window.location.search);
-    const d = params.get('d');
+    try{
+      // ✅ PATCH: Scala richiede la data ?d=YYYY-MM-DD → la prendiamo dalla URL e la passiamo a /token/...
+      const params = new URLSearchParams(location.search);
+      const d = params.get('d');
+      if(!d){
+        s.textContent = 'Questo link richiede la data di check-in (?d=YYYY-MM-DD).';
+        return;
+      }
 
-    if(!d){
-      s.textContent = 'Questo link richiede la data di check-in (?d=YYYY-MM-DD).';
-      return;
+      s.textContent='Generating one-time key…';
+      const url = path + (path.includes('?') ? '&' : '?') + 'd=' + encodeURIComponent(d);
+
+      const r=await fetch(url,{cache:'no-store'});
+      const j=await r.json();
+      if(j && j.url){ s.textContent='Key OK. Opening…'; location.href=j.url; }
+      else{ s.textContent=(j && (j.error||j.message)) ? String(j.error||j.message) : 'No URL returned.'; }
+    }catch(e){
+      s.textContent='Network error. Try again.';
     }
-
-    s.textContent = 'Generating one-time key…';
-
-    const sep = path.includes('?') ? '&' : '?';
-    const r = await fetch(`${path}${sep}d=${encodeURIComponent(d)}`, { cache:'no-store' });
-
-    const j = await r.json();
-    if(j && j.url){
-      s.textContent = 'Key OK. Opening…';
-      location.href = j.url;
-    } else {
-      s.textContent = (j && (j.error||j.message)) ? String(j.error||j.message) : 'No URL returned.';
-    }
-  } catch(e){
-    s.textContent = 'Network error. Try again.';
   }
-}
-</script>
 
   /* ----------- Dizionario testi: 5 lingue (s3_lock) ----------- */
   const T = {
@@ -200,7 +185,7 @@ async function openWith(statusId, path){
       help_p:'Chiama o WhatsApp: <a class="cta" href="tel:+393355245756">+39 335 524 5756</a>',
       footer:'niceflatinrome.com • Guida rapida per gli arrivi in Via della Scala 17, interno A/1'
     },
-    fr: {
+        fr: {
       title:'Guide d’enregistrement — Via della Scala 17, unité A/1',
       addr:'Adresse : Via della Scala 17, Rome • Unité : A/1',
       s1_t:"Trouver l’entrée de l’immeuble",
@@ -258,7 +243,8 @@ async function openWith(statusId, path){
       footer:'niceflatinrome.com • Guía visual rápida para llegadas a Via della Scala 17, unidad A/1'
     }
   };
-   (function(){
+
+  (function(){
     const params=new URLSearchParams(location.search);
     const L=(params.get('lang')||'en').toLowerCase();
     const t=T[L]||T.en;
@@ -300,4 +286,4 @@ async function openWith(statusId, path){
 </script>
 </body>
 </html>
- 
+  
