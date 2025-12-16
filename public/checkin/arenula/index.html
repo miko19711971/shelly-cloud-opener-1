@@ -223,7 +223,8 @@ const T = {
 
   // barra lingue
     
-const token = params.get('t') || '';
+ const token = params.get('t') || '';
+const base  = location.pathname.replace(/\/+$/,'');
 
 document.getElementById('langbar').innerHTML =
   `${t.langLabel}: ` +
