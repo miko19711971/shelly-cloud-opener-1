@@ -619,33 +619,19 @@ app.use("/public-test-ai-html", express.static(path.join(PUBLIC_DIR, "public-tes
 
 // --- ALIAS: /checkin/:apt/today  (valido SOLO oggi) ---
 // ✅ PATCH: /checkin/:apt/today — valido solo il giorno in cui viene usato
-app.get("/checkin/:apt/today", (req, res) => {
+ app.get("/checkin/:apt/today", (req, res) => {
   const apt   = req.params.apt.toLowerCase();
   const today = tzToday();
 
-  // Se non è mai stato usato, blocco al giorno corrente
-  if (!TODAY_LOCK.has(apt)) TODAY_LOCK.set(apt, today);
-
-  // ✅ Consentiamo fino alle 04:00 del mattino successivo
-  const now     = new Date();
-  const hour    = now.getHours();
-  const sameDay = TODAY_LOCK.get(apt) === today;
-
-  // Se è un nuovo giorno ma dopo le 04:00 → link scaduto
-  if (!sameDay && hour >= 4) {
-    return res.status(410).send("Link scaduto: valido solo nel giorno di check-in.");
-  }
-
-  // Genera token valido solo oggi
   const { token } = newTokenFor(`checkin-${apt}`, {
     windowMin: CHECKIN_WINDOW_MIN,
     max: 200,
     day: today
   });
-  const url = `${req.protocol}://${req.get("host")}/checkin/${apt}/index.html?t=${token}`;
-  res.redirect(302, url);
-});
 
+  const url = `${req.protocol}://${req.get("host")}/checkin/${apt}/index.html?t=${token}`;
+  return res.redirect(302, url);
+});
 // ✅ NUOVO: /checkin/:apt/:rawDate — pensato per HostAway {{checkin_date}}
 app.get("/checkin/:apt/:rawDate([^/.]+)", (req, res) => {
   const apt   = req.params.apt.toLowerCase();
