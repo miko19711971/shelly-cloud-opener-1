@@ -752,6 +752,49 @@ app.get("/checkin/:apt/", (req, res) => {
     return res.status(500).send("Internal Server Error");
   }
 });
+
+function requireCheckinToken(req, res, next) {
+  const apt = String(req.params.apt || "").toLowerCase();
+  const t = String(req.query.t || "");
+
+  const parsed = parseToken(t);
+  if (!parsed.ok) return res.status(410).json({ ok: false, error: "bad_token" });
+
+  const { tgt, day } = parsed.payload || {};
+  if (tgt !== `checkin-${apt}`) {
+    return res.status(410).json({ ok: false, error: "token_target_mismatch" });
+  }
+  if (!isYYYYMMDD(day) || day !== tzToday()) {
+    return res.status(410).json({ ok: false, error: "wrong_day" });
+  }
+
+  next();
+}
+
+app.post("/checkin/:apt/open/building", requireCheckinToken, async (req, res) => {
+  const apt = String(req.params.apt || "").toLowerCase();
+
+  const map = {
+    arenula: "arenula-building",
+    leonina: "leonina-building",
+    scala: "via-della-scala-building",
+    portico: "portico-1d-building",
+    trastevere: "viale-trastevere-building"
+  };
+
+  const targetKey = map[apt];
+  const targetDef = TARGETS[targetKey];
+  if (!targetDef) return res.status(404).json({ ok: false, error: "unknown_target" });
+
+  const result = (targetDef.ids.length === 1)
+    ? await openOne(targetDef.ids[0])
+    : await openSequence(targetDef.ids, 10000);
+
+  if (!result.ok) return res.status(502).json({ ok: false, error: "open_failed", details: result });
+
+  return res.json({ ok: true, opened: result });
+});
+
 // ========= STATIC (asset) =========
 app.use("/checkin",        express.static(path.join(PUBLIC_DIR, "checkin"), { fallthrough: false }));
  
