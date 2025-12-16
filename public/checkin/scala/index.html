@@ -1,4 +1,4 @@
- <!doctype html>
+<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -61,7 +61,8 @@
           </div>
           <figcaption id="s1_cap">Main entrance — Via della Scala 17.</figcaption>
         </figure>
-        <a class="cta" href="#" onclick="openWith('statusBuilding','/token/via-della-scala-building');return false;" id="btn_building">➜ Open Building Gates</a>
+
+        <a class="cta" href="javascript:void(0)" onclick="openWith(event,'statusBuilding','/token/via-della-scala-building')" id="btn_building">➜ Open Building Gates</a>
         <span style="float:right; font-weight:700; text-transform:uppercase; margin-left:10px;">
  At the second gate, press “A-1” and then press “Open the Building Gates” again..
 </span>
@@ -69,8 +70,7 @@
       </div>
     </div>
   </section>
-
-  <!-- 2. CORRIDOR / ARROW -->
+   <!-- 2. CORRIDOR / ARROW -->
   <section class="card">
     <div class="step">
       <div class="num">2</div>
@@ -87,7 +87,8 @@
       </div>
     </div>
   </section>
-    <!-- 3. APARTMENT DOOR -->
+
+  <!-- 3. APARTMENT DOOR -->
   <section class="card">
     <div class="step">
       <div class="num">3</div>
@@ -106,7 +107,8 @@
           </div>
           <figcaption id="s3_cap">Green door = your apartment entrance.</figcaption>
         </figure>
-        <a class="cta" href="#" onclick="openWith('statusApartment','/token/via-della-scala-door');return false;" id="btn_apartment">➜ Open Apartment Door</a>
+
+        <a class="cta" href="javascript:void(0)" onclick="openWith(event,'statusApartment','/token/via-della-scala-door')" id="btn_apartment">➜ Open Apartment Door</a>
         <span class="status" id="statusApartment"></span>
       </div>
     </div>
@@ -119,37 +121,27 @@
 
   <footer id="footer">niceflatinrome.com • Quick visual guide for arrivals at Via della Scala 17, unit A/1</footer>
 </main>
+ <script>
+  async function openWith(ev, statusId, path){
+    if (ev) ev.preventDefault();
 
-<script>
-   <script>
-  async function openWith(statusId, path){
-    const s = document.getElementById(statusId);
+    const s=document.getElementById(statusId);
     try{
       const params = new URLSearchParams(location.search);
-      const d = params.get('d'); // 👈 prende la data dal link /checkin/scala/?d=...
+      const d = params.get('d');
 
       if(!d){
         s.textContent = 'Questo link richiede la data di check-in (?d=YYYY-MM-DD).';
         return;
       }
 
-      s.textContent = 'Generating one-time key…';
-      const url = `${path}?d=${encodeURIComponent(d)}`; // 👈 inoltra la data al backend
-
-      const r = await fetch(url, { method:'GET', cache:'no-store' });
-      const j = await r.json().catch(()=> ({}));
-
-      if (r.ok && j && j.url){
-        s.textContent = 'Key OK. Opening…';
-        location.href = j.url;
-      } else {
-        s.textContent = (j && (j.error || j.message)) ? String(j.error || j.message) : `Error (${r.status})`;
-      }
-    } catch(e){
-      s.textContent = 'Network error. Try again.';
-    }
+      s.textContent='Generating one-time key…';
+      const r=await fetch(`${path}?d=${encodeURIComponent(d)}`,{cache:'no-store'});
+      const j=await r.json().catch(()=> ({}));
+      if(j && j.url){ s.textContent='Key OK. Opening…'; location.href=j.url; }
+      else{ s.textContent=(j && (j.error||j.message)) ? String(j.error||j.message) : 'No URL returned.'; }
+    }catch(e){ s.textContent='Network error. Try again.'; }
   }
-</script>
 
   /* ----------- Dizionario testi: 5 lingue (s3_lock) ----------- */
   const T = {
@@ -191,7 +183,7 @@
       help_p:'Chiama o WhatsApp: <a class="cta" href="tel:+393355245756">+39 335 524 5756</a>',
       footer:'niceflatinrome.com • Guida rapida per gli arrivi in Via della Scala 17, interno A/1'
     },
-        fr: {
+    fr: {
       title:'Guide d’enregistrement — Via della Scala 17, unité A/1',
       addr:'Adresse : Via della Scala 17, Rome • Unité : A/1',
       s1_t:"Trouver l’entrée de l’immeuble",
@@ -255,7 +247,7 @@
     const L=(params.get('lang')||'en').toLowerCase();
     const t=T[L]||T.en;
 
-    // costruisci correttamente gli href della barra lingue preservando tutti i parametri (es. d=)
+    // costruisci correttamente gli href della barra lingue preservando tutti i parametri (es. t=)
     document.querySelectorAll('#langbar a').forEach(a=>{
       const lang=a.getAttribute('data-lang');
       const p=new URLSearchParams(params);
@@ -292,4 +284,3 @@
 </script>
 </body>
 </html>
-  
