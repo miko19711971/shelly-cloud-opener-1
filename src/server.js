@@ -702,21 +702,34 @@ app.get("/checkin/:apt/", (req, res) => {
 });
 
 // Pagina protetta: verifica token + giorno
-app.get("/checkin/:apt/index.html", (req, res) => {
-  const apt = req.params.apt.toLowerCase();
-  const t   = String(req.query.t || "");
-  const parsed = parseToken(t);
+ app.get("/checkin/:apt/index.html", (req, res) => {
+  try {
+    const apt = req.params.apt.toLowerCase();
+    const t   = String(req.query.t || "");
+    const parsed = parseToken(t);
 
-  if (!parsed.ok) return res.status(410).send("Questo link non è più valido.");
-  const { tgt, day } = parsed.payload || {};
-  if (tgt !== `checkin-${apt}`)        return res.status(410).send("Link non valido.");
-  if (!isYYYYMMDD(day) || day !== tzToday()) {
-    return res.status(410).send("Questo link è valido solo nel giorno di check-in.");
+    if (!parsed.ok) return res.status(410).send("Questo link non è più valido.");
+    const { tgt, day } = parsed.payload || {};
+    if (tgt !== `checkin-${apt}`) return res.status(410).send("Link non valido.");
+    if (!isYYYYMMDD(day) || day !== tzToday()) {
+      return res.status(410).send("Questo link è valido solo nel giorno di check-in.");
+    }
+
+    const filePath = path.join(PUBLIC_DIR, "checkin", apt, "index.html");
+
+    return res.sendFile(filePath, (err) => {
+      if (err) {
+        console.error("❌ sendFile error:", { filePath, code: err.code, message: err.message });
+        if (!res.headersSent) {
+          return res.status(err.statusCode || 404).send("Check-in page missing on server.");
+        }
+      }
+    });
+  } catch (e) {
+    console.error("❌ /checkin/:apt/index.html crashed:", e);
+    return res.status(500).send("Internal Server Error");
   }
-
-  res.sendFile(path.join(PUBLIC_DIR, "checkin", apt, "index.html"));
 });
-
 // ========= STATIC (asset) =========
 app.use("/checkin",        express.static(path.join(PUBLIC_DIR, "checkin"), { fallthrough: false }));
  
