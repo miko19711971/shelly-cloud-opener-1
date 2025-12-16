@@ -128,33 +128,37 @@
 
 <script>
   /* ✅ PATCH: usa ?d=YYYY-MM-DD e chiama /checkin/scala/open/... in POST */
-  async function openWith(statusId, kind){
-    const s=document.getElementById(statusId);
-    try{
-      const params = new URLSearchParams(window.location.search);
-      const d = params.get("d");
+  
 
-      if(!d){
-        s.textContent = "Questo link richiede la data di check-in (?d=YYYY-MM-DD).";
-        return;
-      }
+<script>
+async function openWith(statusId, path){
+  const s = document.getElementById(statusId);
+  try{
+    const params = new URLSearchParams(window.location.search);
+    const d = params.get('d');
 
-      s.textContent='Opening…';
-      const r = await fetch(`/checkin/scala/open/${kind}?d=${encodeURIComponent(d)}`, {
-        method:'POST',
-        cache:'no-store'
-      });
-      const j = await r.json().catch(()=> ({}));
-
-      if(r.ok && j.ok){
-        s.textContent='Done.';
-      } else {
-        s.textContent = (j.error || j.message) ? String(j.error || j.message) : `Error (${r.status})`;
-      }
-    }catch(e){
-      s.textContent='Network error. Try again.';
+    if(!d){
+      s.textContent = 'Questo link richiede la data di check-in (?d=YYYY-MM-DD).';
+      return;
     }
+
+    s.textContent = 'Generating one-time key…';
+
+    const sep = path.includes('?') ? '&' : '?';
+    const r = await fetch(`${path}${sep}d=${encodeURIComponent(d)}`, { cache:'no-store' });
+
+    const j = await r.json();
+    if(j && j.url){
+      s.textContent = 'Key OK. Opening…';
+      location.href = j.url;
+    } else {
+      s.textContent = (j && (j.error||j.message)) ? String(j.error||j.message) : 'No URL returned.';
+    }
+  } catch(e){
+    s.textContent = 'Network error. Try again.';
   }
+}
+</script>
 
   /* ----------- Dizionario testi: 5 lingue (s3_lock) ----------- */
   const T = {
