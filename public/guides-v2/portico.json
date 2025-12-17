@@ -1,4 +1,4 @@
- {
+{
   "apartment": "Via del Portico d’Ottavia 1D",
   "languages": ["it", "en", "fr", "de", "es"],
   "intents": {
@@ -76,7 +76,7 @@
       "early_checkin_policy": ["early check in", "early check-in", "early arrival", "check-in earlier", "arrive early"],
       "linens_towels": ["towels", "linens", "bedsheets", "bed linen", "bath towels"]
     },
-    "fr": {
+       "fr": {
       "trash": ["ordures", "déchets", "poubelle", "sacs poubelle"],
       "heating": ["chauffage", "radiateur", "radiateur électrique", "froid"],
       "electric_panel": ["tableau électrique", "disjoncteur", "compteur", "coupure de courant"],
@@ -150,7 +150,7 @@
       "early_checkin_policy": ["früher check-in", "early check-in", "frühe anreise", "eher einchecken", "check-in früher"],
       "linens_towels": ["handtücher", "bettwäsche", "wäsche", "linens", "towels"]
     },
-    "es": {
+       "es": {
       "trash": ["basura", "residuos", "bolsa de basura", "papelera", "contenedor"],
       "heating": ["calefacción", "estufa", "estufa eléctrica", "frío"],
       "electric_panel": ["cuadro eléctrico", "interruptor", "contador", "corte de luz"],
@@ -189,7 +189,7 @@
     }
   },
   "answers": {
-        "it": {
+    "it": {
       "trash": "Spazzatura: Prima di lasciare l’appartamento, chiudi bene i sacchetti e portali all’isola ecologica di fronte a Piazza delle Cinque Scole (lato Lungotevere). Facciamo raccolta differenziata (WeDoRecycling): segui le indicazioni e non lasciare rifiuti nel vano scala o fuori dalla porta.",
       "heating": "Riscaldamento: L’appartamento ha una stufa elettrica. Usala solo quando sei in casa e spegnila sempre quando esci, per motivi di sicurezza.",
       "electric_panel": "Quadro elettrico: Se manca la corrente, trovi il quadro sulla destra prima della porta d’uscita dell’appartamento: tutti gli interruttori (incluso il piccolo bianco) devono essere verso l’alto. Se il problema continua, all’uscita del palazzo (prima della porta d’ingresso), sulla sinistra ci sono gli sportelli bianchi: apri quello del tuo contatore e rialza l’interruttore abbassato.",
@@ -226,7 +226,7 @@
       "receipt_rental": "Ricevuta soggiorno: Possiamo rilasciare una ricevuta per il soggiorno (affitto breve) con nome, date e importo totale. Non è una fattura con partita IVA, ma una ricevuta semplice. Se ti serve, mandami i dati da inserire (nome/cognome o ragione sociale, indirizzo, eventuale codice fiscale) e te la invio in digitale.",
       "receipt_city_tax": "Ricevuta tassa di soggiorno: Possiamo rilasciare anche una ricevuta separata con numero di persone, notti e importo totale. Se ti serve, avvisami dopo il pagamento (online o in contanti) e preparo il riepilogo."
     },
-    "en": {
+       "en": {
       "trash": "Trash: Before leaving the apartment, close the bags well and take them to the recycling point (isola ecologica) in front of Piazza delle Cinque Scole (Lungotevere side). We recycle (WeDoRecycling): please follow the instructions and do not leave rubbish in the stairwell or outside the apartment door.",
       "heating": "Heating: The apartment has an electric heater. Use it only when you are inside and always switch it off when you go out, for safety reasons.",
       "electric_panel": "Electric panel: If there is a power cut, the panel is on the right just before the apartment exit door: all switches (including the small white one) must be up. If the issue continues, at the building exit (before the main entrance door) on the left you will find white panels: open the one for your meter and flip the lowered switch back up.",
@@ -263,7 +263,7 @@
       "receipt_rental": "Stay receipt: We can issue a simple receipt for the stay (short-term rental) with name, dates and total amount. It is not a VAT invoice. If you need it, send me the details to include (name/company, address, tax code if applicable) and I will send it digitally.",
       "receipt_city_tax": "City tax receipt: We can also issue a separate receipt showing number of guests, nights and total amount. If you need it, let me know after payment (online or cash) and I will prepare the summary."
     },
-        "fr": {
+    "fr": {
       "trash": "Déchets : Avant de quitter l’appartement, fermez bien les sacs et déposez-les au point de collecte (isola ecologica) en face de Piazza delle Cinque Scole (côté Lungotevere). Nous trions (WeDoRecycling) : merci de suivre les indications et de ne pas laisser de déchets dans la cage d’escalier ou devant la porte.",
       "heating": "Chauffage : L’appartement dispose d’un radiateur électrique. Utilisez-le uniquement lorsque vous êtes à l’intérieur et éteignez-le toujours en sortant, pour des raisons de sécurité.",
       "electric_panel": "Tableau électrique : En cas de coupure, le tableau se trouve à droite juste avant la porte de sortie de l’appartement : tous les disjoncteurs (y compris le petit blanc) doivent être en position haute. Si le problème persiste, à la sortie de l’immeuble (avant la porte d’entrée), à gauche, vous trouverez des panneaux blancs : ouvrez celui de votre compteur et remontez l’interrupteur baissé.",
@@ -284,7 +284,7 @@
       "day_trips": "Excursions à la journée : Ostia Antica ; Tivoli (Villa d’Este et Villa d’Hadrien) ; Castelli Romani.",
       "tickets": "Billets événements : Pour concerts, spectacles ou matchs, utilisez TicketOne et les canaux officiels de l’AS Roma et de la SS Lazio.",
       "museums": "Musées principaux : Recommandés : Musées du Vatican, Colisée/Forum/Palatin et Galerie Borghèse (réservation conseillée).",
-      "exhibitions": "Expositions : Pour les grandes expos à Rome, consultez le MAXXI, le Palazzo delle Esposizioni et les Scuderie del Quirinale.",
+      "exhibitions": "Expositions : Pour les grandes expos à Rome, consultez le MAXXI, le Palazzo delle Esposizioni et les Scuderie du Quirinale.",
       "transport": "Transports : Plusieurs bus (30, 44, 85) vont vers le centre et Termini. Taxi : +39 06 3570. Aéroports : Fiumicino via train FL1 (depuis Trastevere ou Termini), Ciampino via bus dédiés ou taxi.",
       "services": "Services à proximité : Pharmacies autour de Largo Argentina ; Hôpital Fatebenefratelli sur l’Île Tibérine ; distributeurs (ATM) Via Arenula et alentours.",
       "emergency": "Urgences : 112 urgences UE • 113 Police • 118 Ambulance • 115 Pompiers.",
@@ -300,7 +300,7 @@
       "receipt_rental": "Reçu de séjour : Nous pouvons fournir un reçu simple pour le séjour (location courte) avec nom, dates et montant total. Ce n’est pas une facture TVA. Si besoin, envoyez-moi les informations à indiquer (nom/société, adresse, éventuel code fiscal) et je l’envoie en version numérique.",
       "receipt_city_tax": "Reçu taxe de séjour : Nous pouvons aussi fournir un reçu séparé indiquant nombre de personnes, nuits et montant total. Si vous en avez besoin, dites-le-moi après paiement (en ligne ou espèces) et je prépare le récapitulatif."
     },
-    "de": {
+       "de": {
       "trash": "Müll: Bevor Sie die Wohnung verlassen, verschließen Sie die Beutel gut und bringen Sie sie zur Sammelstelle (isola ecologica) gegenüber der Piazza delle Cinque Scole (Lungotevere-Seite). Wir trennen den Müll (WeDoRecycling): Bitte folgen Sie den Hinweisen und lassen Sie keinen Müll im Treppenhaus oder vor der Wohnungstür.",
       "heating": "Heizung: Die Wohnung hat eine Elektroheizung. Bitte nur benutzen, wenn Sie in der Wohnung sind, und beim Verlassen immer ausschalten (Sicherheit).",
       "electric_panel": "Sicherungskasten: Bei Stromausfall befindet sich der Kasten rechts kurz vor der Wohnungsausgangstür: Alle Schalter (auch der kleine weiße) müssen nach oben stehen. Wenn das Problem bleibt, finden Sie am Gebäudeeingang/Ausgang (vor der Haustür) links weiße Klappen: Öffnen Sie die Klappe Ihres Zählers und legen Sie den heruntergefallenen Schalter wieder nach oben.",
@@ -337,7 +337,7 @@
       "receipt_rental": "Beleg Aufenthalt: Wir können einen einfachen Beleg für den Aufenthalt (Kurzzeitmiete) mit Name, Daten und Gesamtbetrag ausstellen (keine MwSt.-Rechnung). Wenn nötig, senden Sie mir die Daten (Name/Firma, Adresse, ggf. Steuernummer), dann schicke ich ihn digital.",
       "receipt_city_tax": "Beleg Kurtaxe: Wir können auch einen separaten Beleg mit Personenzahl, Nächten und Gesamtbetrag ausstellen. Wenn Sie ihn brauchen, sagen Sie mir nach der Zahlung (online oder bar) Bescheid, dann erstelle ich die Übersicht."
     },
-        "es": {
+    "es": {
       "trash": "Basura: Antes de salir del apartamento, cierre bien las bolsas y llévelas al punto ecológico (isola ecologica) frente a Piazza delle Cinque Scole (lado Lungotevere). Reciclamos (WeDoRecycling): siga las indicaciones y no deje basura en la escalera ni fuera de la puerta.",
       "heating": "Calefacción: El apartamento tiene una estufa eléctrica. Úsela solo cuando esté dentro y apáguela siempre al salir, por seguridad.",
       "electric_panel": "Cuadro eléctrico: Si se va la luz, el cuadro está a la derecha justo antes de la puerta de salida del apartamento: todos los interruptores (incluido el pequeño blanco) deben estar hacia arriba. Si el problema continúa, en la salida del edificio (antes de la puerta principal), a la izquierda hay paneles blancos: abra el de su contador y suba el interruptor bajado.",
@@ -364,7 +364,7 @@
       "emergency": "Emergencias: 112 emergencia UE • 113 Policía • 118 Ambulancia • 115 Bomberos.",
       "house_rules": "Normas de la casa: Respete a los vecinos: no fiestas, no música alta y nada de ruido después de las 22:00. Prohibido fumar dentro; si fuma cerca de las ventanas, no tire colillas fuera. No se permiten huéspedes extra no registrados. Si tiene dudas, escríbame antes: mejor aclararlo con antelación.",
       "laundry": "Lavandería: Si necesita lavar ropa o toallas, escríbame y le indicaré la mejor opción (autoservicio o servicio cercano) según sus horarios.",
-      "wifi_troubleshooting": "Wi-Fi no funciona: 1) Compruebe que el router esté encendido. 2) Desenchufe 30 segundos y vuelva a enchufar. 3) Revise red y contraseña en la etiqueta (mayúsculas/minúsculas). Si no funciona, escríbame.",
+      "wifi_troubleshooting": "Wi-Fi no funciona: 1) Compruebe que el router esté encendido. 2) Desenchufe 30 segundos y vuelva a enchufar. 3) Revise red y contraseña en la etiqueta (mayúsculas/minusculas). Si no funciona, escríbame.",
       "late_checkout_policy": "Late check-out: La salida estándar es a las 11:00. A veces es posible una pequeña extensión, según llegadas del mismo día y limpieza. No se confirma automáticamente: dígame la hora que necesita y le confirmaré según disponibilidad.",
       "luggage_storage": "Consigna de equipaje: Cuando es posible, buscamos una solución después del check-out, según limpieza y nuevas llegadas. Dígame hora de dejar/recoger: le confirmo lo posible o le indico una consigna cercana.",
       "id_documents": "Documentos: La ley italiana exige el registro de huéspedes. Antes o en el check-in pediré un documento válido para cada huésped (DNI o pasaporte). Puede enviarlos por el portal/enlace que le mando o como fotos claras (anverso/reverso) por mensaje/email. Datos usados solo para obligaciones legales.",
@@ -376,4 +376,4 @@
     }
   }
 }
-    
+   
