@@ -1162,22 +1162,8 @@ bathroom_troubleshooting: [
       "check in","llegada","hora de llegada","entrada","codigo puerta","codigo de acceso","self check in",
       "check in","arrivee","heure d arrivee","entree","code porte","code d acces","self check in",
       "check in","einchecken","ankunft","ankunftszeit","zugang","turcode","tuer code","schloss code",
-      "early check-in",
-"check in early",
-"check-in early",
-"check-in earlier",
-"early arrival",
-"arrivo anticipato",
-"check in anticipato",
-"check-in anticipato",
-"arrivo prima",
-"entrare prima",
-"arrivée anticipée",
-"arriver plus tôt",
-"früher check-in",
-"frühe anreise",
-"llegada temprana",
-"check-in temprano"
+      "early check-in"
+ 
     ],
 
     // CHECK-OUT
@@ -1192,22 +1178,8 @@ bathroom_troubleshooting: [
       "a quelle heure est le check out","ou laisser les cles","laisser les cles",
       "check out","auschecken","abreise","abfahrtszeit","wohnung verlassen","spater check out",
       "um wie viel uhr ist der check out","wann ist der check out","wo soll ich die schlussel lassen","schlussel abgeben",
-      "early check-out",
-"early checkout",
-"check out early",
-"checkout early",
-"leave early",
-"depart early",
-"check out anticipato",
-"check-out anticipato",
-"uscire prima",
-"partenza anticipata",
-"départ anticipé",
-"partir plus tôt",
-"früher check-out",
-"frühe abreise",
-"salida temprana",
-"salir más temprano"
+      "early check-out"
+ 
     ],
 
     // BATHROOM / BAGNO  ← ORA IN FONDO, E SENZA "baño"
