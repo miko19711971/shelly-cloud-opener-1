@@ -1254,8 +1254,10 @@ early_check_out: [
   "gas",
   "bathroom",
   "trash",
-  "check_in",
-  "check_out",
+ "early_checkin_policy",
+"early_check_out",
+"check_in",
+"check_out",
   "transport"
 ];
 
