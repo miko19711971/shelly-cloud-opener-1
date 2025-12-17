@@ -1,4 +1,4 @@
-{
+ {
   "apartment": "Via del Portico d’Ottavia 1D",
   "languages": ["it", "en", "fr", "de", "es"],
   "intents": {
@@ -35,7 +35,9 @@
       "city_tax_info": ["tassa soggiorno", "city tax", "tassa comunale"],
       "city_tax_payment_issue": ["problema tassa soggiorno", "link tassa", "city tax link", "importo sbagliato tassa"],
       "receipt_rental": ["ricevuta soggiorno", "ricevuta affitto", "receipt stay"],
-      "receipt_city_tax": ["ricevuta tassa soggiorno", "ricevuta city tax"]
+      "receipt_city_tax": ["ricevuta tassa soggiorno", "ricevuta city tax"],
+      "early_checkin_policy": ["early check in", "early check-in", "check in anticipato", "check-in anticipato", "arrivo prima", "entrare prima", "anticipare check in"],
+      "linens_towels": ["asciugamani", "lenzuola", "biancheria", "towels", "linens"]
     },
     "en": {
       "trash": ["trash", "garbage", "rubbish", "bin", "bins"],
@@ -70,9 +72,11 @@
       "city_tax_info": ["city tax", "tourist tax", "local tax"],
       "city_tax_payment_issue": ["city tax problem", "city tax link", "wrong tax amount"],
       "receipt_rental": ["receipt stay", "rental receipt", "receipt apartment"],
-      "receipt_city_tax": ["receipt city tax", "tourist tax receipt"]
+      "receipt_city_tax": ["receipt city tax", "tourist tax receipt"],
+      "early_checkin_policy": ["early check in", "early check-in", "early arrival", "check-in earlier", "arrive early"],
+      "linens_towels": ["towels", "linens", "bedsheets", "bed linen", "bath towels"]
     },
-       "fr": {
+    "fr": {
       "trash": ["ordures", "déchets", "poubelle", "sacs poubelle"],
       "heating": ["chauffage", "radiateur", "radiateur électrique", "froid"],
       "electric_panel": ["tableau électrique", "disjoncteur", "compteur", "coupure de courant"],
@@ -105,7 +109,9 @@
       "city_tax_info": ["taxe de séjour", "city tax", "taxe communale"],
       "city_tax_payment_issue": ["problème taxe de séjour", "lien taxe", "problème city tax"],
       "receipt_rental": ["reçu de séjour", "reçu location", "reçu appartement"],
-      "receipt_city_tax": ["reçu taxe de séjour", "reçu city tax"]
+      "receipt_city_tax": ["reçu taxe de séjour", "reçu city tax"],
+      "early_checkin_policy": ["arrivée anticipée", "check-in anticipé", "early check-in", "arriver plus tôt", "entrée plus tôt"],
+      "linens_towels": ["serviettes", "draps", "linge", "linens", "towels"]
     },
     "de": {
       "trash": ["müll", "abfall", "mülleimer", "müllsack"],
@@ -140,7 +146,9 @@
       "city_tax_info": ["kurtaxe", "city tax", "touristensteuer"],
       "city_tax_payment_issue": ["problem kurtaxe", "city tax link", "falscher steuerbetrag"],
       "receipt_rental": ["beleg aufenthalt", "mietbeleg", "beleg wohnung"],
-      "receipt_city_tax": ["beleg kurtaxe", "beleg city tax"]
+      "receipt_city_tax": ["beleg kurtaxe", "beleg city tax"],
+      "early_checkin_policy": ["früher check-in", "early check-in", "frühe anreise", "eher einchecken", "check-in früher"],
+      "linens_towels": ["handtücher", "bettwäsche", "wäsche", "linens", "towels"]
     },
     "es": {
       "trash": ["basura", "residuos", "bolsa de basura", "papelera", "contenedor"],
@@ -175,20 +183,24 @@
       "city_tax_info": ["tasa turística", "city tax", "impuesto municipal"],
       "city_tax_payment_issue": ["problema tasa turística", "enlace tasa", "importe tasa incorrecto"],
       "receipt_rental": ["recibo estancia", "recibo alquiler", "recibo apartamento"],
-      "receipt_city_tax": ["recibo tasa turística", "recibo city tax"]
+      "receipt_city_tax": ["recibo tasa turística", "recibo city tax"],
+      "early_checkin_policy": ["check-in temprano", "llegada temprana", "early check-in", "entrar antes", "llegar antes"],
+      "linens_towels": ["toallas", "sábanas", "ropa de cama", "linens", "towels"]
     }
   },
-   "answers": {
-    "it": {
+  "answers": {
+        "it": {
       "trash": "Spazzatura: Prima di lasciare l’appartamento, chiudi bene i sacchetti e portali all’isola ecologica di fronte a Piazza delle Cinque Scole (lato Lungotevere). Facciamo raccolta differenziata (WeDoRecycling): segui le indicazioni e non lasciare rifiuti nel vano scala o fuori dalla porta.",
       "heating": "Riscaldamento: L’appartamento ha una stufa elettrica. Usala solo quando sei in casa e spegnila sempre quando esci, per motivi di sicurezza.",
       "electric_panel": "Quadro elettrico: Se manca la corrente, trovi il quadro sulla destra prima della porta d’uscita dell’appartamento: tutti gli interruttori (incluso il piccolo bianco) devono essere verso l’alto. Se il problema continua, all’uscita del palazzo (prima della porta d’ingresso), sulla sinistra ci sono gli sportelli bianchi: apri quello del tuo contatore e rialza l’interruttore abbassato.",
       "wifi": "Wi-Fi: Il router è sul tavolo. Giralo per leggere SSID e password sull’etichetta.",
       "check_in": "Check-in dalle 15:00.\nAccesso: Per entrare puoi usare il link che ti ho inviato con la Virtual Key: apre sia il portone dell’edificio sia la porta dell’appartamento. Dentro troverai le chiavi fisiche sul tavolo; da quel momento la Virtual Key viene disattivata.\nAiuto: +39 335 5245756.",
+      "early_checkin_policy": "Early check-in: Il check-in standard è dalle 15:00. Se ti serve entrare prima, dimmi l’orario che ti serve e ti confermo se è possibile in base a check-out dello stesso giorno e tempi di pulizia.",
       "check_out": "Prima di partire: spegni luci e riscaldamento, chiudi le finestre e lascia le chiavi sul tavolo. Chiudi la porta manualmente e verifica che sia ben chiusa.",
       "water": "Acqua: L’acqua del rubinetto è potabile. L’acqua calda è sempre disponibile, ma può impiegare 1–2 minuti ad arrivare (soprattutto al mattino). Se non arriva o la pressione è bassa: apri un solo rubinetto alla volta, controlla che i miscelatori caldo/freddo siano completamente aperti e aspetta 1–2 minuti. Se il problema continua, scrivimi subito.",
       "ac": "Aria condizionata: L’appartamento è dotato di A/C. Ti chiediamo di spegnerla sempre quando esci.",
       "bathroom": "Bagno: Trovi asciugamani, phon, tappetino, carta igienica e sapone. Asciugamani: per ogni ospite 1 telo grande + 1 medio.",
+      "linens_towels": "Lenzuola e asciugamani: Il letto è pronto all’arrivo e le lenzuola sono incluse.\nAsciugamani: per ogni ospite 1 telo grande + 1 medio.",
       "kitchen": "Cucina: È completa e attrezzata. Per accendere un fornello, premi lo starter e, nello stesso momento, ruota e spingi la manopola del fuoco scelto tenendola premuta per circa 5 secondi. Ricordati di spegnere sempre i fornelli dopo l’uso.",
       "eat": "Dove mangiare: Nel Ghetto ti consigliamo Nonna Betta, Ba’Ghetto, Renato al Ghetto, Su’Ghetto, Giggetto e Taverna del Ghetto.",
       "drink": "Dove bere: Per un bicchiere di vino o un drink: Enoteca Il Goccetto, Bar del Ghetto, Caffè Farnese.",
@@ -220,10 +232,12 @@
       "electric_panel": "Electric panel: If there is a power cut, the panel is on the right just before the apartment exit door: all switches (including the small white one) must be up. If the issue continues, at the building exit (before the main entrance door) on the left you will find white panels: open the one for your meter and flip the lowered switch back up.",
       "wifi": "Wi-Fi: The router is on the table. Turn it around to read the SSID and password on the label.",
       "check_in": "Check-in from 15:00.\nAccess: You can use the Virtual Key link I sent you: it opens both the building main door and the apartment door. Inside you will find the physical keys on the table; from that moment the Virtual Key is deactivated.\nHelp: +39 335 5245756.",
+      "early_checkin_policy": "Early check-in: Standard check-in is from 15:00. If you need to arrive earlier, tell me the time you need and I will confirm if it’s possible based on same-day check-outs and the cleaning schedule.",
       "check_out": "Before leaving: switch off lights and heating, close the windows and leave the keys on the table. Close the door manually and make sure it is properly shut.",
       "water": "Water: Tap water is drinkable. Hot water is always available, but it may take 1–2 minutes to arrive (especially in the morning). If it does not arrive or the pressure is low: open only one tap at a time, make sure the hot/cold mixers are fully open, and wait 1–2 minutes. If the issue continues, message me immediately.",
       "ac": "Air conditioning: The apartment has A/C. Please switch it off every time you leave.",
       "bathroom": "Bathroom: You will find towels, hairdryer, bath mat, toilet paper and soap. Towels: per guest, 1 large + 1 medium.",
+      "linens_towels": "Linens & towels: The bed is prepared on arrival and linens are provided.\nTowels: per guest, 1 large + 1 medium.",
       "kitchen": "Kitchen: Fully equipped. To light a burner, press the starter and at the same time turn and push the knob of the chosen burner, keeping it pressed for about 5 seconds. Always turn the burners off after use.",
       "eat": "Where to eat: In the Ghetto we recommend Nonna Betta, Ba’Ghetto, Renato al Ghetto, Su’Ghetto, Giggetto and Taverna del Ghetto.",
       "drink": "Where to drink: For a glass of wine or a drink: Enoteca Il Goccetto, Bar del Ghetto, Caffè Farnese.",
@@ -249,17 +263,18 @@
       "receipt_rental": "Stay receipt: We can issue a simple receipt for the stay (short-term rental) with name, dates and total amount. It is not a VAT invoice. If you need it, send me the details to include (name/company, address, tax code if applicable) and I will send it digitally.",
       "receipt_city_tax": "City tax receipt: We can also issue a separate receipt showing number of guests, nights and total amount. If you need it, let me know after payment (online or cash) and I will prepare the summary."
     },
-
         "fr": {
       "trash": "Déchets : Avant de quitter l’appartement, fermez bien les sacs et déposez-les au point de collecte (isola ecologica) en face de Piazza delle Cinque Scole (côté Lungotevere). Nous trions (WeDoRecycling) : merci de suivre les indications et de ne pas laisser de déchets dans la cage d’escalier ou devant la porte.",
       "heating": "Chauffage : L’appartement dispose d’un radiateur électrique. Utilisez-le uniquement lorsque vous êtes à l’intérieur et éteignez-le toujours en sortant, pour des raisons de sécurité.",
       "electric_panel": "Tableau électrique : En cas de coupure, le tableau se trouve à droite juste avant la porte de sortie de l’appartement : tous les disjoncteurs (y compris le petit blanc) doivent être en position haute. Si le problème persiste, à la sortie de l’immeuble (avant la porte d’entrée), à gauche, vous trouverez des panneaux blancs : ouvrez celui de votre compteur et remontez l’interrupteur baissé.",
       "wifi": "Wi-Fi : Le routeur est sur la table. Tournez-le pour lire le SSID et le mot de passe sur l’étiquette.",
       "check_in": "Arrivée à partir de 15h00.\nAccès : Vous pouvez utiliser le lien Virtual Key que je vous ai envoyé : il ouvre à la fois la porte de l’immeuble et la porte de l’appartement. À l’intérieur, vous trouverez les clés physiques sur la table ; ensuite la Virtual Key est désactivée.\nAide : +39 335 5245756.",
+      "early_checkin_policy": "Arrivée anticipée : L’heure standard est à partir de 15h00. Si vous souhaitez arriver plus tôt, dites-moi l’heure dont vous avez besoin et je confirmerai si c’est possible selon les départs du jour et le planning de ménage.",
       "check_out": "Avant de partir : éteignez les lumières et le chauffage, fermez les fenêtres et laissez les clés sur la table. Fermez la porte manuellement et vérifiez qu’elle est bien fermée.",
       "water": "Eau : L’eau du robinet est potable. L’eau chaude est toujours disponible, mais peut mettre 1–2 minutes à arriver (surtout le matin). Si elle n’arrive pas ou si la pression est faible : ouvrez un seul robinet à la fois, vérifiez que les mélangeurs chaud/froid sont bien ouverts, puis attendez 1–2 minutes. Si le problème continue, écrivez-moi immédiatement.",
       "ac": "Climatisation : L’appartement est équipé de la climatisation. Merci de l’éteindre chaque fois que vous sortez.",
       "bathroom": "Salle de bain : Vous trouverez des serviettes, un sèche-cheveux, un tapis de bain, du papier toilette et du savon. Serviettes : par personne, 1 grande + 1 moyenne.",
+      "linens_towels": "Draps et serviettes : Le lit est prêt à l’arrivée et les draps sont fournis.\nServiettes : par personne, 1 grande + 1 moyenne.",
       "kitchen": "Cuisine : Entièrement équipée. Pour allumer un brûleur, appuyez sur l’allumeur et, en même temps, tournez et poussez le bouton du brûleur choisi en le maintenant environ 5 secondes. Éteignez toujours les feux après usage.",
       "eat": "Où manger : Dans le Ghetto, nous recommandons Nonna Betta, Ba’Ghetto, Renato al Ghetto, Su’Ghetto, Giggetto et Taverna del Ghetto.",
       "drink": "Où boire : Pour un verre de vin ou un cocktail : Enoteca Il Goccetto, Bar del Ghetto, Caffè Farnese.",
@@ -291,10 +306,12 @@
       "electric_panel": "Sicherungskasten: Bei Stromausfall befindet sich der Kasten rechts kurz vor der Wohnungsausgangstür: Alle Schalter (auch der kleine weiße) müssen nach oben stehen. Wenn das Problem bleibt, finden Sie am Gebäudeeingang/Ausgang (vor der Haustür) links weiße Klappen: Öffnen Sie die Klappe Ihres Zählers und legen Sie den heruntergefallenen Schalter wieder nach oben.",
       "wifi": "WLAN: Der Router steht auf dem Tisch. Drehen Sie ihn, um SSID und Passwort auf dem Etikett zu lesen.",
       "check_in": "Check-in ab 15:00 Uhr.\nZugang: Sie können den Virtual-Key-Link verwenden, den ich Ihnen geschickt habe: Er öffnet sowohl die Haustür als auch die Wohnungstür. In der Wohnung liegen die physischen Schlüssel auf dem Tisch; danach wird der Virtual Key deaktiviert.\nHilfe: +39 335 5245756.",
+      "early_checkin_policy": "Früher Check-in: Der Standard-Check-in ist ab 15:00 Uhr. Wenn Sie früher ankommen möchten, nennen Sie mir bitte die gewünschte Uhrzeit; ich bestätige, ob es je nach Abreisen am selben Tag und Reinigungsplan möglich ist.",
       "check_out": "Vor der Abreise: Licht und Heizung ausschalten, Fenster schließen und Schlüssel auf dem Tisch lassen. Tür manuell schließen und prüfen, dass sie gut geschlossen ist.",
       "water": "Wasser: Leitungswasser ist trinkbar. Warmwasser ist immer verfügbar, kann aber 1–2 Minuten brauchen (besonders morgens). Wenn es nicht kommt oder der Druck niedrig ist: nur einen Hahn gleichzeitig öffnen, prüfen, dass Warm/Kalt-Mischer ganz offen sind, und 1–2 Minuten warten. Wenn es weiterhin nicht klappt, schreiben Sie mir sofort.",
       "ac": "Klimaanlage: Die Wohnung hat eine Klimaanlage. Bitte beim Verlassen immer ausschalten.",
       "bathroom": "Bad: Handtücher, Föhn, Badematte, Toilettenpapier und Seife sind vorhanden. Handtücher: pro Person 1 großes + 1 mittleres.",
+      "linens_towels": "Bettwäsche & Handtücher: Das Bett ist bei Ankunft vorbereitet und Bettwäsche ist vorhanden.\nHandtücher: pro Person 1 großes + 1 mittleres.",
       "kitchen": "Küche: Voll ausgestattet. Zum Anzünden eines Brenners den Starter drücken und gleichzeitig den Drehknopf des gewählten Brenners drehen und hineindrücken (ca. 5 Sekunden gedrückt halten). Danach immer ausschalten.",
       "eat": "Essen: Im Ghetto empfehlen wir Nonna Betta, Ba’Ghetto, Renato al Ghetto, Su’Ghetto, Giggetto und Taverna del Ghetto.",
       "drink": "Trinken: Für ein Glas Wein oder einen Drink: Enoteca Il Goccetto, Bar del Ghetto, Caffè Farnese.",
@@ -320,17 +337,18 @@
       "receipt_rental": "Beleg Aufenthalt: Wir können einen einfachen Beleg für den Aufenthalt (Kurzzeitmiete) mit Name, Daten und Gesamtbetrag ausstellen (keine MwSt.-Rechnung). Wenn nötig, senden Sie mir die Daten (Name/Firma, Adresse, ggf. Steuernummer), dann schicke ich ihn digital.",
       "receipt_city_tax": "Beleg Kurtaxe: Wir können auch einen separaten Beleg mit Personenzahl, Nächten und Gesamtbetrag ausstellen. Wenn Sie ihn brauchen, sagen Sie mir nach der Zahlung (online oder bar) Bescheid, dann erstelle ich die Übersicht."
     },
-
-    "es": {
+        "es": {
       "trash": "Basura: Antes de salir del apartamento, cierre bien las bolsas y llévelas al punto ecológico (isola ecologica) frente a Piazza delle Cinque Scole (lado Lungotevere). Reciclamos (WeDoRecycling): siga las indicaciones y no deje basura en la escalera ni fuera de la puerta.",
       "heating": "Calefacción: El apartamento tiene una estufa eléctrica. Úsela solo cuando esté dentro y apáguela siempre al salir, por seguridad.",
       "electric_panel": "Cuadro eléctrico: Si se va la luz, el cuadro está a la derecha justo antes de la puerta de salida del apartamento: todos los interruptores (incluido el pequeño blanco) deben estar hacia arriba. Si el problema continúa, en la salida del edificio (antes de la puerta principal), a la izquierda hay paneles blancos: abra el de su contador y suba el interruptor bajado.",
       "wifi": "Wi-Fi: El router está sobre la mesa. Gírelo para leer el SSID y la contraseña en la etiqueta.",
       "check_in": "Check-in desde las 15:00.\nAcceso: Puede usar el enlace de Virtual Key que le envié: abre tanto la puerta principal del edificio como la puerta del apartamento. Dentro encontrará las llaves físicas sobre la mesa; desde ese momento la Virtual Key se desactiva.\nAyuda: +39 335 5245756.",
+      "early_checkin_policy": "Check-in temprano: El horario estándar es a partir de las 15:00. Si necesita entrar antes, dígame la hora que necesita y le confirmaré si es posible según salidas del mismo día y limpieza.",
       "check_out": "Antes de salir: apague luces y calefacción, cierre las ventanas y deje las llaves sobre la mesa. Cierre la puerta manualmente y compruebe que quede bien cerrada.",
       "water": "Agua: El agua del grifo es potable. El agua caliente está siempre disponible, pero puede tardar 1–2 minutos en llegar (sobre todo por la mañana). Si no llega o la presión es baja: abra solo un grifo a la vez, compruebe que los mandos de caliente/fría estén totalmente abiertos y espere 1–2 minutos. Si el problema continúa, escríbame de inmediato.",
       "ac": "Aire acondicionado: El apartamento tiene A/C. Por favor, apáguelo siempre al salir.",
       "bathroom": "Baño: Encontrará toallas, secador, alfombrilla, papel higiénico y jabón. Toallas: por persona, 1 grande + 1 mediana.",
+      "linens_towels": "Sábanas y toallas: La cama está preparada a la llegada y se incluyen sábanas.\nToallas: por persona, 1 grande + 1 mediana.",
       "kitchen": "Cocina: Totalmente equipada. Para encender un fuego, pulse el encendido y al mismo tiempo gire y empuje la perilla del fuego elegido, manteniéndola presionada unos 5 segundos. Apague siempre los fuegos después de usarlos.",
       "eat": "Dónde comer: En el Gueto recomendamos Nonna Betta, Ba’Ghetto, Renato al Ghetto, Su’Ghetto, Giggetto y Taverna del Ghetto.",
       "drink": "Dónde beber: Para una copa de vino o un cóctel: Enoteca Il Goccetto, Bar del Ghetto, Caffè Farnese.",
@@ -358,5 +376,4 @@
     }
   }
 }
-
     
