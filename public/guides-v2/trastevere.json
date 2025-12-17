@@ -8,7 +8,9 @@
       "electric_panel": ["quadro elettrico","contatore","salta la luce","manca la corrente","interruttore","generale"],
       "wifi": ["wifi","wi-fi","rete","internet","password"],
       "check_in": ["check in","arrivo","ingresso","codice","chiavi","portone"],
+      "early_checkin": ["early check-in","early check in","check-in anticipato","check in anticipato","arrivo prima","arrivare prima","prima delle 15","prima delle 3","arrivo anticipato"],
       "check_out": ["check out","partenza","uscita","chiavi","lasciare"],
+      "linens_towels": ["biancheria","lenzuola","l lenzuola","cambio lenzuola","cambio biancheria","asciugamani","towels","cambio asciugamani","asciugamani extra","teli","telo"],
       "water": ["acqua","calda","potabile","boiler"],
       "ac": ["aria condizionata","condizionatore","ac"],
       "bathroom": ["bagno","asciugamani","phon","sapone"],
@@ -45,7 +47,9 @@
       "electric_panel": ["electric panel","fuse box","breaker","power cut","no electricity","main switch"],
       "wifi": ["wifi","wi-fi","network","internet","password"],
       "check_in": ["check in","arrival","enter","door","code","keys"],
+      "early_checkin": ["early check-in","early check in","early arrival","arrive early","check in earlier","before 3pm","before 15:00"],
       "check_out": ["check out","departure","leave","keys"],
+      "linens_towels": ["linens","bed linen","bedsheets","sheets","towels","extra towels","towel change","linen change","change linens","clean towels"],
       "water": ["water","hot water","drinkable","boiler"],
       "ac": ["air conditioning","ac","aircon"],
       "bathroom": ["bathroom","towels","hairdryer","soap"],
@@ -76,14 +80,15 @@
       "late_checkout_policy": ["late check out","late checkout","leave later","late departure"],
       "luggage_storage": ["luggage","leave bags","store luggage","baggage storage"]
     },
-
-        "fr": {
+       "fr": {
       "heating": ["chauffage","thermostat","radiateurs","froid","température"],
       "trash": ["ordures","déchets","poubelle","sacs poubelle","conteneurs"],
       "electric_panel": ["tableau électrique","disjoncteur","coupure de courant","compteur","interrupteur général"],
       "wifi": ["wifi","wi-fi","réseau","internet","mot de passe"],
       "check_in": ["check in","arrivée","entrée","clé","code"],
+      "early_checkin": ["arrivée tôt","check-in anticipé","arriver plus tôt","avant 15h","avant 15:00"],
       "check_out": ["check out","départ","clés"],
+      "linens_towels": ["linge","draps","drap","linge de lit","serviettes","serviettes supplémentaires","changer les serviettes","changement de linge","linge propre"],
       "water": ["eau","chaude","potable","boiler"],
       "ac": ["climatisation","clim"],
       "bathroom": ["salle de bain","serviettes","sèche-cheveux","savon"],
@@ -120,7 +125,9 @@
       "electric_panel": ["sicherungskasten","sicherung","stromausfall","zähler","hauptschalter"],
       "wifi": ["wlan","wifi","netz","internet","passwort"],
       "check_in": ["check in","ankunft","eingang","schlüssel","code"],
+      "early_checkin": ["früher check-in","early check-in","frühe anreise","vor 15 uhr","vor 15:00","früher einchecken"],
       "check_out": ["check out","abreise","schlüssel"],
+      "linens_towels": ["bettwäsche","wäsche","laken","bettlaken","handtücher","zusätzliche handtücher","handtuchwechsel","wäschewechsel","frische handtücher"],
       "water": ["wasser","warmwasser","trinkbar","boiler"],
       "ac": ["klimaanlage","ac"],
       "bathroom": ["bad","handtücher","föhn","seife"],
@@ -151,14 +158,16 @@
       "late_checkout_policy": ["late check out","später check-out","spät auschecken","späte abreise"],
       "luggage_storage": ["gepäck","gepäck abstellen","gepäckaufbewahrung","koffer lassen"]
     },
-
-        "es": {
+   
+       "es": {
       "heating": ["calefacción","termostato","radiadores","frío","temperatura"],
       "trash": ["basura","residuos","cubos","bolsas","contenedores"],
       "electric_panel": ["cuadro eléctrico","interruptor","contador","corte de luz","general"],
       "wifi": ["wifi","wi-fi","red","internet","contraseña"],
       "check_in": ["check in","llegada","puerta","llave","código"],
+      "early_checkin": ["check-in temprano","early check-in","llegar antes","antes de las 15","antes de las 3","entrada antes","llegada temprana"],
       "check_out": ["check out","salida","llaves"],
+      "linens_towels": ["sábanas","ropa de cama","cambio de sábanas","toallas","toallas extra","cambio de toallas","toallas limpias","ropa blanca"],
       "water": ["agua","caliente","potable","calentador"],
       "ac": ["aire acondicionado","ac"],
       "bathroom": ["baño","toallas","secador","jabón"],
@@ -190,7 +199,6 @@
       "luggage_storage": ["equipaje","dejar maletas","consigna","guardar equipaje"]
     }
   },
-
   "answers": {
     "it": {
       "heating": "Riscaldamento: Per accenderlo vai nel corridoio subito dopo la cucina. Sulla parete di destra trovi il termostato con una ghiera: metti l'interruttore su ON e imposta la temperatura a 26 °C. In pochi minuti i termosifoni inizieranno a scaldarsi in tutta la casa.",
@@ -198,7 +206,9 @@
       "electric_panel": "Quadro elettrico: Se manca la corrente, il quadro è nell'antibagno: appena entri in casa, lo trovi subito a destra. Controlla che tutti gli interruttori siano verso l'alto.\nSe la corrente non torna, scendi al piano -1: davanti alla porta del 'New York Institute' trovi lo sportello elettrico. Aprilo, cerca 'Bondi int. 9' e rialza l'interruttore che è sceso.",
       "wifi": "Wi-Fi: Il router è sul mobile all'ingresso. Giralo per leggere sull'etichetta il nome della rete (SSID) e la password.",
       "check_in": "Check-in dalle 15:00.",
+      "early_checkin": "Early check-in: Il check-in standard è dalle 15:00. Se l’appartamento è già pronto (dipende da check-out e pulizie) possiamo anticipare, ma NON è garantito. Scrivimi l’orario di arrivo e ti confermo appena possibile. Se arrivi molto prima, possiamo valutare deposito bagagli.",
       "check_out": "Check-out: Prima di uscire spegni luci e aria condizionata, chiudi le finestre e lascia le chiavi sul tavolo. Chiudi la porta manualmente e assicurati che sia ben chiusa.",
+      "linens_towels": "Biancheria e asciugamani: All’arrivo trovi letto pronto con lenzuola pulite e asciugamani puliti (per ogni ospite 1 telo grande + 1 medio). Il cambio non è giornaliero. Se ti serve un cambio extra (lenzuola o asciugamani), scrivimi e ti confermo disponibilità e modalità.",
       "water": "Acqua: L'acqua del rubinetto è potabile. L'acqua calda è sempre disponibile, ma (soprattutto al mattino) può impiegare qualche minuto ad arrivare.\nSe l'acqua calda tarda o la pressione è bassa: 1) apri un solo rubinetto alla volta (es. solo doccia); 2) controlla che i miscelatori caldo/freddo siano completamente aperti; 3) attendi 1–2 minuti. Se dopo questi passaggi non arriva acqua calda (o non arriva proprio acqua), scrivimi subito e verifichiamo.",
       "ac": "Aria condizionata: È disponibile e si gestisce con il telecomando. Ti chiediamo di spegnerla sempre quando esci dall'appartamento.",
       "bathroom": "Bagno: Trovi asciugamani, phon, tappetino, carta igienica e sapone.\nAsciugamani: per ogni ospite 1 telo grande + 1 medio; il letto è pronto all'arrivo.\nWC: se lo scarico è debole, tieni premuto il pulsante per qualche secondo. Non gettare nel water salviette, assorbenti o altri oggetti (solo carta igienica).\nSe noti acqua sul pavimento o la doccia scarica lentamente, avvisami appena possibile.",
@@ -229,14 +239,15 @@
       "late_checkout_policy": "Late check-out: L'orario standard di check-out è alle 11:00. A volte possiamo concedere un piccolo prolungamento, ma dipende da arrivi in giornata e pulizie. Il late check-out non è mai automatico: scrivimi l'orario che ti serve e ti confermo io in base alla disponibilità.",
       "luggage_storage": "Deposito bagagli: Quando possibile possiamo trovare una soluzione per tenere le valigie dopo il check-out, ma dipende da pulizie e nuovi arrivi. Scrivimi gli orari di lasciare/ritirare e ti dico se possiamo tenerle in appartamento oppure ti suggerisco un deposito vicino."
     },
-
     "en": {
       "heating": "Heating: To turn it on, go to the corridor just after the kitchen. On the right-hand wall you will find the thermostat with a dial: set the small switch to ON and set the temperature to 26°C. Within a few minutes the radiators will start warming up throughout the apartment.",
       "trash": "Trash: In this building there is NO recycling. Before check-out, please take your rubbish to the containers located just outside the building, on the right-hand side.",
       "electric_panel": "Electric panel: If the power goes off, the panel is in the small area before the bathroom: as soon as you enter the apartment, it is immediately on the right. Make sure all switches are in the up position.\nIf the power does not come back, go down to floor -1: in front of the 'New York Institute' door you will find the electrical cabinet. Open it, look for 'Bondi int. 9' and push the lowered switch back up.",
       "wifi": "Wi-Fi: The router is on the entrance cabinet. Turn it around to read the network name (SSID) and password on the label.",
       "check_in": "Check-in from 15:00.",
+      "early_checkin": "Early check-in: Standard check-in is from 15:00. If the apartment is ready (depending on previous check-out and cleaning), we may allow an earlier arrival, but it is NOT guaranteed. Send me your arrival time and I will confirm as soon as possible. If you arrive much earlier, we can evaluate luggage storage.",
       "check_out": "Check-out: Before leaving, switch off lights and air conditioning, close the windows, and leave the keys on the table. Close the door manually and make sure it is properly closed.",
+      "linens_towels": "Linens and towels: On arrival the bed is prepared with clean bed linen and you will find clean towels (per guest: 1 large + 1 medium). Changes are not daily. If you need an extra change (linens or towels), message me and I will confirm availability and the best option.",
       "water": "Water: Tap water is drinkable. Hot water is always available, but (especially in the morning) it may take a couple of minutes to reach the tap.\nIf hot water is slow or pressure is low: 1) open only one tap at a time (e.g., shower only); 2) make sure hot/cold mixers are fully open; 3) wait 1–2 minutes. If you still have no hot water (or no water at all), please message me immediately and we will check it.",
       "ac": "Air conditioning: Available and managed with the remote control. Please switch it off every time you leave the apartment.",
       "bathroom": "Bathroom: You will find towels, hairdryer, bath mat, toilet paper and soap.\nTowels: per guest: 1 large + 1 medium towel; the bed is prepared on arrival.\nWC: if the flush is weak, keep the button pressed for a few seconds. Please do not throw wipes, sanitary products or other items into the toilet (toilet paper only).\nIf you notice water on the floor or the shower drains slowly, let me know as soon as possible.",
@@ -267,13 +278,15 @@
       "late_checkout_policy": "Late check-out: Standard check-out is at 11:00. Sometimes we can allow a small extension, but it depends on same-day arrivals and cleaning. Late check-out is never automatic: tell me the time you need and I will confirm based on availability.",
       "luggage_storage": "Luggage storage: When possible we can try to keep your luggage after check-out, but it depends on cleaning and new arrivals. Send me your drop-off/pick-up times and I will confirm if you can leave them in the apartment or I will suggest a nearby luggage storage."
     },
-    "fr": {
+       "fr": {
       "heating": "Chauffage : Pour l'allumer, allez dans le couloir juste après la cuisine. Sur le mur de droite se trouve le thermostat avec molette : mettez l'interrupteur sur ON et réglez la température à 26 °C. En quelques minutes, les radiateurs chaufferont dans tout l'appartement.",
       "trash": "Déchets : Dans cet immeuble, il n'y a PAS de tri sélectif. Avant le départ, déposez vos déchets dans les conteneurs situés juste à l'extérieur de l'immeuble, sur la droite.",
       "electric_panel": "Tableau électrique : En cas de coupure, le tableau se trouve dans l'antichambre de la salle de bain : en entrant, il est immédiatement à droite. Vérifiez que tous les disjoncteurs sont en position haute.\nSi le courant ne revient pas, descendez à l'étage -1 : devant la porte du 'New York Institute' se trouve l'armoire électrique. Ouvrez-la, cherchez 'Bondi int. 9' et remontez l'interrupteur abaissé.",
       "wifi": "Wi-Fi : Le routeur est sur le meuble d'entrée. Tournez-le pour lire sur l'étiquette le nom du réseau (SSID) et le mot de passe.",
       "check_in": "Arrivée à partir de 15h00.",
+      "early_checkin": "Arrivée anticipée : L’arrivée standard est à partir de 15h00. Si l’appartement est déjà prêt (selon le départ précédent et le ménage), une arrivée plus tôt est possible, mais ce n’est PAS garanti. Envoyez-moi votre heure d’arrivée et je confirme dès que possible. Si vous arrivez très tôt, on peut envisager une consigne bagages.",
       "check_out": "Départ : Avant de sortir, éteignez les lumières et la climatisation, fermez les fenêtres et laissez les clés sur la table. Fermez la porte manuellement et assurez-vous qu'elle soit bien fermée.",
+      "linens_towels": "Linge et serviettes : À l’arrivée, le lit est préparé avec du linge propre et vous trouverez des serviettes propres (par personne : 1 grande + 1 moyenne). Le changement n’est pas quotidien. Si vous avez besoin d’un changement supplémentaire (linge ou serviettes), écrivez-moi et je confirme la disponibilité et la solution.",
       "water": "Eau : L'eau du robinet est potable. L'eau chaude est toujours disponible, mais (surtout le matin) elle peut mettre quelques minutes à arriver.\nSi l'eau chaude tarde ou si la pression est faible : 1) n'ouvrez qu'un seul robinet à la fois (ex. douche uniquement) ; 2) vérifiez que les mélangeurs chaud/froid sont bien ouverts ; 3) attendez 1–2 minutes. Si vous n'avez toujours pas d'eau chaude (ou pas d'eau du tout), écrivez-moi immédiatement et nous vérifierons.",
       "ac": "Climatisation : Disponible et gérée avec la télécommande. Merci de l'éteindre chaque fois que vous sortez de l'appartement.",
       "bathroom": "Salle de bain : Vous trouverez serviettes, sèche-cheveux, tapis de bain, papier toilette et savon.\nServiettes : par personne 1 grande + 1 moyenne ; le lit est prêt à l'arrivée.\nWC : si la chasse est faible, maintenez le bouton appuyé quelques secondes. Ne jetez pas de lingettes, protections hygiéniques ou autres objets (papier toilette uniquement).\nSi vous voyez de l'eau au sol ou si la douche évacue lentement, prévenez-moi dès que possible.",
@@ -304,14 +317,15 @@
       "late_checkout_policy": "Départ tardif : L'heure standard de départ est 11h00. Parfois, un léger prolongement est possible, selon les arrivées et le ménage. Ce n'est jamais automatique : dites-moi l'heure souhaitée et je confirmerai selon disponibilité.",
       "luggage_storage": "Consigne bagages : Quand c'est possible, nous pouvons essayer de garder les valises après le départ, selon le ménage et les nouvelles arrivées. Envoyez-moi vos horaires de dépôt/retrait et je vous dirai si c'est possible dans l'appartement ou je vous proposerai une consigne à proximité."
     },
-
-        "de": {
+    "de": {
       "heating": "Heizung: Zum Einschalten gehen Sie in den Flur direkt nach der Küche. An der rechten Wand befindet sich der Thermostat mit Drehregler: Schalter auf ON stellen und 26 °C einstellen. Nach wenigen Minuten werden die Heizkörper in der ganzen Wohnung warm.",
       "trash": "Müll: In diesem Gebäude gibt es KEINE Mülltrennung. Bitte entsorgen Sie den Müll vor dem Check-out in den Containern direkt außerhalb des Gebäudes auf der rechten Seite.",
       "electric_panel": "Sicherungskasten: Bei Stromausfall befindet sich der Kasten im Vorraum zum Bad: Beim Betreten der Wohnung ist er sofort rechts. Prüfen Sie, dass alle Schalter nach oben stehen.\nWenn der Strom nicht zurückkommt, gehen Sie auf Etage -1: Vor der Tür des 'New York Institute' finden Sie den Elektroschrank. Öffnen Sie ihn, suchen Sie 'Bondi int. 9' und legen Sie den heruntergefallenen Schalter wieder nach oben.",
       "wifi": "WLAN: Der Router steht auf dem Möbel im Eingangsbereich. Drehen Sie ihn um, um auf dem Etikett SSID (Netzname) und Passwort zu lesen.",
       "check_in": "Check-in ab 15:00 Uhr.",
+      "early_checkin": "Früher Check-in: Der reguläre Check-in ist ab 15:00 Uhr. Wenn die Wohnung bereits fertig ist (abhängig von Abreise und Reinigung), ist ein früherer Check-in möglich, aber NICHT garantiert. Bitte schicken Sie mir Ihre Ankunftszeit, dann bestätige ich so früh wie möglich. Bei sehr früher Ankunft können wir ggf. eine Gepäckaufbewahrung prüfen.",
       "check_out": "Check-out: Vor dem Verlassen Licht und Klimaanlage ausschalten, Fenster schließen und die Schlüssel auf dem Tisch lassen. Tür manuell schließen und prüfen, dass sie richtig zu ist.",
+      "linens_towels": "Bettwäsche und Handtücher: Bei Ankunft ist das Bett mit sauberer Bettwäsche vorbereitet und es liegen saubere Handtücher bereit (pro Person: 1 großes + 1 mittleres). Ein täglicher Wechsel ist nicht vorgesehen. Wenn Sie einen zusätzlichen Wechsel (Bettwäsche oder Handtücher) benötigen, schreiben Sie mir – ich bestätige Verfügbarkeit und Ablauf.",
       "water": "Wasser: Leitungswasser ist trinkbar. Warmwasser ist immer verfügbar, kann aber (vor allem morgens) ein paar Minuten brauchen.\nWenn Warmwasser spät kommt oder der Druck niedrig ist: 1) nur einen Hahn gleichzeitig öffnen (z. B. nur Dusche); 2) prüfen, ob Warm/Kalt-Mischer ganz geöffnet sind; 3) 1–2 Minuten warten. Wenn weiterhin kein Warmwasser (oder gar kein Wasser) kommt, schreiben Sie mir bitte sofort.",
       "ac": "Klimaanlage: Vorhanden und per Fernbedienung steuerbar. Bitte immer ausschalten, wenn Sie die Wohnung verlassen.",
       "bathroom": "Bad: Handtücher, Föhn, Badematte, Toilettenpapier und Seife sind vorhanden.\nHandtücher: pro Gast 1 großes + 1 mittleres; das Bett ist bei Ankunft gemacht.\nWC: Wenn die Spülung schwach ist, den Knopf einige Sekunden gedrückt halten. Keine Feuchttücher, Binden oder andere Gegenstände entsorgen (nur Toilettenpapier).\nWenn Wasser am Boden steht oder die Dusche langsam abläuft, sagen Sie mir bitte so bald wie möglich Bescheid.",
@@ -336,7 +350,7 @@
       "city_tax_payment_issue": "Probleme bei der Zahlung: Wenn der Betrag im Link nicht korrekt wirkt oder der Link nicht funktioniert, keine Sorge: Check-in und Schlüssel werden nicht blockiert. Schreiben Sie mir Anzahl der Erwachsenen, tatsächliche Nächte und ggf. bereits gezahlten Betrag, dann bestätige ich den korrekten Gesamtbetrag. Differenzen regeln wir per neuem Link oder bar.",
       "receipt_rental": "Beleg Aufenthalt: Wir können einen einfachen Beleg für den Aufenthalt (touristische Vermietung) mit Name, Daten und Gesamtbetrag ausstellen. Keine MwSt.-Rechnung. Wenn benötigt, senden Sie mir die Daten (Name/Firma, Adresse, ggf. Steuernummer) und ich schicke ihn digital.",
       "receipt_city_tax": "Beleg Kurtaxe: Wir können auch einen separaten Beleg für die Kurtaxe ausstellen (Personen, Nächte, Gesamtbetrag). Wenn benötigt, nach der Zahlung (online oder bar) kurz Bescheid geben.",
-      "house_rules": "Hausordnung: Bitte Nachbarn respektieren: keine Partys, keine laute Musik und kein Lärm nach 22:00 Uhr. Rauchen ist innen verboten; wenn am Fenster geraucht wird, keine Kippen hinauswerfen. Keine zusätzlichen, nicht registrierten Gäste. Bei Unsicherheiten bitte vorher schreiben.",
+      "house_rules": "Hausordnung: Bitte Nachbarn respektieren: keine Partys, keine laute Musik und kein Lärm nach 22:00 Uhr. Rauchen ist innen verboten; wenn am Fenster geraucht wird, keine Kippen hinauswerfen. Keine zusätzlichen, nicht registrierte Gäste. Bei Unsicherheiten bitte vorher schreiben.",
       "laundry": "Wäsche: Wenn Sie Kleidung oder Handtücher waschen müssen, schreiben Sie mir und ich empfehle je nach Zeitplan die beste Option in der Nähe (SB oder klassischer Service).",
       "wifi_troubleshooting": "WLAN funktioniert nicht: 1) prüfen, ob der Router an ist (Lichter an). 2) 30 Sekunden ausstecken, dann wieder einstecken. 3) Netzwerk und Passwort am Etikett prüfen (Groß-/Kleinschreibung). Wenn es weiter nicht geht, schreiben Sie mir.",
       "late_checkout_policy": "Später Check-out: Standard ist 11:00 Uhr. Manchmal ist eine kurze Verlängerung möglich, abhängig von Anreisen und Reinigung. Nie automatisch: gewünschte Zeit senden, ich bestätige nach Verfügbarkeit.",
@@ -348,7 +362,9 @@
       "electric_panel": "Cuadro eléctrico: Si se corta la luz, el cuadro está en el antebaño: al entrar en el apartamento, inmediatamente a la derecha. Compruebe que todos los interruptores estén hacia arriba.\nSi la luz no vuelve, baje al piso -1: delante de la puerta del 'New York Institute' está el armario eléctrico. Ábralo, busque 'Bondi int. 9' y suba el interruptor que se bajó.",
       "wifi": "Wi-Fi: El router está sobre el mueble de la entrada. Gírelo para leer en la etiqueta el nombre de la red (SSID) y la contraseña.",
       "check_in": "Check-in desde las 15:00.",
+      "early_checkin": "Check-in temprano: El check-in estándar es a partir de las 15:00. Si el apartamento ya está listo (según la salida anterior y la limpieza), podemos adelantar, pero NO está garantizado. Envíeme su hora de llegada y lo confirmaré lo antes posible. Si llega muy temprano, podemos valorar guardar el equipaje.",
       "check_out": "Check-out: Antes de salir, apague luces y aire acondicionado, cierre las ventanas y deje las llaves sobre la mesa. Cierre la puerta manualmente y asegúrese de que esté bien cerrada.",
+      "linens_towels": "Ropa de cama y toallas: A la llegada la cama está preparada con sábanas limpias y encontrará toallas limpias (por persona: 1 grande + 1 mediana). El cambio no es diario. Si necesita un cambio extra (sábanas o toallas), escríbame y confirmaré disponibilidad y la mejor opción.",
       "water": "Agua: El agua del grifo es potable. El agua caliente está siempre disponible, pero (sobre todo por la mañana) puede tardar un par de minutos.\nSi tarda o la presión es baja: 1) abra solo un grifo a la vez (p. ej., solo ducha); 2) compruebe que los mandos caliente/fría estén totalmente abiertos; 3) espere 1–2 minutos. Si sigue sin agua caliente (o sin agua), escríbame de inmediato.",
       "ac": "Aire acondicionado: Disponible y con mando a distancia. Por favor, apáguelo siempre al salir del apartamento.",
       "bathroom": "Baño: Encontrará toallas, secador, alfombrilla, papel higiénico y jabón.\nToallas: por huésped 1 grande + 1 mediana; la cama está preparada a la llegada.\nWC: si descarga poco, mantenga pulsado el botón unos segundos. No tire toallitas, compresas u otros objetos (solo papel higiénico).\nSi ve agua en el suelo o la ducha drena lento, avíseme cuanto antes.",
@@ -381,4 +397,4 @@
     }
   }
 }
-    
+   
