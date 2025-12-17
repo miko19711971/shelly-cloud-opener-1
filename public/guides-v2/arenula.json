@@ -5,10 +5,12 @@
     "electric_panel": "Electric panel: Going towards the bathroom, on the right (before the door) you will find the panel. If the power goes off: 1) raise any switch that is down; 2) if they are all already up, remove the panel above, raise the main switch and switch off some appliances.",
     "wifi": "Wi-Fi: The router is on the desk near the window. Turn it around to read the SSID and password on the label.",
     "check_in": "Check-in: from 15:00.\nIntercom: C8.\nMain door: 08:00–13:00 and 15:30–18:00.\nConcierge: Paolo.\nHelp: +39 335 5245756.",
+    "early_checkin_policy": "Early check-in: Standard check-in is from 15:00. If you need to arrive earlier, tell me the time you need and I will confirm if it’s possible based on same-day check-outs and the cleaning schedule.",
     "check_out": "Check-out: Before leaving, switch off lights and A/C, close the windows, leave the keys on the table and close the door gently.",
     "water": "Water: Tap water is safe to drink and normally hot water is always available. If in the shower or at the taps you only get cold water (or no water), turn the mixer fully to hot and let it run for 1–2 minutes. If it stays cold or there is no water, write to me immediately and tell me if the problem is only in the shower, at the sink or in the whole apartment, so we can check the boiler/water supply.",
     "AC": "A/C: Please switch off the air conditioning when you leave the apartment.",
     "bathroom": "Bathroom: You will find toilet paper, hand soap, bath mat and hairdryer.\nTowels: for each guest 1 large towel + 1 medium towel.\nBed: ready on arrival.",
+    "linens_towels": "Linens & towels: The bed is prepared on arrival and linens are provided.\nTowels: for each guest 1 large towel + 1 medium towel.",
     "gas": "Gas use: Gas valve: horizontal = OPEN, vertical = CLOSED. Choose the burner, light a match/lighter, then turn and press the black knob until the flame is stable. When stable, release.",
     "building": "Building: Intercom C8.\nElevator: reserved for owners — please do not use it.\nMain door: 08:00–13:00 and 15:30–18:00.\nConcierge: Paolo.",
     "eat": "Where to eat: Roscioli; Emma Pizzeria; Ditirambo; Osteria da Fortunata; Pianostrada; Forno Campo de’ Fiori; Gelateria del Teatro.",
@@ -35,16 +37,18 @@
     "receipt_rental": "Stay receipt: We can issue a receipt for the stay (short-term rental) with name, dates and total amount. It is not a VAT invoice, but a simple receipt. If you need it, send me the details to include (name/surname or company name, address, tax code if applicable) and I will send it digitally.",
     "receipt_city_tax": "City tax receipt: We can also issue a separate receipt with number of guests, nights and total amount. If you need it, let me know after payment (online or cash) and I will prepare the summary."
   },
-    "it": {
+  "it": {
     "trash": "Spazzatura: Trovi le buste in cucina. Chiudi bene i sacchetti e portali nei cassonetti nella corte, prima dell’uscita. Facciamo raccolta differenziata (WeDoRecycling): segui le indicazioni e non lasciare immondizia nel vano scala o fuori dalla porta dell’appartamento.",
     "heating": "Riscaldamento: Usa il telecomando dell’aria condizionata. Premi MODE finché appare il simbolo del sole, imposta 26 °C e potenza 1. Spegni sempre il condizionatore quando esci.",
     "electric_panel": "Quadro elettrico: Andando verso il bagno, sulla destra (prima della porta) trovi il quadro. Se manca la corrente: 1) alza gli interruttori abbassati; 2) se sono già tutti su, togli il pannello sopra, rialza l’interruttore generale e spegni qualche elettrodomestico.",
     "wifi": "Wi-Fi: Il router è sulla scrivania vicino alla finestra. Giralo per leggere SSID e password sull’etichetta.",
     "check_in": "Check-in: dalle 15:00.\nCitofono: C8.\nPortone: 08:00–13:00 e 15:30–18:00.\nPortineria: Paolo.\nAiuto: +39 335 5245756.",
+    "early_checkin_policy": "Early check-in: Il check-in standard è dalle 15:00. Se ti serve entrare prima, dimmi l’orario che ti serve e ti confermo se è possibile in base a check-out dello stesso giorno e tempi di pulizia.",
     "check_out": "Check-out: Prima di partire spegni luci e A/C, chiudi le finestre, lascia le chiavi sul tavolo e chiudi la porta delicatamente.",
     "water": "Acqua: L’acqua del rubinetto è potabile e normalmente l’acqua calda è sempre disponibile. Se in doccia o ai rubinetti esce solo acqua fredda (o non esce acqua), sposta la manopola tutta sul caldo e lascia scorrere 1–2 minuti. Se resta fredda o non esce acqua, scrivimi subito indicando se il problema è solo in doccia, al lavandino o in tutta la casa, così controlliamo caldaia/fornitura.",
     "AC": "A/C: Spegni l’aria condizionata quando esci dall’appartamento.",
     "bathroom": "Bagno: Trovi carta igienica, sapone mani, tappetino e asciugacapelli.\nAsciugamani: per ogni ospite 1 telo grande + 1 medio.\nLetto: pronto all’arrivo.",
+    "linens_towels": "Lenzuola e asciugamani: Il letto è pronto all’arrivo e le lenzuola sono incluse.\nAsciugamani: per ogni ospite 1 telo grande + 1 medio.",
     "gas": "Uso gas: Valvola gas: orizzontale = aperto, verticale = chiuso. Scegli il fornello, accendi un fiammifero/accendino, poi gira e premi la manopola nera finché la fiamma è stabile. Quando è stabile, rilascia.",
     "building": "Edificio: Citofono C8.\nAscensore: è riservato ai proprietari — per favore non usarlo.\nPortone: 08:00–13:00 e 15:30–18:00.\nPortineria: Paolo.",
     "eat": "Dove mangiare: Roscioli; Emma Pizzeria; Ditirambo; Osteria da Fortunata; Pianostrada; Forno Campo de’ Fiori; Gelateria del Teatro.",
@@ -77,10 +81,12 @@
     "electric_panel": "Tableau électrique : En allant vers la salle de bain, sur la droite (avant la porte) vous trouverez le tableau. En cas de coupure : 1) relevez les disjoncteurs baissés ; 2) s’ils sont déjà tous en haut, retirez le panneau au-dessus, remontez l’interrupteur principal et éteignez quelques appareils.",
     "wifi": "Wi-Fi : Le routeur est sur le bureau près de la fenêtre. Tournez-le pour lire le SSID et le mot de passe sur l’étiquette.",
     "check_in": "Arrivée : à partir de 15:00.\nInterphone : C8.\nPorte d’entrée : 08:00–13:00 et 15:30–18:00.\nConcierge : Paolo.\nAide : +39 335 5245756.",
+    "early_checkin_policy": "Arrivée anticipée : L’heure standard est à partir de 15:00. Si vous souhaitez arriver plus tôt, dites-moi l’heure et je confirmerai si c’est possible selon les départs du jour et le planning de ménage.",
     "check_out": "Départ : Avant de partir, éteignez les lumières et la climatisation, fermez les fenêtres, laissez les clés sur la table et fermez la porte doucement.",
     "water": "Eau : L’eau du robinet est potable et normalement l’eau chaude est toujours disponible. Si à la douche ou aux robinets vous n’avez que de l’eau froide (ou pas d’eau), tournez le mitigeur entièrement vers le chaud et laissez couler 1–2 minutes. Si cela reste froid ou s’il n’y a pas d’eau, écrivez-moi immédiatement en précisant si le problème concerne uniquement la douche, le lavabo ou tout l’appartement, afin que nous vérifiions la chaudière/l’alimentation en eau.",
     "AC": "Climatisation : Merci d’éteindre la climatisation lorsque vous quittez l’appartement.",
     "bathroom": "Salle de bain : Vous trouverez du papier toilette, du savon pour les mains, un tapis de bain et un sèche-cheveux.\nServiettes : pour chaque invité 1 grande serviette + 1 moyenne.\nLit : prêt à l’arrivée.",
+    "linens_towels": "Draps et serviettes : Le lit est prêt à l’arrivée et les draps sont fournis.\nServiettes : pour chaque invité 1 grande serviette + 1 moyenne.",
     "gas": "Gaz : Vanne de gaz : horizontale = ouvert, verticale = fermé. Choisissez le brûleur, allumez une allumette/un briquet, puis tournez et appuyez sur le bouton noir jusqu’à ce que la flamme soit stable. Quand elle est stable, relâchez.",
     "building": "Immeuble : Interphone C8.\nAscenseur : réservé aux propriétaires — merci de ne pas l’utiliser.\nPorte d’entrée : 08:00–13:00 et 15:30–18:00.\nConcierge : Paolo.",
     "eat": "Où manger : Roscioli; Emma Pizzeria; Ditirambo; Osteria da Fortunata; Pianostrada; Forno Campo de’ Fiori; Gelateria del Teatro.",
@@ -107,17 +113,18 @@
     "receipt_rental": "Reçu de séjour : Nous pouvons émettre un reçu pour le séjour (location courte durée) avec le nom, les dates et le montant total. Ce n’est pas une facture avec TVA, mais un reçu simple. Si vous en avez besoin, envoyez-moi les données à indiquer (nom/prénom ou raison sociale, adresse, éventuel code fiscal) et je vous l’enverrai en format numérique.",
     "receipt_city_tax": "Reçu de taxe de séjour : Nous pouvons aussi émettre un reçu séparé avec le nombre de personnes, les nuits et le montant total. Si vous en avez besoin, prévenez-moi après le paiement (en ligne ou en espèces) et je prépare le récapitulatif."
   },
-
-  "de": {
+    "de": {
     "trash": "Müll: Müllbeutel finden Sie in der Küche. Bitte die Beutel gut verschließen und vor dem Verlassen zu den Containern im Innenhof bringen. Wir trennen den Müll (WeDoRecycling): Bitte den Hinweisen folgen und keinen Müll im Treppenhaus oder vor der Wohnungstür stehen lassen.",
     "heating": "Heizung: Nutzen Sie die Fernbedienung der Klimaanlage. Drücken Sie MODE, bis das Sonnensymbol erscheint, stellen Sie 26 °C und Leistungsstufe 1 ein. Schalten Sie die Klimaanlage immer aus, wenn Sie hinausgehen.",
     "electric_panel": "Sicherungskasten: Auf dem Weg zum Bad, rechts (vor der Tür), finden Sie den Kasten. Bei Stromausfall: 1) heruntergefallene Schalter wieder nach oben legen; 2) wenn alle bereits oben sind, die Abdeckung darüber entfernen, den Hauptschalter hochlegen und einige Geräte ausschalten.",
     "wifi": "WLAN: Der Router steht auf dem Schreibtisch nahe dem Fenster. Drehen Sie ihn um, um SSID und Passwort auf dem Etikett zu lesen.",
     "check_in": "Check-in: ab 15:00.\nSprechanlage: C8.\nHaustür: 08:00–13:00 und 15:30–18:00.\nHausmeister: Paolo.\nHilfe: +39 335 5245756.",
+    "early_checkin_policy": "Früher Check-in: Der Standard-Check-in ist ab 15:00. Wenn Sie früher ankommen möchten, nennen Sie mir bitte die gewünschte Uhrzeit; ich bestätige, ob es je nach Abreisen am selben Tag und Reinigungsplan möglich ist.",
     "check_out": "Check-out: Vor der Abreise bitte Licht und Klimaanlage ausschalten, Fenster schließen, Schlüssel auf dem Tisch lassen und die Tür sanft schließen.",
     "water": "Wasser: Leitungswasser ist trinkbar und normalerweise ist Warmwasser immer verfügbar. Wenn in der Dusche oder an den Wasserhähnen nur kaltes Wasser kommt (oder gar kein Wasser), den Mischer ganz auf „heiß“ drehen und 1–2 Minuten laufen lassen. Bleibt es kalt oder kommt kein Wasser, schreiben Sie mir bitte sofort und sagen Sie, ob das Problem nur in der Dusche, am Waschbecken oder in der ganzen Wohnung auftritt, damit wir Boiler/Wasserversorgung prüfen können.",
     "AC": "Klimaanlage: Bitte die Klimaanlage ausschalten, wenn Sie die Wohnung verlassen.",
     "bathroom": "Bad: Sie finden Toilettenpapier, Handseife, Badematte und Föhn.\nHandtücher: pro Gast 1 großes Handtuch + 1 mittleres.\nBett: bei Ankunft vorbereitet.",
+    "linens_towels": "Bettwäsche & Handtücher: Das Bett ist bei Ankunft vorbereitet und Bettwäsche ist vorhanden.\nHandtücher: pro Gast 1 großes Handtuch + 1 mittleres.",
     "gas": "Gas: Gasventil: waagrecht = OFFEN, senkrecht = ZU. Brenner wählen, Streichholz/Feuerzeug anzünden, dann den schwarzen Knopf drehen und drücken, bis die Flamme stabil ist. Wenn stabil, loslassen.",
     "building": "Gebäude: Sprechanlage C8.\nAufzug: nur für Eigentümer — bitte nicht benutzen.\nHaustür: 08:00–13:00 und 15:30–18:00.\nHausmeister: Paolo.",
     "eat": "Essen: Roscioli; Emma Pizzeria; Ditirambo; Osteria da Fortunata; Pianostrada; Forno Campo de’ Fiori; Gelateria del Teatro.",
@@ -144,17 +151,18 @@
     "receipt_rental": "Beleg für den Aufenthalt: Wir können einen Beleg für den Aufenthalt (Kurzzeitmiete) mit Name, Daten und Gesamtbetrag ausstellen. Es ist keine Rechnung mit USt., sondern ein einfacher Beleg. Wenn Sie ihn benötigen, senden Sie mir die Daten (Name/Firma, Adresse, ggf. Steuernummer) und ich sende ihn digital.",
     "receipt_city_tax": "Beleg für die Kurtaxe: Wir können auch einen separaten Beleg mit Personenzahl, Nächten und Gesamtbetrag ausstellen. Wenn Sie ihn benötigen, sagen Sie mir nach der Zahlung (online oder bar) Bescheid, dann erstelle ich die Zusammenfassung."
   },
-
-  "es": {
+    "es": {
     "trash": "Basura: Encontrará las bolsas en la cocina. Cierre bien las bolsas y llévelas a los contenedores del patio antes de salir. Hacemos recogida selectiva (WeDoRecycling): siga las indicaciones y no deje basura en la escalera ni delante de la puerta del apartamento.",
     "heating": "Calefacción: Use el mando del aire acondicionado. Pulse MODE hasta que aparezca el símbolo del sol, ajuste 26 °C y potencia 1. Apague siempre el aire acondicionado cuando salga.",
     "electric_panel": "Cuadro eléctrico: Yendo hacia el baño, a la derecha (antes de la puerta) encontrará el cuadro. Si se corta la luz: 1) suba los interruptores bajados; 2) si ya están todos arriba, quite el panel superior, suba el interruptor general y apague algunos electrodomésticos.",
     "wifi": "Wi-Fi: El router está en el escritorio junto a la ventana. Gírelo para leer el SSID y la contraseña en la etiqueta.",
     "check_in": "Check-in: desde las 15:00.\nInterfono: C8.\nPuerta de entrada: 08:00–13:00 y 15:30–18:00.\nConserje: Paolo.\nAyuda: +39 335 5245756.",
+    "early_checkin_policy": "Check-in temprano: La hora estándar es a partir de las 15:00. Si necesitas entrar antes, dime la hora que necesitas y te confirmaré si es posible según los check-outs del día y el horario de limpieza.",
     "check_out": "Check-out: Antes de salir apague luces y A/C, cierre las ventanas, deje las llaves en la mesa y cierre la puerta suavemente.",
     "water": "Agua: El agua del grifo es potable y normalmente el agua caliente siempre está disponible. Si en la ducha o en los grifos sale solo agua fría (o no sale agua), gire el mezclador totalmente hacia caliente y deje correr 1–2 minutos. Si sigue fría o no sale agua, escríbame de inmediato indicando si el problema es solo en la ducha, en el lavabo o en toda la casa, para revisar caldera/suministro.",
     "AC": "A/C: Apague el aire acondicionado cuando salga del apartamento.",
     "bathroom": "Baño: Encontrará papel higiénico, jabón de manos, alfombrilla y secador.\nToallas: por cada huésped 1 toalla grande + 1 mediana.\nCama: lista a la llegada.",
+    "linens_towels": "Sábanas y toallas: La cama está preparada a la llegada y se incluyen sábanas.\nToallas: por cada huésped 1 toalla grande + 1 mediana.",
     "gas": "Uso del gas: Válvula de gas: horizontal = abierta, vertical = cerrada. Elija el fuego, encienda una cerilla/mechero, luego gire y presione la perilla negra hasta que la llama sea estable. Cuando sea estable, suelte.",
     "building": "Edificio: Interfono C8.\nAscensor: reservado para propietarios — por favor no usar.\nPuerta de entrada: 08:00–13:00 y 15:30–18:00.\nConserje: Paolo.",
     "eat": "Dónde comer: Roscioli; Emma Pizzeria; Ditirambo; Osteria da Fortunata; Pianostrada; Forno Campo de’ Fiori; Gelateria del Teatro.",
@@ -182,5 +190,3 @@
     "receipt_city_tax": "Recibo de tasa turística: También podemos emitir un recibo separado con número de personas, noches e importe total. Si lo necesitas, avísame después del pago (online o en efectivo) y preparo el resumen."
   }
 }
-
-  
