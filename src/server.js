@@ -1153,6 +1153,35 @@ bathroom_troubleshooting: [
       "notfall","notruf","krankenhaus","rettungswagen","ambulanz","hilfe","ich brauche hilfe"
     ],
 
+// EARLY CHECK-IN
+early_checkin_policy: [
+  // EN
+  "early check in","early check-in","early arrival","check in early",
+  "is an early check in possible","is early check in possible","can i check in early","can we check in early",
+  // IT
+  "early check in","early check-in","arrivo anticipato","check in anticipato","ingresso anticipato",
+  // FR
+  "arrivee anticipee","check in anticipe","arrivée anticipée",
+  // DE
+  "fruher check in","frueher check in","früher check-in","früher check in",
+  // ES
+  "check in temprano","entrada temprana","llegada temprana"
+],
+
+// EARLY CHECK-OUT (se non hai ancora una chiave nel JSON, la lasciamo pronta)
+early_check_out: [
+  // EN
+  "early check out","early check-out","early departure","check out early",
+  // IT
+  "early check out","check out anticipato","uscita anticipata","partenza anticipata",
+  // FR
+  "depart anticipe","départ anticipé","check out anticipe",
+  // DE
+  "fruher check out","frueher check out","früher check-out","früher check out",
+  // ES
+  "check out temprano","salida temprana","salida anticipada"
+],
+
     // CHECK-IN
     check_in: [
       "check in","check-in","checkin","arrival","arrive","check in time","self check in","early check in",
