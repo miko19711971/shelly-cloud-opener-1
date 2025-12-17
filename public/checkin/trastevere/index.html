@@ -1,4 +1,4 @@
-<!doctype html>
+ <!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -50,8 +50,9 @@
         <h2 id="s1_t">Open the Building Door</h2>
         <p id="s1_p">Press the button below when you are at the entrance.</p>
 
+        <!-- ✅ LEONINA MECHANISM: usa token t + POST /checkin/trastevere/open/building -->
         <a class="cta" href="#"
-           onclick="openWith('statusBuilding','/token/viale-trastevere-building?mins=1440&max=1');return false;"
+           onclick="openWith('statusBuilding','building');return false;"
            id="btn_building">➜ Open Building Door</a>
         <div class="status" id="statusBuilding"></div>
 
@@ -87,8 +88,7 @@
       </div>
     </div>
   </section>
-
-  <!-- 3. Apartment -->
+    <!-- 3. Apartment -->
   <section class="card">
     <div class="step">
       <div class="num">3</div>
@@ -96,8 +96,9 @@
         <h2 id="s3_t">Open your Apartment Door</h2>
         <p id="s3_p">Press only once when you are in front of the correct door.</p>
 
+        <!-- ✅ LEONINA MECHANISM: usa token t + POST /checkin/trastevere/open/apartment (fallback /door) -->
         <a class="cta" href="#"
-           onclick="openWith('statusApartment','/token/viale-trastevere-door?mins=1440&max=1');return false;"
+           onclick="openWith('statusApartment','apartment');return false;"
            id="btn_apartment">➜ Open Apartment Door</a>
         <div class="status" id="statusApartment"></div>
 
@@ -128,32 +129,61 @@
 function tMsgs(){
   const L=(new URLSearchParams(location.search).get('lang')||'en').toLowerCase();
   const M={
-    en:{gen:'Generating one-time key…',ok:'Key OK. Opening…',err:'Network error. Try again.',bad:'Link generation error. Try again.'},
-    it:{gen:'Generazione chiave monouso…',ok:'Chiave OK. Apertura…',err:'Errore di rete. Riprova.',bad:'Errore generazione link. Riprova.'},
-    fr:{gen:'Génération de clé à usage unique…',ok:'Clé OK. Ouverture…',err:'Erreur réseau. Réessayez.',bad:'Erreur de génération du lien. Réessayez.'},
-    de:{gen:'Einmal-Schlüssel wird erzeugt…',ok:'Schlüssel OK. Öffnen…',err:'Netzwerkfehler. Bitte erneut versuchen.',bad:'Fehler bei der Linkerstellung. Erneut versuchen.'},
-    es:{gen:'Generando clave de un solo uso…',ok:'Clave OK. Abriendo…',err:'Error de red. Inténtalo de nuevo.',bad:'Error al generar el enlace. Inténtalo de nuevo.'}
+    en:{open:'Opening…',done:'Done.',net:'Network error. Try again.',bad:'Error',missing:'Invalid link (missing token).'},
+    it:{open:'Apertura…',done:'Fatto.',net:'Errore di rete. Riprova.',bad:'Errore',missing:'Link non valido (token mancante).'},
+    fr:{open:'Ouverture…',done:'Fait.',net:'Erreur réseau. Réessayez.',bad:'Erreur',missing:'Lien invalide (token manquant).'},
+    de:{open:'Öffnen…',done:'Fertig.',net:'Netzwerkfehler. Bitte erneut versuchen.',bad:'Fehler',missing:'Ungültiger Link (Token fehlt).'},
+    es:{open:'Abriendo…',done:'Hecho.',net:'Error de red. Inténtalo de nuevo.',bad:'Error',missing:'Enlace no válido (falta token).'}
   };
   return M[L]||M.en;
 }
 
-async function openWith(statusId, path){
+async function openWith(statusId, which){
   const s=document.getElementById(statusId);
   const M=tMsgs();
   try{
-    s.className='status'; s.textContent=M.gen;
-    const r=await fetch(path,{cache:'no-store'});
-    if(!r.ok){ s.classList.add('err'); s.textContent=M.bad+' ('+r.status+')'; return; }
-    const j=await r.json();
-    if(j && j.url){
-      s.classList.add('ok'); s.textContent=M.ok;
-      location.href=j.url; // reindirizza alla landing /k3/:target/:token
-    }else{
-      const msg=(j && (j.error||j.message)) ? String(j.error||j.message) : M.bad;
-      s.classList.add('err'); s.textContent=msg;
+    const params = new URLSearchParams(window.location.search);
+    const t = params.get("t") || "";
+
+    s.className='status';
+    if(!t){
+      s.classList.add('err');
+      s.textContent = M.missing;
+      return;
     }
-  }catch(e){
-    s.classList.add('err'); s.textContent=M.err;
+
+    s.textContent = M.open;
+
+    const tries = (which === "building")
+      ? ["building"]
+      : ["apartment","door"]; // stesso fallback di Leonina
+
+    for (const kind of tries) {
+      const r = await fetch(`/checkin/trastevere/open/${kind}?t=${encodeURIComponent(t)}`, {
+        method: "POST",
+        cache: "no-store"
+      });
+
+      if (r.status === 404) continue;
+
+      const j = await r.json().catch(()=> ({}));
+
+      if (r.ok && j.ok) {
+        s.classList.add('ok');
+        s.textContent = M.done;
+      } else {
+        const msg = (j.error || j.message) ? String(j.error || j.message) : `${M.bad} (${r.status})`;
+        s.classList.add('err');
+        s.textContent = msg;
+      }
+      return;
+    }
+
+    s.classList.add('err');
+    s.textContent = `${M.bad} (endpoint not found)`;
+  } catch(e){
+    s.classList.add('err');
+    s.textContent = M.net;
   }
 }
 
@@ -164,8 +194,7 @@ function imgFallback(img, list){
   img.src=next;
 }
 </script>
-
-<script>
+  <script>
 const T = {
   en:{ title:'Check-in Guide — Viale Trastevere 108',
        addr:'Address: Viale Trastevere 108, Rome • Use the buttons below to open the doors.',
