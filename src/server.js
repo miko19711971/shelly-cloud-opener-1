@@ -1564,9 +1564,6 @@ console.log("🏠 listingId:", listingId, "→ apartment:", apartment);
     }
 
 
-    // Usa la mappa; se qualcosa non torna, default "arenula"
-    const apartment = LISTING_TO_APARTMENT[listingId] || "arenula";
-
     // 3) Lingua (fallback 'en', ma corretta dal testo)
     const language = detectLangFromMessage(message);
 
