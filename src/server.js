@@ -1562,7 +1562,26 @@ console.log("🏠 listingId:", listingId, "→ apartment:", apartment);
         message: "Nel JSON non trovo il testo del messaggio (es. campo 'body')."
       });
     }
+// ✅ PRIORITÀ HARD: EARLY CHECK-IN (prima di chiamare guest-assistant)
+const norm = String(message || "").toLowerCase();
+const isEarlyCheckin =
+  /early\s*(check\s*in|checkin)/i.test(norm) ||
+  /(arrive|arrival).*(early|before)/i.test(norm);
 
+if (isEarlyCheckin) {
+  // risposta “fissa” (metti qui il testo che vuoi davvero)
+  const earlyAnswer =
+    "Early check-in is possible only if the apartment is ready. Standard check-in is from 15:00. We’ll confirm in the morning.";
+
+  return res.json({
+    ok: true,
+    apartment,
+    language,
+    question: message,
+    answer: earlyAnswer,
+    intent: "early_checkin"
+  });
+}
 
     // 3) Lingua (fallback 'en', ma corretta dal testo)
     const language = detectLangFromMessage(message);
