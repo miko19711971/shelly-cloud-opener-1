@@ -372,7 +372,29 @@
       "city_tax_info": "Tasa turística: En Roma existe una tasa municipal obligatoria para huéspedes no residentes. Para este apartamento: 5 € por persona y noche, hasta un máximo de 10 noches. La cobramos en nombre del Ayuntamiento de Roma. Posibles exenciones dependen de las normas municipales: si tiene dudas, escríbame y lo comprobamos.",
       "city_tax_payment_issue": "Problemas con el pago de la tasa: Si el importe del enlace no le parece correcto o el enlace no funciona, no se preocupe: el check-in y las llaves no se bloquean. Envíeme número de adultos, noches reales y cuánto ha pagado (si pagó) y le confirmaré el importe correcto. Cualquier diferencia se ajusta con un nuevo enlace o en efectivo.",
       "receipt_rental": "Recibo de estancia: Podemos emitir un recibo por la estancia (alquiler turístico) con su nombre, fechas e importe total. No es una factura con IVA, sino un recibo sencillo. Envíeme los datos a incluir (nombre/apellidos o empresa, dirección, posible NIF) y se lo enviaré en formato digital.",
-      "receipt_city_tax": "Recibo de tasa turística: También podemos emitir un recibo separado de la tasa, indicando número de personas, noches e importe total. Si lo necesita, avíseme después del pago (online o efectivo) y prepararé un resumen."
+      "receipt_city_tax": "Recibo de tasa turística: También podemos emitir un recibo separado de la tasa, indicando número de personas, noches e importe total. Si lo necesita, avíseme después del pago (online o efectivo) y prepararé un resumen.",
+    },
+  "en": {
+    "early_checkin_policy": "Early check-in: Standard check-in is from 15:00. If you want to arrive earlier, tell me your arrival time: if the apartment is ready we can try to accommodate; otherwise luggage drop-off may be possible.",
+    ...
+  },
+  "it": {
+    "early_checkin_policy": "Early check-in: il check-in standard è dalle 15:00. Se vuoi arrivare prima, dimmi l’orario: se l’appartamento è pronto proviamo ad anticipare; altrimenti possiamo valutare deposito bagagli.",
+    ...
+  },
+  "fr": {
+    "early_checkin_policy": "Arrivée anticipée: le check-in standard est à partir de 15h00. Dites-moi votre heure d’arrivée: si l’appartement est prêt, on essaie; sinon, dépôt des bagages possible selon disponibilités.",
+    ...
+  },
+  "de": {
+    "early_checkin_policy": "Früher Check-in: Standard-Check-in ab 15:00. Nennen Sie bitte Ihre Ankunftszeit: wenn die Wohnung bereit ist, versuchen wir es; sonst ggf. Gepäckabgabe je nach Verfügbarkeit.",
+    ...
+  },
+  "es": {
+    "early_checkin_policy": "Check-in temprano: el check-in estándar es desde las 15:00. Dime tu hora de llegada: si el apartamento está listo, lo intentamos; si no, puede ser posible dejar el equipaje según disponibilidad.",
+    ...
+  }
+}
     }
   }
 }
