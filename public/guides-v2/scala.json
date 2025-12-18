@@ -7,8 +7,8 @@
       "trash": ["spazzatura", "immondizia", "rifiuti", "pattumiera", "cestino", "cestini", "sacchetti", "differenziata", "raccolta differenziata", "plastica", "carta", "vetro", "organico", "indifferenziata", "cassonetti"],
       "electric_panel": ["quadro elettrico", "contatore", "manca la corrente", "salta la luce", "è saltata la luce", "interruttore", "interruttore generale", "salvavita", "differenziale", "blackout", "corrente", "elettricità"],
       "wifi": ["wifi", "wi-fi", "wlan", "internet", "rete", "password", "pass", "router", "modem", "connessione", "non si connette", "lento", "segnale"],
-      "check_in": ["check in", "check-in", "arrivo", "arriviamo", "ingresso", "entrare", "entrata", "citofono", "interfono", "portone", "porta", "chiavi", "codice", "self check in", "self-check-in"],
       "early_checkin": ["early check-in", "early check in", "check-in anticipato", "check in anticipato", "arrivo prima", "arrivare prima", "prima delle 15", "prima delle 3", "arrivo anticipato"],
+      "check_in": ["check in", "check-in", "arrivo", "arriviamo", "ingresso", "entrare", "entrata", "citofono", "interfono", "portone", "porta", "chiavi", "codice", "self check in", "self-check-in"],
       "check_out": ["check out", "check-out", "partenza", "uscire", "lasciare", "chiavi", "orario check out", "checkout time", "uscita"],
       "linens_towels": ["biancheria", "lenzuola", "l lenzuola", "cambio lenzuola", "cambio biancheria", "asciugamani", "towels", "cambio asciugamani", "asciugamani extra", "teli", "telo"],
       "water": ["acqua", "acqua calda", "acqua fredda", "doccia", "pressione", "scaldabagno", "boiler", "rubinetto", "non arriva acqua", "potabile", "warm water"],
@@ -44,8 +44,8 @@
       "trash": ["trash", "garbage", "rubbish", "bin", "bins", "recycling", "separate waste", "plastic", "paper", "glass", "organic"],
       "electric_panel": ["electric panel", "fuse box", "breaker", "trip switch", "main switch", "power cut", "no electricity", "blackout", "electricity"],
       "wifi": ["wifi", "wi-fi", "wlan", "internet", "network", "password", "router", "modem", "connection", "slow wifi", "no internet"],
-      "check_in": ["check in", "check-in", "arrival", "entrance", "intercom", "door", "building door", "keys", "code", "self check in", "self-check-in"],
       "early_checkin": ["early check-in", "early check in", "early arrival", "arrive early", "check in earlier", "before 3pm", "before 15:00"],
+      "check_in": ["check in", "check-in", "arrival", "entrance", "intercom", "door", "building door", "keys", "code", "self check in", "self-check-in"],
       "check_out": ["check out", "check-out", "departure", "leave", "keys", "checkout time", "late departure"],
       "linens_towels": ["linens", "bed linen", "bedsheets", "sheets", "towels", "extra towels", "towel change", "linen change", "change linens", "clean towels"],
       "water": ["water", "hot water", "cold water", "shower", "pressure", "boiler", "tap", "no water", "drinkable"],
@@ -81,8 +81,8 @@
       "trash": ["ordures", "déchets", "poubelle", "sacs poubelle", "tri", "recyclage", "plastique", "papier", "verre", "organique"],
       "electric_panel": ["tableau électrique", "disjoncteur", "compteur", "coupure de courant", "interrupteur général", "plus d'électricité", "blackout"],
       "wifi": ["wifi", "wi-fi", "internet", "réseau", "mot de passe", "routeur", "connexion", "wifi lent", "pas d'internet"],
-      "check_in": ["check in", "arrivée", "entrée", "interphone", "porte", "porte d'immeuble", "clés", "code", "self check in"],
       "early_checkin": ["arrivée tôt", "check-in anticipé", "arriver plus tôt", "avant 15h", "avant 15:00"],
+      "check_in": ["check in", "arrivée", "entrée", "interphone", "porte", "porte d'immeuble", "clés", "code", "self check in"],
       "check_out": ["check out", "départ", "sortie", "clés", "heure de départ", "départ tardif"],
       "linens_towels": ["linge", "linge de lit", "draps", "drap", "serviettes", "serviettes supplémentaires", "changer les serviettes", "changement de linge", "linge propre"],
       "water": ["eau", "eau chaude", "douche", "pression", "robinet", "ballon", "pas d'eau", "potable"],
@@ -118,8 +118,8 @@
       "trash": ["müll", "abfall", "mülleimer", "müllsack", "recycling", "trennung", "plastik", "papier", "glas", "bio"],
       "electric_panel": ["sicherungskasten", "sicherung", "stromausfall", "hauptschalter", "zähler", "kein strom", "blackout"],
       "wifi": ["wlan", "wifi", "internet", "netz", "passwort", "router", "verbindung", "wlan langsam", "kein internet"],
-      "check_in": ["check in", "ankunft", "eingang", "sprechanlage", "tür", "haustür", "schlüssel", "code", "self check in"],
       "early_checkin": ["früher check-in", "early check-in", "frühe anreise", "vor 15 uhr", "vor 15:00", "früher einchecken"],
+      "check_in": ["check in", "ankunft", "eingang", "sprechanlage", "tür", "haustür", "schlüssel", "code", "self check in"],
       "check_out": ["check out", "abreise", "auschecken", "schlüssel", "check-out zeit", "späte abreise"],
       "linens_towels": ["bettwäsche", "wäsche", "laken", "bettlaken", "handtücher", "zusätzliche handtücher", "handtuchwechsel", "wäschewechsel", "frische handtücher"],
       "water": ["wasser", "warmwasser", "dusche", "druck", "hahn", "boiler", "kein wasser", "trinkbar"],
@@ -155,8 +155,8 @@
       "trash": ["basura", "residuos", "papelera", "cubos", "bolsas de basura", "reciclaje", "plástico", "papel", "vidrio", "orgánico"],
       "electric_panel": ["cuadro eléctrico", "interruptor", "general", "contador", "corte de luz", "sin electricidad", "diferencial", "salta la luz"],
       "wifi": ["wifi", "wi-fi", "internet", "red", "contraseña", "router", "conexión", "wifi lento", "sin internet"],
-      "check_in": ["check in", "llegada", "entrada", "portero", "interfono", "puerta", "puerta del edificio", "llaves", "código", "self check in"],
       "early_checkin": ["check-in temprano", "early check-in", "llegar antes", "antes de las 15", "antes de las 3", "entrada antes", "llegada temprana"],
+      "check_in": ["check in", "llegada", "entrada", "portero", "interfono", "puerta", "puerta del edificio", "llaves", "código", "self check in"],
       "check_out": ["check out", "salida", "marcha", "llaves", "hora de salida", "salida tardía"],
       "linens_towels": ["sábanas", "ropa de cama", "cambio de sábanas", "toallas", "toallas extra", "cambio de toallas", "toallas limpias", "ropa blanca"],
       "water": ["agua", "agua caliente", "ducha", "presión", "grifo", "calentador", "sin agua", "potable"],
@@ -226,7 +226,7 @@
       "receipt_rental": "Ricevuta soggiorno: Possiamo rilasciare una ricevuta per il soggiorno (locazione turistica) con nome, date e importo totale. Non è una fattura con partita IVA, ma una ricevuta semplice. Se ti serve, mandami i dati da inserire (nome/cognome o ragione sociale, indirizzo, eventuale codice fiscale) e te la invio in formato digitale.",
       "receipt_city_tax": "Ricevuta tassa di soggiorno: Possiamo rilasciare anche una ricevuta separata per la tassa, con numero persone, notti e importo totale versato. Se ti serve, avvisami dopo il pagamento (online o contanti) e preparo un riepilogo dedicato."
     },
-       "en": {
+    "en": {
       "heating": "Heating: To turn it on, go to the bedroom. Facing the window (in front of the bed), on the left you will see a small thermostat: switch the small top button to ON and set the dial to 26°C. The radiators will start warming up after a few minutes.",
       "trash": "Trash: Before leaving the apartment, please put rubbish in the appropriate bins. We do recycling (WeDoRecycling): take the bags to the end of Via della Scala (corner with Via Garibaldi), every day between 8:00 and 9:30.",
       "electric_panel": "Electric panel: If the power goes off, at the apartment exit (facing the door) the panel is on the right: make sure all switches are up. If power does not return, there is a small wooden door above the panel: press to open it and lift the main switch you find behind it.",
@@ -263,7 +263,7 @@
       "receipt_rental": "Stay receipt: We can issue a receipt for the apartment stay (tourist rental) with your name, dates and total amount paid. It is not a VAT invoice, but a simple receipt. If you need it, send me the details to include (name/surname or company name, address, tax code if applicable) and I will send it digitally.",
       "receipt_city_tax": "City tax receipt: We can also issue a separate receipt for the city tax, showing number of guests, nights and total amount paid. If you need it, let me know after payment (online or cash) and I will prepare a dedicated summary."
     },
-    "fr": {
+       "fr": {
       "heating": "Chauffage : Pour l’allumer, allez dans la chambre. Face à la fenêtre (devant le lit), sur la gauche se trouve un petit thermostat : mettez le petit interrupteur du haut sur ON et réglez la molette sur 26 °C. Après quelques minutes, les radiateurs commenceront à chauffer.",
       "trash": "Déchets : Avant de quitter l’appartement, jetez les ordures dans les poubelles prévues. Nous faisons le tri (WeDoRecycling) : apportez les sacs au bout de Via della Scala (angle Via Garibaldi), tous les jours entre 8h00 et 9h30.",
       "electric_panel": "Tableau électrique : En cas de coupure, en sortant de l’appartement (face à la porte) le tableau est à droite : vérifiez que tous les disjoncteurs sont en position haute. Si le courant ne revient pas, au-dessus il y a un petit panneau en bois : appuyez pour l’ouvrir et remontez aussi l’interrupteur général derrière.",
@@ -300,7 +300,7 @@
       "receipt_rental": "Reçu de séjour : Nous pouvons émettre un reçu pour le séjour (location touristique) avec votre nom, les dates et le montant total. Ce n’est pas une facture TVA, mais un reçu simple. Envoyez-moi les informations à indiquer (nom/prénom ou société, adresse, éventuel code fiscal) et je l’enverrai au format numérique.",
       "receipt_city_tax": "Reçu de taxe de séjour : Nous pouvons aussi émettre un reçu séparé pour la taxe, avec nombre de personnes, nuits et total versé. Si vous en avez besoin, prévenez-moi après le paiement (en ligne ou espèces) et je prépare un récapitulatif."
     },
-       "de": {
+    "de": {
       "heating": "Heizung: Zum Einschalten gehen Sie ins Schlafzimmer. Mit Blick zum Fenster (vor dem Bett) finden Sie links einen kleinen Thermostat: Den kleinen oberen Schalter auf ON stellen und den Drehregler auf 26 °C drehen. Nach ein paar Minuten werden die Heizkörper warm.",
       "trash": "Müll: Bitte werfen Sie Abfälle in die vorgesehenen Behälter, bevor Sie die Wohnung verlassen. Wir trennen den Müll (WeDoRecycling): Bringen Sie die Beutel ans Ende der Via della Scala (Ecke Via Garibaldi), täglich zwischen 8:00 und 9:30 Uhr.",
       "electric_panel": "Sicherungskasten: Bei Stromausfall befindet sich beim Verlassen der Wohnung (zur Tür gewandt) rechts der Sicherungskasten: Prüfen Sie, ob alle Schalter nach oben stehen. Wenn der Strom nicht zurückkommt, gibt es über dem Kasten eine kleine Holztür: Drücken Sie sie auf und legen Sie auch den Hauptschalter dahinter nach oben.",
@@ -376,4 +376,4 @@
     }
   }
 }
-   
+
