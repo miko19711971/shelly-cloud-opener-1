@@ -1184,14 +1184,14 @@ early_check_out: [
 
     // CHECK-IN
     check_in: [
-      "check in","check-in","checkin","arrival","arrive","check in time","self check in","early check in",
+      "check in","check-in","checkin","arrival","arrive","check in time","self check in",
       "keys","key collection","access code","door code",
       "check in","arrivo","orario di arrivo","accesso","ingresso","codice portone","codice porta","ritiro chiavi",
       "come faccio il check in","self check in",
       "check in","llegada","hora de llegada","entrada","codigo puerta","codigo de acceso","self check in",
       "check in","arrivee","heure d arrivee","entree","code porte","code d acces","self check in",
-      "check in","einchecken","ankunft","ankunftszeit","zugang","turcode","tuer code","schloss code",
-      "early check-in"
+      "check in","einchecken","ankunft","ankunftszeit","zugang","turcode","tuer code","schloss code"
+      
  
     ],
 
@@ -1206,8 +1206,8 @@ early_check_out: [
       "check out","depart","heure de depart","sortie","late check out",
       "a quelle heure est le check out","ou laisser les cles","laisser les cles",
       "check out","auschecken","abreise","abfahrtszeit","wohnung verlassen","spater check out",
-      "um wie viel uhr ist der check out","wann ist der check out","wo soll ich die schlussel lassen","schlussel abgeben",
-      "early check-out"
+      "um wie viel uhr ist der check out","wann ist der check out","wo soll ich die schlussel lassen","schlussel abgeben"
+      
  
     ],
 
