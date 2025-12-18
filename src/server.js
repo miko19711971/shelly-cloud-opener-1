@@ -7,7 +7,14 @@ import { fileURLToPath } from "url";
 import fs from "fs/promises";
 // Guest Assistant AI → JSON dinamico (guides-v2)
 import { reply as guideAIreply } from "./guide-ai.js";
-
+// 🔗 Mappa ListingID → Guida JSON
+const GUIDE_BY_LISTING_ID = {
+  194162: "trastevere",     // NiceFlatInRome Trastevere, Trilussa (→ Via della Scala 17)
+  194163: "leonina",        // Top floor studio apt with terrace (→ Via Leonina 71)
+  194164: "scala",          // Brand new flat in Trastevere (→ Viale Trastevere 108)
+  194165: "portico",        // Portico d’Ottavia the heart of Rome
+  194166: "arenula"         // Near Pantheon and Piazza Argentina (→ Via Arenula 16)
+};
 function safeEqual(a, b) {
   const aa = Buffer.from(String(a || ""));
   const bb = Buffer.from(String(b || ""));
