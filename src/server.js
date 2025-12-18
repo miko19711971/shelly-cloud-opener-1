@@ -1536,7 +1536,8 @@ app.post("/api/hostaway-ai-bridge", async (req, res) => {
     console.log(JSON.stringify(req.body, null, 2));
 
     const payload = req.body || {};
-  // 2) Listing → nome appartamento interno (Hostaway usa spesso listingMapId a livello top)
+
+// 2) Listing → nome appartamento interno (Hostaway: listingMapId quasi sempre top-level)
 const listingId = String(
   payload.listingMapId ||
   payload.listingId ||
