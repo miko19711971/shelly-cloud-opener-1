@@ -1536,7 +1536,10 @@ app.post("/api/hostaway-ai-bridge", async (req, res) => {
     console.log(JSON.stringify(req.body, null, 2));
 
     const payload = req.body || {};
+const listingId = Number(payload?.reservation?.listingId) || null;
+const slug = listingId ? LISTING_TO_APARTMENT[String(listingId)] : null;
 
+console.log("🏠 listingId:", listingId, "→ guida:", slug);
     // 1) Testo del messaggio dell'ospite
     const message =
       payload.body ||
