@@ -1562,8 +1562,6 @@ console.log("🏠 listingId:", listingId, "→ apartment:", apartment);
       });
     }
 
-    // 2) Listing → nome appartamento interno
-    const listingId = String(payload.listingMapId || payload.listingId || "");
 
     // Usa la mappa; se qualcosa non torna, default "arenula"
     const apartment = LISTING_TO_APARTMENT[listingId] || "arenula";
