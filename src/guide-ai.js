@@ -49,12 +49,7 @@ const STOPWORDS = {
 // =====================
 // NORMALIZZAZIONE / TOKEN
 // =====================
-function normalizeText(str) {
-  return String(str || "")
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/\p{Diacritic}/gu, "");
-}
+ 
 
 function tokenize(str) {
   const s = normalizeText(str);
