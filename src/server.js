@@ -1885,35 +1885,47 @@ const langCode = known.has(raw2) ? raw2 : detectLangFromMessage(finalMessage);
     const name = guestName || "Guest";
     const email = guestEmail || "";
 
-    // 👉 Da ora: nessuna risposta se la guida non trova un match
-    let aiReply = null;
-    let aiMatched = false;
+     // 👉 Da ora: nessuna risposta se la guida non trova un match
+let aiReply = null;
+let aiMatched = false;
 
-    try {
-      const gaResp = await axios.post(
-        `${req.protocol}://${req.get("host")}/api/guest-assistant`,
-        {
-          apartment: apartmentKey,
-          lang: langCode,
-          question: finalMessage,
-          guestName: name,          // nome reale
-          source: "hostaway"        // solo per log
-        },
-        { timeout: 8000 }
-      );
+// ✅ PRIORITÀ HARD: EARLY CHECK-IN (prima di chiamare /api/guest-assistant)
+const normMsg = String(finalMessage || "").toLowerCase();
+const isEarlyCheckin =
+  /early\s*(check\s*in|checkin)/i.test(normMsg) ||
+  /(arrive|arrival).*(early|before)/i.test(normMsg) ||
+  /(check\s*in|checkin).*(early|before)/i.test(normMsg);
 
-      const data = gaResp.data || {};
-
-       if (data.ok && data.answer && !data.noMatch) {
-  aiReply = data.answer;
+if (isEarlyCheckin) {
+  aiReply =
+    "Early check-in is possible only if the apartment is ready. Standard check-in is from 15:00. We’ll confirm in the morning.";
   aiMatched = true;
-      } else { 
-         console.log("⚠️ guest-assistant: noMatch o risposta mancante:", data);
-      }
-    } catch (err) {
-      console.error("Errore Virtual Guide:", err.message);
-      // nessun fallback: risponderai tu a mano dalla dashboard
+} else {
+  try {
+    const gaResp = await axios.post(
+      `${req.protocol}://${req.get("host")}/api/guest-assistant`,
+      {
+        apartment: apartmentKey,
+        lang: langCode,
+        question: finalMessage,
+        guestName: name,
+        source: "hostaway"
+      },
+      { timeout: 8000 }
+    );
+
+    const data = gaResp.data || {};
+
+    if (data.ok && data.answer && !data.noMatch) {
+      aiReply = data.answer;
+      aiMatched = true;
+    } else {
+      console.log("⚠️ guest-assistant: noMatch o risposta mancante:", data);
     }
+  } catch (err) {
+    console.error("Errore Virtual Guide:", err.message);
+  }
+}
 
     // 2) Invio risposta nella chat Hostaway SOLO se abbiamo una risposta AI valida
     if (aiReply && HOSTAWAY_TOKEN && conversationId) {
