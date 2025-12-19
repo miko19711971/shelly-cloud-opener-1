@@ -1529,7 +1529,7 @@ const LISTING_TO_APARTMENT = {
   "194162": "scala"        // Via della Scala 17
 };
 
-app.post("/api/hostaway-ai-bridge", async (req, res) => {
+ app.post("/api/hostaway-ai-bridge", async (req, res) => {
   try {
     // LOG per vedere sempre cosa arriva da HostAway
     console.log("🔔 Hostaway webhook body:");
@@ -1537,17 +1537,17 @@ app.post("/api/hostaway-ai-bridge", async (req, res) => {
 
     const payload = req.body || {};
 
-// 2) Listing → nome appartamento interno (Hostaway: listingMapId quasi sempre top-level)
-const listingId = String(
-  payload.listingMapId ||
-  payload.listingId ||
-  payload?.reservation?.listingId ||
-  ""
-);
+    // 2) Listing → nome appartamento interno (Hostaway: listingMapId quasi sempre top-level)
+    const listingId = String(
+      payload.listingMapId ||
+      payload.listingId ||
+      payload?.reservation?.listingId ||
+      ""
+    );
 
-const apartment = LISTING_TO_APARTMENT[listingId] || "arenula";
+    const apartment = LISTING_TO_APARTMENT[listingId] || "arenula";
+    console.log("🏠 listingId:", listingId, "→ apartment:", apartment);
 
-console.log("🏠 listingId:", listingId, "→ apartment:", apartment);
     // 1) Testo del messaggio dell'ospite
     const message =
       payload.body ||
@@ -1562,29 +1562,30 @@ console.log("🏠 listingId:", listingId, "→ apartment:", apartment);
         message: "Nel JSON non trovo il testo del messaggio (es. campo 'body')."
       });
     }
-// ✅ PRIORITÀ HARD: EARLY CHECK-IN (prima di chiamare guest-assistant)
-const norm = String(message || "").toLowerCase();
-const isEarlyCheckin =
-  /early\s*(check\s*in|checkin)/i.test(norm) ||
-  /(arrive|arrival).*(early|before)/i.test(norm);
 
-if (isEarlyCheckin) {
-  // risposta “fissa” (metti qui il testo che vuoi davvero)
-  const earlyAnswer =
-    "Early check-in is possible only if the apartment is ready. Standard check-in is from 15:00. We’ll confirm in the morning.";
-
-  return res.json({
-    ok: true,
-    apartment,
-    language,
-    question: message,
-    answer: earlyAnswer,
-    intent: "early_checkin"
-  });
-}
-
-    // 3) Lingua (fallback 'en', ma corretta dal testo)
+    // 3) Lingua (fallback 'en', ma corretta dal testo)  ✅ SPOSTATA QUI (prima dell'early check-in)
     const language = detectLangFromMessage(message);
+
+    // ✅ PRIORITÀ HARD: EARLY CHECK-IN (prima di chiamare guest-assistant)
+    const norm = String(message || "").toLowerCase();
+    const isEarlyCheckin =
+      /early\s*(check\s*in|checkin)/i.test(norm) ||
+      /(arrive|arrival).*(early|before)/i.test(norm);
+
+    if (isEarlyCheckin) {
+      // risposta “fissa” (metti qui il testo che vuoi davvero)
+      const earlyAnswer =
+        "Early check-in is possible only if the apartment is ready. Standard check-in is from 15:00. We’ll confirm in the morning.";
+
+      return res.json({
+        ok: true,
+        apartment,
+        language,
+        question: message,
+        answer: earlyAnswer,
+        intent: "early_checkin"
+      });
+    }
 
     // 4) Nome guest se presente (estrazione robusta)
     const guestName = extractGuestName(payload);
@@ -1604,26 +1605,26 @@ if (isEarlyCheckin) {
 
     const data = aiResponse.data || {};
 
-     // ✅ gestione corretta: se noMatch o answer mancante → NON è un errore
-if (!data.ok) {
-  console.error("❌ guest-assistant error:", data);
-  return res.status(502).json({
-    ok: false,
-    error: "guest_assistant_failed",
-    details: data
-  });
-}
+    // ✅ gestione corretta: se noMatch o answer mancante → NON è un errore
+    if (!data.ok) {
+      console.error("❌ guest-assistant error:", data);
+      return res.status(502).json({
+        ok: false,
+        error: "guest_assistant_failed",
+        details: data
+      });
+    }
 
-if (data.noMatch || !data.answer) {
-  return res.json({
-    ok: true,
-    apartment,
-    language,
-    question: message,
-    answer: null,
-    noMatch: true
-  });
-}
+    if (data.noMatch || !data.answer) {
+      return res.json({
+        ok: true,
+        apartment,
+        language,
+        question: message,
+        answer: null,
+        noMatch: true
+      });
+    }
 
     console.log("✅ AI answer for Hostaway:", data.answer);
 
