@@ -1888,7 +1888,47 @@ const langCode = known.has(raw2) ? raw2 : detectLangFromMessage(finalMessage);
      // 👉 Da ora: nessuna risposta se la guida non trova un match
 let aiReply = null;
 let aiMatched = false;
+// ✅ PRIORITÀ HARD: EARLY CHECK-OUT (MULTILINGUA)
+const isEarlyCheckout =
+  // EN
+  /early\s*(check\s*out|checkout)/i.test(norm) ||
+  /check\s*out\s*early/i.test(norm) ||
+  /early\s*departure/i.test(norm) ||
 
+  // IT
+  /(check\s*out|check-out|uscita|partenza)\s*(anticipat|in\s*anticipo)/i.test(norm) ||
+  /(si\s*puo|posso|possibile).*(check\s*out|uscire|partire).*(prima|anticip)/i.test(norm) ||
+
+  // FR
+  /(depart|départ|check\s*out|check-out)\s*(anticip)/i.test(norm) ||
+  /(est\s*ce\s*possible|peut\s*on).*(partir|check\s*out).*(plus\s*tot|avant)/i.test(norm) ||
+
+  // DE
+  /(fruh|frueh|fruher|früher).*(check\s*out|auschecken|abreisen)/i.test(norm) ||
+  /(kann|ist\s*es\s*moglich).*(fruh|frueh|früher).*(check\s*out|auschecken|abreisen)/i.test(norm) ||
+
+  // ES
+  /(check\s*out|salida|salir|partida)\s*(tempran|anticipad)/i.test(norm) ||
+  /(es\s*posible|podemos|puedo).*(salir|check\s*out|irme).*(antes|temprano)/i.test(norm);
+
+if (isEarlyCheckout) {
+  const earlyOutAnswers = {
+    en: "Early check-out is possible if it fits our housekeeping schedule. Standard check-out is by 11:00. Tell us your preferred time and we’ll confirm.",
+    it: "Il check-out anticipato è possibile se compatibile con il programma di pulizie. Il check-out standard è entro le 11:00. Dimmi l’orario che preferisci e ti confermiamo.",
+    fr: "Un départ anticipé est possible selon notre planning de ménage. Le check-out standard est avant 11h00. Dites-nous l’heure souhaitée et nous confirmerons.",
+    de: "Ein früher Check-out ist möglich, wenn es in unseren Reinigungsplan passt. Der Standard-Check-out ist bis 11:00. Nennen Sie bitte Ihre Wunschzeit, dann bestätigen wir.",
+    es: "El check-out temprano es posible si encaja con nuestro horario de limpieza. El check-out estándar es hasta las 11:00. Dinos la hora que prefieres y lo confirmaremos."
+  };
+
+  return res.json({
+    ok: true,
+    apartment,
+    language,
+    question: message,
+    answer: earlyOutAnswers[language] || earlyOutAnswers.en,
+    intent: "early_check_out"
+  });
+}
  // ✅ PRIORITÀ HARD: EARLY CHECK-IN / EARLY CHECK-OUT (prima di chiamare /api/guest-assistant)
 const normMsg = String(finalMessage || "").toLowerCase();
 
