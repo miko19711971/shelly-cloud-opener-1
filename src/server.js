@@ -1778,7 +1778,7 @@ app.post("/api/vbro-mail", requireAdmin, async (req, resInner) => {
   }
 });
 
-// ========== HOSTAWAY → AUTO RISPOSTA AI PER MESSAGGI ==========
+ // ========== HOSTAWAY → AUTO RISPOSTA AI PER MESSAGGI ==========
  
 app.post("/hostaway-incoming", async (req, res) => {
   try {
@@ -1787,34 +1787,35 @@ app.post("/hostaway-incoming", async (req, res) => {
 
     const payload = req.body || {};
 
-     // ✅ Webhook secret check — SOLO header (niente query/body)
- // ✅ Legge il secret da:
-// 1) header custom x-hwwb-secret (utile per ReqBin)
-// 2) Basic Auth (HostAway usa i campi Login/Password)
-function getIncomingSecret(req) {
-  const h = req.get("x-hwwb-secret");
-  if (h) return h;
+    // ✅ Webhook secret check — SOLO header (niente query/body)
+    // ✅ Legge il secret da:
+    // 1) header custom x-hwwb-secret (utile per ReqBin)
+    // 2) Basic Auth (HostAway usa i campi Login/Password)
+    function getIncomingSecret(req) {
+      const h = req.get("x-hwwb-secret");
+      if (h) return h;
 
-  const auth = req.get("authorization") || "";
-  const m = auth.match(/^Basic\s+(.+)$/i);
-  if (!m) return "";
+      const auth = req.get("authorization") || "";
+      const m = auth.match(/^Basic\s+(.+)$/i);
+      if (!m) return "";
 
-  try {
-    const decoded = Buffer.from(m[1], "base64").toString("utf8"); // "user:pass"
-    const idx = decoded.indexOf(":");
-    if (idx < 0) return "";
-    const pass = decoded.slice(idx + 1);
-    return pass || "";
-  } catch {
-    return "";
-  }
-}
+      try {
+        const decoded = Buffer.from(m[1], "base64").toString("utf8"); // "user:pass"
+        const idx = decoded.indexOf(":");
+        if (idx < 0) return "";
+        const pass = decoded.slice(idx + 1);
+        return pass || "";
+      } catch {
+        return "";
+      }
+    }
 
-const incomingSecret = getIncomingSecret(req);
+    const incomingSecret = getIncomingSecret(req);
 
-if (!safeEqual(incomingSecret, HOSTAWAY_WEBHOOK_BOOKING_SECRET)) {
-  return res.status(403).json({ ok: false, error: "unauthorized" });
-}
+    if (!safeEqual(incomingSecret, HOSTAWAY_WEBHOOK_BOOKING_SECRET)) {
+      return res.status(403).json({ ok: false, error: "unauthorized" });
+    }
+
     const listingId = payload.listingId || payload.listingMapId;
     const conversationId = payload.conversationId;
 
@@ -1859,9 +1860,9 @@ if (!safeEqual(incomingSecret, HOSTAWAY_WEBHOOK_BOOKING_SECRET)) {
       payload.language ||
       "";
 
-     const known = new Set(["it","en","fr","de","es"]);
-const raw2 = String(languageRaw || "").slice(0, 2).toLowerCase();
-const langCode = known.has(raw2) ? raw2 : detectLangFromMessage(finalMessage);
+    const known = new Set(["it","en","fr","de","es"]);
+    const raw2 = String(languageRaw || "").slice(0, 2).toLowerCase();
+    const langCode = known.has(raw2) ? raw2 : detectLangFromMessage(finalMessage);
 
     // Controllo minimo: deve esserci almeno listingId e finalMessage
     if (!listingId || !finalMessage) {
@@ -1885,141 +1886,95 @@ const langCode = known.has(raw2) ? raw2 : detectLangFromMessage(finalMessage);
     const name = guestName || "Guest";
     const email = guestEmail || "";
 
-     // 👉 Da ora: nessuna risposta se la guida non trova un match
-let aiReply = null;
-let aiMatched = false;
-// ✅ PRIORITÀ HARD: EARLY CHECK-OUT (MULTILINGUA)
-const isEarlyCheckout =
-  // EN
-  /early\s*(check\s*out|checkout)/i.test(norm) ||
-  /check\s*out\s*early/i.test(norm) ||
-  /early\s*departure/i.test(norm) ||
+    // 👉 Da ora: nessuna risposta se la guida non trova un match
+    let aiReply = null;
+    let aiMatched = false;
 
-  // IT
-  /(check\s*out|check-out|uscita|partenza)\s*(anticipat|in\s*anticipo)/i.test(norm) ||
-  /(si\s*puo|posso|possibile).*(check\s*out|uscire|partire).*(prima|anticip)/i.test(norm) ||
+    // ✅ PRIORITÀ HARD: EARLY CHECK-IN / EARLY CHECK-OUT (prima di chiamare /api/guest-assistant)
+    const normMsg = String(finalMessage || "").toLowerCase();
 
-  // FR
-  /(depart|départ|check\s*out|check-out)\s*(anticip)/i.test(norm) ||
-  /(est\s*ce\s*possible|peut\s*on).*(partir|check\s*out).*(plus\s*tot|avant)/i.test(norm) ||
+    const isEarlyCheckin =
+      // EN
+      /early\s*(check\s*in|checkin)/i.test(normMsg) ||
+      /(arrive|arrival).*(early|before)/i.test(normMsg) ||
+      /(check\s*in|checkin).*(early|before)/i.test(normMsg) ||
+      // IT
+      /(check\s*in|check-in|arrivo|ingresso).*(anticipat|in\s*anticipo|prima)/i.test(normMsg) ||
+      /(si\s*puo|posso|possibile).*(check\s*in|entrare|arrivare).*(prima|anticip)/i.test(normMsg) ||
+      // FR
+      /(arrivee|arrivée|check\s*in|check-in).*(anticip)/i.test(normMsg) ||
+      /(est\s*ce\s*possible|peut\s*on).*(arriver|check\s*in).*(plus\s*tot|avant)/i.test(normMsg) ||
+      // DE
+      /(fruh|frueh|fruher|früher).*(check\s*in|einchecken|ankommen)/i.test(normMsg) ||
+      /(kann|ist\s*es\s*moglich).*(fruh|frueh|früher).*(check\s*in|einchecken|ankommen)/i.test(normMsg) ||
+      // ES
+      /(check\s*in|entrada|llegada).*(tempran|anticipad|antes)/i.test(normMsg) ||
+      /(es\s*posible|podemos|puedo).*(entrar|llegar|check\s*in).*(antes|temprano)/i.test(normMsg);
 
-  // DE
-  /(fruh|frueh|fruher|früher).*(check\s*out|auschecken|abreisen)/i.test(norm) ||
-  /(kann|ist\s*es\s*moglich).*(fruh|frueh|früher).*(check\s*out|auschecken|abreisen)/i.test(norm) ||
+    const isEarlyCheckout =
+      // EN
+      /early\s*(check\s*out|checkout)/i.test(normMsg) ||
+      /check\s*out\s*early/i.test(normMsg) ||
+      /early\s*departure/i.test(normMsg) ||
+      // IT
+      /(check\s*out|check-out|uscita|partenza)\s*(anticipat|in\s*anticipo)/i.test(normMsg) ||
+      /(si\s*puo|posso|possibile).*(check\s*out|uscire|partire).*(prima|anticip)/i.test(normMsg) ||
+      // FR
+      /(depart|départ|check\s*out|check-out)\s*(anticip)/i.test(normMsg) ||
+      /(est\s*ce\s*possible|peut\s*on).*(partir|check\s*out).*(plus\s*tot|avant)/i.test(normMsg) ||
+      // DE
+      /(fruh|frueh|fruher|früher).*(check\s*out|auschecken|abreisen)/i.test(normMsg) ||
+      /(kann|ist\s*es\s*moglich).*(fruh|frueh|früher).*(check\s*out|auschecken|abreisen)/i.test(normMsg) ||
+      // ES
+      /(check\s*out|salida|salir|partida)\s*(tempran|anticipad)/i.test(normMsg) ||
+      /(es\s*posible|podemos|puedo).*(salir|check\s*out|irme).*(antes|temprano)/i.test(normMsg);
 
-  // ES
-  /(check\s*out|salida|salir|partida)\s*(tempran|anticipad)/i.test(norm) ||
-  /(es\s*posible|podemos|puedo).*(salir|check\s*out|irme).*(antes|temprano)/i.test(norm);
+    const earlyCheckinAnswers = {
+      en: "Early check-in is possible only if the apartment is ready. Standard check-in is from 15:00. We’ll confirm in the morning.",
+      it: "Il check-in anticipato è possibile solo se l’appartamento è pronto. Il check-in standard è dalle 15:00. Ti confermiamo la mattina stessa.",
+      fr: "L’arrivée anticipée est possible seulement si l’appartement est prêt. Le check-in standard est à partir de 15h00. Nous confirmerons le matin même.",
+      de: "Ein früher Check-in ist nur möglich, wenn die Wohnung bereits fertig ist. Standard-Check-in ist ab 15:00. Wir bestätigen es am Morgen.",
+      es: "El check-in temprano es posible solo si el apartamento está listo. El check-in estándar es a partir de las 15:00. Lo confirmamos por la mañana."
+    };
 
-if (isEarlyCheckout) {
-  const earlyOutAnswers = {
-    en: "Early check-out is possible if it fits our housekeeping schedule. Standard check-out is by 11:00. Tell us your preferred time and we’ll confirm.",
-    it: "Il check-out anticipato è possibile se compatibile con il programma di pulizie. Il check-out standard è entro le 11:00. Dimmi l’orario che preferisci e ti confermiamo.",
-    fr: "Un départ anticipé est possible selon notre planning de ménage. Le check-out standard est avant 11h00. Dites-nous l’heure souhaitée et nous confirmerons.",
-    de: "Ein früher Check-out ist möglich, wenn es in unseren Reinigungsplan passt. Der Standard-Check-out ist bis 11:00. Nennen Sie bitte Ihre Wunschzeit, dann bestätigen wir.",
-    es: "El check-out temprano es posible si encaja con nuestro horario de limpieza. El check-out estándar es hasta las 11:00. Dinos la hora que prefieres y lo confirmaremos."
-  };
+    const earlyCheckoutAnswers = {
+      en: "Early check-out is possible if it fits our housekeeping schedule. Standard check-out is by 11:00. Tell us your preferred time and we’ll confirm.",
+      it: "Il check-out anticipato è possibile se compatibile con il programma di pulizie. Il check-out standard è entro le 11:00. Dimmi l’orario che preferisci e ti confermiamo.",
+      fr: "Un départ anticipé est possible selon notre planning de ménage. Le check-out standard est avant 11h00. Dites-nous l’heure souhaitée et nous confirmerons.",
+      de: "Ein früher Check-out ist möglich, wenn es in unseren Reinigungsplan passt. Der Standard-Check-out ist bis 11:00. Nennen Sie bitte Ihre Wunschzeit, dann bestätigen wir.",
+      es: "El check-out temprano es posible si encaja con nuestro horario de limpieza. El check-out estándar es hasta las 11:00. Dinos la hora que prefieres y lo confirmaremos."
+    };
 
-  return res.json({
-    ok: true,
-    apartment,
-    language,
-    question: message,
-    answer: earlyOutAnswers[language] || earlyOutAnswers.en,
-    intent: "early_check_out"
-  });
-}
- // ✅ PRIORITÀ HARD: EARLY CHECK-IN / EARLY CHECK-OUT (prima di chiamare /api/guest-assistant)
-const normMsg = String(finalMessage || "").toLowerCase();
-
-const isEarlyCheckin =
-  // EN
-  /early\s*(check\s*in|checkin)/i.test(normMsg) ||
-  /(arrive|arrival).*(early|before)/i.test(normMsg) ||
-  /(check\s*in|checkin).*(early|before)/i.test(normMsg) ||
-  // IT
-  /(check\s*in|check-in|arrivo|ingresso).*(anticipat|in\s*anticipo|prima)/i.test(normMsg) ||
-  /(si\s*puo|posso|possibile).*(check\s*in|entrare|arrivare).*(prima|anticip)/i.test(normMsg) ||
-  // FR
-  /(arrivee|arrivée|check\s*in|check-in).*(anticip)/i.test(normMsg) ||
-  /(est\s*ce\s*possible|peut\s*on).*(arriver|check\s*in).*(plus\s*tot|avant)/i.test(normMsg) ||
-  // DE
-  /(fruh|frueh|fruher|früher).*(check\s*in|einchecken|ankommen)/i.test(normMsg) ||
-  /(kann|ist\s*es\s*moglich).*(fruh|frueh|früher).*(check\s*in|einchecken|ankommen)/i.test(normMsg) ||
-  // ES
-  /(check\s*in|entrada|llegada).*(tempran|anticipad|antes)/i.test(normMsg) ||
-  /(es\s*posible|podemos|puedo).*(entrar|llegar|check\s*in).*(antes|temprano)/i.test(normMsg);
-
-const isEarlyCheckout =
-  // EN
-  /early\s*(check\s*out|checkout)/i.test(normMsg) ||
-  /check\s*out\s*early/i.test(normMsg) ||
-  /early\s*departure/i.test(normMsg) ||
-  // IT
-  /(check\s*out|check-out|uscita|partenza)\s*(anticipat|in\s*anticipo)/i.test(normMsg) ||
-  /(si\s*puo|posso|possibile).*(check\s*out|uscire|partire).*(prima|anticip)/i.test(normMsg) ||
-  // FR
-  /(depart|départ|check\s*out|check-out)\s*(anticip)/i.test(normMsg) ||
-  /(est\s*ce\s*possible|peut\s*on).*(partir|check\s*out).*(plus\s*tot|avant)/i.test(normMsg) ||
-  // DE
-  /(fruh|frueh|fruher|früher).*(check\s*out|auschecken|abreisen)/i.test(normMsg) ||
-  /(kann|ist\s*es\s*moglich).*(fruh|frueh|früher).*(check\s*out|auschecken|abreisen)/i.test(normMsg) ||
-  // ES
-  /(check\s*out|salida|salir|partida)\s*(tempran|anticipad)/i.test(normMsg) ||
-  /(es\s*posible|podemos|puedo).*(salir|check\s*out|irme).*(antes|temprano)/i.test(normMsg);
-
-const earlyCheckinAnswers = {
-  en: "Early check-in is possible only if the apartment is ready. Standard check-in is from 15:00. We’ll confirm in the morning.",
-  it: "Il check-in anticipato è possibile solo se l’appartamento è pronto. Il check-in standard è dalle 15:00. Ti confermiamo la mattina stessa.",
-  fr: "L’arrivée anticipée est possible seulement si l’appartement est prêt. Le check-in standard est à partir de 15h00. Nous confirmerons le matin même.",
-  de: "Ein früher Check-in ist nur möglich, wenn die Wohnung bereits fertig ist. Standard-Check-in ist ab 15:00. Wir bestätigen es am Morgen.",
-  es: "El check-in temprano es posible solo si el apartamento está listo. El check-in estándar es a partir de las 15:00. Lo confirmamos por la mañana."
-};
-
-const earlyCheckoutAnswers = {
-  en: "Early check-out is possible if it fits our housekeeping schedule. Standard check-out is by 11:00. Tell us your preferred time and we’ll confirm.",
-  it: "Il check-out anticipato è possibile se compatibile con il programma di pulizie. Il check-out standard è entro le 11:00. Dimmi l’orario che preferisci e ti confermiamo.",
-  fr: "Un départ anticipé est possible selon notre planning de ménage. Le check-out standard est avant 11h00. Dites-nous l’heure souhaitée et nous confirmerons.",
-  de: "Ein früher Check-out ist möglich, wenn es in unseren Reinigungsplan passt. Der Standard-Check-out ist bis 11:00. Nennen Sie bitte Ihre Wunschzeit, dann bestätigen wir.",
-  es: "El check-out temprano es posible si encaja con nuestro horario de limpieza. El check-out estándar es hasta las 11:00. Dinos la hora que prefieres y lo confirmaremos."
-};
-
-if (isEarlyCheckin) {
-  aiReply = earlyCheckinAnswers[langCode] || earlyCheckinAnswers.en;
-  aiMatched = true;
-} else if (isEarlyCheckout) {
-  aiReply = earlyCheckoutAnswers[langCode] || earlyCheckoutAnswers.en;
-  aiMatched = true;
-} else {
-  try {
-    const gaResp = await axios.post(
-      `${req.protocol}://${req.get("host")}/api/guest-assistant`,
-      {
-        apartment: apartmentKey,
-        lang: langCode,
-        question: finalMessage,
-        guestName: name,
-        source: "hostaway"
-      },
-      { timeout: 8000 }
-    );
-
-    const data = gaResp.data || {};
-
-    if (data.ok && data.answer && !data.noMatch) {
-      aiReply = data.answer;
+    if (isEarlyCheckin) {
+      aiReply = earlyCheckinAnswers[langCode] || earlyCheckinAnswers.en;
+      aiMatched = true;
+    } else if (isEarlyCheckout) {
+      aiReply = earlyCheckoutAnswers[langCode] || earlyCheckoutAnswers.en;
       aiMatched = true;
     } else {
-      console.log("⚠️ guest-assistant: noMatch o risposta mancante:", data);
-    }
-  } catch (err) {
-    console.error("Errore Virtual Guide:", err.message);
-  }
-}
+      try {
+        const gaResp = await axios.post(
+          `${req.protocol}://${req.get("host")}/api/guest-assistant`,
+          {
+            apartment: apartmentKey,
+            lang: langCode,
+            question: finalMessage,
+            guestName: name,
+            source: "hostaway"
+          },
+          { timeout: 8000 }
+        );
 
-        console.log("📧 Email inviata a guest e copia a Michele");
+        const data = gaResp.data || {};
+
+        if (data.ok && data.answer && !data.noMatch) {
+          aiReply = data.answer;
+          aiMatched = true;
+        } else {
+          console.log("⚠️ guest-assistant: noMatch o risposta mancante:", data);
+        }
       } catch (err) {
-        console.error("❌ Errore invio email:", err.message);
+        console.error("Errore Virtual Guide:", err.message);
       }
     }
 
@@ -2038,6 +1993,7 @@ if (isEarlyCheckin) {
     return res.status(500).json({ ok: false, error: String(err) });
   }
 });
+
 const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => {
   console.log(
