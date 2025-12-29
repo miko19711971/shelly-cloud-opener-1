@@ -170,7 +170,15 @@ export async function reply({ apartment, lang, question }) {
 
   const intentsLang = guide?.intents?.[L] || guide?.intents?.en || {};
   const answersLang = guide?.answers?.[L] || guide?.answers?.en || {};
-
+// ✅ JSON legacy (solo risposte)
+if (!guide.intents && guide[L]) {
+  return {
+    ok: true,
+    lang: L,
+    intent: "direct",
+    answer: guide[L].services || Object.values(guide[L])[0]
+  };
+}
   // gate unknown ratio
   const known = buildKnownTokens(intentsLang);
   const ur = unknownRatio(q, L, known);
