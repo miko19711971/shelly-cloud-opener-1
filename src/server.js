@@ -703,16 +703,17 @@ app.get("/checkin/:apt/", (req, res) => {
   let day   = normalizeCheckinDate(raw);
 
   // 2) se mancante/non valida -> fallback opzionale a oggi
-  if (!day) {
-    if (ALLOW_TODAY_FALLBACK) {
-      day = today;
-    } else {
-      return res
-        .status(410)
-        .send("Questo link richiede la data di check-in (?d), es. ?d=2025-09-22.");
-    }
+   if (!day) {
+  if (ALLOW_TODAY_FALLBACK) {
+    day = today;
+  } else {
+    return res.status(410).send("Link scaduto.");
   }
+}
 
+if (day !== today) {
+  return res.status(410).send("Link scaduto.");
+}
   // 3) vincolo: valido SOLO nel giorno di check-in (Europe/Rome)
   if (day !== today) {
     return res.status(410).send("Questo link è valido solo nel giorno di check-in.");
