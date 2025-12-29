@@ -767,14 +767,20 @@ app.get("/checkin/:apt/index.html", (req, res) => {
   }
 });
 
-function requireCheckinToken(req, res, next) {
+ function requireCheckinToken(req, res, next) {
   const apt = String(req.params.apt || "").toLowerCase();
   const t = String(req.query.t || "");
 
   const parsed = parseToken(t);
   if (!parsed.ok) return res.status(410).json({ ok: false, error: "bad_token" });
 
-  const { tgt, day } = parsed.payload || {};
+  // ✅ PATCH: controlla scadenza (24h)
+  const p = parsed.payload || {};
+  if (typeof p.exp !== "number" || Date.now() > p.exp) {
+    return res.status(410).json({ ok: false, error: "expired" });
+  }
+
+  const { tgt, day } = p;
   if (tgt !== `checkin-${apt}`) {
     return res.status(410).json({ ok: false, error: "token_target_mismatch" });
   }
@@ -808,7 +814,6 @@ app.post("/checkin/:apt/open/building", requireCheckinToken, async (req, res) =>
 
   return res.json({ ok: true, opened: result });
 });
-
 // ========= STATIC (asset) =========
 app.use("/checkin",        express.static(path.join(PUBLIC_DIR, "checkin"), { fallthrough: false }));
  
