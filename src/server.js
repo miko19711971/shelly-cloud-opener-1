@@ -730,15 +730,22 @@ app.get("/checkin/:apt/", (req, res) => {
   res.redirect(302, url);
 });
 
-// Pagina protetta: verifica token + giorno
- app.get("/checkin/:apt/index.html", (req, res) => {
+ // Pagina protetta: verifica token + giorno
+app.get("/checkin/:apt/index.html", (req, res) => {
   try {
     const apt = req.params.apt.toLowerCase();
     const t   = String(req.query.t || "");
     const parsed = parseToken(t);
 
     if (!parsed.ok) return res.status(410).send("Questo link non è più valido.");
-    const { tgt, day } = parsed.payload || {};
+
+    // ✅ PATCH: controlla scadenza (24h)
+    const p = parsed.payload || {};
+    if (typeof p.exp !== "number" || Date.now() > p.exp) {
+      return res.status(410).send("Questo link è scaduto. Richiedi un nuovo link.");
+    }
+
+    const { tgt, day } = p;
     if (tgt !== `checkin-${apt}`) return res.status(410).send("Link non valido.");
     if (!isYYYYMMDD(day) || day !== tzToday()) {
       return res.status(410).send("Questo link è valido solo nel giorno di check-in.");
