@@ -671,20 +671,17 @@ app.get("/checkin/:apt/:rawDate([^/.]+)", (req, res) => {
   let day   = normalizeCheckinDate(raw);
 
   // se data non valida → errore (o fallback opzionale a oggi)
-  if (!day) {
-    if (ALLOW_TODAY_FALLBACK) {
-      day = today;
-    } else {
-      return res
-        .status(410)
-        .send("Questo link richiede una data valida di check-in nel percorso, es. /checkin/arenula/2025-11-21.");
-    }
+   if (!day) {
+  if (ALLOW_TODAY_FALLBACK) {
+    day = today;
+  } else {
+    return res.status(410).send("Link scaduto.");
   }
+}
 
-  // valido SOLO nel giorno di check-in (Europe/Rome)
-  if (day !== today) {
-    return res.status(410).send("Questo link è valido solo nel giorno di check-in.");
-  }
+if (day !== today) {
+  return res.status(410).send("Link scaduto.");
+}
 
   const { token } = newTokenFor(`checkin-${apt}`, {
     windowMin: CHECKIN_WINDOW_MIN,
