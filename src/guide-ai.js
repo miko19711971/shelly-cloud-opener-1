@@ -16,13 +16,13 @@ const GUIDES_V2_DIR = path.join(PUBLIC_DIR, "guides-v2");
 const guidesCache = new Map();
 
 // =====================
-// GATE — PARAMETRI
+// GATE — PARAMETRI (FIX 3)
 // =====================
 const GATE = {
   MAX_MESSAGE_CHARS: 250,
   MIN_MATCH_SCORE: 1,
-  MIN_SCORE_MARGIN: 1,
-  MAX_UNKNOWN_RATIO: 0.45,
+  MIN_SCORE_MARGIN: 0,   // FIX 3
+  MAX_UNKNOWN_RATIO: 0.6, // FIX 3
   MIN_TOKEN_LEN_FOR_UNKNOWN: 3
 };
 
@@ -34,11 +34,11 @@ const STOPWORDS = {
   de: new Set(["der","die","das","ein","eine","einen","einem","einer","von","in","auf","an","für","mit","ohne","und","oder","aber","was","wo","wann","wie","ich","du","wir","ihr","sie","ist","sind","kann","koennen","können","bitte","hallo"]),
   es: new Set(["el","la","los","las","un","una","unos","unas","de","del","en","sobre","a","para","con","sin","y","o","pero","que","donde","cuando","como","yo","tu","usted","nosotros","vosotros","ellos","ellas","es","son","puedo","puede","porfavor","hola"])
 };
+
 // =====================
 // NORMALIZZAZIONE / TOKEN
 // =====================
 function normalizeText(str) {
-  // NOTA: "check-in" -> "check in" (trattini/segni diventano spazi)
   return String(str || "")
     .toLowerCase()
     .normalize("NFD")
@@ -53,7 +53,6 @@ function tokenize(str) {
   const m = s.match(/[a-z0-9]+/g);
   return m ? m : [];
 }
-
 // =====================
 // CARICAMENTO GUIDA
 // =====================
@@ -74,14 +73,14 @@ async function loadGuideJson(apartment) {
     return null;
   }
 }
- // =====================
+
+// =====================
 // LINGUA (fallback)
 // =====================
 function pickLang(requested, question) {
   const lang = String(requested || "").toLowerCase().trim();
   if (["it","en","fr","de","es"].includes(lang)) return lang;
 
-  // fallback “soft” via stopwords
   const toks = tokenize(question);
   const score = { it: 0, en: 0, fr: 0, de: 0, es: 0 };
   for (const t of toks) {
@@ -108,7 +107,6 @@ function buildKnownTokens(intentsLang) {
       const nkw = normalizeText(kw);
       if (!nkw) continue;
       for (const tok of tokenize(nkw)) known.add(tok);
-      // anche la frase intera (utile per includes)
       known.add(nkw);
     }
   }
@@ -132,7 +130,6 @@ function unknownRatio(question, lang, known) {
   return unknown / considered;
 }
 
-// helper: match “boolean” su un intent (keyword singola o frase)
 function intentMatches(question, intentsLang, intentKey) {
   const kws = intentsLang?.[intentKey];
   if (!Array.isArray(kws) || kws.length === 0) return false;
@@ -143,11 +140,8 @@ function intentMatches(question, intentsLang, intentKey) {
   return kws.some((kw) => {
     const nkw = normalizeText(kw);
     if (!nkw) return false;
-
-    if (nkw.includes(" ")) {
-      return normMsg.includes(nkw); // match frase
-    }
-    return msgTokens.has(nkw) || normMsg.includes(nkw); // match token o substring
+    if (nkw.includes(" ")) return normMsg.includes(nkw);
+    return msgTokens.has(nkw) || normMsg.includes(nkw);
   });
 }
 // =====================
@@ -170,24 +164,16 @@ export async function reply({ apartment, lang, question }) {
 
   const intentsLang = guide?.intents?.[L] || guide?.intents?.en || {};
   const answersLang = guide?.answers?.[L] || guide?.answers?.en || {};
-// ✅ JSON legacy (solo risposte)
-if (!guide.intents && guide[L]) {
-  return {
-    ok: true,
-    lang: L,
-    intent: "direct",
-    answer: guide[L].services || Object.values(guide[L])[0]
-  };
-}
-  // gate unknown ratio
+
+  // FIX 2 — fallback legacy RIMOSSO (nessuna risposta casuale)
+
   const known = buildKnownTokens(intentsLang);
   const ur = unknownRatio(q, L, known);
   if (ur > GATE.MAX_UNKNOWN_RATIO) {
     return { ok: true, noMatch: true, answer: null };
   }
 
-  // ===== PRIORITÀ HARD: EARLY CHECK-IN =====
-  // Se matcha early_checkin -> ritorna subito early_checkin (NON deve finire su check_in)
+  // PRIORITÀ HARD: EARLY CHECK-IN
   if (intentMatches(q, intentsLang, "early_checkin") && answersLang.early_checkin) {
     return {
       ok: true,
@@ -197,7 +183,6 @@ if (!guide.intents && guide[L]) {
     };
   }
 
-  // ===== LOOP NORMALE SU INTENTS =====
   const normMsg = normalizeText(q);
   const msgTokens = new Set(tokenize(q));
 
@@ -209,18 +194,15 @@ if (!guide.intents && guide[L]) {
     if (!Array.isArray(kws) || kws.length === 0) continue;
 
     let score = 0;
-
     for (const kw of kws) {
       const nkw = normalizeText(kw);
       if (!nkw) continue;
 
-      // frase (più peso)
       if (nkw.includes(" ")) {
         if (normMsg.includes(nkw)) score += 5;
         continue;
       }
 
-      // token singolo
       if (msgTokens.has(nkw)) score += 2;
       else if (normMsg.includes(nkw)) score += 1;
     }
@@ -234,15 +216,18 @@ if (!guide.intents && guide[L]) {
     }
   }
 
-  // gate score
   if (!bestIntent || bestScore < GATE.MIN_MATCH_SCORE) {
     return { ok: true, noMatch: true, answer: null };
   }
 
-  // gate margin
-  if (bestScore - secondScore < GATE.MIN_SCORE_MARGIN) {
-    return { ok: true, noMatch: true, answer: null };
-  }
+  // FIX 1 — alias intent
+  const INTENT_ALIASES = {
+    early_checkin_policy: "early_checkin",
+    late_checkout_policy: "late_checkout",
+    AC: "AC"
+  };
+
+  bestIntent = INTENT_ALIASES[bestIntent] || bestIntent;
 
   const answer = answersLang?.[bestIntent] || null;
   if (!answer) {
