@@ -152,7 +152,7 @@ const TARGETS = {
   "via-della-scala-door":     { name: "Via della Scala 17 — Apartment Door",       ids: ["3494547a1075"] },
   "via-della-scala-building": { name: "Via della Scala 17 — Building Door",        ids: ["3494547745ee", "3494547745ee"] },
   "portico-1d-door":          { name: "Portico d'Ottavia 1D — Apartment Door",     ids: ["3494547a887d"] },
-  "portico-1d-building":      { name: "Portico d'Ottavia 1D — Building Door",      ids: ["3494547ab62b"] },
+  "portico-1d-building":      { name: "Portico d'Ottavia 1D — Building Door",      ids: ["2cbcbb30fb90"] },
   "viale-trastevere-door":    { name: "Viale Trastevere 108 — Apartment Door",     ids: ["34945479fa35"] },
   "viale-trastevere-building":{ name: "Building Door",                             ids: ["34945479fd73"] },
 };
