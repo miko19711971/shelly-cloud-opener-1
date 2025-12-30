@@ -1790,8 +1790,8 @@ app.post("/api/vbro-mail", requireAdmin, async (req, resInner) => {
 
  // ========== HOSTAWAY → AUTO RISPOSTA AI PER MESSAGGI ==========
  
-app.post("/hostaway-incoming", async (req, res) => {
-     try {
+ app.post("/hostaway-incoming", async (req, res) => {
+  try {
     const payload = req.body;
 
     const message = payload?.body;
@@ -1818,7 +1818,8 @@ app.post("/hostaway-incoming", async (req, res) => {
       return res.status(200).send("No AI reply");
     }
 
-    // ⬇️ QUI sotto resta il tuo codice di risposta Hostaway
+    // 👉 QUI sotto resta il tuo codice di risposta Hostaway
+
     return res.status(200).send("OK");
 
   } catch (err) {
