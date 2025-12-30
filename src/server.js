@@ -1828,28 +1828,6 @@ app.post("/api/vbro-mail", requireAdmin, async (req, resInner) => {
   }
 });
 
-     
-
-    // Mappa ID listing → nome appartamento (solo per log / email)
-    const LISTING_TO_APARTMENT = {
-      "194166": "arenula",     // Via Arenula 16
-      "194165": "portico",     // Portico d'Ottavia 1D
-      "194163": "leonina",     // Via Leonina 71
-      "194164": "trastevere",  // Brand new flat in Trastevere, 4 min
-      "194162": "scala"        // Via della Scala 17
-    };
-
-    const apt = LISTING_TO_APARTMENT[String(listingId)] || "Appartamento";
-
-    // Chiave usata dalla Virtual Guide
-    const apartmentKey = LISTING_TO_APARTMENT[String(listingId)] || "arenula";
-
-    const name = guestName || "Guest";
-    const email = guestEmail || "";
-
-    // 👉 Da ora: nessuna risposta se la guida non trova un match
-let aiReply = null;
-let aiMatched = false;
 
 // ✅ PRIORITÀ HARD: EARLY CHECK-IN / EARLY CHECK-OUT (prima di chiamare /api/guest-assistant)
 const normMsg = String(finalMessage || "").toLowerCase();
