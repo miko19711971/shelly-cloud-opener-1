@@ -1817,7 +1817,33 @@ app.post("/api/vbro-mail", requireAdmin, async (req, resInner) => {
     if (!aiResponse || aiResponse.noMatch || !aiResponse.answer) {
       return res.status(200).send("No AI reply");
     }
+// ===============================
+// 📤 INVIO RISPOSTA A HOSTAWAY
+// ===============================
+try {
+  await axios.post(
+    `https://api.hostaway.com/v1/conversations/${payload.conversationId}/messages`,
+    {
+      body: aiResponse.answer,
+      sendToGuest: true
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${HOSTAWAY_TOKEN}`,
+        "Content-Type": "application/json"
+      },
+      timeout: 10000
+    }
+  );
 
+  console.log("📧 Risposta AI inviata a HostAway (email inclusa)");
+
+} catch (err) {
+  console.error(
+    "❌ Errore invio messaggio HostAway:",
+    err.response?.data || err.message
+  );
+}
     // 👉 QUI sotto resta il tuo codice di risposta Hostaway
 
     return res.status(200).send("OK");
