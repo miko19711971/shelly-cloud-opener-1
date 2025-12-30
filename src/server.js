@@ -1791,65 +1791,41 @@ app.post("/api/vbro-mail", requireAdmin, async (req, resInner) => {
  // ========== HOSTAWAY → AUTO RISPOSTA AI PER MESSAGGI ==========
  
 app.post("/hostaway-incoming", async (req, res) => {
-  try {
-    console.log("🔔 Hostaway message webhook:");
-    console.log(JSON.stringify(req.body, null, 2));
+     try {
+    const payload = req.body;
 
-    const payload = req.body || {};
+    const message = payload?.body;
+    const listingId = payload?.listingMapId;
 
-    // ✅ Webhook secret check — SOLO header (niente query/body)
-    // ✅ Legge il secret da:
-    // 1) header custom x-hwwb-secret (utile per ReqBin)
-    // 2) Basic Auth (HostAway usa i campi Login/Password)
-    function getIncomingSecret(req) {
-      const h = req.get("x-hwwb-secret");
-      if (h) return h;
-
-      const auth = req.get("authorization") || "";
-      const m = auth.match(/^Basic\s+(.+)$/i);
-      if (!m) return "";
-
-      try {
-        const decoded = Buffer.from(m[1], "base64").toString("utf8"); // "user:pass"
-        const idx = decoded.indexOf(":");
-        if (idx < 0) return "";
-        const pass = decoded.slice(idx + 1);
-        return pass || "";
-      } catch {
-        return "";
-      }
+    if (!message || !listingId) {
+      console.log("⚠️ Payload incompleto");
+      return res.status(200).send("OK");
     }
 
-    const incomingSecret = getIncomingSecret(req);
-
-    if (!safeEqual(incomingSecret, HOSTAWAY_WEBHOOK_BOOKING_SECRET)) {
-      return res.status(403).json({ ok: false, error: "unauthorized" });
+    const apartmentKey = GUIDE_BY_LISTING_ID[listingId];
+    if (!apartmentKey) {
+      console.error("❌ Listing non mappato:", listingId);
+      return res.status(200).send("Listing non mappato");
     }
 
-    const listingId = payload.listingId || payload.listingMapId;
-    const conversationId = payload.conversationId;
-
-    // Estrai subito nome ed email
-    const guestName = extractGuestName(payload);
-    const guestEmail =
-      payload.guestEmail ||
-      payload.guestEmailAddress ||
-      payload.email ||
-      "";
-
-    // Log di debug per capire dove sta il nome
-    console.log("🔍 Name fields in payload:", {
-      guestName_raw: payload.guestName,
-      guest_first_name_raw: payload.guest_first_name,
-      firstName_raw: payload.firstName,
-      guestFullName_raw: payload.guestFullName,
-      travellerName_raw: payload.travellerName,
-      contactName_raw: payload.contactName,
-      nested_guest: payload.guest || null,
-      nested_contact: payload.contact || null,
-      email_raw: guestEmail,
-      extracted_guestName: guestName
+    const aiResponse = await guideAIreply({
+      apartment: apartmentKey,
+      question: message,
+      lang: null
     });
+
+    if (!aiResponse || aiResponse.noMatch || !aiResponse.answer) {
+      return res.status(200).send("No AI reply");
+    }
+
+    // ⬇️ QUI sotto resta il tuo codice di risposta Hostaway
+    return res.status(200).send("OK");
+
+  } catch (err) {
+    console.error("❌ Errore webhook Hostaway:", err);
+    return res.status(200).send("Error handled");
+  }
+});
 
     // ==== TESTO VERO DEL MESSAGGIO DEL GUEST (SOLO ULTIMA COMUNICAZIONE) ====
     const communication = payload.communicationBody || {};
