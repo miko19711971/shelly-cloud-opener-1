@@ -1828,33 +1828,7 @@ app.post("/api/vbro-mail", requireAdmin, async (req, resInner) => {
   }
 });
 
-    // ==== TESTO VERO DEL MESSAGGIO DEL GUEST (SOLO ULTIMA COMUNICAZIONE) ====
-    const communication = payload.communicationBody || {};
-
-    const bodyFromCommunication =
-      (communication && communication.body) || "";
-
-    // fallback sugli altri campi solo se proprio vuoto
-    const finalMessage =
-      (bodyFromCommunication && bodyFromCommunication.trim()) ||
-      payload.message ||
-      payload.body ||
-      "";
-
-    // ---- LINGUA: prima proviamo a leggere dal payload, poi dal testo ----
-    const languageRaw =
-      communication.language ||
-      payload.language ||
-      "";
-
-    const known = new Set(["it","en","fr","de","es"]);
-    const raw2 = String(languageRaw || "").slice(0, 2).toLowerCase();
-    const langCode = known.has(raw2) ? raw2 : detectLangFromMessage(finalMessage);
-
-    // Controllo minimo: deve esserci almeno listingId e finalMessage
-    if (!listingId || !finalMessage) {
-      return res.status(400).json({ ok: false, error: "missing_fields" });
-    }
+     
 
     // Mappa ID listing → nome appartamento (solo per log / email)
     const LISTING_TO_APARTMENT = {
