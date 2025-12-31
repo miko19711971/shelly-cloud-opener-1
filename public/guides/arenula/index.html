@@ -632,12 +632,13 @@ function postFeedback(vote, topic, answerText){
       
       headers:{'Content-Type':'application/json'},
       body: JSON.stringify({
-        apartment_id: APARTMENT_ID,
-        language: (lang||'en').toUpperCase(),
-        topic: topic,
-        answer_text: answerText,
-        vote: vote
-      })
+  apartment: APARTMENT_ID,
+  language: lang,
+  topic: topic,
+  answer: answerText,
+  vote: vote,
+  timestamp: new Date().toISOString()
+})
     });
   }catch{}
 }
