@@ -76,56 +76,36 @@ input{flex:1;padding:12px;border:1px solid #cbd5e1;border-radius:10px;outline:no
 /* === CONFIG === */
 const APARTMENT_ID = "ARENULA16";
 const GOOGLE_SCRIPT_URL = const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyJABCTtIbJCfsb4VVAznb_MFsnCtNp1oBOGQCjUWA_Z6QMhwmDw2a2SNjaJU3taMiX/exec";
-async function sendFeedback(topic, answerText, voteValue) {
+ /* --- FUNZIONE INVIO FEEDBACK AL FOGLIO GOOGLE --- */
+async function sendFeedback(topic, answerText, voteValue, buttonElement) {
   const feedbackData = {
-    apartment_id: APARTMENT_ID, // Usa la costante già presente nel tuo HTML
-    language: document.documentElement.lang || 'it',
+    apartment_id: APARTMENT_ID,
+    language: typeof currLang !== 'undefined' ? currLang : 'it',
     topic: topic,
     answer_text: answerText,
-    vote: voteValue // Deve essere 'like' o 'dislike'
+    vote: voteValue
   };
 
-  try {
-    // Invia i dati a Google Sheets
-    await fetch(GOOGLE_SCRIPT_URL, {
-      method: "POST",
-      mode: "no-cors", // Necessario per evitare blocchi CORS da GitHub/Render
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(feedbackData)
-    });
-    
-    // Messaggio di conferma (usa le traduzioni DATA che hai già)
-    alert(DATA[currLang].ui.fb_thanks || "Grazie per il feedback!");
-  } catch (error) {
-    console.error("Errore durante l'invio del feedback:", error);
-  }
-}
- /* --- FUNZIONE INVIO FEEDBACK --- */
-async function sendFeedback(intentKey, value) {
-  const data = {
-    apartment: APARTMENT_ID,
-    topic: intentKey,
-    vote: value, // "Like" o "Dislike"
-    timestamp: new Date().toLocaleString()
-  };
-
-  // Seleziona il box dei bottoni per dare un feedback visivo
-  const feedbackBox = event.target.parentElement;
+  // Feedback visivo: disabilita i bottoni dopo il click
+  const container = buttonElement.parentElement;
+  container.style.opacity = "0.5";
+  container.style.pointerEvents = "none";
 
   try {
-    // Usiamo 'no-cors' per evitare blocchi del browser, 
-    // ma tieni presente che non leggeremo la risposta di conferma
     await fetch(GOOGLE_SCRIPT_URL, {
       method: "POST",
       mode: "no-cors", 
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data)
+      body: JSON.stringify(feedbackData)
     });
     
-    // Mostra un messaggio di ringraziamento
-    feedbackBox.innerHTML = `<span class="fb-done">${DATA[currLang].ui.fb_thanks}</span>`;
+    // Mostra il messaggio di ringraziamento (usando le tue traduzioni DATA)
+    const thanksMsg = DATA[currLang]?.ui?.fb_thanks || "Grazie!";
+    container.innerHTML = `<span class="fb-done">${thanksMsg}</span>`;
   } catch (error) {
     console.error("Errore invio feedback:", error);
+    container.style.opacity = "1";
+    container.style.pointerEvents = "auto";
   }
 }
 
