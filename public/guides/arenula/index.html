@@ -76,7 +76,38 @@ input{flex:1;padding:12px;border:1px solid #cbd5e1;border-radius:10px;outline:no
 /* === CONFIG === */
 const APARTMENT_ID = "ARENULA16";
 const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxpLAyktZtDjjWrxNbuR8_UOB2JTrZm5z4zXqejKaJpplwvrwD5i7ZEYgz9Mo24dN0B/exec";
+/* --- FUNZIONE INVIO FEEDBACK --- */
+async function sendFeedback(intentKey, value) {
+  const data = {
+    apartment: APARTMENT_ID,
+    topic: intentKey,
+    vote: value, // "Like" o "Dislike"
+    timestamp: new Date().toLocaleString()
+  };
 
+  // Seleziona il box dei bottoni per dare un feedback visivo
+  const feedbackBox = event.target.parentElement;
+
+  try {
+    // Usiamo 'no-cors' per evitare blocchi del browser, 
+    // ma tieni presente che non leggeremo la risposta di conferma
+    await fetch(GOOGLE_SCRIPT_URL, {
+      method: "POST",
+      mode: "no-cors", 
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data)
+    });
+    
+    // Mostra un messaggio di ringraziamento
+    feedbackBox.innerHTML = `<span class="fb-done">${DATA[currLang].ui.fb_thanks}</span>`;
+  } catch (error) {
+    console.error("Errore invio feedback:", error);
+  }
+}
+
+// Nota: Assicurati che quando generi i bottoni Like/Dislike 
+// nell'HTML dinamico, tu aggiunga l'attributo onclick:
+// onclick="sendFeedback('${intentKey}', 'Like')"
 /* ============ CONTENUTI LOCALIZZATI (ARENULA 16) ============ */
 const DATA = {
 
