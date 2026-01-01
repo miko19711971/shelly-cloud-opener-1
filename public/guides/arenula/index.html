@@ -698,8 +698,10 @@ function send(){
 sendBtn.addEventListener('click',send);
 input.addEventListener('keydown',e=>{ if(e.key==='Enter') send(); });
 
-applyUI(); 
-welcome();
+document.addEventListener('DOMContentLoaded', () => {
+  applyUI();
+  welcome();
+});
 </script>
 </body>
 </html>
