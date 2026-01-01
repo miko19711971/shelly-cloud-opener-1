@@ -76,7 +76,31 @@ input{flex:1;padding:12px;border:1px solid #cbd5e1;border-radius:10px;outline:no
 /* === CONFIG === */
 const APARTMENT_ID = "ARENULA16";
 const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxpLAyktZtDjjWrxNbuR8_UOB2JTrZm5z4zXqejKaJpplwvrwD5i7ZEYgz9Mo24dN0B/exec";
-/* --- FUNZIONE INVIO FEEDBACK --- */
+async function sendFeedback(topic, answerText, voteValue) {
+  const feedbackData = {
+    apartment_id: APARTMENT_ID, // Usa la costante già presente nel tuo HTML
+    language: document.documentElement.lang || 'it',
+    topic: topic,
+    answer_text: answerText,
+    vote: voteValue // Deve essere 'like' o 'dislike'
+  };
+
+  try {
+    // Invia i dati a Google Sheets
+    await fetch(GOOGLE_SCRIPT_URL, {
+      method: "POST",
+      mode: "no-cors", // Necessario per evitare blocchi CORS da GitHub/Render
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(feedbackData)
+    });
+    
+    // Messaggio di conferma (usa le traduzioni DATA che hai già)
+    alert(DATA[currLang].ui.fb_thanks || "Grazie per il feedback!");
+  } catch (error) {
+    console.error("Errore durante l'invio del feedback:", error);
+  }
+}
+ /* --- FUNZIONE INVIO FEEDBACK --- */
 async function sendFeedback(intentKey, value) {
   const data = {
     apartment: APARTMENT_ID,
