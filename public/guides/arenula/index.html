@@ -568,14 +568,14 @@ if(!DATA[lang]) lang='en';
 url.searchParams.set('lang',lang); history.replaceState(null,'',url);
 localStorage.setItem('lang',lang);
 
-/* ============ TTS MULTILINGUA (voci preferite) ============ */
+/* ============ TTS MULTILINGUA ============ */
 let voiceOn=false, pick=null;
 const VOICE_PREFS = {
-  en:['Samantha','Google US English','Google UK English Female','Microsoft Aria Online (Natural)'],
-  it:['Alice','Eloisa','Google italiano','Microsoft Elsa Online (Natural)','Microsoft Isabella Online (Natural)'],
-  fr:['Amelie','Thomas','Google français','Microsoft Denise Online (Natural)','Microsoft Vivienne Online (Natural)'],
-  de:['Anna','Markus','Google Deutsch','Microsoft Katja Online (Natural)','Microsoft Conrad Online (Natural)'],
-  es:['Monica','Jorge','Paulina','Google español','Microsoft Alvaro Online (Natural)']
+  en:['Samantha','Google US English','Google UK English Female'],
+  it:['Alice','Eloisa','Google italiano'],
+  fr:['Amelie','Thomas','Google français'],
+  de:['Anna','Markus','Google Deutsch'],
+  es:['Monica','Jorge','Paulina']
 };
 function selectVoice(){
   if(!('speechSynthesis' in window)) return null;
@@ -585,8 +585,7 @@ function selectVoice(){
     const v = all.find(v => (v.name||'').toLowerCase()===name.toLowerCase());
     if(v) return v;
   }
-  const byLang = all.find(v => (v.lang||'').toLowerCase().startsWith(lang));
-  return byLang || all[0] || null;
+  return all.find(v => (v.lang||'').toLowerCase().startsWith(lang)) || null;
 }
 function refreshVoice(){ pick = selectVoice(); }
 if('speechSynthesis' in window){ refreshVoice(); speechSynthesis.onvoiceschanged = refreshVoice; }
@@ -595,7 +594,7 @@ function warm(){
   try{
     speechSynthesis.cancel();
     const dot = new SpeechSynthesisUtterance('.');
-    dot.volume=0.01; if(pick) dot.voice=pick; dot.lang = pick?.lang || lang;
+    dot.volume=0.01; if(pick) dot.voice=pick; dot.lang = lang;
     speechSynthesis.speak(dot);
   }catch{}
 }
@@ -603,8 +602,8 @@ function speak(t){
   if(!voiceOn || !('speechSynthesis' in window)) return;
   try{
     speechSynthesis.cancel();
-    const u=new SpeechSynthesisUtterance(t.replace(/<[^>]+>/g,'')); // legge senza tag
-    if(pick) u.voice=pick; u.lang = pick?.lang || lang;
+    const u=new SpeechSynthesisUtterance(t.replace(/<[^>]+>/g,''));
+    if(pick) u.voice=pick; u.lang = lang;
     speechSynthesis.speak(u);
   }catch{}
 }
@@ -634,18 +633,15 @@ function applyUI(){
 function add(type, txt){
   const d=document.createElement('div');
   d.className='msg '+(type==='me'?'me':'wd');
-  if(type==='me'){
-    d.textContent = txt;
-  } else {
-    d.innerHTML = txt;  // <<< QUI: il bot può mostrare link cliccabili
-  }
+  if(type==='me') d.textContent = txt;
+  else d.innerHTML = txt;
   chatEl.appendChild(d);
   chatEl.scrollTop=chatEl.scrollHeight;
   return d;
 }
 function detectIntent(text){
   const L = DATA[lang]; const t = (text||'').toLowerCase();
-  let best=null,score=0;
+  let best=null, score=0;
   for(const it of L.intents){
     let s=0; for(const k of it.keys){ if(t.includes(k.toLowerCase())) s++; }
     if(s>score){ score=s; best=it; }
@@ -653,53 +649,63 @@ function detectIntent(text){
   return best;
 }
 function getAnswer(text){
-  const L = DATA[lang]; const apt=L.apt;
+  const L = DATA[lang];
   const m = detectIntent(text);
   if(!m) return { text: L.ui.fallback, topic: 'fallback' };
-  try{ return { text: m.t(apt), topic: m.k }; }catch{ return { text: L.ui.fallback, topic: 'fallback' }; }
+  try{ return { text: m.t(L.apt), topic: m.k }; } catch{ return { text: L.ui.fallback, topic: 'fallback' }; }
 }
 
-/* --- invio feedback al Google Sheet --- */
-function postFeedback(vote, topic, answerText){
-  try{
-    fetch(GOOGLE_SCRIPT_URL, {
-      method:'POST',
-      
-      headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({
-  apartment: APARTMENT_ID,
-  language: lang,
-  topic: topic,
-  answer: answerText,
-  vote: vote,
-  timestamp: new Date().toISOString()
-})
+/* --- INVIO FEEDBACK AL GOOGLE SHEET (CORRETTO) --- */
+async function postFeedback(vote, topic, answerText){
+  if(!GOOGLE_SCRIPT_URL) return;
+  const payload = {
+    apartment_id: APARTMENT_ID,
+    language: lang,
+    topic: topic,
+    answer_text: answerText.substring(0,100), // inviamo solo l'inizio per brevità
+    vote: vote
+  };
+  try {
+    await fetch(GOOGLE_SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors', // Evita il blocco CORS
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
     });
-  }catch{}
+  } catch(e) { console.error("Errore invio:", e); }
 }
+
 function attachFeedbackUI(container, topic, answerText){
   const L = DATA[lang].ui;
   const box = document.createElement('div');
   box.className = 'fb-box';
+  
   const label = document.createElement('span');
   label.className = 'fb-label';
   label.textContent = L.fb_label;
+  
   const likeBtn = document.createElement('button');
-  likeBtn.type='button'; likeBtn.textContent= L.fb_like;
+  likeBtn.textContent = L.fb_like;
+  
   const dislikeBtn = document.createElement('button');
-  dislikeBtn.type='button'; dislikeBtn.textContent= L.fb_dislike;
+  dislikeBtn.textContent = L.fb_dislike;
+  
   const done = document.createElement('span');
-  done.className='fb-done'; done.textContent= L.fb_thanks;
+  done.className='fb-done'; done.textContent = " " + L.fb_thanks;
   done.style.display='none';
+
   function finish(v){
-    likeBtn.disabled = true; dislikeBtn.disabled = true;
-    likeBtn.style.opacity = 0.6; dislikeBtn.style.opacity = 0.6;
+    likeBtn.style.display = 'none';
+    dislikeBtn.style.display = 'none';
+    label.style.display = 'none';
     done.style.display = 'inline';
     postFeedback(v, topic, answerText);
   }
-  likeBtn.addEventListener('click', ()=>finish('like'));
-  dislikeBtn.addEventListener('click', ()=>finish('dislike'));
-  box.appendChild(label); box.appendChild(likeBtn); box.appendChild(dislikeBtn); box.appendChild(done);
+
+  likeBtn.onclick = () => finish('like');
+  dislikeBtn.onclick = () => finish('dislike');
+
+  box.append(label, likeBtn, dislikeBtn, done);
   container.appendChild(box);
 }
 
@@ -717,7 +723,6 @@ function welcome(){
   chatEl.appendChild(q);
 }
 
-/* --- invio messaggio --- */
 function send(){
   const text=(input.value||'').trim(); 
   if(!text) return;
@@ -729,7 +734,6 @@ function send(){
   attachFeedbackUI(botNode, topic, bot);
 }
 
-/* --- eventi --- */
 sendBtn.addEventListener('click',send);
 input.addEventListener('keydown',e=>{ if(e.key==='Enter') send(); });
 
@@ -738,4 +742,3 @@ welcome();
 </script>
 </body>
 </html>
-
