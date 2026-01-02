@@ -624,107 +624,64 @@ function getAnswer(text){
   try{ return { text: m.t(apt), topic: m.k }; }catch{ return { text: L.ui.fallback, topic: 'fallback' }; }
 }
 
-/* --- invio feedback al Google Sheet --- */
-function postFeedback(vote, topic, answerText){
-  try{
-    fetch(GOOGLE_SCRIPT_URL, {
-      method:'POST',
-      
-      headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({
-  apartment: APARTMENT_ID,
-  language: lang,
-  topic: topic,
-  answer: answerText,
-  vote: vote,
-  timestamp: new Date().toISOString()
-})
-    });
-  }catch{}
-}
-function attachFeedbackUI(container, topic, answerText){
-  const L = DATA[lang].ui;
-  const box = document.createElement('div');
-  box.className = 'fb-box';
-  const label = document.createElement('span');
-  label.className = 'fb-label';
-  label.textContent = L.fb_label;
-  const likeBtn = document.createElement('button');
-  likeBtn.type='button'; likeBtn.textContent= L.fb_like;
-  const dislikeBtn = document.createElement('button');
-  dislikeBtn.type='button'; dislikeBtn.textContent= L.fb_dislike;
-  const done = document.createElement('span');
-  done.className='fb-done'; done.textContent= L.fb_thanks;
-  done.style.display='none';
-  function finish(v){
-    likeBtn.disabled = true; dislikeBtn.disabled = true;
-    likeBtn.style.opacity = 0.6; dislikeBtn.style.opacity = 0.6;
-    done.style.display = 'inline';
-    postFeedback(v, topic, answerText);
-  }
-  likeBtn.addEventListener('click', ()=>finish('like'));
-  dislikeBtn.addEventListener('click', ()=>finish('dislike'));
-  box.appendChild(label); box.appendChild(likeBtn); box.appendChild(dislikeBtn); box.appendChild(done);
-  container.appendChild(box);
-}
+ /* --- LOGICA DI INVIO E FEEDBACK (COPIA DA QUI) --- */
 
-function welcome(){
-  const L=DATA[lang].ui;
-  const intro=document.createElement('div'); intro.className='intro';
-  intro.innerHTML = `<b>${L.welcome}</b>`;
-  chatEl.appendChild(intro);
-  const q=document.createElement('div'); q.className='quick';
-  for(const key of L.quick){
-    const b=document.createElement('button'); b.textContent=key;
-    b.onclick=()=>{ input.value=key; send(); };
-    q.appendChild(b);
-  }
-  chatEl.appendChild(q);
-}
-
-/* --- invio messaggio --- */
-function send(){
-  const text=(input.value||'').trim(); 
-  if(!text) return;
-  add('me',text); 
-  input.value='';
-  const {text:bot, topic} = getAnswer(text);
-  const botNode = add('wd',bot); 
+// 1. Funzione che invia il messaggio in chat
+function send() {
+  const text = (input.value || '').trim(); 
+  if (!text) return;
+  add('me', text); 
+  input.value = '';
+  
+  // Trova la risposta corretta
+  const {text: bot, topic} = getAnswer(text);
+  const botNode = add('wd', bot); 
   speak(bot);
+  
+  // Aggiunge i tastini Like/Dislike sotto la risposta
   attachFeedbackUI(botNode, topic, bot);
 }
 
-/* --- eventi --- */
-sendBtn.addEventListener('click',send);
-input.addEventListener('keydown',e=>{ if(e.key==='Enter') send(); });
+// 2. Funzione che crea graficamente i tastini Like/Dislike
+function attachFeedbackUI(node, topic, answer) {
+  const div = document.createElement('div');
+  div.className = 'fb-box';
+  div.innerHTML = `
+    <span class="fb-label">${DATA[currentLang].ui.fb_label}</span>
+    <button onclick="handleFb(this,'Like','${topic.replace(/'/g,"\\'")}','${answer.replace(/'/g,"\\'")}')">${DATA[currentLang].ui.fb_like}</button>
+    <button onclick="handleFb(this,'Dislike','${topic.replace(/'/g,"\\'")}','${answer.replace(/'/g,"\\'")}')">${DATA[currentLang].ui.fb_dislike}</button>
+  `;
+  node.appendChild(div);
+}
 
-applyUI(); 
-welcome();
-</script>
-</body>
-</html>
- /* === FUNZIONE INVIO FEEDBACK AL FOGLIO GOOGLE === */
-function sendFeedbackToGoogle(vote, topic, answer) {
-  const data = {
+// 3. Funzione che spedisce i dati al tuo Foglio Google
+function handleFb(btn, vote, topic, answer) {
+  // Trasforma i tastini in un messaggio di ringraziamento
+  const container = btn.parentElement;
+  container.innerHTML = `<span class="fb-thanks">${DATA[currentLang].ui.fb_thanks}</span>`;
+  
+  // Prepara i dati da spedire
+  const payload = {
     apartment: APARTMENT_ID,
-    language: document.documentElement.lang || 'en',
+    language: currentLang,
     topic: topic,
     answer: answer,
     vote: vote
   };
 
-  // Questa è la parte che "parla" con il tuo script
+  // SPEDISCE A GOOGLE
   fetch(GOOGLE_SCRIPT_URL, {
     method: "POST",
-    mode: "no-cors", // Fondamentale per evitare errori di blocco browser
-    cache: "no-cache",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(data)
-  })
-  .then(() => console.log("Feedback inviato con successo!"))
-  .catch(err => console.error("Errore invio:", err));
+    mode: "no-cors",
+    body: JSON.stringify(payload)
+  });
 }
 
-// Assicurati che quando l'utente clicca Like/Dislike, questa funzione venga chiamata.
-// Esempio: sendFeedbackToGoogle('Like', 'wifi', 'Password is...');
+// Gestione tasto invio e click
+sendBtn.onclick = send;
+input.onkeydown = e => { if(e.key==='Enter') send(); };
 
+/* --- FINE DEL FILE --- */
+</script>
+</body>
+</html>
