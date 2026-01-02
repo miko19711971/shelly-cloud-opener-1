@@ -624,21 +624,20 @@ function getAnswer(text){
   try{ return { text: m.t(apt), topic: m.k }; }catch{ return { text: L.ui.fallback, topic: 'fallback' }; }
 }
 
-/* --- invio feedback al Google Sheet --- */
+ /* --- invio feedback al Google Sheet --- */
 function postFeedback(vote, topic, answerText){
   try{
     fetch(GOOGLE_SCRIPT_URL, {
-      method:'POST',
-      
-      headers:{'Content-Type':'application/json'},
+      method: 'POST',
+      mode: 'no-cors',
       body: JSON.stringify({
-  apartment: APARTMENT_ID,
-  language: lang,
-  topic: topic,
-  answer: answerText,
-  vote: vote,
-  timestamp: new Date().toISOString()
-})
+        apartment: APARTMENT_ID,
+        language: lang,
+        topic: topic,
+        answer: answerText,
+        vote: vote,
+        timestamp: new Date().toISOString()
+      })
     });
   }catch{}
 }
