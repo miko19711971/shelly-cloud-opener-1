@@ -75,7 +75,7 @@ input{flex:1;padding:12px;border:1px solid #cbd5e1;border-radius:10px;outline:no
 <script>
 /* === CONFIG === */
 const APARTMENT_ID = "ARENULA16";
-const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz5peEbDoCS3VCxudWcsJ1F2K2382j2bPX58l1L8p-SuQdkZM71kY2wgjjgmS_9rE4X/exec";
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxpLAyktZtDjjWrxNbuR8_UOB2JTrZm5z4zXqejKaJpplwvrwD5i7ZEYgz9Mo24dN0B/exec";
 
 /* ============ CONTENUTI LOCALIZZATI (ARENULA 16) ============ */
 const DATA = {
@@ -594,6 +594,7 @@ function applyUI(){
   input.placeholder = L.placeholder;
   document.querySelectorAll('.lang [data-lang]').forEach(b=> b.setAttribute('aria-current', b.getAttribute('data-lang')===lang ? 'true':'false'));
 }
+
 /* ============ CHAT LOGIC + FEEDBACK ============ */
 function add(type, txt){
   const d=document.createElement('div');
@@ -601,13 +602,12 @@ function add(type, txt){
   if(type==='me'){
     d.textContent = txt;
   } else {
-    d.innerHTML = txt;
+    d.innerHTML = txt;  // <<< QUI: il bot può mostrare link cliccabili
   }
   chatEl.appendChild(d);
   chatEl.scrollTop=chatEl.scrollHeight;
   return d;
 }
-
 function detectIntent(text){
   const L = DATA[lang]; const t = (text||'').toLowerCase();
   let best=null,score=0;
@@ -617,74 +617,90 @@ function detectIntent(text){
   }
   return best;
 }
-
 function getAnswer(text){
   const L = DATA[lang]; const apt=L.apt;
   const m = detectIntent(text);
   if(!m) return { text: L.ui.fallback, topic: 'fallback' };
-  try{ return { text: m.t(apt), topic: m.k }; }
-  catch{ return { text: L.ui.fallback, topic: 'fallback' }; }
+  try{ return { text: m.t(apt), topic: m.k }; }catch{ return { text: L.ui.fallback, topic: 'fallback' }; }
 }
 
-/* --- LOGICA DI INVIO E FEEDBACK --- */
+/* --- invio feedback al Google Sheet --- */
+function postFeedback(vote, topic, answerText){
+  try{
+    fetch(GOOGLE_SCRIPT_URL, {
+      method:'POST',
+      
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+  apartment: APARTMENT_ID,
+  language: lang,
+  topic: topic,
+  answer: answerText,
+  vote: vote,
+  timestamp: new Date().toISOString()
+})
+    });
+  }catch{}
+}
+function attachFeedbackUI(container, topic, answerText){
+  const L = DATA[lang].ui;
+  const box = document.createElement('div');
+  box.className = 'fb-box';
+  const label = document.createElement('span');
+  label.className = 'fb-label';
+  label.textContent = L.fb_label;
+  const likeBtn = document.createElement('button');
+  likeBtn.type='button'; likeBtn.textContent= L.fb_like;
+  const dislikeBtn = document.createElement('button');
+  dislikeBtn.type='button'; dislikeBtn.textContent= L.fb_dislike;
+  const done = document.createElement('span');
+  done.className='fb-done'; done.textContent= L.fb_thanks;
+  done.style.display='none';
+  function finish(v){
+    likeBtn.disabled = true; dislikeBtn.disabled = true;
+    likeBtn.style.opacity = 0.6; dislikeBtn.style.opacity = 0.6;
+    done.style.display = 'inline';
+    postFeedback(v, topic, answerText);
+  }
+  likeBtn.addEventListener('click', ()=>finish('like'));
+  dislikeBtn.addEventListener('click', ()=>finish('dislike'));
+  box.appendChild(label); box.appendChild(likeBtn); box.appendChild(dislikeBtn); box.appendChild(done);
+  container.appendChild(box);
+}
 
-// 1. Invio messaggio
-function send() {
-  const text = (input.value || '').trim(); 
-  if (!text) return;
+function welcome(){
+  const L=DATA[lang].ui;
+  const intro=document.createElement('div'); intro.className='intro';
+  intro.innerHTML = `<b>${L.welcome}</b>`;
+  chatEl.appendChild(intro);
+  const q=document.createElement('div'); q.className='quick';
+  for(const key of L.quick){
+    const b=document.createElement('button'); b.textContent=key;
+    b.onclick=()=>{ input.value=key; send(); };
+    q.appendChild(b);
+  }
+  chatEl.appendChild(q);
+}
 
-  add('me', text); 
-  input.value = '';
-
-  const { text: bot, topic } = getAnswer(text);
-  const botNode = add('wd', bot); 
+/* --- invio messaggio --- */
+function send(){
+  const text=(input.value||'').trim(); 
+  if(!text) return;
+  add('me',text); 
+  input.value='';
+  const {text:bot, topic} = getAnswer(text);
+  const botNode = add('wd',bot); 
   speak(bot);
-
   attachFeedbackUI(botNode, topic, bot);
 }
 
-// 2. UI Like / Dislike
-function attachFeedbackUI(node, topic, answer) {
-  const div = document.createElement('div');
-  div.className = 'fb-box';
-  div.innerHTML = `
-    <span class="fb-label">${DATA[lang].ui.fb_label}</span>
-    <button onclick="handleFb(this,'like','${topic.replace(/'/g,"\\'")}','${answer.replace(/'/g,"\\'")}')">
-      ${DATA[lang].ui.fb_like}
-    </button>
-    <button onclick="handleFb(this,'dislike','${topic.replace(/'/g,"\\'")}','${answer.replace(/'/g,"\\'")}')">
-      ${DATA[lang].ui.fb_dislike}
-    </button>
-  `;
-  node.appendChild(div);
-}
+/* --- eventi --- */
+sendBtn.addEventListener('click',send);
+input.addEventListener('keydown',e=>{ if(e.key==='Enter') send(); });
 
-// 3. Invio dati al Google Apps Script (CAMPI ALLINEATI)
-function handleFb(btn, vote, topic, answer) {
-  const container = btn.parentElement;
-  container.innerHTML = `<span class="fb-thanks">${DATA[lang].ui.fb_thanks}</span>`;
-
-  const payload = {
-    apartment_id: APARTMENT_ID,
-    language: lang,
-    topic: topic,
-    answer_text: answer,
-    vote: vote
-  };
-
- fetch(GOOGLE_SCRIPT_URL, {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify(payload)
-})
-.then(r => r.json())
-.then(d => console.log("Feedback OK:", d))
-.catch(e => console.error("Feedback ERROR:", e));
-}
-
-// Eventi
-sendBtn.onclick = send;
-input.onkeydown = e => { if(e.key === 'Enter') send(); };
+applyUI(); 
+welcome();
 </script>
 </body>
 </html>
+
