@@ -672,12 +672,14 @@ function handleFb(btn, vote, topic, answer) {
     vote: vote
   };
 
-  fetch(GOOGLE_SCRIPT_URL, {
-    method: "POST",
-    mode: "no-cors",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload)
-  });
+ fetch(GOOGLE_SCRIPT_URL, {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify(payload)
+})
+.then(r => r.json())
+.then(d => console.log("Feedback OK:", d))
+.catch(e => console.error("Feedback ERROR:", e));
 }
 
 // Eventi
