@@ -696,6 +696,19 @@ input.addEventListener('keydown',e=>{ if(e.key==='Enter') send(); });
 
 applyUI(); 
 welcome();
+  function sendFeedback(vote) {
+  fetch("/feedback", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      apartment: "arenula",
+      language: document.documentElement.lang || "en",
+      topic: window.currentTopic || "general",
+      vote: vote,
+      timestamp: new Date().toISOString()
+    })
+  });
+}
 </script>
 </body>
 </html>
