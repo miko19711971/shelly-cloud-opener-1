@@ -710,6 +710,26 @@ welcome();
   });
 }
 </script>
+  <script>
+const FEEDBACK_ENDPOINT = "https://shelly-cloud-opener-1.onrender.com/feedback";
+
+function sendFeedback(vote, topic, answerText) {
+  fetch(FEEDBACK_ENDPOINT, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      apartment: "arenula",
+      language: "it",
+      topic,
+      answer: answerText,
+      vote,
+      timestamp: new Date().toISOString()
+    })
+  })
+  .then(() => console.log("✅ feedback inviato"))
+  .catch(err => console.error("❌ feedback errore", err));
+}
+</script>
 </body>
 </html>
 
