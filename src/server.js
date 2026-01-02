@@ -28,6 +28,7 @@ app.set("trust proxy", true);
 app.use(express.urlencoded({ extended: true, limit: "50kb" }));
 app.use(express.json({ limit: "100kb" }));
 app.post("/feedback", async (req, res) => {
+  console.log("FEEDBACK ARRIVATO", req.body);
   try {
     await fetch(
       "https://script.google.com/macros/s/AKfycbwut-C1NoqZAxAPKFQO_JVb_O5mPbEYjCVTVecWiSOMgJ31GCtiQjNPHOnQI3h5KZsy/exec",
