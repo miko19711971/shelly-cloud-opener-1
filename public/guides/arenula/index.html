@@ -594,7 +594,6 @@ function applyUI(){
   input.placeholder = L.placeholder;
   document.querySelectorAll('.lang [data-lang]').forEach(b=> b.setAttribute('aria-current', b.getAttribute('data-lang')===lang ? 'true':'false'));
 }
-
 /* ============ CHAT LOGIC + FEEDBACK ============ */
 function add(type, txt){
   const d=document.createElement('div');
@@ -602,12 +601,13 @@ function add(type, txt){
   if(type==='me'){
     d.textContent = txt;
   } else {
-    d.innerHTML = txt;  // <<< QUI: il bot può mostrare link cliccabili
+    d.innerHTML = txt;
   }
   chatEl.appendChild(d);
   chatEl.scrollTop=chatEl.scrollHeight;
   return d;
 }
+
 function detectIntent(text){
   const L = DATA[lang]; const t = (text||'').toLowerCase();
   let best=null,score=0;
@@ -617,71 +617,72 @@ function detectIntent(text){
   }
   return best;
 }
+
 function getAnswer(text){
   const L = DATA[lang]; const apt=L.apt;
   const m = detectIntent(text);
   if(!m) return { text: L.ui.fallback, topic: 'fallback' };
-  try{ return { text: m.t(apt), topic: m.k }; }catch{ return { text: L.ui.fallback, topic: 'fallback' }; }
+  try{ return { text: m.t(apt), topic: m.k }; }
+  catch{ return { text: L.ui.fallback, topic: 'fallback' }; }
 }
 
- /* --- LOGICA DI INVIO E FEEDBACK (COPIA DA QUI) --- */
+/* --- LOGICA DI INVIO E FEEDBACK --- */
 
-// 1. Funzione che invia il messaggio in chat
+// 1. Invio messaggio
 function send() {
   const text = (input.value || '').trim(); 
   if (!text) return;
+
   add('me', text); 
   input.value = '';
-  
-  // Trova la risposta corretta
-  const {text: bot, topic} = getAnswer(text);
+
+  const { text: bot, topic } = getAnswer(text);
   const botNode = add('wd', bot); 
   speak(bot);
-  
-  // Aggiunge i tastini Like/Dislike sotto la risposta
+
   attachFeedbackUI(botNode, topic, bot);
 }
 
-// 2. Funzione che crea graficamente i tastini Like/Dislike
+// 2. UI Like / Dislike
 function attachFeedbackUI(node, topic, answer) {
   const div = document.createElement('div');
   div.className = 'fb-box';
   div.innerHTML = `
-    <span class="fb-label">${DATA[currentLang].ui.fb_label}</span>
-    <button onclick="handleFb(this,'Like','${topic.replace(/'/g,"\\'")}','${answer.replace(/'/g,"\\'")}')">${DATA[currentLang].ui.fb_like}</button>
-    <button onclick="handleFb(this,'Dislike','${topic.replace(/'/g,"\\'")}','${answer.replace(/'/g,"\\'")}')">${DATA[currentLang].ui.fb_dislike}</button>
+    <span class="fb-label">${DATA[lang].ui.fb_label}</span>
+    <button onclick="handleFb(this,'like','${topic.replace(/'/g,"\\'")}','${answer.replace(/'/g,"\\'")}')">
+      ${DATA[lang].ui.fb_like}
+    </button>
+    <button onclick="handleFb(this,'dislike','${topic.replace(/'/g,"\\'")}','${answer.replace(/'/g,"\\'")}')">
+      ${DATA[lang].ui.fb_dislike}
+    </button>
   `;
   node.appendChild(div);
 }
 
-// 3. Funzione che spedisce i dati al tuo Foglio Google
+// 3. Invio dati al Google Apps Script (CAMPI ALLINEATI)
 function handleFb(btn, vote, topic, answer) {
-  // Trasforma i tastini in un messaggio di ringraziamento
   const container = btn.parentElement;
-  container.innerHTML = `<span class="fb-thanks">${DATA[currentLang].ui.fb_thanks}</span>`;
-  
-  // Prepara i dati da spedire
+  container.innerHTML = `<span class="fb-thanks">${DATA[lang].ui.fb_thanks}</span>`;
+
   const payload = {
-    apartment: APARTMENT_ID,
-    language: currentLang,
+    apartment_id: APARTMENT_ID,
+    language: lang,
     topic: topic,
-    answer: answer,
+    answer_text: answer,
     vote: vote
   };
 
-  // SPEDISCE A GOOGLE
   fetch(GOOGLE_SCRIPT_URL, {
     method: "POST",
     mode: "no-cors",
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload)
   });
 }
 
-// Gestione tasto invio e click
+// Eventi
 sendBtn.onclick = send;
-input.onkeydown = e => { if(e.key==='Enter') send(); };
-
-/* --- FINE DEL FILE --- */
+input.onkeydown = e => { if(e.key === 'Enter') send(); };
 </script>
 </body>
 </html>
