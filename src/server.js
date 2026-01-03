@@ -27,6 +27,7 @@ app.disable("x-powered-by");
 app.set("trust proxy", true);
 app.use(express.urlencoded({ extended: true, limit: "50kb" }));
 app.use(express.json({ limit: "100kb" }));
+app.options("/feedback", cors());
 app.post("/feedback", cors(), async (req, res) => {
   console.log("FEEDBACK ARRIVATO", req.body);
   try {
