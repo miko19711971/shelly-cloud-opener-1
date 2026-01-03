@@ -703,29 +703,4 @@ welcome();
 </script>
 </body>
 </html>
- /* === FUNZIONE INVIO FEEDBACK AL FOGLIO GOOGLE === */
-function sendFeedbackToGoogle(vote, topic, answer) {
-  const data = {
-    apartment: APARTMENT_ID,
-    language: document.documentElement.lang || 'en',
-    topic: topic,
-    answer: answer,
-    vote: vote
-  };
-
-  // Questa è la parte che "parla" con il tuo script
-  fetch(GOOGLE_SCRIPT_URL, {
-    method: "POST",
-    mode: "no-cors", // Fondamentale per evitare errori di blocco browser
-    cache: "no-cache",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(data)
-  })
-  .then(() => console.log("Feedback inviato con successo!"))
-  .catch(err => console.error("Errore invio:", err));
-}
-
-// Assicurati che quando l'utente clicca Like/Dislike, questa funzione venga chiamata.
-// Esempio: sendFeedbackToGoogle('Like', 'wifi', 'Password is...');
-
-
+ 
