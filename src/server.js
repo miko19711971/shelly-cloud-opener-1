@@ -1,3 +1,5 @@
+Js top
+
 import express from "express";
 import axios from "axios";
 import crypto from "crypto";
@@ -27,37 +29,7 @@ app.disable("x-powered-by");
 app.set("trust proxy", true);
 app.use(express.urlencoded({ extended: true, limit: "50kb" }));
 app.use(express.json({ limit: "100kb" }));
- // 🔎 Diagnostica: conferma arrivo richiesta
-app.use((req, res, next) => {
-  if (req.url.includes("/feedback")) {
-    console.log("HIT FEEDBACK RAW", req.method, req.headers["content-type"]);
-  }
-  next();
-});
 
-// ✅ Preflight CORS
-app.options("/feedback", cors());
-
-// ✅ Endpoint feedback
-app.post("/feedback", cors(), async (req, res) => {
-  console.log("FEEDBACK ARRIVATO", req.body);
-
-  try {
-    await fetch(
-      "https://script.google.com/macros/s/AKfycbwut-C1NoqZAxAPKFQO_JVb_O5mPbEYjCVTVecWiSOMgJ31GCtiQjNPHOnQI3h5KZsy/exec",
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(req.body)
-      }
-    );
-
-    res.json({ ok: true });
-  } catch (err) {
-    console.error("ERRORE FEEDBACK → APPS SCRIPT", err);
-    res.status(500).json({ ok: false });
-  }
-});
 // ✅ CORS solo dove serve (non globale)
 const corsOptions = {
   origin: (origin, cb) => {
@@ -145,7 +117,7 @@ const GUIDE_CSP = [
   "style-src 'self' 'unsafe-inline' https:",
   "img-src 'self' data: https:",
   "font-src 'self' data: https:",
-  "connect-src 'self' https://script.google.com https://shelly-cloud-opener-1.onrender.com",
+  "connect-src 'self'",
   "form-action 'self'",
   "frame-ancestors 'none'",
   "base-uri 'self'",
