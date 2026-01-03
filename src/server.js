@@ -28,6 +28,12 @@ app.set("trust proxy", true);
 app.use(express.urlencoded({ extended: true, limit: "50kb" }));
 app.use(express.json({ limit: "100kb" }));
 app.options("/feedback", cors());
+app.use((req, res, next) => {
+  if (req.url.includes("feedback")) {
+    console.log("HIT FEEDBACK RAW", req.method, req.headers["content-type"]);
+  }
+  next();
+});
 app.post("/feedback", cors(), async (req, res) => {
   console.log("FEEDBACK ARRIVATO", req.body);
   try {
