@@ -27,15 +27,21 @@ app.disable("x-powered-by");
 app.set("trust proxy", true);
 app.use(express.urlencoded({ extended: true, limit: "50kb" }));
 app.use(express.json({ limit: "100kb" }));
-app.options("/feedback", cors());
+ // 🔎 Diagnostica: conferma arrivo richiesta
 app.use((req, res, next) => {
-  if (req.url.includes("feedback")) {
+  if (req.url.includes("/feedback")) {
     console.log("HIT FEEDBACK RAW", req.method, req.headers["content-type"]);
   }
   next();
 });
+
+// ✅ Preflight CORS
+app.options("/feedback", cors());
+
+// ✅ Endpoint feedback
 app.post("/feedback", cors(), async (req, res) => {
   console.log("FEEDBACK ARRIVATO", req.body);
+
   try {
     await fetch(
       "https://script.google.com/macros/s/AKfycbwut-C1NoqZAxAPKFQO_JVb_O5mPbEYjCVTVecWiSOMgJ31GCtiQjNPHOnQI3h5KZsy/exec",
@@ -45,8 +51,10 @@ app.post("/feedback", cors(), async (req, res) => {
         body: JSON.stringify(req.body)
       }
     );
+
     res.json({ ok: true });
-  } catch (e) {
+  } catch (err) {
+    console.error("ERRORE FEEDBACK → APPS SCRIPT", err);
     res.status(500).json({ ok: false });
   }
 });
