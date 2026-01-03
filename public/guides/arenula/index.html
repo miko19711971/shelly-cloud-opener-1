@@ -73,12 +73,10 @@ input{flex:1;padding:12px;border:1px solid #cbd5e1;border-radius:10px;outline:no
 </div>
 
 <script>
-alert('ARENULA HTML LOADED');
-
 /* === CONFIG === */
 const APARTMENT_ID = "ARENULA16";
-const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx4gfShWt2wVvgdEO1Q0sFphv8QT4Nx6DVsnGIRGk5SYptL8e5SJLO-BXa-TxtFmX6W/exec";
- 
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzI-uKj5SjzxpidtJJczWGi1ZIy9n5fkqHEqs8A4LkdeRluJJ14uEqlKzio5rD3Kus8/exec";
+
 /* ============ CONTENUTI LOCALIZZATI (ARENULA 16) ============ */
 const DATA = {
 
@@ -705,4 +703,29 @@ welcome();
 </script>
 </body>
 </html>
- 
+ /* === FUNZIONE INVIO FEEDBACK AL FOGLIO GOOGLE === */
+function sendFeedbackToGoogle(vote, topic, answer) {
+  const data = {
+    apartment: APARTMENT_ID,
+    language: document.documentElement.lang || 'en',
+    topic: topic,
+    answer: answer,
+    vote: vote
+  };
+
+  // Questa è la parte che "parla" con il tuo script
+  fetch(GOOGLE_SCRIPT_URL, {
+    method: "POST",
+    mode: "no-cors", // Fondamentale per evitare errori di blocco browser
+    cache: "no-cache",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data)
+  })
+  .then(() => console.log("Feedback inviato con successo!"))
+  .catch(err => console.error("Errore invio:", err));
+}
+
+// Assicurati che quando l'utente clicca Like/Dislike, questa funzione venga chiamata.
+// Esempio: sendFeedbackToGoogle('Like', 'wifi', 'Password is...');
+
+
