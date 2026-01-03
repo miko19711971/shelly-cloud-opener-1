@@ -130,7 +130,7 @@ const GUIDE_CSP = [
   "style-src 'self' 'unsafe-inline' https:",
   "img-src 'self' data: https:",
   "font-src 'self' data: https:",
-  "connect-src 'self'",
+  "connect-src 'self' https://script.google.com https://shelly-cloud-opener-1.onrender.com",
   "form-action 'self'",
   "frame-ancestors 'none'",
   "base-uri 'self'",
