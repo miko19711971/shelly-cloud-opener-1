@@ -680,23 +680,21 @@ function welcome(){
 
 /* --- invio messaggio --- */
 function send(){
-  const text=(input.value||'').trim(); 
-  if(!text) return;
-  add('me',text); 
-  input.value='';
-  const {text:bot, topic} = getAnswer(text);
-  const botNode = add('wd',bot); 
+  const text = (input.value || '').trim(); 
+  if (!text) return;
+
+  add('me', text); 
+  input.value = '';
+
+  const { text: bot, topic } = getAnswer(text);
+  const botNode = add('wd', bot); 
   speak(bot);
+
   attachFeedbackUI(botNode, topic, bot);
 }
 
-/* --- eventi --- */
-sendBtn.addEventListener('click',send);
-input.addEventListener('keydown',e=>{ if(e.key==='Enter') send(); });
-
-applyUI(); 
-welcome();
-  function sendFeedback(vote) {
+/* --- INVIO FEEDBACK (FUORI da send) --- */
+function sendFeedback(vote) {
   fetch("/feedback", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -704,12 +702,12 @@ welcome();
       apartment: "arenula",
       language: document.documentElement.lang || "en",
       topic: window.currentTopic || "general",
+      answer: window.lastAnswer || "",
       vote: vote,
       timestamp: new Date().toISOString()
     })
-  });
+  }).catch(() => {});
 }
 </script>
 </body>
 </html>
-
