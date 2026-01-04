@@ -225,9 +225,20 @@ if (scoreMargin <= GATE.MIN_SCORE_MARGIN) {
     answer: null
   };
 }
-  if (!bestIntent || bestScore < GATE.MIN_MATCH_SCORE) {
-    return { ok: true, noMatch: true, answer: null };
-  }
+   if (!bestIntent || bestScore < GATE.MIN_MATCH_SCORE) {
+  return {
+    ok: true,
+    lang: L,
+    intent: "fallback",
+    answer: {
+      it: "Posso aiutarti volentieri 🙂 Puoi dirmi se il problema riguarda Wi-Fi, acqua, aria condizionata o check-in?",
+      en: "I’ll be happy to help 🙂 Is the issue about Wi-Fi, water, air conditioning or check-in?",
+      fr: "Je peux vous aider 🙂 Le problème concerne le Wi-Fi, l’eau, la climatisation ou l’arrivée ?",
+      de: "Ich helfe Ihnen gern 🙂 Geht es um WLAN, Wasser, Klimaanlage oder Check-in?",
+      es: "Con gusto te ayudo 🙂 ¿El problema es Wi-Fi, agua, aire acondicionado o check-in?"
+    }[L]
+  };
+}
 
   // FIX 1 — alias intent
   const INTENT_ALIASES = {
