@@ -93,24 +93,27 @@
     </div>
   </section>
     <!-- 3 -->
-  <section class="card">
-    <div class="step">
-      <div class="num">3</div>
-      <div>
-        <h2 id="s3_t">This is Your Apartment Door</h2>
-        <p id="s3_p">Please press the button only once when you are certain this is the correct door.</p>
+<section class="card">
+  <div class="step">
+    <div class="num">3</div>
+    <div>
+      <h2 id="s3_t">This is Your Apartment Door</h2>
+      <p id="s3_p">Please press the button only once when you are certain this is the correct door.</p>
 
-        <a class="cta" href="#" onclick="openWith('statusApartment','/token/portico-1d-door');return false;" id="btn_apartment">➜ Open Apartment Door</a>
-        <div class="status" id="statusApartment"></div>
+      <a class="cta" href="#"
+         onclick="window.location.href='/k3/portico-1d-door/'+new URLSearchParams(location.search).get('t'); return false;"
+         id="btn_apartment">
+        ➜ Open Apartment Door
+      </a>
+      <div class="status" id="statusApartment"></div>
 
-        <figure>
-          <img src="apartment-door.jpg" alt="Apartment door — Via del Portico d’Ottavia 1D">
-          <figcaption id="s3_cap">Apartment door — 3rd floor.</figcaption>
-        </figure>
-      </div>
+      <figure>
+        <img src="apartment-door.jpg" alt="Apartment door — Via del Portico d’Ottavia 1D">
+        <figcaption id="s3_cap">Apartment door — 3rd floor.</figcaption>
+      </figure>
     </div>
-  </section>
-
+  </div>
+</section>
   <section class="card">
     <h2 id="help_h">Need help?</h2>
     <p id="help_p">Call or WhatsApp: <a class="cta" href="tel:+393355245756">+39 335 524 5756</a></p>
