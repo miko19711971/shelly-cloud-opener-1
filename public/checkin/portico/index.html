@@ -100,8 +100,9 @@
       <h2 id="s3_t">This is Your Apartment Door</h2>
       <p id="s3_p">Please press the button only once when you are certain this is the correct door.</p>
 
-       <a class="cta" href="#"
-   onclick="openWith('statusApartment','/token/portico-1d-door');return false;"
+        <a class="cta"
+   role="button"
+   onclick="event.preventDefault(); openWith('statusApartment','/token/portico-1d-door');"
    id="btn_apartment">
         ➜ Open Apartment Door
       </a>
