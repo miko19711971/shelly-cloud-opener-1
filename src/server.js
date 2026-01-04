@@ -1838,12 +1838,17 @@ app.post("/api/vbro-mail", requireAdmin, async (req, resInner) => {
       return res.status(200).send("Listing non mappato");
     }
 
-    const aiResponse = await guideAIreply({
-      apartment: apartmentKey,
-      question: message,
-      lang: null
-    });
+     const aiResponse = await axios.post(
+  `${req.protocol}://${req.get("host")}/api/guest-assistant`,
+  {
+    apartment: apartmentKey,
+    lang: "auto",
+    question: message
+  },
+  { timeout: 8000 }
+);
 
+const data = aiResponse.data || {};
     if (!aiResponse || aiResponse.noMatch || !aiResponse.answer) {
       return res.status(200).send("No AI reply");
     }
