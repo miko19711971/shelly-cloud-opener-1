@@ -215,7 +215,16 @@ export async function reply({ apartment, lang, question }) {
       secondScore = score;
     }
   }
+const scoreMargin = bestScore - secondScore;
 
+if (scoreMargin <= GATE.MIN_SCORE_MARGIN) {
+  return {
+    ok: true,
+    noMatch: true,
+    reason: "low_confidence",
+    answer: null
+  };
+}
   if (!bestIntent || bestScore < GATE.MIN_MATCH_SCORE) {
     return { ok: true, noMatch: true, answer: null };
   }
