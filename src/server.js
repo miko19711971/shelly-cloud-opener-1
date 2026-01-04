@@ -842,6 +842,33 @@ app.post("/checkin/:apt/open/building", requireCheckinToken, async (req, res) =>
 
   return res.json({ ok: true, opened: result });
 });
+app.post("/checkin/:apt/open/door", requireCheckinToken, async (req, res) => {
+  const apt = String(req.params.apt || "").toLowerCase();
+
+  const map = {
+    arenula: "arenula-door",
+    leonina: "leonina-door",
+    scala: "via-della-scala-door",
+    portico: "portico-1d-door",
+    trastevere: "viale-trastevere-door"
+  };
+
+  const targetKey = map[apt];
+  const targetDef = TARGETS[targetKey];
+  if (!targetDef) {
+    return res.status(404).json({ ok: false, error: "unknown_target" });
+  }
+
+  const result = (targetDef.ids.length === 1)
+    ? await openOne(targetDef.ids[0])
+    : await openSequence(targetDef.ids, 10000);
+
+  if (!result.ok) {
+    return res.status(502).json({ ok: false, error: "open_failed", details: result });
+  }
+
+  return res.json({ ok: true, opened: result });
+});
 // ========= STATIC (asset) =========
 app.use("/checkin",        express.static(path.join(PUBLIC_DIR, "checkin"), { fallthrough: false }));
  
