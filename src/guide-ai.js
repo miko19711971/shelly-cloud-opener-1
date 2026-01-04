@@ -206,7 +206,7 @@ export async function reply({ apartment, lang, question }) {
       if (msgTokens.has(nkw)) score += 2;
       else if (normMsg.includes(nkw)) score += 1;
     }
-
+if (intent === "services") score -= 2;
     if (score > bestScore) {
       secondScore = bestScore;
       bestScore = score;
