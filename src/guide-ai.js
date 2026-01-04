@@ -21,7 +21,7 @@ const guidesCache = new Map();
 const GATE = {
   MAX_MESSAGE_CHARS: 250,
   MIN_MATCH_SCORE: 1,
-  MIN_SCORE_MARGIN: 0,   // FIX 3
+  MIN_SCORE_MARGIN: 1,   // FIX 3
   MAX_UNKNOWN_RATIO: 0.6, // FIX 3
   MIN_TOKEN_LEN_FOR_UNKNOWN: 3
 };
