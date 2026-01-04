@@ -1848,10 +1848,7 @@ app.post("/api/vbro-mail", requireAdmin, async (req, resInner) => {
   { timeout: 8000 }
 );
 
-const data = aiResponse.data || {};
-    if (!aiResponse || aiResponse.noMatch || !aiResponse.answer) {
-      return res.status(200).send("No AI reply");
-    }
+ 
 // ===============================
 // 📤 INVIO RISPOSTA A HOSTAWAY
 // ===============================
