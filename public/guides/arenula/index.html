@@ -626,20 +626,21 @@ function getAnswer(text){
 }
 
 /* --- invio feedback al Google Sheet --- */
- function postFeedback(vote, topic){
+  function postFeedback(vote, topic, answerText){
   try{
     fetch(GOOGLE_SCRIPT_URL, {
-      method:'POST',
-      mode:'no-cors',
-      headers:{'Content-Type':'application/json'},
+      method: "POST",
+      mode: "no-cors",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        apartment_id: APARTMENT_ID,
-        language: (lang||'en').toUpperCase(),
+        apartment: APARTMENT_ID.toLowerCase(),
+        language: lang || "en",
         topic: topic,
+        answer: answerText,
         vote: vote
       })
     });
-  }catch{}
+  }catch(e){}
 }
  function attachFeedbackUI(botNode, topic, answerText) {
   window.currentTopic = topic;
