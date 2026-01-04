@@ -1588,12 +1588,12 @@ return res.json({
 
 // ========= HOSTAWAY AI BRIDGE =========
 // Mappa condivisa listingId Hostaway → apartment key
-const LISTING_TO_APARTMENT = {
+ const LISTING_TO_APARTMENT = {
   "194166": "arenula",     // Via Arenula 16
-  "194165": "portico",     // Portico d'Ottavia 1D
+  "194165": "portico",     // Portico d’Ottavia 1D
   "194163": "leonina",     // Via Leonina 71
-  "194164": "trastevere",  // Brand new flat in Trastevere, 4 min
-  "194162": "scala"        // Via della Scala 17
+  "194162": "trastevere",  // Viale Trastevere 108
+  "194164": "scala"        // Via della Scala 17
 };
 
  app.post("/api/hostaway-ai-bridge", async (req, res) => {
