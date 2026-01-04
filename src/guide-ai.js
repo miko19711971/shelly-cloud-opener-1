@@ -215,14 +215,20 @@ if (intent === "services") score -= 2;
       secondScore = score;
     }
   }
-const scoreMargin = bestScore - secondScore;
+ const scoreMargin = bestScore - secondScore;
 
-if (scoreMargin <= GATE.MIN_SCORE_MARGIN) {
+if (bestScore > 0 && secondScore > 0 && scoreMargin <= 2) {
   return {
     ok: true,
-    noMatch: true,
-    reason: "low_confidence",
-    answer: null
+    lang: L,
+    intent: "clarification_multi",
+    answer: {
+      it: "Mi sembra che ci siano più questioni. Puoi dirmi qual è il problema principale? (Wi-Fi, acqua, aria condizionata, check-in)",
+      en: "It looks like there may be more than one issue. Which one is the main problem? (Wi-Fi, water, air conditioning, check-in)",
+      fr: "Il semble qu’il y ait plusieurs problèmes. Lequel est le principal ?",
+      de: "Es scheint mehrere Probleme zu geben. Welches ist das Hauptproblem?",
+      es: "Parece que hay más de un problema. ¿Cuál es el principal?"
+    }[L]
   };
 }
    if (!bestIntent || bestScore < GATE.MIN_MATCH_SCORE) {
