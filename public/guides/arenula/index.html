@@ -626,21 +626,20 @@ function getAnswer(text){
 }
 
 /* --- invio feedback al Google Sheet --- */
- function sendFeedback(vote) {
-  alert("FEEDBACK CLICK: " + vote); // DEBUG VISIBILE SU iPad
-
-  fetch("/feedback", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      apartment: "arenula",
-      language: document.documentElement.lang || "en",
-      topic: window.currentTopic || "general",
-      answer: window.lastAnswer || "",
-      vote: vote,
-      timestamp: new Date().toISOString()
-    })
-  }).catch(() => {});
+ function postFeedback(vote, topic){
+  try{
+    fetch(GOOGLE_SCRIPT_URL, {
+      method:'POST',
+      mode:'no-cors',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        apartment_id: APARTMENT_ID,
+        language: (lang||'en').toUpperCase(),
+        topic: topic,
+        vote: vote
+      })
+    });
+  }catch{}
 }
  function attachFeedbackUI(botNode, topic, answerText) {
   window.currentTopic = topic;
