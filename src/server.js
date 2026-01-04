@@ -1850,8 +1850,29 @@ app.post("/api/vbro-mail", requireAdmin, async (req, resInner) => {
 
 const data = aiResponse.data || {};
 
-if (!data.ok || data.noMatch || !data.answer) {
-  console.log("🤖 No AI reply (noMatch or empty)");
+ if (!data.ok) {
+  console.error("❌ AI error:", data);
+  return res.status(200).send("OK");
+}
+
+if (data.noMatch || !data.answer) {
+  console.log("🤖 AI noMatch → fallback message");
+
+  await axios.post(
+    `https://api.hostaway.com/v1/conversations/${payload.conversationId}/messages`,
+    {
+      body: "Thanks for your message! I’m checking and will get back to you shortly.",
+      sendToGuest: true
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${HOSTAWAY_TOKEN}`,
+        "Content-Type": "application/json"
+      },
+      timeout: 10000
+    }
+  );
+
   return res.status(200).send("OK");
 }
 
