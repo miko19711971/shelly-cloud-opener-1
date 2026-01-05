@@ -15,7 +15,6 @@
       "early_checkin": ["early check in", "entrare prima", "arrivo anticipato"],
       "check_out": ["check out", "partenza", "lasciare casa"],
       "late_checkout": ["late check out", "uscire tardi", "partenza tardiva"],
-      "luggage_storage": ["bagagli", "valigie", "deposito bagagli"],
       "building": ["palazzo", "portone", "citofono", "ascensore"],
       "transport": ["trasporti", "bus", "tram", "metro", "taxi"],
       "eat": ["mangiare", "ristoranti", "dove mangiare"],
