@@ -1922,12 +1922,7 @@ if (data.noMatch || !data.answer) {
 
   console.log("📧 Risposta AI inviata a HostAway");
 
-} catch (err) {
-  console.error(
-    "❌ Errore invio messaggio HostAway:",
-    err.response?.data || err.message
-  );
-}
+
    
     // 👉 QUI sotto resta il tuo codice di risposta Hostaway
 
