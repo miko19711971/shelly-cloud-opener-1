@@ -1628,7 +1628,15 @@ return res.json({
     }
 
   // 3) Lingua (fallback 'en', ma corretta dal testo)
-const language = detectLangFromMessage(message);
+const callerLang =
+  typeof lang === "string" && lang !== "auto" && lang.length >= 2
+    ? lang.slice(0, 2).toLowerCase()
+    : null;
+
+const detectedLang = detectLangFromMessage(question);
+
+// 👉 PRIORITÀ ASSOLUTA
+const requestedLang = callerLang || detectedLang;
 
 // ✅ PRIORITÀ HARD: EARLY CHECK-IN (prima di chiamare guest-assistant)
 const norm = String(message || "").toLowerCase();
