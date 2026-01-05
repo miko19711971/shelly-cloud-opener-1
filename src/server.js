@@ -1900,11 +1900,10 @@ if (data.noMatch || !data.answer) {
   return res.status(200).send("OK");
 }
 
- 
-// ===============================
+ // ===============================
 // 📤 INVIO RISPOSTA A HOSTAWAY
 // ===============================
-  try {
+try {
   await axios.post(
     `https://api.hostaway.com/v1/conversations/${payload.conversationId}/messages`,
     {
@@ -1922,16 +1921,19 @@ if (data.noMatch || !data.answer) {
 
   console.log("📧 Risposta AI inviata a HostAway");
 
+  // 👉 risposta OK al webhook (OBBLIGATORIA)
+  return res.status(200).send("OK");
 
-   
-    // 👉 QUI sotto resta il tuo codice di risposta Hostaway
+} catch (err) {
+  console.error(
+    "❌ Errore invio messaggio HostAway:",
+    err.response?.data || err.message
+  );
 
-    return res.status(200).send("OK");
-
-  } catch (err) {
-    console.error("❌ Errore webhook Hostaway:", err);
-    return res.status(200).send("Error handled");
-  }
+  // ⚠️ SEMPRE 200, altrimenti HostAway ritenta
+  return res.status(200).send("OK");
+}
+ 
 });
 
 const PORT = process.env.PORT || 10000;
