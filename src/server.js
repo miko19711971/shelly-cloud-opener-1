@@ -1922,39 +1922,7 @@ app.post("/api/vbro-mail", requireAdmin, async (req, resInner) => {
   }
 });
 
-    // ===============================
-    // 📤 INVIO RISPOSTA AI A HOSTAWAY
-    // ===============================
-    await axios.post(
-      `https://api.hostaway.com/v1/conversations/${conversationId}/messages`,
-      {
-        body: data.answer,
-        sendToGuest: true
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${HOSTAWAY_TOKEN}`,
-          "Content-Type": "application/json"
-        },
-        timeout: 10000
-      }
-    );
-
-    console.log("📧 Risposta AI inviata a HostAway");
-    return res.status(200).send("OK");
-
-  } catch (err) {
-    console.error(
-      "❌ Errore webhook HostAway:",
-      err.response?.data || err.message
-    );
-
-    // ⚠️ SEMPRE 200, altrimenti HostAway ritenta
-    return res.status(200).send("OK");
-  }
-});
-
-
+    
 // ========== AVVIO SERVER ==========
 
 const PORT = process.env.PORT || 10000;
