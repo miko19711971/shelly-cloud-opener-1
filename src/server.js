@@ -1866,7 +1866,7 @@ app.post("/api/vbro-mail", requireAdmin, async (req, resInner) => {
   `${req.protocol}://${req.get("host")}/api/guest-assistant`,
   {
     apartment: apartmentKey,
-    lang: "auto",
+   lang: language,
     question: message
   },
   { timeout: 8000 }
