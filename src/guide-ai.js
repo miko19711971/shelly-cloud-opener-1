@@ -1,4 +1,8 @@
- // guide-ai.js — PARTE 1/4
+// guide-ai.js
+// Motore AI a keyword per guides-v2
+// ✔ lingua coerente
+// ✔ nessun fallback incrociato
+// ✔ deploy-safe
 
 import fs from "fs/promises";
 import path from "path";
@@ -10,10 +14,11 @@ const __dirname = path.dirname(__filename);
 const PUBLIC_DIR = path.join(__dirname, "..", "public");
 const GUIDES_V2_DIR = path.join(PUBLIC_DIR, "guides-v2");
 
+// cache in memoria
 const guidesCache = new Map();
 
 // =====================
-// NORMALIZZAZIONE BASE
+// NORMALIZZAZIONE TESTO
 // =====================
 function normalizeText(str) {
   return String(str || "")
@@ -31,10 +36,10 @@ function tokenize(str) {
 }
 
 // =====================
-// CARICA JSON GUIDA
+// CARICAMENTO GUIDA
 // =====================
 async function loadGuideJson(apartment) {
-  const key = String(apartment || "").toLowerCase();
+  const key = String(apartment || "").toLowerCase().trim();
   if (!key) return null;
 
   if (guidesCache.has(key)) return guidesCache.get(key);
@@ -52,46 +57,46 @@ async function loadGuideJson(apartment) {
 }
 
 // =====================
-// LINGUA — SOLO SE SUPPORTATA DAL JSON
+// RISOLUZIONE LINGUA
 // =====================
 function resolveLanguage(requested, question, availableLanguages) {
   const req = String(requested || "").toLowerCase().slice(0, 2);
 
-  // 1️⃣ Se la lingua richiesta è supportata → USALA
+  // 1️⃣ se richiesta valida → usa quella
   if (availableLanguages.includes(req)) return req;
 
-  // 2️⃣ Rilevamento semplice dal testo
-  const text = normalizeText(question);
-  const tokens = tokenize(text);
+  // 2️⃣ rilevamento semplice dal testo
+  const tokens = tokenize(question);
 
   const hints = {
-    en: ["the","what","should","do","wifi","working"],
-    it: ["il","non","funziona","cosa","fare","wifi"],
-    fr: ["ne","pas","fonctionne","wifi"],
-    de: ["nicht","funktioniert","wlan"],
-    es: ["no","funciona","wifi"]
+    en: ["the", "what", "should", "do", "wifi", "working"],
+    it: ["il", "non", "funziona", "cosa", "fare", "wifi"],
+    fr: ["ne", "pas", "fonctionne", "wifi"],
+    de: ["nicht", "funktioniert", "wlan"],
+    es: ["no", "funciona", "wifi"]
   };
 
   let best = "en";
-  let score = 0;
+  let bestScore = 0;
 
   for (const lang of availableLanguages) {
     const hits = hints[lang]?.filter(t => tokens.includes(t)).length || 0;
-    if (hits > score) {
-      score = hits;
+    if (hits > bestScore) {
+      bestScore = hits;
       best = lang;
     }
   }
 
   return best;
 }
-// guide-ai.js — PARTE 2/4
 
+// =====================
+// MATCH INTENT
+// =====================
 function intentMatches(question, keywords = []) {
   if (!Array.isArray(keywords) || !keywords.length) return false;
 
   const normQ = normalizeText(question);
-
   return keywords.some(kw => {
     const nkw = normalizeText(kw);
     return nkw && normQ.includes(nkw);
@@ -102,16 +107,14 @@ function findBestIntent(question, intentsForLang) {
   let bestIntent = null;
   let bestScore = 0;
 
+  const normQ = normalizeText(question);
+
   for (const [intent, keywords] of Object.entries(intentsForLang || {})) {
     let score = 0;
-
     for (const kw of keywords) {
       const nkw = normalizeText(kw);
-      if (nkw && normalizeText(question).includes(nkw)) {
-        score += 1;
-      }
+      if (nkw && normQ.includes(nkw)) score += 1;
     }
-
     if (score > bestScore) {
       bestScore = score;
       bestIntent = intent;
@@ -120,8 +123,10 @@ function findBestIntent(question, intentsForLang) {
 
   return bestScore > 0 ? bestIntent : null;
 }
-// guide-ai.js — PARTE 3/4
 
+// =====================
+// MAIN REPLY
+// =====================
 export async function reply({ apartment, lang, question }) {
   const q = String(question || "").trim();
   if (!q) return { ok: true, noMatch: true, answer: null };
@@ -138,7 +143,7 @@ export async function reply({ apartment, lang, question }) {
   const intentsForLang = guide.intents?.[language] || {};
   const answersForLang = guide.answers?.[language] || {};
 
-  // PRIORITÀ HARD — early check-in policy
+  // PRIORITÀ HARD: early check-in
   if (
     intentsForLang.early_checkin_policy &&
     intentMatches(q, intentsForLang.early_checkin_policy)
@@ -151,17 +156,10 @@ export async function reply({ apartment, lang, question }) {
     };
   }
 
-   // 🔒 FIX MINIMALE — lingua BLOCCATA
-const answer = guide?.answers?.[L]?.[bestIntent] || null;
-
-if (!answer) {
-  return {
-    ok: true,
-    noMatch: true,
-    lang: L,
-    reason: "answer_not_available_in_detected_language"
-  };
-}
+  const intent = findBestIntent(q, intentsForLang);
+  if (!intent) {
+    return { ok: true, noMatch: true, answer: null, language };
+  }
 
   const answer = answersForLang[intent] || null;
   if (!answer) {
@@ -175,9 +173,3 @@ if (!answer) {
     answer
   };
 }
-// guide-ai.js — PARTE 4/4
-// ✔ Nessun fallback incrociato di lingua
-// ✔ La lingua è SEMPRE una di guide.languages
-// ✔ Le risposte arrivano SOLO da answers[lingua]
-// ✔ Se inglese → MAI spagnolo
-// ✔ Se non matcha → noMatch, non risposta sbagliata
