@@ -68,7 +68,7 @@
       "emergency": ["emergency"],
       "services": ["services"]
     }
-  },
+"answers": {
  "it": {
   "trash": "Spazzatura: Trovi le buste in cucina. Chiudi bene i sacchetti e portali nei cassonetti nella corte, prima dell’uscita. Facciamo raccolta differenziata (WeDoRecycling): segui le indicazioni e non lasciare immondizia nel vano scala o fuori dalla porta.",
   "heating": "Riscaldamento: Usa il telecomando dell’aria condizionata. Premi MODE finché appare il simbolo del sole, imposta 26 °C e potenza 1. Spegni sempre il condizionatore quando esci.",
