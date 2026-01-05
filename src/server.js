@@ -1843,15 +1843,16 @@ app.post("/api/vbro-mail", requireAdmin, async (req, resInner) => {
 });
 
  // ========== HOSTAWAY → AUTO RISPOSTA AI PER MESSAGGI ==========
- 
- app.post("/hostaway-incoming", async (req, res) => {
+
+app.post("/hostaway-incoming", async (req, res) => {
   try {
     const payload = req.body;
 
     const message = payload?.body;
     const listingId = payload?.listingMapId;
+    const conversationId = payload?.conversationId;
 
-    if (!message || !listingId) {
+    if (!message || !listingId || !conversationId) {
       console.log("⚠️ Payload incompleto");
       return res.status(200).send("OK");
     }
@@ -1859,84 +1860,81 @@ app.post("/api/vbro-mail", requireAdmin, async (req, resInner) => {
     const apartmentKey = GUIDE_BY_LISTING_ID[listingId];
     if (!apartmentKey) {
       console.error("❌ Listing non mappato:", listingId);
-      return res.status(200).send("Listing non mappato");
+      return res.status(200).send("OK");
     }
 
-      const aiResponse = await axios.post(
-  `${req.protocol}://${req.get("host")}/api/guest-assistant`,
-  {
-    apartment: apartmentKey,
-   lang: language,
-    question: message
-  },
-  { timeout: 8000 }
-);
-
-const data = aiResponse.data || {};
-
- if (!data.ok) {
-  console.error("❌ AI error:", data);
-  return res.status(200).send("OK");
-}
-
-if (data.noMatch || !data.answer) {
-  console.log("🤖 AI noMatch → fallback message");
-
-  await axios.post(
-    `https://api.hostaway.com/v1/conversations/${payload.conversationId}/messages`,
-    {
-      body: "Thanks for your message! I’m checking and will get back to you shortly.",
-      sendToGuest: true
-    },
-    {
-      headers: {
-        Authorization: `Bearer ${HOSTAWAY_TOKEN}`,
-        "Content-Type": "application/json"
+    // 👉 chiamata al Guest Assistant
+    const aiResponse = await axios.post(
+      `${req.protocol}://${req.get("host")}/api/guest-assistant`,
+      {
+        apartment: apartmentKey,
+        lang: language,
+        question: message
       },
-      timeout: 10000
+      { timeout: 8000 }
+    );
+
+    const data = aiResponse.data || {};
+
+    // 👉 fallback se AI non risponde correttamente
+    if (!data.ok || data.noMatch || !data.answer) {
+      console.log("🤖 AI noMatch → fallback");
+
+      await axios.post(
+        `https://api.hostaway.com/v1/conversations/${conversationId}/messages`,
+        {
+          body: "Thanks for your message! I’m checking and will get back to you shortly.",
+          sendToGuest: true
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${HOSTAWAY_TOKEN}`,
+            "Content-Type": "application/json"
+          },
+          timeout: 10000
+        }
+      );
+
+      return res.status(200).send("OK");
     }
-  );
 
-  return res.status(200).send("OK");
-}
-
- // ===============================
-// 📤 INVIO RISPOSTA A HOSTAWAY
-// ===============================
-try {
-  await axios.post(
-    `https://api.hostaway.com/v1/conversations/${payload.conversationId}/messages`,
-    {
-      body: data.answer,
-      sendToGuest: true
-    },
-    {
-      headers: {
-        Authorization: `Bearer ${HOSTAWAY_TOKEN}`,
-        "Content-Type": "application/json"
+    // ===============================
+    // 📤 INVIO RISPOSTA AI A HOSTAWAY
+    // ===============================
+    await axios.post(
+      `https://api.hostaway.com/v1/conversations/${conversationId}/messages`,
+      {
+        body: data.answer,
+        sendToGuest: true
       },
-      timeout: 10000
-    }
-  );
+      {
+        headers: {
+          Authorization: `Bearer ${HOSTAWAY_TOKEN}`,
+          "Content-Type": "application/json"
+        },
+        timeout: 10000
+      }
+    );
 
-  console.log("📧 Risposta AI inviata a HostAway");
+    console.log("📧 Risposta AI inviata a HostAway");
+    return res.status(200).send("OK");
 
-  // 👉 risposta OK al webhook (OBBLIGATORIA)
-  return res.status(200).send("OK");
+  } catch (err) {
+    console.error(
+      "❌ Errore webhook HostAway:",
+      err.response?.data || err.message
+    );
 
-} catch (err) {
-  console.error(
-    "❌ Errore invio messaggio HostAway:",
-    err.response?.data || err.message
-  );
-
-  // ⚠️ SEMPRE 200, altrimenti HostAway ritenta
-  return res.status(200).send("OK");
-}
- 
+    // ⚠️ SEMPRE 200, altrimenti HostAway ritenta
+    return res.status(200).send("OK");
+  }
 });
 
+
+// ========== AVVIO SERVER ==========
+
 const PORT = process.env.PORT || 10000;
+
 app.listen(PORT, () => {
   console.log(
     "Server running on", PORT,
