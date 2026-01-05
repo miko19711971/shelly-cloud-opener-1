@@ -1868,7 +1868,7 @@ app.post("/hostaway-incoming", async (req, res) => {
       `${req.protocol}://${req.get("host")}/api/guest-assistant`,
       {
         apartment: apartmentKey,
-        lang: payload.language || payload.lang || "en",
+        lang: language,
         question: message
       },
       { timeout: 8000 }
