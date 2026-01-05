@@ -1659,7 +1659,7 @@ return res.json({
       `${req.protocol}://${req.get("host")}/api/guest-assistant`,
       {
         apartment,        // es. "arenula"
-        lang: language,   // 👈 importante: chiave "lang"
+        lang: payload.language || payload.lang || "en",
         question: message,
         guestName,
         source: "hostaway"
@@ -1868,7 +1868,7 @@ app.post("/hostaway-incoming", async (req, res) => {
       `${req.protocol}://${req.get("host")}/api/guest-assistant`,
       {
         apartment: apartmentKey,
-        lang: language,
+        lang: payload.language || payload.lang || "en",
         question: message
       },
       { timeout: 8000 }
