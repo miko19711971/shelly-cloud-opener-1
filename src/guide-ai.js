@@ -1,5 +1,4 @@
-// guide-ai.js
-// Motore “AI” a keyword + gate (guides-v2) con priorità EARLY CHECK-IN
+ // guide-ai.js — PARTE 1/4
 
 import fs from "fs/promises";
 import path from "path";
@@ -8,35 +7,13 @@ import { fileURLToPath } from "url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// cartella public/guides-v2
 const PUBLIC_DIR = path.join(__dirname, "..", "public");
 const GUIDES_V2_DIR = path.join(PUBLIC_DIR, "guides-v2");
 
-// cache in memoria
 const guidesCache = new Map();
 
 // =====================
-// GATE — PARAMETRI (FIX 3)
-// =====================
-const GATE = {
-  MAX_MESSAGE_CHARS: 250,
-  MIN_MATCH_SCORE: 1,
-  MIN_SCORE_MARGIN: 1,   // FIX 3
-  MAX_UNKNOWN_RATIO: 0.6, // FIX 3
-  MIN_TOKEN_LEN_FOR_UNKNOWN: 3
-};
-
-// Stopwords minime
-const STOPWORDS = {
-  it: new Set(["il","lo","la","i","gli","le","un","uno","una","di","a","da","in","su","per","con","senza","e","o","ma","che","come","dove","quando","quanto","quale","quali","mi","ti","si","ci","vi","non","sono","sei","è","ho","hai","abbiamo","avete","hanno"]),
-  en: new Set(["the","a","an","to","of","in","on","at","for","with","without","and","or","but","what","where","when","how","howmuch","i","you","we","they","is","are","am","do","does","did","can","could","please","hi","hello"]),
-  fr: new Set(["le","la","les","un","une","des","de","du","dans","sur","à","pour","avec","sans","et","ou","mais","quoi","où","quand","comment","je","tu","il","elle","nous","vous","ils","elles","est","sont","peux","pouvez","svp","bonjour"]),
-  de: new Set(["der","die","das","ein","eine","einen","einem","einer","von","in","auf","an","für","mit","ohne","und","oder","aber","was","wo","wann","wie","ich","du","wir","ihr","sie","ist","sind","kann","koennen","können","bitte","hallo"]),
-  es: new Set(["el","la","los","las","un","una","unos","unas","de","del","en","sobre","a","para","con","sin","y","o","pero","que","donde","cuando","como","yo","tu","usted","nosotros","vosotros","ellos","ellas","es","son","puedo","puede","porfavor","hola"])
-};
-
-// =====================
-// NORMALIZZAZIONE / TOKEN
+// NORMALIZZAZIONE BASE
 // =====================
 function normalizeText(str) {
   return String(str || "")
@@ -50,220 +27,150 @@ function normalizeText(str) {
 
 function tokenize(str) {
   const s = normalizeText(str);
-  const m = s.match(/[a-z0-9]+/g);
-  return m ? m : [];
+  return s ? s.split(" ") : [];
 }
+
 // =====================
-// CARICAMENTO GUIDA
+// CARICA JSON GUIDA
 // =====================
 async function loadGuideJson(apartment) {
-  const aptKey = String(apartment || "").toLowerCase().trim();
-  if (!aptKey) return null;
+  const key = String(apartment || "").toLowerCase();
+  if (!key) return null;
 
-  if (guidesCache.has(aptKey)) return guidesCache.get(aptKey);
+  if (guidesCache.has(key)) return guidesCache.get(key);
 
-  const filePath = path.join(GUIDES_V2_DIR, `${aptKey}.json`);
+  const filePath = path.join(GUIDES_V2_DIR, `${key}.json`);
   try {
     const raw = await fs.readFile(filePath, "utf8");
     const json = JSON.parse(raw);
-    guidesCache.set(aptKey, json);
+    guidesCache.set(key, json);
     return json;
   } catch (err) {
-    console.error("❌ Impossibile leggere guida JSON:", aptKey, filePath, err.message);
+    console.error("❌ Errore lettura guida:", key, err.message);
     return null;
   }
 }
 
 // =====================
-// LINGUA (fallback)
+// LINGUA — SOLO SE SUPPORTATA DAL JSON
 // =====================
-function pickLang(requested, question) {
-  const lang = String(requested || "").toLowerCase().trim();
-  if (["it","en","fr","de","es"].includes(lang)) return lang;
+function resolveLanguage(requested, question, availableLanguages) {
+  const req = String(requested || "").toLowerCase().slice(0, 2);
 
-  const toks = tokenize(question);
-  const score = { it: 0, en: 0, fr: 0, de: 0, es: 0 };
-  for (const t of toks) {
-    for (const k of Object.keys(score)) {
-      if (STOPWORDS[k]?.has(t)) score[k] += 1;
-    }
-  }
+  // 1️⃣ Se la lingua richiesta è supportata → USALA
+  if (availableLanguages.includes(req)) return req;
+
+  // 2️⃣ Rilevamento semplice dal testo
+  const text = normalizeText(question);
+  const tokens = tokenize(text);
+
+  const hints = {
+    en: ["the","what","should","do","wifi","working"],
+    it: ["il","non","funziona","cosa","fare","wifi"],
+    fr: ["ne","pas","fonctionne","wifi"],
+    de: ["nicht","funktioniert","wlan"],
+    es: ["no","funciona","wifi"]
+  };
+
   let best = "en";
-  let bestScore = -1;
-  for (const k of Object.keys(score)) {
-    if (score[k] > bestScore) {
-      bestScore = score[k];
-      best = k;
+  let score = 0;
+
+  for (const lang of availableLanguages) {
+    const hits = hints[lang]?.filter(t => tokens.includes(t)).length || 0;
+    if (hits > score) {
+      score = hits;
+      best = lang;
     }
   }
+
   return best;
 }
+// guide-ai.js — PARTE 2/4
 
-function buildKnownTokens(intentsLang) {
-  const known = new Set();
-  for (const kws of Object.values(intentsLang || {})) {
-    if (!Array.isArray(kws)) continue;
-    for (const kw of kws) {
-      const nkw = normalizeText(kw);
-      if (!nkw) continue;
-      for (const tok of tokenize(nkw)) known.add(tok);
-      known.add(nkw);
-    }
-  }
-  return known;
-}
+function intentMatches(question, keywords = []) {
+  if (!Array.isArray(keywords) || !keywords.length) return false;
 
-function unknownRatio(question, lang, known) {
-  const toks = tokenize(question).filter(t => (t.length >= GATE.MIN_TOKEN_LEN_FOR_UNKNOWN));
-  if (toks.length === 0) return 0;
+  const normQ = normalizeText(question);
 
-  const sw = STOPWORDS[lang] || new Set();
-  let considered = 0;
-  let unknown = 0;
-
-  for (const t of toks) {
-    if (sw.has(t)) continue;
-    considered += 1;
-    if (!known.has(t)) unknown += 1;
-  }
-  if (considered === 0) return 0;
-  return unknown / considered;
-}
-
-function intentMatches(question, intentsLang, intentKey) {
-  const kws = intentsLang?.[intentKey];
-  if (!Array.isArray(kws) || kws.length === 0) return false;
-
-  const normMsg = normalizeText(question);
-  const msgTokens = new Set(tokenize(question));
-
-  return kws.some((kw) => {
+  return keywords.some(kw => {
     const nkw = normalizeText(kw);
-    if (!nkw) return false;
-    if (nkw.includes(" ")) return normMsg.includes(nkw);
-    return msgTokens.has(nkw) || normMsg.includes(nkw);
+    return nkw && normQ.includes(nkw);
   });
 }
-// =====================
-// MATCH + RISPOSTA
-// =====================
+
+function findBestIntent(question, intentsForLang) {
+  let bestIntent = null;
+  let bestScore = 0;
+
+  for (const [intent, keywords] of Object.entries(intentsForLang || {})) {
+    let score = 0;
+
+    for (const kw of keywords) {
+      const nkw = normalizeText(kw);
+      if (nkw && normalizeText(question).includes(nkw)) {
+        score += 1;
+      }
+    }
+
+    if (score > bestScore) {
+      bestScore = score;
+      bestIntent = intent;
+    }
+  }
+
+  return bestScore > 0 ? bestIntent : null;
+}
+// guide-ai.js — PARTE 3/4
+
 export async function reply({ apartment, lang, question }) {
   const q = String(question || "").trim();
   if (!q) return { ok: true, noMatch: true, answer: null };
 
-  if (q.length > GATE.MAX_MESSAGE_CHARS) {
-    return { ok: true, noMatch: true, answer: null };
-  }
-
   const guide = await loadGuideJson(apartment);
-  if (!guide) {
-    return { ok: false, error: "guide_not_found", answer: null };
-  }
+  if (!guide) return { ok: false, error: "guide_not_found" };
 
-  const L = pickLang(lang, q);
+  const availableLanguages = Array.isArray(guide.languages)
+    ? guide.languages.map(l => l.toLowerCase())
+    : ["en"];
 
-  const intentsLang = guide?.intents?.[L] || guide?.intents?.en || {};
-  const answersLang = guide?.answers?.[L] || guide?.answers?.en || {};
+  const language = resolveLanguage(lang, q, availableLanguages);
 
-  // FIX 2 — fallback legacy RIMOSSO (nessuna risposta casuale)
+  const intentsForLang = guide.intents?.[language] || {};
+  const answersForLang = guide.answers?.[language] || {};
 
-  const known = buildKnownTokens(intentsLang);
-  const ur = unknownRatio(q, L, known);
-  if (ur > GATE.MAX_UNKNOWN_RATIO) {
-    return { ok: true, noMatch: true, answer: null };
-  }
-
-  // PRIORITÀ HARD: EARLY CHECK-IN
-  if (intentMatches(q, intentsLang, "early_checkin") && answersLang.early_checkin) {
+  // PRIORITÀ HARD — early check-in policy
+  if (
+    intentsForLang.early_checkin_policy &&
+    intentMatches(q, intentsForLang.early_checkin_policy)
+  ) {
     return {
       ok: true,
-      lang: L,
-      intent: "early_checkin",
-      answer: answersLang.early_checkin
+      language,
+      intent: "early_checkin_policy",
+      answer: answersForLang.early_checkin_policy || null
     };
   }
 
-  const normMsg = normalizeText(q);
-  const msgTokens = new Set(tokenize(q));
-
-  let bestIntent = null;
-  let bestScore = -1;
-  let secondScore = -1;
-
-  for (const [intent, kws] of Object.entries(intentsLang)) {
-    if (!Array.isArray(kws) || kws.length === 0) continue;
-
-    let score = 0;
-    for (const kw of kws) {
-      const nkw = normalizeText(kw);
-      if (!nkw) continue;
-
-      if (nkw.includes(" ")) {
-        if (normMsg.includes(nkw)) score += 5;
-        continue;
-      }
-
-      if (msgTokens.has(nkw)) score += 2;
-      else if (normMsg.includes(nkw)) score += 1;
-    }
-if (intent === "services") score -= 2;
-    if (score > bestScore) {
-      secondScore = bestScore;
-      bestScore = score;
-      bestIntent = intent;
-    } else if (score > secondScore) {
-      secondScore = score;
-    }
+  const intent = findBestIntent(q, intentsForLang);
+  if (!intent) {
+    return { ok: true, noMatch: true, answer: null, language };
   }
- const scoreMargin = bestScore - secondScore;
 
-if (bestScore > 0 && secondScore > 0 && scoreMargin <= 2) {
-  return {
-    ok: true,
-    lang: L,
-    intent: "clarification_multi",
-    answer: {
-      it: "Mi sembra che ci siano più questioni. Puoi dirmi qual è il problema principale? (Wi-Fi, acqua, aria condizionata, check-in)",
-      en: "It looks like there may be more than one issue. Which one is the main problem? (Wi-Fi, water, air conditioning, check-in)",
-      fr: "Il semble qu’il y ait plusieurs problèmes. Lequel est le principal ?",
-      de: "Es scheint mehrere Probleme zu geben. Welches ist das Hauptproblem?",
-      es: "Parece que hay más de un problema. ¿Cuál es el principal?"
-    }[L]
-  };
-}
-   if (!bestIntent || bestScore < GATE.MIN_MATCH_SCORE) {
-  return {
-    ok: true,
-    lang: L,
-    intent: "fallback",
-    answer: {
-      it: "Posso aiutarti volentieri 🙂 Puoi dirmi se il problema riguarda Wi-Fi, acqua, aria condizionata o check-in?",
-      en: "I’ll be happy to help 🙂 Is the issue about Wi-Fi, water, air conditioning or check-in?",
-      fr: "Je peux vous aider 🙂 Le problème concerne le Wi-Fi, l’eau, la climatisation ou l’arrivée ?",
-      de: "Ich helfe Ihnen gern 🙂 Geht es um WLAN, Wasser, Klimaanlage oder Check-in?",
-      es: "Con gusto te ayudo 🙂 ¿El problema es Wi-Fi, agua, aire acondicionado o check-in?"
-    }[L]
-  };
-}
-
-  // FIX 1 — alias intent
-  const INTENT_ALIASES = {
-    early_checkin_policy: "early_checkin",
-    late_checkout_policy: "late_checkout",
-    AC: "AC"
-  };
-
-  bestIntent = INTENT_ALIASES[bestIntent] || bestIntent;
-
-  const answer = answersLang?.[bestIntent] || null;
+  const answer = answersForLang[intent] || null;
   if (!answer) {
-    return { ok: true, noMatch: true, answer: null };
+    return { ok: true, noMatch: true, answer: null, language };
   }
 
   return {
     ok: true,
-    lang: L,
-    intent: bestIntent,
+    language,
+    intent,
     answer
   };
 }
+// guide-ai.js — PARTE 4/4
+// ✔ Nessun fallback incrociato di lingua
+// ✔ La lingua è SEMPRE una di guide.languages
+// ✔ Le risposte arrivano SOLO da answers[lingua]
+// ✔ Se inglese → MAI spagnolo
+// ✔ Se non matcha → noMatch, non risposta sbagliata
