@@ -1627,70 +1627,69 @@ return res.json({
       });
     }
 
-    // 3) Lingua (fallback 'en', ma corretta dal testo)  ✅ SPOSTATA QUI (prima dell'early check-in)
-    const language = detectLangFromMessage(message);
+  // 3) Lingua (fallback 'en', ma corretta dal testo)
+const language = detectLangFromMessage(message);
 
-    // ✅ PRIORITÀ HARD: EARLY CHECK-IN (prima di chiamare guest-assistant)
-    const norm = String(message || "").toLowerCase();
-    const isEarlyCheckin =
-      /early\s*(check\s*in|checkin)/i.test(norm) ||
-      /(arrive|arrival).*(early|before)/i.test(norm);
+// ✅ PRIORITÀ HARD: EARLY CHECK-IN (prima di chiamare guest-assistant)
+const norm = String(message || "").toLowerCase();
+const isEarlyCheckin =
+  /early\s*(check\s*in|checkin)/i.test(norm) ||
+  /(arrive|arrival).*(early|before)/i.test(norm);
 
-    if (isEarlyCheckin) {
-      // risposta “fissa” (metti qui il testo che vuoi davvero)
-      const earlyAnswer =
-        "Early check-in is possible only if the apartment is ready. Standard check-in is from 15:00. We’ll confirm in the morning.";
+if (isEarlyCheckin) {
+  const earlyAnswer =
+    "Early check-in is possible only if the apartment is ready. Standard check-in is from 15:00. We’ll confirm in the morning.";
 
-      return res.json({
-        ok: true,
-        apartment,
-        language,
-        question: message,
-        answer: earlyAnswer,
-        intent: "early_checkin"
-      });
-    }
+  return res.json({
+    ok: true,
+    apartment,
+    language,
+    question: message,
+    answer: earlyAnswer,
+    intent: "early_checkin"
+  });
+}
 
-    // 4) Nome guest se presente (estrazione robusta)
-    const guestName = extractGuestName(payload);
+// 4) Nome guest se presente (estrazione robusta)
+const guestName = extractGuestName(payload);
 
-    // 5) CHIAMO IL VERO GUEST ASSISTANT INTERNO
-    const aiResponse = await axios.post(
-      `${req.protocol}://${req.get("host")}/api/guest-assistant`,
-      {
-        apartment,        // es. "arenula"
-        lang: payload.language || payload.lang || "en",
-        question: message,
-        guestName,
-        source: "hostaway"
-      },
-      { timeout: 8000 }
-    );
+// 5) CHIAMO IL VERO GUEST ASSISTANT INTERNO
+const aiResponse = await axios.post(
+  `${req.protocol}://${req.get("host")}/api/guest-assistant`,
+  {
+    apartment,          // es. "arenula"
+    lang: language,     // ✅ QUI la correzione
+    question: message,
+    guestName,
+    source: "hostaway"
+  },
+  { timeout: 8000 }
+);
 
-    const data = aiResponse.data || {};
+const data = aiResponse.data || {};
 
-    // ✅ gestione corretta: se noMatch o answer mancante → NON è un errore
-    if (!data.ok) {
-      console.error("❌ guest-assistant error:", data);
-      return res.status(502).json({
-        ok: false,
-        error: "guest_assistant_failed",
-        details: data
-      });
-    }
+// ✅ gestione corretta: se noMatch o answer mancante → NON è un errore
+if (!data.ok) {
+  console.error("❌ guest-assistant error:", data);
+  return res.status(502).json({
+    ok: false,
+    error: "guest_assistant_failed",
+    details: data
+  });
+}
 
-    if (data.noMatch || !data.answer) {
-      return res.json({
-        ok: true,
-        apartment,
-        language,
-        question: message,
-        answer: null,
-        noMatch: true
-      });
-    }
+if (data.noMatch || !data.answer) {
+  return res.json({
+    ok: true,
+    apartment,
+    language,
+    question: message,
+    answer: null,
+    noMatch: true
+  });
+}
 
-    console.log("✅ AI answer for Hostaway:", data.answer);
+console.log("✅ AI answer for Hostaway:", data.answer);
 
     // 6) Risposta finale (per ora solo JSON, HostAway NON la usa ancora)
     return res.json({
