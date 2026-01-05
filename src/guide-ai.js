@@ -151,10 +151,17 @@ export async function reply({ apartment, lang, question }) {
     };
   }
 
-  const intent = findBestIntent(q, intentsForLang);
-  if (!intent) {
-    return { ok: true, noMatch: true, answer: null, language };
-  }
+   // 🔒 FIX MINIMALE — lingua BLOCCATA
+const answer = guide?.answers?.[L]?.[bestIntent] || null;
+
+if (!answer) {
+  return {
+    ok: true,
+    noMatch: true,
+    lang: L,
+    reason: "answer_not_available_in_detected_language"
+  };
+}
 
   const answer = answersForLang[intent] || null;
   if (!answer) {
