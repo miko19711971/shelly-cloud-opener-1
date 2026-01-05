@@ -1506,10 +1506,7 @@ function makeGreeting(lang, name) {
     }
 
     // 👇 se lang manca o è "auto", rilevo dal testo
-    let requestedLang = lang;
-    if (!requestedLang || requestedLang === "auto") {
-      requestedLang = detectLangFromMessage(question);
-    }
+     const requestedLang = detectLangFromMessage(question);
 
     // 👇 ricavo le lingue disponibili dal JSON (compatibile con entrambe le strutture)
     const availableLangs =
