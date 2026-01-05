@@ -1851,7 +1851,7 @@ app.post("/api/vbro-mail", requireAdmin, async (req, resInner) => {
 
  // ========== HOSTAWAY → AUTO RISPOSTA AI PER MESSAGGI ==========
 
- app.post("/hostaway-incoming", async (req, res) => {
+app.post("/hostaway-incoming", async (req, res) => {
   try {
     const payload = req.body;
 
@@ -1870,20 +1870,8 @@ app.post("/api/vbro-mail", requireAdmin, async (req, resInner) => {
       return res.status(200).send("OK");
     }
 
-    // ✅ FIX CRITICO: lingua SEMPRE definita
-    // 1️⃣ lingua richiesta dal chiamante (HostAway o UI)
-const callerLang = (lang && lang !== "auto") ? lang : null;
-
-// 2️⃣ lingua rilevata dal testo
-const detectedLang = detectLangFromMessage(question);
-
-// 3️⃣ PRIORITÀ ASSOLUTA:
-// - se il chiamante passa lang → USA QUELLA
-// - altrimenti usa detectedLang
-const requestedLang = callerLang || detectedLang;
-
-// 4️⃣ normalizzazione finale rispetto al JSON
-const language = normalizeLang(requestedLang, availableLangs);
+    // ✅ UNICA fonte lingua: testo del messaggio
+    const language = detectLangFromMessage(message);
 
     const aiResponse = await axios.post(
       `${req.protocol}://${req.get("host")}/api/guest-assistant`,
@@ -1941,7 +1929,6 @@ const language = normalizeLang(requestedLang, availableLangs);
     return res.status(200).send("OK");
   }
 });
-
     
 // ========== AVVIO SERVER ==========
 
