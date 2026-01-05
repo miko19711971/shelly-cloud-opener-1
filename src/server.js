@@ -1843,7 +1843,7 @@ app.post("/api/vbro-mail", requireAdmin, async (req, resInner) => {
 
  // ========== HOSTAWAY → AUTO RISPOSTA AI PER MESSAGGI ==========
 
-app.post("/hostaway-incoming", async (req, res) => {
+ app.post("/hostaway-incoming", async (req, res) => {
   try {
     const payload = req.body;
 
@@ -1862,7 +1862,9 @@ app.post("/hostaway-incoming", async (req, res) => {
       return res.status(200).send("OK");
     }
 
-    // 👉 chiamata al Guest Assistant
+    // ✅ FIX CRITICO: lingua SEMPRE definita
+    const language = detectLangFromMessage(message);
+
     const aiResponse = await axios.post(
       `${req.protocol}://${req.get("host")}/api/guest-assistant`,
       {
@@ -1875,7 +1877,6 @@ app.post("/hostaway-incoming", async (req, res) => {
 
     const data = aiResponse.data || {};
 
-    // 👉 fallback se AI non risponde correttamente
     if (!data.ok || data.noMatch || !data.answer) {
       console.log("🤖 AI noMatch → fallback");
 
@@ -1896,6 +1897,30 @@ app.post("/hostaway-incoming", async (req, res) => {
 
       return res.status(200).send("OK");
     }
+
+    await axios.post(
+      `https://api.hostaway.com/v1/conversations/${conversationId}/messages`,
+      {
+        body: data.answer,
+        sendToGuest: true
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${HOSTAWAY_TOKEN}`,
+          "Content-Type": "application/json"
+        },
+        timeout: 10000
+      }
+    );
+
+    console.log("📧 Risposta AI inviata a HostAway");
+    return res.status(200).send("OK");
+
+  } catch (err) {
+    console.error("❌ Errore webhook HostAway:", err.message || err);
+    return res.status(200).send("OK");
+  }
+});
 
     // ===============================
     // 📤 INVIO RISPOSTA AI A HOSTAWAY
