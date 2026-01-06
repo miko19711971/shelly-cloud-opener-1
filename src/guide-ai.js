@@ -1,8 +1,8 @@
 // guide-ai.js
 // Motore AI a keyword per guides-v2
-// ✔ Fix rilevamento lingua (Parametri invertiti corretti)
-// ✔ Fallback inglese garantito
-// ✔ Matching intents potenziato
+// ✔ Fix rilevamento lingua (Parametri q/lang)
+// ✔ Debug Log integrato per tracciamento errori
+// ✔ Fallback inglese forzato
 
 import fs from "fs/promises";
 import path from "path";
@@ -50,19 +50,18 @@ async function loadGuideJson(apartment) {
 }
 
 // =====================
-// RISOLUZIONE LINGUA (FIXED)
+// RISOLUZIONE LINGUA
 // =====================
 function resolveLanguage(question, requested, availableLanguages) {
-  // 1. Se la lingua è già definita e valida, usala
+  // Se la lingua è passata forzatamente (es. dal browser) e esiste nel JSON, usala
   if (requested && availableLanguages.includes(requested.toLowerCase())) {
     return requested.toLowerCase();
   }
 
   const text = " " + question.toLowerCase() + " ";
   
-  // 2. Indicatori grammaticali forti
   const indicators = {
-    en: ['is', 'the', 'what', 'to', 'how', 'it', 'working', 'not', 'wifi', 'internet', 'you'],
+    en: ['is', 'the', 'what', 'to', 'how', 'it', 'working', 'not', 'wifi', 'internet', 'you', 'where'],
     it: ['il', 'la', 'non', 'come', 'fare', 'funziona', 'dove', 'che', 'per'],
     es: ['el', 'la', 'no', 'como', 'hacer', 'funciona', 'donde', 'esta', 'que'],
     fr: ['le', 'la', 'les', 'pas', 'comment', 'faire', 'est', 'dans', 'pour']
@@ -78,7 +77,7 @@ function resolveLanguage(question, requested, availableLanguages) {
     }
   });
 
-  // 3. Fallback predefinito su Inglese (se disponibile) o prima lingua del JSON
+  // Fallback iniziale: se c'è l'inglese nel JSON, usa quello come base, altrimenti la prima lingua
   let detected = availableLanguages.includes('en') ? 'en' : availableLanguages[0];
   let maxScore = 0;
 
@@ -93,7 +92,7 @@ function resolveLanguage(question, requested, availableLanguages) {
 }
 
 // =====================
-// MATCH INTENT (IMPROVED)
+// MATCH INTENT
 // =====================
 function findBestIntent(question, intentsForLang) {
   let bestIntent = null;
@@ -108,7 +107,6 @@ function findBestIntent(question, intentsForLang) {
       const nkw = normalizeText(kw);
       if (nkw && normQ.includes(nkw)) {
         currentScore++;
-        // Bonus match esatto
         if (normQ.split(" ").includes(nkw)) currentScore += 1;
       }
     }
@@ -143,8 +141,11 @@ export async function reply({ apartment, lang, question }) {
     ? guide.languages.map(l => l.toLowerCase())
     : ["en"];
 
-  // CORREZIONE: Passiamo prima la domanda (q), poi la lingua richiesta (lang)
+  // ESECUZIONE RILEVAMENTO
   const language = resolveLanguage(q, lang, availableLanguages);
+
+  // --- RIGA DI DEBUG (CONTROLLA IL TERMINALE) ---
+  console.log(`[DEBUG AI] Domanda: "${q}" | Lingua Scelta: ${language.toUpperCase()}`);
 
   const intentsForLang = guide.intents?.[language] || {};
   const answersForLang = guide.answers?.[language] || {};
