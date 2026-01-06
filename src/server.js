@@ -3,7 +3,7 @@ import axios from "axios";
 import crypto from "crypto";
 import cors from "cors";
 import path from "path";
-import { routeArenulaIntent } from "./ai-router/arenula.router.js";
+
 import { fileURLToPath } from "url";
 import fs from "fs/promises";
 // Guest Assistant AI → JSON dinamico (guides-v2)
