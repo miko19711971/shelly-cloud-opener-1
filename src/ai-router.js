@@ -46,20 +46,31 @@ const GUIDE_INTENTS = new Set([
   "services"
 ]);
 
+/**
+ * Decide come gestire l’intent per Arenula
+ */
 export function routeArenulaIntent({ intent }) {
-  // Se l’intent è nella guida → rimando al link
+  if (!intent) {
+    return {
+      handled: false,
+      action: "delegate_to_ai"
+    };
+  }
+
+  // Se l’intent è coperto dalla guida → rimando alla guida
   if (GUIDE_INTENTS.has(intent)) {
     return {
       handled: true,
       action: "redirect_to_guide",
-      guide: "arenula"
+      guide: "arenula",
+      intent
     };
   }
 
   // Altrimenti → lascia lavorare l’AI
   return {
     handled: false,
-    intent,
-    action: "delegate_to_ai"
+    action: "delegate_to_ai",
+    intent
   };
 }
