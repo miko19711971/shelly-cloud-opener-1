@@ -1,6 +1,7 @@
 // guide-ai.js
 // Motore AI a keyword per guides-v2
-// ✔ lingua coerente
+// ✔ lingua coerente (Fix parametri invertiti)
+// ✔ rilevamento stop-words migliorato
 // ✔ nessun fallback incrociato
 // ✔ deploy-safe
 
@@ -59,45 +60,54 @@ async function loadGuideJson(apartment) {
 // =====================
 // RISOLUZIONE LINGUA
 // =====================
-  function resolveLanguage(question, requested, availableLanguages) {
-    // 1. Forza la lingua se passata correttamente via URL/Browser
-    if (requested && availableLanguages.includes(requested)) {
-        return requested;
-    }
+function resolveLanguage(question, requested, availableLanguages) {
+  // 1. Forza la lingua se passata correttamente via URL/Browser
+  if (requested && availableLanguages.includes(requested.toLowerCase())) {
+    return requested.toLowerCase();
+  }
 
-    const text = question.toLowerCase();
-    
-    // 2. Dizionario di parole "forti" (che non lasciano dubbi)
-    const indicators = {
-        en: ['is', 'the', 'what', 'to', 'how', 'it', 'working', 'not'],
-        it: ['il', 'la', 'non', 'come', 'fare', 'funziona', 'dove'],
-        es: ['el', 'la', 'no', 'como', 'hacer', 'funciona', 'donde', 'esta'],
-        fr: ['le', 'la', 'pas', 'comment', 'faire', 'est', 'dans']
-    };
+  // Prepariamo il testo con spazi per un matching esatto delle parole
+  const text = " " + question.toLowerCase() + " ";
 
-    let scores = {};
-    availableLanguages.forEach(lang => {
-        scores[lang] = 0;
-        if (indicators[lang]) {
-            indicators[lang].forEach(word => {
-                // Controlla se la parola è presente nel testo con spazi intorno
-                if (text.includes(' ' + word + ' ') || text.startsWith(word + ' ') || text.endsWith(' ' + word)) {
-                    scores[lang]++;
-                }
-            });
+  // 2. Dizionario di parole "forti" (articoli e verbi comuni)
+  const indicators = {
+    en: ['is', 'the', 'what', 'to', 'how', 'it', 'working', 'not', 'you', 'where'],
+    it: ['il', 'la', 'non', 'come', 'fare', 'funziona', 'dove', 'che', 'per'],
+    es: ['el', 'la', 'no', 'como', 'hacer', 'funciona', 'donde', 'esta', 'que'],
+    fr: ['le', 'la', 'les', 'pas', 'comment', 'faire', 'est', 'dans', 'pour']
+  };
+
+  let scores = {};
+  availableLanguages.forEach(lang => {
+    scores[lang] = 0;
+    if (indicators[lang]) {
+      indicators[lang].forEach(word => {
+        // Cerca la parola esatta circondata da spazi
+        if (text.includes(' ' + word + ' ')) {
+          scores[lang]++;
         }
-    });
-
-    // 3. Trova la lingua con il punteggio più alto
-    let detected = Object.keys(scores).reduce((a, b) => scores[a] > scores[b] ? a : b);
-
-    // 4. Se il punteggio è 0 (nessuna parola trovata), usa l'inglese come fallback 
-    // o la prima lingua disponibile nel JSON
-    if (scores[detected] === 0) {
-        return availableLanguages.includes('en') ? 'en' : availableLanguages[0];
+      });
     }
+  });
 
-    return detected;
+  // 3. Trova la lingua con il punteggio più alto
+  let detected = null;
+  let maxScore = -1;
+
+  availableLanguages.forEach(lang => {
+    if (scores[lang] > maxScore) {
+      maxScore = scores[lang];
+      detected = lang;
+    }
+  });
+
+  // 4. Se il punteggio è 0 (nessuna parola trovata), usa l'inglese come fallback 
+  // o la prima lingua disponibile nel JSON
+  if (maxScore <= 0) {
+    return availableLanguages.includes('en') ? 'en' : availableLanguages[0];
+  }
+
+  return detected;
 }
 
 // =====================
@@ -148,7 +158,8 @@ export async function reply({ apartment, lang, question }) {
     ? guide.languages.map(l => l.toLowerCase())
     : ["en"];
 
-  const language = resolveLanguage(lang, q, availableLanguages);
+  // FIX: Invertiti q e lang. Ora q (la domanda) viene analizzata correttamente.
+  const language = resolveLanguage(q, lang, availableLanguages);
 
   const intentsForLang = guide.intents?.[language] || {};
   const answersForLang = guide.answers?.[language] || {};
