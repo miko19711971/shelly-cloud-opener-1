@@ -4,74 +4,61 @@ import { fileURLToPath } from "url";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname  = path.dirname(__filename);
-const GUIDES_V2_DIR = path.join(__dirname, "..", "public", "guides-v2");
-const guidesCache = new Map();
+const GUIDES_DIR = path.join(__dirname, "..", "public", "guides-v2");
 
-function normalizeText(str) {
-  return String(str || "").toLowerCase().normalize("NFD").replace(/\p{Diacritic}/gu, "");
-}
-
-// Dizionario globale per DETERMINARE la lingua dalla domanda
-const LANGUAGE_DETECTOR = {
-  it: ["riscaldamento", "spazzatura", "chiavi", "dove", "mangiare", "grazie", "buongiorno", "caldo", "freddo", "funziona", "pagare", "tassa"],
-  en: ["heating", "trash", "keys", "where", "eat", "thanks", "working", "how", "cold", "warm", "pay", "tax", "is", "the"],
-  fr: ["chauffage", "poubelle", "cles", "manger", "merci", "chaud", "froid", "marche", "payer", "taxe"],
-  es: ["calefaccion", "basura", "llaves", "donde", "comer", "gracias", "funciona", "pagar", "tasa", "calor", "frio"],
-  de: ["heizung", "mull", "schlussel", "wo", "essen", "danke", "warm", "kalt", "funktioniert", "bezahlen", "steuer"]
-};
-
-// Parole chiave per trovare la RISPOSTA (Intents)
-const KEYWORDS = {
-  it: { wifi: ["wifi", "internet", "password"], heating: ["riscaldamento", "termostato", "caldo"], trash: ["spazzatura", "rifiuti", "sacchetti"], check_in: ["arrivo", "codice", "citofono"], city_tax_info: ["tassa", "pagamento"] },
-  en: { wifi: ["wifi", "internet", "password"], heating: ["heating", "thermostat", "warm"], trash: ["trash", "garbage", "bins"], check_in: ["arrival", "code", "intercom"], city_tax_info: ["tax", "payment"] },
-  fr: { wifi: ["wifi", "internet", "passe"], heating: ["chauffage", "chaud"], trash: ["poubelle", "dechets"], check_in: ["arrivee", "code"], city_tax_info: ["taxe", "payer"] },
-  de: { wifi: ["wlan", "wifi", "passwort"], heating: ["heizung", "warm"], trash: ["mull", "abfall"], check_in: ["ankunft", "code"], city_tax_info: ["steuer", "bezahlen"] },
-  es: { wifi: ["wifi", "internet", "contrasena"], heating: ["calefaccion", "calor"], trash: ["basura", "residuos"], check_in: ["llegada", "codigo"], city_tax_info: ["tasa", "pagar"] }
+// 1. Rilevatore universale di lingua (parole neutre che definiscono la lingua)
+const LANG_MARKERS = {
+  en: ["the", "is", "where", "how", "thanks", "please", "my", "to"],
+  it: ["il", "la", "dove", "come", "grazie", "per", "sono", "nel"],
+  fr: ["le", "la", "est", "ou", "merci", "pour", "dans", "avez"],
+  es: ["el", "la", "donde", "como", "gracias", "para", "esta", "hay"],
+  de: ["der", "die", "das", "ist", "wo", "danke", "bitte", "fur"]
 };
 
 export async function reply({ apartment, message }) {
-  const aptKey = String(apartment || "").toLowerCase().trim();
-  let guide = guidesCache.get(aptKey);
-  if (!guide) {
-    try {
-      const raw = await fs.readFile(path.join(GUIDES_V2_DIR, `${aptKey}.json`), "utf8");
-      guide = JSON.parse(raw);
-      guidesCache.set(aptKey, guide);
-    } catch { return "Guide not found."; }
-  }
+  try {
+    // Carica il JSON dell'appartamento
+    const filePath = path.join(GUIDES_DIR, `${apartment.toLowerCase()}.json`);
+    const fileContent = await fs.readFile(filePath, "utf8");
+    const guide = JSON.parse(fileContent);
 
-  const text = normalizeText(message);
-  const targetData = guide.answers || guide;
+    const text = message.toLowerCase();
 
-  // 1. DETERMINAZIONE LINGUA: Scansiona il testo per capire la lingua
-  let detectedLang = "en"; // Default
-  let maxLangScore = 0;
+    // 2. DETERMINA LA LINGUA DALLA FRASE
+    let detectedLang = "en"; // Default
+    let topScore = 0;
 
-  for (const [lang, signs] of Object.entries(LANGUAGE_DETECTOR)) {
-    let score = 0;
-    signs.forEach(word => { if (text.includes(word)) score++; });
-    if (score > maxLangScore) {
-      maxLangScore = score;
-      detectedLang = lang;
+    for (const [lang, markers] of Object.entries(LANG_MARKERS)) {
+      let score = markers.filter(m => text.includes(m)).length;
+      if (score > topScore) {
+        topScore = score;
+        detectedLang = lang;
+      }
     }
-  }
 
-  // 2. SCELTA RISPOSTA: Usa la lingua rilevata per trovare l'intent
-  const answersForLang = targetData[detectedLang] || targetData.en;
-  const langKeywords = KEYWORDS[detectedLang] || KEYWORDS.en;
-  
-  let bestIntent = null;
-  let maxIntentScore = 0;
+    // 3. TROVA L'INTENT (Sfrutta gli "intents" che hai già nel tuo JSON)
+    const langIntents = guide.intents[detectedLang] || guide.intents.en;
+    const langAnswers = guide.answers[detectedLang] || guide.answers.en;
+    
+    let foundIntent = null;
 
-  for (const [intent, synonyms] of Object.entries(langKeywords)) {
-    let score = 0;
-    synonyms.forEach(syn => { if (text.includes(normalizeText(syn))) score++; });
-    if (score > maxIntentScore) {
-      maxIntentScore = score;
-      bestIntent = intent;
+    for (const [intentName, keywords] of Object.entries(langIntents)) {
+      if (keywords.some(kw => text.includes(kw.toLowerCase()))) {
+        foundIntent = intentName;
+        break; 
+      }
     }
-  }
 
-  // 3. RESTITUZIONE: Ritorna la risposta specifica o un fallback
-  return bestIntent ? answersForLang[bestIntent] : (answersForLang.wifi || Object.values(answersForLang)[0]);
+    // 4. RESTITUISCI LA RISPOSTA
+    if (foundIntent && langAnswers[foundIntent]) {
+      return langAnswers[foundIntent];
+    }
+
+    // Fallback se non capisce il tema: Wi-Fi o la prima risposta disponibile
+    return langAnswers.wifi || langAnswers.check_in || Object.values(langAnswers)[0];
+
+  } catch (error) {
+    console.error("Errore nel motore AI:", error);
+    return "I'm sorry, I'm having trouble accessing the guide. Please try again later.";
+  }
 }
