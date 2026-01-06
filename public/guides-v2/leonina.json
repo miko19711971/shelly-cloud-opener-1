@@ -1,4 +1,4 @@
-{
+ {
   "apartment": "Leonina / Citofono 16",
   "languages": ["it", "en", "fr", "de", "es"],
   "intents": {
@@ -90,7 +90,7 @@
     },
     "es": {
       "wifi": ["wifi", "internet", "contraseña"],
-      "wifi_troubleshooting": ["wifi no funciona", "problemas wifi"],
+      "wifi_troubleshooting": ["wifi no funciona", "sin internet"],
       "trash": ["basura", "residuos", "contenedores"],
       "heating": ["calefacción", "calor", "frío"],
       "AC": ["aire acondicionado", "ac"],
@@ -110,8 +110,8 @@
       "heating": "Riscaldamento: Si utilizza il telecomando dell'aria condizionata. Premi MODE fino a visualizzare il simbolo del SOLE e imposta la temperatura a 26 °C.",
       "electric_panel": "Quadro elettrico: Si trova a sinistra guardando verso la porta d'uscita dell'appartamento. Verifica che tutti gli interruttori siano verso l'alto.",
       "wifi": "Wi-Fi: Il router è sulla scrivania. Nome rete (SSID) e password sono indicati sull’etichetta del dispositivo.",
-      "wifi_troubleshooting": "Se il Wi-Fi non funziona: 1) Riavvia il router staccando la spina per 30 secondi. 2) Controlla la password. Se persiste, contattami.",
-      "check_in": "Check-in dalle 15:00. Citofono interno 16. Codice portone strada: 7171.",
+      "wifi_troubleshooting": "Se il Wi-Fi non funziona: 1) Riavvia il router staccando la spina per 30 secondi. 2) Controlla la password sull'etichetta. Se persiste, contattami.",
+      "check_in": "Check-in dalle 15:00. Citofono interno 16. Codice portone strada: 7171. Le chiavi sono all'interno.",
       "early_checkin": "Early check-in: Standard ore 15:00. Dimmi l'orario e verifico la disponibilità in base alle pulizie.",
       "check_out": "Check-out: Entro le ore 11:00. Spegni luci e AC, chiudi le finestre e lascia le chiavi sul tavolo.",
       "late_checkout": "Late check-out: L'orario standard è le 11:00. Eventuali proroghe sono possibili solo su richiesta e se non ci sono nuovi arrivi.",
@@ -138,7 +138,7 @@
       "wifi": "Wi-Fi: The router is on the desk. Network name and password are on the label underneath.",
       "wifi_troubleshooting": "Wi-Fi issues: 1) Restart the router (unplug for 30s). 2) Double check the password. Message me if it still fails.",
       "check_in": "Check-in from 3:00 PM. Intercom apartment 16. Street building code: 7171.",
-      "early_checkin": "Early check-in: Standard is 3:00 PM. Tell me your time and I will check availability.",
+      "early_checkin": "Early check-in: Standard is 3:00 PM. Tell me your arrival time and I will check availability.",
       "check_out": "Check-out: By 11:00 AM. Turn off lights and A/C, close windows, and leave keys on the table.",
       "late_checkout": "Late check-out: Standard time is 11:00 AM. Extensions upon request and subject to availability.",
       "water": "Water: Tap water is drinkable. If the shower is cold, let it run for 1–2 minutes.",
@@ -156,42 +156,46 @@
     },
     "fr": {
       "trash": "Poubelles : Les sacs sont en cuisine. Les conteneurs sont à gauche en sortant de l'immeuble.",
-      "heating": "Chauffage : Utilisez la télécommande de la clim. Mode SOLEIL à 26 °C.",
+      "heating": "Chauffage : Utilisez la télécommande de la clim. Appuyez sur MODE jusqu'au symbole SOLEIL et réglez sur 26 °C.",
       "electric_panel": "Tableau électrique : À gauche de la porte de sortie de l'appartement.",
-      "wifi": "Wi-Fi : Routeur sur le bureau. Code sur l'étiquette.",
+      "wifi": "Wi-Fi : Routeur sur le bureau. Code sur l'étiquette. Si besoin, redémarrez le routeur (30 sec).",
       "check_in": "Check-in dès 15h00. Interphone 16. Code porte rue : 7171.",
       "check_out": "Check-out : 11h00. Éteignez tout et laissez les clés sur la table.",
       "gas": "Gaz : La cuisine est électrique, il n'y a pas de gaz.",
-      "building": "Immeuble : Ascenseur à portes manuelles (à bien refermer).",
+      "building": "Immeuble : Ascenseur à portes manuelles (veuillez bien les refermer après usage).",
       "transport": "Transports : Métro B arrêt Cavour.",
       "city_tax_info": "Taxe : 6 € par personne/nuit.",
-      "emergency": "Urgence : 112."
+      "emergency": "Urgence : 112.",
+      "house_rules": "Règles : Non-fumeur, pas de fêtes, calme après 22h00.",
+      "services": "Pour toute aide, contactez-moi ici."
     },
     "de": {
       "trash": "Müll: Beutel in der Küche. Mülltonnen links beim Verlassen des Gebäudes.",
-      "heating": "Heizung: AC-Fernbedienung nutzen. Modus SONNE auf 26 °C.",
+      "heating": "Heizung: AC-Fernbedienung nutzen. Drücken Sie MODE bis zum SONNE-Symbol und stellen Sie 26 °C ein.",
       "electric_panel": "Sicherungskasten: Links neben der Wohnungstür.",
-      "wifi": "WLAN: Router auf dem Schreibtisch. Passwort auf dem Etikett.",
+      "wifi": "WLAN: Router auf dem Schreibtisch. Passwort auf dem Etikett. Starten Sie bei Bedarf neu.",
       "check_in": "Check-in ab 15:00 Uhr. Gegensprechanlage 16. Türcode: 7171.",
       "check_out": "Check-out: 11:00 Uhr. AC aus, Schlüssel auf den Tisch.",
       "gas": "Gas: Elektroherd, kein Gas vorhanden.",
-      "building": "Gebäude: Aufzug mit manuellen Türen (bitte fest schließen).",
+      "building": "Gebäude: Aufzug mit manuellen Türen (bitte fest schließen, sonst blockiert er).",
       "transport": "Verkehr: Metro B Station Cavour.",
       "city_tax_info": "Kurtaxe: 6 € pro Person/Nacht.",
-      "emergency": "Notfall: 112."
+      "emergency": "Notfall: 112.",
+      "house_rules": "Hausordnung: Nichtraucher, keine Partys, Ruhe ab 22:00 Uhr."
     },
     "es": {
       "trash": "Basura: Bolsas en la cocina. Contenedores a la izquierda al salir del edificio.",
-      "heating": "Calefacción: Use el mando del AC. Modo SOL a 26 °C.",
-      "electric_panel": "Cuadro eléctrico: A la izquierda de la puerta de salida.",
-      "wifi": "Wi-Fi: Router en el escritorio. Clave en la etiqueta.",
+      "heating": "Calefacción: Use el mando del AC. Pulse MODE hasta el símbolo del SOL y fije 26 °C.",
+      "electric_panel": "Cuadro eléctrico: A la izquierda de la puerta de salida del apartamento.",
+      "wifi": "Wi-Fi: Router en el escritorio. Clave en la etiqueta. Reinicie si no funciona (30 seg).",
       "check_in": "Check in desde las 15:00. Portero 16. Código calle: 7171.",
       "check_out": "Check out: 11:00. Apague el AC y deje llaves en la mesa.",
       "gas": "Gas: La cocina es eléctrica, no hay gas.",
-      "building": "Edificio: Ascensor con puertas manuales (cerrar bien).",
+      "building": "Edificio: Ascensor con puertas manuales (asegúrese de cerrarlas bien).",
       "transport": "Transporte: Metro B parada Cavour.",
       "city_tax_info": "Tasa: 6 € por persona/noche.",
-      "emergency": "Emergencia: 112."
+      "emergency": "Emergencia: 112.",
+      "house_rules": "Reglas: No fumar, no fiestas, silencio desde las 22:00."
     }
   }
 }
