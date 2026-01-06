@@ -1306,7 +1306,15 @@ early_check_out: [
     }
   }
 
-  if (!foundIntents.length) return null;
+  // 🔒 FIX MINIMALE — evita riuso intent precedente (state leakage)
+// Ogni intent deve avere almeno UNA keyword matchata nella domanda attuale
+const validatedIntents = foundIntents.filter(intent => {
+  const synonyms = KEYWORDS[intent];
+  if (!Array.isArray(synonyms)) return false;
+  return synonyms.some(hasToken);
+});
+
+if (!validatedIntents.length) return null;
 
   // deduplica
   const unique = [...new Set(foundIntents)];
