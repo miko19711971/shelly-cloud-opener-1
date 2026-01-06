@@ -1611,6 +1611,26 @@ return res.json({
     );
 
     const apartment = LISTING_TO_APARTMENT[listingId] || "arenula";
+    // === AI ROUTER (solo Arenula per ora) ===
+let routed = null;
+
+if (apartment === "arenula" && data?.intent) {
+  routed = routeArenulaIntent({ intent: data.intent });
+
+  if (routed?.handled && routed.action === "redirect_to_guide") {
+    const guideUrl = `https://shelly-cloud-opener-1.onrender.com/guest-assistant/arenula/?lang=${language}`;
+
+    return res.json({
+      ok: true,
+      apartment,
+      language,
+      question: message,
+      answer: `Please refer to the full guide here:\n${guideUrl}`,
+      intent: data.intent,
+      redirected: true
+    });
+  }
+}
     console.log("🏠 listingId:", listingId, "→ apartment:", apartment);
 
     // 1) Testo del messaggio dell'ospite
