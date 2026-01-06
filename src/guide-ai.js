@@ -1,9 +1,8 @@
 // guide-ai.js
 // Motore AI a keyword per guides-v2
-// ✔ lingua coerente (Fix parametri invertiti)
-// ✔ rilevamento stop-words migliorato
-// ✔ nessun fallback incrociato
-// ✔ deploy-safe
+// ✔ Fix rilevamento lingua (Parametri invertiti corretti)
+// ✔ Fallback inglese garantito
+// ✔ Matching intents potenziato
 
 import fs from "fs/promises";
 import path from "path";
@@ -15,7 +14,6 @@ const __dirname = path.dirname(__filename);
 const PUBLIC_DIR = path.join(__dirname, "..", "public");
 const GUIDES_V2_DIR = path.join(PUBLIC_DIR, "guides-v2");
 
-// cache in memoria
 const guidesCache = new Map();
 
 // =====================
@@ -31,18 +29,12 @@ function normalizeText(str) {
     .replace(/\s+/g, " ");
 }
 
-function tokenize(str) {
-  const s = normalizeText(str);
-  return s ? s.split(" ") : [];
-}
-
 // =====================
 // CARICAMENTO GUIDA
 // =====================
 async function loadGuideJson(apartment) {
   const key = String(apartment || "").toLowerCase().trim();
   if (!key) return null;
-
   if (guidesCache.has(key)) return guidesCache.get(key);
 
   const filePath = path.join(GUIDES_V2_DIR, `${key}.json`);
@@ -58,20 +50,19 @@ async function loadGuideJson(apartment) {
 }
 
 // =====================
-// RISOLUZIONE LINGUA
+// RISOLUZIONE LINGUA (FIXED)
 // =====================
 function resolveLanguage(question, requested, availableLanguages) {
-  // 1. Forza la lingua se passata correttamente via URL/Browser
+  // 1. Se la lingua è già definita e valida, usala
   if (requested && availableLanguages.includes(requested.toLowerCase())) {
     return requested.toLowerCase();
   }
 
-  // Prepariamo il testo con spazi per un matching esatto delle parole
   const text = " " + question.toLowerCase() + " ";
-
-  // 2. Dizionario di parole "forti" (articoli e verbi comuni)
+  
+  // 2. Indicatori grammaticali forti
   const indicators = {
-    en: ['is', 'the', 'what', 'to', 'how', 'it', 'working', 'not', 'you', 'where'],
+    en: ['is', 'the', 'what', 'to', 'how', 'it', 'working', 'not', 'wifi', 'internet', 'you'],
     it: ['il', 'la', 'non', 'come', 'fare', 'funziona', 'dove', 'che', 'per'],
     es: ['el', 'la', 'no', 'como', 'hacer', 'funciona', 'donde', 'esta', 'que'],
     fr: ['le', 'la', 'les', 'pas', 'comment', 'faire', 'est', 'dans', 'pour']
@@ -82,17 +73,14 @@ function resolveLanguage(question, requested, availableLanguages) {
     scores[lang] = 0;
     if (indicators[lang]) {
       indicators[lang].forEach(word => {
-        // Cerca la parola esatta circondata da spazi
-        if (text.includes(' ' + word + ' ')) {
-          scores[lang]++;
-        }
+        if (text.includes(' ' + word + ' ')) scores[lang]++;
       });
     }
   });
 
-  // 3. Trova la lingua con il punteggio più alto
-  let detected = null;
-  let maxScore = -1;
+  // 3. Fallback predefinito su Inglese (se disponibile) o prima lingua del JSON
+  let detected = availableLanguages.includes('en') ? 'en' : availableLanguages[0];
+  let maxScore = 0;
 
   availableLanguages.forEach(lang => {
     if (scores[lang] > maxScore) {
@@ -101,47 +89,44 @@ function resolveLanguage(question, requested, availableLanguages) {
     }
   });
 
-  // 4. Se il punteggio è 0 (nessuna parola trovata), usa l'inglese come fallback 
-  // o la prima lingua disponibile nel JSON
-  if (maxScore <= 0) {
-    return availableLanguages.includes('en') ? 'en' : availableLanguages[0];
-  }
-
   return detected;
 }
 
 // =====================
-// MATCH INTENT
+// MATCH INTENT (IMPROVED)
 // =====================
+function findBestIntent(question, intentsForLang) {
+  let bestIntent = null;
+  let maxMatches = 0;
+
+  const normQ = normalizeText(question);
+  if (!intentsForLang) return null;
+
+  for (const [intent, keywords] of Object.entries(intentsForLang)) {
+    let currentScore = 0;
+    for (const kw of keywords) {
+      const nkw = normalizeText(kw);
+      if (nkw && normQ.includes(nkw)) {
+        currentScore++;
+        // Bonus match esatto
+        if (normQ.split(" ").includes(nkw)) currentScore += 1;
+      }
+    }
+    if (currentScore > maxMatches) {
+      maxMatches = currentScore;
+      bestIntent = intent;
+    }
+  }
+  return maxMatches > 0 ? bestIntent : null;
+}
+
 function intentMatches(question, keywords = []) {
   if (!Array.isArray(keywords) || !keywords.length) return false;
-
   const normQ = normalizeText(question);
   return keywords.some(kw => {
     const nkw = normalizeText(kw);
     return nkw && normQ.includes(nkw);
   });
-}
-
-function findBestIntent(question, intentsForLang) {
-  let bestIntent = null;
-  let bestScore = 0;
-
-  const normQ = normalizeText(question);
-
-  for (const [intent, keywords] of Object.entries(intentsForLang || {})) {
-    let score = 0;
-    for (const kw of keywords) {
-      const nkw = normalizeText(kw);
-      if (nkw && normQ.includes(nkw)) score += 1;
-    }
-    if (score > bestScore) {
-      bestScore = score;
-      bestIntent = intent;
-    }
-  }
-
-  return bestScore > 0 ? bestIntent : null;
 }
 
 // =====================
@@ -158,13 +143,13 @@ export async function reply({ apartment, lang, question }) {
     ? guide.languages.map(l => l.toLowerCase())
     : ["en"];
 
-  // FIX: Invertiti q e lang. Ora q (la domanda) viene analizzata correttamente.
+  // CORREZIONE: Passiamo prima la domanda (q), poi la lingua richiesta (lang)
   const language = resolveLanguage(q, lang, availableLanguages);
 
   const intentsForLang = guide.intents?.[language] || {};
   const answersForLang = guide.answers?.[language] || {};
 
-  // PRIORITÀ HARD: early check-in
+  // PRIORITÀ: early check-in
   if (
     intentsForLang.early_checkin_policy &&
     intentMatches(q, intentsForLang.early_checkin_policy)
@@ -178,12 +163,8 @@ export async function reply({ apartment, lang, question }) {
   }
 
   const intent = findBestIntent(q, intentsForLang);
-  if (!intent) {
-    return { ok: true, noMatch: true, answer: null, language };
-  }
-
-  const answer = answersForLang[intent] || null;
-  if (!answer) {
+  
+  if (!intent || !answersForLang[intent]) {
     return { ok: true, noMatch: true, answer: null, language };
   }
 
@@ -191,6 +172,6 @@ export async function reply({ apartment, lang, question }) {
     ok: true,
     language,
     intent,
-    answer
+    answer: answersForLang[intent]
   };
 }
