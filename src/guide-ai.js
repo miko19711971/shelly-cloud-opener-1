@@ -34,11 +34,19 @@ async function loadGuideJson(apartment) {
   }
 }
 
+// --- LOGICA LINGUE BLINDATA ---
 function normalizeLang(lang, availableLangs) {
   const fallback = "en";
-  const requested = String(lang || "").toLowerCase().slice(0, 2);
+  // Puliamo la lingua in ingresso (es. "en-GB" -> "en")
+  let requested = String(lang || "").toLowerCase().trim().slice(0, 2);
+
+  // Se la lingua chiesta c'è nel JSON, usala
   if (availableLangs.includes(requested)) return requested;
+  
+  // Se la lingua chiesta NON c'è, forza l'INGLESE invece di andare a caso
   if (availableLangs.includes(fallback)) return fallback;
+  
+  // Se manca pure l'inglese, prendi la prima disponibile
   return availableLangs[0];
 }
 
@@ -47,86 +55,76 @@ const KEYWORDS = {
     wifi: ["wifi", "wi-fi", "internet", "password", "rete"],
     check_in: ["check in", "arrivo", "citofono", "entrare", "chiavi", "ingresso", "codice"],
     check_out: ["check out", "partenza", "uscire", "lasciare"],
-    heating: ["riscaldamento", "termosifoni", "caldo", "freddo", "termostato", "caloriferi"],
-    trash: ["spazzatura", "rifiuti", "immondizia", "differenziata", "sacchetti", "pattumiera"],
+    heating: ["riscaldamento", "termosifoni", "caldo", "freddo", "termostato"],
+    trash: ["spazzatura", "rifiuti", "immondizia", "differenziata", "sacchetti"],
     electric_panel: ["luce", "corrente", "quadro elettrico", "interruttore", "blackout", "salta"],
-    water: ["acqua", "potabile", "calda", "rubinetto", "bere"],
-    ac: ["aria condizionata", "condizionatore", "ac", "clima", "telecomando"],
-    gas: ["gas", "fornelli", "cucina", "fiamma", "fuochi"],
-    eat: ["mangiare", "ristorante", "cena", "pranzo", "cibo", "dove mangiare"],
+    water: ["acqua", "potabile", "calda", "rubinetto"],
+    ac: ["aria condizionata", "condizionatore", "ac", "clima"],
+    gas: ["gas", "fornelli", "cucina", "fiamma"],
+    eat: ["mangiare", "ristorante", "cena", "pranzo", "cibo"],
     drink: ["bere", "bar", "vino", "cocktail", "aperitivo"],
-    id_documents: ["documenti", "passaporto", "registrazione", "identita", "carta"],
-    city_tax_info: ["tassa", "soggiorno", "city tax", "pagare", "comune", "soldi"],
-    house_rules: ["regole", "fumare", "feste", "rumore", "fumo"],
+    id_documents: ["documenti", "passaporto", "registrazione", "identita"],
+    city_tax_info: ["tassa", "soggiorno", "city tax", "pagare", "comune"],
+    house_rules: ["regole", "fumare", "feste", "rumore"],
     transport: ["trasporti", "bus", "tram", "metro", "taxi", "stazione", "aeroporto"]
   },
   en: {
     wifi: ["wifi", "wi-fi", "internet", "password", "network"],
     check_in: ["check in", "arrival", "intercom", "door", "keys", "entry", "code"],
     check_out: ["check out", "departure", "leave", "leaving", "exit"],
-    heating: ["heating", "radiators", "warm", "cold", "thermostat", "heaters"],
+    heating: ["heating", "radiators", "warm", "cold", "thermostat"],
     trash: ["trash", "garbage", "rubbish", "recycling", "waste", "bins"],
     electric_panel: ["electricity", "power", "electric panel", "breaker", "blackout", "no light"],
-    water: ["water", "drinkable", "hot water", "tap", "drinking"],
-    ac: ["air conditioning", "ac", "aircon", "cooling", "remote"],
-    gas: ["gas", "stove", "cook", "burner", "flame"],
-    eat: ["eat", "food", "restaurant", "dinner", "lunch", "where to eat"],
-    drink: ["drink", "bar", "wine", "cocktail", "pub", "aperitivo"],
-    id_documents: ["documents", "passport", "id card", "registration", "id"],
+    water: ["water", "drinkable", "hot water", "tap"],
+    ac: ["air conditioning", "ac", "aircon", "cooling"],
+    gas: ["gas", "stove", "cook", "burner"],
+    eat: ["eat", "food", "restaurant", "dinner", "lunch"],
+    drink: ["drink", "bar", "wine", "cocktail", "pub"],
+    id_documents: ["documents", "passport", "id card", "registration"],
     city_tax_info: ["tax", "city tax", "tourist tax", "payment", "pay"],
-    house_rules: ["rules", "smoking", "parties", "noise", "smoke"],
+    house_rules: ["rules", "smoking", "parties", "noise"],
     transport: ["transport", "bus", "tram", "metro", "taxi", "train", "airport"]
   },
   fr: {
-    wifi: ["wifi", "wi-fi", "internet", "mot de passe", "réseau"],
-    check_in: ["check in", "arrivée", "interphone", "porte", "clés", "code"],
-    check_out: ["check out", "départ", "partir", "sortir", "clés"],
-    heating: ["chauffage", "radiateur", "chaud", "froid", "thermostat"],
-    trash: ["poubelle", "déchets", "ordures", "tri", "sacs"],
-    electric_panel: ["électricité", "courant", "tableau électrique", "disjoncteur", "coupure"],
-    water: ["eau", "potable", "eau chaude", "robinet"],
-    ac: ["climatisation", "clim", "ac"],
-    gas: ["gaz", "cuisinière", "feu", "cuisiner"],
-    eat: ["manger", "restaurant", "nourriture", "dîner", "déjeuner"],
-    drink: ["boire", "bar", "vin", "cocktail", "aperitif"],
-    id_documents: ["documents", "passeport", "identité", "enregistrement"],
-    city_tax_info: ["taxe", "taxe de séjour", "payer", "argent"],
-    house_rules: ["règles", "fumer", "fêtes", "bruit"],
-    transport: ["transport", "bus", "tram", "métro", "taxi", "aéroport"]
+    wifi: ["wifi", "wi-fi", "internet", "mot de passe"],
+    check_in: ["check in", "arrivée", "interphone", "porte", "clés"],
+    check_out: ["check out", "départ", "clés"],
+    heating: ["chauffage", "radiateur", "thermostat"],
+    trash: ["poubelle", "déchets", "tri"],
+    electric_panel: ["électricité", "tableau électrique"],
+    water: ["eau", "potable", "eau chaude"],
+    ac: ["climatisation", "clim"],
+    gas: ["gaz", "cuisinière"],
+    eat: ["manger", "restaurant"],
+    id_documents: ["documents", "passeport", "identité"],
+    city_tax_info: ["taxe", "taxe de séjour", "payer"],
+    transport: ["transport", "bus", "tram", "métro", "taxi"]
   },
   de: {
-    wifi: ["wlan", "wifi", "internet", "passwort", "netzwerk"],
-    check_in: ["check in", "ankunft", "tür", "schlüssel", "code", "eingang"],
-    check_out: ["check out", "abreise", "verlassen", "schlüssel"],
-    heating: ["heizung", "heizkörper", "warm", "kalt", "thermostat"],
-    trash: ["müll", "abfall", "mülleimer", "tüte", "recycling"],
-    electric_panel: ["strom", "sicherung", "sicherungskasten", "stromausfall"],
-    water: ["wasser", "trinkwasser", "warmwasser", "leitung"],
-    ac: ["klimaanlage", "ac", "kühlen"],
-    gas: ["gas", "herd", "kochen", "flamme"],
-    eat: ["essen", "restaurant", "küche", "mittagessen", "abendessen"],
-    drink: ["trinken", "bar", "wein", "cocktail", "bier"],
-    id_documents: ["dokumente", "reisepass", "ausweis", "registrierung"],
-    city_tax_info: ["steuer", "kurtaxe", "bezahlen", "city tax"],
-    house_rules: ["regeln", "rauchen", "partys", "lärm"],
-    transport: ["verkehr", "bus", "tram", "u-bahn", "taxi", "flughafen"]
+    wifi: ["wlan", "wifi", "internet", "passwort"],
+    check_in: ["check in", "ankunft", "schlüssel"],
+    check_out: ["check out", "abreise", "schlüssel"],
+    heating: ["heizung", "warm", "kalt"],
+    trash: ["müll", "abfall"],
+    electric_panel: ["strom", "sicherung"],
+    water: ["wasser", "warmwasser"],
+    ac: ["klimaanlage", "ac"],
+    id_documents: ["dokumente", "reisepass"],
+    city_tax_info: ["steuer", "kurtaxe", "city tax"],
+    transport: ["verkehr", "bus", "tram", "taxi"]
   },
   es: {
-    wifi: ["wifi", "wi-fi", "internet", "contraseña", "red"],
-    check_in: ["check in", "llegada", "portero", "puerta", "llaves", "código"],
-    check_out: ["check out", "salida", "dejar", "llaves"],
-    heating: ["calefacción", "radiadores", "calor", "frío", "termostato"],
-    trash: ["basura", "residuos", "bolsas", "reciclaje", "cubo"],
-    electric_panel: ["luz", "corriente", "cuadro eléctrico", "interruptor", "apagón"],
-    water: ["agua", "potable", "agua caliente", "grifo"],
-    ac: ["aire acondicionado", "ac", "clima"],
-    gas: ["gas", "cocina", "fuego", "hornilla"],
-    eat: ["comer", "restaurante", "comida", "cena", "almuerzo"],
-    drink: ["beber", "bar", "vino", "cóctel", "aperitivo"],
-    id_documents: ["documentos", "pasaporte", "identidad", "registro"],
-    city_tax_info: ["tasa", "tasa turística", "pagar", "dinero", "city tax"],
-    house_rules: ["reglas", "fumar", "fiestas", "ruido"],
-    transport: ["transporte", "bus", "tranvía", "metro", "taxi", "aeropuerto"]
+    wifi: ["wifi", "wi-fi", "internet", "contraseña"],
+    check_in: ["check in", "llegada", "portero", "llaves"],
+    check_out: ["check out", "salida", "llaves"],
+    heating: ["calefacción", "calor", "frío"],
+    trash: ["basura", "residuos", "bolsas"],
+    electric_panel: ["luz", "corriente", "cuadro eléctrico"],
+    water: ["agua", "agua caliente"],
+    ac: ["aire acondicionado", "clima"],
+    id_documents: ["documentos", "pasaporte", "identidad"],
+    city_tax_info: ["tasa", "tasa turística", "pagar"],
+    transport: ["transporte", "bus", "metro", "taxi"]
   }
 };
 
@@ -155,19 +153,24 @@ export async function reply({ apartment, language, message }) {
   const guide = await loadGuideJson(apartment);
   if (!guide) return "Guide not found.";
 
-  const availableLangs = guide.languages || Object.keys(guide.answers || {});
-  const lang = normalizeLang(language, availableLangs);
+  // Punto critico: cerchiamo in 'answers' o nel corpo del JSON
+  const targetData = guide.answers ? guide.answers : guide;
   
-  const answersForLang = guide.answers ? guide.answers[lang] : guide[lang];
+  // Prendiamo le lingue effettivamente scritte nel JSON
+  const availableLangs = Object.keys(targetData).filter(k => 
+    ["en", "it", "fr", "de", "es"].includes(k.toLowerCase())
+  );
+
+  // Scegliamo la lingua con la logica "English Fallback"
+  const lang = normalizeLang(language, availableLangs);
+  const answersForLang = targetData[lang];
+
   if (!answersForLang) return "Language not supported.";
 
   const intentKey = findBestIntentForQuestion(lang, message, answersForLang);
 
-  let answer = intentKey ? answersForLang[intentKey] : null;
-
-  if (!answer) {
-    answer = answersForLang.check_in || answersForLang.wifi || Object.values(answersForLang)[0];
-  }
+  // Se non trova l'intento, dà il check_in o il wifi come benvenuto
+  let answer = intentKey ? answersForLang[intentKey] : (answersForLang.check_in || answersForLang.wifi || Object.values(answersForLang)[0]);
 
   return answer;
 }
