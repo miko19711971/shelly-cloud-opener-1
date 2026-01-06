@@ -1,6 +1,5 @@
 {
   "apartment": "Via del Portico d’Ottavia 1D",
-  "languages": ["it", "en", "fr", "de", "es"],
   "intents": {
     "it": {
       "trash": ["spazzatura", "immondizia", "rifiuti", "pattumiera", "sacchetti"],
@@ -74,7 +73,7 @@
       "emergency": ["emergency", "police"],
       "house_rules": ["house rules", "noise"]
     }
-    ,
+  },
   "answers": {
     "it": {
       "trash": "Spazzatura: Prima di lasciare l’appartamento, chiudi bene i sacchetti e portali all’isola ecologica di fronte a Piazza delle Cinque Scole (lato Lungotevere). Facciamo raccolta differenziata (WeDoRecycling): segui le indicazioni e non lasciare rifiuti nel vano scala o fuori dalla porta.",
@@ -109,8 +108,7 @@
       "city_tax_payment_issue": "Problemi pagamento tassa: Se l’importo nel link/portale non ti sembra corretto o il link non funziona, non preoccuparti: check-in e chiavi non vengono bloccati. Scrivimi numero di persone adulte, notti effettive e quanto hai già pagato (se hai pagato): ti confermo l’importo corretto. Eventuali differenze si sistemano con un nuovo link o in contanti.",
       "receipt_rental": "Ricevuta soggiorno: Possiamo rilasciare una ricevuta per il soggiorno (affitto breve) con nome, date e importo totale. Non è una fattura con partita IVA, ma una ricevuta semplice. Se ti serve, mandami i dati da inserire (nome/cognome o ragione sociale, indirizzo, eventuale codice fiscale) e te la invio in digitale.",
       "receipt_city_tax": "Ricevuta tassa di soggiorno: Possiamo rilasciare anche una ricevuta separata con numero di persone, notti e importo totale. Se ti serve, avvisami dopo il pagamento (online o in contanti) e preparo il riepilogo."
-    }
-    ,
+    },
     "en": {
       "trash": "Trash: Before leaving the apartment, close the bags well and take them to the recycling point opposite Piazza delle Cinque Scole (Lungotevere side). We separate waste (WeDoRecycling): please follow the instructions and do not leave rubbish in the stairwell or outside the door.",
       "heating": "Heating: The apartment has an electric heater. Use it only when you are inside and always switch it off when you go out, for safety reasons.",
@@ -144,111 +142,6 @@
       "city_tax_payment_issue": "City tax payment issues: If the amount in the link/portal does not seem correct or the link does not work, do not worry: check-in and keys are not blocked. Write to me with number of adult guests, actual nights and how much you have already paid (if any): I will confirm the correct amount. Any differences can be settled with a new link or in cash.",
       "receipt_rental": "Stay receipt: We can issue a receipt for the stay (short-term rental) with name, dates and total amount. It is not a VAT invoice, but a simple receipt. If you need it, send me the details to include (name/surname or company name, address, possible tax code) and I will send it digitally.",
       "receipt_city_tax": "City tax receipt: We can also issue a separate receipt with number of guests, nights and total amount. If you need it, let me know after payment (online or cash) and I will prepare the summary."
-    },
-
-    "fr": {
-      "trash": "Déchets : Avant de quitter l’appartement, fermez bien les sacs et déposez-les au point de collecte en face de la Piazza delle Cinque Scole (côté Lungotevere). Nous faisons le tri (WeDoRecycling) : suivez les indications et ne laissez pas de déchets dans la cage d’escalier ou devant la porte.",
-      "heating": "Chauffage : L’appartement dispose d’un radiateur électrique. Utilisez-le uniquement lorsque vous êtes à l’intérieur et éteignez-le toujours en sortant, pour des raisons de sécurité.",
-      "electric_panel": "Tableau électrique : En cas de coupure, le tableau se trouve à droite juste avant la porte de sortie de l’appartement : tous les interrupteurs (y compris le petit blanc) doivent être en position haute. Si le problème persiste, à la sortie de l’immeuble (avant la porte d’entrée), à gauche, se trouvent des boîtiers blancs : ouvrez celui de votre compteur et remontez l’interrupteur abaissé.",
-      "wifi": "Wi-Fi : Le routeur est sur la table. Tournez-le pour lire le SSID et le mot de passe sur l’étiquette.",
-      "check_in": "Arrivée à partir de 15h00. Accès : Pour entrer, vous pouvez utiliser le lien Virtual Key que je vous ai envoyé : il ouvre à la fois la porte de l’immeuble et celle de l’appartement. À l’intérieur, vous trouverez les clés physiques sur la table ; à partir de ce moment, la Virtual Key est désactivée.\nAide : +39 335 5245756.",
-      "early_checkin": "Arrivée anticipée : L’arrivée standard est à partir de 15h00. Si vous devez entrer plus tôt, indiquez-moi l’heure souhaitée et je confirmerai si c’est possible selon les départs du jour et le planning de ménage.",
-      "check_out": "Avant le départ : éteignez les lumières et le chauffage, fermez les fenêtres et laissez les clés sur la table. Fermez la porte manuellement et vérifiez qu’elle est bien fermée.",
-      "water": "Eau : L’eau du robinet est potable. L’eau chaude est toujours disponible, mais peut mettre 1–2 minutes à arriver (surtout le matin). Si elle n’arrive pas ou si la pression est faible : ouvrez un seul robinet à la fois, vérifiez que les mélangeurs chaud/froid sont complètement ouverts et attendez 1–2 minutes. Si le problème persiste, écrivez-moi immédiatement.",
-      "AC": "Climatisation : L’appartement est équipé de la climatisation. Merci de toujours l’éteindre en sortant.",
-      "bathroom": "Salle de bain : Vous trouverez des serviettes, un sèche-cheveux, un tapis de bain, du papier toilette et du savon. Serviettes : par personne 1 grande + 1 moyenne.",
-      "linens_towels": "Draps et serviettes : Le lit est prêt à l’arrivée et les draps sont inclus.\nServiettes : par personne 1 grande + 1 moyenne.",
-      "kitchen": "Cuisine : Entièrement équipée. Pour allumer un brûleur, appuyez sur l’allumeur et, en même temps, tournez et poussez le bouton du brûleur choisi en le maintenant enfoncé environ 5 secondes. Éteignez toujours les feux après usage.",
-      "eat": "Où manger : Dans le Ghetto, nous recommandons Nonna Betta, Ba’Ghetto, Renato al Ghetto, Su’Ghetto, Giggetto et Taverna del Ghetto.",
-      "drink": "Où boire : Pour un verre de vin ou un cocktail : Enoteca Il Goccetto, Bar del Ghetto, Caffè Farnese.",
-      "shopping": "Shopping : Pour des produits typiques, des douceurs et des spécialités du Ghetto, rendez-vous Via del Portico d’Ottavia ; pour un marché en plein air, Campo de’ Fiori.",
-      "visit": "À visiter à pied : La Synagogue, le Musée juif, le Teatro di Marcello, le Portico d’Ottavia et l’Île Tibérine sont tous accessibles à pied.",
-      "experiences": "Expérience romantique : Balade Ghetto → Île Tibérine → Trastevere au coucher du soleil.",
-      "day_trips": "Excursions à la journée : Ostia Antica ; Tivoli (Villa d’Este et Villa Adriana) ; Castelli Romani.",
-      "tickets": "Billets événements : Pour concerts, spectacles ou matchs, utilisez TicketOne et les canaux officiels de l’AS Roma et de la SS Lazio.",
-      "museums": "Musées principaux : Recommandés : Musées du Vatican, Colisée/Forum/Palatin et Galerie Borghese (réservation conseillée).",
-      "exhibitions": "Expositions : Pour les grandes expositions à Rome, consultez le MAXXI, le Palazzo delle Expositions et les Scuderie del Quirinale.",
-      "transport": "Transports : Plusieurs bus (30, 44, 85) relient le quartier au centre-ville et à Termini. Taxi : +39 06 3570. Aéroports : Fiumicino via le train FL1 (depuis Trastevere ou Termini), Ciampino via bus dédiés ou taxi.",
-      "laundry": "Blanchisserie : Si vous devez laver des vêtements ou des serviettes, écrivez-moi et je vous indiquerai la meilleure solution (libre-service ou service à proximité) selon vos horaires.",
-      "wifi_troubleshooting": "Wi-Fi ne fonctionne pas : 1) Vérifiez que le routeur est allumé (voyants avant). 2) Débranchez-le pendant 30 secondes puis rebranchez-le. 3) Vérifiez le réseau et le mot de passe sur l’étiquette (majuscules/minuscules). Si ça ne fonctionne toujours pas, écrivez-moi.",
-      "late_checkout": "Départ tardif : L’horaire standard est 11h00. Parfois, une courte extension est possible, selon les arrivées du jour et l’équipe de ménage. Je ne peux pas le confirmer automatiquement : indiquez-moi l’heure souhaitée et je vous répondrai selon disponibilité.",
-      "luggage_storage": "Consigne bagages : Lorsque c’est possible, nous pouvons trouver une solution pour laisser les valises après le départ, selon le ménage et les nouvelles arrivées. Indiquez-moi les horaires de dépôt et de retrait et je confirmerai ce qui est possible ou vous proposerai une consigne à proximité.",
-      "id_documents": "Documents : La loi italienne impose l’enregistrement des hôtes. Avant ou au check-in, je vous demanderai un document valide pour chaque invité (carte d’identité ou passeport). Vous pouvez les envoyer via le portail/lien que je fournis ou sous forme de photos claires recto/verso par message/email. Les données sont utilisées uniquement pour les obligations légales.",
-      "payment_methods": "Paiements : Le coût du séjour est généralement géré par la plateforme de réservation (Airbnb, Booking, Vrbo, etc.). Pour la taxe de séjour, nous utilisons des liens de paiement en ligne (carte, Apple/Google Pay, PayPal) ou, si vous préférez, des espèces à l’arrivée ou avant le départ. Dans tous les cas, je vous enverrai des instructions claires.",
-      "city_tax_info": "Taxe de séjour : À Rome, elle est obligatoire pour les invités non résidents. Pour cet appartement, elle est de 5 € par personne et par nuit, jusqu’à un maximum de 10 nuits. Nous la collectons pour le compte de la Ville de Rome. Les exonérations dépendent des règles municipales : en cas de doute, écrivez-moi et nous vérifierons ensemble.",
-      "city_tax_payment_issue": "Problèmes de paiement de la taxe : Si le montant indiqué dans le lien/portail ne semble pas correct ou si le lien ne fonctionne pas, ne vous inquiétez pas : l’arrivée et les clés ne sont pas bloquées. Écrivez-moi le nombre d’adultes, les nuits effectives et ce que vous avez déjà payé (le cas échéant) : je confirmerai le montant correct. Les différences peuvent être réglées via un nouveau lien ou en espèces.",
-      "receipt_rental": "Reçu de séjour : Nous pouvons délivrer un reçu pour le séjour (location courte durée) avec le nom, les dates et le montant total. Ce n’est pas une facture avec TVA, mais un reçu simple. Si vous en avez besoin, envoyez-moi les informations à indiquer (nom/prénom ou raison sociale, adresse, éventuel code fiscal) et je vous l’enverrai en format numérique.",
-      "receipt_city_tax": "Reçu de taxe de séjour : Nous pouvons également délivrer un reçu séparé indiquant le nombre de personnes, les nuits et le montant total. Si vous en avez besoin, prévenez-moi après le paiement (en ligne ou en espèces) et je préparerai le récapitulatif."
-    }
-    ,
-    "de": {
-      "trash": "Müll: Bevor Sie die Wohnung verlassen, verschließen Sie die Beutel gut und bringen Sie sie zur Sammelstelle gegenüber der Piazza delle Cinque Scole (Lungotevere-Seite). Wir trennen den Müll (WeDoRecycling): Bitte folgen Sie den Hinweisen und lassen Sie keinen Müll im Treppenhaus oder vor der Tür.",
-      "heating": "Heizung: Die Wohnung hat eine Elektroheizung. Bitte nur benutzen, wenn Sie in der Wohnung sind, und beim Verlassen immer ausschalten, aus Sicherheitsgründen.",
-      "electric_panel": "Sicherungskasten: Bei Stromausfall befindet sich der Kasten rechts kurz vor der Wohnungsausgangstür: Alle Schalter (auch der kleine weiße) müssen nach oben stehen. Wenn das Problem weiterhin besteht, finden Sie am Ausgang des Gebäudes (vor der Eingangstür) links weiße Kästen: Öffnen Sie den Ihres Zählers und legen Sie den heruntergefallenen Schalter wieder nach oben.",
-      "wifi": "WLAN: Der Router steht auf dem Tisch. Drehen Sie ihn, um SSID und Passwort auf dem Etikett zu lesen.",
-      "check_in": "Check-in ab 15:00 Uhr. Zugang: Sie können den Virtual-Key-Link verwenden, den ich Ihnen geschickt habe: Er öffnet sowohl die Haustür als auch die Wohnungstür. In der Wohnung liegen die physischen Schlüssel auf dem Tisch; ab diesem Moment wird der Virtual Key deaktiviert.\nHilfe: +39 335 5245756.",
-      "early_checkin": "Früher Check-in: Der Standard-Check-in ist ab 15:00 Uhr. Wenn Sie früher hinein möchten, nennen Sie mir bitte die gewünschte Uhrzeit; ich bestätige, ob dies je nach Abreisen am selben Tag und Reinigungszeiten möglich ist.",
-      "check_out": "Vor der Abreise: Licht und Heizung ausschalten, Fenster schließen und die Schlüssel auf dem Tisch lassen. Tür manuell schließen und prüfen, dass sie gut geschlossen ist.",
-      "water": "Wasser: Leitungswasser ist trinkbar. Warmwasser ist immer verfügbar, kann aber 1–2 Minuten benötigen (besonders morgens). Wenn es nicht kommt oder der Druck niedrig ist: Öffnen Sie jeweils nur einen Wasserhahn, prüfen Sie, dass Warm-/Kaltmischer vollständig geöffnet sind, und warten Sie 1–2 Minuten. Wenn das Problem bleibt, schreiben Sie mir sofort.",
-      "AC": "Klimaanlage: Die Wohnung ist mit einer Klimaanlage ausgestattet. Bitte beim Verlassen immer ausschalten.",
-      "bathroom": "Bad: Handtücher, Föhn, Badematte, Toilettenpapier und Seife sind vorhanden. Handtücher: pro Gast 1 großes + 1 mittleres.",
-      "linens_towels": "Bettwäsche und Handtücher: Das Bett ist bei Ankunft vorbereitet und Bettwäsche ist inklusive.\nHandtücher: pro Gast 1 großes + 1 mittleres.",
-      "kitchen": "Küche: Voll ausgestattet. Zum Anzünden eines Brenners den Starter drücken und gleichzeitig den Drehknopf des gewählten Brenners drehen und hineindrücken (ca. 5 Sekunden gedrückt halten). Nach Gebrauch immer ausschalten.",
-      "eat": "Essen: Im Ghetto empfehlen wir Nonna Betta, Ba’Ghetto, Renato al Ghetto, Su’Ghetto, Giggetto und Taverna del Ghetto.",
-      "drink": "Trinken: Für ein Glas Wein oder einen Drink: Enoteca Il Goccetto, Bar del Ghetto, Caffè Farnese.",
-      "shopping": "Shopping: Für typische Produkte, Süßigkeiten und Spezialitäten des Ghettos besuchen Sie die Via del Portico d’Ottavia; für einen Open-Air-Markt Campo de’ Fiori.",
-      "visit": "Zu Fuß zu besichtigen: Synagoge, Jüdisches Museum, Teatro di Marcello, Portico d’Ottavia und die Tiberinsel sind alle fußläufig erreichbar.",
-      "experiences": "Romantisches Erlebnis: Spaziergang Ghetto → Tiberinsel → Trastevere bei Sonnenuntergang.",
-      "day_trips": "Tagesausflüge: Ostia Antica; Tivoli (Villa d’Este und Hadriansvilla); Castelli Romani.",
-      "tickets": "Tickets für Events: Für Konzerte, Shows oder Spiele nutzen Sie TicketOne sowie die offiziellen Kanäle von AS Roma und SS Lazio.",
-      "museums": "Wichtige Museen: Empfohlen sind die Vatikanischen Museen, Kolosseum/Forum/Palatin und die Galleria Borghese (Reservierung empfohlen).",
-      "exhibitions": "Ausstellungen: Für große Ausstellungen in Rom besuchen Sie MAXXI, Palazzo delle Esposizioni und die Scuderie del Quirinale.",
-      "transport": "Verkehr: Mehrere Busse (30, 44, 85) fahren ins Zentrum und nach Termini. Taxi: +39 06 3570. Flughäfen: Fiumicino mit dem FL1-Zug (ab Trastevere oder Termini), Ciampino mit Shuttlebus oder Taxi.",
-      "laundry": "Wäsche: Wenn Sie Kleidung oder Handtücher waschen müssen, schreiben Sie mir und ich empfehle Ihnen je nach Zeitplan die beste Lösung (SB-Waschsalon oder Service in der Nähe).",
-      "wifi_troubleshooting": "WLAN funktioniert nicht: 1) Prüfen Sie, ob der Router eingeschaltet ist. 2) Ziehen Sie den Stecker für 30 Sekunden und stecken Sie ihn wieder ein. 3) Prüfen Sie Netzwerk und Passwort auf dem Etikett (Groß-/Kleinschreibung beachten). Wenn es weiterhin nicht funktioniert, schreiben Sie mir.",
-      "late_checkout": "Später Check-out: Die Standardzeit ist 11:00 Uhr. Manchmal ist eine kurze Verlängerung möglich, abhängig von Anreisen am selben Tag und dem Reinigungsteam. Dies kann nicht automatisch bestätigt werden: Nennen Sie mir die gewünschte Uhrzeit, ich prüfe die Verfügbarkeit.",
-      "luggage_storage": "Gepäckaufbewahrung: Wenn möglich, finden wir nach dem Check-out eine Lösung, abhängig von Reinigung und neuen Ankünften. Teilen Sie mir Abgabe- und Abholzeit mit: Ich bestätige, was möglich ist, oder empfehle eine nahegelegene Gepäckaufbewahrung.",
-      "id_documents": "Ausweisdokumente: Nach italienischem Recht ist die Registrierung der Gäste verpflichtend. Vor oder beim Check-in benötige ich für jeden Gast ein gültiges Dokument (Personalausweis oder Reisepass). Sie können diese über den bereitgestellten Link oder als klare Fotos (Vorder-/Rückseite) per Nachricht/E-Mail senden. Die Daten werden ausschließlich für gesetzliche Zwecke verwendet.",
-      "payment_methods": "Zahlungen: Die Unterkunftskosten werden in der Regel über die Buchungsplattform (Airbnb, Booking, Vrbo usw.) abgewickelt. Für die Kurtaxe nutzen wir Online-Zahlungslinks (Karte, Apple/Google Pay, PayPal) oder auf Wunsch Barzahlung bei Ankunft oder vor Abreise. Ich sende Ihnen klare Anweisungen.",
-      "city_tax_info": "Kurtaxe: In Rom ist sie für nicht ansässige Gäste verpflichtend. Für diese Wohnung beträgt sie 5 € pro Person und Nacht, bis maximal 10 Nächte. Wir kassieren sie im Auftrag der Stadt Rom. Befreiungen richten sich nach den städtischen Regeln – bei Fragen schreiben Sie mir bitte.",
-      "city_tax_payment_issue": "Probleme bei der Zahlung der Kurtaxe: Wenn der Betrag im Link/Portal nicht korrekt erscheint oder der Link nicht funktioniert, keine Sorge – Check-in und Schlüssel werden nicht blockiert. Teilen Sie mir bitte die Anzahl der Erwachsenen, die tatsächlichen Nächte und ggf. bereits gezahlte Beträge mit; ich bestätige den korrekten Betrag. Anpassungen erfolgen per neuem Link oder bar.",
-      "receipt_rental": "Aufenthaltsbeleg: Wir können einen einfachen Beleg für den Aufenthalt (Kurzzeitmiete) mit Name, Daten und Gesamtbetrag ausstellen. Dies ist keine MwSt.-Rechnung. Wenn Sie ihn benötigen, senden Sie mir die einzutragenden Daten (Name/Firma, Adresse, ggf. Steuernummer) und ich sende ihn digital.",
-      "receipt_city_tax": "Beleg für die Kurtaxe: Wir können auch einen separaten Beleg mit Anzahl der Personen, Nächten und Gesamtbetrag ausstellen. Wenn Sie ihn benötigen, informieren Sie mich bitte nach der Zahlung (online oder bar), dann erstelle ich die Zusammenfassung."
-    },
-
-    "es": {
-      "trash": "Basura: Antes de salir del apartamento, cierre bien las bolsas y llévelas al punto ecológico frente a Piazza delle Cinque Scole (lado Lungotevere). Hacemos recogida selectiva (WeDoRecycling): siga las indicaciones y no deje basura en la escalera ni fuera de la puerta.",
-      "heating": "Calefacción: El apartamento tiene una estufa eléctrica. Úsela solo cuando esté dentro y apáguela siempre al salir, por motivos de seguridad.",
-      "electric_panel": "Cuadro eléctrico: Si se va la luz, el cuadro está a la derecha justo antes de la puerta de salida del apartamento: todos los interruptores (incluido el pequeño blanco) deben estar hacia arriba. Si el problema continúa, en la salida del edificio (antes de la puerta principal), a la izquierda hay cajas blancas: abra la de su contador y suba el interruptor bajado.",
-      "wifi": "Wi-Fi: El router está sobre la mesa. Gírelo para leer el SSID y la contraseña en la etiqueta.",
-      "check_in": "Check-in desde las 15:00. Acceso: Puede usar el enlace de Virtual Key que le envié: abre tanto la puerta principal del edificio como la puerta del apartamento. Dentro encontrará las llaves físicas sobre la mesa; desde ese momento la Virtual Key se desactiva.\nAyuda: +39 335 5245756.",
-      "early_checkin": "Check-in temprano: El check-in estándar es a partir de las 15:00. Si necesita entrar antes, dígame la hora que necesita y confirmaré si es posible según las salidas del mismo día y los tiempos de limpieza.",
-      "check_out": "Antes de salir: apague luces y calefacción, cierre las ventanas y deje las llaves sobre la mesa. Cierre la puerta manualmente y compruebe que quede bien cerrada.",
-      "water": "Agua: El agua del grifo es potable. El agua caliente está siempre disponible, pero puede tardar 1–2 minutos en llegar (especialmente por la mañana). Si no llega o la presión es baja: abra solo un grifo a la vez, compruebe que los mandos de caliente/fría estén completamente abiertos y espere 1–2 minutos. Si el problema continúa, escríbame de inmediato.",
-      "AC": "Aire acondicionado: El apartamento está equipado con A/C. Por favor, apáguelo siempre al salir.",
-      "bathroom": "Baño: Encontrará toallas, secador, alfombrilla, papel higiénico y jabón. Toallas: por huésped 1 grande + 1 mediana.",
-      "linens_towels": "Sábanas y toallas: La cama está preparada a la llegada y se incluyen las sábanas.\nToallas: por huésped 1 grande + 1 mediana.",
-      "kitchen": "Cocina: Totalmente equipada. Para encender un fuego, presione el encendido y, al mismo tiempo, gire y empuje la perilla del fuego elegido manteniéndola presionada unos 5 segundos. Apague siempre los fuegos después de usarlos.",
-      "eat": "Dónde comer: En el Gueto recomendamos Nonna Betta, Ba’Ghetto, Renato al Ghetto, Su’Ghetto, Giggetto y Taverna del Ghetto.",
-      "drink": "Dónde beber: Para una copa de vino o un cóctel: Enoteca Il Goccetto, Bar del Ghetto, Caffè Farnese.",
-      "shopping": "Compras: Para productos típicos, dulces y especialidades del Gueto vaya a Via del Portico d’Ottavia; para un mercado al aire libre, Campo de’ Fiori.",
-      "visit": "Qué visitar a pie: La Sinagoga, el Museo Judío, el Teatro di Marcello, el Portico d’Ottavia y la Isla Tiberina están a poca distancia a pie.",
-      "experiences": "Experiencia romántica: Paseo Gueto → Isla Tiberina → Trastevere al atardecer.",
-      "day_trips": "Excursiones de un día: Ostia Antica; Tivoli (Villa d’Este y Villa Adriana); Castelli Romani.",
-      "tickets": "Entradas para eventos: Para conciertos, espectáculos o partidos use TicketOne y los canales oficiales de AS Roma y SS Lazio.",
-      "museums": "Museos principales: Recomendados Museos Vaticanos, Coliseo/Foro/Palatino y Galería Borghese (reserva recomendada).",
-      "exhibitions": "Exposiciones: Para grandes exposiciones en Roma, consulte MAXXI, Palazzo delle Esposizioni y Scuderie del Quirinale.",
-      "transport": "Transporte: Varias líneas de bus (30, 44, 85) conectan la zona con el centro y Termini. Taxi: +39 06 3570. Aeropuertos: Fiumicino con el tren FL1 (desde Trastevere o Termini), Ciampino con buses dedicados o taxi.",
-      "laundry": "Lavandería: Si necesita lavar ropa o toallas, escríbame y le indicaré la mejor solución (autoservicio o servicio cercano) según sus horarios.",
-      "wifi_troubleshooting": "Wi-Fi no funciona: 1) Compruebe que el router esté encendido. 2) Desenchúfelo durante 30 segundos y vuelva a enchufarlo. 3) Verifique red y contraseña en la etiqueta (mayúsculas/minúsculas). Si aún no funciona, escríbame.",
-      "late_checkout": "Salida tardía: El horario estándar es a las 11:00. A veces se puede conceder una pequeña extensión, según llegadas del mismo día y limpieza. No se confirma automáticamente: indíqueme la hora que necesita y confirmaré según disponibilidad.",
-      "luggage_storage": "Consigna de equipaje: Cuando es posible, buscamos una solución después del check-out, según limpieza y nuevas llegadas. Dígame horarios de dejar y recoger el equipaje y le confirmaré lo posible o le sugeriré una consigna cercana.",
-      "id_documents": "Documentos: La ley italiana exige el registro de los huéspedes. Antes o durante el check-in le pediré un documento válido para cada huésped (DNI o pasaporte). Puede enviarlos mediante el enlace/portal que le envío o como fotos claras del anverso y reverso por mensaje/email. Los datos se usan solo para obligaciones legales.",
-      "payment_methods": "Pagos: El coste de la estancia suele gestionarse a través de la plataforma de reserva (Airbnb, Booking, Vrbo, etc.). Para la tasa turística utilizamos enlaces de pago online (tarjeta, Apple/Google Pay, PayPal) o, si lo prefiere, efectivo a la llegada o antes de la salida. Le enviaré instrucciones claras.",
-      "city_tax_info": "Tasa turística: En Roma es obligatoria para huéspedes no residentes. Para este apartamento es de 5 € por persona y noche, hasta un máximo de 10 noches. La cobramos en nombre del Ayuntamiento de Roma. Las exenciones dependen de las normas municipales; si tiene dudas, escríbame.",
-      "city_tax_payment_issue": "Problemas con el pago de la tasa: Si el importe del enlace/portal no parece correcto o el enlace no funciona, no se preocupe: el check-in y las llaves no se bloquean. Envíeme el número de adultos, las noches reales y lo que ya haya pagado (si aplica); confirmaré el importe correcto. Las diferencias se ajustan con un nuevo enlace o en efectivo.",
-      "receipt_rental": "Recibo de estancia: Podemos emitir un recibo simple por la estancia (alquiler de corta duración) con nombre, fechas e importe total. No es una factura con IVA. Si lo necesita, envíeme los datos a incluir (nombre/apellidos o empresa, dirección, posible NIF) y se lo enviaré en formato digital.",
-      "receipt_city_tax": "Recibo de la tasa turística: También podemos emitir un recibo separado con número de personas, noches e importe total. Si lo necesita, avíseme después del pago (online o efectivo) y prepararé el resumen."
     }
   }
-  }
+}
