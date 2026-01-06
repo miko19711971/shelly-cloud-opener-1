@@ -52,19 +52,21 @@ async function loadGuideJson(apartment) {
 // =====================
 // RISOLUZIONE LINGUA
 // =====================
-function resolveLanguage(question, requested, availableLanguages) {
-  // Se la lingua è passata forzatamente (es. dal browser) e esiste nel JSON, usala
-  if (requested && availableLanguages.includes(requested.toLowerCase())) {
-    return requested.toLowerCase();
-  }
-
+ function resolveLanguage(question, requested, availableLanguages) {
   const text = " " + question.toLowerCase() + " ";
   
+  // Se la domanda contiene queste parole, DEVE essere inglese
+  const forceEnglish = ['is', 'working', 'not', 'what', 'how', 'does', 'please'];
+  const isEnglish = forceEnglish.some(word => text.includes(' ' + word + ' '));
+  
+  if (isEnglish) return 'en';
+
+  // Altrimenti procedi con il calcolo normale...
   const indicators = {
-    en: ['is', 'the', 'what', 'to', 'how', 'it', 'working', 'not', 'wifi', 'internet', 'you', 'where'],
-    it: ['il', 'la', 'non', 'come', 'fare', 'funziona', 'dove', 'che', 'per'],
-    es: ['el', 'la', 'no', 'como', 'hacer', 'funciona', 'donde', 'esta', 'que'],
-    fr: ['le', 'la', 'les', 'pas', 'comment', 'faire', 'est', 'dans', 'pour']
+    en: ['the', 'to', 'it', 'wifi', 'internet', 'where'],
+    it: ['il', 'la', 'non', 'come', 'fare', 'funziona'],
+    es: ['el', 'no', 'como', 'hacer', 'funciona', 'donde'],
+    fr: ['le', 'la', 'pas', 'comment', 'faire']
   };
 
   let scores = {};
@@ -77,10 +79,8 @@ function resolveLanguage(question, requested, availableLanguages) {
     }
   });
 
-  // Fallback iniziale: se c'è l'inglese nel JSON, usa quello come base, altrimenti la prima lingua
   let detected = availableLanguages.includes('en') ? 'en' : availableLanguages[0];
   let maxScore = 0;
-
   availableLanguages.forEach(lang => {
     if (scores[lang] > maxScore) {
       maxScore = scores[lang];
@@ -90,43 +90,6 @@ function resolveLanguage(question, requested, availableLanguages) {
 
   return detected;
 }
-
-// =====================
-// MATCH INTENT
-// =====================
-function findBestIntent(question, intentsForLang) {
-  let bestIntent = null;
-  let maxMatches = 0;
-
-  const normQ = normalizeText(question);
-  if (!intentsForLang) return null;
-
-  for (const [intent, keywords] of Object.entries(intentsForLang)) {
-    let currentScore = 0;
-    for (const kw of keywords) {
-      const nkw = normalizeText(kw);
-      if (nkw && normQ.includes(nkw)) {
-        currentScore++;
-        if (normQ.split(" ").includes(nkw)) currentScore += 1;
-      }
-    }
-    if (currentScore > maxMatches) {
-      maxMatches = currentScore;
-      bestIntent = intent;
-    }
-  }
-  return maxMatches > 0 ? bestIntent : null;
-}
-
-function intentMatches(question, keywords = []) {
-  if (!Array.isArray(keywords) || !keywords.length) return false;
-  const normQ = normalizeText(question);
-  return keywords.some(kw => {
-    const nkw = normalizeText(kw);
-    return nkw && normQ.includes(nkw);
-  });
-}
-
 // =====================
 // MAIN REPLY
 // =====================
