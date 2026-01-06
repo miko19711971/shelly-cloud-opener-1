@@ -59,31 +59,34 @@ async function loadGuideJson(apartment) {
 // =====================
 // RISOLUZIONE LINGUA
 // =====================
-function resolveLanguage(requested, question, availableLanguages) {
+ function resolveLanguage(requested, question, availableLanguages) {
   const req = String(requested || "").toLowerCase().slice(0, 2);
 
-  // 1️⃣ se richiesta valida → usa quella
+  // 1️⃣ Priorità assoluta: se la lingua è già passata correttamente, usala subito
   if (availableLanguages.includes(req)) return req;
 
-  // 2️⃣ rilevamento semplice dal testo
+  // 2️⃣ Rilevamento testuale migliorato con stop-words univoche
   const tokens = tokenize(question);
 
   const hints = {
-    en: ["the", "what", "should", "do", "wifi", "working"],
-    it: ["il", "non", "funziona", "cosa", "fare", "wifi"],
-    fr: ["ne", "pas", "fonctionne", "wifi"],
-    de: ["nicht", "funktioniert", "wlan"],
-    es: ["no", "funciona", "wifi"]
+    it: ["il", "lo", "la", "i", "gli", "le", "per", "con", "e", "non"],
+    en: ["the", "and", "with", "is", "for", "to", "what", "should"],
+    fr: ["le", "la", "les", "des", "pour", "dans", "est", "une", "avez"],
+    de: ["der", "die", "das", "ein", "eine", "und", "mit", "nicht"],
+    es: ["el", "los", "las", "un", "una", "por", "con", "y", "del"]
   };
 
-  let best = "en";
-  let bestScore = 0;
+  let best = availableLanguages[0] || "en"; // Fallback sulla prima lingua del JSON
+  let maxHits = 0;
 
   for (const lang of availableLanguages) {
-    const hits = hints[lang]?.filter(t => tokens.includes(t)).length || 0;
-    if (hits > bestScore) {
-      bestScore = hits;
-      best = lang;
+    if (hints[lang]) {
+      // Conta quante parole della lingua corrente sono presenti nella domanda
+      const hits = hints[lang].filter(t => tokens.includes(t)).length;
+      if (hits > maxHits) {
+        maxHits = hits;
+        best = lang;
+      }
     }
   }
 
