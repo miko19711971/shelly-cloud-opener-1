@@ -61,8 +61,6 @@
       "city_tax_payment_issue": ["city tax problem"],
       "payment_methods": ["payment", "cash", "credit card"],
       "id_documents": ["documents", "passport", "id card"],
-      "receipt_rental": ["stay receipt"],
-      "receipt_city_tax": ["city tax receipt"],
       "house_rules": ["house rules", "smoking", "parties"],
       "laundry": ["laundry", "washing machine"],
       "emergency": ["emergency", "police", "ambulance"],
@@ -70,39 +68,48 @@
     },
     "fr": {
       "wifi": ["wifi", "internet", "mot de passe"],
+      "wifi_troubleshooting": ["wifi ne marche pas"],
       "trash": ["poubelle", "déchets"],
       "heating": ["chauffage", "chaud"],
       "AC": ["clim", "climatisation"],
+      "electric_panel": ["tableau électrique", "pas de courant"],
       "check_in": ["check in", "arrivée"],
       "check_out": ["check out", "départ"],
       "building": ["immeuble", "ascenseur", "interphone"],
+      "city_tax_info": ["taxe de séjour", "city tax"],
       "emergency": ["urgence", "police"]
     },
     "de": {
       "wifi": ["wlan", "wifi", "internet", "passwort"],
+      "wifi_troubleshooting": ["wlan funktioniert nicht"],
       "trash": ["müll", "abfall"],
       "heating": ["heizung", "warm"],
       "AC": ["klimaanlage", "ac"],
+      "electric_panel": ["sicherungskasten", "stromausfall"],
       "check_in": ["check in", "ankunft"],
       "check_out": ["check out", "abreise"],
       "building": ["gebäude", "aufzug", "gegensprechanlage"],
+      "city_tax_info": ["kurtaxe", "city tax"],
       "emergency": ["notfall", "polizei"]
     },
     "es": {
       "wifi": ["wifi", "internet", "contraseña"],
+      "wifi_troubleshooting": ["wifi no funciona"],
       "trash": ["basura", "residuos"],
       "heating": ["calefacción", "calor"],
       "AC": ["aire acondicionado", "ac"],
+      "electric_panel": ["cuadro eléctrico", "sin luz"],
       "check_in": ["check in", "llegada"],
       "check_out": ["check out", "salida"],
       "building": ["edificio", "ascensor", "portero"],
+      "city_tax_info": ["tasa turística", "city tax"],
       "emergency": ["emergencia", "policía"]
     }
   },
   "answers": {
     "it": {
       "trash": "Spazzatura: Trovi le buste in cucina. Chiudi bene i sacchetti e portali nei cassonetti nella corte, prima dell’uscita. Facciamo raccolta differenziata (WeDoRecycling): segui le indicazioni e non lasciare immondizia nel vano scala o fuori dalla porta.",
-      "heating": "Riscaldamento: Usa il telecomando dell’aria condizionata. Premi MODE finché appare il simbolo del sole, imposta 26 °C e potenza 1. Spegni sempre il condizionatore quando esci.",
+      "heating": "Riscaldamento: Usa il telecomando dell’aria condizionata. Premi MODE finché appare il simbolo del SOLE, imposta 26 °C e potenza 1. Spegni sempre il condizionatore quando esci.",
       "electric_panel": "Quadro elettrico: Si trova verso il bagno, sulla destra prima della porta. Se manca la corrente, alza gli interruttori. L'interruttore generale è sopra al quadro, dietro il pannello di copertura. Stacca qualche elettrodomestico per evitare nuovi blackout.",
       "wifi": "Wi-Fi: Il router è sulla scrivania vicino alla finestra. SSID e password sono sull’etichetta del dispositivo.",
       "wifi_troubleshooting": "Wi-Fi: Controlla che il router sia acceso, riavvialo staccando la spina per 30 secondi. Se non si risolve, contattami.",
@@ -115,7 +122,7 @@
       "bathroom": "Bagno: Carta igienica, sapone, tappetino e asciugacapelli sono a disposizione.",
       "linens_towels": "Biancheria: Letto pronto e set di asciugamani inclusi per ogni ospite.",
       "gas": "Gas: Valvola in posizione orizzontale = aperto, verticale = chiuso.",
-      "building": "Edificio: Citofono C8. NOTA IMPORTANTE: L'ascensore è riservato esclusivamente ai proprietari; gli ospiti non possono utilizzarlo.",
+      "building": "Edificio: Citofono C8. NOTA IMPORTANTE: L'ascensore è riservato esclusivamente ai proprietari; gli ospiti non possono utilizzarlo per motivi di regolamento condominiale.",
       "transport": "Trasporti: Tram 8 per Piazza Venezia/Trastevere. Taxi: +39 06 3570.",
       "eat": "Ristoranti consigliati: Roscioli, Emma, Ditirambo, Fortunata.",
       "visit": "Cosa vedere: Torre Argentina, Portico d’Ottavia, Isola Tiberina.",
@@ -138,7 +145,7 @@
       "late_checkout": "Late check-out: Standard is 11 AM. Ask me for possible extensions.",
       "water": "Water: Tap water is drinkable. Let it run for 1-2 mins for hot water.",
       "AC": "A/C: Please turn it off whenever you leave the apartment.",
-      "building": "Building: Intercom C8. IMPORTANT: The elevator is strictly for owners; guests are not allowed to use it.",
+      "building": "Building: Intercom C8. IMPORTANT: The elevator is strictly for owners; guests are not allowed to use it according to building rules.",
       "transport": "Transport: Tram 8 to Piazza Venezia. Taxi: +39 06 3570.",
       "eat": "Food: Roscioli; Emma; Ditirambo; Fortunata.",
       "city_tax_info": "City tax: 5 € per person/night, max 10 nights.",
@@ -149,29 +156,35 @@
     "fr": {
       "trash": "Poubelles : Sacs en cuisine. Jetez-les dans les bacs de la cour. Ne rien laisser dans l'immeuble.",
       "heating": "Chauffage : Télécommande clim, mode SOLEIL à 26°C. Éteignez en partant.",
-      "electric_panel": "Tableau électrique : À droite avant la salle de bain. Le disjoncteur général est au-dessus du tableau.",
+      "electric_panel": "Tableau électrique : À droite prima della sala di bagno. Le disjoncteur général è au-dessus du tableau.",
+      "wifi": "Wi-Fi : Routeur sur le bureau. SSID et code sur l'étiquette. Redémarrez si besoin (30 sec).",
       "check_in": "Check-in : 15h00. Interphone C8. Concierge (Paolo) le matin et l'après-midi.",
-      "building": "Immeuble : Interphone C8. L'ascenseur est strictement réservé aux propriétaires.",
+      "building": "Immeuble : Interphone C8. IMPORTANT : L'ascenseur est strictement réservé aux propriétaires.",
       "city_tax_info": "Taxe : 5 € par personne/nuit.",
-      "emergency": "Urgence : 112."
+      "emergency": "Urgence : 112.",
+      "services": "Contactez-moi ici pour toute assistance."
     },
     "de": {
       "trash": "Müll: Beutel in der Küche. Mülltonnen im Innenhof nutzen. Nichts im Treppenhaus lassen.",
       "heating": "Heizung: AC-Fernbedienung, Modus SONNE auf 26°C. Beim Verlassen ausschalten.",
       "electric_panel": "Sicherungskasten: Rechts vor dem Bad. Hauptschalter oben hinter der Abdeckung.",
+      "wifi": "WLAN: Router auf dem Schreibtisch. Passwort auf dem Etikett. Bei Problemen 30 Sek. ausstecken.",
       "check_in": "Check-in: 15:00 Uhr. Gegensprechanlage C8. Pförtner Paolo vor Ort.",
-      "building": "Gebäude: Gegensprechanlage C8. Der Aufzug darf nur von Eigentümern benutzt werden.",
+      "building": "Gebäude: Gegensprechanlage C8. WICHTIG: Der Aufzug darf nur von Eigentümern benutzt werden.",
       "city_tax_info": "Kurtaxe: 5 € pro Person/Nacht.",
-      "emergency": "Notfall: 112."
+      "emergency": "Notfall: 112.",
+      "services": "Schreiben Sie mir hier, wenn Sie Hilfe benötigen."
     },
     "es": {
       "trash": "Basura: Bolsas en la cocina. Contenedores en el patio. No deje basura en los pasillos.",
       "heating": "Calefacción: Mando del AC, modo SOL a 26°C. Apague al salir.",
-      "electric_panel": "Cuadro eléctrico: A la derecha antes del baño. El general está arriba del cuadro.",
-      "check_in": "Check-in: 15:00. Portero C8. Conserje (Paolo) disponible en horario comercial.",
-      "building": "Edificio: Portero C8. El ascensor es solo para propietarios; los huéspedes no pueden usarlo.",
+      "electric_panel": "Cuadro eléctrico: A la derecha antes del baño. El interruptor general está arriba del cuadro.",
+      "wifi": "Wi-Fi: Router en el escritorio. Clave en la etiqueta. Reinicie (30 seg) si falla.",
+      "check_in": "Check-in: 15:00. Portero C8. Conserje (Paolo) disponible en el edificio.",
+      "building": "Edificio: Portero C8. IMPORTANTE: El ascensor es solo para propietarios; los huéspedes no possono usarlo.",
       "city_tax_info": "Tasa: 5 € por persona/noche.",
-      "emergency": "Emergencia: 112."
+      "emergency": "Emergencia: 112.",
+      "services": "Para cualquier ayuda, escríbame por aquí."
     }
   }
 }
