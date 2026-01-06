@@ -1317,7 +1317,7 @@ const validatedIntents = foundIntents.filter(intent => {
 if (!validatedIntents.length) return null;
 
   // deduplica
-  const unique = [...new Set(foundIntents)];
+  const unique = [...new Set(validatedIntents)];
 
   // priorità (emergency in testa, max 2 intent totali)
    const PRIORITY = [
