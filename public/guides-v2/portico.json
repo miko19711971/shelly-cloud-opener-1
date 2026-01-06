@@ -184,7 +184,7 @@
       "receipt_city_tax": ["recibo tasa"],
       "house_rules": ["normas", "fumo", "fiestas"],
       "laundry": ["lavandería", "lavar ropa"],
-      "emergency": ["emergencia", "policía", "ambulancia"],
+      "emergency": ["emergency", "policía", "ambulancia"],
       "services": ["servicios", "ayuda"]
     }
   },
@@ -222,7 +222,9 @@
       "receipt_rental": "Ricevuta: Disponibile su richiesta fornendo i dati fiscali.",
       "receipt_city_tax": "Ricevuta tassa: Rilasciata dopo il pagamento della city tax.",
       "emergency": "Emergenza: UE 112 • Polizia 113 • Ambulanza 118",
-      "services": "Per ogni altra necessità o aiuto durante il soggiorno, scrivimi pure."
+      "services": "Per ogni altra necessità o aiuto durante il soggiorno, scrivimi pure.",
+      "house_rules": "Regole: Vietato fumare, no feste, silenzio dopo le 22:00.",
+      "building": "Edificio: Via del Portico d’Ottavia 1D. Citofono presente all'ingresso principale."
     },
     "en": {
       "trash": "Trash: Before leaving, take bags to the recycling island in front of Piazza delle Cinque Scole (Lungotevere side). We use separate collection (WeDoRecycling). Do not leave trash in the building.",
@@ -257,33 +259,47 @@
       "receipt_rental": "Receipt: Available upon request with your tax details.",
       "receipt_city_tax": "Tax receipt: Provided after city tax payment.",
       "emergency": "Emergency: EU 112 • Police 113 • Ambulance 118",
-      "services": "For any other needs or help during your stay, feel free to message me."
+      "services": "For any other needs or help during your stay, feel free to message me.",
+      "house_rules": "House Rules: No smoking, no parties, silence after 10:00 PM.",
+      "building": "Building: Via del Portico d'Ottavia 1D. Intercom at the main entrance."
     },
     "fr": {
       "trash": "Poubelles : Apportez les sacs à l'île écologique devant la Piazza delle Cinque Scole (côté Lungotevere). Ne laissez rien dans l'immeuble.",
       "heating": "Chauffage : Poêle électrique disponible. Éteignez-le en sortant pour votre sécurité.",
-      "electric_panel": "Tableau électrique : À droite avant la porte de sortie. Tous les interrupteurs doivent être vers le haut.",
-      "wifi": "Wi-Fi : Routeur sur la table. SSID et mot de passe sur l'étiquette.",
+      "electric_panel": "Tableau électrique : À droite avant la porte de sortie. Tous les interrupteurs doivent être vers le haut. Sinon, vérifiez les disjoncteurs principaux à l'entrée de l'immeuble.",
+      "wifi": "Wi-Fi : Routeur sur la table. SSID et mot de passe sur l'étiquette dessous.",
       "check_in": "Check-in dès 15h00. Utilisez le lien Virtual Key pour entrer. Les clés physiques sont sur la table.",
       "check_out": "Check-out : 11h00. Éteignez tout, laissez les clés sur la table et fermez bien la porte.",
       "water": "Eau : L'eau du robinet est potable. L'eau chaude peut mettre 1-2 minutes.",
-      "AC": "Climatisation : Veuillez l'éteindre quand vous quittez l'appartement.",
+      "AC": "AC : Veuillez l'éteindre quand vous quittez l'appartement.",
+      "kitchen": "Cuisine : Pour les plaques, appuyez sur l'allumeur et tournez le bouton pendant 5 secondes.",
+      "eat": "Manger au Ghetto : Nonna Betta, Ba’Ghetto, Renato al Ghetto, Su’Ghetto.",
       "transport": "Transports : Bus 30, 44, 85. Train FL1 depuis Trastevere pour Fiumicino.",
       "city_tax_info": "Taxe : 5 € par personne/nuit. Payable par lien ou espèces.",
-      "emergency": "Urgence : 112 (UE) • 113 (Police) • 118 (Ambulance)"
+      "wifi_troubleshooting": "Problèmes Wi-Fi : 1) Vérifiez les voyants; 2) Redémarrez (30 sec); 3) Vérifiez le code.",
+      "emergency": "Urgence : 112 (UE) • 113 (Police) • 118 (Ambulance)",
+      "house_rules": "Règles : Non-fumeur, pas de fêtes, calme après 22h00.",
+      "building": "Immeuble : Via del Portico d’Ottavia 1D. Interphone à l'entrée.",
+      "services": "Pour toute aide, contactez-moi ici."
     },
     "de": {
       "trash": "Müll: Bringen Sie den Müll zur Entsorgungsstelle an der Piazza delle Cinque Scole (Lungotevere-Seite). Nicht im Gebäude lassen.",
       "heating": "Heizung: Elektroheizung vorhanden. Aus Sicherheitsgründen beim Verlassen ausschalten.",
-      "electric_panel": "Sicherungskasten: Rechts vor der Ausgangstür. Alle Schalter müssen oben sein.",
+      "electric_panel": "Sicherungskasten: Rechts vor der Ausgangstür. Alle Schalter müssen oben sein. Sonst Hauptsicherungen am Hauseingang prüfen.",
       "wifi": "WLAN: Router auf dem Tisch. Name und Passwort auf dem Etikett.",
       "check_in": "Check-in ab 15:00 Uhr. Nutzen Sie den Virtual Key Link. Physische Schlüssel liegen auf dem Tisch.",
       "check_out": "Check-out: 11:00 Uhr. Alles ausschalten, Schlüssel auf den Tisch, Tür manuell zuziehen.",
       "water": "Wasser: Leitungswasser ist trinkbar. Warmwasser dauert 1-2 Minuten.",
       "AC": "AC: Bitte beim Verlassen der Wohnung ausschalten.",
+      "kitchen": "Küche: Zum Zünden den Knopf drücken und 5 Sekunden lang gedrückt halten.",
+      "eat": "Essen im Ghetto: Nonna Betta, Ba’Ghetto, Renato al Ghetto, Su’Ghetto.",
       "transport": "Verkehr: Bus 30, 44, 85. Zug FL1 ab Trastevere zum Flughafen Fiumicino.",
       "city_tax_info": "Kurtaxe: 5 € pro Person/Nacht. Per Link oder bar zahlbar.",
-      "emergency": "Notfall: 112 (EU) • 113 (Polizei) • 118 (Krankenwagen)"
+      "wifi_troubleshooting": "WLAN-Probleme: 1) Lichter prüfen; 2) Neustart (30 Sek.); 3) Passwort prüfen.",
+      "emergency": "Notfall: 112 (EU) • 113 (Polizei) • 118 (Krankenwagen)",
+      "house_rules": "Hausordnung: Nichtraucher, keine Partys, Ruhe ab 22:00 Uhr.",
+      "building": "Gebäude: Via del Portico d’Ottavia 1D. Gegensprechanlage am Eingang.",
+      "services": "Bei Fragen schreiben Sie mir hier."
     },
     "es": {
       "trash": "Basura: Lleve las bolsas al punto de reciclaje frente a Piazza delle Cinque Scole (lado Lungotevere). No deje basura en el edificio.",
@@ -294,9 +310,15 @@
       "check_out": "Check-out: 11:00. Apague todo, deje llaves en la mesa y cierre bien la puerta.",
       "water": "Agua: El agua del grifo es potable. El agua caliente tarda 1-2 minutos.",
       "AC": "AC: Por favor, apáguelo siempre al salir.",
+      "kitchen": "Cocina: Presione el encendedor y gire el mando durante 5 segundos.",
+      "eat": "Comer en el Ghetto: Nonna Betta, Ba’Ghetto, Renato al Ghetto, Su’Ghetto.",
       "transport": "Transporte: Bus 30, 44, 85. Tren FL1 desde Trastevere para Fiumicino.",
       "city_tax_info": "Tasa: 5 € por persona/noche. Por enlace o en efectivo.",
-      "emergency": "Emergencia: 112 (UE) • 113 (Policía) • 118 (Ambulancia)"
+      "wifi_troubleshooting": "Problemas Wi-Fi: 1) Luces del router; 2) Reiniciar (30 seg); 3) Verificar clave.",
+      "emergency": "Emergencia: 112 (UE) • 113 (Policía) • 118 (Ambulancia)",
+      "house_rules": "Reglas: No fumar, no fiestas, silencio desde las 22:00.",
+      "building": "Edificio: Via del Portico d’Ottavia 1D. Portero en la entrada.",
+      "services": "Para cualquier ayuda, escríbame aquí."
     }
   }
 }
