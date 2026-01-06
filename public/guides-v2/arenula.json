@@ -1,4 +1,4 @@
-{
+ {
   "apartment": "Arenula / Citofono C8",
   "languages": ["it", "en", "fr", "de", "es"],
   "intents": {
@@ -68,41 +68,30 @@
     },
     "fr": {
       "wifi": ["wifi", "internet", "mot de passe"],
-      "wifi_troubleshooting": ["wifi ne marche pas"],
       "trash": ["poubelle", "déchets"],
       "heating": ["chauffage", "chaud"],
       "AC": ["clim", "climatisation"],
-      "electric_panel": ["tableau électrique", "pas de courant"],
       "check_in": ["check in", "arrivée"],
       "check_out": ["check out", "départ"],
       "building": ["immeuble", "ascenseur", "interphone"],
-      "city_tax_info": ["taxe de séjour", "city tax"],
       "emergency": ["urgence", "police"]
     },
     "de": {
       "wifi": ["wlan", "wifi", "internet", "passwort"],
-      "wifi_troubleshooting": ["wlan funktioniert nicht"],
       "trash": ["müll", "abfall"],
       "heating": ["heizung", "warm"],
       "AC": ["klimaanlage", "ac"],
-      "electric_panel": ["sicherungskasten", "stromausfall"],
       "check_in": ["check in", "ankunft"],
-      "check_out": ["check out", "abreise"],
-      "building": ["gebäude", "aufzug", "gegensprechanlage"],
-      "city_tax_info": ["kurtaxe", "city tax"],
+      "building": ["aufzug", "gebäude", "gegensprechanlage"],
       "emergency": ["notfall", "polizei"]
     },
     "es": {
       "wifi": ["wifi", "internet", "contraseña"],
-      "wifi_troubleshooting": ["wifi no funciona"],
       "trash": ["basura", "residuos"],
       "heating": ["calefacción", "calor"],
       "AC": ["aire acondicionado", "ac"],
-      "electric_panel": ["cuadro eléctrico", "sin luz"],
       "check_in": ["check in", "llegada"],
-      "check_out": ["check out", "salida"],
       "building": ["edificio", "ascensor", "portero"],
-      "city_tax_info": ["tasa turística", "city tax"],
       "emergency": ["emergencia", "policía"]
     }
   },
@@ -156,13 +145,9 @@
     "fr": {
       "trash": "Poubelles : Sacs en cuisine. Jetez-les dans les bacs de la cour. Ne rien laisser dans l'immeuble.",
       "heating": "Chauffage : Télécommande clim, mode SOLEIL à 26°C. Éteignez en partant.",
-      "electric_panel": "Tableau électrique : À droite prima della sala di bagno. Le disjoncteur général è au-dessus du tableau.",
-      "wifi": "Wi-Fi : Routeur sur le bureau. SSID et code sur l'étiquette. Redémarrez si besoin (30 sec).",
-      "check_in": "Check-in : 15h00. Interphone C8. Concierge (Paolo) le matin et l'après-midi.",
-      "building": "Immeuble : Interphone C8. IMPORTANT : L'ascenseur est strictement réservé aux propriétaires.",
-      "city_tax_info": "Taxe : 5 € par personne/nuit.",
-      "emergency": "Urgence : 112.",
-      "services": "Contactez-moi ici pour toute assistance."
+      "check_in": "Check-in : 15h00. Interphone C8. Concierge (Paolo) disponible.",
+      "building": "Immeuble : Interphone C8. IMPORTANT : L'ascenseur è strictement réservé aux propriétaires.",
+      "emergency": "Urgence : 112."
     },
     "de": {
       "trash": "Müll: Beutel in der Küche. Mülltonnen im Innenhof nutzen. Nichts im Treppenhaus lassen.",
@@ -170,7 +155,7 @@
       "electric_panel": "Sicherungskasten: Rechts vor dem Bad. Hauptschalter oben hinter der Abdeckung.",
       "wifi": "WLAN: Router auf dem Schreibtisch. Passwort auf dem Etikett. Bei Problemen 30 Sek. ausstecken.",
       "check_in": "Check-in: 15:00 Uhr. Gegensprechanlage C8. Pförtner Paolo vor Ort.",
-      "building": "Gebäude: Gegensprechanlage C8. WICHTIG: Der Aufzug darf nur von Eigentümern benutzt werden.",
+      "building": "Gebäude: Gegensprechanlage C8. WICHTIG: Der Aufzug darf nur von Eigentümern benutzt werden. Gäste dürfen ihn nicht benutzen.",
       "city_tax_info": "Kurtaxe: 5 € pro Person/Nacht.",
       "emergency": "Notfall: 112.",
       "services": "Schreiben Sie mir hier, wenn Sie Hilfe benötigen."
@@ -181,7 +166,7 @@
       "electric_panel": "Cuadro eléctrico: A la derecha antes del baño. El interruptor general está arriba del cuadro.",
       "wifi": "Wi-Fi: Router en el escritorio. Clave en la etiqueta. Reinicie (30 seg) si falla.",
       "check_in": "Check-in: 15:00. Portero C8. Conserje (Paolo) disponible en el edificio.",
-      "building": "Edificio: Portero C8. IMPORTANTE: El ascensor es solo para propietarios; los huéspedes no possono usarlo.",
+      "building": "Edificio: Portero C8. IMPORTANTE: El ascensor es solo para propietarios; los huéspedes no pueden usarlo.",
       "city_tax_info": "Tasa: 5 € por persona/noche.",
       "emergency": "Emergencia: 112.",
       "services": "Para cualquier ayuda, escríbame por aquí."
