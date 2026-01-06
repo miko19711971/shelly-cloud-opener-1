@@ -1764,18 +1764,18 @@ app.post("/hostaway-outbound", requireAdmin, async (req, res) => {
   <p>Un saluto da Michele e dal team NiceFlatInRome.</p>
 `;
 
-    // Invia la mail passando dal ponte (Apps Script o servizio esterno)
-    const response = await axios.post(
+  // Invia la mail passando dal ponte (Apps Script o servizio esterno)
+    const mailResponse = await axios.post(
       `${MAILER_URL}?secret=${encodeURIComponent(MAIL_SHARED_SECRET)}`,
       { to: guestEmail, subject, htmlBody },
       { headers: { "Content-Type": "application/json" }, timeout: 10000 }
     );
 
-    if (String(response.data).trim() === "ok") {
+    if (String(mailResponse.data).trim() === "ok") {
       console.log(`📤 Email inviata con successo a ${guestEmail}`);
       return res.json({ ok: true });
     } else {
-      console.error("❌ Errore dal mailer:", response.data);
+      console.error("❌ Errore dal mailer:", mailResponse.data);
       return res.status(502).json({ ok: false, error: "mailer_failed" });
     }
   } catch (err) {
@@ -1785,10 +1785,8 @@ app.post("/hostaway-outbound", requireAdmin, async (req, res) => {
 });
 
 // ------ Pagina di test per inviare un'email di prova ------
- // ------ Pagina di test per inviare un'email di prova ------
 
 app.get("/test-mail", requireAdmin, (req, res) => {
-
   res.type("html").send(`
     <!doctype html><meta charset="utf-8">
     <div style="font-family: system-ui; max-width: 680px; margin: 24px auto;">
@@ -1826,22 +1824,19 @@ app.get("/test-mail", requireAdmin, (req, res) => {
   `);
 });
 
- // ====== VRBO MAILER BRIDGE ======
+// ====== VRBO MAILER BRIDGE ======
 app.post("/api/vbro-mail", requireAdmin, async (req, resInner) => {
   try {
     const { to, subject, body } = req.body || {};
-
     if (!to || !subject || !body) {
       return resInner.status(400).json({ ok: false, error: "missing_fields" });
     }
-
-    const response = await axios.post(
+    const mailResp = await axios.post(
       `${MAILER_URL}?secret=${encodeURIComponent(MAIL_SHARED_SECRET)}`,
       { to, subject, htmlBody: body },
       { headers: { "Content-Type": "application/json" }, timeout: 10000 }
     );
-
-    console.log("📨 Email VRBO inviata con successo", response.status);
+    console.log("📨 Email VRBO inviata con successo", mailResp.status);
     return resInner.json({ ok: true });
   } catch (err) {
     console.error("❌ Errore invio mail:", err);
@@ -1849,12 +1844,11 @@ app.post("/api/vbro-mail", requireAdmin, async (req, resInner) => {
   }
 });
 
- // ========== HOSTAWAY → AUTO RISPOSTA AI PER MESSAGGI ==========
+// ========== HOSTAWAY → AUTO RISPOSTA AI PER MESSAGGI ==========
 
 app.post("/hostaway-incoming", async (req, res) => {
   try {
     const payload = req.body;
-
     const message = payload?.body;
     const listingId = payload?.listingMapId;
     const conversationId = payload?.conversationId;
@@ -1870,46 +1864,20 @@ app.post("/hostaway-incoming", async (req, res) => {
       return res.status(200).send("OK");
     }
 
-    // ✅ UNICA fonte lingua: testo del messaggio
-    const language = detectLangFromMessage(message);
+    // ✅ CHIAMATA DIRETTA AL NUOVO MOTORE AI (RILEVAMENTO LINGUA AUTOMATICO)
+    // Non passiamo più 'language', lo decide il file guide-ai.js
+    const answer = await guideAIreply({
+      apartment: apartmentKey,
+      message: message
+    });
 
-    const aiResponse = await axios.post(
-      `${req.protocol}://${req.get("host")}/api/guest-assistant`,
-      {
-        apartment: apartmentKey,
-        lang: language,
-        question: message
-      },
-      { timeout: 8000 }
-    );
-
-    const data = aiResponse.data || {};
-
-    if (!data.ok || data.noMatch || !data.answer) {
-      console.log("🤖 AI noMatch → fallback");
-
-      await axios.post(
-        `https://api.hostaway.com/v1/conversations/${conversationId}/messages`,
-        {
-          body: "Thanks for your message! I’m checking and will get back to you shortly.",
-          sendToGuest: true
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${HOSTAWAY_TOKEN}`,
-            "Content-Type": "application/json"
-          },
-          timeout: 10000
-        }
-      );
-
-      return res.status(200).send("OK");
-    }
+    // Se non c'è risposta valida, inviamo il messaggio di cortesia (fallback)
+    const finalAnswer = answer || "Thanks for your message! I’m checking and will get back to you shortly.";
 
     await axios.post(
       `https://api.hostaway.com/v1/conversations/${conversationId}/messages`,
       {
-        body: data.answer,
+        body: finalAnswer,
         sendToGuest: true
       },
       {
@@ -1921,7 +1889,7 @@ app.post("/hostaway-incoming", async (req, res) => {
       }
     );
 
-    console.log("📧 Risposta AI inviata a HostAway");
+    console.log(`📧 Risposta inviata per ${apartmentKey}`);
     return res.status(200).send("OK");
 
   } catch (err) {
@@ -1929,20 +1897,10 @@ app.post("/hostaway-incoming", async (req, res) => {
     return res.status(200).send("OK");
   }
 });
-    
+
 // ========== AVVIO SERVER ==========
 
 const PORT = process.env.PORT || 10000;
-
 app.listen(PORT, () => {
-  console.log(
-    "Server running on", PORT,
-    "TZ:", TIMEZONE,
-    "TokenVer:", TOKEN_VERSION,
-    "RotationTag:", ROTATION_TAG,
-    "LinkPrefix:", LINK_PREFIX,
-    "StartedAt:", STARTED_AT,
-    "RevokeBefore:", REVOKE_BEFORE || "-",
-    "AllowTodayFallback:", ALLOW_TODAY_FALLBACK ? "1" : "0"
-  );
+  console.log("Server running on", PORT);
 });
