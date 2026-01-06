@@ -59,38 +59,45 @@ async function loadGuideJson(apartment) {
 // =====================
 // RISOLUZIONE LINGUA
 // =====================
- function resolveLanguage(requested, question, availableLanguages) {
-  const req = String(requested || "").toLowerCase().slice(0, 2);
-
-  // 1️⃣ Priorità assoluta: se la lingua è già passata correttamente, usala subito
-  if (availableLanguages.includes(req)) return req;
-
-  // 2️⃣ Rilevamento testuale migliorato con stop-words univoche
-  const tokens = tokenize(question);
-
-  const hints = {
-    it: ["il", "lo", "la", "i", "gli", "le", "per", "con", "e", "non"],
-    en: ["the", "and", "with", "is", "for", "to", "what", "should"],
-    fr: ["le", "la", "les", "des", "pour", "dans", "est", "une", "avez"],
-    de: ["der", "die", "das", "ein", "eine", "und", "mit", "nicht"],
-    es: ["el", "los", "las", "un", "una", "por", "con", "y", "del"]
-  };
-
-  let best = availableLanguages[0] || "en"; // Fallback sulla prima lingua del JSON
-  let maxHits = 0;
-
-  for (const lang of availableLanguages) {
-    if (hints[lang]) {
-      // Conta quante parole della lingua corrente sono presenti nella domanda
-      const hits = hints[lang].filter(t => tokens.includes(t)).length;
-      if (hits > maxHits) {
-        maxHits = hits;
-        best = lang;
-      }
+  function resolveLanguage(question, requested, availableLanguages) {
+    // 1. Forza la lingua se passata correttamente via URL/Browser
+    if (requested && availableLanguages.includes(requested)) {
+        return requested;
     }
-  }
 
-  return best;
+    const text = question.toLowerCase();
+    
+    // 2. Dizionario di parole "forti" (che non lasciano dubbi)
+    const indicators = {
+        en: ['is', 'the', 'what', 'to', 'how', 'it', 'working', 'not'],
+        it: ['il', 'la', 'non', 'come', 'fare', 'funziona', 'dove'],
+        es: ['el', 'la', 'no', 'como', 'hacer', 'funciona', 'donde', 'esta'],
+        fr: ['le', 'la', 'pas', 'comment', 'faire', 'est', 'dans']
+    };
+
+    let scores = {};
+    availableLanguages.forEach(lang => {
+        scores[lang] = 0;
+        if (indicators[lang]) {
+            indicators[lang].forEach(word => {
+                // Controlla se la parola è presente nel testo con spazi intorno
+                if (text.includes(' ' + word + ' ') || text.startsWith(word + ' ') || text.endsWith(' ' + word)) {
+                    scores[lang]++;
+                }
+            });
+        }
+    });
+
+    // 3. Trova la lingua con il punteggio più alto
+    let detected = Object.keys(scores).reduce((a, b) => scores[a] > scores[b] ? a : b);
+
+    // 4. Se il punteggio è 0 (nessuna parola trovata), usa l'inglese come fallback 
+    // o la prima lingua disponibile nel JSON
+    if (scores[detected] === 0) {
+        return availableLanguages.includes('en') ? 'en' : availableLanguages[0];
+    }
+
+    return detected;
 }
 
 // =====================
