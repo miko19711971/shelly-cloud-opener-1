@@ -82,7 +82,75 @@ function requireAdmin(req, res, next) {
   }
   return next();
 }
+// ========================================================================
+// 🔒 SISTEMA TOKEN UNIVOCI CHECK-IN (non prevedibili)
+// ========================================================================
 
+// Storage token check-in univoci (in memoria - usa DB in produzione)
+const CHECKIN_TOKENS = new Map(); // key: token → { apt, bookingCode, createdAt, expiresAt }
+
+// Genera token check-in univoco e sicuro
+function generateSecureCheckinToken(apt, bookingCode = null, validDays = 7) {
+  const randomToken = crypto.randomBytes(12).toString('hex'); // 24 caratteri
+  const uniqueToken = `CHK_${randomToken}`;
+  
+  const now = Date.now();
+  const expiresAt = now + (validDays * 24 * 60 * 60 * 1000); // Default 7 giorni
+  
+  CHECKIN_TOKENS.set(uniqueToken, {
+    apt,
+    bookingCode,
+    createdAt: now,
+    expiresAt,
+    used: false
+  });
+  
+  return uniqueToken;
+}
+
+// Valida token check-in univoco
+function validateSecureCheckinToken(token, apt) {
+  const data = CHECKIN_TOKENS.get(token);
+  
+  if (!data) {
+    return { valid: false, reason: "token_not_found" };
+  }
+  
+  if (data.apt !== apt) {
+    return { valid: false, reason: "apartment_mismatch" };
+  }
+  
+  if (Date.now() > data.expiresAt) {
+    CHECKIN_TOKENS.delete(token); // Pulisci token scaduto
+    return { valid: false, reason: "token_expired" };
+  }
+  
+  if (data.used) {
+    return { valid: false, reason: "token_already_used" };
+  }
+  
+  return { valid: true, data };
+}
+
+// Marca token come usato (opzionale - se vuoi monouso)
+function markTokenAsUsed(token) {
+  const data = CHECKIN_TOKENS.get(token);
+  if (data) {
+    data.used = true;
+    CHECKIN_TOKENS.set(token, data);
+  }
+}
+
+// Pulizia periodica token scaduti (ogni ora)
+setInterval(() => {
+  const now = Date.now();
+  for (const [token, data] of CHECKIN_TOKENS.entries()) {
+    if (now > data.expiresAt) {
+      CHECKIN_TOKENS.delete(token);
+      console.log(`🗑️ Token check-in scaduto rimosso: ${token}`);
+    }
+  }
+}, 60 * 60 * 1000);
 console.log("🔥 Hostaway token caricato:", HOSTAWAY_TOKEN ? "OK" : "MANCANTE");
 
 if (!HOSTAWAY_TOKEN) {
