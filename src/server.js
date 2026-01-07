@@ -432,7 +432,92 @@ app.get("/token/:target", requireAdmin, (req, res) => {
   const url = `${req.protocol}://${req.get("host")}${LINK_PREFIX}/${targetKey}/${token}`;
   return res.json({ ok: true, url, expiresInMin: Math.round((payload.exp - Date.now()) / 60000) });
 });
+// ========================================================================
+// 🔒 GENERA LINK CHECK-IN SICURI (solo admin)
+// ========================================================================
 
+app.post("/api/generate-checkin-link", requireAdmin, (req, res) => {
+  try {
+    const { apartment, bookingCode, validDays } = req.body;
+    
+    if (!apartment) {
+      return res.status(400).json({ 
+        ok: false, 
+        error: "missing_apartment",
+        message: "Specificare l'appartamento (es: 'leonina', 'arenula')" 
+      });
+    }
+    
+    // Verifica che l'appartamento esista
+    const validApartments = ["leonina", "scala", "portico", "trastevere", "arenula"];
+    if (!validApartments.includes(apartment.toLowerCase())) {
+      return res.status(400).json({ 
+        ok: false, 
+        error: "invalid_apartment",
+        message: `Appartamento deve essere uno di: ${validApartments.join(", ")}` 
+      });
+    }
+    
+    // Genera token univoco
+    const secureToken = generateSecureCheckinToken(
+      apartment.toLowerCase(), 
+      bookingCode || null,
+      validDays || 7
+    );
+    
+    // Costruisci URL completo
+    const baseUrl = `${req.protocol}://${req.get("host")}`;
+    const checkInUrl = `${baseUrl}/checkin/${apartment.toLowerCase()}/${secureToken}`;
+    
+    return res.json({
+      ok: true,
+      apartment: apartment.toLowerCase(),
+      bookingCode: bookingCode || null,
+      token: secureToken,
+      url: checkInUrl,
+      expiresIn: `${validDays || 7} giorni`,
+      expiresAt: new Date(Date.now() + ((validDays || 7) * 24 * 60 * 60 * 1000)).toISOString(),
+      message: "Link check-in generato con successo. Invia questo link all'ospite via email/SMS."
+    });
+    
+  } catch (err) {
+    console.error("❌ Errore generazione link check-in:", err);
+    return res.status(500).json({ 
+      ok: false, 
+      error: "server_error",
+      message: err.message 
+    });
+  }
+});
+
+// ========================================================================
+// 📋 LISTA LINK CHECK-IN ATTIVI (solo admin)
+// ========================================================================
+
+app.get("/api/checkin-links", requireAdmin, (req, res) => {
+  const now = Date.now();
+  const activeTokens = [];
+  
+  for (const [token, data] of CHECKIN_TOKENS.entries()) {
+    if (now < data.expiresAt) {
+      activeTokens.push({
+        token,
+        apartment: data.apt,
+        bookingCode: data.bookingCode,
+        used: data.used,
+        createdAt: new Date(data.createdAt).toISOString(),
+        expiresAt: new Date(data.expiresAt).toISOString(),
+        url: `${req.protocol}://${req.get("host")}/checkin/${data.apt}/${token}`
+      });
+    }
+  }
+  
+  return res.json({
+    ok: true,
+    count: activeTokens.length,
+    tokens: activeTokens
+  });
+});
 app.all("/k/:target/:token", (req, res) => res.status(410).send("Link non più valido."));
 app.all("/k/:target/:token/open", (req, res) => res.status(410).json({ ok: false, error: "gone" }));
 app.all("/k2/:target/:token", (req, res) => res.status(410).send("Link non più valido."));
