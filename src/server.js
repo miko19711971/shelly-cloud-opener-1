@@ -632,7 +632,19 @@ app.post("/checkin/:apt/open/door", requireCheckinToken, async (req, res) => {
   if (!result.ok) return res.status(502).json({ ok: false, error: "open_failed", details: result });
   return res.json({ ok: true, opened: result });
 });
+app.get("/admin/checkin/:apt", requireAdmin, (req, res) => {
+  const apt = req.params.apt.toLowerCase();
+  const today = tzToday();
 
+  const { token } = newTokenFor(`checkin-${apt}`, {
+    windowMin: 1440,
+    max: 999,
+    day: today
+  });
+
+  const url = `${req.protocol}://${req.get("host")}/checkin/${apt}/index.html?t=${token}`;
+  res.redirect(302, url);
+});
 app.use("/checkin", express.static(path.join(PUBLIC_DIR, "checkin"), { fallthrough: false }));
 app.use(express.static(PUBLIC_DIR));
 
