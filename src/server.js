@@ -1,4 +1,4 @@
- import express from "express";
+import express from "express";
 import axios from "axios";
 import crypto from "crypto";
 import cors from "cors";
@@ -83,57 +83,6 @@ function requireAdmin(req, res, next) {
   return next();
 }
 
-// ========================================================================
-// 🔒 SISTEMA TOKEN UNIVOCI CHECK-IN (non prevedibili)
-// ========================================================================
-
-const CHECKIN_TOKENS = new Map();
-
-function generateSecureCheckinToken(apt, bookingCode = null, validDays = 7) {
-  const randomToken = crypto.randomBytes(12).toString('hex');
-  const uniqueToken = `CHK_${randomToken}`;
-  const now = Date.now();
-  const expiresAt = now + (validDays * 24 * 60 * 60 * 1000);
-  CHECKIN_TOKENS.set(uniqueToken, {
-    apt,
-    bookingCode,
-    createdAt: now,
-    expiresAt,
-    used: false
-  });
-  return uniqueToken;
-}
-
-function validateSecureCheckinToken(token, apt) {
-  const data = CHECKIN_TOKENS.get(token);
-  if (!data) return { valid: false, reason: "token_not_found" };
-  if (data.apt !== apt) return { valid: false, reason: "apartment_mismatch" };
-  if (Date.now() > data.expiresAt) {
-    CHECKIN_TOKENS.delete(token);
-    return { valid: false, reason: "token_expired" };
-  }
-  if (data.used) return { valid: false, reason: "token_already_used" };
-  return { valid: true, data };
-}
-
-function markTokenAsUsed(token) {
-  const data = CHECKIN_TOKENS.get(token);
-  if (data) {
-    data.used = true;
-    CHECKIN_TOKENS.set(token, data);
-  }
-}
-
-setInterval(() => {
-  const now = Date.now();
-  for (const [token, data] of CHECKIN_TOKENS.entries()) {
-    if (now > data.expiresAt) {
-      CHECKIN_TOKENS.delete(token);
-      console.log(`🗑️ Token check-in scaduto rimosso: ${token}`);
-    }
-  }
-}, 60 * 60 * 1000);
-
 console.log("🔥 Hostaway token caricato:", HOSTAWAY_TOKEN ? "OK" : "MANCANTE");
 
 if (!HOSTAWAY_TOKEN) {
@@ -182,7 +131,6 @@ function setGuideSecurityHeaders(req, res, next) {
   res.setHeader("X-Frame-Options", "DENY");
   next();
 }
-
 app.use(["/checkin", "/guides", "/guest-assistant", LINK_PREFIX], setGuideSecurityHeaders);
 
 app.use((req, res, next) => {
@@ -417,54 +365,6 @@ app.get("/token/:target", requireAdmin, (req, res) => {
   return res.json({ ok: true, url, expiresInMin: Math.round((payload.exp - Date.now()) / 60000) });
 });
 
-app.post("/api/generate-checkin-link", requireAdmin, (req, res) => {
-  try {
-    const { apartment, bookingCode, validDays } = req.body;
-    if (!apartment) {
-      return res.status(400).json({ ok: false, error: "missing_apartment", message: "Specificare l'appartamento (es: 'leonina', 'arenula')" });
-    }
-    const validApartments = ["leonina", "scala", "portico", "trastevere", "arenula"];
-    if (!validApartments.includes(apartment.toLowerCase())) {
-      return res.status(400).json({ ok: false, error: "invalid_apartment", message: `Appartamento deve essere uno di: ${validApartments.join(", ")}` });
-    }
-    const secureToken = generateSecureCheckinToken(apartment.toLowerCase(), bookingCode || null, validDays || 7);
-    const baseUrl = `${req.protocol}://${req.get("host")}`;
-    const checkInUrl = `${baseUrl}/checkin/${apartment.toLowerCase()}/${secureToken}`;
-    return res.json({
-      ok: true,
-      apartment: apartment.toLowerCase(),
-      bookingCode: bookingCode || null,
-      token: secureToken,
-      url: checkInUrl,
-      expiresIn: `${validDays || 7} giorni`,
-      expiresAt: new Date(Date.now() + ((validDays || 7) * 24 * 60 * 60 * 1000)).toISOString(),
-      message: "Link check-in generato con successo. Invia questo link all'ospite via email/SMS."
-    });
-  } catch (err) {
-    console.error("❌ Errore generazione link check-in:", err);
-    return res.status(500).json({ ok: false, error: "server_error", message: err.message });
-  }
-});
-
-app.get("/api/checkin-links", requireAdmin, (req, res) => {
-  const now = Date.now();
-  const activeTokens = [];
-  for (const [token, data] of CHECKIN_TOKENS.entries()) {
-    if (now < data.expiresAt) {
-      activeTokens.push({
-        token,
-        apartment: data.apt,
-        bookingCode: data.bookingCode,
-        used: data.used,
-        createdAt: new Date(data.createdAt).toISOString(),
-        expiresAt: new Date(data.expiresAt).toISOString(),
-        url: `${req.protocol}://${req.get("host")}/checkin/${data.apt}/${token}`
-      });
-    }
-  }
-  return res.json({ ok: true, count: activeTokens.length, tokens: activeTokens });
-});
-
 app.all("/k/:target/:token", (req, res) => res.status(410).send("Link non più valido."));
 app.all("/k/:target/:token/open", (req, res) => res.status(410).json({ ok: false, error: "gone" }));
 app.all("/k2/:target/:token", (req, res) => res.status(410).send("Link non più valido."));
@@ -524,35 +424,16 @@ app.use("/guides-v2", express.static(path.join(PUBLIC_DIR, "guides-v2"), { fallt
 app.use("/public-test-ai-html", express.static(path.join(PUBLIC_DIR, "public-test-ai-html"), { fallthrough: false }));
 
 app.get("/checkin/:apt/today", (req, res) => {
-  return res.status(403).send("Accesso non autorizzato. Utilizza il link check-in fornito via email.");
+  const apt = req.params.apt.toLowerCase(), today = tzToday();
+  const { token } = newTokenFor(`checkin-${apt}`, { windowMin: CHECKIN_WINDOW_MIN, max: 200, day: today });
+  const url = `${req.protocol}://${req.get("host")}/checkin/${apt}/index.html?t=${token}`;
+  return res.redirect(302, url);
 });
 
-app.get("/checkin/:apt/:tokenOrDate", (req, res) => {
-  const apt = req.params.apt.toLowerCase();
-  const tokenOrDate = req.params.tokenOrDate;
-  const today = tzToday();
-  
-  if (tokenOrDate.startsWith("CHK_")) {
-    const validation = validateSecureCheckinToken(tokenOrDate, apt);
-    if (!validation.valid) {
-      const messages = {
-        token_not_found: "Link non valido o scaduto.",
-        apartment_mismatch: "Link non valido per questo appartamento.",
-        token_expired: "Link scaduto. Richiedi un nuovo link.",
-        token_already_used: "Link già utilizzato."
-      };
-      return res.status(410).send(messages[validation.reason] || "Link non valido.");
-    }
-    const { token } = newTokenFor(`checkin-${apt}`, { windowMin: CHECKIN_WINDOW_MIN, max: 200, day: today });
-    const url = `${req.protocol}://${req.get("host")}/checkin/${apt}/index.html?t=${token}`;
-    return res.redirect(302, url);
-  }
-  
-  if (tokenOrDate === "today") {
-    return res.status(403).send("Accesso non autorizzato. Utilizza il link check-in fornito via email.");
-  }
-  
-  let day = normalizeCheckinDate(tokenOrDate);
+app.get("/checkin/:apt/:rawDate([^/.]+)", (req, res) => {
+  const apt = req.params.apt.toLowerCase(), today = tzToday();
+  const raw = String(req.params.rawDate || "");
+  let day = normalizeCheckinDate(raw);
   if (!day) {
     if (ALLOW_TODAY_FALLBACK) day = today;
     else return res.status(410).send("Link scaduto.");
@@ -572,6 +453,7 @@ app.get("/checkin/:apt/", (req, res) => {
     else return res.status(410).send("Link scaduto.");
   }
   if (day !== today) return res.status(410).send("Link scaduto.");
+  if (day !== today) return res.status(410).send("Questo link è valido solo nel giorno di check-in.");
   const { token } = newTokenFor(`checkin-${apt}`, { windowMin: CHECKIN_WINDOW_MIN, max: 200, day });
   const url = `${req.protocol}://${req.get("host")}/checkin/${apt}/index.html?t=${token}`;
   res.redirect(302, url);
@@ -615,7 +497,13 @@ function requireCheckinToken(req, res, next) {
 
 app.post("/checkin/:apt/open/building", requireCheckinToken, async (req, res) => {
   const apt = String(req.params.apt || "").toLowerCase();
-  const map = { arenula: "arenula-building", leonina: "leonina-building", scala: "via-della-scala-building", portico: "portico-1d-building", trastevere: "viale-trastevere-building" };
+  const map = {
+    arenula: "arenula-building",
+    leonina: "leonina-building",
+    scala: "via-della-scala-building",
+    portico: "portico-1d-building",
+    trastevere: "viale-trastevere-building"
+  };
   const targetKey = map[apt], targetDef = TARGETS[targetKey];
   if (!targetDef) return res.status(404).json({ ok: false, error: "unknown_target" });
   const result = (targetDef.ids.length === 1) ? await openOne(targetDef.ids[0]) : await openSequence(targetDef.ids, 10000);
@@ -625,28 +513,38 @@ app.post("/checkin/:apt/open/building", requireCheckinToken, async (req, res) =>
 
 app.post("/checkin/:apt/open/door", requireCheckinToken, async (req, res) => {
   const apt = String(req.params.apt || "").toLowerCase();
-  const map = { arenula: "arenula-door", leonina: "leonina-door", scala: "via-della-scala-door", portico: "portico-1d-door", trastevere: "viale-trastevere-door" };
+  const map = {
+    arenula: "arenula-door",
+    leonina: "leonina-door",
+    scala: "via-della-scala-door",
+    portico: "portico-1d-door",
+    trastevere: "viale-trastevere-door"
+  };
   const targetKey = map[apt], targetDef = TARGETS[targetKey];
   if (!targetDef) return res.status(404).json({ ok: false, error: "unknown_target" });
   const result = (targetDef.ids.length === 1) ? await openOne(targetDef.ids[0]) : await openSequence(targetDef.ids, 10000);
   if (!result.ok) return res.status(502).json({ ok: false, error: "open_failed", details: result });
   return res.json({ ok: true, opened: result });
 });
-app.get("/admin/checkin/:apt", requireAdmin, (req, res) => {
-  const apt = req.params.apt.toLowerCase();
-  const today = tzToday();
 
-  const { token } = newTokenFor(`checkin-${apt}`, {
-    windowMin: 1440,
-    max: 999,
-    day: today
-  });
-
-  const url = `${req.protocol}://${req.get("host")}/checkin/${apt}/index.html?t=${token}`;
-  res.redirect(302, url);
-});
 app.use("/checkin", express.static(path.join(PUBLIC_DIR, "checkin"), { fallthrough: false }));
 app.use(express.static(PUBLIC_DIR));
+
+// ========================================================================
+// ❌ RIMOSSO: Sistema AI Guest Assistant completo
+// ❌ RIMOSSO: Directory GUIDES_V2_DIR e cache guidesCache
+// ❌ RIMOSSO: Funzione loadGuideJson (caricamento JSON guide)
+// ❌ RIMOSSO: Funzione normalizeLang (normalizzazione lingua)
+// ❌ RIMOSSO: Funzione normalizeNoAccents (pulizia testo)
+// ❌ RIMOSSO: Funzione findAnswerByKeywords (match parole chiave + 190 righe KEYWORDS)
+// ❌ RIMOSSO: Funzione extractGuestName (estrazione nome ospite)
+// ❌ RIMOSSO: Funzione detectLangFromMessage (rilevamento lingua)
+// ❌ RIMOSSO: Funzione makeGreeting (saluto multilingua)
+// ❌ RIMOSSO: Endpoint POST /api/guest-assistant (API AI principale)
+// ❌ RIMOSSO: Mappa LISTING_TO_APARTMENT
+// ❌ RIMOSSO: Endpoint POST /api/hostaway-ai-bridge (bridge HostAway)
+// ❌ RIMOSSO: Endpoint POST /hostaway-incoming (auto-reply HostAway)
+// ========================================================================
 
 app.get("/health", (req, res) => {
   res.json({
@@ -737,7 +635,9 @@ app.post("/api/vbro-mail", requireAdmin, async (req, resInner) => {
     return resInner.status(500).json({ ok: false, error: String(err?.message || err) });
   }
 });
+
 const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => {
   console.log("Server running on", PORT);
 });
+
