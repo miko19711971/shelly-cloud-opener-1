@@ -583,7 +583,7 @@ app.get("/checkin/:apt/today", (req, res) => {
   return res.redirect(302, url);
 });
 
-app.get("/checkin/:apt/:rawDate([^/.]+)", (req, res) => {
+ app.get("/checkin/:apt/:rawDate([^/.]+)", (req, res) => {
   const apt = req.params.apt.toLowerCase(), today = tzToday();
   const raw = String(req.params.rawDate || "");
   let day = normalizeCheckinDate(raw);
@@ -596,7 +596,6 @@ app.get("/checkin/:apt/:rawDate([^/.]+)", (req, res) => {
   const url = `${req.protocol}://${req.get("host")}/checkin/${apt}/index.html?t=${token}`;
   res.redirect(302, url);
 });
-
 app.get("/checkin/:apt/", (req, res) => {
   const apt = req.params.apt.toLowerCase(), today = tzToday();
   const raw = (req.query.d || "").toString();
