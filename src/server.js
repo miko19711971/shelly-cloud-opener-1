@@ -643,57 +643,132 @@ app.post("/api/vbro-mail", requireAdmin, async (req, resInner) => {
 import { matchIntent } from "./matcher.js";
 import { ANSWERS } from "./answers.js";
 
-app.post("/hostaway-incoming", async (req, res) => {
-  console.log("📩 HOSTAWAY INCOMING RAW:", JSON.stringify(req.body, null, 2));
+ app.post("/hostaway-incoming", async (req, res) => {
+  console.log("\n" + "=".repeat(60));
+  console.log("📩 HOSTAWAY WEBHOOK RECEIVED");
+  console.log("=".repeat(60));
+  console.log("📦 Request Body:", JSON.stringify(req.body, null, 2));
+  console.log("=".repeat(60) + "\n");
+
   try {
     const {
-  body,
-  guestName,
-  reservationId,
-  conversationId
-} = req.body || {};
+      body: message,
+      guestName,
+      reservationId,
+      conversationId
+    } = req.body || {};
 
-const message = body;
+    console.log("📋 STEP 1: Extract Data");
+    console.log("  ├─ message:", message);
+    console.log("  ├─ conversationId:", conversationId);
+    console.log("  ├─ guestName:", guestName);
+    console.log("  └─ reservationId:", reservationId);
 
     if (!message || !conversationId) {
-      return res.json({ ok: true, skipped: true });
+      console.log("⚠️  Missing required fields → SKIPPING\n");
+      return res.json({
+        ok: true,
+        skipped: true,
+        reason: "missing_message_or_conversationId"
+      });
     }
 
-    // 1. Detect language (full text)
-    const lang = detectLanguage(message);
+    console.log("\n🔐 STEP 2: Check HostAway Token");
+    
+    if (!HOSTAWAY_TOKEN) {
+      console.error("❌ HOSTAWAY_TOKEN is NOT configured!");
+      return res.status(500).json({
+        ok: false,
+        error: "HOSTAWAY_TOKEN_missing"
+      });
+    }
 
-    // 2. Match intent (strict)
+    console.log("  ✅ Token configured");
+
+    console.log("\n🌍 STEP 3: Detect Language");
+    const lang = detectLanguage(message);
+    console.log("  └─ Detected:", lang.toUpperCase());
+
+    console.log("\n🎯 STEP 4: Match Intent");
     const intent = matchIntent(message);
+    console.log("  └─ Matched:", intent || "❌ NONE");
 
     if (!intent) {
-      // No intent → silence
-      return res.json({ ok: true, silent: true });
+      console.log("\n⚠️  No intent matched → System will stay SILENT\n");
+      return res.json({
+        ok: true,
+        silent: true,
+        reason: "no_intent_matched",
+        lang,
+        message
+      });
     }
 
-    const answer =
-      ANSWERS[lang]?.[intent] ||
-      ANSWERS["en"]?.[intent];
+    console.log("\n💬 STEP 5: Get Answer");
+    const answer = ANSWERS[lang]?.[intent];
 
     if (!answer) {
-      return res.json({ ok: true, silent: true });
+      console.log("  ❌ No answer found");
+      console.log("  ├─ Language:", lang);
+      console.log("  └─ Intent:", intent);
+      return res.json({
+        ok: true,
+        silent: true,
+        reason: "no_answer_found",
+        lang,
+        intent
+      });
     }
 
-    // 3. Send reply back to HostAway (chat)
-     await axios.post(
-  `https://api.hostaway.com/v1/conversations/${conversationId}/messages`,
-  {
-    conversationId,
-    message: answer
-  },
-  {
-    headers: {
-      Authorization: `Bearer ${HOSTAWAY_TOKEN}`,
-      "Content-Type": "application/json"
-    },
-    timeout: 10000
-  }
-);
+    console.log("  ✅ Answer found");
+    console.log("  └─ Preview:", answer.substring(0, 80) + "...");
 
+    console.log("\n📤 STEP 6: Send Reply to HostAway");
+
+    const hostawayResponse = await axios.post(
+      `https://api.hostaway.com/v1/conversations/${conversationId}/messages`,
+      {
+        conversationId,
+        message: answer
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${HOSTAWAY_TOKEN}`,
+          "Content-Type": "application/json"
+        },
+        timeout: 10000
+      }
+    );
+
+    console.log("\n✅ Reply Sent Successfully!");
+    console.log("  └─ HTTP Status:", hostawayResponse.status);
+    console.log("\n🎉 SUCCESS - Auto-reply sent to guest!\n");
+
+    return res.json({
+      ok: true,
+      replied: true,
+      intent,
+      lang,
+      hostawayStatus: hostawayResponse.status
+    });
+
+  } catch (err) {
+    console.error("\n❌ ERROR IN /hostaway-incoming");
+    console.error("Error:", err.message);
+    
+    if (err.response) {
+      console.error("HostAway API Error:");
+      console.error("  ├─ Status:", err.response.status);
+      console.error("  └─ Data:", JSON.stringify(err.response.data, null, 2));
+    }
+    
+    return res.status(500).json({
+      ok: false,
+      error: err.message,
+      details: err.response?.data || null
+    });
+  }
+});
     return res.json({
       ok: true,
       replied: true,
