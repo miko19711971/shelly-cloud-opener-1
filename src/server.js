@@ -657,7 +657,7 @@ app.post("/hostaway-incoming", async (req, res) => {
   conversationId,
   listingId
 } = req.body || {};
-
+console.log("🏠 Listing ID:", listingId);
     console.log("📋 STEP 1: Extract Data");
     console.log("  ├─ message:", message);
     console.log("  ├─ conversationId:", conversationId);
