@@ -635,7 +635,73 @@ app.post("/api/vbro-mail", requireAdmin, async (req, resInner) => {
     return resInner.status(500).json({ ok: false, error: String(err?.message || err) });
   }
 });
+// ========================================================================
+// HostAway → AI Guest Assistant (chat reply)
+// ========================================================================
 
+import { detectLanguage } from "./language.js";
+import { matchIntent } from "./matcher.js";
+import { ANSWERS } from "./answers.js";
+
+app.post("/hostaway-incoming", requireAdmin, async (req, res) => {
+  try {
+    const {
+      message,
+      guestName,
+      reservationId,
+      conversationId
+    } = req.body || {};
+
+    if (!message || !conversationId) {
+      return res.json({ ok: true, skipped: true });
+    }
+
+    // 1. Detect language (full text)
+    const lang = detectLanguage(message);
+
+    // 2. Match intent (strict)
+    const intent = matchIntent(message);
+
+    if (!intent) {
+      // No intent → silence
+      return res.json({ ok: true, silent: true });
+    }
+
+    const answer =
+      ANSWERS[lang]?.[intent] ||
+      ANSWERS["en"]?.[intent];
+
+    if (!answer) {
+      return res.json({ ok: true, silent: true });
+    }
+
+    // 3. Send reply back to HostAway (chat)
+    await axios.post(
+      "https://api.hostaway.com/v1/conversations/messages",
+      {
+        conversationId,
+        message: answer
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${HOSTAWAY_TOKEN}`,
+          "Content-Type": "application/json"
+        },
+        timeout: 10000
+      }
+    );
+
+    return res.json({
+      ok: true,
+      replied: true,
+      intent,
+      lang
+    });
+  } catch (err) {
+    console.error("❌ HostAway AI error:", err?.response?.data || err);
+    return res.status(500).json({ ok: false });
+  }
+});
 const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => {
   console.log("Server running on", PORT);
