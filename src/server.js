@@ -680,7 +680,7 @@ const message = body;
 
     // 3. Send reply back to HostAway (chat)
     await axios.post(
-      "https://api.hostaway.com/v1/conversations/messages",
+     `https://api.hostaway.com/v1/conversations/${conversationId}/messages`
       {
         conversationId,
         message: answer
