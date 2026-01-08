@@ -635,15 +635,15 @@ app.post("/api/vbro-mail", requireAdmin, async (req, resInner) => {
     return resInner.status(500).json({ ok: false, error: String(err?.message || err) });
   }
 });
-// ========================================================================
+ // ========================================================================
 // HostAway → AI Guest Assistant (chat reply)
 // ========================================================================
 
- import { detectLanguage } from "./language.js";
+import { detectLanguage } from "./language.js";
 import { matchIntent } from "./matcher.js";
 import { ANSWERS } from "./answers.js";
 
- app.post("/hostaway-incoming", async (req, res) => {
+app.post("/hostaway-incoming", async (req, res) => {
   console.log("\n" + "=".repeat(60));
   console.log("📩 HOSTAWAY WEBHOOK RECEIVED");
   console.log("=".repeat(60));
@@ -673,7 +673,7 @@ import { ANSWERS } from "./answers.js";
       });
     }
 
-    console.log("\n🔐 STEP 2: Check HostAway Token");
+console.log("\n🔐 STEP 2: Check HostAway Token");
     
     if (!HOSTAWAY_TOKEN) {
       console.error("❌ HOSTAWAY_TOKEN is NOT configured!");
@@ -723,7 +723,7 @@ import { ANSWERS } from "./answers.js";
     console.log("  ✅ Answer found");
     console.log("  └─ Preview:", answer.substring(0, 80) + "...");
 
-    console.log("\n📤 STEP 6: Send Reply to HostAway");
+console.log("\n📤 STEP 6: Send Reply to HostAway");
 
     const hostawayResponse = await axios.post(
       `https://api.hostaway.com/v1/conversations/${conversationId}/messages`,
@@ -769,7 +769,6 @@ import { ANSWERS } from "./answers.js";
     });
   }
 });
-   
 const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => {
   console.log("Server running on", PORT);
