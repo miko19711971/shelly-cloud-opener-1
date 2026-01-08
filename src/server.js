@@ -647,11 +647,13 @@ app.post("/hostaway-incoming", async (req, res) => {
   console.log("📩 HOSTAWAY INCOMING RAW:", JSON.stringify(req.body, null, 2));
   try {
     const {
-      message,
-      guestName,
-      reservationId,
-      conversationId
-    } = req.body || {};
+  body,
+  guestName,
+  reservationId,
+  conversationId
+} = req.body || {};
+
+const message = body;
 
     if (!message || !conversationId) {
       return res.json({ ok: true, skipped: true });
