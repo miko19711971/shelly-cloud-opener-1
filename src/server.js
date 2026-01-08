@@ -8,6 +8,15 @@ import fs from "fs/promises";
 import { detectLanguage } from "./language.js";
 import { matchIntent } from "./matcher.js";
 import { ANSWERS } from "./answers.js";
+const APT_DEFAULT_LANG = {
+  arenula: "en",
+  leonina: "en",
+  scala: "en",
+  portico: "en",
+  trastevere: "en"
+};
+
+const LANG_FALLBACK_ORDER = ["en", "it", "es", "fr", "de"];
 // ========================================================================
 // ❌ RIMOSSO: Sistema AI Guest Assistant (guide-ai.js import)
 // ❌ RIMOSSO: Mappa GUIDE_BY_LISTING_ID per AI auto-reply
