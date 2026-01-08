@@ -724,21 +724,20 @@ console.log("\n🔐 STEP 2: Check HostAway Token");
 
 console.log("\n📤 STEP 6: Send Reply to HostAway");
 
-    const hostawayResponse = await axios.post(
-      `https://api.hostaway.com/v1/conversations/${conversationId}/messages`,
-      {
-        conversationId,
-        message: answer
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${HOSTAWAY_TOKEN}`,
-          "Content-Type": "application/json"
-        },
-        timeout: 10000
-      }
-    );
-
+    await axios.post(
+  `https://api.hostaway.com/v1/conversations/${conversationId}/messages`,
+  {
+    body: answer,
+    sendToGuest: true
+  },
+  {
+    headers: {
+      Authorization: `Bearer ${HOSTAWAY_TOKEN}`,
+      "Content-Type": "application/json"
+    },
+    timeout: 10000
+  }
+);
     console.log("\n✅ Reply Sent Successfully!");
     console.log("  └─ HTTP Status:", hostawayResponse.status);
     console.log("\n🎉 SUCCESS - Auto-reply sent to guest!\n");
