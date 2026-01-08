@@ -679,20 +679,20 @@ const message = body;
     }
 
     // 3. Send reply back to HostAway (chat)
-    await axios.post(
-     `https://api.hostaway.com/v1/conversations/${conversationId}/messages`
-      {
-        conversationId,
-        message: answer
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${HOSTAWAY_TOKEN}`,
-          "Content-Type": "application/json"
-        },
-        timeout: 10000
-      }
-    );
+     await axios.post(
+  `https://api.hostaway.com/v1/conversations/${conversationId}/messages`,
+  {
+    conversationId,
+    message: answer
+  },
+  {
+    headers: {
+      Authorization: `Bearer ${HOSTAWAY_TOKEN}`,
+      "Content-Type": "application/json"
+    },
+    timeout: 10000
+  }
+);
 
     return res.json({
       ok: true,
