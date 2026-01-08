@@ -1,21 +1,10 @@
-import { franc } from "franc";
+ export function detectLanguage(text) {
+  const t = text.toLowerCase();
 
-// mappa ISO-639-3 → lingua che usiamo noi
-const LANG_MAP = {
-  ita: "it",
-  eng: "en",
-  fra: "fr",
-  deu: "de",
-  spa: "es"
-};
+  if (t.match(/[àèéìòù]/) || t.includes(" che ")) return "it";
+  if (t.includes("¿") || t.includes(" qué ")) return "es";
+  if (t.includes(" le ") || t.includes(" bonjour")) return "fr";
+  if (t.includes(" der ") || t.includes(" und ")) return "de";
 
-export function detectLanguage(text) {
-  if (!text || typeof text !== "string") return null;
-
-  // franc analizza TUTTO il testo
-  const lang3 = franc(text);
-
-  if (!LANG_MAP[lang3]) return null;
-
-  return LANG_MAP[lang3];
+  return "en";
 }
