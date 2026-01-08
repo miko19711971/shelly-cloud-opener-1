@@ -769,16 +769,7 @@ import { ANSWERS } from "./answers.js";
     });
   }
 });
-    return res.json({
-      ok: true,
-      replied: true,
-      intent,
-      lang
-    });
-  } catch (err) {
-    console.error("❌ HostAway AI error:", err?.response?.data || err);
-    return res.status(500).json({ ok: false });
-  }
+   
 });
 const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => {
