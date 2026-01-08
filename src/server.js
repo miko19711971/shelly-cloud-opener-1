@@ -686,7 +686,9 @@ console.log("\n🔐 STEP 2: Check HostAway Token");
     console.log("  ✅ Token configured");
 
     console.log("\n🌍 STEP 3: Detect Language");
-    const lang = detectLanguage(message);
+    const lang =
+  (req.body?.guestLanguage || "").slice(0, 2) ||
+  detectLanguage(message);
     console.log("  └─ Detected:", lang.toUpperCase());
 
     console.log("\n🎯 STEP 4: Match Intent");
