@@ -716,21 +716,21 @@ console.log("\n🔐 STEP 2: Check HostAway Token");
     }
 
     console.log("\n💬 STEP 5: Get Answer");
-    const answer = ANSWERS[lang]?.[intent];
+    const preferredLang = APT_DEFAULT_LANG[apartment] || "en";
 
+let answer = null;
+
+for (const l of [preferredLang, ...LANG_FALLBACK_ORDER]) {
+  if (ANSWERS[apartment]?.[l]?.[intent]) {
+    answer = ANSWERS[apartment][l][intent];
+    break;
+  }
+}
     if (!answer) {
-      console.log("  ❌ No answer found");
-      console.log("  ├─ Language:", lang);
-      console.log("  └─ Intent:", intent);
-      return res.json({
-        ok: true,
-        silent: true,
-        reason: "no_answer_found",
-        lang,
-        intent
-      });
-    }
+  return res.json({ ok: true, silent: true });
+}
 
+    
     console.log("  ✅ Answer found");
     console.log("  └─ Preview:", answer.substring(0, 80) + "...");
 
