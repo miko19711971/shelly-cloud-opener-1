@@ -641,10 +641,7 @@ app.post("/api/vbro-mail", requireAdmin, async (req, resInner) => {
 // HostAway → AI Guest Assistant (chat reply)
 // ========================================================================
 
-import { detectLanguage } from "./language.js";
-import { matchIntent } from "./matcher.js";
-import { ANSWERS } from "./answers.js";
-
+ 
 app.post("/hostaway-incoming", async (req, res) => {
   console.log("\n" + "=".repeat(60));
   console.log("📩 HOSTAWAY WEBHOOK RECEIVED");
