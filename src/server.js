@@ -639,9 +639,9 @@ app.post("/api/vbro-mail", requireAdmin, async (req, resInner) => {
 // HostAway → AI Guest Assistant (chat reply)
 // ========================================================================
 
- import { detectLanguage } from "../language.js";
-import { matchIntent } from "../matcher.js";
-import { ANSWERS } from "../answers.js";
+ import { detectLanguage } from "./language.js";
+import { matchIntent } from "./matcher.js";
+import { ANSWERS } from "./answers.js";
 
 app.post("/hostaway-incoming", async (req, res) => {
   console.log("📩 HOSTAWAY INCOMING RAW:", JSON.stringify(req.body, null, 2));p
