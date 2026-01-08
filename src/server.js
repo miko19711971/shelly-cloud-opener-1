@@ -724,7 +724,7 @@ console.log("\n🔐 STEP 2: Check HostAway Token");
 
 console.log("\n📤 STEP 6: Send Reply to HostAway");
 
-    await axios.post(
+ await axios.post(
   `https://api.hostaway.com/v1/conversations/${conversationId}/messages`,
   {
     body: answer,
@@ -738,17 +738,16 @@ console.log("\n📤 STEP 6: Send Reply to HostAway");
     timeout: 10000
   }
 );
-    console.log("\n✅ Reply Sent Successfully!");
-    console.log("  └─ HTTP Status:", hostawayResponse.status);
-    console.log("\n🎉 SUCCESS - Auto-reply sent to guest!\n");
 
-    return res.json({
-      ok: true,
-      replied: true,
-      intent,
-      lang,
-      hostawayStatus: hostawayResponse.status
-    });
+console.log("\n✅ Reply Sent Successfully!");
+console.log("\n🎉 SUCCESS - Auto-reply sent to guest!\n");
+
+return res.json({
+  ok: true,
+  replied: true,
+  intent,
+  lang
+});
 
   } catch (err) {
     console.error("\n❌ ERROR IN /hostaway-incoming");
