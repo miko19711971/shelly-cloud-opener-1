@@ -644,7 +644,7 @@ import { matchIntent } from "./matcher.js";
 import { ANSWERS } from "./answers.js";
 
 app.post("/hostaway-incoming", async (req, res) => {
-  console.log("📩 HOSTAWAY INCOMING RAW:", JSON.stringify(req.body, null, 2));p
+  console.log("📩 HOSTAWAY INCOMING RAW:", JSON.stringify(req.body, null, 2));
   try {
     const {
       message,
