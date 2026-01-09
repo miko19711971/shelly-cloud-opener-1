@@ -675,19 +675,22 @@ if (!resolvedListingId && reservationId) {
   try {
     console.log("🔎 Fetching reservation from HostAway:", reservationId);
 
-    const r = await axios.get(
-      `https://api.hostaway.com/v1/reservations/${reservationId}`,
-      {
-        headers: {
-          Authorization: `Bearer ${HOSTAWAY_TOKEN}`
-        },
-        timeout: 10000
-      }
-    );
+     const r = await axios.get(
+  `https://api.hostaway.com/v1/reservations/${reservationId}`,
+  {
+    headers: {
+      Authorization: `Bearer ${HOSTAWAY_TOKEN}`
+    },
+    timeout: 10000
+  }
+);
 
-    resolvedListingId = r.data?.result?.listingId;
+// 🔍 LOG COMPLETO per vedere la struttura
+console.log("🔍 FULL API Response:", JSON.stringify(r.data, null, 2));
 
-    console.log("🏠 ListingId resolved from reservation:", resolvedListingId);
+resolvedListingId = r.data?.result?.listingId;
+
+console.log("🏠 ListingId resolved from reservation:", resolvedListingId);
   } catch (e) {
     console.error("❌ Failed to resolve listingId from reservation", e.message);
   }
