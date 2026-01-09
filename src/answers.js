@@ -2,7 +2,7 @@
   arenula: {
     it: {
       wifi: "Wi-Fi: Il router è sulla scrivania vicino alla finestra. Giralo per leggere SSID e password sull'etichetta. Se non funziona: controlla che sia acceso, scollegalo 30 secondi e ricollegalo. Se il problema continua, scrivimi.",
-      trash: "Spazzatura: Trovi le buste in cucina. Chiudi bene i sacchetti e portali nei cassonetti nella corte prima dell'uscita. Facciamo raccolta differenziata: segui le indicazioni e non lasciare immondizia nel vano scala o fuori dalla porta.",
+      trash: "Spazzatura: Trovi le buste in cucina. Chiudi bene i sacchetti e portali nei cassonetti nella corte prima dell'uscita. Facciamo raccolta differenziata: segui le indicazioni e non lasciare immondizia nel vano scala o fuori dalla porta.Una volta che hai diviso tutta l’immondizia, prima del check-out portala giù nella corte esterna. Prima dell’uscita, sul lato destro, ci sono i vari secchioni. Disponi l’immondizia per tipologie in ogni secchione. Grazie.",
       heating: "Riscaldamento: Usa il telecomando dell'aria condizionata. Premi MODE finché appare il simbolo del sole, imposta 26 °C e potenza 1. Spegni sempre il condizionatore quando esci.",
       electric_panel: "Quadro elettrico: Andando verso il bagno, sulla destra prima della porta trovi il quadro. Se manca la corrente: 1) alza gli interruttori abbassati; 2) se sono già tutti su, togli il pannello sopra, rialza l'interruttore generale e spegni qualche elettrodomestico.",
       check_in: "Check-in dalle 15:00. Citofono C8. Portone attivo 08:00–13:00 e 15:30–18:00. Portineria: Paolo. Per aiuto: +39 335 5245756.",
@@ -14,7 +14,7 @@
     },
     en: {
       wifi: "Wi-Fi: The router is on the desk near the window. Turn it to read the SSID and password on the label. If it doesn't work: check it's on, unplug it for 30 seconds and plug it back in. If the issue continues, message me.",
-      trash: "Trash: Bags are in the kitchen. Close them well and take them to the bins in the courtyard before leaving. We do recycling: follow the signs and do not leave trash in the stairwell or outside the apartment door.",
+      trash: "Trash: Bags are in the kitchen. Close them well and take them to the bins in the courtyard before leaving. We do recycling: follow the signs and do not leave trash in the stairwell or outside the apartment door.Once you have separated all the waste, before check-out please take it down to the outdoor courtyard. Before the exit, on the right-hand side, you will find the bins. Place each type of waste in the appropriate bin. Thank you.",
       heating: "Heating: Use the A/C remote control. Press MODE until the SUN symbol appears, set 26 °C and power level 1. Always turn it off when leaving.",
       electric_panel: "Electric panel: Walking toward the bathroom, on the right before the door. If there's no power: 1) switch any lowered breakers back up; 2) if all are up, remove the upper panel, reset the main switch and turn off some appliances.",
       check_in: "Check-in from 3:00 PM. Intercom C8. Building door active 8:00–13:00 and 15:30–18:00. Doorman: Paolo. Help: +39 335 5245756.",
@@ -26,7 +26,7 @@
     },
     fr: {
       wifi: "Wi-Fi : Le routeur est sur le bureau près de la fenêtre. Tournez-le pour lire le SSID et le mot de passe sur l'étiquette. S'il ne fonctionne pas : vérifiez qu'il est allumé, débranchez-le 30 secondes puis rebranchez-le. Sinon, écrivez-moi.",
-      trash: "Déchets : Les sacs sont dans la cuisine. Fermez-les bien et jetez-les dans les bacs de la cour avant de partir. Tri sélectif obligatoire : suivez les indications et ne laissez rien dans l'escalier ou devant la porte.",
+      trash: "Déchets : Les sacs sont dans la cuisine. Fermez-les bien et jetez-les dans les bacs de la cour avant de partir. Tri sélectif obligatoire : suivez les indications et ne laissez rien dans l'escalier ou devant la porte.Une fois tous les déchets triés, avant le check-out, veuillez les descendre dans la cour extérieure. Avant la sortie, sur le côté droit, se trouvent les conteneurs. Déposez chaque type de déchet dans le conteneur correspondant. Merci.",
       heating: "Chauffage : Utilisez la télécommande de la climatisation. Appuyez sur MODE jusqu'au symbole soleil, réglez à 26 °C et puissance 1. Éteignez toujours en sortant.",
       electric_panel: "Tableau électrique : En allant vers la salle de bain, à droite avant la porte. En cas de coupure : 1) remontez les disjoncteurs baissés ; 2) s'ils sont tous levés, retirez le panneau supérieur, réarmez le général et éteignez quelques appareils.",
       check_in: "Arrivée à partir de 15h00. Interphone C8. Porte principale active 8h00–13h00 et 15h30–18h00. Concierge : Paolo. Aide : +39 335 5245756.",
@@ -38,7 +38,7 @@
     },
     de: {
       wifi: "WLAN: Der Router steht auf dem Schreibtisch nahe dem Fenster. Drehen Sie ihn, um SSID und Passwort auf dem Aufkleber zu lesen. Falls es nicht funktioniert: prüfen Sie, ob er eingeschaltet ist, ziehen Sie den Stecker 30 Sekunden und stecken Sie ihn wieder ein. Dann bitte melden.",
-      trash: "Müll: Müllbeutel befinden sich in der Küche. Gut verschließen und vor dem Verlassen in die Tonnen im Innenhof bringen. Mülltrennung ist Pflicht: nichts im Treppenhaus oder vor der Wohnungstür abstellen.",
+      trash: "Müll: Müllbeutel befinden sich in der Küche. Gut verschließen und vor dem Verlassen in die Tonnen im Innenhof bringen. Mülltrennung ist Pflicht: nichts im Treppenhaus oder vor der Wohnungstür abstellen.Nachdem Sie den Müll getrennt haben, bringen Sie ihn bitte vor dem Check-out in den Außenhof. Vor dem Ausgang, auf der rechten Seite, befinden sich die Müllcontainer. Entsorgen Sie jede Abfallart im entsprechenden Container. Danke.",
       heating: "Heizung: Verwenden Sie die Klimaanlagen-Fernbedienung. MODE drücken bis das Sonnensymbol erscheint, 26 °C und Stufe 1 einstellen. Beim Verlassen immer ausschalten.",
       electric_panel: "Sicherungskasten: Auf dem Weg zum Bad rechts vor der Tür. Bei Stromausfall: 1) heruntergefallene Sicherungen hochstellen; 2) wenn alle oben sind, obere Abdeckung entfernen, Hauptschalter zurücksetzen und einige Geräte ausschalten.",
       check_in: "Check-in ab 15:00 Uhr. Gegensprechanlage C8. Haustür aktiv 08:00–13:00 und 15:30–18:00. Pförtner: Paolo. Hilfe: +39 335 5245756.",
@@ -50,7 +50,7 @@
     },
     es: {
       wifi: "Wi-Fi: El router está en el escritorio cerca de la ventana. Gíralo para leer el SSID y la contraseña en la etiqueta. Si no funciona: comprueba que esté encendido, desenchúfalo 30 segundos y vuelve a conectarlo. Si continúa, escríbeme.",
-      trash: "Basura: Las bolsas están en la cocina. Ciérralas bien y llévalas a los contenedores del patio antes de salir. Hacemos reciclaje: sigue las indicaciones y no dejes basura en la escalera ni fuera del apartamento.",
+      trash: "Basura: Las bolsas están en la cocina. Ciérralas bien y llévalas a los contenedores del patio antes de salir. Hacemos reciclaje: sigue las indicaciones y no dejes basura en la escalera ni fuera del apartamento.Una vez separada toda la basura, antes del check-out llévela al patio exterior. Antes de la salida, en el lado derecho, encontrará los contenedores. Deposite cada tipo de residuo en el contenedor correspondiente. Gracias.",
       heating: "Calefacción: Usa el mando del aire acondicionado. Pulsa MODE hasta que aparezca el símbolo del sol, ajusta a 26 °C y potencia 1. Apágalo siempre al salir.",
       electric_panel: "Cuadro eléctrico: Yendo hacia el baño, a la derecha antes de la puerta. Si no hay luz: 1) sube los interruptores bajados; 2) si ya están todos arriba, retira el panel superior, rearma el general y apaga algunos electrodomésticos.",
       check_in: "Check-in desde las 15:00. Portero automático C8. Puerta principal activa 08:00–13:00 y 15:30–18:00. Portero: Paolo. Ayuda: +39 335 5245756.",
