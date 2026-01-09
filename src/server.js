@@ -659,12 +659,12 @@ app.post("/hostaway-incoming", async (req, res) => {
   console.log("=".repeat(60) + "\n");
 
   try {
-     const {
+      const {
   body: message,
   guestName,
   reservationId,
   conversationId,
-  listingId
+  listingMapId  // ✅ Usa direttamente listingMapId
 } = req.body || {};
     // ======================================================
 // 🔎 Resolve Listing ID from reservation (HostAway)
