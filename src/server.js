@@ -752,23 +752,21 @@ const LISTING_TO_APARTMENT = {
   "194162": "scala"
 };
 
-// 🔍 DEBUG: vediamo cosa succede
-console.log("  ├─ listingId ricevuto:", listingId);
-console.log("  ├─ tipo listingId:", typeof listingId);
+ // 🔍 DEBUG: vediamo cosa succede
+console.log("  ├─ listingId ricevuto:", resolvedListingId);
+console.log("  ├─ tipo listingId:", typeof resolvedListingId);
 
-// ✅ RISOLUZIONE APPARTAMENTO (QUI VA MESSO)
- const apartment = LISTING_TO_APARTMENT[String(resolvedListingId)];
+const apartment = LISTING_TO_APARTMENT[String(resolvedListingId)];
 
 if (!apartment) {
-  console.error("❌ ListingId non mappato:", listingId);
+  console.error("❌ ListingId non mappato:", resolvedListingId);
   return res.json({
     ok: true,
     silent: true,
     reason: "unknown_listing",
-    listingId
+    listingId: resolvedListingId
   });
 }
-
 // 🔍 DEBUG OK
 console.log("  ├─ Appartamento selezionato:", apartment);
 console.log("  ├─ Lingua:", lang);
