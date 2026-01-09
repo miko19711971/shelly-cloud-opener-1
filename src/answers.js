@@ -269,7 +269,7 @@
   trastevere: {
     it: {
       wifi: "Wi-Fi: Il router è sul mobile all'ingresso. Giralo per leggere sull'etichetta il nome della rete (SSID) e la password. Se non funziona: controlla che sia acceso, scollegalo 30 secondi e ricollegalo. Se il problema continua, scrivimi.",
-      air_conditioning: "
+      air_conditioning: "Per accendere l’aria condizionata usa il telecomando. Premi MODE, seleziona il simbolo del fiocco di neve, poi POWER per accendere. Imposta la temperatura a 23 o 24 gradi, assicurati che sia impostato su POWER 1 e ricordati di spegnere il condizionatore quando esci per visitare la città."
      trash: "Spazzatura: In questo stabile NON si fa raccolta differenziata. Prima del check-out porta i rifiuti nei contenitori appena fuori dall'edificio, sul lato destro.",
       heating: "Riscaldamento: Per accenderlo vai nel corridoio subito dopo la cucina. Sulla parete di destra trovi il termostato: metti l'interruttore su ON e imposta 26 °C. In pochi minuti i termosifoni inizieranno a scaldarsi.",
       electric_panel: "Quadro elettrico: Se manca la corrente, il quadro è nell'antibagno, subito a destra entrando in casa. Controlla che tutti gli interruttori siano verso l'alto. Se non torna, scendi al piano -1: davanti alla porta del New York Institute apri lo sportello elettrico, cerca 'Bondi int. 9' e rialza l'interruttore sceso.",
@@ -282,7 +282,7 @@
     },
     en: {
       wifi: "Wi-Fi: The router is on the cabinet near the entrance. Turn it to read the SSID and password on the label. If it doesn't work: check it's on, unplug it for 30 seconds and plug it back in. If the issue continues, message me.",
-      air_conditioning: "
+      air_conditioning: "To turn on the air conditioning, use the remote control. Press MODE, select the snowflake symbol, then press POWER to turn it on. Set the temperature to 23 or 24 degrees, make sure it is set to POWER 1, and remember to turn off the air conditioning when you go out to visit the city."
      trash: "Trash: There is NO recycling in this building. Before check-out, take the trash to the bins just outside the building, on the right side.",
       heating: "Heating: To turn it on, go to the hallway just after the kitchen. On the right wall you'll find the thermostat: switch it to ON and set 26 °C. The radiators will start warming up in a few minutes.",
       electric_panel: "Electric panel: If there's no power, the panel is in the bathroom anteroom, immediately on the right when entering. Make sure all breakers are up. If power doesn't return, go to floor -1: in front of the New York Institute door open the electrical box, look for 'Bondi int. 9' and reset the lowered switch.",
@@ -295,7 +295,7 @@
     },
     fr: {
       wifi: "Wi-Fi : Le routeur est sur le meuble près de l'entrée. Tournez-le pour lire le SSID et le mot de passe sur l'étiquette. En cas de problème, vérifiez qu'il est allumé, débranchez-le 30 secondes puis rebranchez-le.",
-    air_conditioning: "
+    air_conditioning: "Pour allumer la climatisation, utilisez la télécommande. Appuyez sur MODE, sélectionnez le symbole du flocon de neige, puis appuyez sur POWER pour l’allumer. Réglez la température à 23 ou 24 degrés, assurez-vous qu’elle soit réglée sur POWER 1, et pensez à éteindre la climatisation lorsque vous sortez visiter la ville."
      trash: "Déchets : Il n'y a PAS de tri sélectif dans cet immeuble. Avant le départ, déposez les sacs dans les conteneurs juste à l'extérieur du bâtiment, sur la droite.",
       heating: "Chauffage : Pour l'allumer, allez dans le couloir après la cuisine. Sur le mur de droite se trouve le thermostat : mettez-le sur ON et réglez à 26 °C. Les radiateurs chaufferont en quelques minutes.",
       electric_panel: "Tableau électrique : En cas de coupure, le tableau est dans l'antichambre de la salle de bain, immédiatement à droite en entrant. Vérifiez que tous les interrupteurs sont levés. Sinon, descendez à l'étage -1 : devant la porte du New York Institute, ouvrez le coffret, cherchez 'Bondi int. 9' et réarmez l'interrupteur.",
@@ -308,7 +308,7 @@
     },
     de: {
       wifi: "WLAN: Der Router steht auf dem Möbelstück im Eingangsbereich. Drehen Sie ihn, um SSID und Passwort auf dem Aufkleber zu lesen. Bei Problemen: 30 Sekunden vom Strom trennen und wieder anschließen.",
-      air_conditioning: "
+      air_conditioning: "Um die Klimaanlage einzuschalten, verwenden Sie die Fernbedienung. Drücken Sie MODE, wählen Sie das Schneeflocken-Symbol und drücken Sie dann POWER, um sie einzuschalten. Stellen Sie die Temperatur auf 23 oder 24 Grad ein, stellen Sie sicher, dass POWER 1 eingestellt ist, und denken Sie daran, die Klimaanlage auszuschalten, wenn Sie die Stadt besichtigen."
      trash: "Müll: In diesem Gebäude gibt es KEINE Mülltrennung. Vor dem Check-out den Müll in die Tonnen direkt rechts vor dem Gebäude bringen.",
       heating: "Heizung: Zum Einschalten in den Flur nach der Küche gehen. An der rechten Wand befindet sich der Thermostat: auf ON stellen und 26 °C einstellen. Nach wenigen Minuten werden die Heizkörper warm.",
       electric_panel: "Sicherungskasten: Bei Stromausfall befindet sich der Kasten im Vorbad rechts beim Eintreten. Prüfen, ob alle Schalter oben sind. Falls nicht, in Etage -1 gehen, vor der Tür des New York Institute den Kasten öffnen, 'Bondi int. 9' suchen und den Schalter hochstellen.",
