@@ -715,17 +715,8 @@ console.log("\n🔐 STEP 2: Check HostAway Token");
       });
     }
 
-    console.log("\n💬 STEP 5: Get Answer");
-    const preferredLang = APT_DEFAULT_LANG[apartment] || "en";
-
-let answer = null;
-
-for (const l of [preferredLang, ...LANG_FALLBACK_ORDER]) {
-  if (ANSWERS[apartment]?.[l]?.[intent]) {
-    answer = ANSWERS[apartment][l][intent];
-    break;
-  }
-}
+     console.log("\n💬 STEP 5: Get Answer");
+const answer = ANSWERS[lang]?.[intent] || null;
     if (!answer) {
   return res.json({ ok: true, silent: true });
 }
