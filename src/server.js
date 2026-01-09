@@ -757,7 +757,7 @@ console.log("  ├─ listingId ricevuto:", listingId);
 console.log("  ├─ tipo listingId:", typeof listingId);
 
 // ✅ RISOLUZIONE APPARTAMENTO (QUI VA MESSO)
-const apartment = LISTING_TO_APARTMENT[String(listingId)];
+ const apartment = LISTING_TO_APARTMENT[String(resolvedListingId)];
 
 if (!apartment) {
   console.error("❌ ListingId non mappato:", listingId);
