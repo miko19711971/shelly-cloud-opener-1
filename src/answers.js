@@ -70,7 +70,7 @@
   leonina: {
     it: {
       wifi: "Wi-Fi: Il router è sulla scrivania vicino alla finestra. Giralo per leggere SSID e password sull'etichetta. Se non funziona: controlla che sia acceso, scollegalo 30 secondi e ricollegalo. Se il problema continua, scrivimi.",
-      air_conditioning: "
+      air_conditioning: "Per accendere l’aria condizionata usa il telecomando. Premi MODE, seleziona il simbolo del fiocco di neve, poi POWER per accendere. Imposta la temperatura a 23 o 24 gradi, assicurati che sia impostato su POWER 1 e ricordati di spegnere il condizionatore quando esci per visitare la città."
      trash: "Spazzatura: Trovi i sacchi in cucina. Chiudili bene e portali nei cassonetti a 50 metri a sinistra dell'uscita del portone. Facciamo raccolta differenziata: segui le indicazioni e non lasciare immondizia nel vano scala o fuori dalla porta.",
       heating: "Riscaldamento: Usa il telecomando dell'aria condizionata, premi MODE finché compare il simbolo del sole e imposta 26 °C con potenza 1. Spegni sempre il condizionatore quando esci.",
       electric_panel: "Quadro elettrico: È sul lato sinistro guardando la porta di uscita dell'appartamento. Se manca la corrente, alza gli interruttori abbassati e spegni qualche elettrodomestico.",
@@ -83,7 +83,7 @@
     },
     en: {
       wifi: "Wi-Fi: The router is on the desk near the window. Turn it to read the SSID and password on the label. If it doesn't work: check it's on, unplug it for 30 seconds and plug it back in. If the issue continues, message me.",
-      air_conditioning: "
+      air_conditioning: "To turn on the air conditioning, use the remote control. Press MODE, select the snowflake symbol, then press POWER to turn it on. Set the temperature to 23 or 24 degrees, make sure it is set to POWER 1, and remember to turn off the air conditioning when you go out to visit the city."
      trash: "Trash: Bags are in the kitchen. Close them well and take them to the bins 50 meters to the left after exiting the building. Recycling is required: follow the signs and do not leave trash in the stairwell or outside the apartment door.",
       heating: "Heating: Use the A/C remote control, press MODE until the SUN symbol appears, set 26 °C and power level 1. Always turn it off when leaving.",
       electric_panel: "Electric panel: Located on the left side when facing the apartment exit door. If there's no power, reset the lowered breakers and turn off some appliances.",
@@ -96,7 +96,7 @@
     },
     fr: {
       wifi: "Wi-Fi : Le routeur est sur le bureau près de la fenêtre. Tournez-le pour lire le SSID et le mot de passe sur l'étiquette. S'il ne fonctionne pas : vérifiez qu'il est allumé, débranchez-le 30 secondes puis rebranchez-le. Sinon, écrivez-moi.",
-    air_conditioning: "
+    air_conditioning: "Pour allumer la climatisation, utilisez la télécommande. Appuyez sur MODE, sélectionnez le symbole du flocon de neige, puis appuyez sur POWER pour l’allumer. Réglez la température à 23 ou 24 degrés, assurez-vous qu’elle soit réglée sur POWER 1, et pensez à éteindre la climatisation lorsque vous sortez visiter la ville."
      trash: "Déchets : Les sacs sont dans la cuisine. Fermez-les bien et jetez-les dans les bacs à 50 mètres à gauche en sortant de l'immeuble. Le tri est obligatoire : suivez les indications et ne laissez rien dans l'escalier ou devant la porte.",
       heating: "Chauffage : Utilisez la télécommande de la climatisation, appuyez sur MODE jusqu'au symbole soleil, réglez à 26 °C et puissance 1. Éteignez toujours en sortant.",
       electric_panel: "Tableau électrique : Situé à gauche en regardant la porte de sortie de l'appartement. En cas de coupure, remontez les disjoncteurs et éteignez quelques appareils.",
@@ -109,7 +109,7 @@
     },
     de: {
       wifi: "WLAN: Der Router steht auf dem Schreibtisch nahe dem Fenster. Drehen Sie ihn, um SSID und Passwort auf dem Aufkleber zu lesen. Falls es nicht funktioniert: prüfen Sie, ob er eingeschaltet ist, ziehen Sie den Stecker 30 Sekunden und stecken Sie ihn wieder ein. Dann bitte melden.",
-     air_conditioning: "
+     air_conditioning: "Um die Klimaanlage einzuschalten, verwenden Sie die Fernbedienung. Drücken Sie MODE, wählen Sie das Schneeflocken-Symbol und drücken Sie dann POWER, um sie einzuschalten. Stellen Sie die Temperatur auf 23 oder 24 Grad ein, stellen Sie sicher, dass POWER 1 eingestellt ist, und denken Sie daran, die Klimaanlage auszuschalten, wenn Sie die Stadt besichtigen."
      trash: "Müll: Müllbeutel befinden sich in der Küche. Gut verschließen und 50 Meter links vom Hauseingang in die Tonnen bringen. Mülltrennung ist Pflicht: nichts im Treppenhaus oder vor der Wohnungstür abstellen.",
       heating: "Heizung: Verwenden Sie die Klimaanlagen-Fernbedienung, MODE drücken bis das Sonnensymbol erscheint, 26 °C und Stufe 1 einstellen. Beim Verlassen immer ausschalten.",
       electric_panel: "Sicherungskasten: Befindet sich links, wenn man zur Ausgangstür blickt. Bei Stromausfall Sicherungen hochstellen und einige Geräte ausschalten.",
@@ -122,7 +122,7 @@
     },
     es: {
       wifi: "Wi-Fi: El router está en el escritorio cerca de la ventana. Gíralo para leer el SSID y la contraseña en la etiqueta. Si no funciona: comprueba que esté encendido, desenchúfalo 30 segundos y vuelve a conectarlo. Si continúa, escríbeme.",
-     air_conditioning: "
+     air_conditioning: "Para encender el aire acondicionado, usa el control remoto. Pulsa MODE, selecciona el símbolo del copo de nieve y luego POWER para encenderlo. Ajusta la temperatura a 23 o 24 grados, asegúrate de que esté en POWER 1 y recuerda apagar el aire acondicionado cuando salgas a visitar la ciudad."
      trash: "Basura: Las bolsas están en la cocina. Ciérralas bien y llévalas a los contenedores a 50 metros a la izquierda al salir del edificio. El reciclaje es obligatorio: sigue las indicaciones y no dejes basura en la escalera ni fuera del apartamento.",
       heating: "Calefacción: Usa el mando del aire acondicionado, pulsa MODE hasta que aparezca el símbolo del sol, ajusta a 26 °C y potencia 1. Apágalo siempre al salir.",
       electric_panel: "Cuadro eléctrico: Está a la izquierda mirando la puerta de salida del apartamento. Si no hay luz, sube los interruptores bajados y apaga algunos electrodomésticos.",
