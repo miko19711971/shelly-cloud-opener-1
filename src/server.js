@@ -782,8 +782,25 @@ if (!answer) {
   return res.json({ ok: true, silent: true });
 }
 
-console.log("  ✅ Answer found");
+ console.log("  ✅ Answer found");
 console.log("  └─ Preview:", answer.substring(0, 80) + "...");
+
+console.log("\n📤 STEP 6: Send Reply to HostAway");
+
+await axios.post(
+  `https://api.hostaway.com/v1/conversations/${conversationId}/messages`,
+  {
+    body: answer,
+    sendToGuest: true
+  },
+  {
+    headers: {
+      Authorization: `Bearer ${HOSTAWAY_TOKEN}`,
+      "Content-Type": "application/json"
+    },
+    timeout: 10000
+  }
+);
 
 console.log("\n✅ Reply Sent Successfully!");
 console.log("\n🎉 SUCCESS - Auto-reply sent to guest!\n");
