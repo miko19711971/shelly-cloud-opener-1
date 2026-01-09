@@ -2,7 +2,8 @@
   arenula: {
     it: {
       wifi: "Wi-Fi: Il router è sulla scrivania vicino alla finestra. Giralo per leggere SSID e password sull'etichetta. Se non funziona: controlla che sia acceso, scollegalo 30 secondi e ricollegalo. Se il problema continua, scrivimi.",
-      trash: "Spazzatura: Trovi le buste in cucina. Chiudi bene i sacchetti e portali nei cassonetti nella corte prima dell'uscita. Facciamo raccolta differenziata: segui le indicazioni e non lasciare immondizia nel vano scala o fuori dalla porta.Una volta che hai diviso tutta l’immondizia, prima del check-out portala giù nella corte esterna. Prima dell’uscita, sul lato destro, ci sono i vari secchioni. Disponi l’immondizia per tipologie in ogni secchione. Grazie.",
+      air_conditioning: "
+     trash: "Spazzatura: Trovi le buste in cucina. Chiudi bene i sacchetti e portali nei cassonetti nella corte prima dell'uscita. Facciamo raccolta differenziata: segui le indicazioni e non lasciare immondizia nel vano scala o fuori dalla porta.Una volta che hai diviso tutta l’immondizia, prima del check-out portala giù nella corte esterna. Prima dell’uscita, sul lato destro, ci sono i vari secchioni. Disponi l’immondizia per tipologie in ogni secchione. Grazie.",
       heating: "Riscaldamento: Usa il telecomando dell'aria condizionata. Premi MODE finché appare il simbolo del sole, imposta 26 °C e potenza 1. Spegni sempre il condizionatore quando esci.",
       electric_panel: "Quadro elettrico: Andando verso il bagno, sulla destra prima della porta trovi il quadro. Se manca la corrente: 1) alza gli interruttori abbassati; 2) se sono già tutti su, togli il pannello sopra, rialza l'interruttore generale e spegni qualche elettrodomestico.",
       check_in: "Check-in dalle 15:00. Citofono C8. Portone attivo 08:00–13:00 e 15:30–18:00. Portineria: Paolo. Per aiuto: +39 335 5245756.",
@@ -14,7 +15,8 @@
     },
     en: {
       wifi: "Wi-Fi: The router is on the desk near the window. Turn it to read the SSID and password on the label. If it doesn't work: check it's on, unplug it for 30 seconds and plug it back in. If the issue continues, message me.",
-      trash: "Trash: Bags are in the kitchen. Close them well and take them to the bins in the courtyard before leaving. We do recycling: follow the signs and do not leave trash in the stairwell or outside the apartment door.Once you have separated all the waste, before check-out please take it down to the outdoor courtyard. Before the exit, on the right-hand side, you will find the bins. Place each type of waste in the appropriate bin. Thank you.",
+      air_conditioning: "
+     trash: "Trash: Bags are in the kitchen. Close them well and take them to the bins in the courtyard before leaving. We do recycling: follow the signs and do not leave trash in the stairwell or outside the apartment door.Once you have separated all the waste, before check-out please take it down to the outdoor courtyard. Before the exit, on the right-hand side, you will find the bins. Place each type of waste in the appropriate bin. Thank you.",
       heating: "Heating: Use the A/C remote control. Press MODE until the SUN symbol appears, set 26 °C and power level 1. Always turn it off when leaving.",
       electric_panel: "Electric panel: Walking toward the bathroom, on the right before the door. If there's no power: 1) switch any lowered breakers back up; 2) if all are up, remove the upper panel, reset the main switch and turn off some appliances.",
       check_in: "Check-in from 3:00 PM. Intercom C8. Building door active 8:00–13:00 and 15:30–18:00. Doorman: Paolo. Help: +39 335 5245756.",
@@ -26,7 +28,8 @@
     },
     fr: {
       wifi: "Wi-Fi : Le routeur est sur le bureau près de la fenêtre. Tournez-le pour lire le SSID et le mot de passe sur l'étiquette. S'il ne fonctionne pas : vérifiez qu'il est allumé, débranchez-le 30 secondes puis rebranchez-le. Sinon, écrivez-moi.",
-      trash: "Déchets : Les sacs sont dans la cuisine. Fermez-les bien et jetez-les dans les bacs de la cour avant de partir. Tri sélectif obligatoire : suivez les indications et ne laissez rien dans l'escalier ou devant la porte.Une fois tous les déchets triés, avant le check-out, veuillez les descendre dans la cour extérieure. Avant la sortie, sur le côté droit, se trouvent les conteneurs. Déposez chaque type de déchet dans le conteneur correspondant. Merci.",
+      air_conditioning: "
+     trash: "Déchets : Les sacs sont dans la cuisine. Fermez-les bien et jetez-les dans les bacs de la cour avant de partir. Tri sélectif obligatoire : suivez les indications et ne laissez rien dans l'escalier ou devant la porte.Une fois tous les déchets triés, avant le check-out, veuillez les descendre dans la cour extérieure. Avant la sortie, sur le côté droit, se trouvent les conteneurs. Déposez chaque type de déchet dans le conteneur correspondant. Merci.",
       heating: "Chauffage : Utilisez la télécommande de la climatisation. Appuyez sur MODE jusqu'au symbole soleil, réglez à 26 °C et puissance 1. Éteignez toujours en sortant.",
       electric_panel: "Tableau électrique : En allant vers la salle de bain, à droite avant la porte. En cas de coupure : 1) remontez les disjoncteurs baissés ; 2) s'ils sont tous levés, retirez le panneau supérieur, réarmez le général et éteignez quelques appareils.",
       check_in: "Arrivée à partir de 15h00. Interphone C8. Porte principale active 8h00–13h00 et 15h30–18h00. Concierge : Paolo. Aide : +39 335 5245756.",
@@ -38,7 +41,8 @@
     },
     de: {
       wifi: "WLAN: Der Router steht auf dem Schreibtisch nahe dem Fenster. Drehen Sie ihn, um SSID und Passwort auf dem Aufkleber zu lesen. Falls es nicht funktioniert: prüfen Sie, ob er eingeschaltet ist, ziehen Sie den Stecker 30 Sekunden und stecken Sie ihn wieder ein. Dann bitte melden.",
-      trash: "Müll: Müllbeutel befinden sich in der Küche. Gut verschließen und vor dem Verlassen in die Tonnen im Innenhof bringen. Mülltrennung ist Pflicht: nichts im Treppenhaus oder vor der Wohnungstür abstellen.Nachdem Sie den Müll getrennt haben, bringen Sie ihn bitte vor dem Check-out in den Außenhof. Vor dem Ausgang, auf der rechten Seite, befinden sich die Müllcontainer. Entsorgen Sie jede Abfallart im entsprechenden Container. Danke.",
+     air_conditioning: "
+     trash: "Müll: Müllbeutel befinden sich in der Küche. Gut verschließen und vor dem Verlassen in die Tonnen im Innenhof bringen. Mülltrennung ist Pflicht: nichts im Treppenhaus oder vor der Wohnungstür abstellen.Nachdem Sie den Müll getrennt haben, bringen Sie ihn bitte vor dem Check-out in den Außenhof. Vor dem Ausgang, auf der rechten Seite, befinden sich die Müllcontainer. Entsorgen Sie jede Abfallart im entsprechenden Container. Danke.",
       heating: "Heizung: Verwenden Sie die Klimaanlagen-Fernbedienung. MODE drücken bis das Sonnensymbol erscheint, 26 °C und Stufe 1 einstellen. Beim Verlassen immer ausschalten.",
       electric_panel: "Sicherungskasten: Auf dem Weg zum Bad rechts vor der Tür. Bei Stromausfall: 1) heruntergefallene Sicherungen hochstellen; 2) wenn alle oben sind, obere Abdeckung entfernen, Hauptschalter zurücksetzen und einige Geräte ausschalten.",
       check_in: "Check-in ab 15:00 Uhr. Gegensprechanlage C8. Haustür aktiv 08:00–13:00 und 15:30–18:00. Pförtner: Paolo. Hilfe: +39 335 5245756.",
@@ -50,7 +54,8 @@
     },
     es: {
       wifi: "Wi-Fi: El router está en el escritorio cerca de la ventana. Gíralo para leer el SSID y la contraseña en la etiqueta. Si no funciona: comprueba que esté encendido, desenchúfalo 30 segundos y vuelve a conectarlo. Si continúa, escríbeme.",
-      trash: "Basura: Las bolsas están en la cocina. Ciérralas bien y llévalas a los contenedores del patio antes de salir. Hacemos reciclaje: sigue las indicaciones y no dejes basura en la escalera ni fuera del apartamento.Una vez separada toda la basura, antes del check-out llévela al patio exterior. Antes de la salida, en el lado derecho, encontrará los contenedores. Deposite cada tipo de residuo en el contenedor correspondiente. Gracias.",
+     air_conditioning: "
+     trash: "Basura: Las bolsas están en la cocina. Ciérralas bien y llévalas a los contenedores del patio antes de salir. Hacemos reciclaje: sigue las indicaciones y no dejes basura en la escalera ni fuera del apartamento.Una vez separada toda la basura, antes del check-out llévela al patio exterior. Antes de la salida, en el lado derecho, encontrará los contenedores. Deposite cada tipo de residuo en el contenedor correspondiente. Gracias.",
       heating: "Calefacción: Usa el mando del aire acondicionado. Pulsa MODE hasta que aparezca el símbolo del sol, ajusta a 26 °C y potencia 1. Apágalo siempre al salir.",
       electric_panel: "Cuadro eléctrico: Yendo hacia el baño, a la derecha antes de la puerta. Si no hay luz: 1) sube los interruptores bajados; 2) si ya están todos arriba, retira el panel superior, rearma el general y apaga algunos electrodomésticos.",
       check_in: "Check-in desde las 15:00. Portero automático C8. Puerta principal activa 08:00–13:00 y 15:30–18:00. Portero: Paolo. Ayuda: +39 335 5245756.",
@@ -65,7 +70,8 @@
   leonina: {
     it: {
       wifi: "Wi-Fi: Il router è sulla scrivania vicino alla finestra. Giralo per leggere SSID e password sull'etichetta. Se non funziona: controlla che sia acceso, scollegalo 30 secondi e ricollegalo. Se il problema continua, scrivimi.",
-      trash: "Spazzatura: Trovi i sacchi in cucina. Chiudili bene e portali nei cassonetti a 50 metri a sinistra dell'uscita del portone. Facciamo raccolta differenziata: segui le indicazioni e non lasciare immondizia nel vano scala o fuori dalla porta.",
+      air_conditioning: "
+     trash: "Spazzatura: Trovi i sacchi in cucina. Chiudili bene e portali nei cassonetti a 50 metri a sinistra dell'uscita del portone. Facciamo raccolta differenziata: segui le indicazioni e non lasciare immondizia nel vano scala o fuori dalla porta.",
       heating: "Riscaldamento: Usa il telecomando dell'aria condizionata, premi MODE finché compare il simbolo del sole e imposta 26 °C con potenza 1. Spegni sempre il condizionatore quando esci.",
       electric_panel: "Quadro elettrico: È sul lato sinistro guardando la porta di uscita dell'appartamento. Se manca la corrente, alza gli interruttori abbassati e spegni qualche elettrodomestico.",
       check_in: "Check-in dalle 15:00. Citofono: interno 16. Codice portone: 7171 + simbolo della chiave. Aiuto: +39 335 5245756.",
@@ -77,7 +83,8 @@
     },
     en: {
       wifi: "Wi-Fi: The router is on the desk near the window. Turn it to read the SSID and password on the label. If it doesn't work: check it's on, unplug it for 30 seconds and plug it back in. If the issue continues, message me.",
-      trash: "Trash: Bags are in the kitchen. Close them well and take them to the bins 50 meters to the left after exiting the building. Recycling is required: follow the signs and do not leave trash in the stairwell or outside the apartment door.",
+      air_conditioning: "
+     trash: "Trash: Bags are in the kitchen. Close them well and take them to the bins 50 meters to the left after exiting the building. Recycling is required: follow the signs and do not leave trash in the stairwell or outside the apartment door.",
       heating: "Heating: Use the A/C remote control, press MODE until the SUN symbol appears, set 26 °C and power level 1. Always turn it off when leaving.",
       electric_panel: "Electric panel: Located on the left side when facing the apartment exit door. If there's no power, reset the lowered breakers and turn off some appliances.",
       check_in: "Check-in from 3:00 PM. Intercom: unit 16. Building door code: 7171 + key symbol. Help: +39 335 5245756.",
@@ -89,7 +96,8 @@
     },
     fr: {
       wifi: "Wi-Fi : Le routeur est sur le bureau près de la fenêtre. Tournez-le pour lire le SSID et le mot de passe sur l'étiquette. S'il ne fonctionne pas : vérifiez qu'il est allumé, débranchez-le 30 secondes puis rebranchez-le. Sinon, écrivez-moi.",
-      trash: "Déchets : Les sacs sont dans la cuisine. Fermez-les bien et jetez-les dans les bacs à 50 mètres à gauche en sortant de l'immeuble. Le tri est obligatoire : suivez les indications et ne laissez rien dans l'escalier ou devant la porte.",
+    air_conditioning: "
+     trash: "Déchets : Les sacs sont dans la cuisine. Fermez-les bien et jetez-les dans les bacs à 50 mètres à gauche en sortant de l'immeuble. Le tri est obligatoire : suivez les indications et ne laissez rien dans l'escalier ou devant la porte.",
       heating: "Chauffage : Utilisez la télécommande de la climatisation, appuyez sur MODE jusqu'au symbole soleil, réglez à 26 °C et puissance 1. Éteignez toujours en sortant.",
       electric_panel: "Tableau électrique : Situé à gauche en regardant la porte de sortie de l'appartement. En cas de coupure, remontez les disjoncteurs et éteignez quelques appareils.",
       check_in: "Arrivée à partir de 15h00. Interphone : appartement 16. Code porte : 7171 + symbole clé. Aide : +39 335 5245756.",
@@ -101,7 +109,8 @@
     },
     de: {
       wifi: "WLAN: Der Router steht auf dem Schreibtisch nahe dem Fenster. Drehen Sie ihn, um SSID und Passwort auf dem Aufkleber zu lesen. Falls es nicht funktioniert: prüfen Sie, ob er eingeschaltet ist, ziehen Sie den Stecker 30 Sekunden und stecken Sie ihn wieder ein. Dann bitte melden.",
-      trash: "Müll: Müllbeutel befinden sich in der Küche. Gut verschließen und 50 Meter links vom Hauseingang in die Tonnen bringen. Mülltrennung ist Pflicht: nichts im Treppenhaus oder vor der Wohnungstür abstellen.",
+     air_conditioning: "
+     trash: "Müll: Müllbeutel befinden sich in der Küche. Gut verschließen und 50 Meter links vom Hauseingang in die Tonnen bringen. Mülltrennung ist Pflicht: nichts im Treppenhaus oder vor der Wohnungstür abstellen.",
       heating: "Heizung: Verwenden Sie die Klimaanlagen-Fernbedienung, MODE drücken bis das Sonnensymbol erscheint, 26 °C und Stufe 1 einstellen. Beim Verlassen immer ausschalten.",
       electric_panel: "Sicherungskasten: Befindet sich links, wenn man zur Ausgangstür blickt. Bei Stromausfall Sicherungen hochstellen und einige Geräte ausschalten.",
       check_in: "Check-in ab 15:00 Uhr. Gegensprechanlage: Wohnung 16. Haustürcode: 7171 + Schlüsselsymbol. Hilfe: +39 335 5245756.",
@@ -113,7 +122,8 @@
     },
     es: {
       wifi: "Wi-Fi: El router está en el escritorio cerca de la ventana. Gíralo para leer el SSID y la contraseña en la etiqueta. Si no funciona: comprueba que esté encendido, desenchúfalo 30 segundos y vuelve a conectarlo. Si continúa, escríbeme.",
-      trash: "Basura: Las bolsas están en la cocina. Ciérralas bien y llévalas a los contenedores a 50 metros a la izquierda al salir del edificio. El reciclaje es obligatorio: sigue las indicaciones y no dejes basura en la escalera ni fuera del apartamento.",
+     air_conditioning: "
+     trash: "Basura: Las bolsas están en la cocina. Ciérralas bien y llévalas a los contenedores a 50 metros a la izquierda al salir del edificio. El reciclaje es obligatorio: sigue las indicaciones y no dejes basura en la escalera ni fuera del apartamento.",
       heating: "Calefacción: Usa el mando del aire acondicionado, pulsa MODE hasta que aparezca el símbolo del sol, ajusta a 26 °C y potencia 1. Apágalo siempre al salir.",
       electric_panel: "Cuadro eléctrico: Está a la izquierda mirando la puerta de salida del apartamento. Si no hay luz, sube los interruptores bajados y apaga algunos electrodomésticos.",
       check_in: "Check-in desde las 15:00. Portero automático: piso 16. Código del portal: 7171 + símbolo de la llave. Ayuda: +39 335 5245756.",
@@ -191,7 +201,8 @@
   portico: {
     it: {
       wifi: "Wi-Fi: Il router è sul tavolo. Giralo per leggere SSID e password sull'etichetta. Se non funziona: controlla che sia acceso, scollegalo 30 secondi e ricollegalo. Se il problema continua, scrivimi.",
-      trash: "Spazzatura: Prima di lasciare l'appartamento, chiudi bene i sacchetti e portali all'isola ecologica di fronte a Piazza delle Cinque Scole (lato Lungotevere). Facciamo raccolta differenziata: segui le indicazioni e non lasciare rifiuti nel vano scala o fuori dalla porta.",
+      air_conditioning: "
+     trash: "Spazzatura: Prima di lasciare l'appartamento, chiudi bene i sacchetti e portali all'isola ecologica di fronte a Piazza delle Cinque Scole (lato Lungotevere). Facciamo raccolta differenziata: segui le indicazioni e non lasciare rifiuti nel vano scala o fuori dalla porta.",
       heating: "Riscaldamento: L'appartamento ha una stufa elettrica. Usala solo quando sei in casa e spegnila sempre quando esci, per motivi di sicurezza.",
       electric_panel: "Quadro elettrico: Se manca la corrente, trovi il quadro sulla destra prima della porta d'uscita dell'appartamento: tutti gli interruttori (incluso il piccolo bianco) devono essere verso l'alto. Se il problema continua, all'uscita del palazzo, sulla sinistra prima della porta d'ingresso, apri lo sportello del tuo contatore e rialza l'interruttore abbassato.",
       check_in: "Check-in dalle 15:00. Accesso tramite Virtual Key: il link apre portone e porta dell'appartamento. Dentro trovi le chiavi sul tavolo; dopo l'ingresso la Virtual Key viene disattivata. Aiuto: +39 335 5245756.",
@@ -203,7 +214,8 @@
     },
     en: {
       wifi: "Wi-Fi: The router is on the table. Turn it to read the SSID and password on the label. If it doesn't work: check it's on, unplug it for 30 seconds and plug it back in. If the issue continues, message me.",
-      trash: "Trash: Before leaving the apartment, close the bags well and take them to the recycling area in front of Piazza delle Cinque Scole (Lungotevere side). Recycling is required: follow the signs and do not leave trash in the stairwell or outside the door.",
+      air_conditioning: "
+     trash: "Trash: Before leaving the apartment, close the bags well and take them to the recycling area in front of Piazza delle Cinque Scole (Lungotevere side). Recycling is required: follow the signs and do not leave trash in the stairwell or outside the door.",
       heating: "Heating: The apartment has an electric heater. Use it only when you are inside and always turn it off when leaving for safety reasons.",
       electric_panel: "Electric panel: If there is no power, the panel is on the right before the apartment exit door. All switches (including the small white one) must be up. If the issue continues, outside the building on the left before the entrance door, open your meter box and reset the lowered switch.",
       check_in: "Check-in from 3:00 PM. Access via Virtual Key: the link opens both the building door and the apartment door. Inside you'll find the physical keys on the table; after entry the Virtual Key is deactivated. Help: +39 335 5245756.",
@@ -215,7 +227,8 @@
     },
     fr: {
       wifi: "Wi-Fi : Le routeur est sur la table. Tournez-le pour lire le SSID et le mot de passe sur l'étiquette. S'il ne fonctionne pas : vérifiez qu'il est allumé, débranchez-le 30 secondes puis rebranchez-le. Sinon, écrivez-moi.",
-      trash: "Déchets : Avant de partir, fermez bien les sacs et déposez-les à l'aire de tri en face de la Piazza delle Cinque Scole (côté Lungotevere). Le tri est obligatoire : suivez les indications et ne laissez rien dans l'escalier ou devant la porte.",
+     air_conditioning: "
+     trash: "Déchets : Avant de partir, fermez bien les sacs et déposez-les à l'aire de tri en face de la Piazza delle Cinque Scole (côté Lungotevere). Le tri est obligatoire : suivez les indications et ne laissez rien dans l'escalier ou devant la porte.",
       heating: "Chauffage : L'appartement est équipé d'un chauffage électrique. Utilisez-le uniquement lorsque vous êtes à l'intérieur et éteignez-le toujours en sortant.",
       electric_panel: "Tableau électrique : En cas de coupure, le tableau se trouve à droite avant la porte de sortie. Tous les interrupteurs (y compris le petit blanc) doivent être relevés. Si le problème persiste, à l'extérieur de l'immeuble sur la gauche, ouvrez le boîtier de votre compteur et réarmez l'interrupteur.",
       check_in: "Arrivée à partir de 15h00. Accès via Virtual Key : le lien ouvre le portail et la porte de l'appartement. À l'intérieur, vous trouverez les clés sur la table ; après l'entrée, la Virtual Key est désactivée. Aide : +39 335 5245756.",
@@ -227,7 +240,8 @@
     },
     de: {
       wifi: "WLAN: Der Router steht auf dem Tisch. Drehen Sie ihn, um SSID und Passwort auf dem Aufkleber zu lesen. Falls es nicht funktioniert: prüfen Sie, ob er eingeschaltet ist, ziehen Sie den Stecker 30 Sekunden und stecken Sie ihn wieder ein. Dann bitte melden.",
-      trash: "Müll: Vor der Abreise die Beutel gut verschließen und zur Recyclingstelle gegenüber der Piazza delle Cinque Scole (Lungotevere-Seite) bringen. Mülltrennung ist Pflicht: nichts im Treppenhaus oder vor der Tür abstellen.",
+      air_conditioning: "
+     trash: "Müll: Vor der Abreise die Beutel gut verschließen und zur Recyclingstelle gegenüber der Piazza delle Cinque Scole (Lungotevere-Seite) bringen. Mülltrennung ist Pflicht: nichts im Treppenhaus oder vor der Tür abstellen.",
       heating: "Heizung: Die Wohnung hat einen elektrischen Heizkörper. Nur benutzen, wenn Sie in der Wohnung sind, und beim Verlassen immer ausschalten.",
       electric_panel: "Sicherungskasten: Bei Stromausfall befindet sich der Kasten rechts vor der Wohnungstür. Alle Schalter (auch der kleine weiße) müssen oben sein. Falls das Problem bleibt, draußen links vor dem Eingang den Zählerkasten öffnen und den Schalter hochstellen.",
       check_in: "Check-in ab 15:00 Uhr. Zugang über Virtual Key: Der Link öffnet Haustür und Wohnungstür. Drinnen liegen die Schlüssel auf dem Tisch; danach wird der Virtual Key deaktiviert. Hilfe: +39 335 5245756.",
@@ -239,7 +253,8 @@
     },
     es: {
       wifi: "Wi-Fi: El router está sobre la mesa. Gíralo para leer el SSID y la contraseña en la etiqueta. Si no funciona: comprueba que esté encendido, desenchúfalo 30 segundos y vuelve a conectarlo. Si continúa, escríbeme.",
-      trash: "Basura: Antes de salir, cierra bien las bolsas y llévalas al punto de reciclaje frente a Piazza delle Cinque Scole (lado Lungotevere). El reciclaje es obligatorio: sigue las indicaciones y no dejes basura en la escalera ni fuera de la puerta.",
+      air_conditioning: "
+     trash: "Basura: Antes de salir, cierra bien las bolsas y llévalas al punto de reciclaje frente a Piazza delle Cinque Scole (lado Lungotevere). El reciclaje es obligatorio: sigue las indicaciones y no dejes basura en la escalera ni fuera de la puerta.",
       heating: "Calefacción: El apartamento tiene una estufa eléctrica. Úsala solo cuando estés dentro y apágala siempre al salir por seguridad.",
       electric_panel: "Cuadro eléctrico: Si no hay luz, el cuadro está a la derecha antes de la puerta de salida. Todos los interruptores (incluido el pequeño blanco) deben estar arriba. Si continúa, fuera del edificio a la izquierda abre el contador y sube el interruptor.",
       check_in: "Check-in desde las 15:00. Acceso con Virtual Key: el enlace abre el portal y la puerta del apartamento. Dentro encontrarás las llaves sobre la mesa; después la Virtual Key se desactiva. Ayuda: +39 335 5245756.",
@@ -254,7 +269,8 @@
   trastevere: {
     it: {
       wifi: "Wi-Fi: Il router è sul mobile all'ingresso. Giralo per leggere sull'etichetta il nome della rete (SSID) e la password. Se non funziona: controlla che sia acceso, scollegalo 30 secondi e ricollegalo. Se il problema continua, scrivimi.",
-      trash: "Spazzatura: In questo stabile NON si fa raccolta differenziata. Prima del check-out porta i rifiuti nei contenitori appena fuori dall'edificio, sul lato destro.",
+      air_conditioning: "
+     trash: "Spazzatura: In questo stabile NON si fa raccolta differenziata. Prima del check-out porta i rifiuti nei contenitori appena fuori dall'edificio, sul lato destro.",
       heating: "Riscaldamento: Per accenderlo vai nel corridoio subito dopo la cucina. Sulla parete di destra trovi il termostato: metti l'interruttore su ON e imposta 26 °C. In pochi minuti i termosifoni inizieranno a scaldarsi.",
       electric_panel: "Quadro elettrico: Se manca la corrente, il quadro è nell'antibagno, subito a destra entrando in casa. Controlla che tutti gli interruttori siano verso l'alto. Se non torna, scendi al piano -1: davanti alla porta del New York Institute apri lo sportello elettrico, cerca 'Bondi int. 9' e rialza l'interruttore sceso.",
       check_in: "Check-in dalle 15:00.",
@@ -266,7 +282,8 @@
     },
     en: {
       wifi: "Wi-Fi: The router is on the cabinet near the entrance. Turn it to read the SSID and password on the label. If it doesn't work: check it's on, unplug it for 30 seconds and plug it back in. If the issue continues, message me.",
-      trash: "Trash: There is NO recycling in this building. Before check-out, take the trash to the bins just outside the building, on the right side.",
+      air_conditioning: "
+     trash: "Trash: There is NO recycling in this building. Before check-out, take the trash to the bins just outside the building, on the right side.",
       heating: "Heating: To turn it on, go to the hallway just after the kitchen. On the right wall you'll find the thermostat: switch it to ON and set 26 °C. The radiators will start warming up in a few minutes.",
       electric_panel: "Electric panel: If there's no power, the panel is in the bathroom anteroom, immediately on the right when entering. Make sure all breakers are up. If power doesn't return, go to floor -1: in front of the New York Institute door open the electrical box, look for 'Bondi int. 9' and reset the lowered switch.",
       check_in: "Check-in from 3:00 PM.",
@@ -278,7 +295,8 @@
     },
     fr: {
       wifi: "Wi-Fi : Le routeur est sur le meuble près de l'entrée. Tournez-le pour lire le SSID et le mot de passe sur l'étiquette. En cas de problème, vérifiez qu'il est allumé, débranchez-le 30 secondes puis rebranchez-le.",
-      trash: "Déchets : Il n'y a PAS de tri sélectif dans cet immeuble. Avant le départ, déposez les sacs dans les conteneurs juste à l'extérieur du bâtiment, sur la droite.",
+    air_conditioning: "
+     trash: "Déchets : Il n'y a PAS de tri sélectif dans cet immeuble. Avant le départ, déposez les sacs dans les conteneurs juste à l'extérieur du bâtiment, sur la droite.",
       heating: "Chauffage : Pour l'allumer, allez dans le couloir après la cuisine. Sur le mur de droite se trouve le thermostat : mettez-le sur ON et réglez à 26 °C. Les radiateurs chaufferont en quelques minutes.",
       electric_panel: "Tableau électrique : En cas de coupure, le tableau est dans l'antichambre de la salle de bain, immédiatement à droite en entrant. Vérifiez que tous les interrupteurs sont levés. Sinon, descendez à l'étage -1 : devant la porte du New York Institute, ouvrez le coffret, cherchez 'Bondi int. 9' et réarmez l'interrupteur.",
       check_in: "Arrivée à partir de 15h00.",
@@ -290,7 +308,8 @@
     },
     de: {
       wifi: "WLAN: Der Router steht auf dem Möbelstück im Eingangsbereich. Drehen Sie ihn, um SSID und Passwort auf dem Aufkleber zu lesen. Bei Problemen: 30 Sekunden vom Strom trennen und wieder anschließen.",
-      trash: "Müll: In diesem Gebäude gibt es KEINE Mülltrennung. Vor dem Check-out den Müll in die Tonnen direkt rechts vor dem Gebäude bringen.",
+      air_conditioning: "
+     trash: "Müll: In diesem Gebäude gibt es KEINE Mülltrennung. Vor dem Check-out den Müll in die Tonnen direkt rechts vor dem Gebäude bringen.",
       heating: "Heizung: Zum Einschalten in den Flur nach der Küche gehen. An der rechten Wand befindet sich der Thermostat: auf ON stellen und 26 °C einstellen. Nach wenigen Minuten werden die Heizkörper warm.",
       electric_panel: "Sicherungskasten: Bei Stromausfall befindet sich der Kasten im Vorbad rechts beim Eintreten. Prüfen, ob alle Schalter oben sind. Falls nicht, in Etage -1 gehen, vor der Tür des New York Institute den Kasten öffnen, 'Bondi int. 9' suchen und den Schalter hochstellen.",
       check_in: "Check-in ab 15:00 Uhr.",
