@@ -25,16 +25,15 @@ const INTENTS = {
   ],
 
   heating: [
-    "riscaldamento", "stufa", "caldo", "freddo", "temperatura",
-    "come scaldo", "come riscaldo", "accendere", "spegnere",
-    "termostato", "aria condizionata", "condizionatore",
-    "fa freddo", "fa caldo", "ho freddo", "ho caldo",
-    "heating", "heater", "heat", "warm", "cold", "temperature",
-    "air conditioning", "ac", "thermostat", "it's cold", "it's hot",
-    "calefacción", "calor", "frio", "frío",
-    "chauffage", "chaud", "froid",
-    "heizung", "warm", "kalt"
-  ],
+  "riscaldamento", "stufa", "caldo", "temperatura",
+  "come scaldo", "come riscaldo", "accendere", "spegnere",
+  "termostato", "fa freddo", "ho freddo",
+  "heating", "heater", "heat", "warm", "temperature",
+  "thermostat", "it's cold", "i am cold",
+  "calefacción", "calor", "tengo frío", "hace frío",
+  "chauffage", "chaud", "j'ai froid", "il fait froid",
+  "heizung", "warm", "kalt", "mir ist kalt"
+] ,
 
   electric_panel: [
     "corrente", "elettricità", "luce", "luci", "interruttore",
