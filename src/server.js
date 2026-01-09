@@ -715,7 +715,7 @@ console.log("\n🔐 STEP 2: Check HostAway Token");
       });
     }
 
-      console.log("\n💬 STEP 5: Get Answer");
+   console.log("\n💬 STEP 5: Get Answer");
 
 // Mappa listingId → appartamento
 const LISTING_TO_APARTMENT = {
@@ -726,7 +726,15 @@ const LISTING_TO_APARTMENT = {
   "194162": "scala"
 };
 
-const apartment = LISTING_TO_APARTMENT[listingId] || "portico"; // fallback a portico
+// 🔍 DEBUG: vediamo cosa succede
+console.log("  ├─ listingId ricevuto:", listingId);
+console.log("  ├─ tipo listingId:", typeof listingId);
+
+const apartment = LISTING_TO_APARTMENT[String(listingId)] || "portico";
+
+console.log("  ├─ Appartamento selezionato:", apartment);
+console.log("  ├─ Lingua:", lang);
+console.log("  └─ Intent:", intent);
 
 const answer = ANSWERS[apartment]?.[lang]?.[intent] || null;
     if (!answer) {
