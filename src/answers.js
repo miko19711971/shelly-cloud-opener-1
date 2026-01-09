@@ -201,7 +201,7 @@
   portico: {
     it: {
       wifi: "Wi-Fi: Il router è sul tavolo. Giralo per leggere SSID e password sull'etichetta. Se non funziona: controlla che sia acceso, scollegalo 30 secondi e ricollegalo. Se il problema continua, scrivimi.",
-      air_conditioning: "
+      air_conditioning: "Per accendere l’aria condizionata usa il telecomando sopra il condizionatore. Premi MODE, seleziona il simbolo del fiocco di neve, poi POWER 1. Imposta la temperatura a 23 o 24 gradi e ricordati di spegnere il condizionatore quando esci per visitare la città."
      trash: "Spazzatura: Prima di lasciare l'appartamento, chiudi bene i sacchetti e portali all'isola ecologica di fronte a Piazza delle Cinque Scole (lato Lungotevere). Facciamo raccolta differenziata: segui le indicazioni e non lasciare rifiuti nel vano scala o fuori dalla porta.",
       heating: "Riscaldamento: L'appartamento ha una stufa elettrica. Usala solo quando sei in casa e spegnila sempre quando esci, per motivi di sicurezza.",
       electric_panel: "Quadro elettrico: Se manca la corrente, trovi il quadro sulla destra prima della porta d'uscita dell'appartamento: tutti gli interruttori (incluso il piccolo bianco) devono essere verso l'alto. Se il problema continua, all'uscita del palazzo, sulla sinistra prima della porta d'ingresso, apri lo sportello del tuo contatore e rialza l'interruttore abbassato.",
@@ -214,7 +214,7 @@
     },
     en: {
       wifi: "Wi-Fi: The router is on the table. Turn it to read the SSID and password on the label. If it doesn't work: check it's on, unplug it for 30 seconds and plug it back in. If the issue continues, message me.",
-      air_conditioning: "
+      air_conditioning: "To turn on the air conditioning, use the remote control above the unit. Press MODE, select the snowflake symbol, then POWER 1. Set the temperature to 23 or 24 degrees, and remember to turn off the air conditioning when you go out to visit the city."
      trash: "Trash: Before leaving the apartment, close the bags well and take them to the recycling area in front of Piazza delle Cinque Scole (Lungotevere side). Recycling is required: follow the signs and do not leave trash in the stairwell or outside the door.",
       heating: "Heating: The apartment has an electric heater. Use it only when you are inside and always turn it off when leaving for safety reasons.",
       electric_panel: "Electric panel: If there is no power, the panel is on the right before the apartment exit door. All switches (including the small white one) must be up. If the issue continues, outside the building on the left before the entrance door, open your meter box and reset the lowered switch.",
@@ -227,7 +227,7 @@
     },
     fr: {
       wifi: "Wi-Fi : Le routeur est sur la table. Tournez-le pour lire le SSID et le mot de passe sur l'étiquette. S'il ne fonctionne pas : vérifiez qu'il est allumé, débranchez-le 30 secondes puis rebranchez-le. Sinon, écrivez-moi.",
-     air_conditioning: "
+     air_conditioning: "Pour allumer la climatisation, utilisez la télécommande située au-dessus de l’appareil. Appuyez sur MODE, sélectionnez le symbole du flocon de neige, puis POWER 1. Réglez la température à 23 ou 24 degrés et pensez à éteindre la climatisation lorsque vous sortez visiter la ville."
      trash: "Déchets : Avant de partir, fermez bien les sacs et déposez-les à l'aire de tri en face de la Piazza delle Cinque Scole (côté Lungotevere). Le tri est obligatoire : suivez les indications et ne laissez rien dans l'escalier ou devant la porte.",
       heating: "Chauffage : L'appartement est équipé d'un chauffage électrique. Utilisez-le uniquement lorsque vous êtes à l'intérieur et éteignez-le toujours en sortant.",
       electric_panel: "Tableau électrique : En cas de coupure, le tableau se trouve à droite avant la porte de sortie. Tous les interrupteurs (y compris le petit blanc) doivent être relevés. Si le problème persiste, à l'extérieur de l'immeuble sur la gauche, ouvrez le boîtier de votre compteur et réarmez l'interrupteur.",
@@ -240,8 +240,8 @@
     },
     de: {
       wifi: "WLAN: Der Router steht auf dem Tisch. Drehen Sie ihn, um SSID und Passwort auf dem Aufkleber zu lesen. Falls es nicht funktioniert: prüfen Sie, ob er eingeschaltet ist, ziehen Sie den Stecker 30 Sekunden und stecken Sie ihn wieder ein. Dann bitte melden.",
-      air_conditioning: "
-     trash: "Müll: Vor der Abreise die Beutel gut verschließen und zur Recyclingstelle gegenüber der Piazza delle Cinque Scole (Lungotevere-Seite) bringen. Mülltrennung ist Pflicht: nichts im Treppenhaus oder vor der Tür abstellen.",
+      air_conditioning: "Um die Klimaanlage einzuschalten, benutzen Sie die Fernbedienung oberhalb des Geräts. Drücken Sie MODE, wählen Sie das Schneeflocken-Symbol und dann POWER 1. Stellen Sie die Temperatur auf 23 oder 24 Grad ein und denken Sie daran, die Klimaanlage auszuschalten, wenn Sie die Stadt besichtigen."
+      trash: "Müll: Vor der Abreise die Beutel gut verschließen und zur Recyclingstelle gegenüber der Piazza delle Cinque Scole (Lungotevere-Seite) bringen. Mülltrennung ist Pflicht: nichts im Treppenhaus oder vor der Tür abstellen.",
       heating: "Heizung: Die Wohnung hat einen elektrischen Heizkörper. Nur benutzen, wenn Sie in der Wohnung sind, und beim Verlassen immer ausschalten.",
       electric_panel: "Sicherungskasten: Bei Stromausfall befindet sich der Kasten rechts vor der Wohnungstür. Alle Schalter (auch der kleine weiße) müssen oben sein. Falls das Problem bleibt, draußen links vor dem Eingang den Zählerkasten öffnen und den Schalter hochstellen.",
       check_in: "Check-in ab 15:00 Uhr. Zugang über Virtual Key: Der Link öffnet Haustür und Wohnungstür. Drinnen liegen die Schlüssel auf dem Tisch; danach wird der Virtual Key deaktiviert. Hilfe: +39 335 5245756.",
@@ -253,7 +253,7 @@
     },
     es: {
       wifi: "Wi-Fi: El router está sobre la mesa. Gíralo para leer el SSID y la contraseña en la etiqueta. Si no funciona: comprueba que esté encendido, desenchúfalo 30 segundos y vuelve a conectarlo. Si continúa, escríbeme.",
-      air_conditioning: "
+      air_conditioning: "Para encender el aire acondicionado, usa el control remoto situado encima del equipo. Pulsa MODE, selecciona el símbolo del copo de nieve y luego POWER 1. Ajusta la temperatura a 23 o 24 grados y recuerda apagar el aire acondicionado cuando salgas a visitar la ciudad."
      trash: "Basura: Antes de salir, cierra bien las bolsas y llévalas al punto de reciclaje frente a Piazza delle Cinque Scole (lado Lungotevere). El reciclaje es obligatorio: sigue las indicaciones y no dejes basura en la escalera ni fuera de la puerta.",
       heating: "Calefacción: El apartamento tiene una estufa eléctrica. Úsala solo cuando estés dentro y apágala siempre al salir por seguridad.",
       electric_panel: "Cuadro eléctrico: Si no hay luz, el cuadro está a la derecha antes de la puerta de salida. Todos los interruptores (incluido el pequeño blanco) deben estar arriba. Si continúa, fuera del edificio a la izquierda abre el contador y sube el interruptor.",
