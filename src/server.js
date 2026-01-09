@@ -666,6 +666,32 @@ app.post("/hostaway-incoming", async (req, res) => {
   conversationId,
   listingId
 } = req.body || {};
+    // ======================================================
+// 🔎 Resolve Listing ID from reservation (HostAway)
+// ======================================================
+let resolvedListingId = listingId;
+
+if (!resolvedListingId && reservationId) {
+  try {
+    console.log("🔎 Fetching reservation from HostAway:", reservationId);
+
+    const r = await axios.get(
+      `https://api.hostaway.com/v1/reservations/${reservationId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${HOSTAWAY_TOKEN}`
+        },
+        timeout: 10000
+      }
+    );
+
+    resolvedListingId = r.data?.result?.listingId;
+
+    console.log("🏠 ListingId resolved from reservation:", resolvedListingId);
+  } catch (e) {
+    console.error("❌ Failed to resolve listingId from reservation", e.message);
+  }
+}
 console.log("🏠 Listing ID:", listingId);
     console.log("📋 STEP 1: Extract Data");
     console.log("  ├─ message:", message);
