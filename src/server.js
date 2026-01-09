@@ -664,7 +664,7 @@ app.post("/hostaway-incoming", async (req, res) => {
   guestName,
   reservationId,
   conversationId,
-  listingMapId  // ✅ Usa direttamente listingMapId
+  listingMapId: listingId  // ✅ Prende listingMapId e lo rinomina in listingId
 } = req.body || {};
     // ======================================================
 // 🔎 Resolve Listing ID from reservation (HostAway)
