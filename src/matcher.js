@@ -11,7 +11,15 @@ const INTENTS = {
     "mot de passe", "quel est le mot de passe",
     "passwort", "wlan", "wie verbinde ich"
   ],
-
+air_conditioning: [
+  "aria condizionata", "condizionatore", "climatizzatore", "raffreddamento",
+  "fa caldo", "ho caldo", "rinfrescare", "raffreddare",
+  "accendere aria", "spegnere aria", "telecomando aria",
+  "air conditioning", "ac", "a/c", "cooling", "cool", "it's hot", "i am hot",
+  "aire acondicionado", "acondicionado", "hace calor", "tengo calor",
+  "climatisation", "il fait chaud", "j'ai chaud",
+  "klimaanlage", "es ist heiß", "mir ist heiß"
+],
   trash: [
     "spazzatura", "rifiuti", "immondizia", "pattumiera", "cestino",
     "dove butto", "dove metto", "dove posso buttare", "dove si butta",
