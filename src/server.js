@@ -715,8 +715,20 @@ console.log("\n🔐 STEP 2: Check HostAway Token");
       });
     }
 
-     console.log("\n💬 STEP 5: Get Answer");
-const answer = ANSWERS[lang]?.[intent] || null;
+      console.log("\n💬 STEP 5: Get Answer");
+
+// Mappa listingId → appartamento
+const LISTING_TO_APARTMENT = {
+  "194166": "arenula",
+  "194165": "portico",
+  "194163": "leonina",
+  "194164": "trastevere",
+  "194162": "scala"
+};
+
+const apartment = LISTING_TO_APARTMENT[listingId] || "portico"; // fallback a portico
+
+const answer = ANSWERS[apartment]?.[lang]?.[intent] || null;
     if (!answer) {
   return res.json({ ok: true, silent: true });
 }
