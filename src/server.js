@@ -8,6 +8,45 @@ import fs from "fs/promises";
 import { detectLanguage } from "./language.js";
 import { matchIntent } from "./matcher.js";
 import { ANSWERS } from "./answers.js";
+// Funzione per rilevare la lingua con AI
+async function detectLanguageWithAI(message) {
+  const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY;
+  
+  if (!ANTHROPIC_API_KEY) {
+    console.warn("⚠️ ANTHROPIC_API_KEY mancante, fallback a detectLanguage");
+    return detectLanguage(message);
+  }
+
+  try {
+    const response = await axios.post(
+      "https://api.anthropic.com/v1/messages",
+      {
+        model: "claude-sonnet-4-20250514",
+        max_tokens: 50,
+        messages: [{
+          role: "user",
+          content: `Detect the language of this message and respond with ONLY the 2-letter ISO code (it, en, es, fr, de). Message: "${message}"`
+        }]
+      },
+      {
+        headers: {
+          "x-api-key": ANTHROPIC_API_KEY,
+          "anthropic-version": "2023-06-01",
+          "content-type": "application/json"
+        },
+        timeout: 5000
+      }
+    );
+
+    const detectedLang = response.data.content[0].text.trim().toLowerCase();
+    console.log("🤖 AI detected language:", detectedLang);
+    return detectedLang;
+    
+  } catch (err) {
+    console.error("❌ AI detection failed:", err.message);
+    return detectLanguage(message); // Fallback
+  }
+}
 const APT_DEFAULT_LANG = {
   arenula: "en",
   leonina: "en",
