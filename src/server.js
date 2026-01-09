@@ -715,7 +715,7 @@ console.log("\n🔐 STEP 2: Check HostAway Token");
       });
     }
 
-   console.log("\n💬 STEP 5: Get Answer");
+    console.log("\n💬 STEP 5: Get Answer");
 
 // Mappa listingId → appartamento
 const LISTING_TO_APARTMENT = {
@@ -730,35 +730,33 @@ const LISTING_TO_APARTMENT = {
 console.log("  ├─ listingId ricevuto:", listingId);
 console.log("  ├─ tipo listingId:", typeof listingId);
 
+// ✅ RISOLUZIONE APPARTAMENTO (QUI VA MESSO)
+const apartment = LISTING_TO_APARTMENT[String(listingId)];
+
+if (!apartment) {
+  console.error("❌ ListingId non mappato:", listingId);
+  return res.json({
+    ok: true,
+    silent: true,
+    reason: "unknown_listing",
+    listingId
+  });
+}
+
+// 🔍 DEBUG OK
 console.log("  ├─ Appartamento selezionato:", apartment);
 console.log("  ├─ Lingua:", lang);
 console.log("  └─ Intent:", intent);
 
+// 🎯 SELEZIONE RISPOSTA
 const answer = ANSWERS[apartment]?.[lang]?.[intent] || null;
-    if (!answer) {
+
+if (!answer) {
   return res.json({ ok: true, silent: true });
 }
 
-    
-    console.log("  ✅ Answer found");
-    console.log("  └─ Preview:", answer.substring(0, 80) + "...");
-
-console.log("\n📤 STEP 6: Send Reply to HostAway");
-
- await axios.post(
-  `https://api.hostaway.com/v1/conversations/${conversationId}/messages`,
-  {
-    body: answer,
-    sendToGuest: true
-  },
-  {
-    headers: {
-      Authorization: `Bearer ${HOSTAWAY_TOKEN}`,
-      "Content-Type": "application/json"
-    },
-    timeout: 10000
-  }
-);
+console.log("  ✅ Answer found");
+console.log("  └─ Preview:", answer.substring(0, 80) + "...");
 
 console.log("\n✅ Reply Sent Successfully!");
 console.log("\n🎉 SUCCESS - Auto-reply sent to guest!\n");
