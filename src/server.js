@@ -730,8 +730,6 @@ const LISTING_TO_APARTMENT = {
 console.log("  ├─ listingId ricevuto:", listingId);
 console.log("  ├─ tipo listingId:", typeof listingId);
 
-const apartment = LISTING_TO_APARTMENT[String(listingId)] || "portico";
-
 console.log("  ├─ Appartamento selezionato:", apartment);
 console.log("  ├─ Lingua:", lang);
 console.log("  └─ Intent:", intent);
