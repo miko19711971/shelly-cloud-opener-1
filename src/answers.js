@@ -11,8 +11,16 @@
       laundry: "Lavanderia: Se devi lavare vestiti o asciugamani, scrivimi e ti indico la soluzione migliore in zona in base ai tuoi orari.",
       building: "Edificio: Citofono C8. Ascensore riservato ai proprietari (non utilizzarlo). Portone 08:00–13:00 e 15:30–18:00. Portineria: Paolo.",
       emergency: "Emergenze: UE 112 • Polizia 113 • Ambulanza 118 • Vigili del Fuoco 115 • Medico (EN) +39 06 488 2371 • Veterinario 24h +39 06 660 681",
-      parking: "Parcheggio: L'appartamento si trova nel centro storico (ZTL). L'accesso in auto è consentito solo dal lunedì al sabato dalle 19:00 alle 7:30. Per trovare il parcheggio più vicino cerca su Google Maps l'indirizzo dell'appartamento. Se hai difficoltà, chiamami: +39 335 5245756."
+      parking: "Parcheggio: L'appartamento si trova nel centro storico (ZTL). L'accesso in auto è consentito solo dal lunedì al sabato dalle 19:00 alle 7:30. Per trovare il parcheggio più vicino cerca su Google Maps l'indirizzo dell'appartamento. Se hai difficoltà, chiamami: +39 335 5245756.",
+
+      tickets: "Tutte le informazioni aggiornate su questo argomento sono disponibili nella guida dell’appartamento al seguente link:\nhttps://shelly-cloud-opener-1.onrender.com/guides/arenula/?lang=it",
+      day_trips: "Tutte le informazioni aggiornate su questo argomento sono disponibili nella guida dell’appartamento al seguente link:\nhttps://shelly-cloud-opener-1.onrender.com/guides/arenula/?lang=it",
+      attractions: "Tutte le informazioni aggiornate su questo argomento sono disponibili nella guida dell’appartamento al seguente link:\nhttps://shelly-cloud-opener-1.onrender.com/guides/arenula/?lang=it",
+      shopping: "Tutte le informazioni aggiornate su questo argomento sono disponibili nella guida dell’appartamento al seguente link:\nhttps://shelly-cloud-opener-1.onrender.com/guides/arenula/?lang=it",
+      restaurants: "Tutte le informazioni aggiornate su questo argomento sono disponibili nella guida dell’appartamento al seguente link:\nhttps://shelly-cloud-opener-1.onrender.com/guides/arenula/?lang=it",
+      transport: "Tutte le informazioni aggiornate su questo argomento sono disponibili nella guida dell’appartamento al seguente link:\nhttps://shelly-cloud-opener-1.onrender.com/guides/arenula/?lang=it"
     },
+
     en: {
       wifi: "Wi-Fi: The router is on the desk near the window. Turn it to read the SSID and password on the label. If it doesn't work: check it's on, unplug it for 30 seconds and plug it back in. If the issue continues, message me.",
       trash: "Trash: Bags are in the kitchen. Close them well and take them to the bins in the courtyard before leaving. We do recycling: follow the signs and do not leave trash in the stairwell or outside the apartment door.Once you have separated all the waste, before check-out please take it down to the outdoor courtyard. Before the exit, on the right-hand side, you will find the bins. Place each type of waste in the appropriate bin. Thank you.",
@@ -24,46 +32,14 @@
       laundry: "Laundry: If you need to wash clothes or towels, message me and I'll suggest the best option nearby based on your schedule.",
       building: "Building: Intercom C8. Elevator is reserved for owners (please do not use it). Main door 8:00–13:00 and 15:30–18:00. Doorman: Paolo.",
       emergency: "Emergencies: EU 112 • Police 113 • Ambulance 118 • Fire Brigade 115 • Doctor (EN) +39 06 488 2371 • 24h Vet +39 06 660 681",
-      parking: "Parking: The apartment is in the historic center (ZTL - Limited Traffic Zone). Car access is allowed only Monday to Saturday from 7:00 PM to 7:30 AM. To find the nearest parking, search the apartment address on Google Maps. If you need help, call me: +39 335 5245756."
-    },
-    fr: {
-      wifi: "Wi-Fi : Le routeur est sur le bureau près de la fenêtre. Tournez-le pour lire le SSID et le mot de passe sur l'étiquette. S'il ne fonctionne pas : vérifiez qu'il est allumé, débranchez-le 30 secondes puis rebranchez-le. Sinon, écrivez-moi.",
-      trash: "Déchets : Les sacs sont dans la cuisine. Fermez-les bien et jetez-les dans les bacs de la cour avant de partir. Tri sélectif obligatoire : suivez les indications et ne laissez rien dans l'escalier ou devant la porte.Une fois tous les déchets triés, avant le check-out, veuillez les descendre dans la cour extérieure. Avant la sortie, sur le côté droit, se trouvent les conteneurs. Déposez chaque type de déchet dans le conteneur correspondant. Merci.",
-      heating: "Chauffage : Utilisez la télécommande de la climatisation. Appuyez sur MODE jusqu'au symbole soleil, réglez à 26 °C et puissance 1. Éteignez toujours en sortant.",
-      electric_panel: "Tableau électrique : En allant vers la salle de bain, à droite avant la porte. En cas de coupure : 1) remontez les disjoncteurs baissés ; 2) s'ils sont tous levés, retirez le panneau supérieur, réarmez le général et éteignez quelques appareils.",
-      check_in: "Arrivée à partir de 15h00. Interphone C8. Porte principale active 8h00–13h00 et 15h30–18h00. Concierge : Paolo. Aide : +39 335 5245756.",
-      check_out: "Départ : Avant de partir, éteignez lumières et climatisation, fermez les fenêtres, laissez les clés sur la table et fermez la porte doucement.",
-      city_tax_info: "Taxe de séjour : Obligatoire à Rome pour les non-résidents. Pour cet appartement : 5 € par personne et par nuit, maximum 10 nuits. Perçue pour la Ville de Rome.",
-      laundry: "Blanchisserie : Si vous devez laver des vêtements ou serviettes, écrivez-moi et je vous indiquerai la meilleure solution à proximité.",
-      building: "Immeuble : Interphone C8. Ascenseur réservé aux propriétaires (merci de ne pas l'utiliser). Porte 8h00–13h00 et 15h30–18h00. Concierge : Paolo.",
-      emergency: "Urgences : UE 112 • Police 113 • Ambulance 118 • Pompiers 115 • Médecin (EN) +39 06 488 2371 • Vétérinaire 24h +39 06 660 681",
-      parking: "Parking : L'appartement se trouve dans le centre historique (ZTL - Zone à Trafic Limité). L'accès en voiture est autorisé uniquement du lundi au samedi de 19h00 à 7h30. Pour trouver le parking le plus proche, recherchez l'adresse de l'appartement sur Google Maps. En cas de difficulté, appelez-moi : +39 335 5245756."
-    },
-    de: {
-      wifi: "WLAN: Der Router steht auf dem Schreibtisch nahe dem Fenster. Drehen Sie ihn, um SSID und Passwort auf dem Aufkleber zu lesen. Falls es nicht funktioniert: prüfen Sie, ob er eingeschaltet ist, ziehen Sie den Stecker 30 Sekunden und stecken Sie ihn wieder ein. Dann bitte melden.",
-      trash: "Müll: Müllbeutel befinden sich in der Küche. Gut verschließen und vor dem Verlassen in die Tonnen im Innenhof bringen. Mülltrennung ist Pflicht: nichts im Treppenhaus oder vor der Wohnungstür abstellen.Nachdem Sie den Müll getrennt haben, bringen Sie ihn bitte vor dem Check-out in den Außenhof. Vor dem Ausgang, auf der rechten Seite, befinden sich die Müllcontainer. Entsorgen Sie jede Abfallart im entsprechenden Container. Danke.",
-      heating: "Heizung: Verwenden Sie die Klimaanlagen-Fernbedienung. MODE drücken bis das Sonnensymbol erscheint, 26 °C und Stufe 1 einstellen. Beim Verlassen immer ausschalten.",
-      electric_panel: "Sicherungskasten: Auf dem Weg zum Bad rechts vor der Tür. Bei Stromausfall: 1) heruntergefallene Sicherungen hochstellen; 2) wenn alle oben sind, obere Abdeckung entfernen, Hauptschalter zurücksetzen und einige Geräte ausschalten.",
-      check_in: "Check-in ab 15:00 Uhr. Gegensprechanlage C8. Haustür aktiv 08:00–13:00 und 15:30–18:00. Pförtner: Paolo. Hilfe: +39 335 5245756.",
-      check_out: "Check-out: Vor der Abreise Licht und Klimaanlage ausschalten, Fenster schließen, Schlüssel auf dem Tisch lassen und die Tür vorsichtig schließen.",
-      city_tax_info: "Touristensteuer: In Rom für Nicht-Einwohner verpflichtend. Für diese Wohnung 5 € pro Person und Nacht, maximal 10 Nächte. Wird für die Stadt Rom erhoben.",
-      laundry: "Wäscherei: Wenn Sie Kleidung oder Handtücher waschen müssen, schreiben Sie mir – ich empfehle Ihnen die beste Lösung in der Nähe.",
-      building: "Gebäude: Gegensprechanlage C8. Aufzug nur für Eigentümer (bitte nicht benutzen). Haustür 08:00–13:00 und 15:30–18:00. Pförtner: Paolo.",
-      emergency: "Notfälle: EU 112 • Polizei 113 • Rettung 118 • Feuerwehr 115 • Arzt (EN) +39 06 488 2371 • Tierarzt 24h +39 06 660 681",
-      parking: "Parkplatz: Die Wohnung liegt im historischen Zentrum (ZTL - Verkehrsbeschränkte Zone). Die Zufahrt mit dem Auto ist nur Montag bis Samstag von 19:00 bis 7:30 Uhr erlaubt. Um den nächsten Parkplatz zu finden, suchen Sie die Adresse der Wohnung bei Google Maps. Bei Schwierigkeiten rufen Sie mich an: +39 335 5245756."
-    },
-    es: {
-      wifi: "Wi-Fi: El router está en el escritorio cerca de la ventana. Gíralo para leer el SSID y la contraseña en la etiqueta. Si no funciona: comprueba que esté encendido, desenchúfalo 30 segundos y vuelve a conectarlo. Si continúa, escríbeme.",
-      trash: "Basura: Las bolsas están en la cocina. Ciérralas bien y llévalas a los contenedores del patio antes de salir. Hacemos reciclaje: sigue las indicaciones y no dejes basura en la escalera ni fuera del apartamento.Una vez separada toda la basura, antes del check-out llévela al patio exterior. Antes de la salida, en el lado derecho, encontrará los contenedores. Deposite cada tipo de residuo en el contenedor correspondiente. Gracias.",
-      heating: "Calefacción: Usa el mando del aire acondicionado. Pulsa MODE hasta que aparezca el símbolo del sol, ajusta a 26 °C y potencia 1. Apágalo siempre al salir.",
-      electric_panel: "Cuadro eléctrico: Yendo hacia el baño, a la derecha antes de la puerta. Si no hay luz: 1) sube los interruptores bajados; 2) si ya están todos arriba, retira el panel superior, rearma el general y apaga algunos electrodomésticos.",
-      check_in: "Check-in desde las 15:00. Portero automático C8. Puerta principal activa 08:00–13:00 y 15:30–18:00. Portero: Paolo. Ayuda: +39 335 5245756.",
-      check_out: "Check-out: Antes de salir apaga luces y aire acondicionado, cierra las ventanas, deja las llaves sobre la mesa y cierra la puerta con cuidado.",
-      city_tax_info: "Tasa turística: Obligatoria en Roma para no residentes. Para este apartamento es de 5 € por persona y noche, máximo 10 noches. Se cobra en nombre del Ayuntamiento de Roma.",
-      laundry: "Lavandería: Si necesitas lavar ropa o toallas, escríbeme y te indicaré la mejor opción cercana según tus horarios.",
-      building: "Edificio: Portero automático C8. Ascensor reservado a los propietarios (no usar). Puerta principal 08:00–13:00 y 15:30–18:00. Portero: Paolo.",
-      emergency: "Emergencias: UE 112 • Policía 113 • Ambulancia 118 • Bomberos 115 • Médico (EN) +39 06 488 2371 • Veterinario 24h +39 06 660 681",
-      parking: "Aparcamiento: El apartamento está en el centro histórico (ZTL - Zona de Tráfico Limitado). El acceso en coche está permitido solo de lunes a sábado de 19:00 a 7:30. Para encontrar el aparcamiento más cercano, busca la dirección del apartamento en Google Maps. Si tienes dificultades, llámame: +39 335 5245756."
+      parking: "Parking: The apartment is in the historic center (ZTL - Limited Traffic Zone). Car access is allowed only Monday to Saturday from 7:00 PM to 7:30 AM. To find the nearest parking, search the apartment address on Google Maps. If you need help, call me: +39 335 5245756.",
+
+      tickets: "All updated information on this topic is available in the apartment guide at the following link:\nhttps://shelly-cloud-opener-1.onrender.com/guides/arenula/?lang=en",
+      day_trips: "All updated information on this topic is available in the apartment guide at the following link:\nhttps://shelly-cloud-opener-1.onrender.com/guides/arenula/?lang=en",
+      attractions: "All updated information on this topic is available in the apartment guide at the following link:\nhttps://shelly-cloud-opener-1.onrender.com/guides/arenula/?lang=en",
+      shopping: "All updated information on this topic is available in the apartment guide at the following link:\nhttps://shelly-cloud-opener-1.onrender.com/guides/arenula/?lang=en",
+      restaurants: "All updated information on this topic is available in the apartment guide at the following link:\nhttps://shelly-cloud-opener-1.onrender.com/guides/arenula/?lang=en",
+      transport: "All updated information on this topic is available in the apartment guide at the following link:\nhttps://shelly-cloud-opener-1.onrender.com/guides/arenula/?lang=en"
     }
   },
 
@@ -79,8 +55,16 @@
       laundry: "Lavanderia: Puoi utilizzare la lavatrice in appartamento. In alternativa, scrivimi e ti indico una lavanderia in zona in base ai tuoi orari.",
       building: "Edificio: Citofono interno 16. Ascensore con porte manuali: ricordati di aprirle e chiuderle sempre. L'ascensore arriva al quarto piano; uscendo, l'appartamento è sulla sinistra.",
       emergency: "Emergenze: UE 112 • Polizia 113 • Ambulanza 118 • Vigili del Fuoco 115 • Medico (EN) +39 06 488 2371 • Veterinario 24h +39 06 660 681",
-      parking: "Parcheggio: L'appartamento si trova nel centro storico (ZTL). L'accesso in auto è consentito solo dal lunedì al sabato dalle 19:00 alle 7:30. Per trovare il parcheggio più vicino cerca su Google Maps l'indirizzo dell'appartamento. Se hai difficoltà, chiamami: +39 335 5245756."
+      parking: "Parcheggio: L'appartamento si trova nel centro storico (ZTL). L'accesso in auto è consentito solo dal lunedì al sabato dalle 19:00 alle 7:30. Per trovare il parcheggio più vicino cerca su Google Maps l'indirizzo dell'appartamento. Se hai difficoltà, chiamami: +39 335 5245756.",
+
+      tickets: "Tutte le informazioni aggiornate su questo argomento sono disponibili nella guida dell’appartamento al seguente link:\nhttps://shelly-cloud-opener-1.onrender.com/guides/leonina/?lang=it",
+      day_trips: "Tutte le informazioni aggiornate su questo argomento sono disponibili nella guida dell’appartamento al seguente link:\nhttps://shelly-cloud-opener-1.onrender.com/guides/leonina/?lang=it",
+      attractions: "Tutte le informazioni aggiornate su questo argomento sono disponibili nella guida dell’appartamento al seguente link:\nhttps://shelly-cloud-opener-1.onrender.com/guides/leonina/?lang=it",
+      shopping: "Tutte le informazioni aggiornate su questo argomento sono disponibili nella guida dell’appartamento al seguente link:\nhttps://shelly-cloud-opener-1.onrender.com/guides/leonina/?lang=it",
+      restaurants: "Tutte le informazioni aggiornate su questo argomento sono disponibili nella guida dell’appartamento al seguente link:\nhttps://shelly-cloud-opener-1.onrender.com/guides/leonina/?lang=it",
+      transport: "Tutte le informazioni aggiornate su questo argomento sono disponibili nella guida dell’appartamento al seguente link:\nhttps://shelly-cloud-opener-1.onrender.com/guides/leonina/?lang=it"
     },
+
     en: {
       wifi: "Wi-Fi: The router is on the desk near the window. Turn it to read the SSID and password on the label. If it doesn't work: check it's on, unplug it for 30 seconds and plug it back in. If the issue continues, message me.",
       trash: "Trash: Bags are in the kitchen. Close them well and take them to the bins 50 meters to the left after exiting the building. Recycling is required: follow the signs and do not leave trash in the stairwell or outside the apartment door.",
@@ -92,46 +76,14 @@
       laundry: "Laundry: You can use the washing machine in the apartment. Alternatively, message me and I'll suggest a nearby laundry option based on your schedule.",
       building: "Building: Intercom unit 16. Elevator has manual doors—please always open and close them. The elevator goes to the 4th floor; when exiting, the apartment is on the left.",
       emergency: "Emergencies: EU 112 • Police 113 • Ambulance 118 • Fire Brigade 115 • Doctor (EN) +39 06 488 2371 • 24h Vet +39 06 660 681",
-      parking: "Parking: The apartment is in the historic center (ZTL - Limited Traffic Zone). Car access is allowed only Monday to Saturday from 7:00 PM to 7:30 AM. To find the nearest parking, search the apartment address on Google Maps. If you need help, call me: +39 335 5245756."
-    },
-    fr: {
-      wifi: "Wi-Fi : Le routeur est sur le bureau près de la fenêtre. Tournez-le pour lire le SSID et le mot de passe sur l'étiquette. S'il ne fonctionne pas : vérifiez qu'il est allumé, débranchez-le 30 secondes puis rebranchez-le. Sinon, écrivez-moi.",
-      trash: "Déchets : Les sacs sont dans la cuisine. Fermez-les bien et jetez-les dans les bacs à 50 mètres à gauche en sortant de l'immeuble. Le tri est obligatoire : suivez les indications et ne laissez rien dans l'escalier ou devant la porte.",
-      heating: "Chauffage : Utilisez la télécommande de la climatisation, appuyez sur MODE jusqu'au symbole soleil, réglez à 26 °C et puissance 1. Éteignez toujours en sortant.",
-      electric_panel: "Tableau électrique : Situé à gauche en regardant la porte de sortie de l'appartement. En cas de coupure, remontez les disjoncteurs et éteignez quelques appareils.",
-      check_in: "Arrivée à partir de 15h00. Interphone : appartement 16. Code porte : 7171 + symbole clé. Aide : +39 335 5245756.",
-      check_out: "Départ : Avant de partir, éteignez lumières et climatisation, fermez les fenêtres, laissez les clés sur la table et fermez la porte soigneusement.",
-      city_tax_info: "Taxe de séjour : Obligatoire à Rome pour les non-résidents. Pour cet appartement : 6 € par personne et par nuit, maximum 10 nuits. Perçue pour la Ville de Rome.",
-      laundry: "Blanchisserie : Vous pouvez utiliser le lave-linge de l'appartement. Sinon, écrivez-moi et je vous indiquerai une solution à proximité.",
-      building: "Immeuble : Interphone appartement 16. Ascenseur à portes manuelles — merci de toujours les ouvrir et fermer. L'ascenseur arrive au 4e étage ; en sortant, l'appartement est à gauche.",
-      emergency: "Urgences : UE 112 • Police 113 • Ambulance 118 • Pompiers 115 • Médecin (EN) +39 06 488 2371 • Vétérinaire 24h +39 06 660 681",
-      parking: "Parking : L'appartement se trouve dans le centre historique (ZTL - Zone à Trafic Limité). L'accès en voiture est autorisé uniquement du lundi au samedi de 19h00 à 7h30. Pour trouver le parking le plus proche, recherchez l'adresse de l'appartement sur Google Maps. En cas de difficulté, appelez-moi : +39 335 5245756."
-    },
-    de: {
-      wifi: "WLAN: Der Router steht auf dem Schreibtisch nahe dem Fenster. Drehen Sie ihn, um SSID und Passwort auf dem Aufkleber zu lesen. Falls es nicht funktioniert: prüfen Sie, ob er eingeschaltet ist, ziehen Sie den Stecker 30 Sekunden und stecken Sie ihn wieder ein. Dann bitte melden.",
-      trash: "Müll: Müllbeutel befinden sich in der Küche. Gut verschließen und 50 Meter links vom Hauseingang in die Tonnen bringen. Mülltrennung ist Pflicht: nichts im Treppenhaus oder vor der Wohnungstür abstellen.",
-      heating: "Heizung: Verwenden Sie die Klimaanlagen-Fernbedienung, MODE drücken bis das Sonnensymbol erscheint, 26 °C und Stufe 1 einstellen. Beim Verlassen immer ausschalten.",
-      electric_panel: "Sicherungskasten: Befindet sich links, wenn man zur Ausgangstür blickt. Bei Stromausfall Sicherungen hochstellen und einige Geräte ausschalten.",
-      check_in: "Check-in ab 15:00 Uhr. Gegensprechanlage: Wohnung 16. Haustürcode: 7171 + Schlüsselsymbol. Hilfe: +39 335 5245756.",
-      check_out: "Check-out: Vor der Abreise Licht und Klimaanlage ausschalten, Fenster schließen, Schlüssel auf dem Tisch lassen und die Tür sorgfältig schließen.",
-      city_tax_info: "Touristensteuer: In Rom für Nicht-Einwohner verpflichtend. Für diese Wohnung 6 € pro Person und Nacht, maximal 10 Nächte. Wird für die Stadt Rom erhoben.",
-      laundry: "Wäscherei: Waschmaschine in der Wohnung vorhanden. Alternativ schreiben Sie mir für eine Empfehlung in der Nähe.",
-      building: "Gebäude: Gegensprechanlage Wohnung 16. Aufzug mit manuellen Türen — bitte immer öffnen und schließen. Der Aufzug fährt bis in den 4. Stock; beim Aussteigen ist die Wohnung links.",
-      emergency: "Notfälle: EU 112 • Polizei 113 • Rettung 118 • Feuerwehr 115 • Arzt (EN) +39 06 488 2371 • Tierarzt 24h +39 06 660 681",
-      parking: "Parkplatz: Die Wohnung liegt im historischen Zentrum (ZTL - Verkehrsbeschränkte Zone). Die Zufahrt mit dem Auto ist nur Montag bis Samstag von 19:00 bis 7:30 Uhr erlaubt. Um den nächsten Parkplatz zu finden, suchen Sie die Adresse der Wohnung bei Google Maps. Bei Schwierigkeiten rufen Sie mich an: +39 335 5245756."
-    },
-    es: {
-      wifi: "Wi-Fi: El router está en el escritorio cerca de la ventana. Gíralo para leer el SSID y la contraseña en la etiqueta. Si no funciona: comprueba que esté encendido, desenchúfalo 30 segundos y vuelve a conectarlo. Si continúa, escríbeme.",
-      trash: "Basura: Las bolsas están en la cocina. Ciérralas bien y llévalas a los contenedores a 50 metros a la izquierda al salir del edificio. El reciclaje es obligatorio: sigue las indicaciones y no dejes basura en la escalera ni fuera del apartamento.",
-      heating: "Calefacción: Usa el mando del aire acondicionado, pulsa MODE hasta que aparezca el símbolo del sol, ajusta a 26 °C y potencia 1. Apágalo siempre al salir.",
-      electric_panel: "Cuadro eléctrico: Está a la izquierda mirando la puerta de salida del apartamento. Si no hay luz, sube los interruptores bajados y apaga algunos electrodomésticos.",
-      check_in: "Check-in desde las 15:00. Portero automático: piso 16. Código del portal: 7171 + símbolo de la llave. Ayuda: +39 335 5245756.",
-      check_out: "Check-out: Antes de salir apaga luces y aire acondicionado, cierra las ventanas, deja las llaves sobre la mesa y cierra la puerta con cuidado.",
-      city_tax_info: "Tasa turística: Obligatoria en Roma para no residentes. Para este apartamento es de 6 € por persona y noche, máximo 10 noches. Se cobra en nombre del Ayuntamiento de Roma.",
-      laundry: "Lavandería: Puedes usar la lavadora del apartamento. Si lo prefieres, escríbeme y te indicaré una lavandería cercana.",
-      building: "Edificio: Portero automático piso 16. Ascensor con puertas manuales — recuerda abrirlas y cerrarlas siempre. Llega hasta la 4ª planta; al salir, el apartamento está a la izquierda.",
-      emergency: "Emergencias: UE 112 • Policía 113 • Ambulancia 118 • Bomberos 115 • Médico (EN) +39 06 488 2371 • Veterinario 24h +39 06 660 681",
-      parking: "Aparcamiento: El apartamento está en el centro histórico (ZTL - Zona de Tráfico Limitado). El acceso en coche está permitido solo de lunes a sábado de 19:00 a 7:30. Para encontrar el aparcamiento más cercano, busca la dirección del apartamento en Google Maps. Si tienes dificultades, llámame: +39 335 5245756."
+      parking: "Parking: The apartment is in the historic center (ZTL - Limited Traffic Zone). Car access is allowed only Monday to Saturday from 7:00 PM to 7:30 AM. To find the nearest parking, search the apartment address on Google Maps. If you need help, call me: +39 335 5245756.",
+
+      tickets: "All updated information on this topic is available in the apartment guide at the following link:\nhttps://shelly-cloud-opener-1.onrender.com/guides/leonina/?lang=en",
+      day_trips: "All updated information on this topic is available in the apartment guide at the following link:\nhttps://shelly-cloud-opener-1.onrender.com/guides/leonina/?lang=en",
+      attractions: "All updated information on this topic is available in the apartment guide at the following link:\nhttps://shelly-cloud-opener-1.onrender.com/guides/leonina/?lang=en",
+      shopping: "All updated information on this topic is available in the apartment guide at the following link:\nhttps://shelly-cloud-opener-1.onrender.com/guides/leonina/?lang=en",
+      restaurants: "All updated information on this topic is available in the apartment guide at the following link:\nhttps://shelly-cloud-opener-1.onrender.com/guides/leonina/?lang=en",
+      transport: "All updated information on this topic is available in the apartment guide at the following link:\nhttps://shelly-cloud-opener-1.onrender.com/guides/leonina/?lang=en"
     }
   },
 
@@ -147,8 +99,16 @@
       laundry: "Lavanderia: Se hai bisogno di lavare vestiti o asciugamani, scrivimi e ti indico la soluzione migliore in zona Trastevere in base ai tuoi orari.",
       building: "Edificio: Appartamento in zona Trastevere, quartiere vivace e centrale. Accesso tramite portone con citofono esterno e interno.",
       emergency: "Emergenze: UE 112 • Polizia 113 • Ambulanza 118 • Vigili del Fuoco 115",
-      parking: "Parcheggio: L'appartamento si trova nel centro storico (ZTL). L'accesso in auto è consentito solo dal lunedì al sabato dalle 19:00 alle 7:30. Per trovare il parcheggio più vicino cerca su Google Maps l'indirizzo dell'appartamento. Se hai difficoltà, chiamami: +39 335 5245756."
+      parking: "Parcheggio: L'appartamento si trova nel centro storico (ZTL). L'accesso in auto è consentito solo dal lunedì al sabato dalle 19:00 alle 7:30. Per trovare il parcheggio più vicino cerca su Google Maps l'indirizzo dell'appartamento. Se hai difficoltà, chiamami: +39 335 5245756.",
+
+      tickets: "Tutte le informazioni aggiornate su questo argomento sono disponibili nella guida dell’appartamento al seguente link:\nhttps://shelly-cloud-opener-1.onrender.com/guides/scala/?lang=it",
+      day_trips: "Tutte le informazioni aggiornate su questo argomento sono disponibili nella guida dell’appartamento al seguente link:\nhttps://shelly-cloud-opener-1.onrender.com/guides/scala/?lang=it",
+      attractions: "Tutte le informazioni aggiornate su questo argomento sono disponibili nella guida dell’appartamento al seguente link:\nhttps://shelly-cloud-opener-1.onrender.com/guides/scala/?lang=it",
+      shopping: "Tutte le informazioni aggiornate su questo argomento sono disponibili nella guida dell’appartamento al seguente link:\nhttps://shelly-cloud-opener-1.onrender.com/guides/scala/?lang=it",
+      restaurants: "Tutte le informazioni aggiornate su questo argomento sono disponibili nella guida dell’appartamento al seguente link:\nhttps://shelly-cloud-opener-1.onrender.com/guides/scala/?lang=it",
+      transport: "Tutte le informazioni aggiornate su questo argomento sono disponibili nella guida dell’appartamento al seguente link:\nhttps://shelly-cloud-opener-1.onrender.com/guides/scala/?lang=it"
     },
+
     en: {
       wifi: "Wi-Fi: The router is on the right side of the living room, placed on a bench. SSID and password are on the router label. If it doesn't work: check it's on, unplug it for 30 seconds and plug it back in. If the issue continues, message me.",
       trash: "Trash: Before leaving, dispose of waste in the designated bins. Recycling is required: take the bags to the end of Via della Scala, corner with Via Garibaldi, every day from 8:00 to 9:30.",
@@ -160,46 +120,14 @@
       laundry: "Laundry: If you need to wash clothes or towels, message me and I'll suggest the best option in the Trastevere area.",
       building: "Building: Apartment located in the Trastevere district, lively and central. Access via building door with external and internal intercom.",
       emergency: "Emergencies: EU 112 • Police 113 • Ambulance 118 • Fire Brigade 115",
-      parking: "Parking: The apartment is in the historic center (ZTL - Limited Traffic Zone). Car access is allowed only Monday to Saturday from 7:00 PM to 7:30 AM. To find the nearest parking, search the apartment address on Google Maps. If you need help, call me: +39 335 5245756."
-    },
-    fr: {
-      wifi: "Wi-Fi : Le routeur se trouve à droite du salon, posé sur un banc. Le SSID et le mot de passe sont indiqués sur l'étiquette. En cas de problème : vérifiez qu'il est allumé, débranchez-le 30 secondes puis rebranchez-le.",
-      trash: "Déchets : Avant de partir, jetez les déchets dans les bacs prévus. Tri obligatoire : déposez les sacs au bout de la Via della Scala, angle Via Garibaldi, tous les jours de 8h00 à 9h30.",
-      heating: "Chauffage : Pour l'allumer, allez dans la chambre. Face à la fenêtre, à gauche se trouve un petit thermostat : mettez-le sur ON et réglez à 26 °C. Les radiateurs chauffent après quelques minutes.",
-      electric_panel: "Tableau électrique : En cas de coupure, le tableau est à droite en sortant de l'appartement. Vérifiez que tous les interrupteurs sont levés. Si nécessaire, ouvrez la trappe en bois au-dessus et réarmez l'interrupteur général.",
-      check_in: "Arrivée à partir de 15h00. Interphone extérieur : colonne gauche, premier bouton en bas. Interphone intérieur : A/1.",
-      check_out: "Départ : Avant de partir, éteignez les lumières, fermez les fenêtres, laissez les clés sur la table et fermez la porte correctement.",
-      city_tax_info: "Taxe de séjour : Obligatoire à Rome pour les non-résidents. Pour cet appartement : 5 € par personne et par nuit, maximum 10 nuits. Perçue pour la Ville de Rome.",
-      laundry: "Blanchisserie : Si vous devez laver des vêtements ou serviettes, écrivez-moi et je vous indiquerai la meilleure solution à Trastevere.",
-      building: "Immeuble : Appartement situé dans le quartier de Trastevere, animé et central. Accès par porte avec interphone extérieur et intérieur.",
-      emergency: "Urgences : UE 112 • Police 113 • Ambulance 118 • Pompiers 115",
-      parking: "Parking : L'appartement se trouve dans le centre historique (ZTL - Zone à Trafic Limité). L'accès en voiture est autorisé uniquement du lundi au samedi de 19h00 à 7h30. Pour trouver le parking le plus proche, recherchez l'adresse de l'appartement sur Google Maps. En cas de difficulté, appelez-moi : +39 335 5245756."
-    },
-    de: {
-      wifi: "WLAN: Der Router steht auf der rechten Seite des Wohnzimmers auf einer Bank. SSID und Passwort stehen auf dem Aufkleber. Bei Problemen: prüfen, ob er eingeschaltet ist, 30 Sekunden vom Strom trennen und wieder anschließen.",
-      trash: "Müll: Vor der Abreise den Müll in die vorgesehenen Tonnen bringen. Mülltrennung ist Pflicht: Abgabe am Ende der Via della Scala, Ecke Via Garibaldi, täglich von 8:00 bis 9:30.",
-      heating: "Heizung: Zum Einschalten ins Schlafzimmer gehen. Mit Blick zum Fenster befindet sich links ein kleiner Thermostat: auf ON stellen und 26 °C einstellen. Nach wenigen Minuten werden die Heizkörper warm.",
-      electric_panel: "Sicherungskasten: Bei Stromausfall befindet sich der Kasten rechts beim Verlassen der Wohnung. Alle Schalter müssen oben sein. Falls nötig, die Holzklappe darüber öffnen und den Hauptschalter hochstellen.",
-      check_in: "Check-in ab 15:00 Uhr. Außensprechanlage: linke Säule, erster Knopf von unten. Innensprechanlage: A/1.",
-      check_out: "Check-out: Vor der Abreise Licht ausschalten, Fenster schließen, Schlüssel auf dem Tisch lassen und die Tür sorgfältig schließen.",
-      city_tax_info: "Touristensteuer: In Rom für Nicht-Einwohner verpflichtend. Für diese Wohnung 5 € pro Person und Nacht, maximal 10 Nächte. Wird für die Stadt Rom erhoben.",
-      laundry: "Wäscherei: Wenn Sie Kleidung oder Handtücher waschen müssen, schreiben Sie mir – ich empfehle eine Lösung in Trastevere.",
-      building: "Gebäude: Wohnung im Stadtteil Trastevere, lebendig und zentral. Zugang über Haustür mit Außen- und Innensprechanlage.",
-      emergency: "Notfälle: EU 112 • Polizei 113 • Rettung 118 • Feuerwehr 115",
-      parking: "Parkplatz: Die Wohnung liegt im historischen Zentrum (ZTL - Verkehrsbeschränkte Zone). Die Zufahrt mit dem Auto ist nur Montag bis Samstag von 19:00 bis 7:30 Uhr erlaubt. Um den nächsten Parkplatz zu finden, suchen Sie die Adresse der Wohnung bei Google Maps. Bei Schwierigkeiten rufen Sie mich an: +39 335 5245756."
-    },
-    es: {
-      wifi: "Wi-Fi: El router está en el lado derecho del salón, sobre un banco. El SSID y la contraseña están en la etiqueta. Si hay problemas: comprueba que esté encendido, desenchúfalo 30 segundos y vuelve a conectarlo.",
-      trash: "Basura: Antes de salir, tira los residuos en los contenedores indicados. Reciclaje obligatorio: lleva las bolsas al final de Via della Scala, esquina con Via Garibaldi, todos los días de 8:00 a 9:30.",
-      heating: "Calefacción: Para encenderla ve al dormitorio. Mirando a la ventana, a la izquierda hay un pequeño termostato: ponlo en ON y ajusta a 26 °C. En pocos minutos los radiadores se calientan.",
-      electric_panel: "Cuadro eléctrico: Si se corta la luz, el cuadro está a la derecha al salir del apartamento. Comprueba que todos los interruptores estén arriba. Si hace falta, abre la trampilla de madera encima y rearma el general.",
-      check_in: "Check-in desde las 15:00. Portero automático exterior: columna izquierda, primer botón desde abajo. Portero automático interior: A/1.",
-      check_out: "Check-out: Antes de salir apaga las luces, cierra las ventanas, deja las llaves sobre la mesa y cierra bien la puerta.",
-      city_tax_info: "Tasa turística: Obligatoria en Roma para no residentes. Para este apartamento es de 5 € por persona y noche, máximo 10 noches. Se cobra en nombre del Ayuntamiento de Roma.",
-      laundry: "Lavandería: Si necesitas lavar ropa o toallas, escríbeme y te indicaré la mejor opción en la zona de Trastevere.",
-      building: "Edificio: Apartamento situado en el barrio de Trastevere, céntrico y animado. Acceso mediante puerta con portero automático exterior e interior.",
-      emergency: "Emergencias: UE 112 • Policía 113 • Ambulancia 118 • Bomberos 115",
-      parking: "Aparcamiento: El apartamento está en el centro histórico (ZTL - Zona de Tráfico Limitado). El acceso en coche está permitido solo de lunes a sábado de 19:00 a 7:30. Para encontrar el aparcamiento más cercano, busca la dirección del apartamento en Google Maps. Si tienes dificultades, llámame: +39 335 5245756."
+      parking: "Parking: The apartment is in the historic center (ZTL - Limited Traffic Zone). Car access is allowed only Monday to Saturday from 7:00 PM to 7:30 AM. To find the nearest parking, search the apartment address on Google Maps. If you need help, call me: +39 335 5245756.",
+
+      tickets: "All updated information on this topic is available in the apartment guide at the following link:\nhttps://shelly-cloud-opener-1.onrender.com/guides/scala/?lang=en",
+      day_trips: "All updated information on this topic is available in the apartment guide at the following link:\nhttps://shelly-cloud-opener-1.onrender.com/guides/scala/?lang=en",
+      attractions: "All updated information on this topic is available in the apartment guide at the following link:\nhttps://shelly-cloud-opener-1.onrender.com/guides/scala/?lang=en",
+      shopping: "All updated information on this topic is available in the apartment guide at the following link:\nhttps://shelly-cloud-opener-1.onrender.com/guides/scala/?lang=en",
+      restaurants: "All updated information on this topic is available in the apartment guide at the following link:\nhttps://shelly-cloud-opener-1.onrender.com/guides/scala/?lang=en",
+      transport: "All updated information on this topic is available in the apartment guide at the following link:\nhttps://shelly-cloud-opener-1.onrender.com/guides/scala/?lang=en"
     }
   },
 
@@ -215,59 +143,14 @@
       laundry: "Lavanderia: Se devi lavare vestiti o asciugamani, scrivimi e ti indico la soluzione migliore in zona in base ai tuoi orari.",
       building: "Edificio: Accesso tramite portone con Virtual Key. Area Ghetto/Portico d'Ottavia, zona centrale e pedonale in alcune fasce orarie.",
       emergency: "Emergenze: UE 112 • Polizia 113 • Ambulanza 118 • Vigili del Fuoco 115",
-      parking: "Parcheggio: L'appartamento si trova nel centro storico (ZTL). L'accesso in auto è consentito solo dal lunedì al sabato dalle 19:00 alle 7:30. Per trovare il parcheggio più vicino cerca su Google Maps l'indirizzo dell'appartamento. Se hai difficoltà, chiamami: +39 335 5245756."
-    },
-    en: {
-      wifi: "Wi-Fi: The router is on the table. Turn it to read the SSID and password on the label. If it doesn't work: check it's on, unplug it for 30 seconds and plug it back in. If the issue continues, message me.",
-      trash: "Trash: Before leaving the apartment, close the bags well and take them to the recycling area in front of Piazza delle Cinque Scole (Lungotevere side). Recycling is required: follow the signs and do not leave trash in the stairwell or outside the door.",
-      heating: "Heating: The apartment has an electric heater. Use it only when you are inside and always turn it off when leaving for safety reasons.",
-      electric_panel: "Electric panel: If there is no power, the panel is on the right before the apartment exit door. All switches (including the small white one) must be up. If the issue continues, outside the building on the left before the entrance door, open your meter box and reset the lowered switch.",
-      check_in: "Check-in from 3:00 PM. Access via Virtual Key: the link opens both the building door and the apartment door. Inside you'll find the physical keys on the table; after entry the Virtual Key is deactivated. Help: +39 335 5245756.",
-      check_out: "Check-out: Before leaving, turn off lights and heating, close the windows, leave the keys on the table and close the door manually, making sure it is properly locked.",
-      city_tax_info: "City tax: Mandatory in Rome for non-residents. For this apartment it is €5 per person per night, up to a maximum of 10 nights. Collected on behalf of the City of Rome.",
-      laundry: "Laundry: If you need to wash clothes or towels, message me and I'll suggest the best nearby option based on your schedule.",
-      building: "Building: Access via building door with Virtual Key. Located in the Ghetto/Portico d'Ottavia area, central and partially pedestrian.",
-      emergency: "Emergencies: EU 112 • Police 113 • Ambulance 118 • Fire Brigade 115",
-      parking: "Parking: The apartment is in the historic center (ZTL - Limited Traffic Zone). Car access is allowed only Monday to Saturday from 7:00 PM to 7:30 AM. To find the nearest parking, search the apartment address on Google Maps. If you need help, call me: +39 335 5245756."
-    },
-    fr: {
-      wifi: "Wi-Fi : Le routeur est sur la table. Tournez-le pour lire le SSID et le mot de passe sur l'étiquette. S'il ne fonctionne pas : vérifiez qu'il est allumé, débranchez-le 30 secondes puis rebranchez-le. Sinon, écrivez-moi.",
-      trash: "Déchets : Avant de partir, fermez bien les sacs et déposez-les à l'aire de tri en face de la Piazza delle Cinque Scole (côté Lungotevere). Le tri est obligatoire : suivez les indications et ne laissez rien dans l'escalier ou devant la porte.",
-      heating: "Chauffage : L'appartement est équipé d'un chauffage électrique. Utilisez-le uniquement lorsque vous êtes à l'intérieur et éteignez-le toujours en sortant.",
-      electric_panel: "Tableau électrique : En cas de coupure, le tableau se trouve à droite avant la porte de sortie. Tous les interrupteurs (y compris le petit blanc) doivent être relevés. Si le problème persiste, à l'extérieur de l'immeuble sur la gauche, ouvrez le boîtier de votre compteur et réarmez l'interrupteur.",
-      check_in: "Arrivée à partir de 15h00. Accès via Virtual Key : le lien ouvre le portail et la porte de l'appartement. À l'intérieur, vous trouverez les clés sur la table ; après l'entrée, la Virtual Key est désactivée. Aide : +39 335 5245756.",
-      check_out: "Départ : Avant de partir, éteignez lumières et chauffage, fermez les fenêtres, laissez les clés sur la table et fermez la porte manuellement en vérifiant qu'elle est bien fermée.",
-      city_tax_info: "Taxe de séjour : Obligatoire à Rome pour les non-résidents. Pour cet appartement : 5 € par personne et par nuit, maximum 10 nuits. Perçue pour la Ville de Rome.",
-      laundry: "Blanchisserie : Si vous devez laver des vêtements ou serviettes, écrivez-moi et je vous indiquerai la meilleure solution à proximité.",
-      building: "Immeuble : Accès par porte avec Virtual Key. Situé dans le quartier du Ghetto/Portico d'Ottavia, zone centrale partiellement piétonne.",
-      emergency: "Urgences : UE 112 • Police 113 • Ambulance 118 • Pompiers 115",
-      parking: "Parking : L'appartement se trouve dans le centre historique (ZTL - Zone à Trafic Limité). L'accès en voiture est autorisé uniquement du lundi au samedi de 19h00 à 7h30. Pour trouver le parking le plus proche, recherchez l'adresse de l'appartement sur Google Maps. En cas de difficulté, appelez-moi : +39 335 5245756."
-    },
-    de: {
-      wifi: "WLAN: Der Router steht auf dem Tisch. Drehen Sie ihn, um SSID und Passwort auf dem Aufkleber zu lesen. Falls es nicht funktioniert: prüfen Sie, ob er eingeschaltet ist, ziehen Sie den Stecker 30 Sekunden und stecken Sie ihn wieder ein. Dann bitte melden.",
-      trash: "Müll: Vor der Abreise die Beutel gut verschließen und zur Recyclingstelle gegenüber der Piazza delle Cinque Scole (Lungotevere-Seite) bringen. Mülltrennung ist Pflicht: nichts im Treppenhaus oder vor der Tür abstellen.",
-      heating: "Heizung: Die Wohnung hat einen elektrischen Heizkörper. Nur benutzen, wenn Sie in der Wohnung sind, und beim Verlassen immer ausschalten.",
-      electric_panel: "Sicherungskasten: Bei Stromausfall befindet sich der Kasten rechts vor der Wohnungstür. Alle Schalter (auch der kleine weiße) müssen oben sein. Falls das Problem bleibt, draußen links vor dem Eingang den Zählerkasten öffnen und den Schalter hochstellen.",
-      check_in: "Check-in ab 15:00 Uhr. Zugang über Virtual Key: Der Link öffnet Haustür und Wohnungstür. Drinnen liegen die Schlüssel auf dem Tisch; danach wird der Virtual Key deaktiviert. Hilfe: +39 335 5245756.",
-      check_out: "Check-out: Vor der Abreise Licht und Heizung ausschalten, Fenster schließen, Schlüssel auf dem Tisch lassen und die Tür manuell schließen und prüfen.",
-      city_tax_info: "Touristensteuer: In Rom für Nicht-Einwohner verpflichtend. Für diese Wohnung 5 € pro Person und Nacht, maximal 10 Nächte. Wird für die Stadt Rom erhoben.",
-      laundry: "Wäscherei: Wenn Sie Kleidung oder Handtücher waschen müssen, schreiben Sie mir für eine Empfehlung in der Nähe.",
-      building: "Gebäude: Zugang über Haustür mit Virtual Key. Lage im Ghetto/Portico-d'Ottavia-Viertel, zentrale Lage mit teilweiser Fußgängerzone.",
-      emergency: "Notfälle: EU 112 • Polizei 113 • Rettung 118 • Feuerwehr 115",
-      parking: "Parkplatz: Die Wohnung liegt im historischen Zentrum (ZTL - Verkehrsbeschränkte Zone). Die Zufahrt mit dem Auto ist nur Montag bis Samstag von 19:00 bis 7:30 Uhr erlaubt. Um den nächsten Parkplatz zu finden, suchen Sie die Adresse der Wohnung bei Google Maps. Bei Schwierigkeiten rufen Sie mich an: +39 335 5245756."
-    },
-    es: {
-      wifi: "Wi-Fi: El router está sobre la mesa. Gíralo para leer el SSID y la contraseña en la etiqueta. Si no funciona: comprueba que esté encendido, desenchúfalo 30 segundos y vuelve a conectarlo. Si continúa, escríbeme.",
-      trash: "Basura: Antes de salir, cierra bien las bolsas y llévalas al punto de reciclaje frente a Piazza delle Cinque Scole (lado Lungotevere). El reciclaje es obligatorio: sigue las indicaciones y no dejes basura en la escalera ni fuera de la puerta.",
-      heating: "Calefacción: El apartamento tiene una estufa eléctrica. Úsala solo cuando estés dentro y apágala siempre al salir por seguridad.",
-      electric_panel: "Cuadro eléctrico: Si no hay luz, el cuadro está a la derecha antes de la puerta de salida. Todos los interruptores (incluido el pequeño blanco) deben estar arriba. Si continúa, fuera del edificio a la izquierda abre el contador y sube el interruptor.",
-      check_in: "Check-in desde las 15:00. Acceso con Virtual Key: el enlace abre el portal y la puerta del apartamento. Dentro encontrarás las llaves sobre la mesa; después la Virtual Key se desactiva. Ayuda: +39 335 5245756.",
-      check_out: "Check-out: Antes de salir apaga luces y calefacción, cierra las ventanas, deja las llaves sobre la mesa y cierra la puerta manualmente comprobando que quede bien cerrada.",
-      city_tax_info: "Tasa turística: Obligatoria en Roma para no residentes. Para este apartamento es de 5 € por persona y noche, máximo 10 noches. Se cobra en nombre del Ayuntamiento de Roma.",
-      laundry: "Lavandería: Si necesitas lavar ropa o toallas, escríbeme y te indicaré la mejor opción cercana.",
-      building: "Edificio: Acceso mediante puerta con Virtual Key. Ubicado en la zona del Ghetto/Portico d'Ottavia, céntrica y parcialmente peatonal.",
-      emergency: "Emergencias: UE 112 • Policía 113 • Ambulancia 118 • Bomberos 115",
-      parking: "Aparcamiento: El apartamento está en el centro histórico (ZTL - Zona de Tráfico Limitado). El acceso en coche está permitido solo de lunes a sábado de 19:00 a 7:30. Para encontrar el aparcamiento más cercano, busca la dirección del apartamento en Google Maps. Si tienes dificultades, llámame: +39 335 5245756."
+      parking: "Parcheggio: L'appartamento si trova nel centro storico (ZTL). L'accesso in auto è consentito solo dal lunedì al sabato dalle 19:00 alle 7:30. Per trovare il parcheggio più vicino cerca su Google Maps l'indirizzo dell'appartamento. Se hai difficoltà, chiamami: +39 335 5245756.",
+
+      tickets: "Tutte le informazioni aggiornate su questo argomento sono disponibili nella guida dell’appartamento al seguente link:\nhttps://shelly-cloud-opener-1.onrender.com/guides/portico/?lang=it",
+      day_trips: "Tutte le informazioni aggiornate su questo argomento sono disponibili nella guida dell’appartamento al seguente link:\nhttps://shelly-cloud-opener-1.onrender.com/guides/portico/?lang=it",
+      attractions: "Tutte le informazioni aggiornate su questo argomento sono disponibili nella guida dell’appartamento al seguente link:\nhttps://shelly-cloud-opener-1.onrender.com/guides/portico/?lang=it",
+      shopping: "Tutte le informazioni aggiornate su questo argomento sono disponibili nella guida dell’appartamento al seguente link:\nhttps://shelly-cloud-opener-1.onrender.com/guides/portico/?lang=it",
+      restaurants: "Tutte le informazioni aggiornate su questo argomento sono disponibili nella guida dell’appartamento al seguente link:\nhttps://shelly-cloud-opener-1.onrender.com/guides/portico/?lang=it",
+      transport: "Tutte le informazioni aggiornate su questo argomento sono disponibili nella guida dell’appartamento al seguente link:\nhttps://shelly-cloud-opener-1.onrender.com/guides/portico/?lang=it"
     }
   },
 
@@ -283,59 +166,14 @@
       laundry: "Lavanderia: Se devi lavare vestiti o asciugamani, scrivimi e ti indico la soluzione migliore in zona in base ai tuoi orari.",
       building: "Edificio: Appartamento su Viale Trastevere, zona centrale e ben collegata. Accesso diretto dal portone su strada principale.",
       emergency: "Emergenze: UE 112 • Polizia 113 • Ambulanza 118 • Vigili del Fuoco 115",
-      parking: "Parcheggio: Vicino all'appartamento ci sono diversi parcheggi pubblici non custoditi (non lasciare oggetti visibili in auto) e parcheggi privati a pagamento. Puoi anche usare i parcheggi comunali con strisce blu."
-    },
-    en: {
-      wifi: "Wi-Fi: The router is on the cabinet near the entrance. Turn it to read the SSID and password on the label. If it doesn't work: check it's on, unplug it for 30 seconds and plug it back in. If the issue continues, message me.",
-      trash: "Trash: There is NO recycling in this building. Before check-out, take the trash to the bins just outside the building, on the right side.",
-      heating: "Heating: To turn it on, go to the hallway just after the kitchen. On the right wall you'll find the thermostat: switch it to ON and set 26 °C. The radiators will start warming up in a few minutes.",
-      electric_panel: "Electric panel: If there's no power, the panel is in the bathroom anteroom, immediately on the right when entering. Make sure all breakers are up. If power doesn't return, go to floor -1: in front of the New York Institute door open the electrical box, look for 'Bondi int. 9' and reset the lowered switch.",
-      check_in: "Check-in from 3:00 PM.",
-      check_out: "Check-out: Before leaving, turn off lights and air conditioning, close the windows, leave the keys on the table and close the door manually, making sure it's properly locked.",
-      city_tax_info: "City tax: Required in Rome for non-residents. For this apartment it is €5 per person per night, up to a maximum of 10 nights. Collected on behalf of the City of Rome.",
-      laundry: "Laundry: If you need to wash clothes or towels, message me and I'll suggest the best nearby option based on your schedule.",
-      building: "Building: Apartment on Viale Trastevere, central and well connected. Direct access from the main street entrance.",
-      emergency: "Emergencies: EU 112 • Police 113 • Ambulance 118 • Fire Brigade 115",
-      parking: "Parking: Near the apartment there are several unattended public parking lots (do not leave visible items in your car) and paid private parking facilities. You can also use municipal parking with blue lines."
-    },
-    fr: {
-      wifi: "Wi-Fi : Le routeur est sur le meuble près de l'entrée. Tournez-le pour lire le SSID et le mot de passe sur l'étiquette. En cas de problème, vérifiez qu'il est allumé, débranchez-le 30 secondes puis rebranchez-le.",
-      trash: "Déchets : Il n'y a PAS de tri sélectif dans cet immeuble. Avant le départ, déposez les sacs dans les conteneurs juste à l'extérieur du bâtiment, sur la droite.",
-      heating: "Chauffage : Pour l'allumer, allez dans le couloir après la cuisine. Sur le mur de droite se trouve le thermostat : mettez-le sur ON et réglez à 26 °C. Les radiateurs chaufferont en quelques minutes.",
-      electric_panel: "Tableau électrique : En cas de coupure, le tableau est dans l'antichambre de la salle de bain, immédiatement à droite en entrant. Vérifiez que tous les interrupteurs sont levés. Sinon, descendez à l'étage -1 : devant la porte du New York Institute, ouvrez le coffret, cherchez 'Bondi int. 9' et réarmez l'interrupteur.",
-      check_in: "Arrivée à partir de 15h00.",
-      check_out: "Départ : Avant de partir, éteignez lumières et climatisation, fermez les fenêtres, laissez les clés sur la table et fermez la porte manuellement.",
-      city_tax_info: "Taxe de séjour : Obligatoire à Rome pour les non-résidents. Pour cet appartement : 5 € par personne et par nuit, maximum 10 nuits. Perçue pour la Ville de Rome.",
-      laundry: "Blanchisserie : Si vous devez laver des vêtements ou serviettes, écrivez-moi et je vous indiquerai la meilleure solution à proximité.",
-      building: "Immeuble : Appartement situé sur Viale Trastevere, quartier central et très bien desservi.",
-      emergency: "Urgences : UE 112 • Police 113 • Ambulance 118 • Pompiers 115",
-      parking: "Parking : Près de l'appartement, il y a plusieurs parkings publics non surveillés (ne laissez rien de visible dans la voiture) et des parkings privés payants. Vous pouvez également utiliser les parkings municipaux avec lignes bleues."
-    },
-    de: {
-      wifi: "WLAN: Der Router steht auf dem Möbelstück im Eingangsbereich. Drehen Sie ihn, um SSID und Passwort auf dem Aufkleber zu lesen. Bei Problemen: 30 Sekunden vom Strom trennen und wieder anschließen.",
-      trash: "Müll: In diesem Gebäude gibt es KEINE Mülltrennung. Vor dem Check-out den Müll in die Tonnen direkt rechts vor dem Gebäude bringen.",
-      heating: "Heizung: Zum Einschalten in den Flur nach der Küche gehen. An der rechten Wand befindet sich der Thermostat: auf ON stellen und 26 °C einstellen. Nach wenigen Minuten werden die Heizkörper warm.",
-      electric_panel: "Sicherungskasten: Bei Stromausfall befindet sich der Kasten im Vorbad rechts beim Eintreten. Prüfen, ob alle Schalter oben sind. Falls nicht, in Etage -1 gehen, vor der Tür des New York Institute den Kasten öffnen, 'Bondi int. 9' suchen und den Schalter hochstellen.",
-      check_in: "Check-in ab 15:00 Uhr.",
-      check_out: "Check-out: Vor der Abreise Licht und Klimaanlage ausschalten, Fenster schließen, Schlüssel auf dem Tisch lassen und die Tür manuell schließen.",
-      city_tax_info: "Touristensteuer: In Rom für Nicht-Einwohner verpflichtend. Für diese Wohnung 5 € pro Person und Nacht, maximal 10 Nächte. Wird für die Stadt Rom erhoben.",
-      laundry: "Wäscherei: Wenn Sie Kleidung oder Handtücher waschen müssen, schreiben Sie mir – ich empfehle eine Lösung in der Nähe.",
-      building: "Gebäude: Wohnung an der Viale Trastevere, zentrale Lage mit sehr guter Anbindung.",
-      emergency: "Notfälle: EU 112 • Polizei 113 • Rettung 118 • Feuerwehr 115",
-      parking: "Parkplatz: In der Nähe der Wohnung gibt es mehrere unbewachte öffentliche Parkplätze (lassen Sie keine sichtbaren Gegenstände im Auto) und kostenpflichtige Privatparkplätze. Sie können auch die städtischen Parkplätze mit blauen Linien nutzen."
-    },
-    es: {
-      wifi: "Wi-Fi: El router está en el mueble cerca de la entrada. Gíralo para leer el SSID y la contraseña en la etiqueta. Si no funciona: comprueba que esté encendido, desenchúfalo 30 segundos y vuelve a conectarlo. Si continúa, escríbeme.",
-      trash: "Basura: En este edificio NO hay reciclaje. Antes del check-out, lleva la basura a los contenedores justo fuera del edificio, en el lado derecho.",
-      heating: "Calefacción: Para encenderla ve al pasillo después de la cocina. En la pared derecha encontrarás el termostato: ponlo en ON y ajusta a 26 °C. En pocos minutos los radiadores se calientan.",
-      electric_panel: "Cuadro eléctrico: Si no hay luz, el cuadro está en el antebaño, a la derecha nada más entrar. Comprueba que todos los interruptores estén arriba. Si no vuelve, baja a la planta -1: frente a la puerta del New York Institute abre el cuadro, busca 'Bondi int. 9' y sube el interruptor.",
-      check_in: "Check-in desde las 15:00.",
-      check_out: "Check-out: Antes de salir apaga luces y aire acondicionado, cierra las ventanas, deja las llaves sobre la mesa y cierra la puerta manualmente comprobando que quede bien cerrada.",
-      city_tax_info: "Tasa turística: Obligatoria en Roma para no residentes. Para este apartamento es de 5 € por persona y noche, máximo 10 noches. Se cobra en nombre del Ayuntamiento de Roma.",
-      laundry: "Lavandería: Si necesitas lavar ropa o toallas, escríbeme y te indicaré la mejor opción cercana.",
-      building: "Edificio: Apartamento en Viale Trastevere, zona céntrica y bien comunicada. Acceso directo desde la calle principal.",
-      emergency: "Emergencias: UE 112 • Policía 113 • Ambulancia 118 • Bomberos 115",
-      parking: "Aparcamiento: Cerca del apartamento hay varios aparcamientos públicos no vigilados (no dejes objetos visibles en el coche) y aparcamientos privados de pago. También puedes usar los aparcamientos municipales con líneas azules."
+      parking: "Parcheggio: Vicino all'appartamento ci sono diversi parcheggi pubblici non custoditi (non lasciare oggetti visibili in auto) e parcheggi privati a pagamento. Puoi anche usare i parcheggi comunali con strisce blu.",
+
+      tickets: "Tutte le informazioni aggiornate su questo argomento sono disponibili nella guida dell’appartamento al seguente link:\nhttps://shelly-cloud-opener-1.onrender.com/guides/trastevere/?lang=it",
+      day_trips: "Tutte le informazioni aggiornate su questo argomento sono disponibili nella guida dell’appartamento al seguente link:\nhttps://shelly-cloud-opener-1.onrender.com/guides/trastevere/?lang=it",
+      attractions: "Tutte le informazioni aggiornate su questo argomento sono disponibili nella guida dell’appartamento al seguente link:\nhttps://shelly-cloud-opener-1.onrender.com/guides/trastevere/?lang=it",
+      shopping: "Tutte le informazioni aggiornate su questo argomento sono disponibili nella guida dell’appartamento al seguente link:\nhttps://shelly-cloud-opener-1.onrender.com/guides/trastevere/?lang=it",
+      restaurants: "Tutte le informazioni aggiornate su questo argomento sono disponibili nella guida dell’appartamento al seguente link:\nhttps://shelly-cloud-opener-1.onrender.com/guides/trastevere/?lang=it",
+      transport: "Tutte le informazioni aggiornate su questo argomento sono disponibili nella guida dell’appartamento al seguente link:\nhttps://shelly-cloud-opener-1.onrender.com/guides/trastevere/?lang=it"
     }
   }
 };
