@@ -836,4 +836,11 @@ app.listen(PORT, () => {
 
 import { writeTestRow } from "../city-tax/google-sheet.js";
 
-writeTestRow();
+(async () => {
+  try {
+    await writeTestRow();
+    console.log("TEST city-tax OK");
+  } catch (err) {
+    console.error("TEST city-tax ERROR", err);
+  }
+})();
