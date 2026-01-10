@@ -1,15 +1,13 @@
-import { google } from "googleapis";
+  import { google } from "googleapis";
 
 const SPREADSHEET_ID = "1-5umuvZHgqzcDiYKwmYhZJTYSAKXkd2qemNiuiiCyJg";
 const SHEET_NAME = "Foglio1";
 
 function getAuth() {
-  const credentials = JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT_JSON);
-
   return new google.auth.JWT(
-    credentials.client_email,
+    process.env.GOOGLE_CLIENT_EMAIL,
     null,
-    credentials.private_key,
+    process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, '\n'),
     ["https://www.googleapis.com/auth/spreadsheets"]
   );
 }
@@ -17,7 +15,7 @@ function getAuth() {
 export async function writeTestRow() {
   const auth = getAuth();
   const sheets = google.sheets({ version: "v4", auth });
-
+  
   const values = [[
     "TEST",
     "TEST",
@@ -31,13 +29,13 @@ export async function writeTestRow() {
     "",
     "Test automatico"
   ]];
-
+  
   await sheets.spreadsheets.values.append({
     spreadsheetId: SPREADSHEET_ID,
     range: `${SHEET_NAME}!A:K`,
     valueInputOption: "USER_ENTERED",
     requestBody: { values }
   });
-
+  
   console.log("City-tax: riga di test scritta");
 }
