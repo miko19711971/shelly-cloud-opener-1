@@ -834,13 +834,12 @@ app.listen(PORT, () => {
   console.log("Server running on", PORT);
 });
 
-import { writeTestRow } from "../city-tax/google-sheet.js";
+ import { writeTestRow } from "./google-sheet.js";
 
-(async () => {
+setTimeout(async () => {
   try {
     await writeTestRow();
-    console.log("TEST city-tax OK");
-  } catch (err) {
-    console.error("TEST city-tax ERROR", err);
+  } catch (e) {
+    console.error(e);
   }
-})();
+}, 3000);
