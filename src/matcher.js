@@ -1,4 +1,4 @@
- // matcher.js - Intent Matching (EXPANDED)
+// matcher.js - Intent Matching con Word Boundaries
 
 const INTENTS = {
   wifi: [
@@ -25,15 +25,15 @@ const INTENTS = {
   ],
 
   heating: [
-  "riscaldamento", "stufa", "caldo", "temperatura",
-  "come scaldo", "come riscaldo", "accendere", "spegnere",
-  "termostato", "fa freddo", "ho freddo",
-  "heating", "heater", "heat", "warm", "temperature",
-  "thermostat", "it's cold", "i am cold",
-  "calefacción", "calor", "tengo frío", "hace frío",
-  "chauffage", "chaud", "j'ai froid", "il fait froid",
-  "heizung", "warm", "kalt", "mir ist kalt"
-] ,
+    "riscaldamento", "stufa", "caldo", "temperatura",
+    "come scaldo", "come riscaldo", "accendere", "spegnere",
+    "termostato", "fa freddo", "ho freddo",
+    "heating", "heater", "heat", "warm", "temperature",
+    "thermostat", "it's cold", "i am cold",
+    "calefacción", "calor", "tengo frío", "hace frío",
+    "chauffage", "chaud", "j'ai froid", "il fait froid",
+    "heizung", "warm", "kalt", "mir ist kalt"
+  ],
 
   electric_panel: [
     "corrente", "elettricità", "luce", "luci", "interruttore",
@@ -41,8 +41,8 @@ const INTENTS = {
     "è saltata la corrente", "non c'è corrente", "blackout",
     "manca corrente", "non funziona la luce", "salta corrente",
     "dove è il quadro", "dov'è il quadro",
-    "electric", "electricity", "power", "lights", "light",
-    "circuit breaker", "fuse box", "no power", "power is out",
+    "electric", "electricity", "power", "circuit breaker",
+    "fuse box", "no power", "power is out",
     "electricidad", "luz", "no hay luz",
     "électricité", "courant", "lumière",
     "strom", "licht", "kein strom"
@@ -114,6 +114,16 @@ const INTENTS = {
     "emergencia", "ayuda", "problema", "urgente", "roto",
     "urgence", "aide", "problème", "cassé",
     "notfall", "hilfe", "problem", "kaputt"
+  ],
+
+  air_conditioning: [
+    "aria condizionata", "condizionatore", "climatizzatore", "aria",
+    "accendere aria", "spegnere aria", "ac", "a/c", "clima",
+    "air conditioning", "air conditioner", "ac unit", "cooling",
+    "turn on ac", "turn off ac",
+    "aire acondicionado", "encender aire", "apagar aire",
+    "climatisation", "clim", "allumer clim", "éteindre clim",
+    "klimaanlage", "klima", "klimaanlage einschalten"
   ]
 };
 
@@ -122,6 +132,7 @@ function normalize(text) {
     .toLowerCase()
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^\w\s]/g, " ") // Sostituisce punteggiatura con spazi
     .trim();
 }
 
@@ -129,12 +140,24 @@ export function matchIntent(text) {
   if (!text || typeof text !== "string") return null;
 
   const normalized = normalize(text);
+  const words = normalized.split(/\s+/); // Split in parole
 
   for (const [intent, keywords] of Object.entries(INTENTS)) {
     for (const keyword of keywords) {
       const keywordNormalized = normalize(keyword);
-      if (normalized.includes(keywordNormalized)) {
-        return intent;
+      const keywordWords = keywordNormalized.split(/\s+/);
+
+      // Match esatto di frasi multi-parola
+      if (keywordWords.length > 1) {
+        if (normalized.includes(keywordNormalized)) {
+          return intent;
+        }
+      } 
+      // Match esatto di singole parole (evita substring match)
+      else {
+        if (words.includes(keywordWords[0])) {
+          return intent;
+        }
       }
     }
   }
