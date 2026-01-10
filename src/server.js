@@ -525,7 +525,22 @@ app.post("/checkin/:apt/open/door", requireCheckinToken, async (req, res) => {
   if (!result.ok) return res.status(502).json({ ok: false, error: "open_failed", details: result });
   return res.json({ ok: true, opened: result });
 });
+});
 
+// ❌ BLOCCA vecchi URL senza token
+app.get("/checkin/:apt/today", (req, res) => {
+  res.status(410).send("Link scaduto. Usa il link ricevuto via email.");
+});
+
+app.get("/checkin/:apt/:rawDate([^/.]+)", (req, res) => {
+  res.status(410).send("Link scaduto. Usa il link ricevuto via email.");
+});
+
+app.get("/checkin/:apt/", (req, res) => {
+  res.status(410).send("Link scaduto. Usa il link ricevuto via email.");
+});
+
+app.use("/checkin", express.static(path.join(PUBLIC_DIR, "checkin"), { fallthrough: false }));
 app.use("/checkin", express.static(path.join(PUBLIC_DIR, "checkin"), { fallthrough: false }));
 app.use(express.static(PUBLIC_DIR));
 
