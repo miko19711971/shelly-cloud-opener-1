@@ -1,8 +1,8 @@
-  export const ANSWERS = {
+ export const ANSWERS = {
   arenula: {
     it: {
       wifi: "Wi-Fi: Il router è sulla scrivania vicino alla finestra. Giralo per leggere SSID e password sull'etichetta. Se non funziona: controlla che sia acceso, scollegalo 30 secondi e ricollegalo. Se il problema continua, scrivimi.",
-      trash: "Spazzatura: Trovi le buste in cucina. Chiudi bene i sacchetti e portali nei cassonetti nella corte prima dell'uscita. Facciamo raccolta differenziata: segui le indicazioni e non lasciare immondizia nel vano scala o fuori dalla porta.Una volta che hai diviso tutta l’immondizia, prima del check-out portala giù nella corte esterna. Prima dell’uscita, sul lato destro, ci sono i vari secchioni. Disponi l’immondizia per tipologie in ogni secchione. Grazie.",
+      trash: "Spazzatura: Trovi le buste in cucina. Chiudi bene i sacchetti e portali nei cassonetti nella corte prima dell'uscita. Facciamo raccolta differenziata: segui le indicazioni e non lasciare immondizia nel vano scala o fuori dalla porta.Una volta che hai diviso tutta l'immondizia, prima del check-out portala giù nella corte esterna. Prima dell'uscita, sul lato destro, ci sono i vari secchioni. Disponi l'immondizia per tipologie in ogni secchione. Grazie.",
       heating: "Riscaldamento: Usa il telecomando dell'aria condizionata. Premi MODE finché appare il simbolo del sole, imposta 26 °C e potenza 1. Spegni sempre il condizionatore quando esci.",
       electric_panel: "Quadro elettrico: Andando verso il bagno, sulla destra prima della porta trovi il quadro. Se manca la corrente: 1) alza gli interruttori abbassati; 2) se sono già tutti su, togli il pannello sopra, rialza l'interruttore generale e spegni qualche elettrodomestico.",
       check_in: "Check-in dalle 15:00. Citofono C8. Portone attivo 08:00–13:00 e 15:30–18:00. Portineria: Paolo. Per aiuto: +39 335 5245756.",
@@ -10,7 +10,8 @@
       city_tax_info: "Tassa di soggiorno: A Roma è obbligatoria per gli ospiti non residenti. Per questo appartamento è di 5 € a persona per notte, fino a un massimo di 10 notti. La incassiamo per conto del Comune di Roma.",
       laundry: "Lavanderia: Se devi lavare vestiti o asciugamani, scrivimi e ti indico la soluzione migliore in zona in base ai tuoi orari.",
       building: "Edificio: Citofono C8. Ascensore riservato ai proprietari (non utilizzarlo). Portone 08:00–13:00 e 15:30–18:00. Portineria: Paolo.",
-      emergency: "Emergenze: UE 112 • Polizia 113 • Ambulanza 118 • Vigili del Fuoco 115 • Medico (EN) +39 06 488 2371 • Veterinario 24h +39 06 660 681"
+      emergency: "Emergenze: UE 112 • Polizia 113 • Ambulanza 118 • Vigili del Fuoco 115 • Medico (EN) +39 06 488 2371 • Veterinario 24h +39 06 660 681",
+      parking: "Parcheggio: L'appartamento si trova nel centro storico (ZTL). L'accesso in auto è consentito solo dal lunedì al sabato dalle 19:00 alle 7:30. Per trovare il parcheggio più vicino cerca su Google Maps l'indirizzo dell'appartamento. Se hai difficoltà, chiamami: +39 335 5245756."
     },
     en: {
       wifi: "Wi-Fi: The router is on the desk near the window. Turn it to read the SSID and password on the label. If it doesn't work: check it's on, unplug it for 30 seconds and plug it back in. If the issue continues, message me.",
@@ -22,7 +23,8 @@
       city_tax_info: "City tax: Mandatory in Rome for non-residents. For this apartment it is €5 per person per night, up to a maximum of 10 nights. Collected on behalf of the City of Rome.",
       laundry: "Laundry: If you need to wash clothes or towels, message me and I'll suggest the best option nearby based on your schedule.",
       building: "Building: Intercom C8. Elevator is reserved for owners (please do not use it). Main door 8:00–13:00 and 15:30–18:00. Doorman: Paolo.",
-      emergency: "Emergencies: EU 112 • Police 113 • Ambulance 118 • Fire Brigade 115 • Doctor (EN) +39 06 488 2371 • 24h Vet +39 06 660 681"
+      emergency: "Emergencies: EU 112 • Police 113 • Ambulance 118 • Fire Brigade 115 • Doctor (EN) +39 06 488 2371 • 24h Vet +39 06 660 681",
+      parking: "Parking: The apartment is in the historic center (ZTL - Limited Traffic Zone). Car access is allowed only Monday to Saturday from 7:00 PM to 7:30 AM. To find the nearest parking, search the apartment address on Google Maps. If you need help, call me: +39 335 5245756."
     },
     fr: {
       wifi: "Wi-Fi : Le routeur est sur le bureau près de la fenêtre. Tournez-le pour lire le SSID et le mot de passe sur l'étiquette. S'il ne fonctionne pas : vérifiez qu'il est allumé, débranchez-le 30 secondes puis rebranchez-le. Sinon, écrivez-moi.",
@@ -34,7 +36,8 @@
       city_tax_info: "Taxe de séjour : Obligatoire à Rome pour les non-résidents. Pour cet appartement : 5 € par personne et par nuit, maximum 10 nuits. Perçue pour la Ville de Rome.",
       laundry: "Blanchisserie : Si vous devez laver des vêtements ou serviettes, écrivez-moi et je vous indiquerai la meilleure solution à proximité.",
       building: "Immeuble : Interphone C8. Ascenseur réservé aux propriétaires (merci de ne pas l'utiliser). Porte 8h00–13h00 et 15h30–18h00. Concierge : Paolo.",
-      emergency: "Urgences : UE 112 • Police 113 • Ambulance 118 • Pompiers 115 • Médecin (EN) +39 06 488 2371 • Vétérinaire 24h +39 06 660 681"
+      emergency: "Urgences : UE 112 • Police 113 • Ambulance 118 • Pompiers 115 • Médecin (EN) +39 06 488 2371 • Vétérinaire 24h +39 06 660 681",
+      parking: "Parking : L'appartement se trouve dans le centre historique (ZTL - Zone à Trafic Limité). L'accès en voiture est autorisé uniquement du lundi au samedi de 19h00 à 7h30. Pour trouver le parking le plus proche, recherchez l'adresse de l'appartement sur Google Maps. En cas de difficulté, appelez-moi : +39 335 5245756."
     },
     de: {
       wifi: "WLAN: Der Router steht auf dem Schreibtisch nahe dem Fenster. Drehen Sie ihn, um SSID und Passwort auf dem Aufkleber zu lesen. Falls es nicht funktioniert: prüfen Sie, ob er eingeschaltet ist, ziehen Sie den Stecker 30 Sekunden und stecken Sie ihn wieder ein. Dann bitte melden.",
@@ -46,7 +49,8 @@
       city_tax_info: "Touristensteuer: In Rom für Nicht-Einwohner verpflichtend. Für diese Wohnung 5 € pro Person und Nacht, maximal 10 Nächte. Wird für die Stadt Rom erhoben.",
       laundry: "Wäscherei: Wenn Sie Kleidung oder Handtücher waschen müssen, schreiben Sie mir – ich empfehle Ihnen die beste Lösung in der Nähe.",
       building: "Gebäude: Gegensprechanlage C8. Aufzug nur für Eigentümer (bitte nicht benutzen). Haustür 08:00–13:00 und 15:30–18:00. Pförtner: Paolo.",
-      emergency: "Notfälle: EU 112 • Polizei 113 • Rettung 118 • Feuerwehr 115 • Arzt (EN) +39 06 488 2371 • Tierarzt 24h +39 06 660 681"
+      emergency: "Notfälle: EU 112 • Polizei 113 • Rettung 118 • Feuerwehr 115 • Arzt (EN) +39 06 488 2371 • Tierarzt 24h +39 06 660 681",
+      parking: "Parkplatz: Die Wohnung liegt im historischen Zentrum (ZTL - Verkehrsbeschränkte Zone). Die Zufahrt mit dem Auto ist nur Montag bis Samstag von 19:00 bis 7:30 Uhr erlaubt. Um den nächsten Parkplatz zu finden, suchen Sie die Adresse der Wohnung bei Google Maps. Bei Schwierigkeiten rufen Sie mich an: +39 335 5245756."
     },
     es: {
       wifi: "Wi-Fi: El router está en el escritorio cerca de la ventana. Gíralo para leer el SSID y la contraseña en la etiqueta. Si no funciona: comprueba que esté encendido, desenchúfalo 30 segundos y vuelve a conectarlo. Si continúa, escríbeme.",
@@ -58,7 +62,8 @@
       city_tax_info: "Tasa turística: Obligatoria en Roma para no residentes. Para este apartamento es de 5 € por persona y noche, máximo 10 noches. Se cobra en nombre del Ayuntamiento de Roma.",
       laundry: "Lavandería: Si necesitas lavar ropa o toallas, escríbeme y te indicaré la mejor opción cercana según tus horarios.",
       building: "Edificio: Portero automático C8. Ascensor reservado a los propietarios (no usar). Puerta principal 08:00–13:00 y 15:30–18:00. Portero: Paolo.",
-      emergency: "Emergencias: UE 112 • Policía 113 • Ambulancia 118 • Bomberos 115 • Médico (EN) +39 06 488 2371 • Veterinario 24h +39 06 660 681"
+      emergency: "Emergencias: UE 112 • Policía 113 • Ambulancia 118 • Bomberos 115 • Médico (EN) +39 06 488 2371 • Veterinario 24h +39 06 660 681",
+      parking: "Aparcamiento: El apartamento está en el centro histórico (ZTL - Zona de Tráfico Limitado). El acceso en coche está permitido solo de lunes a sábado de 19:00 a 7:30. Para encontrar el aparcamiento más cercano, busca la dirección del apartamento en Google Maps. Si tienes dificultades, llámame: +39 335 5245756."
     }
   },
 
@@ -73,7 +78,8 @@
       city_tax_info: "Tassa di soggiorno: A Roma è obbligatoria per gli ospiti non residenti. Per questo appartamento è di 6 € a persona per notte, fino a un massimo di 10 notti. La incassiamo per conto del Comune di Roma.",
       laundry: "Lavanderia: Puoi utilizzare la lavatrice in appartamento. In alternativa, scrivimi e ti indico una lavanderia in zona in base ai tuoi orari.",
       building: "Edificio: Citofono interno 16. Ascensore con porte manuali: ricordati di aprirle e chiuderle sempre. L'ascensore arriva al quarto piano; uscendo, l'appartamento è sulla sinistra.",
-      emergency: "Emergenze: UE 112 • Polizia 113 • Ambulanza 118 • Vigili del Fuoco 115 • Medico (EN) +39 06 488 2371 • Veterinario 24h +39 06 660 681"
+      emergency: "Emergenze: UE 112 • Polizia 113 • Ambulanza 118 • Vigili del Fuoco 115 • Medico (EN) +39 06 488 2371 • Veterinario 24h +39 06 660 681",
+      parking: "Parcheggio: L'appartamento si trova nel centro storico (ZTL). L'accesso in auto è consentito solo dal lunedì al sabato dalle 19:00 alle 7:30. Per trovare il parcheggio più vicino cerca su Google Maps l'indirizzo dell'appartamento. Se hai difficoltà, chiamami: +39 335 5245756."
     },
     en: {
       wifi: "Wi-Fi: The router is on the desk near the window. Turn it to read the SSID and password on the label. If it doesn't work: check it's on, unplug it for 30 seconds and plug it back in. If the issue continues, message me.",
@@ -85,7 +91,8 @@
       city_tax_info: "City tax: Mandatory in Rome for non-residents. For this apartment it is €6 per person per night, up to a maximum of 10 nights. Collected on behalf of the City of Rome.",
       laundry: "Laundry: You can use the washing machine in the apartment. Alternatively, message me and I'll suggest a nearby laundry option based on your schedule.",
       building: "Building: Intercom unit 16. Elevator has manual doors—please always open and close them. The elevator goes to the 4th floor; when exiting, the apartment is on the left.",
-      emergency: "Emergencies: EU 112 • Police 113 • Ambulance 118 • Fire Brigade 115 • Doctor (EN) +39 06 488 2371 • 24h Vet +39 06 660 681"
+      emergency: "Emergencies: EU 112 • Police 113 • Ambulance 118 • Fire Brigade 115 • Doctor (EN) +39 06 488 2371 • 24h Vet +39 06 660 681",
+      parking: "Parking: The apartment is in the historic center (ZTL - Limited Traffic Zone). Car access is allowed only Monday to Saturday from 7:00 PM to 7:30 AM. To find the nearest parking, search the apartment address on Google Maps. If you need help, call me: +39 335 5245756."
     },
     fr: {
       wifi: "Wi-Fi : Le routeur est sur le bureau près de la fenêtre. Tournez-le pour lire le SSID et le mot de passe sur l'étiquette. S'il ne fonctionne pas : vérifiez qu'il est allumé, débranchez-le 30 secondes puis rebranchez-le. Sinon, écrivez-moi.",
@@ -97,7 +104,8 @@
       city_tax_info: "Taxe de séjour : Obligatoire à Rome pour les non-résidents. Pour cet appartement : 6 € par personne et par nuit, maximum 10 nuits. Perçue pour la Ville de Rome.",
       laundry: "Blanchisserie : Vous pouvez utiliser le lave-linge de l'appartement. Sinon, écrivez-moi et je vous indiquerai une solution à proximité.",
       building: "Immeuble : Interphone appartement 16. Ascenseur à portes manuelles — merci de toujours les ouvrir et fermer. L'ascenseur arrive au 4e étage ; en sortant, l'appartement est à gauche.",
-      emergency: "Urgences : UE 112 • Police 113 • Ambulance 118 • Pompiers 115 • Médecin (EN) +39 06 488 2371 • Vétérinaire 24h +39 06 660 681"
+      emergency: "Urgences : UE 112 • Police 113 • Ambulance 118 • Pompiers 115 • Médecin (EN) +39 06 488 2371 • Vétérinaire 24h +39 06 660 681",
+      parking: "Parking : L'appartement se trouve dans le centre historique (ZTL - Zone à Trafic Limité). L'accès en voiture est autorisé uniquement du lundi au samedi de 19h00 à 7h30. Pour trouver le parking le plus proche, recherchez l'adresse de l'appartement sur Google Maps. En cas de difficulté, appelez-moi : +39 335 5245756."
     },
     de: {
       wifi: "WLAN: Der Router steht auf dem Schreibtisch nahe dem Fenster. Drehen Sie ihn, um SSID und Passwort auf dem Aufkleber zu lesen. Falls es nicht funktioniert: prüfen Sie, ob er eingeschaltet ist, ziehen Sie den Stecker 30 Sekunden und stecken Sie ihn wieder ein. Dann bitte melden.",
@@ -109,7 +117,8 @@
       city_tax_info: "Touristensteuer: In Rom für Nicht-Einwohner verpflichtend. Für diese Wohnung 6 € pro Person und Nacht, maximal 10 Nächte. Wird für die Stadt Rom erhoben.",
       laundry: "Wäscherei: Waschmaschine in der Wohnung vorhanden. Alternativ schreiben Sie mir für eine Empfehlung in der Nähe.",
       building: "Gebäude: Gegensprechanlage Wohnung 16. Aufzug mit manuellen Türen — bitte immer öffnen und schließen. Der Aufzug fährt bis in den 4. Stock; beim Aussteigen ist die Wohnung links.",
-      emergency: "Notfälle: EU 112 • Polizei 113 • Rettung 118 • Feuerwehr 115 • Arzt (EN) +39 06 488 2371 • Tierarzt 24h +39 06 660 681"
+      emergency: "Notfälle: EU 112 • Polizei 113 • Rettung 118 • Feuerwehr 115 • Arzt (EN) +39 06 488 2371 • Tierarzt 24h +39 06 660 681",
+      parking: "Parkplatz: Die Wohnung liegt im historischen Zentrum (ZTL - Verkehrsbeschränkte Zone). Die Zufahrt mit dem Auto ist nur Montag bis Samstag von 19:00 bis 7:30 Uhr erlaubt. Um den nächsten Parkplatz zu finden, suchen Sie die Adresse der Wohnung bei Google Maps. Bei Schwierigkeiten rufen Sie mich an: +39 335 5245756."
     },
     es: {
       wifi: "Wi-Fi: El router está en el escritorio cerca de la ventana. Gíralo para leer el SSID y la contraseña en la etiqueta. Si no funciona: comprueba que esté encendido, desenchúfalo 30 segundos y vuelve a conectarlo. Si continúa, escríbeme.",
@@ -121,7 +130,8 @@
       city_tax_info: "Tasa turística: Obligatoria en Roma para no residentes. Para este apartamento es de 6 € por persona y noche, máximo 10 noches. Se cobra en nombre del Ayuntamiento de Roma.",
       laundry: "Lavandería: Puedes usar la lavadora del apartamento. Si lo prefieres, escríbeme y te indicaré una lavandería cercana.",
       building: "Edificio: Portero automático piso 16. Ascensor con puertas manuales — recuerda abrirlas y cerrarlas siempre. Llega hasta la 4ª planta; al salir, el apartamento está a la izquierda.",
-      emergency: "Emergencias: UE 112 • Policía 113 • Ambulancia 118 • Bomberos 115 • Médico (EN) +39 06 488 2371 • Veterinario 24h +39 06 660 681"
+      emergency: "Emergencias: UE 112 • Policía 113 • Ambulancia 118 • Bomberos 115 • Médico (EN) +39 06 488 2371 • Veterinario 24h +39 06 660 681",
+      parking: "Aparcamiento: El apartamento está en el centro histórico (ZTL - Zona de Tráfico Limitado). El acceso en coche está permitido solo de lunes a sábado de 19:00 a 7:30. Para encontrar el aparcamiento más cercano, busca la dirección del apartamento en Google Maps. Si tienes dificultades, llámame: +39 335 5245756."
     }
   },
 
@@ -136,7 +146,8 @@
       city_tax_info: "Tassa di soggiorno: A Roma è prevista per gli ospiti non residenti. Per questo appartamento è di 5 € a persona per notte, fino a un massimo di 10 notti. La riscuotiamo per conto del Comune di Roma.",
       laundry: "Lavanderia: Se hai bisogno di lavare vestiti o asciugamani, scrivimi e ti indico la soluzione migliore in zona Trastevere in base ai tuoi orari.",
       building: "Edificio: Appartamento in zona Trastevere, quartiere vivace e centrale. Accesso tramite portone con citofono esterno e interno.",
-      emergency: "Emergenze: UE 112 • Polizia 113 • Ambulanza 118 • Vigili del Fuoco 115"
+      emergency: "Emergenze: UE 112 • Polizia 113 • Ambulanza 118 • Vigili del Fuoco 115",
+      parking: "Parcheggio: L'appartamento si trova nel centro storico (ZTL). L'accesso in auto è consentito solo dal lunedì al sabato dalle 19:00 alle 7:30. Per trovare il parcheggio più vicino cerca su Google Maps l'indirizzo dell'appartamento. Se hai difficoltà, chiamami: +39 335 5245756."
     },
     en: {
       wifi: "Wi-Fi: The router is on the right side of the living room, placed on a bench. SSID and password are on the router label. If it doesn't work: check it's on, unplug it for 30 seconds and plug it back in. If the issue continues, message me.",
@@ -148,7 +159,8 @@
       city_tax_info: "City tax: Required in Rome for non-residents. For this apartment it is €5 per person per night, up to a maximum of 10 nights. Collected on behalf of the City of Rome.",
       laundry: "Laundry: If you need to wash clothes or towels, message me and I'll suggest the best option in the Trastevere area.",
       building: "Building: Apartment located in the Trastevere district, lively and central. Access via building door with external and internal intercom.",
-      emergency: "Emergencies: EU 112 • Police 113 • Ambulance 118 • Fire Brigade 115"
+      emergency: "Emergencies: EU 112 • Police 113 • Ambulance 118 • Fire Brigade 115",
+      parking: "Parking: The apartment is in the historic center (ZTL - Limited Traffic Zone). Car access is allowed only Monday to Saturday from 7:00 PM to 7:30 AM. To find the nearest parking, search the apartment address on Google Maps. If you need help, call me: +39 335 5245756."
     },
     fr: {
       wifi: "Wi-Fi : Le routeur se trouve à droite du salon, posé sur un banc. Le SSID et le mot de passe sont indiqués sur l'étiquette. En cas de problème : vérifiez qu'il est allumé, débranchez-le 30 secondes puis rebranchez-le.",
@@ -160,7 +172,8 @@
       city_tax_info: "Taxe de séjour : Obligatoire à Rome pour les non-résidents. Pour cet appartement : 5 € par personne et par nuit, maximum 10 nuits. Perçue pour la Ville de Rome.",
       laundry: "Blanchisserie : Si vous devez laver des vêtements ou serviettes, écrivez-moi et je vous indiquerai la meilleure solution à Trastevere.",
       building: "Immeuble : Appartement situé dans le quartier de Trastevere, animé et central. Accès par porte avec interphone extérieur et intérieur.",
-      emergency: "Urgences : UE 112 • Police 113 • Ambulance 118 • Pompiers 115"
+      emergency: "Urgences : UE 112 • Police 113 • Ambulance 118 • Pompiers 115",
+      parking: "Parking : L'appartement se trouve dans le centre historique (ZTL - Zone à Trafic Limité). L'accès en voiture est autorisé uniquement du lundi au samedi de 19h00 à 7h30. Pour trouver le parking le plus proche, recherchez l'adresse de l'appartement sur Google Maps. En cas de difficulté, appelez-moi : +39 335 5245756."
     },
     de: {
       wifi: "WLAN: Der Router steht auf der rechten Seite des Wohnzimmers auf einer Bank. SSID und Passwort stehen auf dem Aufkleber. Bei Problemen: prüfen, ob er eingeschaltet ist, 30 Sekunden vom Strom trennen und wieder anschließen.",
@@ -172,7 +185,8 @@
       city_tax_info: "Touristensteuer: In Rom für Nicht-Einwohner verpflichtend. Für diese Wohnung 5 € pro Person und Nacht, maximal 10 Nächte. Wird für die Stadt Rom erhoben.",
       laundry: "Wäscherei: Wenn Sie Kleidung oder Handtücher waschen müssen, schreiben Sie mir – ich empfehle eine Lösung in Trastevere.",
       building: "Gebäude: Wohnung im Stadtteil Trastevere, lebendig und zentral. Zugang über Haustür mit Außen- und Innensprechanlage.",
-      emergency: "Notfälle: EU 112 • Polizei 113 • Rettung 118 • Feuerwehr 115"
+      emergency: "Notfälle: EU 112 • Polizei 113 • Rettung 118 • Feuerwehr 115",
+      parking: "Parkplatz: Die Wohnung liegt im historischen Zentrum (ZTL - Verkehrsbeschränkte Zone). Die Zufahrt mit dem Auto ist nur Montag bis Samstag von 19:00 bis 7:30 Uhr erlaubt. Um den nächsten Parkplatz zu finden, suchen Sie die Adresse der Wohnung bei Google Maps. Bei Schwierigkeiten rufen Sie mich an: +39 335 5245756."
     },
     es: {
       wifi: "Wi-Fi: El router está en el lado derecho del salón, sobre un banco. El SSID y la contraseña están en la etiqueta. Si hay problemas: comprueba que esté encendido, desenchúfalo 30 segundos y vuelve a conectarlo.",
@@ -184,7 +198,8 @@
       city_tax_info: "Tasa turística: Obligatoria en Roma para no residentes. Para este apartamento es de 5 € por persona y noche, máximo 10 noches. Se cobra en nombre del Ayuntamiento de Roma.",
       laundry: "Lavandería: Si necesitas lavar ropa o toallas, escríbeme y te indicaré la mejor opción en la zona de Trastevere.",
       building: "Edificio: Apartamento situado en el barrio de Trastevere, céntrico y animado. Acceso mediante puerta con portero automático exterior e interior.",
-      emergency: "Emergencias: UE 112 • Policía 113 • Ambulancia 118 • Bomberos 115"
+      emergency: "Emergencias: UE 112 • Policía 113 • Ambulancia 118 • Bomberos 115",
+      parking: "Aparcamiento: El apartamento está en el centro histórico (ZTL - Zona de Tráfico Limitado). El acceso en coche está permitido solo de lunes a sábado de 19:00 a 7:30. Para encontrar el aparcamiento más cercano, busca la dirección del apartamento en Google Maps. Si tienes dificultades, llámame: +39 335 5245756."
     }
   },
 
@@ -199,7 +214,8 @@
       city_tax_info: "Tassa di soggiorno: A Roma è obbligatoria per gli ospiti non residenti. Per questo appartamento è di 5 € a persona per notte, fino a un massimo di 10 notti. La incassiamo per conto del Comune di Roma.",
       laundry: "Lavanderia: Se devi lavare vestiti o asciugamani, scrivimi e ti indico la soluzione migliore in zona in base ai tuoi orari.",
       building: "Edificio: Accesso tramite portone con Virtual Key. Area Ghetto/Portico d'Ottavia, zona centrale e pedonale in alcune fasce orarie.",
-      emergency: "Emergenze: UE 112 • Polizia 113 • Ambulanza 118 • Vigili del Fuoco 115"
+      emergency: "Emergenze: UE 112 • Polizia 113 • Ambulanza 118 • Vigili del Fuoco 115",
+      parking: "Parcheggio: L'appartamento si trova nel centro storico (ZTL). L'accesso in auto è consentito solo dal lunedì al sabato dalle 19:00 alle 7:30. Per trovare il parcheggio più vicino cerca su Google Maps l'indirizzo dell'appartamento. Se hai difficoltà, chiamami: +39 335 5245756."
     },
     en: {
       wifi: "Wi-Fi: The router is on the table. Turn it to read the SSID and password on the label. If it doesn't work: check it's on, unplug it for 30 seconds and plug it back in. If the issue continues, message me.",
@@ -211,7 +227,8 @@
       city_tax_info: "City tax: Mandatory in Rome for non-residents. For this apartment it is €5 per person per night, up to a maximum of 10 nights. Collected on behalf of the City of Rome.",
       laundry: "Laundry: If you need to wash clothes or towels, message me and I'll suggest the best nearby option based on your schedule.",
       building: "Building: Access via building door with Virtual Key. Located in the Ghetto/Portico d'Ottavia area, central and partially pedestrian.",
-      emergency: "Emergencies: EU 112 • Police 113 • Ambulance 118 • Fire Brigade 115"
+      emergency: "Emergencies: EU 112 • Police 113 • Ambulance 118 • Fire Brigade 115",
+      parking: "Parking: The apartment is in the historic center (ZTL - Limited Traffic Zone). Car access is allowed only Monday to Saturday from 7:00 PM to 7:30 AM. To find the nearest parking, search the apartment address on Google Maps. If you need help, call me: +39 335 5245756."
     },
     fr: {
       wifi: "Wi-Fi : Le routeur est sur la table. Tournez-le pour lire le SSID et le mot de passe sur l'étiquette. S'il ne fonctionne pas : vérifiez qu'il est allumé, débranchez-le 30 secondes puis rebranchez-le. Sinon, écrivez-moi.",
@@ -223,7 +240,8 @@
       city_tax_info: "Taxe de séjour : Obligatoire à Rome pour les non-résidents. Pour cet appartement : 5 € par personne et par nuit, maximum 10 nuits. Perçue pour la Ville de Rome.",
       laundry: "Blanchisserie : Si vous devez laver des vêtements ou serviettes, écrivez-moi et je vous indiquerai la meilleure solution à proximité.",
       building: "Immeuble : Accès par porte avec Virtual Key. Situé dans le quartier du Ghetto/Portico d'Ottavia, zone centrale partiellement piétonne.",
-      emergency: "Urgences : UE 112 • Police 113 • Ambulance 118 • Pompiers 115"
+      emergency: "Urgences : UE 112 • Police 113 • Ambulance 118 • Pompiers 115",
+      parking: "Parking : L'appartement se trouve dans le centre historique (ZTL - Zone à Trafic Limité). L'accès en voiture est autorisé uniquement du lundi au samedi de 19h00 à 7h30. Pour trouver le parking le plus proche, recherchez l'adresse de l'appartement sur Google Maps. En cas de difficulté, appelez-moi : +39 335 5245756."
     },
     de: {
       wifi: "WLAN: Der Router steht auf dem Tisch. Drehen Sie ihn, um SSID und Passwort auf dem Aufkleber zu lesen. Falls es nicht funktioniert: prüfen Sie, ob er eingeschaltet ist, ziehen Sie den Stecker 30 Sekunden und stecken Sie ihn wieder ein. Dann bitte melden.",
@@ -235,7 +253,8 @@
       city_tax_info: "Touristensteuer: In Rom für Nicht-Einwohner verpflichtend. Für diese Wohnung 5 € pro Person und Nacht, maximal 10 Nächte. Wird für die Stadt Rom erhoben.",
       laundry: "Wäscherei: Wenn Sie Kleidung oder Handtücher waschen müssen, schreiben Sie mir für eine Empfehlung in der Nähe.",
       building: "Gebäude: Zugang über Haustür mit Virtual Key. Lage im Ghetto/Portico-d'Ottavia-Viertel, zentrale Lage mit teilweiser Fußgängerzone.",
-      emergency: "Notfälle: EU 112 • Polizei 113 • Rettung 118 • Feuerwehr 115"
+      emergency: "Notfälle: EU 112 • Polizei 113 • Rettung 118 • Feuerwehr 115",
+      parking: "Parkplatz: Die Wohnung liegt im historischen Zentrum (ZTL - Verkehrsbeschränkte Zone). Die Zufahrt mit dem Auto ist nur Montag bis Samstag von 19:00 bis 7:30 Uhr erlaubt. Um den nächsten Parkplatz zu finden, suchen Sie die Adresse der Wohnung bei Google Maps. Bei Schwierigkeiten rufen Sie mich an: +39 335 5245756."
     },
     es: {
       wifi: "Wi-Fi: El router está sobre la mesa. Gíralo para leer el SSID y la contraseña en la etiqueta. Si no funciona: comprueba que esté encendido, desenchúfalo 30 segundos y vuelve a conectarlo. Si continúa, escríbeme.",
@@ -247,7 +266,8 @@
       city_tax_info: "Tasa turística: Obligatoria en Roma para no residentes. Para este apartamento es de 5 € por persona y noche, máximo 10 noches. Se cobra en nombre del Ayuntamiento de Roma.",
       laundry: "Lavandería: Si necesitas lavar ropa o toallas, escríbeme y te indicaré la mejor opción cercana.",
       building: "Edificio: Acceso mediante puerta con Virtual Key. Ubicado en la zona del Ghetto/Portico d'Ottavia, céntrica y parcialmente peatonal.",
-      emergency: "Emergencias: UE 112 • Policía 113 • Ambulancia 118 • Bomberos 115"
+      emergency: "Emergencias: UE 112 • Policía 113 • Ambulancia 118 • Bomberos 115",
+      parking: "Aparcamiento: El apartamento está en el centro histórico (ZTL - Zona de Tráfico Limitado). El acceso en coche está permitido solo de lunes a sábado de 19:00 a 7:30. Para encontrar el aparcamiento más cercano, busca la dirección del apartamento en Google Maps. Si tienes dificultades, llámame: +39 335 5245756."
     }
   },
 
@@ -262,7 +282,8 @@
       city_tax_info: "Tassa di soggiorno: A Roma è prevista per gli ospiti non residenti. Per questo appartamento è di 5 € a persona per notte, fino a un massimo di 10 notti. La riscuotiamo per conto del Comune di Roma.",
       laundry: "Lavanderia: Se devi lavare vestiti o asciugamani, scrivimi e ti indico la soluzione migliore in zona in base ai tuoi orari.",
       building: "Edificio: Appartamento su Viale Trastevere, zona centrale e ben collegata. Accesso diretto dal portone su strada principale.",
-      emergency: "Emergenze: UE 112 • Polizia 113 • Ambulanza 118 • Vigili del Fuoco 115"
+      emergency: "Emergenze: UE 112 • Polizia 113 • Ambulanza 118 • Vigili del Fuoco 115",
+      parking: "Parcheggio: Vicino all'appartamento ci sono diversi parcheggi pubblici non custoditi (non lasciare oggetti visibili in auto) e parcheggi privati a pagamento. Puoi anche usare i parcheggi comunali con strisce blu."
     },
     en: {
       wifi: "Wi-Fi: The router is on the cabinet near the entrance. Turn it to read the SSID and password on the label. If it doesn't work: check it's on, unplug it for 30 seconds and plug it back in. If the issue continues, message me.",
@@ -274,7 +295,8 @@
       city_tax_info: "City tax: Required in Rome for non-residents. For this apartment it is €5 per person per night, up to a maximum of 10 nights. Collected on behalf of the City of Rome.",
       laundry: "Laundry: If you need to wash clothes or towels, message me and I'll suggest the best nearby option based on your schedule.",
       building: "Building: Apartment on Viale Trastevere, central and well connected. Direct access from the main street entrance.",
-      emergency: "Emergencies: EU 112 • Police 113 • Ambulance 118 • Fire Brigade 115"
+      emergency: "Emergencies: EU 112 • Police 113 • Ambulance 118 • Fire Brigade 115",
+      parking: "Parking: Near the apartment there are several unattended public parking lots (do not leave visible items in your car) and paid private parking facilities. You can also use municipal parking with blue lines."
     },
     fr: {
       wifi: "Wi-Fi : Le routeur est sur le meuble près de l'entrée. Tournez-le pour lire le SSID et le mot de passe sur l'étiquette. En cas de problème, vérifiez qu'il est allumé, débranchez-le 30 secondes puis rebranchez-le.",
@@ -286,7 +308,8 @@
       city_tax_info: "Taxe de séjour : Obligatoire à Rome pour les non-résidents. Pour cet appartement : 5 € par personne et par nuit, maximum 10 nuits. Perçue pour la Ville de Rome.",
       laundry: "Blanchisserie : Si vous devez laver des vêtements ou serviettes, écrivez-moi et je vous indiquerai la meilleure solution à proximité.",
       building: "Immeuble : Appartement situé sur Viale Trastevere, quartier central et très bien desservi.",
-      emergency: "Urgences : UE 112 • Police 113 • Ambulance 118 • Pompiers 115"
+      emergency: "Urgences : UE 112 • Police 113 • Ambulance 118 • Pompiers 115",
+      parking: "Parking : Près de l'appartement, il y a plusieurs parkings publics non surveillés (ne laissez rien de visible dans la voiture) et des parkings privés payants. Vous pouvez également utiliser les parkings municipaux avec lignes bleues."
     },
     de: {
       wifi: "WLAN: Der Router steht auf dem Möbelstück im Eingangsbereich. Drehen Sie ihn, um SSID und Passwort auf dem Aufkleber zu lesen. Bei Problemen: 30 Sekunden vom Strom trennen und wieder anschließen.",
@@ -298,7 +321,8 @@
       city_tax_info: "Touristensteuer: In Rom für Nicht-Einwohner verpflichtend. Für diese Wohnung 5 € pro Person und Nacht, maximal 10 Nächte. Wird für die Stadt Rom erhoben.",
       laundry: "Wäscherei: Wenn Sie Kleidung oder Handtücher waschen müssen, schreiben Sie mir – ich empfehle eine Lösung in der Nähe.",
       building: "Gebäude: Wohnung an der Viale Trastevere, zentrale Lage mit sehr guter Anbindung.",
-      emergency: "Notfälle: EU 112 • Polizei 113 • Rettung 118 • Feuerwehr 115"
+      emergency: "Notfälle: EU 112 • Polizei 113 • Rettung 118 • Feuerwehr 115",
+      parking: "Parkplatz: In der Nähe der Wohnung gibt es mehrere unbewachte öffentliche Parkplätze (lassen Sie keine sichtbaren Gegenstände im Auto) und kostenpflichtige Privatparkplätze. Sie können auch die städtischen Parkplätze mit blauen Linien nutzen."
     },
     es: {
       wifi: "Wi-Fi: El router está en el mueble cerca de la entrada. Gíralo para leer el SSID y la contraseña en la etiqueta. Si no funciona: comprueba que esté encendido, desenchúfalo 30 segundos y vuelve a conectarlo. Si continúa, escríbeme.",
@@ -310,7 +334,8 @@
       city_tax_info: "Tasa turística: Obligatoria en Roma para no residentes. Para este apartamento es de 5 € por persona y noche, máximo 10 noches. Se cobra en nombre del Ayuntamiento de Roma.",
       laundry: "Lavandería: Si necesitas lavar ropa o toallas, escríbeme y te indicaré la mejor opción cercana.",
       building: "Edificio: Apartamento en Viale Trastevere, zona céntrica y bien comunicada. Acceso directo desde la calle principal.",
-      emergency: "Emergencias: UE 112 • Policía 113 • Ambulancia 118 • Bomberos 115"
+      emergency: "Emergencias: UE 112 • Policía 113 • Ambulancia 118 • Bomberos 115",
+      parking: "Aparcamiento: Cerca del apartamento hay varios aparcamientos públicos no vigilados (no dejes objetos visibles en el coche) y aparcamientos privados de pago. También puedes usar los aparcamientos municipales con líneas azules."
     }
   }
 };
