@@ -1,4 +1,4 @@
-// matcher.js - Intent Matching (EXPANDED)
+ // matcher.js - Intent Matching (EXPANDED)
 
 const INTENTS = {
   wifi: [
@@ -11,15 +11,7 @@ const INTENTS = {
     "mot de passe", "quel est le mot de passe",
     "passwort", "wlan", "wie verbinde ich"
   ],
-air_conditioning: [
-  "aria condizionata", "condizionatore", "climatizzatore", "raffreddamento",
-  "fa caldo", "ho caldo", "rinfrescare", "raffreddare",
-  "accendere aria", "spegnere aria", "telecomando aria",
-  "air conditioning", "ac", "a/c", "cooling", "cool", "it's hot", "i am hot",
-  "aire acondicionado", "acondicionado", "hace calor", "tengo calor",
-  "climatisation", "il fait chaud", "j'ai chaud",
-  "klimaanlage", "es ist heiß", "mir ist heiß"
-],
+
   trash: [
     "spazzatura", "rifiuti", "immondizia", "pattumiera", "cestino",
     "dove butto", "dove metto", "dove posso buttare", "dove si butta",
@@ -122,109 +114,6 @@ air_conditioning: [
     "emergencia", "ayuda", "problema", "urgente", "roto",
     "urgence", "aide", "problème", "cassé",
     "notfall", "hilfe", "problem", "kaputt"
-  ],
-  hot_water: [
-    "acqua calda", "non c'è acqua calda", "doccia fredda",
-    "boiler", "scaldabagno", "acqua fredda",
-    "hot water", "no hot water", "cold shower",
-    "water heater",
-    "agua caliente", "no hay agua caliente", "ducha fría",
-    "calentador", "termo",
-    "eau chaude", "pas d'eau chaude", "douche froide",
-    "chauffe-eau",
-    "warmes wasser", "kein warmes wasser", "kalte dusche",
-    "wasserheizer"
-  ],
-
-   gas_cooking: [
-  "gas", "fornelli", "piano cottura",
-  "fornello non si accende", "non esce gas",
-  "il fornello si spegne",
-  "la fiamma si spegne",
-  "il gas si spegne",
-  "il fornello si accende e si spegne",
-  "la fiamma non resta accesa",
-  "problema fornello",
-  "problema gas",
-
-  "stove", "cooktop", "burner not working", "no gas",
-  "burner",
-  "gas burner",
-  "burner turns off",
-  "burner lights up",
-  "lights up and turns off",
-  "flame goes out",
-  "flame turns off",
-  "gas flame",
-  "ignites then turns off",
-
-  "fogones", "placa", "no funciona el gas",
-  "el fuego se apaga",
-  "la llama se apaga",
-  "el quemador se apaga",
-  "el gas se apaga",
-  "el fogón se apaga",
-  "la llama no se mantiene",
-
-  "gaz", "cuisinière", "plaque",
-  "la flamme s’éteint",
-  "le brûleur s’éteint",
-  "le gaz s’éteint",
-  "la flamme ne reste pas allumée",
-  "le brûleur s’allume puis s’éteint",
-
-  "herd", "kochfeld", "gas funktioniert nicht",
-  "flamme geht aus",
-  "brenner geht aus",
-  "gasflamme",
-  "der brenner geht aus",
-  "flamme bleibt nicht an",
-  "gas geht aus"
-],
-
-  water_supply: [
-    "acqua", "non c'è acqua", "manca acqua",
-    "pressione bassa", "poca acqua",
-    "water", "no water", "low pressure",
-    "agua", "no hay agua", "poca presión",
-    "eau", "pas d'eau", "pression basse",
-    "wasser", "kein wasser", "niedriger druck"
-  ],
-
-  front_door: [
-    "porta di casa", "porta ingresso",
-    "non si apre", "non si chiude",
-    "chiave", "serratura",
-    "front door", "entrance door",
-    "won't open", "won't close", "key", "lock",
-    "puerta", "puerta de entrada",
-    "no se abre", "no se cierra", "llave", "cerradura",
-    "porte", "porte d'entrée",
-    "ne s'ouvre pas", "ne se ferme pas", "clé", "serrure",
-    "tür", "eingangstür",
-    "öffnet nicht", "schließt nicht", "schlüssel", "schloss"
-  ],
-
-  appliances: [
-    "elettrodomestici", "frigo", "forno", "microonde",
-    "non funziona", "rotto", "non si accende",
-    "appliances", "fridge", "oven", "microwave",
-    "not working", "broken", "won't turn on",
-    "electrodomésticos", "nevera", "horno", "microondas",
-    "no funciona", "roto", "no enciende",
-    "électroménagers", "frigo", "four", "micro-ondes",
-    "ne fonctionne pas", "cassé", "ne s'allume pas",
-    "haushaltsgeräte", "kühlschrank", "ofen", "mikrowelle",
-    "funktioniert nicht", "kaputt", "geht nicht an"
-  ],
-
-  tv: [
-    "televisione", "tv",
-    "non si accende", "telecomando", "schermo nero",
-    "television", "remote control", "black screen",
-    "televisión", "mando", "pantalla negra",
-    "télévision", "télécommande", "écran noir",
-    "fernseher", "fernbedienung", "schwarzer bildschirm"
   ]
 };
 
