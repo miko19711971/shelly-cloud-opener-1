@@ -525,7 +525,6 @@ app.post("/checkin/:apt/open/door", requireCheckinToken, async (req, res) => {
   if (!result.ok) return res.status(502).json({ ok: false, error: "open_failed", details: result });
   return res.json({ ok: true, opened: result });
 });
-});
 
 // ❌ BLOCCA vecchi URL senza token
 app.get("/checkin/:apt/today", (req, res) => {
