@@ -136,14 +136,51 @@ air_conditioning: [
     "wasserheizer"
   ],
 
-  gas_cooking: [
-    "gas", "fornelli", "piano cottura",
-    "fornello non si accende", "non esce gas",
-    "stove", "cooktop", "burner not working", "no gas",
-    "fogones", "placa", "no funciona el gas",
-    "gaz", "cuisinière", "plaque",
-    "herd", "kochfeld", "gas funktioniert nicht"
-  ],
+   gas_cooking: [
+  "gas", "fornelli", "piano cottura",
+  "fornello non si accende", "non esce gas",
+  "il fornello si spegne",
+  "la fiamma si spegne",
+  "il gas si spegne",
+  "il fornello si accende e si spegne",
+  "la fiamma non resta accesa",
+  "problema fornello",
+  "problema gas",
+
+  "stove", "cooktop", "burner not working", "no gas",
+  "burner",
+  "gas burner",
+  "burner turns off",
+  "burner lights up",
+  "lights up and turns off",
+  "flame goes out",
+  "flame turns off",
+  "gas flame",
+  "ignites then turns off",
+
+  "fogones", "placa", "no funciona el gas",
+  "el fuego se apaga",
+  "la llama se apaga",
+  "el quemador se apaga",
+  "el gas se apaga",
+  "el fogón se apaga",
+  "la llama no se mantiene",
+
+  "gaz", "cuisinière", "plaque",
+  "la flamme s’éteint",
+  "le brûleur s’éteint",
+  "le gaz s’éteint",
+  "la flamme ne reste pas allumée",
+  "le brûleur s’allume puis s’éteint",
+
+  "herd", "kochfeld", "gas funktioniert nicht",
+  "flamme geht aus",
+  "brenner geht aus",
+  "gasflamme",
+  "der brenner geht aus",
+  "flamme bleibt nicht an",
+  "gas geht aus"
+],
 
   water_supply: [
     "acqua", "non c'è acqua", "manca acqua",
