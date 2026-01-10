@@ -1,4 +1,4 @@
- // matcher.js - Intent Matching con Word Boundaries
+// matcher.js - Intent Matching con Word Boundaries
 
 const INTENTS = {
   wifi: [
@@ -138,6 +138,122 @@ const INTENTS = {
     "stationner", "garage", "où se garer",
     "parkplatz", "parken", "wo parken", "wo kann ich parken",
     "parkhaus", "wo parkieren"
+  ],
+
+  // ========== 7 NUOVI INTENT ==========
+
+  services: [
+    "farmacia", "ospedale", "medico", "dottore", "bancomat", "atm",
+    "sim card", "sim", "carta sim", "deposito bagagli", "bagagli",
+    "consegna bagagli", "dove posso lasciare bagagli",
+    "pharmacy", "hospital", "doctor", "atm", "cash machine",
+    "sim card", "luggage storage", "left luggage", "baggage storage",
+    "farmacia", "hospital", "cajero", "tarjeta sim", "consigna equipaje",
+    "pharmacie", "hôpital", "médecin", "distributeur", "carte sim", "consigne bagages",
+    "apotheke", "krankenhaus", "arzt", "geldautomat", "sim karte", "gepäckaufbewahrung"
+  ],
+
+  transport: [
+    "trasporti", "come muoversi", "metro", "metropolitana", "autobus",
+    "tram", "treno", "stazione", "fermata", "biglietto", "abbonamento",
+    "aeroporto", "come arrivare", "come andare",
+    "transport", "transportation", "how to get", "how to move", "metro",
+    "subway", "bus", "tram", "train", "station", "stop", "ticket",
+    "airport", "how to reach", "how to get to",
+    "transporte", "como llegar", "metro", "autobus", "tren",
+    "estación", "parada", "billete", "aeropuerto",
+    "transport", "comment aller", "métro", "bus", "tramway",
+    "train", "gare", "arrêt", "billet", "aéroport",
+    "verkehr", "transport", "wie komme ich", "metro", "u-bahn",
+    "bus", "straßenbahn", "zug", "bahnhof", "haltestelle", "flughafen"
+  ],
+
+  restaurants: [
+    "ristorante", "ristoranti", "dove mangiare", "dove cenare", "dove pranzare",
+    "pizzeria", "pizza", "trattoria", "osteria", "cibo", "cena", "pranzo",
+    "colazione", "bar", "caffè", "bere", "aperitivo", "vino", "cocktail",
+    "gelateria", "gelato", "dolci", "pasticceria",
+    "restaurant", "restaurants", "where to eat", "where to dine",
+    "pizzeria", "pizza", "food", "dinner", "lunch", "breakfast",
+    "bar", "cafe", "coffee", "drink", "aperitivo", "wine", "cocktail",
+    "ice cream", "gelato", "dessert", "bakery",
+    "restaurante", "donde comer", "donde cenar", "pizzeria",
+    "comida", "cena", "almuerzo", "desayuno", "bar", "café",
+    "beber", "aperitivo", "vino", "cóctel", "helado", "postre",
+    "restaurant", "où manger", "où dîner", "pizzeria",
+    "nourriture", "dîner", "déjeuner", "petit déjeuner", "bar",
+    "café", "boire", "apéritif", "vin", "cocktail", "glace", "dessert",
+    "restaurant", "wo essen", "wo speisen", "pizzeria",
+    "essen", "abendessen", "mittagessen", "frühstück", "bar",
+    "kaffee", "trinken", "aperitif", "wein", "cocktail", "eis", "nachtisch"
+  ],
+
+  shopping: [
+    "shopping", "negozi", "negozio", "comprare", "acquistare", "mercato",
+    "supermercato", "alimentari", "spesa", "dove comprare",
+    "shopping", "shop", "shops", "store", "stores", "buy", "purchase",
+    "market", "supermarket", "grocery", "groceries", "where to buy",
+    "compras", "tienda", "tiendas", "comprar", "mercado",
+    "supermercado", "comestibles", "donde comprar",
+    "shopping", "magasin", "magasins", "acheter", "marché",
+    "supermarché", "épicerie", "où acheter",
+    "shopping", "einkaufen", "geschäft", "laden", "kaufen",
+    "markt", "supermarkt", "lebensmittel", "wo kaufen"
+  ],
+
+  attractions: [
+    "visitare", "cosa visitare", "cosa vedere", "attrazioni", "monumenti",
+    "musei", "museo", "chiese", "chiesa", "piazze", "fontane",
+    "luoghi da vedere", "cosa fare", "turismo", "siti turistici",
+    "visit", "what to visit", "what to see", "attractions", "sights",
+    "monuments", "museums", "museum", "churches", "church",
+    "squares", "fountains", "places to see", "things to do", "tourism",
+    "visitar", "que visitar", "que ver", "atracciones", "monumentos",
+    "museos", "museo", "iglesias", "plazas", "fuentes", "turismo",
+    "visiter", "quoi visiter", "quoi voir", "attractions", "monuments",
+    "musées", "musée", "églises", "places", "fontaines", "tourisme",
+    "besuchen", "was besuchen", "was sehen", "sehenswürdigkeiten",
+    "denkmäler", "museen", "museum", "kirchen", "plätze", "tourismus"
+  ],
+
+  day_trips: [
+    "gita", "gite", "escursione", "escursioni", "gita di un giorno",
+    "fuori roma", "dintorni", "tivoli", "ostia", "ostia antica",
+    "castelli romani", "frascati", "castel gandolfo",
+    "day trip", "day trips", "excursion", "excursions", "day tour",
+    "outside rome", "near rome", "tivoli", "ostia", "ostia antica",
+    "castelli romani", "frascati", "castel gandolfo",
+    "excursión", "excursiones", "viaje de un día", "fuera de roma",
+    "alrededores", "tivoli", "ostia", "castelli romani",
+    "excursion", "excursions", "sortie d'une journée", "hors de rome",
+    "environs", "tivoli", "ostie", "castelli romani",
+    "tagesausflug", "ausflug", "ausflüge", "außerhalb rom",
+    "umgebung", "tivoli", "ostia", "castelli romani"
+  ],
+
+  tickets: [
+    "biglietti", "biglietto", "prenotare", "prenotazione", "ticket",
+    "colosseo", "vaticano", "musei vaticani", "cappella sistina",
+    "foro romano", "palatino", "galleria borghese", "pantheon",
+    "eventi", "concerti", "concerto", "spettacoli", "teatro",
+    "calcio", "partita", "roma", "lazio", "stadio olimpico",
+    "tickets", "ticket", "book", "booking", "reservation",
+    "colosseum", "vatican", "vatican museums", "sistine chapel",
+    "roman forum", "palatine", "borghese gallery", "pantheon",
+    "events", "concerts", "concert", "shows", "theatre",
+    "football", "soccer", "match", "roma", "lazio", "olympic stadium",
+    "entradas", "entrada", "reservar", "reserva",
+    "coliseo", "vaticano", "museos vaticanos", "capilla sixtina",
+    "foro romano", "eventos", "conciertos", "espectáculos",
+    "fútbol", "partido", "estadio olímpico",
+    "billets", "billet", "réserver", "réservation",
+    "colisée", "vatican", "musées du vatican", "chapelle sixtine",
+    "forum romain", "événements", "concerts", "spectacles",
+    "football", "match", "stade olympique",
+    "tickets", "karten", "buchen", "buchung",
+    "kolosseum", "vatikan", "vatikanische museen", "sixtinische kapelle",
+    "forum romanum", "veranstaltungen", "konzerte", "shows",
+    "fußball", "spiel", "olympiastadion"
   ]
 };
 
