@@ -122,6 +122,72 @@ air_conditioning: [
     "emergencia", "ayuda", "problema", "urgente", "roto",
     "urgence", "aide", "problème", "cassé",
     "notfall", "hilfe", "problem", "kaputt"
+  ],
+  hot_water: [
+    "acqua calda", "non c'è acqua calda", "doccia fredda",
+    "boiler", "scaldabagno", "acqua fredda",
+    "hot water", "no hot water", "cold shower",
+    "water heater",
+    "agua caliente", "no hay agua caliente", "ducha fría",
+    "calentador", "termo",
+    "eau chaude", "pas d'eau chaude", "douche froide",
+    "chauffe-eau",
+    "warmes wasser", "kein warmes wasser", "kalte dusche",
+    "wasserheizer"
+  ],
+
+  gas_cooking: [
+    "gas", "fornelli", "piano cottura",
+    "fornello non si accende", "non esce gas",
+    "stove", "cooktop", "burner not working", "no gas",
+    "fogones", "placa", "no funciona el gas",
+    "gaz", "cuisinière", "plaque",
+    "herd", "kochfeld", "gas funktioniert nicht"
+  ],
+
+  water_supply: [
+    "acqua", "non c'è acqua", "manca acqua",
+    "pressione bassa", "poca acqua",
+    "water", "no water", "low pressure",
+    "agua", "no hay agua", "poca presión",
+    "eau", "pas d'eau", "pression basse",
+    "wasser", "kein wasser", "niedriger druck"
+  ],
+
+  front_door: [
+    "porta di casa", "porta ingresso",
+    "non si apre", "non si chiude",
+    "chiave", "serratura",
+    "front door", "entrance door",
+    "won't open", "won't close", "key", "lock",
+    "puerta", "puerta de entrada",
+    "no se abre", "no se cierra", "llave", "cerradura",
+    "porte", "porte d'entrée",
+    "ne s'ouvre pas", "ne se ferme pas", "clé", "serrure",
+    "tür", "eingangstür",
+    "öffnet nicht", "schließt nicht", "schlüssel", "schloss"
+  ],
+
+  appliances: [
+    "elettrodomestici", "frigo", "forno", "microonde",
+    "non funziona", "rotto", "non si accende",
+    "appliances", "fridge", "oven", "microwave",
+    "not working", "broken", "won't turn on",
+    "electrodomésticos", "nevera", "horno", "microondas",
+    "no funciona", "roto", "no enciende",
+    "électroménagers", "frigo", "four", "micro-ondes",
+    "ne fonctionne pas", "cassé", "ne s'allume pas",
+    "haushaltsgeräte", "kühlschrank", "ofen", "mikrowelle",
+    "funktioniert nicht", "kaputt", "geht nicht an"
+  ],
+
+  tv: [
+    "televisione", "tv",
+    "non si accende", "telecomando", "schermo nero",
+    "television", "remote control", "black screen",
+    "televisión", "mando", "pantalla negra",
+    "télévision", "télécommande", "écran noir",
+    "fernseher", "fernbedienung", "schwarzer bildschirm"
   ]
 };
 
