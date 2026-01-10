@@ -4,14 +4,11 @@ const SPREADSHEET_ID = "1-5umuvZHgqzcDiYKwmYhZJTYSAKXkd2qemNiuiiCyJg";
 const SHEET_NAME = "Foglio1";
 
 function getAuth() {
-  const credentials = JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT_JSON);
-
-  return new google.auth.JWT(
-    credentials.client_email,
-    null,
-    credentials.private_key,
-    ["https://www.googleapis.com/auth/spreadsheets"]
-  );
+  return new google.auth.JWT({
+    email: process.env.GOOGLE_CLIENT_EMAIL,
+    key: process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, "\n"),
+    scopes: ["https://www.googleapis.com/auth/spreadsheets"],
+  });
 }
 
 export async function writeTestRow() {
