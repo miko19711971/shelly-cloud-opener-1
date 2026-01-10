@@ -1,4 +1,4 @@
-// matcher.js - Intent Matching con Word Boundaries
+ // matcher.js - Intent Matching con Word Boundaries
 
 const INTENTS = {
   wifi: [
@@ -124,6 +124,20 @@ const INTENTS = {
     "aire acondicionado", "encender aire", "apagar aire",
     "climatisation", "clim", "allumer clim", "éteindre clim",
     "klimaanlage", "klima", "klimaanlage einschalten"
+  ],
+
+  parking: [
+    "parcheggio", "parcheggiare", "auto", "macchina", "dove parcheggio",
+    "posso parcheggiare", "parcheggio auto", "posto auto", "garage",
+    "dove metto l'auto", "dove metto la macchina", "ztl",
+    "parking", "park", "car", "where can i park", "where to park",
+    "parking spot", "parking space", "can i park", "where do i park",
+    "aparcamiento", "aparcar", "coche", "donde aparcar", "donde puedo aparcar",
+    "estacionamiento", "estacionar", "garaje",
+    "où garer", "où puis-je garer", "voiture", "stationnement",
+    "stationner", "garage", "où se garer",
+    "parkplatz", "parken", "wo parken", "wo kann ich parken",
+    "parkhaus", "wo parkieren"
   ]
 };
 
