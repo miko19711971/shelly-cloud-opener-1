@@ -834,3 +834,6 @@ app.listen(PORT, () => {
   console.log("Server running on", PORT);
 });
 
+import { writeTestRow } from "../city-tax/google-sheet.js";
+
+writeTestRow();
