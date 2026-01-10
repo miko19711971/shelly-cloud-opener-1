@@ -8,7 +8,7 @@ import fs from "fs/promises";
 import { detectLanguage } from "./language.js";
 import { matchIntent } from "./matcher.js";
 import { ANSWERS } from "./answers.js";
-import { writeTestRow } from "./google-sheet.js";
+ 
 const APT_DEFAULT_LANG = {
   arenula: "en",
   leonina: "en",
@@ -836,7 +836,7 @@ app.listen(PORT, () => {
 });
 
  
-
+import { writeTestRow } from "./google-sheet.js";
 setTimeout(async () => {
   try {
     await writeTestRow();
