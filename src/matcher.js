@@ -1,4 +1,4 @@
-// matcher.js — Intent Matching FULL PHRASE + SCORING (NO SILENT BUG)
+// matcher.js — Intent Matching FULL PHRASE + SCORING + LANGUAGE DETECTION
 
 const INTENTS = {
   wifi: [
@@ -147,7 +147,39 @@ function normalize(text) {
 }
 
 // =========================
-// MATCH INTENT CON SCORING
+// RILEVAMENTO LINGUA
+// =========================
+const LANGUAGE_PATTERNS = {
+  it: ["cosa", "come", "dove", "quando", "perche", "qual", "quale", "vorrei", "devo", "posso", "grazie", "ciao", "sono", "ho"],
+  en: ["what", "how", "where", "when", "why", "which", "would", "should", "can", "thanks", "hello", "the", "is", "are"],
+  fr: ["que", "comment", "ou", "quand", "pourquoi", "quel", "quelle", "dois", "puis", "merci", "bonjour", "le", "la", "avant"],
+  es: ["que", "como", "donde", "cuando", "por que", "cual", "debo", "puedo", "gracias", "hola", "el", "la", "antes"],
+  de: ["was", "wie", "wo", "wann", "warum", "welche", "soll", "kann", "danke", "hallo", "der", "die", "das"]
+};
+
+function detectLanguage(text) {
+  const normalized = normalize(text);
+  const words = normalized.split(" ");
+  
+  const scores = {};
+  
+  for (const [lang, patterns] of Object.entries(LANGUAGE_PATTERNS)) {
+    scores[lang] = 0;
+    for (const pattern of patterns) {
+      if (words.includes(normalize(pattern))) {
+        scores[lang]++;
+      }
+    }
+  }
+  
+  const maxScore = Math.max(...Object.values(scores));
+  if (maxScore === 0) return "en"; // default
+  
+  return Object.keys(scores).find(lang => scores[lang] === maxScore);
+}
+
+// =========================
+// MATCH INTENT CON SCORING E LINGUA
 // =========================
 export function matchIntent(text) {
   if (!text || typeof text !== "string") return null;
@@ -188,5 +220,7 @@ export function matchIntent(text) {
   // soglia minima per evitare rumore
   if (bestScore < 2) return null;
 
-  return bestIntent;
+  const language = detectLanguage(text);
+
+  return { intent: bestIntent, language };
 }
