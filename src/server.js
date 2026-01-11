@@ -41,7 +41,7 @@ app.post("/feedback", cors(), async (req, res) => {
     });
     res.json({ ok: true });
   } catch (err) {
-    console.error("ERRORE FEEDBACK → APPS SCRIPT", err);
+    console.error("ERRORE FEEDBACK â APPS SCRIPT", err);
     res.status(500).json({ ok: false });
   }
 });
@@ -69,7 +69,7 @@ const HOSTAWAY_WEBHOOK_BOOKING_SECRET = process.env.HOSTAWAY_WEBHOOK_BOOKING_SEC
 const ADMIN_SECRET = process.env.ADMIN_SECRET;
 
 if (!ADMIN_SECRET) {
-  console.error("❌ Missing ADMIN_SECRET env var");
+  console.error("â Missing ADMIN_SECRET env var");
   process.exit(1);
 }
 
@@ -81,18 +81,18 @@ function requireAdmin(req, res, next) {
   return next();
 }
 
-console.log("🔥 Hostaway token caricato:", HOSTAWAY_TOKEN ? "OK" : "MANCANTE");
+console.log("ð¥ Hostaway token caricato:", HOSTAWAY_TOKEN ? "OK" : "MANCANTE");
 
 if (!HOSTAWAY_TOKEN) {
-  console.error("❌ Missing HOSTAWAY_TOKEN env var (risposte automatiche HostAway disattivate).");
+  console.error("â Missing HOSTAWAY_TOKEN env var (risposte automatiche HostAway disattivate).");
 }
 
 if (!HOSTAWAY_WEBHOOK_BOOKING_SECRET) {
-  console.error("❌ Missing HOSTAWAY_WEBHOOK_BOOKING_SECRET env var.");
+  console.error("â Missing HOSTAWAY_WEBHOOK_BOOKING_SECRET env var.");
 }
 
 if (!TOKEN_SECRET) {
-  console.error("❌ Missing TOKEN_SECRET env var");
+  console.error("â Missing TOKEN_SECRET env var");
   process.exit(1);
 }
 
@@ -144,14 +144,14 @@ app.use((req, res, next) => {
 });
 
 const TARGETS = {
-  "arenula-building": { name: "Arenula 16 — Building Door", ids: ["3494547ab05e"] },
-  "leonina-door": { name: "Leonina 71 — Apartment Door", ids: ["3494547a9395"] },
-  "leonina-building": { name: "Via Leonina 71 — Building Door", ids: ["34945479fbbe"] },
-  "via-della-scala-door": { name: "Via della Scala 17 — Apartment Door", ids: ["3494547a1075"] },
-  "via-della-scala-building": { name: "Via della Scala 17 — Building Door", ids: ["3494547745ee", "3494547745ee"] },
-  "portico-1d-door": { name: "Portico d'Ottavia 1D — Apartment Door", ids: ["2cbcbb2f8ae8"] },
-  "portico-1d-building": { name: "Portico d'Ottavia 1D — Building Door", ids: ["2cbcbb30fb90"] },
-  "viale-trastevere-door": { name: "Viale Trastevere 108 — Apartment Door", ids: ["34945479fa35"] },
+  "arenula-building": { name: "Arenula 16 â Building Door", ids: ["3494547ab05e"] },
+  "leonina-door": { name: "Leonina 71 â Apartment Door", ids: ["3494547a9395"] },
+  "leonina-building": { name: "Via Leonina 71 â Building Door", ids: ["34945479fbbe"] },
+  "via-della-scala-door": { name: "Via della Scala 17 â Apartment Door", ids: ["3494547a1075"] },
+  "via-della-scala-building": { name: "Via della Scala 17 â Building Door", ids: ["3494547745ee", "3494547745ee"] },
+  "portico-1d-door": { name: "Portico d'Ottavia 1D â Apartment Door", ids: ["2cbcbb2f8ae8"] },
+  "portico-1d-building": { name: "Portico d'Ottavia 1D â Building Door", ids: ["2cbcbb30fb90"] },
+  "viale-trastevere-door": { name: "Viale Trastevere 108 â Apartment Door", ids: ["34945479fa35"] },
   "viale-trastevere-building": { name: "Building Door", ids: ["34945479fd73"] },
 };
 
@@ -271,14 +271,14 @@ const MONTHS_MAP = (() => {
   [["enero","ene"],["febrero","feb"],["marzo","mar"],["abril","abr"],["mayo","may"],["junio","jun"],
    ["julio","jul"],["agosto","ago"],["septiembre","sep"],["octubre","oct"],["noviembre","nov"],["diciembre","dic"]]
     .forEach(([full, short], i) => { m.set(full, i + 1); m.set(short, i + 1); });
-  [["janvier","jan"],["février","fevrier"],["mars","mar"],["avril","avr"],["mai","mai"],["juin","juin"],
-   ["juillet","juillet"],["août","aout"],["septembre","sep"],["octobre","oct"],["novembre","nov"],["décembre","decembre"]]
+  [["janvier","jan"],["fÃ©vrier","fevrier"],["mars","mar"],["avril","avr"],["mai","mai"],["juin","juin"],
+   ["juillet","juillet"],["aoÃ»t","aout"],["septembre","sep"],["octobre","oct"],["novembre","nov"],["dÃ©cembre","decembre"]]
     .forEach(([full, short], i) => { 
       const f = full.normalize("NFD").replace(/\p{Diacritic}/gu, "");
       const s = short.normalize("NFD").replace(/\p{Diacritic}/gu, "");
       m.set(f, i + 1); m.set(s, i + 1);
     });
-  [["januar","jan"],["februar","feb"],["märz","marz"],["april","apr"],["mai","mai"],["juni","jun"],
+  [["januar","jan"],["februar","feb"],["mÃ¤rz","marz"],["april","apr"],["mai","mai"],["juni","jun"],
    ["juli","jul"],["august","aug"],["september","sep"],["oktober","okt"],["november","nov"],["dezember","dez"]]
     .forEach(([full, short], i) => { 
       const f = full.normalize("NFD").replace(/\p{Diacritic}/gu, "");
@@ -326,8 +326,8 @@ function landingHtml(targetKey, targetName, tokenPayload) {
 <title>${targetName}</title><style>${pageCss()}</style></head><body><div class="wrap">
 <h1>${targetName}</h1><p class="muted">Valido solo nel giorno di check-in: <b>${day}</b> (${TIMEZONE})</p>
 <button id="btn">Apri</button>
-<div class="muted" id="hint">Max ${tokenPayload.max} aperture entro ${DEFAULT_WINDOW_MIN} minuti · residuo: <b id="left">${remaining}</b> · scade tra <span id="ttl">${expInSec}</span>s</div>
-<p class="ok hidden" id="okmsg">✔ Apertura inviata.</p><pre class="err hidden" id="errmsg"></pre>
+<div class="muted" id="hint">Max ${tokenPayload.max} aperture entro ${DEFAULT_WINDOW_MIN} minuti Â· residuo: <b id="left">${remaining}</b> Â· scade tra <span id="ttl">${expInSec}</span>s</div>
+<p class="ok hidden" id="okmsg">â Apertura inviata.</p><pre class="err hidden" id="errmsg"></pre>
 <script>const btn=document.getElementById('btn'),okmsg=document.getElementById('okmsg'),errmsg=document.getElementById('errmsg'),
 leftEl=document.getElementById('left'),ttlEl=document.getElementById('ttl');let ttl=${expInSec};
 setInterval(()=>{if(ttl>0){ttl--;ttlEl.textContent=ttl;}},1000);
@@ -363,9 +363,9 @@ app.get("/token/:target", requireAdmin, (req, res) => {
   return res.json({ ok: true, url, expiresInMin: Math.round((payload.exp - Date.now()) / 60000) });
 });
 
-app.all("/k/:target/:token", (req, res) => res.status(410).send("Link non più valido."));
+app.all("/k/:target/:token", (req, res) => res.status(410).send("Link non piÃ¹ valido."));
 app.all("/k/:target/:token/open", (req, res) => res.status(410).json({ ok: false, error: "gone" }));
-app.all("/k2/:target/:token", (req, res) => res.status(410).send("Link non più valido."));
+app.all("/k2/:target/:token", (req, res) => res.status(410).send("Link non piÃ¹ valido."));
 app.all("/k2/:target/:token/open", (req, res) => res.status(410).json({ ok: false, error: "gone" }));
 
 app.get(`${LINK_PREFIX}/:target/:token`, (req, res) => {
@@ -374,8 +374,8 @@ app.get(`${LINK_PREFIX}/:target/:token`, (req, res) => {
   const parsed = parseToken(token);
   if (!parsed.ok) {
     const code = ["bad_signature","bad_version","revoked","revoked_boot"].includes(parsed.error) ? 410 : 400;
-    const msg = parsed.error === "bad_signature" ? "Link non più valido (firma)." :
-      parsed.error === "bad_version" ? "Link non più valido." :
+    const msg = parsed.error === "bad_signature" ? "Link non piÃ¹ valido (firma)." :
+      parsed.error === "bad_version" ? "Link non piÃ¹ valido." :
       parsed.error === "revoked" ? "Link revocato." :
       parsed.error === "revoked_boot" ? "Link revocato (riavvio sistema)." : "Invalid link";
     return res.status(code).send(msg);
@@ -451,7 +451,7 @@ app.get("/checkin/:apt/", (req, res) => {
     else return res.status(410).send("Link scaduto.");
   }
   if (day !== today) return res.status(410).send("Link scaduto.");
-  if (day !== today) return res.status(410).send("Questo link è valido solo nel giorno di check-in.");
+  if (day !== today) return res.status(410).send("Questo link Ã¨ valido solo nel giorno di check-in.");
   const { token } = newTokenFor(`checkin-${apt}`, { windowMin: CHECKIN_WINDOW_MIN, max: 200, day });
   const url = `${req.protocol}://${req.get("host")}/checkin/${apt}/index.html?t=${token}`;
   res.redirect(302, url);
@@ -461,21 +461,21 @@ app.get("/checkin/:apt/index.html", (req, res) => {
   try {
     const apt = req.params.apt.toLowerCase(), t = String(req.query.t || "");
     const parsed = parseToken(t);
-    if (!parsed.ok) return res.status(410).send("Questo link non è più valido.");
+    if (!parsed.ok) return res.status(410).send("Questo link non Ã¨ piÃ¹ valido.");
     const p = parsed.payload || {};
-    if (typeof p.exp !== "number" || Date.now() > p.exp) return res.status(410).send("Questo link è scaduto. Richiedi un nuovo link.");
+    if (typeof p.exp !== "number" || Date.now() > p.exp) return res.status(410).send("Questo link Ã¨ scaduto. Richiedi un nuovo link.");
     const { tgt, day } = p;
     if (tgt !== `checkin-${apt}`) return res.status(410).send("Link non valido.");
-    if (!isYYYYMMDD(day) || day !== tzToday()) return res.status(410).send("Questo link è valido solo nel giorno di check-in.");
+    if (!isYYYYMMDD(day) || day !== tzToday()) return res.status(410).send("Questo link Ã¨ valido solo nel giorno di check-in.");
     const filePath = path.join(PUBLIC_DIR, "checkin", apt, "index.html");
     return res.sendFile(filePath, (err) => {
       if (err) {
-        console.error("❌ sendFile error:", { filePath, code: err.code, message: err.message });
+        console.error("â sendFile error:", { filePath, code: err.code, message: err.message });
         if (!res.headersSent) return res.status(err.statusCode || 404).send("Check-in page missing on server.");
       }
     });
   } catch (e) {
-    console.error("❌ /checkin/:apt/index.html crashed:", e);
+    console.error("â /checkin/:apt/index.html crashed:", e);
     return res.status(500).send("Internal Server Error");
   }
 });
@@ -548,7 +548,7 @@ const MAILER_URL = process.env.MAILER_URL || "https://script.google.com/macros/s
 const MAIL_SHARED_SECRET = process.env.MAIL_SHARED_SECRET;
 
 if (!MAIL_SHARED_SECRET) {
-  console.error("❌ Missing MAIL_SHARED_SECRET env var");
+  console.error("â Missing MAIL_SHARED_SECRET env var");
   process.exit(1);
 }
 
@@ -556,7 +556,7 @@ app.post("/hostaway-outbound", requireAdmin, async (req, res) => {
   try {
     const { reservationId, guestEmail, guestName, message } = req.body || {};
     if (!guestEmail || !message) {
-      console.log("❌ Dati insufficienti per invio email:", req.body);
+      console.log("â Dati insufficienti per invio email:", req.body);
       return res.status(400).json({ ok: false, error: "missing_email_or_message" });
     }
     const subject = `Messaggio da NiceFlatInRome`;
@@ -565,10 +565,10 @@ app.post("/hostaway-outbound", requireAdmin, async (req, res) => {
       { to: guestEmail, subject, htmlBody },
       { headers: { "Content-Type": "application/json" }, timeout: 10000 });
     if (String(mailResponse.data).trim() === "ok") {
-      console.log(`📤 Email inviata con successo a ${guestEmail}`);
+      console.log(`ð¤ Email inviata con successo a ${guestEmail}`);
       return res.json({ ok: true });
     } else {
-      console.error("❌ Errore dal mailer:", mailResponse.data);
+      console.error("â Errore dal mailer:", mailResponse.data);
       return res.status(502).json({ ok: false, error: "mailer_failed" });
     }
   } catch (err) {
@@ -611,19 +611,19 @@ app.post("/api/vbro-mail", requireAdmin, async (req, resInner) => {
     const mailResp = await axios.post(`${MAILER_URL}?secret=${encodeURIComponent(MAIL_SHARED_SECRET)}`,
       { to, subject, htmlBody: body },
       { headers: { "Content-Type": "application/json" }, timeout: 10000 });
-    console.log("📨 Email VRBO inviata con successo", mailResp.status);
+    console.log("ð¨ Email VRBO inviata con successo", mailResp.status);
     return resInner.json({ ok: true });
   } catch (err) {
-    console.error("❌ Errore invio mail:", err);
+    console.error("â Errore invio mail:", err);
     return resInner.status(500).json({ ok: false, error: String(err?.message || err) });
   }
 });
  // ========================================================================
-// HostAway → AI Guest Assistant (chat reply)
+// HostAway â AI Guest Assistant (chat reply)
 // ========================================================================
 
  // ========================================================================
-// HostAway Incoming Webhook — FINAL VERSION (NO language.js, NO guessing)
+// HostAway Incoming Webhook â UPDATED WITH NEW MATCHER
 // ========================================================================
 
 const APT_DEFAULT_LANG = {
@@ -641,9 +641,9 @@ function normalizeLang(lang) {
 
 app.post("/hostaway-incoming", async (req, res) => {
   console.log("\n" + "=".repeat(60));
-  console.log("📩 HOSTAWAY WEBHOOK RECEIVED");
+  console.log("ð© HOSTAWAY WEBHOOK RECEIVED");
   console.log("=".repeat(60));
-  console.log("📦 Request Body:", JSON.stringify(req.body, null, 2));
+  console.log("ð¦ Request Body:", JSON.stringify(req.body, null, 2));
   console.log("=".repeat(60) + "\n");
 
   try {
@@ -657,13 +657,13 @@ app.post("/hostaway-incoming", async (req, res) => {
     } = req.body || {};
 
     // ======================================================
-    // 🔎 Resolve Listing ID from reservation (HostAway)
+    // ð Resolve Listing ID from reservation (HostAway)
     // ======================================================
     let resolvedListingId = listingId;
 
     if (!resolvedListingId && reservationId) {
       try {
-        console.log("🔎 Fetching reservation from HostAway:", reservationId);
+        console.log("ð Fetching reservation from HostAway:", reservationId);
 
         const r = await axios.get(
           `https://api.hostaway.com/v1/reservations/${reservationId}`,
@@ -675,49 +675,51 @@ app.post("/hostaway-incoming", async (req, res) => {
           }
         );
 
-        console.log("🔍 FULL API Response:", JSON.stringify(r.data, null, 2));
+        console.log("ð FULL API Response:", JSON.stringify(r.data, null, 2));
 
         resolvedListingId = r.data?.result?.listingId;
-        console.log("🏠 ListingId resolved from reservation:", resolvedListingId);
+        console.log("ð  ListingId resolved from reservation:", resolvedListingId);
       } catch (e) {
-        console.error("❌ Failed to resolve listingId from reservation", e.message);
+        console.error("â Failed to resolve listingId from reservation", e.message);
       }
     }
 
-    console.log("📋 STEP 1: Extract Data");
-    console.log("  ├─ message:", message);
-    console.log("  ├─ conversationId:", conversationId);
-    console.log("  ├─ guestName:", guestName);
-    console.log("  └─ reservationId:", reservationId);
+    console.log("ð STEP 1: Extract Data");
+    console.log("  ââ message:", message);
+    console.log("  ââ conversationId:", conversationId);
+    console.log("  ââ guestName:", guestName);
+    console.log("  ââ reservationId:", reservationId);
 
     if (!message || !conversationId) {
-      console.log("⚠️ Missing required fields → SILENT");
+      console.log("â ï¸ Missing required fields â SILENT");
       return res.json({ ok: true, silent: true });
     }
 
     // ======================================================
-    // 🔐 STEP 2: Check HostAway Token
+    // ð STEP 2: Check HostAway Token
     // ======================================================
     if (!HOSTAWAY_TOKEN) {
-      console.error("❌ HOSTAWAY_TOKEN is NOT configured!");
+      console.error("â HOSTAWAY_TOKEN is NOT configured!");
       return res.status(500).json({ ok: false });
     }
 
-    console.log("  ✅ Token configured");
+    console.log("  â Token configured");
 
     // ======================================================
-    // 🎯 STEP 3: Match Intent
+    // ð¯ STEP 3: Match Intent + Language
     // ======================================================
-    const intent = matchIntent(message);
-    console.log("🎯 Intent matched:", intent || "NONE");
+    const match = matchIntent(message);
+    console.log("ð¯ Matcher result:", match || "NONE");
 
-    if (!intent) {
-      console.log("🔇 No intent → silent");
+    if (!match || !match.intent) {
+      console.log("ð No intent â silent");
       return res.json({ ok: true, silent: true });
     }
 
+    const { intent, language: detectedLang } = match;
+
     // ======================================================
-    // 🏠 STEP 4: listingId → apartment
+    // ð  STEP 4: listingId â apartment
     // ======================================================
     const LISTING_TO_APARTMENT = {
       "194166": "arenula",
@@ -727,19 +729,19 @@ app.post("/hostaway-incoming", async (req, res) => {
       "194162": "scala"
     };
 
-    console.log("  ├─ listingId ricevuto:", resolvedListingId);
+    console.log("  ââ listingId ricevuto:", resolvedListingId);
 
     const apartment = LISTING_TO_APARTMENT[String(resolvedListingId)];
 
     if (!apartment) {
-      console.error("❌ ListingId non mappato:", resolvedListingId);
+      console.error("â ListingId non mappato:", resolvedListingId);
       return res.json({ ok: true, silent: true });
     }
 
-    console.log("  ├─ Appartamento:", apartment);
+    console.log("  ââ Appartamento:", apartment);
 
     // ======================================================
-    // 🌍 STEP 5: Language selection (LEVEL 1 + LEVEL 2 ONLY)
+    // ð STEP 5: Language selection (3-LEVEL CASCADE)
     // ======================================================
     const platformLang = normalizeLang(guestLanguage);
     const defaultLang = APT_DEFAULT_LANG[apartment] || "en";
@@ -747,34 +749,46 @@ app.post("/hostaway-incoming", async (req, res) => {
     let answer = null;
     let usedLang = null;
 
-    // LEVEL 1 — HostAway language
+    // LEVEL 1 â Lingua rilevata dal messaggio
     if (
+      detectedLang &&
+      ANSWERS[apartment]?.[detectedLang]?.[intent]
+    ) {
+      answer = ANSWERS[apartment][detectedLang][intent];
+      usedLang = detectedLang;
+      console.log("  â Usata lingua del messaggio:", detectedLang);
+    }
+
+    // LEVEL 2 â Lingua da HostAway
+    else if (
       platformLang &&
       ANSWERS[apartment]?.[platformLang]?.[intent]
     ) {
       answer = ANSWERS[apartment][platformLang][intent];
       usedLang = platformLang;
+      console.log("  â Usata lingua piattaforma:", platformLang);
     }
 
-    // LEVEL 2 — Apartment default language
+    // LEVEL 3 â Lingua default appartamento
     else if (
       ANSWERS[apartment]?.[defaultLang]?.[intent]
     ) {
       answer = ANSWERS[apartment][defaultLang][intent];
       usedLang = defaultLang;
+      console.log("  â Usata lingua default:", defaultLang);
     }
 
     if (!answer) {
-      console.log("🔇 No answer for language → silent");
+      console.log("ð No answer for language â silent");
       return res.json({ ok: true, silent: true });
     }
 
-    console.log("  ✅ Answer found");
-    console.log("  ├─ Language used:", usedLang);
-    console.log("  └─ Preview:", answer.substring(0, 80) + "...");
+    console.log("  â Answer found");
+    console.log("  ââ Language used:", usedLang);
+    console.log("  ââ Preview:", answer.substring(0, 80) + "...");
 
     // ======================================================
-    // 📤 STEP 6: Send Reply to HostAway
+    // ð¤ STEP 6: Send Reply to HostAway
     // ======================================================
     await axios.post(
       `https://api.hostaway.com/v1/conversations/${conversationId}/messages`,
@@ -791,7 +805,7 @@ app.post("/hostaway-incoming", async (req, res) => {
       }
     );
 
-    console.log("✅ Reply sent successfully");
+    console.log("â Reply sent successfully");
 
     return res.json({
       ok: true,
@@ -801,7 +815,7 @@ app.post("/hostaway-incoming", async (req, res) => {
     });
 
   } catch (err) {
-    console.error("❌ ERROR IN /hostaway-incoming");
+    console.error("â ERROR IN /hostaway-incoming");
     console.error(err.message);
     return res.status(500).json({ ok: false });
   }
@@ -813,5 +827,3 @@ app.post("/hostaway-incoming", async (req, res) => {
 const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => {
   console.log("Server running on", PORT);
-});
- 
