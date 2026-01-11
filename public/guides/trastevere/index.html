@@ -34,8 +34,6 @@ input{flex:1;padding:12px;border:1px solid #cbd5e1;border-radius:10px;outline:no
 .intro{background:#fff;border:1px solid #e0e0e0;padding:12px;border-radius:12px;margin:12px 0}
 .intro b{display:block;margin-bottom:6px}
 .small{opacity:.7;font-size:12px;margin-top:6px}
-
-/* --- Feedback UI --- */
 .fb-box{margin-top:8px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .fb-box .fb-label{font-size:12px;opacity:.7;margin-right:4px}
 .fb-box button{border:1px solid #ddd;background:#fff;padding:6px 10px;border-radius:999px;cursor:pointer}
@@ -54,8 +52,8 @@ input{flex:1;padding:12px;border:1px solid #cbd5e1;border-radius:10px;outline:no
       <div class="apt"><span id="aptLabel">Apartment</span>: VIALETRASTEVERE108</div>
     </div>
     <div class="controls">
-      <button id="voiceBtn" aria-pressed="false" title="Toggle voice">🔇 Voice: Off</button>
-      <nav class="lang" aria-label="Language">
+      <button id="voiceBtn" aria-pressed="false">🔇 Voice: Off</button>
+      <nav class="lang">
         <button data-lang="en" aria-current="true">EN</button>
         <button data-lang="it">IT</button>
         <button data-lang="fr">FR</button>
@@ -65,7 +63,7 @@ input{flex:1;padding:12px;border:1px solid #cbd5e1;border-radius:10px;outline:no
     </div>
   </header>
 
-  <main id="chat" aria-live="polite"></main>
+  <main id="chat"></main>
 
   <footer>
     <input id="input" placeholder="Hi, I am Samantha, your virtual guide. Tap a button for a quick answer — or type here…" autocomplete="off">
@@ -74,386 +72,493 @@ input{flex:1;padding:12px;border:1px solid #cbd5e1;border-radius:10px;outline:no
 </div>
 
 <script>
-/* === CONFIG === */
 const APARTMENT_ID = "VIALETRASTEVERE108";
-/* Se in futuro ridistribuisci la Web App e cambia l'URL, aggiorna qui sotto */
 const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxt0ToaaC9TOrQMJjcWXpyL1a_FCugoVIgZpB5MFY_IsJTJGHOtloEq1sjKs_F-c7Sd/exec";
-/* ============ CONTENUTI LOCALIZZATI ============ */
+
 const DATA = {
-  en: {
-    ui: {
-      welcome: "Hi, I am Samantha, your virtual guide. Tap a button to get a quick answer.",
-      placeholder: "Hi, I am Samantha, your virtual guide. Tap a button for a quick answer — or type here…",
-      apt_label: "Apartment",
-      voice_on: "🔊 Voice: On",
-      voice_off: "🔇 Voice: Off",
-      quick: ["wifi","check in","check out","water","AC","bathroom","kitchen","building","eat","drink","shop","visit","experience","day trips","tickets & events","museums & sites","exhibitions","transport","services","emergency"],
-      fallback: "I did not find a direct answer. Try a quick button (wifi, kitchen, transport, visit…)."
-    },
-    apt: {
-      checkin_time:'15:00', checkout_time:'11:00',
-      wifi_note:'Near the TV there is a WHITE router. Turn it around to see the label with SSID & password.',
-      wifi_ssid:'See router label', wifi_password:'See router label',
-      water_note:'Tap water is safe to drink. Hot water is always on.',
-      ac_note:'Please turn OFF the air conditioning when you leave the apartment.',
-      bathroom_amenities:'Toilet paper, hand soap, bath mat, hairdryer.',
-      towels_note:'Per guest: 1 large + 1 medium towel. Beds are prepared on arrival.',
-      bathroom_notice:'IMPORTANT (bathroom between the bedrooms): use ONLY the toilet paper provided. Do NOT flush anything else or the system will clog and overflow. Unclogging costs €100.',
-      bedrooms_note:'Two bedrooms + a double sofa bed. Keys are on the table on arrival.',
-      gas_steps:'Gas handle (left of the meter): DOWN = CLOSED • HORIZONTAL = OPEN. To cook: 1) choose burner, 2) push knob down and turn, 3) keep pressed a few seconds until the flame is steady, 4) release.',
-      kitchen_note:'The kitchen is fully stocked and ready to use.',
-      main_door_hours:'Building door accessible with the key provided.',
-      concierge:'Concierge: Massimo — desk hours 08:30–13:00 and 15:30–18:30.',
-      registration_note:'Please send your passports via WhatsApp to the host for mandatory guest registration.',
-      host_phone:'+39 335 5245756',
-      supermarkets:'Mini-market on Viale Trastevere near 108 • Fresh produce at Largo/Piazza San Cosimato (mornings).',
-      pharmacies:'Pharmacy at Piazza Trilussa • Other options along Viale Trastevere.',
-      luggage:'Radical Storage — Piazza Mastai (≈5 min).',
-      laundry:'Self-service laundry — Viale Trastevere 150.',
-      hospital:'Ospedale Nuovo Regina Margherita — Via Emilio Morosini 30.',
-      atms:'ATMs along Viale Trastevere (BNL, Unicredit, Intesa).',
-      sims:'Vodafone (Viale Trastevere 143) • TIM (Piazza San Cosimato 70).',
-      transport:'Tram 8 → Largo Argentina / Piazza Venezia. Tram 3 nearby. Bus H → Termini. Taxi: +39 06 3570 or FreeNow app.',
-      airports:'Fiumicino: Tram 8 → Trastevere Station → FL1 train (~45 min). Ciampino: bus to Termini then Tram 8. Private transfer: Welcome Pickups.',
-      emergency:'EU Emergency 112 • Police 113 • Ambulance 118 • Fire 115 • English-speaking doctor +39 06 488 2371 • 24h vet +39 06 660 681',
-      eat:'Da Enzo al 29; Osteria der Belli; Tonnarello; Trattoria Da Teo; Spirito di Vino; Pianostrada; Trapizzino.',
-      drink:'Enoteca Ferrara; Freni e Frizioni; L’Angolo Divino; Mimì e Cocò; La Prosciutteria Trastevere.',
-      shop:'Porta Portese Market (Sun); artisanal bakeries & delis along Viale Trastevere; Via della Lungaretta boutiques.',
-      visit:'Santa Maria in Trastevere; Santa Cecilia; Museo di Roma in Trastevere; Orto Botanico; Villa Farnesina; Piazza Trilussa; walk over Ponte Sisto to Campo de’ Fiori.',
-      experiences:'Evening walk: Viale Trastevere → Piazza Trilussa → Santa Maria → alleys → Tiber waterfront → Campo de’ Fiori. Aperitivo at Freni e Frizioni; church tour (S. Maria & S. Cecilia); sunset at Gianicolo.',
-      romantic_walk:'Start: Viale Trastevere 108 → Piazza S. Maria in Trastevere → Gianicolo Terrace → Orto Botanico → Gelateria del Viale → Biscottificio Innocenti → back to Viale Trastevere 108.',
-      daytrips:'Ostia Antica (~40 min) • Tivoli (Villa d’Este & Hadrian’s Villa ~1h) • Castelli Romani (villages & wine).',
-      checkout_note:'Before leaving: turn off lights/AC, close windows, leave keys on the table, and lock the door.'
-    },
-    intents: [
-      {k:'wifi',keys:['wifi','wi-fi','internet','password','router'],t:a=>`Wi-Fi: ${a.wifi_note}\nNetwork: ${a.wifi_ssid}. Password: ${a.wifi_password}.`},
-      {k:'check in',keys:['check in','arrival','access','self check-in','entrance','intercom','doorbell'],t:a=>`Check-in from ${a.checkin_time}.\n${a.bedrooms_note}\n${a.registration_note}\n${a.concierge}\nNeed help? Call ${a.host_phone}.`},
-      {k:'check out',keys:['check out','leave','departure'],t:a=>a.checkout_note},
-      {k:'water',keys:['water','hot water','drinkable','tap'],t:a=>a.water_note},
-      {k:'AC',keys:['ac','air conditioning','aircon','air'],t:a=>a.ac_note},
-      {k:'bathroom',keys:['bathroom','hairdryer','soap','towels','toilet','notice'],t:a=>`Bathrooms: ${a.bathroom_amenities}\nTowels: ${a.towels_note}\n${a.bathroom_notice}`},
-      {k:'kitchen',keys:['kitchen','cook','cooking','stove','gas'],t:a=>`${a.kitchen_note}\nGas use: ${a.gas_steps}`},
-      {k:'building',keys:['building','elevator','door','hours','concierge'],t:a=>`Door: ${a.main_door_hours}\n${a.concierge}`},
-      {k:'services',keys:['pharmacy','hospital','atm','sim','laundry','luggage','supermarket','groceries'],t:a=>`Supermarkets: ${a.supermarkets}\nPharmacies: ${a.pharmacies}\nHospital: ${a.hospital}\nATMs: ${a.atms}\nLaundry: ${a.laundry}\nLuggage storage: ${a.luggage}\nSIMs: ${a.sims}`},
-      {k:'transport',keys:['transport','tram','bus','taxi','airport','train','metro'],t:a=>`${a.transport}\nAirports: ${a.airports}`},
-      {k:'eat',keys:['eat','restaurant','dinner','lunch','food'],t:a=>a.eat},
-      {k:'drink',keys:['drink','bar','wine','cocktail','aperitivo'],t:a=>a.drink},
-      {k:'shop',keys:['shop','market','shopping','bakeries'],t:a=>a.shop},
-      {k:'visit',keys:['visit','what to visit','see','sight','attraction','museum'],t:a=>a.visit},
-      {k:'experience',keys:['experience','walk','tour','itinerary','sunset','romantic'],t:a=>`${a.experiences}\nRomantic route: ${a.romantic_walk}`},
-      {k:'day trips',keys:['day trip','tivoli','ostia','castelli','excursion','bracciano'],t:a=>a.daytrips},
 
-      /* 👇 NUOVI 3 INTENT in inglese */
-      {
-        k:'tickets & events',
-        keys:['tickets','events','concert','match','roma','lazio','football','soccer'],
-        t: a =>
-`TICKETS & EVENTS (Rome)
-• TicketOne (concerts, theatre, sports): https://www.ticketone.it/en/
-• AS Roma — Official tickets: https://www.asroma.com/en/tickets
-• SS Lazio — Official tickets: https://www.sslazio.it/en`
-      },
-      {
-        k:'museums & sites',
-        keys:['museums','sites','vatican','colosseum','forum','palatine','borghese'],
-        t: a =>
-`MUSEUMS & SITES — ROME
-• Vatican Museums: https://www.museivaticani.va/content/museivaticani/en.html
-• Colosseum, Roman Forum & Palatine Hill: https://parcocolosseo.it/en/
-• Galleria Borghese (reservation required): https://galleriaborghese.beniculturali.it/en/`
-      },
-      {
-        k:'exhibitions',
-        keys:['exhibition','exhibitions','maxxi','palazzo','scuderie','art'],
-        t: a =>
-`EXHIBITIONS — ROME
-• MAXXI — National Museum of 21st Century Arts: https://www.maxxi.art/en/
-• Palazzo delle Esposizioni: https://www.palazzoesposizioni.it/
-• Scuderie del Quirinale: https://www.scuderiequirinale.it/en
-• Palazzo Bonaparte (Arthemisia): https://www.arthemisia.it/en/home/`
-      },
-
-      {k:'emergency',keys:['emergency','police','ambulance','fire','doctor','vet'],t:a=>a.emergency}
-    ]
+en:{
+  ui:{
+    welcome:"Hi, I am Samantha, your virtual guide. Tap a button to get a quick answer.",
+    placeholder:"Hi, I am Samantha, your virtual guide. Tap a button for a quick answer — or type here…",
+    apt_label:"Apartment",
+    voice_on:"🔊 Voice: On",
+    voice_off:"🔇 Voice: Off",
+    quick:["wifi","check in","check out","water","AC","bathroom","kitchen","building","eat","drink","shop","visit","experience","day trips","tickets & events","museums & sites","exhibitions","transport","services","emergency"],
+    fallback:"I did not find a direct answer. Try a quick button such as wifi, kitchen, transport or visit."
   },
-    it: {
-    ui:{
-      welcome:"Ciao, sono Samantha, la tua guida virtuale. Tocca un pulsante per una risposta rapida.",
-      placeholder:"Ciao, sono Samantha, la tua guida virtuale. Tocca un pulsante — oppure scrivi qui…",
-      apt_label:"Appartamento", voice_on:"🔊 Voce: On", voice_off:"🔇 Voce: Off",
-      quick:["wifi","check in","check out","acqua","aria condizionata","bagno","cucina","edificio","mangiare","bere","shopping","visitare","esperienze","gite di un giorno","biglietti & eventi","musei & siti","mostre","trasporti","servizi","emergenza"],
-      fallback:"Non ho trovato una risposta diretta. Prova un pulsante (wifi, cucina, trasporti, visitare…)."
-    },
-    apt:{
-      checkin_time:'15:00', checkout_time:'11:00',
-      wifi_note:'Vicino alla TV c’è un router BIANCO. Giralo per leggere sull’etichetta SSID e password.',
-      wifi_ssid:'Vedi etichetta del router', wifi_password:'Vedi etichetta del router',
-      water_note:'L’acqua del rubinetto è potabile. L’acqua calda è sempre attiva.',
-      ac_note:'Spegni l’aria condizionata quando lasci l’appartamento.',
-      bathroom_amenities:'Carta igienica, sapone mani, tappetino, asciugacapelli.',
-      towels_note:'Per ospite: 1 telo grande + 1 medio. Letti pronti all’arrivo.',
-      bathroom_notice:'IMPORTANTE (bagno tra le camere): usare SOLO la carta igienica fornita. NON gettare altro nel WC: si intasa e tracima. Sblocco €100.',
-      bedrooms_note:'Due camere da letto + divano letto matrimoniale. Le chiavi sono sul tavolo all’arrivo.',
-      gas_steps:'Manopola gas (a sinistra del contatore): IN BASSO = CHIUSO • ORIZZONTALE = APERTO. Per cucinare: 1) scegli il fuoco, 2) premi e gira la manopola, 3) tieni premuto pochi secondi finché la fiamma è stabile, 4) rilascia.',
-      kitchen_note:'Cucina completa e pronta all’uso.',
-      main_door_hours:'Portone accessibile con la chiave fornita.',
-      concierge:'Portineria: Massimo — orari 08:30–13:00 e 15:30–18:30.',
-      registration_note:'Per la registrazione obbligatoria, invia i passaporti via WhatsApp all’host.',
-      host_phone:'+39 335 5245756',
-      supermarkets:'Mini-market su Viale Trastevere vicino al 108 • Prodotti freschi a Largo/Piazza San Cosimato (mattina).',
-      pharmacies:'Farmacia a Piazza Trilussa • Altre lungo Viale Trastevere.',
-      luggage:'Radical Storage — Piazza Mastai (≈5 min).',
-      laundry:'Lavanderia self-service — Viale Trastevere 150.',
-      hospital:'Ospedale Nuovo Regina Margherita — Via Emilio Morosini 30.',
-      atms:'Bancomat lungo Viale Trastevere (BNL, Unicredit, Intesa).',
-      sims:'Vodafone (Viale Trastevere 143) • TIM (Piazza San Cosimato 70).',
-      transport:'Tram 8 → Largo Argentina / Piazza Venezia. Tram 3 vicino. Bus H → Termini. Taxi: +39 06 3570 o app FreeNow.',
-      airports:'Fiumicino: Tram 8 → Stazione Trastevere → FL1 (~45 min). Ciampino: bus per Termini poi Tram 8. Transfer privato: Welcome Pickups.',
-      emergency:'Emergenze UE 112 • Polizia 113 • Ambulanza 118 • Vigili del Fuoco 115 • Medico in inglese +39 06 488 2371 • Veterinario 24h +39 06 660 681',
-      eat:'Da Enzo al 29; Osteria der Belli; Tonnarello; Trattoria Da Teo; Spirito di Vino; Pianostrada; Trapizzino.',
-      drink:'Enoteca Ferrara; Freni e Frizioni; L’Angolo Divino; Mimì e Cocò; La Prosciutteria Trastevere.',
-      shop:'Mercato di Porta Portese (dom); forni e gastronomie artigianali su Viale Trastevere; boutique in Via della Lungaretta.',
-      visit:'Santa Maria in Trastevere; Santa Cecilia; Museo di Roma in Trastevere; Orto Botanico; Villa Farnesina; Piazza Trilussa; passeggiata su Ponte Sisto verso Campo de’ Fiori.',
-      experiences:'Passeggiata serale: Viale Trastevere → Piazza Trilussa → S. Maria → vicoli → Lungotevere → Campo de’ Fiori. Aperitivo da Freni e Frizioni; chiese (S. Maria & S. Cecilia); tramonto al Gianicolo.',
-      romantic_walk:'Partenza: Viale Trastevere 108 → Piazza S. Maria in Trastevere → Terrazza del Gianicolo → Orto Botanico → Gelateria del Viale → Biscottificio Innocenti → ritorno.',
-      daytrips:'Ostia Antica (~40 min) • Tivoli (Villa d’Este & Villa Adriana ~1h) • Castelli Romani.',
-      checkout_note:'Prima di partire: spegni luci/AC, chiudi le finestre, lascia le chiavi sul tavolo e chiudi a chiave la porta.'
-    },
-    intents:[
-      {k:'wifi',keys:['wifi','wi-fi','internet','password','router'],t:a=>`Wi-Fi: ${a.wifi_note}\nRete: ${a.wifi_ssid}. Password: ${a.wifi_password}.`},
-      {k:'check in',keys:['check in','arrivo','accesso','self check-in','ingresso','citofono','campanello'],t:a=>`Check-in dalle ${a.checkin_time}.\n${a.bedrooms_note}\n${a.registration_note}\n${a.concierge}\nServe aiuto? ${a.host_phone}.`},
-      {k:'check out',keys:['check out','partenza','lasciare'],t:a=>a.checkout_note},
-      {k:'acqua',keys:['acqua','acqua calda','potabile','rubinetto'],t:a=>a.water_note},
-      {k:'aria condizionata',keys:['aria condizionata','clima','condizionatore','ac'],t:a=>a.ac_note},
-      {k:'bagno',keys:['bagno','asciugacapelli','sapone','asciugamani','wc','avviso'],t:a=>`Bagni: ${a.bathroom_amenities}\nAsciugamani: ${a.towels_note}\n${a.bathroom_notice}`},
-      {k:'cucina',keys:['cucina','cucinare','fornello','gas'],t:a=>`${a.kitchen_note}\nUso gas: ${a.gas_steps}`},
-      {k:'edificio',keys:['edificio','portone','ascensore','orari','portineria'],t:a=>`Portone: ${a.main_door_hours}\n${a.concierge}`},
-      {k:'servizi',keys:['farmacia','ospedale','bancomat','sim','lavanderia','bagagli','supermercato','spesa'],t:a=>`Supermercati: ${a.supermarkets}\nFarmacie: ${a.pharmacies}\nOspedale: ${a.hospital}\nBancomat: ${a.atms}\nLavanderia: ${a.laundry}\nDeposito bagagli: ${a.luggage}\nSIM: ${a.sims}`},
-      {k:'trasporti',keys:['trasporti','tram','bus','taxi','aeroporto','treno','metro'],t:a=>`${a.transport}\nAeroporti: ${a.airports}`},
-      {k:'mangiare',keys:['mangiare','ristorante','cena','pranzo','cibo'],t:a=>a.eat},
-      {k:'bere',keys:['bere','bar','vino','cocktail','aperitivo'],t:a=>a.drink},
-      {k:'shopping',keys:['shopping','mercato','negozi','panetterie'],t:a=>a.shop},
-      {k:'visitare',keys:['visitare','cosa vedere','museo','attrazioni'],t:a=>a.visit},
-      {k:'esperienze',keys:['esperienze','passeggiata','tour','itinerario','tramonto','romantico'],t:a=>`${a.experiences}\nPercorso romantico: ${a.romantic_walk}`},
-      {k:'gite di un giorno',keys:['gite','gita','tivoli','ostia','castelli','escursione','bracciano'],t:a=>a.daytrips},
-
-      /* 👇 NUOVI 3 INTENT, ma testo in inglese */
-      {
-        k:'biglietti & eventi',
-        keys:['biglietti','eventi','ticket','concerti','partita','roma','lazio'],
-        t: a =>
-`TICKETS & EVENTS (Rome)
-• TicketOne (concerts, theatre, sports): https://www.ticketone.it/en/
-• AS Roma — Official tickets: https://www.asroma.com/en/tickets
-• SS Lazio — Official tickets: https://www.sslazio.it/en`
-      },
-      {
-        k:'musei & siti',
-        keys:['musei','siti','museo','vaticano','colosseo','foro','palatino','borghese'],
-        t: a =>
-`MUSEUMS & SITES — ROME
-• Vatican Museums: https://www.museivaticani.va/content/museivaticani/en.html
-• Colosseum, Roman Forum & Palatine Hill: https://parcocolosseo.it/en/
-• Galleria Borghese (reservation required): https://galleriaborghese.beniculturali.it/en/`
-      },
-      {
-        k:'mostre',
-        keys:['mostre','maxxi','palazzo','scuderie','esposizioni'],
-        t: a =>
-`EXHIBITIONS — ROME
-• MAXXI — National Museum of 21st Century Arts: https://www.maxxi.art/en/
-• Palazzo delle Esposizioni: https://www.palazzoesposizioni.it/
-• Scuderie del Quirinale: https://www.scuderiequirinale.it/en
-• Palazzo Bonaparte (Arthemisia): https://www.arthemisia.it/en/home/`
-      },
-
-      {k:'emergenza',keys:['emergenza','polizia','ambulanza','fuoco','medico','veterinario'],t:a=>a.emergency}
-    ]
-  },
-
-  fr: {
-    ui:{
-      welcome:"Bonjour, je suis Samantha, votre guide virtuel. Touchez un bouton pour une réponse rapide.",
-      placeholder:"Bonjour, je suis Samantha, votre guide virtuel. Touchez un bouton — ou écrivez ici…",
-      apt_label:"Appartement", voice_on:"🔊 Voix : Activée", voice_off:"🔇 Voix : Désactivée",
-      quick:["wifi","check in","check out","eau","climatisation","salle de bain","cuisine","immeuble","manger","boire","shopping","visiter","expériences","excursions","billets & événements","musées & sites","expositions","transports","services","urgence"],
-      fallback:"Je n’ai pas trouvé de réponse directe. Essayez un bouton (wifi, cuisine, transports, visiter…)."
-    },
-    apt:{ /* tutto invariato come tuo originale */ },
-        intents:[
-      {k:'wifi',keys:['wifi','wi-fi','internet','mot de passe','routeur'],t:a=>`Wi-Fi : ${a.wifi_note}\nRéseau : ${a.wifi_ssid}. Mot de passe : ${a.wifi_password}.`},
-      {k:'check in',keys:['check in','arrivée','accès','self check-in','entrée','interphone','sonnette'],t:a=>`Arrivée à partir de ${a.checkin_time}.\n${a.bedrooms_note}\n${a.registration_note}\n${a.concierge}\nBesoin d’aide ? ${a.host_phone}.`},
-      {k:'check out',keys:['check out','départ','quitter'],t:a=>a.checkout_note},
-      {k:'eau',keys:['eau','chaude','potable','robinet'],t:a=>a.water_note},
-      {k:'climatisation',keys:['climatisation','clim','ac'],t:a=>a.ac_note},
-      {k:'salle de bain',keys:['salle de bain','sdb','serviettes','papier','sèche-cheveux'],t:a=>`Salles de bain : ${a.bathroom_amenities}\nServiettes : ${a.towels_note}\n${a.bathroom_notice}`},
-      {k:'cuisine',keys:['cuisine','cuisiner','gaz','plaques'],t:a=>`${a.kitchen_note}\nGaz : ${a.gas_steps}`},
-      {k:'immeuble',keys:['immeuble','porte','horaires','concierge','ascenseur'],t:a=>`Porte : ${a.main_door_hours}\n${a.concierge}`},
-      {k:'services',keys:['pharmacie','hôpital','dab','sim','laverie','consigne','supermarché'],t:a=>`Supermarchés : ${a.supermarkets}\nPharmacies : ${a.pharmacies}\nHôpital : ${a.hospital}\nDAB : ${a.atms}\nLaverie : ${a.laundry}\nConsigne : ${a.luggage}\nCartes SIM : ${a.sims}`},
-      {k:'transports',keys:['transports','tram','bus','taxi','aéroport','train','métro'],t:a=>`${a.transport}\nAéroports : ${a.airports}`},
-      {k:'manger',keys:['manger','restaurant','dîner','déjeuner'],t:a=>a.eat},
-      {k:'boire',keys:['boire','bar','vin','cocktail','apéritif'],t:a=>a.drink},
-      {k:'shopping',keys:['shopping','marché','boutiques','boulangeries'],t:a=>a.shop},
-      {k:'visiter',keys:['visiter','musée','attractions','voir'],t:a=>a.visit},
-      {k:'expériences',keys:['expériences','balade','itinéraire','coucher de soleil','romantique'],t:a=>`${a.experiences}\nParcours romantique : ${a.romantic_walk}`},
-      {k:'excursions',keys:['excursions','ostia','tivoli','castelli','journée'],t:a=>a.daytrips},
-
-      /* 👇 nuovi 3, testo in inglese */
-      {
-        k:'billets & événements',
-        keys:['billets','événements','concert','match','roma','lazio'],
-        t: a =>
-`TICKETS & EVENTS (Rome)
-• TicketOne (concerts, theatre, sports): https://www.ticketone.it/en/
-• AS Roma — Official tickets: https://www.asroma.com/en/tickets
-• SS Lazio — Official tickets: https://www.sslazio.it/en`
-      },
-      {
-        k:'musées & sites',
-        keys:['musées','sites','vatican','colisée','forum','palatin','borghese'],
-        t: a =>
-`MUSEUMS & SITES — ROME
-• Vatican Museums: https://www.museivaticani.va/content/museivaticani/en.html
-• Colosseum, Roman Forum & Palatine Hill: https://parcocolosseo.it/en/
-• Galleria Borghese (reservation required): https://galleriaborghese.beniculturali.it/en/`
-      },
-      {
-        k:'expositions',
-        keys:['expositions','maxxi','palais','scuderie','art'],
-        t: a =>
-`EXHIBITIONS — ROME
-• MAXXI — National Museum of 21st Century Arts: https://www.maxxi.art/en/
-• Palazzo delle Esposizioni: https://www.palazzoesposizioni.it/
-• Scuderie del Quirinale: https://www.scuderiequirinale.it/en
-• Palazzo Bonaparte (Arthemisia): https://www.arthemisia.it/en/home/`
-      },
-
-      {k:'urgence',keys:['urgence','police','ambulance','pompiers','médecin','vétérinaire'],t:a=>a.emergency}
-    ]
-  },
-
-  de: {
-    ui:{
-      welcome:"Hallo, ich bin Samantha, dein virtueller Guide. Tippe auf einen Button für eine schnelle Antwort.",
-      placeholder:"Hallo, ich bin Samantha, dein virtueller Guide. Tippe auf einen Button — oder schreibe hier…",
-      apt_label:"Apartment", voice_on:"🔊 Stimme: An", voice_off:"🔇 Stimme: Aus",
-      quick:["WLAN","check in","check out","Wasser","Klimaanlage","Bad","Küche","Gebäude","Essen","Trinken","Shopping","Sehenswürdigkeiten","Erlebnisse","Tagesausflüge","Tickets & Events","Museen & Stätten","Ausstellungen","Verkehr","Services","Notfall"],
-      fallback:"Keine direkte Antwort gefunden. Nutze einen Button (WLAN, Küche, Verkehr, Sehenswürdigkeiten…)."
-    },
-    apt:{ /* come tuo originale, invariato */ },
-    intents:[
-      {k:'WLAN',keys:['wlan','wifi','wi-fi','internet','passwort','router'],t:a=>`WLAN: ${a.wifi_note}\nNetz: ${a.wifi_ssid}. Passwort: ${a.wifi_password}.`},
-      {k:'check in',keys:['check in','ankunft','zugang','selbst check-in','eingang','klingel','sprechanlage'],t:a=>`Check-in ab ${a.checkin_time}.\n${a.bedrooms_note}\n${a.registration_note}\n${a.concierge}\nHilfe? ${a.host_phone}.`},
-      {k:'check out',keys:['check out','abreise','verlassen'],t:a=>a.checkout_note},
-      {k:'Wasser',keys:['wasser','warmwasser','trinkbar','hahn'],t:a=>a.water_note},
-      {k:'Klimaanlage',keys:['klimaanlage','klima','ac'],t:a=>a.ac_note},
-      {k:'Bad',keys:['bad','handtücher','seife','wc','hinweis','föhn'],t:a=>`Bäder: ${a.bathroom_amenities}\nHandtücher: ${a.towels_note}\n${a.bathroom_notice}`},
-      {k:'Küche',keys:['küche','kochen','herd','gas'],t:a=>`${a.kitchen_note}\nGas: ${a.gas_steps}`},
-      {k:'Gebäude',keys:['gebäude','tür','zeiten','hausmeister','aufzug'],t:a=>`Tür: ${a.main_door_hours}\n${a.concierge}`},
-      {k:'Services',keys:['apotheke','krankenhaus','geldautomat','sim','wäscherei','gepäck','supermarkt'],t:a=>`Supermärkte: ${a.supermarkets}\nApotheken: ${a.pharmacies}\nKrankenhaus: ${a.hospital}\nGeldautomaten: ${a.atms}\nWaschsalon: ${a.laundry}\nGepäck: ${a.luggage}\nSIM: ${a.sims}`},
-      {k:'Verkehr',keys:['verkehr','tram','bus','taxi','flughafen','zug','metro'],t:a=>`${a.transport}\nFlughäfen: ${a.airports}`},
-      {k:'Essen',keys:['essen','restaurant','abendessen','mittagessen'],t:a=>a.eat},
-      {k:'Trinken',keys:['trinken','bar','wein','cocktail','aperitif'],t:a=>a.drink},
-      {k:'Shopping',keys:['shopping','markt','geschäfte','bäckereien'],t:a=>a.shop},
-      {k:'Sehenswürdigkeiten',keys:['sehenswürdigkeiten','besuchen','museum','attraktionen'],t:a=>a.visit},
-      {k:'Erlebnisse',keys:['erlebnisse','spaziergang','tour','route','sonnenuntergang','romantisch'],t:a=>`${a.experiences}\nRomantische Route: ${a.romantic_walk}`},
-      {k:'Tagesausflüge',keys:['tagesausflug','tivoli','ostia','castelli','ausflug'],t:a=>a.daytrips},
-
-      /* 👇 nuovi 3 */
-      {
-        k:'Tickets & Events',
-        keys:['tickets','events','konzert','match','roma','lazio','fussball'],
-        t: a =>
-`TICKETS & EVENTS (Rome)
-• TicketOne (concerts, theatre, sports): https://www.ticketone.it/en/
-• AS Roma — Official tickets: https://www.asroma.com/en/tickets
-• SS Lazio — Official tickets: https://www.sslazio.it/en`
-      },
-      {
-        k:'Museen & Stätten',
-        keys:['museum','museen','stätten','vatican','kolosseum','forum','palatin','borghese'],
-        t: a =>
-`MUSEUMS & SITES — ROME
-• Vatican Museums: https://www.museivaticani.va/content/museivaticani/en.html
-• Colosseum, Roman Forum & Palatine Hill: https://parcocolosseo.it/en/
-• Galleria Borghese (reservation required): https://galleriaborghese.beniculturali.it/en/`
-      },
-      {
-        k:'Ausstellungen',
-        keys:['ausstellung','ausstellungen','maxxi','palazzo','scuderie','kunst'],
-        t: a =>
-`EXHIBITIONS — ROME
-• MAXXI — National Museum of 21st Century Arts: https://www.maxxi.art/en/
-• Palazzo delle Esposizioni: https://www.palazzoesposizioni.it/
-• Scuderie del Quirinale: https://www.scuderiequirinale.it/en
-• Palazzo Bonaparte (Arthemisia): https://www.arthemisia.it/en/home/`
-      },
-
-      {k:'Notfall',keys:['notfall','polizei','rettung','feuerwehr','arzt','tierarzt'],t:a=>a.emergency}
-    ]
-  },
-
-  es: {
-    ui:{
-      welcome:"Hola, soy Samantha, tu guía virtual. Toca un botón para una respuesta rápida.",
-      placeholder:"Hola, soy Samantha, tu guía virtual. Toca un botón — o escribe aquí…",
-      apt_label:"Apartamento", voice_on:"🔊 Voz: Activada", voice_off:"🔇 Voz: Desactivada",
-      quick:["wifi","check in","check out","agua","aire acondicionado","baño","cocina","edificio","comer","beber","compras","visitar","experiencias","excursiones","entradas y eventos","museos y sitios","exposiciones","transporte","servicios","emergencia"],
-      fallback:"No encontré una respuesta directa. Prueba un botón (wifi, cocina, transporte, visitar…)."
-    },
-    apt:{ /* invariato come tuo originale */ },
-    intents:[
-      {k:'wifi',keys:['wifi','wi-fi','internet','contraseña','router'],t:a=>`Wi-Fi: ${a.wifi_note}\nRed: ${a.wifi_ssid}. Contraseña: ${a.wifi_password}.`},
-      {k:'check in',keys:['check in','llegada','acceso','self check-in','entrada','timbre','portero'],t:a=>`Check-in desde las ${a.checkin_time}.\n${a.bedrooms_note}\n${a.registration_note}\n${a.concierge}\n¿Necesitas ayuda? ${a.host_phone}.`},
-      {k:'check out',keys:['check out','salida','marchar'],t:a=>a.checkout_note},
-      {k:'agua',keys:['agua','caliente','potable','grifo'],t:a=>a.water_note},
-      {k:'aire acondicionado',keys:['aire acondicionado','ac','clima'],t:a=>a.ac_note},
-      {k:'baño',keys:['baño','toallas','jabón','wc','aviso','secador'],t:a=>`Baños: ${a.bathroom_amenities}\nToallas: ${a.towels_note}\n${a.bathroom_notice}`},
-      {k:'cocina',keys:['cocina','cocinar','hornilla','gas'],t:a=>`${a.kitchen_note}\nUso del gas: ${a.gas_steps}`},
-      {k:'edificio',keys:['edificio','puerta','horarios','conserje','ascensor'],t:a=>`${a.main_door_hours}\n${a.concierge}`},
-      {k:'servicios',keys:['farmacia','hospital','cajero','sim','lavandería','equipaje','supermercado'],t:a=>`Supermercados: ${a.supermarkets}\nFarmacias: ${a.pharmacies}\nHospital: ${a.hospital}\nCajeros: ${a.atms}\nLavandería: ${a.laundry}\nConsigna: ${a.luggage}\nSIM: ${a.sims}`},
-      {k:'transporte',keys:['transporte','tranvía','bus','taxi','aeropuerto','tren','metro'],t:a=>`${a.transport}\nAeropuertos: ${a.airports}`},
-      {k:'comer',keys:['comer','restaurante','cena','almuerzo'],t:a=>a.eat},
-      {k:'beber',keys:['beber','bar','vino','cóctel','aperitivo'],t:a=>a.drink},
-      {k:'compras',keys:['compras','mercado','tiendas','panaderías'],t:a=>a.shop},
-      {k:'visitar',keys:['visitar','museo','atracciones','ver'],t:a=>a.visit},
-      {k:'experiencias',keys:['experiencias','paseo','tour','itinerario','atardecer','romántico'],t:a=>`${a.experiences}\nRuta romántica: ${a.romantic_walk}`},
-      {k:'excursiones',keys:['excursión','ostia','tivoli','castelli','día'],t:a=>a.daytrips},
-
-      /* 👇 nuovi 3 */
-      {
-        k:'entradas y eventos',
-        keys:['entradas','eventos','ticket','concierto','partido','roma','lazio'],
-        t: a =>
-`TICKETS & EVENTS (Rome)
-• TicketOne (concerts, theatre, sports): https://www.ticketone.it/en/
-• AS Roma — Official tickets: https://www.asroma.com/en/tickets
-• SS Lazio — Official tickets: https://www.sslazio.it/en`
-      },
-      {
-        k:'museos y sitios',
-        keys:['museos','sitios','vaticano','coliseo','foro','palatino','borghese'],
-        t: a =>
-`MUSEUMS & SITES — ROME
-• Vatican Museums: https://www.museivaticani.va/content/museivaticani/en.html
-• Colosseum, Roman Forum & Palatine Hill: https://parcocolosseo.it/en/
-• Galleria Borghese (reservation required): https://galleriaborghese.beniculturali.it/en/`
-      },
-      {
-        k:'exposiciones',
-        keys:['exposiciones','maxxi','palacio','scuderie','arte'],
-        t: a =>
-`EXHIBITIONS — ROME
-• MAXXI — National Museum of 21st Century Arts: https://www.maxxi.art/en/
-• Palazzo delle Esposizioni: https://www.palazzoesposizioni.it/
-• Scuderie del Quirinale: https://www.scuderiequirinale.it/en
-• Palazzo Bonaparte (Arthemisia): https://www.arthemisia.it/en/home/`
-      },
-
-      {k:'emergencia',keys:['emergencia','policía','ambulancia','bomberos','médico','veterinario'],t:a=>a.emergency}
-    ]
+  apt:{
+    checkin_time:"15:00",
+    checkout_time:"11:00",
+    wifi_note:"Near the TV there is a white router. Turn it around to read the label with SSID and password.",
+    wifi_ssid:"See router label",
+    wifi_password:"See router label",
+    water_note:"Tap water is safe to drink. Hot water is always available.",
+    ac_note:"Please remember to turn off the air conditioning when you leave the apartment.",
+    bathroom_amenities:"Toilet paper, hand soap, bath mat and hairdryer.",
+    towels_note:"For each guest: one large towel and one medium towel. Beds are ready on arrival.",
+    bathroom_notice:"Bathroom between the bedrooms. Use only the toilet paper provided. Do not flush anything else.",
+    bedrooms_note:"Two bedrooms and one double sofa bed. The keys will be on the table on arrival.",
+    gas_steps:"The gas knob is on the left of the meter. Down means closed, horizontal means open. To cook, choose the burner, press and turn the knob and keep it pressed for a few seconds until the flame is stable, then release.",
+    kitchen_note:"The kitchen is fully equipped and ready to use.",
+    main_door_hours:"The main building door can be accessed with the provided key.",
+    concierge:"Concierge service available during the day.",
+    registration_note:"For mandatory registration, please send passport photos via WhatsApp to the host.",
+    host_phone:"+39 335 5245756",
+    supermarkets:"Mini market on Viale Trastevere near number 108. Fresh food at Largo and Piazza San Cosimato in the morning.",
+    pharmacies:"Pharmacy at Piazza Trilussa and others along Viale Trastevere.",
+    luggage:"Radical Storage at Piazza Mastai, about five minutes away.",
+    laundry:"Self service laundry on Viale Trastevere 150.",
+    hospital:"Ospedale Nuovo Regina Margherita on Via Emilio Morosini 30.",
+    atms:"ATMs along Viale Trastevere from BNL, Unicredit and Intesa.",
+    sims:"Vodafone on Viale Trastevere 143 and TIM at Piazza San Cosimato 70.",
+    transport:"Tram 8 to Largo Argentina or Piazza Venezia. Tram 3 nearby. Bus H to Termini. Taxi available via FreeNow or by phone.",
+    airports:"Fiumicino Airport: Tram 8 to Trastevere Station and FL1 train, about forty five minutes. Ciampino Airport: bus to Termini then Tram 8. Private transfer available.",
+    emergency:"EU emergency number 112. Police 113. Ambulance 118. Fire brigade 115. English speaking doctor 06 488 2371. 24 hour vet 06 660 681.",
+    eat:"Da Enzo al 29, Osteria der Belli, Tonnarello, Trattoria Da Teo, Spirito di Vino, Pianostrada, Trapizzino.",
+    drink:"Enoteca Ferrara, Freni e Frizioni, L’Angolo Divino, Mimì e Cocò, La Prosciutteria Trastevere.",
+    shop:"Porta Portese market on Sunday, artisanal bakeries and food shops along Viale Trastevere, boutiques on Via della Lungaretta.",
+    visit:"Santa Maria in Trastevere, Santa Cecilia, Museo di Roma in Trastevere, Orto Botanico, Villa Farnesina, Piazza Trilussa and the walk over Ponte Sisto to Campo de’ Fiori.",
+    experiences:"Evening walk through Viale Trastevere, Piazza Trilussa, Santa Maria in Trastevere, historic alleys, the river and Campo de’ Fiori. Aperitivo at Freni e Frizioni and sunset at Gianicolo.",
+    romantic_walk:"Start from Viale Trastevere 108, Piazza Santa Maria in Trastevere, Gianicolo Terrace, Orto Botanico, gelato nearby and return.",
+    daytrips:"Ostia Antica about forty minutes, Tivoli with Villa d’Este and Hadrian’s Villa about one hour, Castelli Romani.",
+    checkout_note:"Before leaving, turn off lights and air conditioning, close the windows, leave the keys on the table and lock the door."
   }
+},
+
+it:{
+  ui:{
+    welcome:"Ciao, sono Samantha, la tua guida virtuale. Tocca un pulsante per una risposta rapida.",
+    placeholder:"Ciao, sono Samantha, la tua guida virtuale. Tocca un pulsante oppure scrivi qui.",
+    apt_label:"Appartamento",
+    voice_on:"🔊 Voce: On",
+    voice_off:"🔇 Voce: Off",
+    quick:["wifi","check in","check out","acqua","aria condizionata","bagno","cucina","edificio","mangiare","bere","shopping","visitare","esperienze","gite di un giorno","biglietti & eventi","musei & siti","mostre","trasporti","servizi","emergenza"],
+    fallback:"Non ho trovato una risposta diretta. Prova un pulsante come wifi, cucina o trasporti."
+  },
+  apt:{
+    checkin_time:"15:00",
+    checkout_time:"11:00",
+    wifi_note:"Vicino alla TV c’è un router bianco. Giralo per leggere sull’etichetta SSID e password.",
+    wifi_ssid:"Vedi etichetta del router",
+    wifi_password:"Vedi etichetta del router",
+    water_note:"L’acqua del rubinetto è potabile. L’acqua calda è sempre disponibile.",
+    ac_note:"Ricordati di spegnere l’aria condizionata quando lasci l’appartamento.",
+    bathroom_amenities:"Carta igienica, sapone per le mani, tappetino e asciugacapelli.",
+    towels_note:"Per ogni ospite: un telo grande e uno medio. Letti pronti all’arrivo.",
+    bathroom_notice:"Bagno tra le camere. Usa solo la carta igienica fornita. Non gettare altro nel WC.",
+    bedrooms_note:"Due camere da letto e un divano letto matrimoniale. Le chiavi sono sul tavolo all’arrivo.",
+    gas_steps:"La manopola del gas è a sinistra del contatore. In basso indica chiuso, in orizzontale indica aperto. Per cucinare scegli il fuoco, premi e gira la manopola e tienila premuta finché la fiamma è stabile, poi rilascia.",
+    kitchen_note:"Cucina completa e pronta all’uso.",
+    main_door_hours:"Il portone è accessibile con la chiave fornita.",
+    concierge:"Portineria presente durante il giorno.",
+    registration_note:"Per la registrazione obbligatoria invia i documenti via WhatsApp all’host.",
+    host_phone:"+39 335 5245756",
+    supermarkets:"Mini market su Viale Trastevere vicino al numero 108. Prodotti freschi a Largo e Piazza San Cosimato al mattino.",
+    pharmacies:"Farmacia a Piazza Trilussa e altre lungo Viale Trastevere.",
+    luggage:"Radical Storage in Piazza Mastai a circa cinque minuti.",
+    laundry:"Lavanderia self service in Viale Trastevere 150.",
+    hospital:"Ospedale Nuovo Regina Margherita in Via Emilio Morosini 30.",
+    atms:"Bancomat BNL, Unicredit e Intesa lungo Viale Trastevere.",
+    sims:"Vodafone in Viale Trastevere 143 e TIM in Piazza San Cosimato 70.",
+    transport:"Tram 8 verso Largo Argentina o Piazza Venezia. Tram 3 nelle vicinanze. Bus H per Termini. Taxi disponibili.",
+    airports:"Fiumicino: Tram 8 fino a Stazione Trastevere e treno FL1. Ciampino: bus per Termini e Tram 8. Transfer privato disponibile.",
+    emergency:"Emergenze UE 112. Polizia 113. Ambulanza 118. Vigili del Fuoco 115. Medico in inglese 06 488 2371. Veterinario 24 ore 06 660 681.",
+    eat:"Da Enzo al 29, Osteria der Belli, Tonnarello, Trattoria Da Teo, Spirito di Vino, Pianostrada, Trapizzino.",
+    drink:"Enoteca Ferrara, Freni e Frizioni, L’Angolo Divino, Mimì e Cocò, La Prosciutteria Trastevere.",
+    shop:"Mercato di Porta Portese la domenica, forni e gastronomie artigianali su Viale Trastevere, boutique in Via della Lungaretta.",
+    visit:"Santa Maria in Trastevere, Santa Cecilia, Museo di Roma in Trastevere, Orto Botanico, Villa Farnesina, Piazza Trilussa e passeggiata su Ponte Sisto verso Campo de’ Fiori.",
+    experiences:"Passeggiata serale tra Viale Trastevere, Piazza Trilussa, Santa Maria in Trastevere, vicoli storici, Lungotevere e Campo de’ Fiori. Aperitivo da Freni e Frizioni e tramonto al Gianicolo.",
+    romantic_walk:"Partenza da Viale Trastevere 108, Piazza Santa Maria in Trastevere, Terrazza del Gianicolo, Orto Botanico e rientro.",
+    daytrips:"Ostia Antica circa quaranta minuti, Tivoli con Villa d’Este e Villa Adriana circa un’ora, Castelli Romani.",
+    checkout_note:"Prima di partire spegni luci e aria condizionata, chiudi le finestre, lascia le chiavi sul tavolo e chiudi a chiave la porta."
+  }
+},
+    intents:[
+    {k:'wifi',keys:['wifi','wi-fi','internet','password','router'],t:a=>`Wi-Fi: ${a.wifi_note}
+Rete: ${a.wifi_ssid}. Password: ${a.wifi_password}.`},
+
+    {k:'check in',keys:['check in','arrivo','accesso','self check-in','ingresso','citofono','campanello'],t:a=>`Check-in dalle ${a.checkin_time}.
+${a.bedrooms_note}
+${a.registration_note}
+${a.concierge}
+Serve aiuto? ${a.host_phone}.`},
+
+    {k:'check out',keys:['check out','partenza','lasciare'],t:a=>a.checkout_note},
+
+    {k:'acqua',keys:['acqua','acqua calda','potabile','rubinetto'],t:a=>a.water_note},
+
+    {k:'aria condizionata',keys:['aria condizionata','clima','condizionatore','ac'],t:a=>a.ac_note},
+
+    {k:'bagno',keys:['bagno','asciugacapelli','sapone','asciugamani','wc','avviso'],t:a=>`Bagno: ${a.bathroom_amenities}
+Asciugamani: ${a.towels_note}
+${a.bathroom_notice}`},
+
+    {k:'cucina',keys:['cucina','cucinare','fornello','gas'],t:a=>`${a.kitchen_note}
+Uso del gas: ${a.gas_steps}`},
+
+    {k:'edificio',keys:['edificio','portone','ascensore','orari','portineria'],t:a=>`Portone: ${a.main_door_hours}
+${a.concierge}`},
+
+    {k:'servizi',keys:['farmacia','ospedale','bancomat','sim','lavanderia','bagagli','supermercato','spesa'],t:a=>`Supermercati: ${a.supermarkets}
+Farmacie: ${a.pharmacies}
+Ospedale: ${a.hospital}
+Bancomat: ${a.atms}
+Lavanderia: ${a.laundry}
+Deposito bagagli: ${a.luggage}
+SIM: ${a.sims}`},
+
+    {k:'trasporti',keys:['trasporti','tram','bus','taxi','aeroporto','treno','metro'],t:a=>`${a.transport}
+Aeroporti: ${a.airports}`},
+
+    {k:'mangiare',keys:['mangiare','ristorante','cena','pranzo','cibo'],t:a=>a.eat},
+
+    {k:'bere',keys:['bere','bar','vino','cocktail','aperitivo'],t:a=>a.drink},
+
+    {k:'shopping',keys:['shopping','mercato','negozi','panetterie'],t:a=>a.shop},
+
+    {k:'visitare',keys:['visitare','cosa vedere','museo','attrazioni'],t:a=>a.visit},
+
+    {k:'esperienze',keys:['esperienze','passeggiata','tour','itinerario','tramonto','romantico'],t:a=>`${a.experiences}
+Percorso romantico: ${a.romantic_walk}`},
+
+    {k:'gite di un giorno',keys:['gite','gita','tivoli','ostia','castelli','escursione','bracciano'],t:a=>a.daytrips},
+
+    {
+      k:'biglietti & eventi',
+      keys:['biglietti','eventi','ticket','concerti','partita','roma','lazio'],
+      t:()=>`TICKETS & EVENTS (Rome)
+• TicketOne (concerts, theatre, sports): https://www.ticketone.it/en/
+• AS Roma — Official tickets: https://www.asroma.com/en/tickets
+• SS Lazio — Official tickets: https://www.sslazio.it/en`
+    },
+
+    {
+      k:'musei & siti',
+      keys:['musei','siti','museo','vaticano','colosseo','foro','palatino','borghese'],
+      t:()=>`MUSEUMS & SITES — ROME
+• Vatican Museums: https://www.museivaticani.va/content/museivaticani/en.html
+• Colosseum, Roman Forum & Palatine Hill: https://parcocolosseo.it/en/
+• Galleria Borghese (reservation required): https://galleriaborghese.beniculturali.it/en/`
+    },
+
+    {
+      k:'mostre',
+      keys:['mostre','maxxi','palazzo','scuderie','esposizioni'],
+      t:()=>`EXHIBITIONS — ROME
+• MAXXI — National Museum of 21st Century Arts: https://www.maxxi.art/en/
+• Palazzo delle Esposizioni: https://www.palazzoesposizioni.it/
+• Scuderie del Quirinale: https://www.scuderiequirinale.it/en
+• Palazzo Bonaparte (Arthemisia): https://www.arthemisia.it/en/home/`
+    },
+
+    {k:'emergenza',keys:['emergenza','polizia','ambulanza','fuoco','medico','veterinario'],t:a=>a.emergency}
+  ]
+},
+
+fr:{
+  ui:{
+    welcome:"Bonjour, je suis Samantha, votre guide virtuel. Touchez un bouton pour une réponse rapide.",
+    placeholder:"Bonjour, je suis Samantha, votre guide virtuel. Touchez un bouton ou écrivez ici.",
+    apt_label:"Appartement",
+    voice_on:"🔊 Voix : Activée",
+    voice_off:"🔇 Voix : Désactivée",
+    quick:["wifi","check in","check out","eau","climatisation","salle de bain","cuisine","immeuble","manger","boire","shopping","visiter","expériences","excursions","billets & événements","musées & sites","expositions","transports","services","urgence"],
+    fallback:"Je n’ai pas trouvé de réponse directe. Essayez un bouton comme wifi, cuisine ou transports."
+  },
+  apt:{
+    checkin_time:"15:00",
+    checkout_time:"11:00",
+    wifi_note:"Près de la télévision se trouve un routeur blanc. Tournez-le pour lire l’étiquette avec le SSID et le mot de passe.",
+    wifi_ssid:"Voir l’étiquette du routeur",
+    wifi_password:"Voir l’étiquette du routeur",
+    water_note:"L’eau du robinet est potable. L’eau chaude est toujours disponible.",
+    ac_note:"Merci d’éteindre la climatisation lorsque vous quittez l’appartement.",
+    bathroom_amenities:"Papier toilette, savon pour les mains, tapis de bain et sèche-cheveux.",
+    towels_note:"Par personne : une grande serviette et une moyenne. Les lits sont prêts à l’arrivée.",
+    bathroom_notice:"Salle de bain entre les chambres. Utilisez uniquement le papier toilette fourni. Ne jetez rien d’autre dans les toilettes.",
+    bedrooms_note:"Deux chambres et un canapé-lit double. Les clés seront sur la table à l’arrivée.",
+    gas_steps:"Le bouton du gaz se trouve à gauche du compteur. Vers le bas signifie fermé, à l’horizontale signifie ouvert. Pour cuisiner, choisissez le brûleur, appuyez et tournez le bouton et maintenez-le quelques secondes jusqu’à ce que la flamme soit stable, puis relâchez.",
+    kitchen_note:"La cuisine est entièrement équipée et prête à l’usage.",
+    main_door_hours:"La porte de l’immeuble est accessible avec la clé fournie.",
+    concierge:"Service de conciergerie disponible pendant la journée.",
+    registration_note:"Pour l’enregistrement obligatoire, veuillez envoyer les documents via WhatsApp à l’hôte.",
+    host_phone:"+39 335 5245756",
+    supermarkets:"Mini marché sur Viale Trastevere près du numéro 108. Produits frais à Largo et Piazza San Cosimato le matin.",
+    pharmacies:"Pharmacie à Piazza Trilussa et autres le long de Viale Trastevere.",
+    luggage:"Radical Storage à Piazza Mastai, à environ cinq minutes.",
+    laundry:"Laverie en libre-service sur Viale Trastevere 150.",
+    hospital:"Hôpital Nuovo Regina Margherita, Via Emilio Morosini 30.",
+    atms:"Distributeurs BNL, Unicredit et Intesa le long de Viale Trastevere.",
+    sims:"Vodafone sur Viale Trastevere 143 et TIM à Piazza San Cosimato 70.",
+    transport:"Tram 8 vers Largo Argentina ou Piazza Venezia. Tram 3 à proximité. Bus H vers Termini. Taxis disponibles.",
+    airports:"Fiumicino : Tram 8 jusqu’à la gare de Trastevere puis train FL1. Ciampino : bus jusqu’à Termini puis Tram 8. Transfert privé disponible.",
+    emergency:"Urgences UE 112. Police 113. Ambulance 118. Pompiers 115. Médecin anglophone 06 488 2371. Vétérinaire 24h 06 660 681.",
+    eat:"Da Enzo al 29, Osteria der Belli, Tonnarello, Trattoria Da Teo, Spirito di Vino, Pianostrada, Trapizzino.",
+    drink:"Enoteca Ferrara, Freni e Frizioni, L’Angolo Divino, Mimì e Cocò, La Prosciutteria Trastevere.",
+    shop:"Marché de Porta Portese le dimanche, boulangeries et épiceries artisanales sur Viale Trastevere, boutiques sur Via della Lungaretta.",
+    visit:"Santa Maria in Trastevere, Santa Cecilia, Museo di Roma in Trastevere, Orto Botanico, Villa Farnesina, Piazza Trilussa et promenade sur le Ponte Sisto vers Campo de’ Fiori.",
+    experiences:"Promenade en soirée entre Viale Trastevere, Piazza Trilussa, Santa Maria in Trastevere, ruelles historiques, le Tibre et Campo de’ Fiori. Apéritif chez Freni e Frizioni et coucher de soleil au Gianicolo.",
+    romantic_walk:"Départ de Viale Trastevere 108, Piazza Santa Maria in Trastevere, terrasse du Gianicolo, Orto Botanico et retour.",
+    daytrips:"Ostia Antica à environ quarante minutes, Tivoli avec la Villa d’Este et la Villa d’Hadrien à environ une heure, Castelli Romani.",
+    checkout_note:"Avant de partir, éteignez les lumières et la climatisation, fermez les fenêtres, laissez les clés sur la table et fermez la porte à clé."
+  },
+  intents:[
+    {k:'wifi',keys:['wifi','wi-fi','internet','mot de passe','routeur'],t:a=>`Wi-Fi : ${a.wifi_note}
+Réseau : ${a.wifi_ssid}. Mot de passe : ${a.wifi_password}.`},
+
+    {k:'check in',keys:['check in','arrivée','accès','entrée','interphone','sonnette'],t:a=>`Arrivée à partir de ${a.checkin_time}.
+${a.bedrooms_note}
+${a.registration_note}
+${a.concierge}
+Besoin d’aide ? ${a.host_phone}.`},
+
+    {k:'check out',keys:['check out','départ','quitter'],t:a=>a.checkout_note},
+
+    {k:'eau',keys:['eau','chaude','potable','robinet'],t:a=>a.water_note},
+
+    {k:'climatisation',keys:['climatisation','clim','ac'],t:a=>a.ac_note},
+
+    {k:'salle de bain',keys:['salle de bain','serviettes','papier','sèche-cheveux'],t:a=>`Salle de bain : ${a.bathroom_amenities}
+Serviettes : ${a.towels_note}
+${a.bathroom_notice}`},
+
+    {k:'cuisine',keys:['cuisine','cuisiner','gaz','plaques'],t:a=>`${a.kitchen_note}
+Gaz : ${a.gas_steps}`},
+
+    {k:'immeuble',keys:['immeuble','porte','horaires','concierge'],t:a=>`Porte : ${a.main_door_hours}
+${a.concierge}`},
+
+    {k:'services',keys:['pharmacie','hôpital','dab','sim','laverie','consigne','supermarché'],t:a=>`Supermarchés : ${a.supermarkets}
+Pharmacies : ${a.pharmacies}
+Hôpital : ${a.hospital}
+DAB : ${a.atms}
+Laverie : ${a.laundry}
+Consigne : ${a.luggage}
+SIM : ${a.sims}`},
+
+    {k:'transports',keys:['transports','tram','bus','taxi','aéroport','train'],t:a=>`${a.transport}
+Aéroports : ${a.airports}`},
+
+    {k:'manger',keys:['manger','restaurant','dîner','déjeuner'],t:a=>a.eat},
+
+    {k:'boire',keys:['boire','bar','vin','cocktail','apéritif'],t:a=>a.drink},
+
+    {k:'shopping',keys:['shopping','marché','boutiques'],t:a=>a.shop},
+
+    {k:'visiter',keys:['visiter','musée','attractions'],t:a=>a.visit},
+
+    {k:'expériences',keys:['expériences','balade','itinéraire','romantique'],t:a=>`${a.experiences}
+Parcours romantique : ${a.romantic_walk}`},
+
+    {k:'excursions',keys:['excursions','tivoli','ostia','castelli'],t:a=>a.daytrips},
+
+    {k:'urgence',keys:['urgence','police','ambulance','pompiers','médecin','vétérinaire'],t:a=>a.emergency}
+  ]
+},
+de:{
+  ui:{
+    welcome:"Hallo, ich bin Samantha, dein virtueller Guide. Tippe auf einen Button für eine schnelle Antwort.",
+    placeholder:"Hallo, ich bin Samantha, dein virtueller Guide. Tippe auf einen Button oder schreibe hier.",
+    apt_label:"Apartment",
+    voice_on:"🔊 Stimme: An",
+    voice_off:"🔇 Stimme: Aus",
+    quick:["WLAN","check in","check out","Wasser","Klimaanlage","Bad","Küche","Gebäude","Essen","Trinken","Shopping","Sehenswürdigkeiten","Erlebnisse","Tagesausflüge","Tickets & Events","Museen & Stätten","Ausstellungen","Verkehr","Services","Notfall"],
+    fallback:"Keine direkte Antwort gefunden. Nutze einen Button wie WLAN, Küche oder Verkehr."
+  },
+  apt:{
+    checkin_time:"15:00",
+    checkout_time:"11:00",
+    wifi_note:"In der Nähe des Fernsehers befindet sich ein weißer Router. Drehe ihn um, um SSID und Passwort auf dem Etikett zu lesen.",
+    wifi_ssid:"Siehe Router-Etikett",
+    wifi_password:"Siehe Router-Etikett",
+    water_note:"Leitungswasser ist trinkbar. Warmwasser ist jederzeit verfügbar.",
+    ac_note:"Bitte schalte die Klimaanlage aus, wenn du die Wohnung verlässt.",
+    bathroom_amenities:"Toilettenpapier, Handseife, Badematte und Haartrockner.",
+    towels_note:"Pro Gast ein großes und ein mittleres Handtuch. Betten sind bei Ankunft vorbereitet.",
+    bathroom_notice:"Bad zwischen den Schlafzimmern. Bitte nur das bereitgestellte Toilettenpapier verwenden. Nichts anderes in die Toilette werfen.",
+    bedrooms_note:"Zwei Schlafzimmer und ein Doppelschlafsofa. Die Schlüssel liegen bei Ankunft auf dem Tisch.",
+    gas_steps:"Der Gashebel befindet sich links vom Zähler. Nach unten bedeutet geschlossen, waagerecht bedeutet offen. Zum Kochen Brenner wählen, Knopf drücken und drehen und einige Sekunden gedrückt halten, bis die Flamme stabil ist, dann loslassen.",
+    kitchen_note:"Die Küche ist vollständig ausgestattet und einsatzbereit.",
+    main_door_hours:"Die Haustür ist mit dem bereitgestellten Schlüssel zugänglich.",
+    concierge:"Hausmeisterservice tagsüber verfügbar.",
+    registration_note:"Für die gesetzlich vorgeschriebene Registrierung sende bitte die Ausweisdokumente per WhatsApp an den Host.",
+    host_phone:"+39 335 5245756",
+    supermarkets:"Minimarkt in der Viale Trastevere nahe Nummer 108. Frische Produkte morgens auf dem Largo und der Piazza San Cosimato.",
+    pharmacies:"Apotheke an der Piazza Trilussa sowie weitere entlang der Viale Trastevere.",
+    luggage:"Radical Storage an der Piazza Mastai, etwa fünf Minuten entfernt.",
+    laundry:"Selbstbedienungswaschsalon in der Viale Trastevere 150.",
+    hospital:"Krankenhaus Nuovo Regina Margherita, Via Emilio Morosini 30.",
+    atms:"Geldautomaten von BNL, Unicredit und Intesa entlang der Viale Trastevere.",
+    sims:"Vodafone in der Viale Trastevere 143 und TIM an der Piazza San Cosimato 70.",
+    transport:"Straßenbahn 8 nach Largo Argentina oder Piazza Venezia. Straßenbahn 3 in der Nähe. Bus H nach Termini. Taxis verfügbar.",
+    airports:"Fiumicino: Tram 8 zur Station Trastevere und FL1-Zug. Ciampino: Bus nach Termini und Tram 8. Privater Transfer möglich.",
+    emergency:"EU-Notruf 112. Polizei 113. Rettungsdienst 118. Feuerwehr 115. Englischsprachiger Arzt 06 488 2371. Tierarzt 24 Stunden 06 660 681.",
+    eat:"Da Enzo al 29, Osteria der Belli, Tonnarello, Trattoria Da Teo, Spirito di Vino, Pianostrada, Trapizzino.",
+    drink:"Enoteca Ferrara, Freni e Frizioni, L’Angolo Divino, Mimì e Cocò, La Prosciutteria Trastevere.",
+    shop:"Porta-Portese-Markt am Sonntag, handwerkliche Bäckereien und Feinkostläden entlang der Viale Trastevere, Boutiquen in der Via della Lungaretta.",
+    visit:"Santa Maria in Trastevere, Santa Cecilia, Museo di Roma in Trastevere, Orto Botanico, Villa Farnesina, Piazza Trilussa und Spaziergang über die Ponte Sisto zum Campo de’ Fiori.",
+    experiences:"Abendlicher Spaziergang durch die Viale Trastevere, Piazza Trilussa, Santa Maria in Trastevere, historische Gassen, das Tiberufer und Campo de’ Fiori. Aperitif bei Freni e Frizioni und Sonnenuntergang am Gianicolo.",
+    romantic_walk:"Start an der Viale Trastevere 108, Piazza Santa Maria in Trastevere, Gianicolo-Terrasse, Orto Botanico und Rückkehr.",
+    daytrips:"Ostia Antica etwa vierzig Minuten, Tivoli mit Villa d’Este und Hadriansvilla etwa eine Stunde, Castelli Romani.",
+    checkout_note:"Vor der Abreise Lichter und Klimaanlage ausschalten, Fenster schließen, Schlüssel auf dem Tisch lassen und die Tür abschließen."
+  },
+  intents:[
+    {k:'WLAN',keys:['wlan','wifi','internet','passwort','router'],t:a=>`WLAN: ${a.wifi_note}
+Netzwerk: ${a.wifi_ssid}. Passwort: ${a.wifi_password}.`},
+
+    {k:'check in',keys:['check in','ankunft','zugang','eingang','klingel'],t:a=>`Check-in ab ${a.checkin_time}.
+${a.bedrooms_note}
+${a.registration_note}
+${a.concierge}
+Hilfe? ${a.host_phone}.`},
+
+    {k:'check out',keys:['check out','abreise','verlassen'],t:a=>a.checkout_note},
+
+    {k:'Wasser',keys:['wasser','warmwasser','trinkbar'],t:a=>a.water_note},
+
+    {k:'Klimaanlage',keys:['klimaanlage','klima','ac'],t:a=>a.ac_note},
+
+    {k:'Bad',keys:['bad','handtücher','wc','hinweis'],t:a=>`Bad: ${a.bathroom_amenities}
+Handtücher: ${a.towels_note}
+${a.bathroom_notice}`},
+
+    {k:'Küche',keys:['küche','kochen','gas','herd'],t:a=>`${a.kitchen_note}
+Gas: ${a.gas_steps}`},
+
+    {k:'Gebäude',keys:['gebäude','tür','hausmeister'],t:a=>`Tür: ${a.main_door_hours}
+${a.concierge}`},
+
+    {k:'Services',keys:['apotheke','krankenhaus','geldautomat','sim','wäsche','gepäck'],t:a=>`Supermärkte: ${a.supermarkets}
+Apotheken: ${a.pharmacies}
+Krankenhaus: ${a.hospital}
+Geldautomaten: ${a.atms}
+Waschsalon: ${a.laundry}
+Gepäck: ${a.luggage}
+SIM: ${a.sims}`},
+
+    {k:'Verkehr',keys:['verkehr','tram','bus','taxi','flughafen'],t:a=>`${a.transport}
+Flughäfen: ${a.airports}`},
+
+    {k:'Essen',keys:['essen','restaurant'],t:a=>a.eat},
+
+    {k:'Trinken',keys:['trinken','bar','wein'],t:a=>a.drink},
+
+    {k:'Shopping',keys:['shopping','markt','geschäfte'],t:a=>a.shop},
+
+    {k:'Sehenswürdigkeiten',keys:['sehen','besuchen','museum'],t:a=>a.visit},
+
+    {k:'Erlebnisse',keys:['erlebnisse','spaziergang','romantisch'],t:a=>`${a.experiences}
+Romantische Route: ${a.romantic_walk}`},
+
+    {k:'Tagesausflüge',keys:['tagesausflug','tivoli','ostia'],t:a=>a.daytrips},
+
+    {k:'Notfall',keys:['notfall','polizei','arzt','feuerwehr'],t:a=>a.emergency}
+  ]
+},
+
+es:{
+  ui:{
+    welcome:"Hola, soy Samantha, tu guía virtual. Toca un botón para obtener una respuesta rápida.",
+    placeholder:"Hola, soy Samantha, tu guía virtual. Toca un botón o escribe aquí.",
+    apt_label:"Apartamento",
+    voice_on:"🔊 Voz: Activada",
+    voice_off:"🔇 Voz: Desactivada",
+    quick:["wifi","check in","check out","agua","aire acondicionado","baño","cocina","edificio","comer","beber","compras","visitar","experiencias","excursiones","entradas y eventos","museos y sitios","exposiciones","transporte","servicios","emergencia"],
+    fallback:"No encontré una respuesta directa. Prueba un botón como wifi, cocina o transporte."
+  },
+  apt:{
+    checkin_time:"15:00",
+    checkout_time:"11:00",
+    wifi_note:"Cerca del televisor hay un router blanco. Gíralo para leer la etiqueta con el SSID y la contraseña.",
+    wifi_ssid:"Ver etiqueta del router",
+    wifi_password:"Ver etiqueta del router",
+    water_note:"El agua del grifo es potable. El agua caliente está siempre disponible.",
+    ac_note:"Por favor apaga el aire acondicionado cuando salgas del apartamento.",
+    bathroom_amenities:"Papel higiénico, jabón de manos, alfombrilla y secador de pelo.",
+    towels_note:"Por huésped: una toalla grande y una mediana. Las camas están listas a la llegada.",
+    bathroom_notice:"Baño entre los dormitorios. Usa solo el papel higiénico proporcionado. No arrojes nada más al inodoro.",
+    bedrooms_note:"Dos dormitorios y un sofá cama doble. Las llaves estarán sobre la mesa a la llegada.",
+    gas_steps:"La perilla del gas está a la izquierda del contador. Abajo significa cerrado, horizontal significa abierto. Para cocinar elige el fuego, presiona y gira la perilla y mantenla presionada unos segundos hasta que la llama sea estable, luego suelta.",
+    kitchen_note:"La cocina está completamente equipada y lista para usar.",
+    main_door_hours:"La puerta del edificio es accesible con la llave proporcionada.",
+    concierge:"Servicio de conserjería disponible durante el día.",
+    registration_note:"Para el registro obligatorio, envía los documentos por WhatsApp al anfitrión.",
+    host_phone:"+39 335 5245756",
+    supermarkets:"Mini mercado en Viale Trastevere cerca del número 108. Productos frescos en Largo y Piazza San Cosimato por la mañana.",
+    pharmacies:"Farmacia en Piazza Trilussa y otras a lo largo de Viale Trastevere.",
+    luggage:"Radical Storage en Piazza Mastai, a unos cinco minutos.",
+    laundry:"Lavandería autoservicio en Viale Trastevere 150.",
+    hospital:"Hospital Nuovo Regina Margherita, Via Emilio Morosini 30.",
+    atms:"Cajeros BNL, Unicredit e Intesa a lo largo de Viale Trastevere.",
+    sims:"Vodafone en Viale Trastevere 143 y TIM en Piazza San Cosimato 70.",
+    transport:"Tranvía 8 hacia Largo Argentina o Piazza Venezia. Tranvía 3 cercano. Autobús H hacia Termini. Taxis disponibles.",
+    airports:"Fiumicino: Tranvía 8 hasta la estación Trastevere y tren FL1. Ciampino: autobús a Termini y tranvía 8. Transfer privado disponible.",
+    emergency:"Emergencias UE 112. Policía 113. Ambulancia 118. Bomberos 115. Médico en inglés 06 488 2371. Veterinario 24 horas 06 660 681.",
+    eat:"Da Enzo al 29, Osteria der Belli, Tonnarello, Trattoria Da Teo, Spirito di Vino, Pianostrada, Trapizzino.",
+    drink:"Enoteca Ferrara, Freni e Frizioni, L’Angolo Divino, Mimì e Cocò, La Prosciutteria Trastevere.",
+    shop:"Mercado de Porta Portese el domingo, panaderías y tiendas artesanales en Viale Trastevere, boutiques en Via della Lungaretta.",
+    visit:"Santa Maria in Trastevere, Santa Cecilia, Museo di Roma in Trastevere, Orto Botanico, Villa Farnesina, Piazza Trilussa y paseo por el Ponte Sisto hasta Campo de’ Fiori.",
+    experiences:"Paseo nocturno por Viale Trastevere, Piazza Trilussa, Santa Maria in Trastevere, callejones históricos, el río Tíber y Campo de’ Fiori. Aperitivo en Freni e Frizioni y atardecer en el Gianicolo.",
+    romantic_walk:"Salida desde Viale Trastevere 108, Piazza Santa Maria in Trastevere, terraza del Gianicolo, Orto Botanico y regreso.",
+    daytrips:"Ostia Antica a unos cuarenta minutos, Tivoli con Villa d’Este y Villa Adriana a una hora, Castelli Romani.",
+    checkout_note:"Antes de salir apaga luces y aire acondicionado, cierra las ventanas, deja las llaves sobre la mesa y cierra la puerta con llave."
+  },
+  intents:[
+    {k:'wifi',keys:['wifi','internet','router'],t:a=>`Wi-Fi: ${a.wifi_note}
+Red: ${a.wifi_ssid}. Contraseña: ${a.wifi_password}.`},
+
+    {k:'check in',keys:['check in','llegada','entrada'],t:a=>`Check-in desde las ${a.checkin_time}.
+${a.bedrooms_note}
+${a.registration_note}
+${a.concierge}
+¿Necesitas ayuda? ${a.host_phone}.`},
+
+    {k:'check out',keys:['check out','salida'],t:a=>a.checkout_note},
+
+    {k:'agua',keys:['agua','potable','caliente'],t:a=>a.water_note},
+
+    {k:'aire acondicionado',keys:['aire acondicionado','ac','clima'],t:a=>a.ac_note},
+
+    {k:'baño',keys:['baño','toallas','wc'],t:a=>`Baño: ${a.bathroom_amenities}
+Toallas: ${a.towels_note}
+${a.bathroom_notice}`},
+
+    {k:'cocina',keys:['cocina','cocinar','gas'],t:a=>`${a.kitchen_note}
+Uso del gas: ${a.gas_steps}`},
+
+    {k:'edificio',keys:['edificio','puerta','conserje'],t:a=>`${a.main_door_hours}
+${a.concierge}`},
+
+    {k:'servicios',keys:['farmacia','hospital','cajero','lavandería','equipaje'],t:a=>`Supermercados: ${a.supermarkets}
+Farmacias: ${a.pharmacies}
+Hospital: ${a.hospital}
+Cajeros: ${a.atms}
+Lavandería: ${a.laundry}
+Consigna: ${a.luggage}
+SIM: ${a.sims}`},
+
+    {k:'transporte',keys:['transporte','tranvía','bus','taxi','aeropuerto'],t:a=>`${a.transport}
+Aeropuertos: ${a.airports}`},
+
+    {k:'comer',keys:['comer','restaurante'],t:a=>a.eat},
+
+    {k:'beber',keys:['beber','bar'],t:a=>a.drink},
+
+    {k:'compras',keys:['compras','mercado'],t:a=>a.shop},
+
+    {k:'visitar',keys:['visitar','museo'],t:a=>a.visit},
+
+    {k:'experiencias',keys:['experiencias','romántico'],t:a=>`${a.experiences}
+Ruta romántica: ${a.romantic_walk}`},
+
+    {k:'excursiones',keys:['excursión','tivoli','ostia'],t:a=>a.daytrips},
+
+    {k:'emergencia',keys:['emergencia','policía','médico'],t:a=>a.emergency}
+  ]
+},
 }; /* <-- CHIUDE const DATA */
+
 /* ============ RILEVAMENTO LINGUA + UI ============ */
 const chatEl = document.getElementById('chat');
 const input  = document.getElementById('input');
@@ -527,7 +632,6 @@ function applyUI(){
 }
 
 /* ============ CHAT LOGIC + FEEDBACK ============ */
-// --- trasforma i link in <a> cliccabili e aggiunge spazio tra le righe
 function linkify(str) {
   const escaped = str
     .replace(/&/g, "&amp;")
@@ -561,7 +665,8 @@ function getAnswer(text){
   const L = DATA[lang]; const apt=L.apt;
   const m = detectIntent(text);
   if(!m) return { text: L.ui.fallback, topic: 'fallback' };
-  try{ return { text: m.t(apt), topic: m.k }; }catch{ return { text: L.ui.fallback, topic: 'fallback' }; }
+  try{ return { text: m.t(apt), topic: m.k }; }
+  catch{ return { text: L.ui.fallback, topic: 'fallback' }; }
 }
 function postFeedback(vote, topic, answerText){
   try{
@@ -629,3 +734,4 @@ applyUI(); welcome();
 </script>
 </body>
 </html>
+  
