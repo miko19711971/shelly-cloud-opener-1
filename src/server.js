@@ -651,7 +651,23 @@ app.post("/api/vbro-mail", requireAdmin, async (req, resInner) => {
 // HostAway → AI Guest Assistant (chat reply)
 // ========================================================================
 
- 
+ // ========================================================================
+// HostAway Incoming Webhook — FINAL VERSION (NO language.js, NO guessing)
+// ========================================================================
+
+const APT_DEFAULT_LANG = {
+  arenula: "en",
+  leonina: "en",
+  scala: "en",
+  portico: "en",
+  trastevere: "en"
+};
+
+function normalizeLang(lang) {
+  if (!lang || typeof lang !== "string") return null;
+  return lang.slice(0, 2).toLowerCase();
+}
+
 app.post("/hostaway-incoming", async (req, res) => {
   console.log("\n" + "=".repeat(60));
   console.log("📩 HOSTAWAY WEBHOOK RECEIVED");
@@ -660,43 +676,43 @@ app.post("/hostaway-incoming", async (req, res) => {
   console.log("=".repeat(60) + "\n");
 
   try {
-      const {
-  body: message,
-  guestName,
-  reservationId,
-  conversationId,
-  listingMapId: listingId  // ✅ Prende listingMapId e lo rinomina in listingId
-} = req.body || {};
+    const {
+      body: message,
+      guestName,
+      reservationId,
+      conversationId,
+      listingMapId: listingId,
+      guestLanguage
+    } = req.body || {};
+
     // ======================================================
-// 🔎 Resolve Listing ID from reservation (HostAway)
-// ======================================================
-let resolvedListingId = listingId;
+    // 🔎 Resolve Listing ID from reservation (HostAway)
+    // ======================================================
+    let resolvedListingId = listingId;
 
-if (!resolvedListingId && reservationId) {
-  try {
-    console.log("🔎 Fetching reservation from HostAway:", reservationId);
+    if (!resolvedListingId && reservationId) {
+      try {
+        console.log("🔎 Fetching reservation from HostAway:", reservationId);
 
-     const r = await axios.get(
-  `https://api.hostaway.com/v1/reservations/${reservationId}`,
-  {
-    headers: {
-      Authorization: `Bearer ${HOSTAWAY_TOKEN}`
-    },
-    timeout: 10000
-  }
-);
+        const r = await axios.get(
+          `https://api.hostaway.com/v1/reservations/${reservationId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${HOSTAWAY_TOKEN}`
+            },
+            timeout: 10000
+          }
+        );
 
-// 🔍 LOG COMPLETO per vedere la struttura
-console.log("🔍 FULL API Response:", JSON.stringify(r.data, null, 2));
+        console.log("🔍 FULL API Response:", JSON.stringify(r.data, null, 2));
 
-resolvedListingId = r.data?.result?.listingId;
+        resolvedListingId = r.data?.result?.listingId;
+        console.log("🏠 ListingId resolved from reservation:", resolvedListingId);
+      } catch (e) {
+        console.error("❌ Failed to resolve listingId from reservation", e.message);
+      }
+    }
 
-console.log("🏠 ListingId resolved from reservation:", resolvedListingId);
-  } catch (e) {
-    console.error("❌ Failed to resolve listingId from reservation", e.message);
-  }
-}
-console.log("🏠 Listing ID:", listingId);
     console.log("📋 STEP 1: Extract Data");
     console.log("  ├─ message:", message);
     console.log("  ├─ conversationId:", conversationId);
@@ -704,136 +720,127 @@ console.log("🏠 Listing ID:", listingId);
     console.log("  └─ reservationId:", reservationId);
 
     if (!message || !conversationId) {
-      console.log("⚠️  Missing required fields → SKIPPING\n");
-      return res.json({
-        ok: true,
-        skipped: true,
-        reason: "missing_message_or_conversationId"
-      });
+      console.log("⚠️ Missing required fields → SILENT");
+      return res.json({ ok: true, silent: true });
     }
 
-console.log("\n🔐 STEP 2: Check HostAway Token");
-    
+    // ======================================================
+    // 🔐 STEP 2: Check HostAway Token
+    // ======================================================
     if (!HOSTAWAY_TOKEN) {
       console.error("❌ HOSTAWAY_TOKEN is NOT configured!");
-      return res.status(500).json({
-        ok: false,
-        error: "HOSTAWAY_TOKEN_missing"
-      });
+      return res.status(500).json({ ok: false });
     }
 
     console.log("  ✅ Token configured");
 
-    console.log("\n🌍 STEP 3: Detect Language");
-    const lang =
-  (req.body?.guestLanguage || "").slice(0, 2) ||
-  detectLanguage(message);
-    console.log("  └─ Detected:", lang.toUpperCase());
-
-    console.log("\n🎯 STEP 4: Match Intent");
+    // ======================================================
+    // 🎯 STEP 3: Match Intent
+    // ======================================================
     const intent = matchIntent(message);
-    console.log("  └─ Matched:", intent || "❌ NONE");
+    console.log("🎯 Intent matched:", intent || "NONE");
 
     if (!intent) {
-      console.log("\n⚠️  No intent matched → System will stay SILENT\n");
-      return res.json({
-        ok: true,
-        silent: true,
-        reason: "no_intent_matched",
-        lang,
-        message
-      });
+      console.log("🔇 No intent → silent");
+      return res.json({ ok: true, silent: true });
     }
 
-    console.log("\n💬 STEP 5: Get Answer");
+    // ======================================================
+    // 🏠 STEP 4: listingId → apartment
+    // ======================================================
+    const LISTING_TO_APARTMENT = {
+      "194166": "arenula",
+      "194165": "portico",
+      "194163": "leonina",
+      "194164": "trastevere",
+      "194162": "scala"
+    };
 
-// Mappa listingId → appartamento
-const LISTING_TO_APARTMENT = {
-  "194166": "arenula",
-  "194165": "portico",
-  "194163": "leonina",
-  "194164": "trastevere",
-  "194162": "scala"
-};
+    console.log("  ├─ listingId ricevuto:", resolvedListingId);
 
- // 🔍 DEBUG: vediamo cosa succede
-console.log("  ├─ listingId ricevuto:", resolvedListingId);
-console.log("  ├─ tipo listingId:", typeof resolvedListingId);
+    const apartment = LISTING_TO_APARTMENT[String(resolvedListingId)];
 
-const apartment = LISTING_TO_APARTMENT[String(resolvedListingId)];
+    if (!apartment) {
+      console.error("❌ ListingId non mappato:", resolvedListingId);
+      return res.json({ ok: true, silent: true });
+    }
 
-if (!apartment) {
-  console.error("❌ ListingId non mappato:", resolvedListingId);
-  return res.json({
-    ok: true,
-    silent: true,
-    reason: "unknown_listing",
-    listingId: resolvedListingId
-  });
-}
-// 🔍 DEBUG OK
-console.log("  ├─ Appartamento selezionato:", apartment);
-console.log("  ├─ Lingua:", lang);
-console.log("  └─ Intent:", intent);
+    console.log("  ├─ Appartamento:", apartment);
 
-// 🎯 SELEZIONE RISPOSTA
-const answer = ANSWERS[apartment]?.[lang]?.[intent] || null;
+    // ======================================================
+    // 🌍 STEP 5: Language selection (LEVEL 1 + LEVEL 2 ONLY)
+    // ======================================================
+    const platformLang = normalizeLang(guestLanguage);
+    const defaultLang = APT_DEFAULT_LANG[apartment] || "en";
 
-if (!answer) {
-  return res.json({ ok: true, silent: true });
-}
+    let answer = null;
+    let usedLang = null;
 
- console.log("  ✅ Answer found");
-console.log("  └─ Preview:", answer.substring(0, 80) + "...");
+    // LEVEL 1 — HostAway language
+    if (
+      platformLang &&
+      ANSWERS[apartment]?.[platformLang]?.[intent]
+    ) {
+      answer = ANSWERS[apartment][platformLang][intent];
+      usedLang = platformLang;
+    }
 
-console.log("\n📤 STEP 6: Send Reply to HostAway");
+    // LEVEL 2 — Apartment default language
+    else if (
+      ANSWERS[apartment]?.[defaultLang]?.[intent]
+    ) {
+      answer = ANSWERS[apartment][defaultLang][intent];
+      usedLang = defaultLang;
+    }
 
-await axios.post(
-  `https://api.hostaway.com/v1/conversations/${conversationId}/messages`,
-  {
-    body: answer,
-    sendToGuest: true
-  },
-  {
-    headers: {
-      Authorization: `Bearer ${HOSTAWAY_TOKEN}`,
-      "Content-Type": "application/json"
-    },
-    timeout: 10000
-  }
-);
+    if (!answer) {
+      console.log("🔇 No answer for language → silent");
+      return res.json({ ok: true, silent: true });
+    }
 
-console.log("\n✅ Reply Sent Successfully!");
-console.log("\n🎉 SUCCESS - Auto-reply sent to guest!\n");
+    console.log("  ✅ Answer found");
+    console.log("  ├─ Language used:", usedLang);
+    console.log("  └─ Preview:", answer.substring(0, 80) + "...");
 
-return res.json({
-  ok: true,
-  replied: true,
-  intent,
-  lang
-});
+    // ======================================================
+    // 📤 STEP 6: Send Reply to HostAway
+    // ======================================================
+    await axios.post(
+      `https://api.hostaway.com/v1/conversations/${conversationId}/messages`,
+      {
+        body: answer,
+        sendToGuest: true
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${HOSTAWAY_TOKEN}`,
+          "Content-Type": "application/json"
+        },
+        timeout: 10000
+      }
+    );
+
+    console.log("✅ Reply sent successfully");
+
+    return res.json({
+      ok: true,
+      replied: true,
+      intent,
+      lang: usedLang
+    });
 
   } catch (err) {
-    console.error("\n❌ ERROR IN /hostaway-incoming");
-    console.error("Error:", err.message);
-    
-    if (err.response) {
-      console.error("HostAway API Error:");
-      console.error("  ├─ Status:", err.response.status);
-      console.error("  └─ Data:", JSON.stringify(err.response.data, null, 2));
-    }
-    
-    return res.status(500).json({
-      ok: false,
-      error: err.message,
-      details: err.response?.data || null
-    });
+    console.error("❌ ERROR IN /hostaway-incoming");
+    console.error(err.message);
+    return res.status(500).json({ ok: false });
   }
 });
+
+// ========================================================================
+// Server
+// ========================================================================
 const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => {
   console.log("Server running on", PORT);
 });
-
  
-  
