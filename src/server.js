@@ -11,7 +11,7 @@ import { ANSWERS } from "./answers.js";
  
  
 
-const LANG_FALLBACK_ORDER = ["en", "it", "es", "fr", "de"];
+ 
 // ========================================================================
 // ❌ RIMOSSO: Sistema AI Guest Assistant (guide-ai.js import)
 // ❌ RIMOSSO: Mappa GUIDE_BY_LISTING_ID per AI auto-reply
