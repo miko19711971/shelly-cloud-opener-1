@@ -35,6 +35,34 @@ function safeEqual(a, b) {
 }
 
 const app = express();
+// ======================================================================
+// STRIPE WEBHOOK (SAFE MODE)
+// ======================================================================
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+
+app.post(
+  "/stripe-webhook",
+  express.raw({ type: "application/json" }),
+  async (req, res) => {
+    let event;
+
+    try {
+      event = stripe.webhooks.constructEvent(
+        req.body,
+        req.headers["stripe-signature"],
+        process.env.STRIPE_WEBHOOK_SECRET
+      );
+    } catch (err) {
+      console.error("❌ Stripe signature error:", err.message);
+      return res.status(400).send("Invalid signature");
+    }
+
+    // ⚠️ SAFE MODE: per ora NON scrive nulla
+    console.log("✅ Stripe webhook received:", event.type);
+
+    return res.json({ ok: true });
+  }
+);
 app.disable("x-powered-by");
 app.set("trust proxy", true);
 app.use(express.urlencoded({ extended: true, limit: "50kb" }));
