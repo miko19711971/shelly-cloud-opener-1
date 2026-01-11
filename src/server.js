@@ -8,14 +8,6 @@ import fs from "fs/promises";
  
 import { matchIntent } from "./matcher.js";
 import { ANSWERS } from "./answers.js";
- 
- 
-
- 
-// ========================================================================
-// ❌ RIMOSSO: Sistema AI Guest Assistant (guide-ai.js import)
-// ❌ RIMOSSO: Mappa GUIDE_BY_LISTING_ID per AI auto-reply
-// ========================================================================
 
 function safeEqual(a, b) {
   const aa = Buffer.from(String(a || ""));
@@ -536,21 +528,6 @@ app.post("/checkin/:apt/open/door", requireCheckinToken, async (req, res) => {
 app.use("/checkin", express.static(path.join(PUBLIC_DIR, "checkin"), { fallthrough: false }));
 app.use(express.static(PUBLIC_DIR));
 
-// ========================================================================
-// ❌ RIMOSSO: Sistema AI Guest Assistant completo
-// ❌ RIMOSSO: Directory GUIDES_V2_DIR e cache guidesCache
-// ❌ RIMOSSO: Funzione loadGuideJson (caricamento JSON guide)
-// ❌ RIMOSSO: Funzione normalizeLang (normalizzazione lingua)
-// ❌ RIMOSSO: Funzione normalizeNoAccents (pulizia testo)
-// ❌ RIMOSSO: Funzione findAnswerByKeywords (match parole chiave + 190 righe KEYWORDS)
-// ❌ RIMOSSO: Funzione extractGuestName (estrazione nome ospite)
-// ❌ RIMOSSO: Funzione detectLangFromMessage (rilevamento lingua)
-// ❌ RIMOSSO: Funzione makeGreeting (saluto multilingua)
-// ❌ RIMOSSO: Endpoint POST /api/guest-assistant (API AI principale)
-// ❌ RIMOSSO: Mappa LISTING_TO_APARTMENT
-// ❌ RIMOSSO: Endpoint POST /api/hostaway-ai-bridge (bridge HostAway)
-// ❌ RIMOSSO: Endpoint POST /hostaway-incoming (auto-reply HostAway)
-// ========================================================================
 
 app.get("/health", (req, res) => {
   res.json({
