@@ -1,4 +1,4 @@
- import express from "express";
+import express from "express";
 import axios from "axios";
 import crypto from "crypto";
 import cors from "cors";
@@ -435,6 +435,42 @@ app.use("/guest-assistant", express.static(path.join(PUBLIC_DIR, "guides"), { fa
 app.use("/guides-v2", express.static(path.join(PUBLIC_DIR, "guides-v2"), { fallthrough: false }));
 app.use("/public-test-ai-html", express.static(path.join(PUBLIC_DIR, "public-test-ai-html"), { fallthrough: false }));
 
+app.get("/checkin/:apt/today", (req, res) => {
+  const apt = req.params.apt.toLowerCase(), today = tzToday();
+  const { token } = newTokenFor(`checkin-${apt}`, { windowMin: CHECKIN_WINDOW_MIN, max: 200, day: today });
+  const url = `${req.protocol}://${req.get("host")}/checkin/${apt}/index.html?t=${token}`;
+  return res.redirect(302, url);
+});
+
+app.get("/checkin/:apt/:rawDate([^/.]+)", (req, res) => {
+  const apt = req.params.apt.toLowerCase(), today = tzToday();
+  const raw = String(req.params.rawDate || "");
+  let day = normalizeCheckinDate(raw);
+  if (!day) {
+    if (ALLOW_TODAY_FALLBACK) day = today;
+    else return res.status(410).send("Link scaduto.");
+  }
+  if (day !== today) return res.status(410).send("Link scaduto.");
+  const { token } = newTokenFor(`checkin-${apt}`, { windowMin: CHECKIN_WINDOW_MIN, max: 200, day });
+  const url = `${req.protocol}://${req.get("host")}/checkin/${apt}/index.html?t=${token}`;
+  res.redirect(302, url);
+});
+
+app.get("/checkin/:apt/", (req, res) => {
+  const apt = req.params.apt.toLowerCase(), today = tzToday();
+  const raw = (req.query.d || "").toString();
+  let day = normalizeCheckinDate(raw);
+  if (!day) {
+    if (ALLOW_TODAY_FALLBACK) day = today;
+    else return res.status(410).send("Link scaduto.");
+  }
+  if (day !== today) return res.status(410).send("Link scaduto.");
+  if (day !== today) return res.status(410).send("Questo link è valido solo nel giorno di check-in.");
+  const { token } = newTokenFor(`checkin-${apt}`, { windowMin: CHECKIN_WINDOW_MIN, max: 200, day });
+  const url = `${req.protocol}://${req.get("host")}/checkin/${apt}/index.html?t=${token}`;
+  res.redirect(302, url);
+});
+
 app.get("/checkin/:apt/index.html", (req, res) => {
   try {
     const apt = req.params.apt.toLowerCase(), t = String(req.query.t || "");
@@ -456,29 +492,6 @@ app.get("/checkin/:apt/index.html", (req, res) => {
     console.error("❌ /checkin/:apt/index.html crashed:", e);
     return res.status(500).send("Internal Server Error");
   }
-});
-
-app.post("/api/generate-checkin-link", requireAdmin, (req, res) => {
-  const { apt, checkinDate } = req.body;
-  
-  if (!apt || !checkinDate) {
-    return res.status(400).json({ ok: false, error: "missing_apt_or_date" });
-  }
-
-  const day = normalizeCheckinDate(checkinDate);
-  if (!day) {
-    return res.status(400).json({ ok: false, error: "invalid_date_format" });
-  }
-
-  const { token } = newTokenFor(`checkin-${apt}`, { 
-    windowMin: CHECKIN_WINDOW_MIN, 
-    max: 200, 
-    day 
-  });
-
-  const url = `${req.protocol}://${req.get("host")}/checkin/${apt}/index.html?t=${token}`;
-  
-  return res.json({ ok: true, url, checkinDate: day });
 });
 
 function requireCheckinToken(req, res, next) {
@@ -526,22 +539,24 @@ app.post("/checkin/:apt/open/door", requireCheckinToken, async (req, res) => {
   return res.json({ ok: true, opened: result });
 });
 
-// ❌ BLOCCA vecchi URL senza token
-app.get("/checkin/:apt/today", (req, res) => {
-  res.status(410).send("Link scaduto. Usa il link ricevuto via email.");
-});
-
-app.get("/checkin/:apt/:rawDate([^/.]+)", (req, res) => {
-  res.status(410).send("Link scaduto. Usa il link ricevuto via email.");
-});
-
-app.get("/checkin/:apt/", (req, res) => {
-  res.status(410).send("Link scaduto. Usa il link ricevuto via email.");
-});
-
-app.use("/checkin", express.static(path.join(PUBLIC_DIR, "checkin"), { fallthrough: false }));
 app.use("/checkin", express.static(path.join(PUBLIC_DIR, "checkin"), { fallthrough: false }));
 app.use(express.static(PUBLIC_DIR));
+
+// ========================================================================
+// ❌ RIMOSSO: Sistema AI Guest Assistant completo
+// ❌ RIMOSSO: Directory GUIDES_V2_DIR e cache guidesCache
+// ❌ RIMOSSO: Funzione loadGuideJson (caricamento JSON guide)
+// ❌ RIMOSSO: Funzione normalizeLang (normalizzazione lingua)
+// ❌ RIMOSSO: Funzione normalizeNoAccents (pulizia testo)
+// ❌ RIMOSSO: Funzione findAnswerByKeywords (match parole chiave + 190 righe KEYWORDS)
+// ❌ RIMOSSO: Funzione extractGuestName (estrazione nome ospite)
+// ❌ RIMOSSO: Funzione detectLangFromMessage (rilevamento lingua)
+// ❌ RIMOSSO: Funzione makeGreeting (saluto multilingua)
+// ❌ RIMOSSO: Endpoint POST /api/guest-assistant (API AI principale)
+// ❌ RIMOSSO: Mappa LISTING_TO_APARTMENT
+// ❌ RIMOSSO: Endpoint POST /api/hostaway-ai-bridge (bridge HostAway)
+// ❌ RIMOSSO: Endpoint POST /hostaway-incoming (auto-reply HostAway)
+// ========================================================================
 
 app.get("/health", (req, res) => {
   res.json({
@@ -632,7 +647,11 @@ app.post("/api/vbro-mail", requireAdmin, async (req, resInner) => {
     return resInner.status(500).json({ ok: false, error: String(err?.message || err) });
   }
 });
+ // ========================================================================
+// HostAway → AI Guest Assistant (chat reply)
+// ========================================================================
 
+ 
 app.post("/hostaway-incoming", async (req, res) => {
   console.log("\n" + "=".repeat(60));
   console.log("📩 HOSTAWAY WEBHOOK RECEIVED");
@@ -646,9 +665,11 @@ app.post("/hostaway-incoming", async (req, res) => {
   guestName,
   reservationId,
   conversationId,
-  listingMapId: listingId
+  listingMapId: listingId  // ✅ Prende listingMapId e lo rinomina in listingId
 } = req.body || {};
-
+    // ======================================================
+// 🔎 Resolve Listing ID from reservation (HostAway)
+// ======================================================
 let resolvedListingId = listingId;
 
 if (!resolvedListingId && reservationId) {
@@ -665,6 +686,7 @@ if (!resolvedListingId && reservationId) {
   }
 );
 
+// 🔍 LOG COMPLETO per vedere la struttura
 console.log("🔍 FULL API Response:", JSON.stringify(r.data, null, 2));
 
 resolvedListingId = r.data?.result?.listingId;
@@ -725,6 +747,7 @@ console.log("\n🔐 STEP 2: Check HostAway Token");
 
     console.log("\n💬 STEP 5: Get Answer");
 
+// Mappa listingId → appartamento
 const LISTING_TO_APARTMENT = {
   "194166": "arenula",
   "194165": "portico",
@@ -733,6 +756,7 @@ const LISTING_TO_APARTMENT = {
   "194162": "scala"
 };
 
+ // 🔍 DEBUG: vediamo cosa succede
 console.log("  ├─ listingId ricevuto:", resolvedListingId);
 console.log("  ├─ tipo listingId:", typeof resolvedListingId);
 
@@ -747,10 +771,12 @@ if (!apartment) {
     listingId: resolvedListingId
   });
 }
+// 🔍 DEBUG OK
 console.log("  ├─ Appartamento selezionato:", apartment);
 console.log("  ├─ Lingua:", lang);
 console.log("  └─ Intent:", intent);
 
+// 🎯 SELEZIONE RISPOSTA
 const answer = ANSWERS[apartment]?.[lang]?.[intent] || null;
 
 if (!answer) {
@@ -808,3 +834,6 @@ const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => {
   console.log("Server running on", PORT);
 });
+
+ 
+  
