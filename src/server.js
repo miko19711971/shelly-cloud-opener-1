@@ -821,9 +821,7 @@ app.post("/hostaway-incoming", async (req, res) => {
   }
 });
 
-// ========================================================================
-// Server
-// ========================================================================
+
 
 Immagina di essere un esperto in script e in Google sheet e nella loro trascrizione da uno script al Google sheet. Fai questa attività analitica da circa trent’anni e ti viene detto di fare un’analisi. Il tuo lavoro è analizzare questo server JS ed occuparti solamente della parte inerente Alla trascrizione delle informazioni da parte di Hostaway Paypal Stripe su un foglio di Google.
 Il committente, non avendo la possibilità di testare direttamente questo script, ti chiede di analizzarlo e fargli sapere se è effettivamente funzionante o meno in base a tutti i parametri che ti vengono forniti sarei ricompensato a dovere quando lo script sarà completamente funzionante trascriverà ogni pagamento di Stripe, ogni pagamento di PayPal e le informazioni inerenti alla prenotazione come data nome cognome eccetera, eccetera del cliente
