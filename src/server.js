@@ -822,398 +822,402 @@ app.post("/hostaway-incoming", async (req, res) => {
 });
 
 
-1// ========================================================================
-2// INTEGRAZIONI PAGAMENTI - DA AGGIUNGERE AL SERVER.JS
-3// ========================================================================
-4
-5// 1) AGGIUNGI QUESTE VARIABILI AMBIENTE ALL'INIZIO (dopo le altre)
-6const STRIPE_WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET;
-7const PAYPAL_WEBHOOK_ID = process.env.PAYPAL_WEBHOOK_ID;
-8const GOOGLE_SHEETS_WEBHOOK_URL = process.env.GOOGLE_SHEETS_WEBHOOK_URL;
-9
-10if (!STRIPE_WEBHOOK_SECRET) {
-11  console.error("⚠️ Missing STRIPE_WEBHOOK_SECRET");
-12}
-13if (!PAYPAL_WEBHOOK_ID) {
-14  console.error("⚠️ Missing PAYPAL_WEBHOOK_ID");
-15}
-16if (!GOOGLE_SHEETS_WEBHOOK_URL) {
-17  console.error("⚠️ Missing GOOGLE_SHEETS_WEBHOOK_URL");
-18}
-19
-20// ========================================================================
-21// FUNZIONE SCRITTURA GOOGLE SHEETS
-22// ========================================================================
-23
-24async function writeToGoogleSheets(data) {
-25  try {
-26    console.log("📊 Invio dati a Google Sheets:", data);
-27    
-28    const response = await axios.post(
-29      GOOGLE_SHEETS_WEBHOOK_URL,
-30      data,
-31      {
-32        headers: { "Content-Type": "application/json" },
-33        timeout: 15000
-34      }
-35    );
-36    
-37    console.log("✅ Dati salvati su Sheets");
-38    return { ok: true, response: response.data };
-39  } catch (err) {
-40    console.error("❌ Errore scrittura Sheets:", err.message);
-41    return { ok: false, error: err.message };
-42  }
-43}
-44
-45// ========================================================================
-46// STRIPE WEBHOOK
-47// ========================================================================
-48
-49app.post("/stripe-webhook", express.raw({ type: "application/json" }), async (req, res) => {
-50  const sig = req.headers["stripe-signature"];
-51  
-52  console.log("\n" + "=".repeat(60));
-53  console.log("💳 STRIPE WEBHOOK RECEIVED");
-54  console.log("=".repeat(60));
-55  
-56  if (!STRIPE_WEBHOOK_SECRET) {
-57    console.error("❌ Stripe webhook secret non configurato");
-58    return res.status(500).send("Configuration error");
-59  }
-60
-61  let event;
-62  
-63  try {
-64    // Verifica firma Stripe
-65    const stripe = (await import("stripe")).default(process.env.STRIPE_SECRET_KEY);
-66    event = stripe.webhooks.constructEvent(req.body, sig, STRIPE_WEBHOOK_SECRET);
-67    console.log("✅ Firma Stripe verificata");
-68  } catch (err) {
-69    console.error("❌ Errore verifica firma:", err.message);
-70    return res.status(400).send(`Webhook Error: ${err.message}`);
-71  }
-72
-73  // Eventi Stripe da gestire
-74  if (event.type === "payment_intent.succeeded" || 
-75      event.type === "charge.succeeded" ||
-76      event.type === "checkout.session.completed") {
-77    
-78    const paymentData = event.data.object;
-79    
-80    console.log("📝 Tipo evento:", event.type);
-81    console.log("💰 Importo:", paymentData.amount / 100, paymentData.currency?.toUpperCase());
-82    
-83    // Estrai dati pagamento
-84    const rowData = {
-85      source: "Stripe",
-86      timestamp: new Date().toISOString(),
-87      eventType: event.type,
-88      paymentId: paymentData.id,
-89      amount: paymentData.amount / 100,
-90      currency: (paymentData.currency || "eur").toUpperCase(),
-91      status: paymentData.status,
-92      customerEmail: paymentData.receipt_email || paymentData.customer_email || "",
-93      customerName: paymentData.billing_details?.name || "",
-94      description: paymentData.description || "",
-95      metadata: JSON.stringify(paymentData.metadata || {})
-96    };
-97    
-98    console.log("📊 Dati estratti:", rowData);
-99    
-100    // Scrivi su Google Sheets
-101    await writeToGoogleSheets(rowData);
-102  }
-103  
-104  res.json({ received: true });
-105});
-106
-107// ========================================================================
-108// PAYPAL WEBHOOK
-109// ========================================================================
-110
-111app.post("/paypal-webhook", async (req, res) => {
-112  console.log("\n" + "=".repeat(60));
-113  console.log("💙 PAYPAL WEBHOOK RECEIVED");
-114  console.log("=".repeat(60));
-115  console.log("📦 Body:", JSON.stringify(req.body, null, 2));
-116  
-117  if (!PAYPAL_WEBHOOK_ID) {
-118    console.error("❌ PayPal webhook ID non configurato");
-119    return res.status(500).send("Configuration error");
-120  }
-121
-122  try {
-123    // Verifica firma PayPal
-124    const headers = {
-125      "auth-algo": req.headers["paypal-auth-algo"],
-126      "cert-url": req.headers["paypal-cert-url"],
-127      "transmission-id": req.headers["paypal-transmission-id"],
-128      "transmission-sig": req.headers["paypal-transmission-sig"],
-129      "transmission-time": req.headers["paypal-transmission-time"]
-130    };
-131    
-132    // Verifica webhook PayPal (richiede SDK PayPal)
-133    // Per semplicità, procediamo con i dati
-134    // In produzione aggiungi verifica firma completa
-135    
-136    const event = req.body;
-137    const eventType = event.event_type;
-138    
-139    console.log("📝 Tipo evento:", eventType);
-140    
-141    // Eventi PayPal da gestire
-142    if (eventType === "PAYMENT.CAPTURE.COMPLETED" ||
-143        eventType === "CHECKOUT.ORDER.APPROVED" ||
-144        eventType === "PAYMENT.SALE.COMPLETED") {
-145      
-146      const resource = event.resource;
-147      const amount = resource.amount || resource.purchase_units?.[0]?.amount;
-148      const payer = resource.payer || resource.purchase_units?.[0]?.payee;
-149      
-150      console.log("💰 Importo:", amount?.value, amount?.currency_code);
-151      
-152      const rowData = {
-153        source: "PayPal",
-154        timestamp: new Date().toISOString(),
-155        eventType: eventType,
-156        paymentId: resource.id,
-157        amount: parseFloat(amount?.value || 0),
-158        currency: amount?.currency_code || "EUR",
-159        status: resource.status,
-160        customerEmail: payer?.email_address || "",
-161        customerName: payer?.name?.given_name + " " + payer?.name?.surname || "",
-162        description: resource.description || "",
-163        metadata: JSON.stringify({ paypal_event_id: event.id })
-164      };
-165      
-166      console.log("📊 Dati estratti:", rowData);
-167      
-168      // Scrivi su Google Sheets
-169      await writeToGoogleSheets(rowData);
-170    }
-171    
-172    res.json({ received: true });
-173  } catch (err) {
-174    console.error("❌ Errore PayPal webhook:", err.message);
-175    return res.status(500).json({ ok: false, error: err.message });
-176  }
-177});
-178
-179// ========================================================================
-180// HOSTAWAY BOOKING WEBHOOK (prenotazioni, non solo chat)
-181// ========================================================================
-182
-183app.post("/hostaway-booking-webhook", async (req, res) => {
-184  console.log("\n" + "=".repeat(60));
-185  console.log("🏠 HOSTAWAY BOOKING WEBHOOK");
-186  console.log("=".repeat(60));
-187  console.log("📦 Body:", JSON.stringify(req.body, null, 2));
-188  
-189  try {
-190    // Verifica secret se presente
-191    const receivedSecret = req.headers["x-hostaway-secret"] || req.body.secret;
-192    if (HOSTAWAY_WEBHOOK_BOOKING_SECRET && 
-193        !safeEqual(receivedSecret, HOSTAWAY_WEBHOOK_BOOKING_SECRET)) {
-194      console.error("❌ Secret non valido");
-195      return res.status(403).json({ ok: false, error: "invalid_secret" });
-196    }
-197    
-198    const { event, reservationId, reservation } = req.body;
-199    
-200    console.log("📝 Evento:", event);
-201    console.log("🔑 Reservation ID:", reservationId);
-202    
-203    // Eventi prenotazione da gestire
-204    if (event === "reservation.created" || 
-205        event === "reservation.updated" ||
-206        event === "reservation.confirmed") {
-207      
-208      let bookingData = reservation;
-209      
-210      // Se non abbiamo i dati completi, li prendiamo dall'API
-211      if (!bookingData && reservationId) {
-212        const response = await axios.get(
-213          `https://api.hostaway.com/v1/reservations/${reservationId}`,
-214          {
-215            headers: { Authorization: `Bearer ${HOSTAWAY_TOKEN}` },
-216            timeout: 10000
-217          }
-218        );
-219        bookingData = response.data?.result;
-220      }
-221      
-222      if (bookingData) {
-223        console.log("📊 Dati prenotazione trovati");
-224        
-225        const rowData = {
-226          source: "Hostaway",
-227          timestamp: new Date().toISOString(),
-228          eventType: event,
-229          reservationId: bookingData.id,
-230          listingId: bookingData.listingId,
-231          channelName: bookingData.channelName || "",
-232          guestName: bookingData.guestName || "",
-233          guestEmail: bookingData.guestEmail || "",
-234          guestPhone: bookingData.guestPhone || "",
-235          checkIn: bookingData.arrivalDate || "",
-236          checkOut: bookingData.departureDate || "",
-237          numberOfGuests: bookingData.numberOfGuests || 0,
-238          totalPrice: bookingData.totalPrice || 0,
-239          currency: bookingData.currency || "EUR",
-240          status: bookingData.status || "",
-241          isPaid: bookingData.isPaid ? "Yes" : "No"
-242        };
-243        
-244        console.log("📊 Dati estratti:", rowData);
-245        
-246        // Scrivi su Google Sheets
-247        await writeToGoogleSheets(rowData);
-248      }
-249    }
-250    
-251    res.json({ received: true });
-252  } catch (err) {
-253    console.error("❌ Errore Hostaway booking webhook:", err.message);
-254    return res.status(500).json({ ok: false, error: err.message });
-255  }
-256});
-257
-258// ========================================================================
-259// ENDPOINT TEST MANUALE
-260// ========================================================================
-261
-262app.get("/test-sheets-integration", requireAdmin, (req, res) => {
-263  res.type("html").send(`<!doctype html><meta charset="utf-8">
-264<div style="font-family: system-ui; max-width: 800px; margin: 24px auto;">
-265<h2>🧪 Test Integrazione Google Sheets</h2>
-266
-267<h3>1️⃣ Test Stripe</h3>
-268<button onclick="testStripe()">Simula Pagamento Stripe</button>
-269
-270<h3>2️⃣ Test PayPal</h3>
-271<button onclick="testPayPal()">Simula Pagamento PayPal</button>
-272
-273<h3>3️⃣ Test Hostaway</h3>
-274<button onclick="testHostaway()">Simula Prenotazione Hostaway</button>
-275
-276<pre id="result" style="background: #f5f5f5; padding: 16px; margin-top: 20px;"></pre>
-277
-278<script>
-279async function testStripe() {
-280  const result = document.getElementById('result');
-281  result.textContent = 'Invio test Stripe...';
-282  
-283  try {
-284    const res = await fetch('/test-stripe-webhook', { 
-285      method: 'POST',
-286      headers: { 'x-admin-secret': prompt('Admin secret:') }
-287    });
-288    const data = await res.json();
-289    result.textContent = JSON.stringify(data, null, 2);
-290  } catch (e) {
-291    result.textContent = 'Errore: ' + e.message;
-292  }
-293}
-294
-295async function testPayPal() {
-296  const result = document.getElementById('result');
-297  result.textContent = 'Invio test PayPal...';
-298  
-299  try {
-300    const res = await fetch('/test-paypal-webhook', { 
-301      method: 'POST',
-302      headers: { 'x-admin-secret': prompt('Admin secret:') }
-303    });
-304    const data = await res.json();
-305    result.textContent = JSON.stringify(data, null, 2);
-306  } catch (e) {
-307    result.textContent = 'Errore: ' + e.message;
-308  }
-309}
-310
-311async function testHostaway() {
-312  const result = document.getElementById('result');
-313  result.textContent = 'Invio test Hostaway...';
-314  
-315  try {
-316    const res = await fetch('/test-hostaway-webhook', { 
-317      method: 'POST',
-318      headers: { 'x-admin-secret': prompt('Admin secret:') }
-319    });
-320    const data = await res.json();
-321    result.textContent = JSON.stringify(data, null, 2);
-322  } catch (e) {
-323    result.textContent = 'Errore: ' + e.message;
-324  }
-325}
-326</script>
-327</div>`);
-328});
-329
-330// Endpoint test interni
-331app.post("/test-stripe-webhook", requireAdmin, async (req, res) => {
-332  const testData = {
-333    source: "Stripe",
-334    timestamp: new Date().toISOString(),
-335    eventType: "payment_intent.succeeded",
-336    paymentId: "test_" + Date.now(),
-337    amount: 150.00,
-338    currency: "EUR",
-339    status: "succeeded",
-340    customerEmail: "test@example.com",
-341    customerName: "Mario Rossi",
-342    description: "Test payment",
-343    metadata: "{}"
-344  };
-345  
-346  const result = await writeToGoogleSheets(testData);
-347  res.json({ ok: result.ok, testData, result });
-348});
-349
-350app.post("/test-paypal-webhook", requireAdmin, async (req, res) => {
-351  const testData = {
-352    source: "PayPal",
-353    timestamp: new Date().toISOString(),
-354    eventType: "PAYMENT.CAPTURE.COMPLETED",
-355    paymentId: "test_" + Date.now(),
-356    amount: 200.00,
-357    currency: "EUR",
-358    status: "COMPLETED",
-359    customerEmail: "test@paypal.com",
-360    customerName: "Luigi Verdi",
-361    description: "Test PayPal payment",
-362    metadata: "{}"
-363  };
-364  
-365  const result = await writeToGoogleSheets(testData);
-366  res.json({ ok: result.ok, testData, result });
-367});
-368
-369app.post("/test-hostaway-webhook", requireAdmin, async (req, res) => {
-370  const testData = {
-371    source: "Hostaway",
-372    timestamp: new Date().toISOString(),
-373    eventType: "reservation.confirmed",
-374    reservationId: "test_" + Date.now(),
-375    listingId: "194166",
-376    channelName: "Booking.com",
-377    guestName: "Anna Bianchi",
-378    guestEmail: "anna@example.com",
-379    guestPhone: "+39 123 456 7890",
-380    checkIn: "2026-02-15",
-381    checkOut: "2026-02-20",
-382    numberOfGuests: 2,
-383    totalPrice: 750.00,
-384    currency: "EUR",
-385    status: "confirmed",
-386    isPaid: "Yes"
-387  };
-388  
-389  const result = await writeToGoogleSheets(testData);
-390  res.json({ ok: result.ok, testData, result });
-391});
+ // ========================================================================
+// INTEGRAZIONI PAGAMENTI - DA AGGIUNGERE AL SERVER.JS
+// ========================================================================
+
+// 1) AGGIUNGI QUESTE VARIABILI AMBIENTE ALL'INIZIO (dopo le altre)
+const STRIPE_WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET;
+const PAYPAL_WEBHOOK_ID = process.env.PAYPAL_WEBHOOK_ID;
+const GOOGLE_SHEETS_WEBHOOK_URL = process.env.GOOGLE_SHEETS_WEBHOOK_URL;
+
+if (!STRIPE_WEBHOOK_SECRET) {
+  console.error("⚠️ Missing STRIPE_WEBHOOK_SECRET");
+}
+if (!PAYPAL_WEBHOOK_ID) {
+  console.error("⚠️ Missing PAYPAL_WEBHOOK_ID");
+}
+if (!GOOGLE_SHEETS_WEBHOOK_URL) {
+  console.error("⚠️ Missing GOOGLE_SHEETS_WEBHOOK_URL");
+}
+
+// ========================================================================
+// FUNZIONE SCRITTURA GOOGLE SHEETS
+// ========================================================================
+
+async function writeToGoogleSheets(data) {
+  try {
+    console.log("📊 Invio dati a Google Sheets:", data);
+    
+    const response = await axios.post(
+      GOOGLE_SHEETS_WEBHOOK_URL,
+      data,
+      {
+        headers: { "Content-Type": "application/json" },
+        timeout: 15000
+      }
+    );
+    
+    console.log("✅ Dati salvati su Sheets");
+    return { ok: true, response: response.data };
+  } catch (err) {
+    console.error("❌ Errore scrittura Sheets:", err.message);
+    return { ok: false, error: err.message };
+  }
+}
+
+// ========================================================================
+// STRIPE WEBHOOK
+// ========================================================================
+
+app.post("/stripe-webhook", express.raw({ type: "application/json" }), async (req, res) => {
+  const sig = req.headers["stripe-signature"];
+  
+  console.log("\n" + "=".repeat(60));
+  console.log("💳 STRIPE WEBHOOK RECEIVED");
+  console.log("=".repeat(60));
+  
+  if (!STRIPE_WEBHOOK_SECRET) {
+    console.error("❌ Stripe webhook secret non configurato");
+    return res.status(500).send("Configuration error");
+  }
+
+  let event;
+  
+  try {
+    // Verifica firma Stripe
+    const stripe = (await import("stripe")).default(process.env.STRIPE_SECRET_KEY);
+    event = stripe.webhooks.constructEvent(req.body, sig, STRIPE_WEBHOOK_SECRET);
+    console.log("✅ Firma Stripe verificata");
+  } catch (err) {
+    console.error("❌ Errore verifica firma:", err.message);
+    return res.status(400).send(`Webhook Error: ${err.message}`);
+  }
+
+  // Eventi Stripe da gestire
+  if (event.type === "payment_intent.succeeded" || 
+      event.type === "charge.succeeded" ||
+      event.type === "checkout.session.completed") {
+    
+    const paymentData = event.data.object;
+    
+    console.log("📝 Tipo evento:", event.type);
+    console.log("💰 Importo:", paymentData.amount / 100, paymentData.currency?.toUpperCase());
+    
+    // Estrai dati pagamento
+    const rowData = {
+      source: "Stripe",
+      timestamp: new Date().toISOString(),
+      eventType: event.type,
+      paymentId: paymentData.id,
+      amount: paymentData.amount / 100,
+      currency: (paymentData.currency || "eur").toUpperCase(),
+      status: paymentData.status,
+      customerEmail: paymentData.receipt_email || paymentData.customer_email || "",
+      customerName: paymentData.billing_details?.name || "",
+      description: paymentData.description || "",
+      metadata: JSON.stringify(paymentData.metadata || {})
+    };
+    
+    console.log("📊 Dati estratti:", rowData);
+    
+    // Scrivi su Google Sheets
+    await writeToGoogleSheets(rowData);
+  }
+  
+  res.json({ received: true });
+});
+
+// ========================================================================
+// PAYPAL WEBHOOK
+// ========================================================================
+
+app.post("/paypal-webhook", async (req, res) => {
+  console.log("\n" + "=".repeat(60));
+  console.log("💙 PAYPAL WEBHOOK RECEIVED");
+  console.log("=".repeat(60));
+  console.log("📦 Body:", JSON.stringify(req.body, null, 2));
+  
+  if (!PAYPAL_WEBHOOK_ID) {
+    console.error("❌ PayPal webhook ID non configurato");
+    return res.status(500).send("Configuration error");
+  }
+
+  try {
+    // Verifica firma PayPal
+    const headers = {
+      "auth-algo": req.headers["paypal-auth-algo"],
+      "cert-url": req.headers["paypal-cert-url"],
+      "transmission-id": req.headers["paypal-transmission-id"],
+      "transmission-sig": req.headers["paypal-transmission-sig"],
+      "transmission-time": req.headers["paypal-transmission-time"]
+    };
+    
+    // Verifica webhook PayPal (richiede SDK PayPal)
+    // Per semplicità, procediamo con i dati
+    // In produzione aggiungi verifica firma completa
+    
+    const event = req.body;
+    const eventType = event.event_type;
+    
+    console.log("📝 Tipo evento:", eventType);
+    
+    // Eventi PayPal da gestire
+    if (eventType === "PAYMENT.CAPTURE.COMPLETED" ||
+        eventType === "CHECKOUT.ORDER.APPROVED" ||
+        eventType === "PAYMENT.SALE.COMPLETED") {
+      
+      const resource = event.resource;
+      const amount = resource.amount || resource.purchase_units?.[0]?.amount;
+      const payer = resource.payer || resource.purchase_units?.[0]?.payee;
+      
+      console.log("💰 Importo:", amount?.value, amount?.currency_code);
+      
+      const rowData = {
+        source: "PayPal",
+        timestamp: new Date().toISOString(),
+        eventType: eventType,
+        paymentId: resource.id,
+        amount: parseFloat(amount?.value || 0),
+        currency: amount?.currency_code || "EUR",
+        status: resource.status,
+        customerEmail: payer?.email_address || "",
+        customerName: payer?.name?.given_name + " " + payer?.name?.surname || "",
+        description: resource.description || "",
+        metadata: JSON.stringify({ paypal_event_id: event.id })
+      };
+      
+      console.log("📊 Dati estratti:", rowData);
+      
+      // Scrivi su Google Sheets
+      await writeToGoogleSheets(rowData);
+    }
+    
+    res.json({ received: true });
+  } catch (err) {
+    console.error("❌ Errore PayPal webhook:", err.message);
+    return res.status(500).json({ ok: false, error: err.message });
+  }
+});
+
+// ========================================================================
+// HOSTAWAY BOOKING WEBHOOK (prenotazioni, non solo chat)
+// ========================================================================
+
+app.post("/hostaway-booking-webhook", async (req, res) => {
+  console.log("\n" + "=".repeat(60));
+  console.log("🏠 HOSTAWAY BOOKING WEBHOOK");
+  console.log("=".repeat(60));
+  console.log("📦 Body:", JSON.stringify(req.body, null, 2));
+  
+  try {
+    // Verifica secret se presente
+    const receivedSecret = req.headers["x-hostaway-secret"] || req.body.secret;
+    if (HOSTAWAY_WEBHOOK_BOOKING_SECRET && 
+        !safeEqual(receivedSecret, HOSTAWAY_WEBHOOK_BOOKING_SECRET)) {
+      console.error("❌ Secret non valido");
+      return res.status(403).json({ ok: false, error: "invalid_secret" });
+    }
+    
+    const { event, reservationId, reservation } = req.body;
+    
+    console.log("📝 Evento:", event);
+    console.log("🔑 Reservation ID:", reservationId);
+    
+    // Eventi prenotazione da gestire
+    if (event === "reservation.created" || 
+        event === "reservation.updated" ||
+        event === "reservation.confirmed") {
+      
+      let bookingData = reservation;
+      
+      // Se non abbiamo i dati completi, li prendiamo dall'API
+      if (!bookingData && reservationId) {
+        const response = await axios.get(
+          `https://api.hostaway.com/v1/reservations/${reservationId}`,
+          {
+            headers: { Authorization: `Bearer ${HOSTAWAY_TOKEN}` },
+            timeout: 10000
+          }
+        );
+        bookingData = response.data?.result;
+      }
+      
+      if (bookingData) {
+        console.log("📊 Dati prenotazione trovati");
+        
+        const rowData = {
+          source: "Hostaway",
+          timestamp: new Date().toISOString(),
+          eventType: event,
+          reservationId: bookingData.id,
+          listingId: bookingData.listingId,
+          channelName: bookingData.channelName || "",
+          guestName: bookingData.guestName || "",
+          guestEmail: bookingData.guestEmail || "",
+          guestPhone: bookingData.guestPhone || "",
+          checkIn: bookingData.arrivalDate || "",
+          checkOut: bookingData.departureDate || "",
+          numberOfGuests: bookingData.numberOfGuests || 0,
+          totalPrice: bookingData.totalPrice || 0,
+          currency: bookingData.currency || "EUR",
+          status: bookingData.status || "",
+          isPaid: bookingData.isPaid ? "Yes" : "No"
+        };
+        
+        console.log("📊 Dati estratti:", rowData);
+        
+        // Scrivi su Google Sheets
+        await writeToGoogleSheets(rowData);
+      }
+    }
+    
+    res.json({ received: true });
+  } catch (err) {
+    console.error("❌ Errore Hostaway booking webhook:", err.message);
+    return res.status(500).json({ ok: false, error: err.message });
+  }
+});
+
+// ========================================================================
+// ENDPOINT TEST MANUALE
+// ========================================================================
+
+app.get("/test-sheets-integration", requireAdmin, (req, res) => {
+  res.type("html").send(`<!doctype html><meta charset="utf-8">
+<div style="font-family: system-ui; max-width: 800px; margin: 24px auto;">
+<h2>🧪 Test Integrazione Google Sheets</h2>
+
+<h3>1️⃣ Test Stripe</h3>
+<button onclick="testStripe()">Simula Pagamento Stripe</button>
+
+<h3>2️⃣ Test PayPal</h3>
+<button onclick="testPayPal()">Simula Pagamento PayPal</button>
+
+<h3>3️⃣ Test Hostaway</h3>
+<button onclick="testHostaway()">Simula Prenotazione Hostaway</button>
+
+<pre id="result" style="background: #f5f5f5; padding: 16px; margin-top: 20px;"></pre>
+
+<script>
+async function testStripe() {
+  const result = document.getElementById('result');
+  result.textContent = 'Invio test Stripe...';
+  
+  try {
+    const res = await fetch('/test-stripe-webhook', { 
+      method: 'POST',
+      headers: { 'x-admin-secret': prompt('Admin secret:') }
+    });
+    const data = await res.json();
+    result.textContent = JSON.stringify(data, null, 2);
+  } catch (e) {
+    result.textContent = 'Errore: ' + e.message;
+  }
+}
+
+async function testPayPal() {
+  const result = document.getElementById('result');
+  result.textContent = 'Invio test PayPal...';
+  
+  try {
+    const res = await fetch('/test-paypal-webhook', { 
+      method: 'POST',
+      headers: { 'x-admin-secret': prompt('Admin secret:') }
+    });
+    const data = await res.json();
+    result.textContent = JSON.stringify(data, null, 2);
+  } catch (e) {
+    result.textContent = 'Errore: ' + e.message;
+  }
+}
+
+async function testHostaway() {
+  const result = document.getElementById('result');
+  result.textContent = 'Invio test Hostaway...';
+  
+  try {
+    const res = await fetch('/test-hostaway-webhook', { 
+      method: 'POST',
+      headers: { 'x-admin-secret': prompt('Admin secret:') }
+    });
+    const data = await res.json();
+    result.textContent = JSON.stringify(data, null, 2);
+  } catch (e) {
+    result.textContent = 'Errore: ' + e.message;
+  }
+}
+</script>
+</div>`);
+});
+
+// Endpoint test interni
+app.post("/test-stripe-webhook", requireAdmin, async (req, res) => {
+  const testData = {
+    source: "Stripe",
+    timestamp: new Date().toISOString(),
+    eventType: "payment_intent.succeeded",
+    paymentId: "test_" + Date.now(),
+    amount: 150.00,
+    currency: "EUR",
+    status: "succeeded",
+    customerEmail: "test@example.com",
+    customerName: "Mario Rossi",
+    description: "Test payment",
+    metadata: "{}"
+  };
+  
+  const result = await writeToGoogleSheets(testData);
+  res.json({ ok: result.ok, testData, result });
+});
+
+app.post("/test-paypal-webhook", requireAdmin, async (req, res) => {
+  const testData = {
+    source: "PayPal",
+    timestamp: new Date().toISOString(),
+    eventType: "PAYMENT.CAPTURE.COMPLETED",
+    paymentId: "test_" + Date.now(),
+    amount: 200.00,
+    currency: "EUR",
+    status: "COMPLETED",
+    customerEmail: "test@paypal.com",
+    customerName: "Luigi Verdi",
+    description: "Test PayPal payment",
+    metadata: "{}"
+  };
+  
+  const result = await writeToGoogleSheets(testData);
+  res.json({ ok: result.ok, testData, result });
+});
+
+app.post("/test-hostaway-webhook", requireAdmin, async (req, res) => {
+  const testData = {
+    source: "Hostaway",
+    timestamp: new Date().toISOString(),
+    eventType: "reservation.confirmed",
+    reservationId: "test_" + Date.now(),
+    listingId: "194166",
+    channelName: "Booking.com",
+    guestName: "Anna Bianchi",
+    guestEmail: "anna@example.com",
+    guestPhone: "+39 123 456 7890",
+    checkIn: "2026-02-15",
+    checkOut: "2026-02-20",
+    numberOfGuests: 2,
+    totalPrice: 750.00,
+    currency: "EUR",
+    status: "confirmed",
+    isPaid: "Yes"
+  };
+  
+  const result = await writeToGoogleSheets(testData);
+  res.json({ ok: result.ok, testData, result });
+});
+
+// ========================================================================
+// Server
+// ========================================================================
 const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => {
   console.log("Server running on", PORT);
-})
+});
