@@ -1121,38 +1121,17 @@ async function testPayPal() {
   result.textContent = 'Invio test PayPal...';
   
   try {
-    const res = await fetch('/test-paypal-webhook', { 
-      method: 'POST',
-      headers: { 'x-admin-secret': prompt('Admin secret:') }
-    });
-    const data = await res.json();
-    result.textContent = JSON.stringify(data, null, 2);
-  } catch (e) {
-    result.textContent = 'Errore: ' + e.message;
-  }
-}
-
-async function testHostaway() {
-  const result = document.getElementById('result');
-  result.textContent = 'Invio test Hostaway...';
-  
-  try {
-    const res = await fetch('/test-hostaway-webhook', { 
-      method: 'POST',
-      headers: { 'x-admin-secret': prompt('Admin secret:') }
-    });
-    const data = await res.json();
-    result.textContent = JSON.stringify(data, null, 2);
-  } catch (e) {
-    result.textContent = 'Errore: ' + e.message;
-  }
-}
-</script>
-</div>`);
+   const result = await writeToGoogleSheets(testData);
+  res.json({ ok: result.ok, testData, result });
 });
 
-// Endpoint test interni
-app.post("/test-stripe-webhook", requireAdmin, async (req, res) => {
+// Test GET per iPhone
+app.get("/test-stripe-simple", async (req, res) => {
+  const secret = req.query.secret;
+  if (!safeEqual(secret || "", ADMIN_SECRET)) {
+    return res.status(403).send("unauthorized");
+  }
+  
   const testData = {
     source: "Stripe",
     timestamp: new Date().toISOString(),
@@ -1168,56 +1147,9 @@ app.post("/test-stripe-webhook", requireAdmin, async (req, res) => {
   };
   
   const result = await writeToGoogleSheets(testData);
-  res.json({ ok: result.ok, testData, result });
+  res.type("html").send(`<h1>Test Completato</h1><pre>${JSON.stringify({ ok: result.ok, testData, result }, null, 2)}</pre>`);
 });
 
-app.post("/test-paypal-webhook", requireAdmin, async (req, res) => {
-  const testData = {
-    source: "PayPal",
-    timestamp: new Date().toISOString(),
-    eventType: "PAYMENT.CAPTURE.COMPLETED",
-    paymentId: "test_" + Date.now(),
-    amount: 200.00,
-    currency: "EUR",
-    status: "COMPLETED",
-    customerEmail: "test@paypal.com",
-    customerName: "Luigi Verdi",
-    description: "Test PayPal payment",
-    metadata: "{}"
-  };
-  
-  const result = await writeToGoogleSheets(testData);
-  res.json({ ok: result.ok, testData, result });
-});
-
-app.post("/test-hostaway-webhook", requireAdmin, async (req, res) => {
-  const testData = {
-    source: "Hostaway",
-    timestamp: new Date().toISOString(),
-    eventType: "reservation.confirmed",
-    reservationId: "test_" + Date.now(),
-    listingId: "194166",
-    channelName: "Booking.com",
-    guestName: "Anna Bianchi",
-    guestEmail: "anna@example.com",
-    guestPhone: "+39 123 456 7890",
-    checkIn: "2026-02-15",
-    checkOut: "2026-02-20",
-    numberOfGuests: 2,
-    totalPrice: 750.00,
-    currency: "EUR",
-    status: "confirmed",
-    isPaid: "Yes"
-  };
-  
-  const result = await writeToGoogleSheets(testData);
-  res.json({ ok: result.ok, testData, result });
-});
- 
-
-// ========================================================================
-// Server
-// ========================================================================
 // ========================================================================
 // Server
 // ========================================================================
