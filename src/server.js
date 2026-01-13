@@ -1147,7 +1147,7 @@ app.get("/test-stripe-simple", async (req, res) => {
   };
   
   const result = await writeToGoogleSheets(testData);
-  res.type("html").send(`<h1>Test Completato</h1><pre>${JSON.stringify({ ok: result.ok, testData, result }, null, 2)}</pre>`);
+   res.type("html").send(`<h1>Test...
 });
 
 // ========================================================================
