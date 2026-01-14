@@ -1020,7 +1020,7 @@ app.post("/paypal-webhook", async (req, res) => {
     console.log("📝 Evento:", event);
     console.log("🔑 Reservation ID:", reservationId);
 
-    let bookingData = reservation || req.body;
+    
 
     // Se i dati non sono completi, recupero da API Hostaway
      
@@ -1031,7 +1031,7 @@ app.post("/paypal-webhook", async (req, res) => {
     }
 
     // Prenotazione cancellata → non scriviamo
-    if (bookingData.status === "cancelled") {
+    
       console.log("⏭ Prenotazione cancellata — ignorata");
       return;
     }
