@@ -1019,11 +1019,11 @@ app.post("/paypal-webhook", async (req, res) => {
     console.log("📝 Evento:", event);
     console.log("🔑 Reservation ID:", reservationId);
 
-    // 🔒 GUARDIA CORRETTA
-     let bookingData = reservation;
+   let bookingData = reservation;
 
+// 🔁 Se Hostaway manda solo reservationId (caso reale)
 if (!bookingData && reservationId) {
-  console.log("🔎 Recupero prenotazione via API Hostaway:", reservationId);
+  console.log("🔍 Recupero prenotazione completa via API Hostaway:", reservationId);
 
   const response = await axios.get(
     `https://api.hostaway.com/v1/reservations/${reservationId}`,
@@ -1036,12 +1036,13 @@ if (!bookingData && reservationId) {
   bookingData = response.data?.result;
 }
 
+// ❌ Se ancora nulla → stop
 if (!bookingData) {
-  console.log("❌ Nessun dato prenotazione disponibile");
+  console.log("❌ Prenotazione non recuperabile");
   return;
 }
 
-    if (reservation.status === "cancelled") {
+   if (bookingData.status === "cancelled") {
       console.log("⏭ Prenotazione cancellata — ignorata");
       return;
     }
