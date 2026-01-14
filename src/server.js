@@ -1012,12 +1012,7 @@ app.post("/hostaway-booking-webhook", async (req, res) => {
   
   try {
     // Verifica secret se presente
-    const receivedSecret = req.headers["x-hostaway-secret"] || req.body.secret;
-    if (HOSTAWAY_WEBHOOK_BOOKING_SECRET && 
-        !safeEqual(receivedSecret, HOSTAWAY_WEBHOOK_BOOKING_SECRET)) {
-      console.error("❌ Secret non valido");
-      return res.status(403).json({ ok: false, error: "invalid_secret" });
-    }
+    
     
     const { event, reservationId, reservation } = req.body;
     
