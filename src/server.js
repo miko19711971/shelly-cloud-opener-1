@@ -1027,69 +1027,28 @@ app.post("/paypal-webhook", async (req, res) => {
 // 🔐 Cache anti-duplicati (fuori dal blocco, UNA VOLTA nel file)
 const WRITTEN_RESERVATIONS = new Set();
 
- app.post("/hostaway-booking-webhook", async (req, res) => {
-  console.log("\n" + "=".repeat(60));
-  console.log("🏠 HOSTAWAY BOOKING WEBHOOK");
-  console.log("=".repeat(60));
-  console.log("📦 Body:", JSON.stringify(req.body, null, 2));
-
-  try {
-    const { reservationId, reservation } = req.body;
-    console.log("🔑 Reservation ID:", reservationId);
-
-    let bookingData = reservation;
-
-    if (!bookingData && reservationId) {
-      console.log("🔍 Recupero prenotazione via API Hostaway:", reservationId);
+  async function fetchReservationWithRetry(reservationId, retries = 5, delayMs = 3000) {
+  for (let attempt = 1; attempt <= retries; attempt++) {
+    try {
       const response = await axios.get(
         `https://api.hostaway.com/v1/reservations/${reservationId}`,
-        { headers: { Authorization: `Bearer ${HOSTAWAY_TOKEN}` }, timeout: 10000 }
+        {
+          headers: { Authorization: `Bearer ${HOSTAWAY_TOKEN}` },
+          timeout: 10000
+        }
       );
-      bookingData = response.data?.result;
+      return response.data?.result;
+    } catch (err) {
+      if (err.response?.status === 404 && attempt < retries) {
+        console.log(`⏳ Tentativo ${attempt}/${retries}: prenotazione non pronta, retry tra ${delayMs}ms`);
+        await new Promise(r => setTimeout(r, delayMs));
+        continue;
+      }
+      throw err;
     }
-
-    if (!bookingData) {
-      console.log("❌ Prenotazione non recuperabile");
-      return res.status(200).json({ ignored: true });
-    }
-
-    if (bookingData.status === "cancelled") {
-      console.log("⏭ Prenotazione cancellata — ignorata");
-      return res.status(200).json({ ignored: true });
-    }
-
-    const LISTING_TO_APARTMENT = {
-      "194166": "Arenula",
-      "194165": "Portico d'Ottavia",
-      "194164": "Trastevere",
-      "194163": "Leonina",
-      "194162": "Via della Scala"
-    };
-
-    const [firstName, ...lastNameParts] = (bookingData.guestName || "").split(" ");
-    const lastName = lastNameParts.join(" ");
-
-    const rowData = {
-      first_name: firstName || "",
-      last_name: lastName || "",
-      apartment: LISTING_TO_APARTMENT[String(bookingData.listingId)] || "",
-      check_in: bookingData.arrivalDate || "",
-      check_out: bookingData.departureDate || "",
-      nights: bookingData.nights || 0
-    };
-
-    console.log("📊 Dati estratti:", rowData);
-
-    await writeToGoogleSheets(rowData);
-    console.log("✅ Scrittura Google Sheets OK");
-
-    return res.status(200).json({ ok: true });
-
-  } catch (err) {
-    console.error("❌ ERRORE REALE WEBHOOK:", err);
-    return res.status(200).json({ error: true });
   }
-});
+  return null;
+}
  
 // ========================================================================
 // ENDPOINT TEST MANUALE
