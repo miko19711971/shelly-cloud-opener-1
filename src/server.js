@@ -5,7 +5,7 @@ import cors from "cors";
 import path from "path";
 import { fileURLToPath } from "url";
 import fs from "fs/promises";
- 
+ import bodyParser from "body-parser";
 import { matchIntent } from "./matcher.js";
 import { ANSWERS } from "./answers.js";
 
@@ -17,10 +17,17 @@ function safeEqual(a, b) {
 }
 
 const app = express();
+const rawBodySaver = (req, res, buf) => {
+  req.rawBody = buf;
+};
+
+app.use(bodyParser.json({
+  verify: rawBodySaver,
+  limit: "100kb"
+}));
 app.disable("x-powered-by");
 app.set("trust proxy", true);
-app.use(express.urlencoded({ extended: true, limit: "50kb" }));
-app.use(express.json({ limit: "100kb" }));
+ 
 
 app.use((req, res, next) => {
   if (req.url.includes("/feedback")) {
