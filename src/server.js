@@ -1063,7 +1063,7 @@ app.post("/hostaway-booking-webhook", async (req, res) => {
         // Scrivi su Google Sheets
         await writeToGoogleSheets(rowData);
       }
-    }
+    
     
     res.json({ received: true });
   } catch (err) {
