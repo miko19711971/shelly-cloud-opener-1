@@ -1085,7 +1085,13 @@ app.post("/paypal-webhook", async (req, res) => {
     console.log("📊 Dati estratti:", rowData);
 
     // 5️⃣ Scrittura su Google Sheets
-    await writeToGoogleSheets(rowData);
+    writeToGoogleSheets(rowData)
+  .then(() => {
+    console.log("✅ Scrittura Google Sheets completata");
+  })
+  .catch(err => {
+    console.error("⚠️ Errore Google Sheets (non blocca webhook):", err.message);
+  });
 
   } catch (err) {
     console.error("❌ Errore interno Hostaway webhook:", err.message);
