@@ -1023,21 +1023,7 @@ app.post("/paypal-webhook", async (req, res) => {
     let bookingData = reservation;
 
     // Se i dati non sono completi, recupero da API Hostaway
-    if (!bookingData && reservationId) {
-      try {
-        const response = await axios.get(
-          `https://api.hostaway.com/v1/reservations/${reservationId}`,
-          {
-            headers: { Authorization: `Bearer ${HOSTAWAY_TOKEN}` },
-            timeout: 10000
-          }
-        );
-        bookingData = response.data?.result;
-      } catch (apiErr) {
-        console.error("❌ Errore chiamata API Hostaway:", apiErr.message);
-        return;
-      }
-    }
+     
 
     if (!bookingData) {
       console.log("⚠️ Nessun dato prenotazione disponibile");
