@@ -1162,7 +1162,7 @@ app.post("/test-stripe-webhook", requireAdmin, async (req, res) => {
     description: "Test payment",
     metadata: "{}"
   };
-  
+
   const result = await writeToGoogleSheets(testData);
   res.json({ ok: result.ok, testData, result });
 });
@@ -1181,7 +1181,7 @@ app.post("/test-paypal-webhook", requireAdmin, async (req, res) => {
     description: "Test PayPal payment",
     metadata: "{}"
   };
-  
+
   const result = await writeToGoogleSheets(testData);
   res.json({ ok: result.ok, testData, result });
 });
@@ -1190,7 +1190,7 @@ app.post("/test-hostaway-webhook", requireAdmin, async (req, res) => {
   const testData = {
     source: "Hostaway",
     timestamp: new Date().toISOString(),
-    eventType: "reservation.confirmed",
+    eventType: "reservation_created", // ← ALLINEATO AL FLUSSO REALE
     reservationId: "test_" + Date.now(),
     listingId: "194166",
     channelName: "Booking.com",
@@ -1205,7 +1205,7 @@ app.post("/test-hostaway-webhook", requireAdmin, async (req, res) => {
     status: "confirmed",
     isPaid: "Yes"
   };
-  
+
   const result = await writeToGoogleSheets(testData);
   res.json({ ok: result.ok, testData, result });
 });
@@ -1216,7 +1216,7 @@ app.get("/test-stripe-simple", async (req, res) => {
   if (!safeEqual(secret || "", ADMIN_SECRET)) {
     return res.status(403).send("unauthorized");
   }
-  
+
   const testData = {
     source: "Stripe",
     timestamp: new Date().toISOString(),
@@ -1230,9 +1230,11 @@ app.get("/test-stripe-simple", async (req, res) => {
     description: "Test payment",
     metadata: "{}"
   };
-  
+
   const result = await writeToGoogleSheets(testData);
-  res.type("html").send(`<h1>Test Completato</h1><pre>${JSON.stringify({ ok: result.ok, testData, result }, null, 2)}</pre>`);
+  res
+    .type("html")
+    .send(`<h1>Test Completato</h1><pre>${JSON.stringify({ ok: result.ok, testData, result }, null, 2)}</pre>`);
 });
 
 // ========================================================================
@@ -1242,4 +1244,3 @@ const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => {
   console.log("Server running on", PORT);
 });
- 
