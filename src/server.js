@@ -1059,7 +1059,7 @@ const lastName = lastNameParts.join(" ");
 const rowData = {
   first_name: firstName || "",
   last_name: lastName || "",
-  apartment: LISTING_TO_APARTMENT[String(bookingData.listingMapId)] || "",
+  apartment: LISTING_TO_APARTMENT[String(bookingData.listingId)] || "",
   check_in: bookingData.arrivalDate || "",
   check_out: bookingData.departureDate || "",
   nights: bookingData.nights || 0
