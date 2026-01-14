@@ -1020,7 +1020,7 @@ app.post("/paypal-webhook", async (req, res) => {
     console.log("📝 Evento:", event);
     console.log("🔑 Reservation ID:", reservationId);
 
-    let bookingData = reservation;
+    let bookingData = reservation || req.body;
 
     // Se i dati non sono completi, recupero da API Hostaway
      
