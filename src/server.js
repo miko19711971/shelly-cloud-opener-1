@@ -30,28 +30,7 @@ app.use((req, res, next) => {
 });
 
 app.options("/feedback", cors());
-async function fetchReservationWithRetry(reservationId, retries = 5, delayMs = 3000) {
-  for (let attempt = 1; attempt <= retries; attempt++) {
-    try {
-      const response = await axios.get(
-        `https://api.hostaway.com/v1/reservations/${reservationId}`,
-        {
-          headers: { Authorization: `Bearer ${HOSTAWAY_TOKEN}` },
-          timeout: 10000
-        }
-      );
-      return response.data?.result;
-    } catch (err) {
-      if (err.response?.status === 404 && attempt < retries) {
-        console.log(`⏳ Tentativo ${attempt}/${retries}: prenotazione non pronta, retry tra ${delayMs}ms`);
-        await new Promise(r => setTimeout(r, delayMs));
-        continue;
-      }
-      throw err;
-    }
-  }
-  return null;
-}
+ 
 app.post("/feedback", cors(), async (req, res) => {
   console.log("FEEDBACK ARRIVATO", req.body);
   try {
