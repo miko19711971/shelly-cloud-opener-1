@@ -1004,44 +1004,30 @@ app.post("/paypal-webhook", async (req, res) => {
 // HOSTAWAY BOOKING WEBHOOK (prenotazioni, non solo chat)
 // ========================================================================
 
- app.post("/hostaway-booking-webhook", async (req, res) => {
+  app.post("/hostaway-booking-webhook", async (req, res) => {
   console.log("\n" + "=".repeat(60));
   console.log("🏠 HOSTAWAY BOOKING WEBHOOK");
   console.log("=".repeat(60));
   console.log("📦 Body:", JSON.stringify(req.body, null, 2));
 
-  // ✅ RISPOSTA IMMEDIATA A HOSTAWAY (OBBLIGATORIA)
+  // ✅ Risposta immediata a Hostaway
   res.status(200).json({ received: true });
 
-  // ⛔ DA QUI IN POI: TUTTO ASINCRONO (NO await prima)
   try {
     const { event, reservationId, reservation } = req.body;
-let bookingData = reservation;
 
-if (!reservation) {
-  console.log("ℹ️ Evento Hostaway senza dati prenotazione — attendo evento successivo");
-  return;
-}
-
-if (reservation.status === "cancelled") {
-  console.log("⏭ Prenotazione cancellata — ignorata");
-  return;
-}
     console.log("📝 Evento:", event);
     console.log("🔑 Reservation ID:", reservationId);
 
-    
+    // 🔒 GUARDIA CORRETTA
+    let bookingData = reservation;
 
-    // Se i dati non sono completi, recupero da API Hostaway
-     
-
-    if (!bookingData) {
-      console.log("⚠️ Nessun dato prenotazione disponibile");
+    if (!reservation) {
+      console.log("ℹ️ Evento Hostaway senza dati prenotazione — attendo evento successivo");
       return;
     }
 
-    // Prenotazione cancellata → non scriviamo
-    
+    if (reservation.status === "cancelled") {
       console.log("⏭ Prenotazione cancellata — ignorata");
       return;
     }
@@ -1049,7 +1035,7 @@ if (reservation.status === "cancelled") {
     const rowData = {
       source: "Hostaway",
       timestamp: new Date().toISOString(),
-      eventType: "reservation_created", // 🔑 STANDARD UNICO
+      eventType: "reservation_created",
       reservationId: bookingData.id,
       listingId: bookingData.listingId,
       channelName: bookingData.channelName || "",
@@ -1067,13 +1053,11 @@ if (reservation.status === "cancelled") {
 
     console.log("📊 Dati estratti:", rowData);
 
-    // Scrittura Google Sheets in background
     writeToGoogleSheets(rowData).catch(err => {
       console.error("❌ Errore Google Sheets:", err.message);
     });
 
   } catch (err) {
-    // ⚠️ NON rispondiamo più a Hostaway qui (già risposto)
     console.error("❌ Errore interno Hostaway webhook:", err.message);
   }
 });
