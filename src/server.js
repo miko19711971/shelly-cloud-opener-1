@@ -1226,6 +1226,34 @@ app.get("/test-stripe-simple", async (req, res) => {
 // ========================================================================
 // Server
 // ========================================================================
+// ========================================================================
+// TEST MANUALE INVIO A GOOGLE APPS SCRIPT (TEMPORANEO)
+// ========================================================================
+
+app.get("/test-gs", async (req, res) => {
+  try {
+    await fetch(process.env.GS_WEBHOOK_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        source: "Stripe",
+        eventType: "payment_intent.succeeded",
+        paymentId: "test_manual_001",
+        amount: 150,
+        currency: "EUR",
+        status: "succeeded",
+        customerEmail: "test@example.com",
+        customerName: "Mario Rossi",
+        description: "Manual test"
+      })
+    });
+
+    res.send("OK – webhook inviato a Google Apps Script");
+  } catch (err) {
+    console.error("❌ Errore test-gs:", err);
+    res.status(500).send("ERRORE: " + err.message);
+  }
+});
 const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => {
   console.log("Server running on", PORT);
