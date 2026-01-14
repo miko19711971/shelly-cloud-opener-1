@@ -1020,13 +1020,7 @@ app.post("/hostaway-booking-webhook", async (req, res) => {
   
   try {
     // Verifica firma se configurata
-    if (HOSTAWAY_WEBHOOK_BOOKING_SECRET) {
-      const sig = req.headers['x-hostaway-signature'] || '';
-      if (!safeEqual(sig, HOSTAWAY_WEBHOOK_BOOKING_SECRET)) {
-        console.error("❌ Firma Hostaway non valida");
-        return;
-      }
-    }
+  
     
     // 📊 Hostaway standard payload structure
     const data = req.body;
