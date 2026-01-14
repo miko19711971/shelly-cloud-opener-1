@@ -1037,6 +1037,10 @@ app.post("/hostaway-booking-webhook", async (req, res) => {
       }
       
       if (bookingData) {
+       if (bookingData.status === "cancelled") {
+  console.log("⏭ Prenotazione cancellata — non scrivo su Google Sheets");
+  return res.json({ received: true, skipped: "cancelled" });
+}
         console.log("📊 Dati prenotazione trovati");
         
         const rowData = {
