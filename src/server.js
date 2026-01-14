@@ -1016,7 +1016,17 @@ app.post("/paypal-webhook", async (req, res) => {
   // ⛔ DA QUI IN POI: TUTTO ASINCRONO (NO await prima)
   try {
     const { event, reservationId, reservation } = req.body;
+let bookingData = reservation;
 
+if (!reservation) {
+  console.log("ℹ️ Evento Hostaway senza dati prenotazione — attendo evento successivo");
+  return;
+}
+
+if (reservation.status === "cancelled") {
+  console.log("⏭ Prenotazione cancellata — ignorata");
+  return;
+}
     console.log("📝 Evento:", event);
     console.log("🔑 Reservation ID:", reservationId);
 
