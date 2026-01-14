@@ -1031,7 +1031,13 @@ app.post("/paypal-webhook", async (req, res) => {
       console.log("⏭ Prenotazione cancellata — ignorata");
       return;
     }
-
+const LISTING_TO_APARTMENT = {
+  "194166": "Arenula",
+  "194165": "Portico d'Ottavia",
+  "194164": "Trastevere",
+  "194163": "Leonina",
+  "194162": "Via della Scala"
+};
     const rowData = {
       source: "Hostaway",
       timestamp: new Date().toISOString(),
