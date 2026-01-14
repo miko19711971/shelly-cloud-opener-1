@@ -1018,7 +1018,11 @@ app.post("/paypal-webhook", async (req, res) => {
 
     console.log("📝 Evento:", event);
     console.log("🔑 Reservation ID:", reservationId);
-
+// ✅ ACCETTO SOLO EVENTI DI CREAZIONE PRENOTAZIONE
+if (!event || !["reservation_created", "booking_created"].includes(event)) {
+  console.log("⏭ Evento ignorato:", event);
+  return;
+}
    let bookingData = reservation;
 
 // 🔁 Se Hostaway manda solo reservationId (caso reale)
