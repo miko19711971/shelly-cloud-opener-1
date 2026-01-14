@@ -1020,9 +1020,7 @@ app.post("/hostaway-booking-webhook", async (req, res) => {
     console.log("🔑 Reservation ID:", reservationId);
     
     // Eventi prenotazione da gestire
-    if (event === "reservation.created" || 
-        event === "reservation.updated" ||
-        event === "reservation.confirmed") {
+     
       
       let bookingData = reservation;
       
