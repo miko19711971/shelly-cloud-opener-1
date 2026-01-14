@@ -1020,12 +1020,26 @@ app.post("/paypal-webhook", async (req, res) => {
     console.log("🔑 Reservation ID:", reservationId);
 
     // 🔒 GUARDIA CORRETTA
-    let bookingData = reservation;
+     let bookingData = reservation;
 
-    if (!reservation) {
-      console.log("ℹ️ Evento Hostaway senza dati prenotazione — attendo evento successivo");
-      return;
+if (!bookingData && reservationId) {
+  console.log("🔎 Recupero prenotazione via API Hostaway:", reservationId);
+
+  const response = await axios.get(
+    `https://api.hostaway.com/v1/reservations/${reservationId}`,
+    {
+      headers: { Authorization: `Bearer ${HOSTAWAY_TOKEN}` },
+      timeout: 10000
     }
+  );
+
+  bookingData = response.data?.result;
+}
+
+if (!bookingData) {
+  console.log("❌ Nessun dato prenotazione disponibile");
+  return;
+}
 
     if (reservation.status === "cancelled") {
       console.log("⏭ Prenotazione cancellata — ignorata");
