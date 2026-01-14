@@ -1006,62 +1006,37 @@ app.post("/paypal-webhook", async (req, res) => {
 // 🔐 Cache anti-duplicati (fuori dal blocco, UNA VOLTA nel file)
 const WRITTEN_RESERVATIONS = new Set();
 
-app.post("/hostaway-booking-webhook", async (req, res) => {
+ app.post("/hostaway-booking-webhook", async (req, res) => {
   console.log("\n" + "=".repeat(60));
   console.log("🏠 HOSTAWAY BOOKING WEBHOOK");
   console.log("=".repeat(60));
   console.log("📦 Body:", JSON.stringify(req.body, null, 2));
 
-  // ✅ Risposta immediata a Hostaway (OBBLIGATORIA)
-  res.status(200).json({ received: true });
-
   try {
     const { reservationId, reservation } = req.body;
-
     console.log("🔑 Reservation ID:", reservationId);
 
-    if (!reservationId) {
-      console.log("⏭ Nessun reservationId — ignorato");
-      return;
-    }
-
-    // ⛔️ Evita doppie scritture
-    if (WRITTEN_RESERVATIONS.has(reservationId)) {
-      console.log("⏭ Prenotazione già scritta — ignorata");
-      return;
-    }
-
-    // 1️⃣ Recupero dati prenotazione
     let bookingData = reservation;
 
-    // Caso reale: Hostaway manda solo reservationId
-    if (!bookingData) {
+    if (!bookingData && reservationId) {
       console.log("🔍 Recupero prenotazione via API Hostaway:", reservationId);
-
       const response = await axios.get(
         `https://api.hostaway.com/v1/reservations/${reservationId}`,
-        {
-          headers: { Authorization: `Bearer ${HOSTAWAY_TOKEN}` },
-          timeout: 10000
-        }
+        { headers: { Authorization: `Bearer ${HOSTAWAY_TOKEN}` }, timeout: 10000 }
       );
-
       bookingData = response.data?.result;
     }
 
-    // ❌ Se ancora nulla → stop
     if (!bookingData) {
       console.log("❌ Prenotazione non recuperabile");
-      return;
+      return res.status(200).json({ ignored: true });
     }
 
-    // ❌ Ignora cancellate
     if (bookingData.status === "cancelled") {
       console.log("⏭ Prenotazione cancellata — ignorata");
-      return;
+      return res.status(200).json({ ignored: true });
     }
 
-    // 2️⃣ Mappa appartamenti
     const LISTING_TO_APARTMENT = {
       "194166": "Arenula",
       "194165": "Portico d'Ottavia",
@@ -1070,11 +1045,9 @@ app.post("/hostaway-booking-webhook", async (req, res) => {
       "194162": "Via della Scala"
     };
 
-    // 3️⃣ Nome / Cognome
     const [firstName, ...lastNameParts] = (bookingData.guestName || "").split(" ");
     const lastName = lastNameParts.join(" ");
 
-    // 4️⃣ Dati FINALI per Google Sheets
     const rowData = {
       first_name: firstName || "",
       last_name: lastName || "",
@@ -1084,17 +1057,16 @@ app.post("/hostaway-booking-webhook", async (req, res) => {
       nights: bookingData.nights || 0
     };
 
-    console.log("📊 Scrittura Google Sheets:", rowData);
+    console.log("📊 Dati estratti:", rowData);
 
     await writeToGoogleSheets(rowData);
+    console.log("✅ Scrittura Google Sheets OK");
 
-    // ✅ Marca come scritta
-    WRITTEN_RESERVATIONS.add(reservationId);
-
-    console.log("✅ Prenotazione salvata correttamente");
+    return res.status(200).json({ ok: true });
 
   } catch (err) {
-    console.error("❌ Errore interno Hostaway webhook:", err.message);
+    console.error("❌ ERRORE REALE WEBHOOK:", err);
+    return res.status(200).json({ error: true });
   }
 });
  
