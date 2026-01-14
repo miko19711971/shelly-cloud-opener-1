@@ -1003,8 +1003,10 @@ app.post("/paypal-webhook", async (req, res) => {
 // ========================================================================
 // HOSTAWAY BOOKING WEBHOOK (prenotazioni, non solo chat)
 // ========================================================================
+// 🔐 Cache anti-duplicati (fuori dal blocco, UNA VOLTA nel file)
+const WRITTEN_RESERVATIONS = new Set();
 
-   app.post("/hostaway-booking-webhook", async (req, res) => {
+app.post("/hostaway-booking-webhook", async (req, res) => {
   console.log("\n" + "=".repeat(60));
   console.log("🏠 HOSTAWAY BOOKING WEBHOOK");
   console.log("=".repeat(60));
@@ -1018,11 +1020,22 @@ app.post("/paypal-webhook", async (req, res) => {
 
     console.log("🔑 Reservation ID:", reservationId);
 
+    if (!reservationId) {
+      console.log("⏭ Nessun reservationId — ignorato");
+      return;
+    }
+
+    // ⛔️ Evita doppie scritture
+    if (WRITTEN_RESERVATIONS.has(reservationId)) {
+      console.log("⏭ Prenotazione già scritta — ignorata");
+      return;
+    }
+
     // 1️⃣ Recupero dati prenotazione
     let bookingData = reservation;
 
     // Caso reale: Hostaway manda solo reservationId
-    if (!bookingData && reservationId) {
+    if (!bookingData) {
       console.log("🔍 Recupero prenotazione via API Hostaway:", reservationId);
 
       const response = await axios.get(
@@ -1048,17 +1061,6 @@ app.post("/paypal-webhook", async (req, res) => {
       return;
     }
 
-    // ✅ ACCETTO SOLO PRENOTAZIONI NUOVE
-    // Hostaway NON manda event → uso insertedOn === updatedOn
-    if (
-      bookingData.insertedOn &&
-      bookingData.updatedOn &&
-      bookingData.insertedOn !== bookingData.updatedOn
-    ) {
-      console.log("⏭ Non è una prenotazione nuova — ignorata");
-      return;
-    }
-
     // 2️⃣ Mappa appartamenti
     const LISTING_TO_APARTMENT = {
       "194166": "Arenula",
@@ -1072,7 +1074,7 @@ app.post("/paypal-webhook", async (req, res) => {
     const [firstName, ...lastNameParts] = (bookingData.guestName || "").split(" ");
     const lastName = lastNameParts.join(" ");
 
-    // 4️⃣ Dati FINALI da scrivere su Google Sheet
+    // 4️⃣ Dati FINALI per Google Sheets
     const rowData = {
       first_name: firstName || "",
       last_name: lastName || "",
@@ -1082,21 +1084,20 @@ app.post("/paypal-webhook", async (req, res) => {
       nights: bookingData.nights || 0
     };
 
-    console.log("📊 Dati estratti:", rowData);
+    console.log("📊 Scrittura Google Sheets:", rowData);
 
-    // 5️⃣ Scrittura su Google Sheets
-    writeToGoogleSheets(rowData)
-  .then(() => {
-    console.log("✅ Scrittura Google Sheets completata");
-  })
-  .catch(err => {
-    console.error("⚠️ Errore Google Sheets (non blocca webhook):", err.message);
-  });
+    await writeToGoogleSheets(rowData);
+
+    // ✅ Marca come scritta
+    WRITTEN_RESERVATIONS.add(reservationId);
+
+    console.log("✅ Prenotazione salvata correttamente");
 
   } catch (err) {
     console.error("❌ Errore interno Hostaway webhook:", err.message);
   }
 });
+ 
 // ========================================================================
 // ENDPOINT TEST MANUALE
 // ========================================================================
