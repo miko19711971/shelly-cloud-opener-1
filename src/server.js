@@ -30,7 +30,7 @@ app.use((req, res, next) => {
 });
 
 app.options("/feedback", cors());
- 
+
 app.post("/feedback", cors(), async (req, res) => {
   console.log("FEEDBACK ARRIVATO", req.body);
   try {
@@ -1003,32 +1003,64 @@ app.post("/paypal-webhook", async (req, res) => {
 // ========================================================================
 // HOSTAWAY BOOKING WEBHOOK (prenotazioni, non solo chat)
 // ========================================================================
-// 🔐 Cache anti-duplicati (fuori dal blocco, UNA VOLTA nel file)
-const WRITTEN_RESERVATIONS = new Set();
 
-  async function fetchReservationWithRetry(reservationId, retries = 5, delayMs = 3000) {
-  for (let attempt = 1; attempt <= retries; attempt++) {
-    try {
-      const response = await axios.get(
-        `https://api.hostaway.com/v1/reservations/${reservationId}`,
-        {
-          headers: { Authorization: `Bearer ${HOSTAWAY_TOKEN}` },
-          timeout: 10000
-        }
-      );
-      return response.data?.result;
-    } catch (err) {
-      if (err.response?.status === 404 && attempt < retries) {
-        console.log(`⏳ Tentativo ${attempt}/${retries}: prenotazione non pronta, retry tra ${delayMs}ms`);
-        await new Promise(r => setTimeout(r, delayMs));
-        continue;
-      }
-      throw err;
+  app.post("/hostaway-booking-webhook", async (req, res) => {
+  console.log("\n" + "=".repeat(60));
+  console.log("🏠 HOSTAWAY BOOKING WEBHOOK");
+  console.log("=".repeat(60));
+  console.log("📦 Body:", JSON.stringify(req.body, null, 2));
+
+  // ✅ Risposta immediata a Hostaway
+  res.status(200).json({ received: true });
+
+  try {
+    const { event, reservationId, reservation } = req.body;
+
+    console.log("📝 Evento:", event);
+    console.log("🔑 Reservation ID:", reservationId);
+
+    // 🔒 GUARDIA CORRETTA
+    let bookingData = reservation;
+
+    if (!reservation) {
+      console.log("ℹ️ Evento Hostaway senza dati prenotazione — attendo evento successivo");
+      return;
     }
+
+    if (reservation.status === "cancelled") {
+      console.log("⏭ Prenotazione cancellata — ignorata");
+      return;
+    }
+
+    const rowData = {
+      source: "Hostaway",
+      timestamp: new Date().toISOString(),
+      eventType: "reservation_created",
+      reservationId: bookingData.id,
+      listingId: bookingData.listingId,
+      channelName: bookingData.channelName || "",
+      guestName: bookingData.guestName || "",
+      guestEmail: bookingData.guestEmail || "",
+      guestPhone: bookingData.guestPhone || "",
+      checkIn: bookingData.arrivalDate || "",
+      checkOut: bookingData.departureDate || "",
+      numberOfGuests: bookingData.numberOfGuests || 0,
+      totalPrice: bookingData.totalPrice || 0,
+      currency: bookingData.currency || "EUR",
+      status: bookingData.status || "",
+      isPaid: bookingData.isPaid ? "Yes" : "No"
+    };
+
+    console.log("📊 Dati estratti:", rowData);
+
+    writeToGoogleSheets(rowData).catch(err => {
+      console.error("❌ Errore Google Sheets:", err.message);
+    });
+
+  } catch (err) {
+    console.error("❌ Errore interno Hostaway webhook:", err.message);
   }
-  return null;
-}
- 
+});
 // ========================================================================
 // ENDPOINT TEST MANUALE
 // ========================================================================
