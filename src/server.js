@@ -1042,7 +1042,7 @@ app.post("/hostaway-booking-webhook", async (req, res) => {
         const rowData = {
           source: "Hostaway",
           timestamp: new Date().toISOString(),
-          eventType: event,
+          eventType: bookingData.status || "unknown",
           reservationId: bookingData.id,
           listingId: bookingData.listingId,
           channelName: bookingData.channelName || "",
