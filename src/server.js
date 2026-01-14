@@ -1038,24 +1038,18 @@ const LISTING_TO_APARTMENT = {
   "194163": "Leonina",
   "194162": "Via della Scala"
 };
-    const rowData = {
-      source: "Hostaway",
-      timestamp: new Date().toISOString(),
-      eventType: "reservation_created",
-      reservationId: bookingData.id,
-      listingId: bookingData.listingId,
-      channelName: bookingData.channelName || "",
-      guestName: bookingData.guestName || "",
-      guestEmail: bookingData.guestEmail || "",
-      guestPhone: bookingData.guestPhone || "",
-      checkIn: bookingData.arrivalDate || "",
-      checkOut: bookingData.departureDate || "",
-      numberOfGuests: bookingData.numberOfGuests || 0,
-      totalPrice: bookingData.totalPrice || 0,
-      currency: bookingData.currency || "EUR",
-      status: bookingData.status || "",
-      isPaid: bookingData.isPaid ? "Yes" : "No"
-    };
+     
+const [firstName, ...lastNameParts] = (bookingData.guestName || "").split(" ");
+const lastName = lastNameParts.join(" ");
+
+const rowData = {
+  first_name: firstName || "",
+  last_name: lastName || "",
+  apartment: LISTING_TO_APARTMENT[String(bookingData.listingMapId)] || "",
+  check_in: bookingData.arrivalDate || "",
+  check_out: bookingData.departureDate || "",
+  nights: bookingData.nights || 0
+};
 
     console.log("📊 Dati estratti:", rowData);
 
