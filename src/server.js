@@ -1041,7 +1041,7 @@ app.post("/paypal-webhook", async (req, res) => {
   try {
     const data = req.body;
     const reservation = data.reservation || data || {};
- if (
+  if (
   data.event === "reservation_cancelled" ||
   reservation.status === "cancelled" ||
   reservation.status === "canceled"
@@ -1053,7 +1053,7 @@ app.post("/paypal-webhook", async (req, res) => {
     action: "delete",
     reservationId: reservationId
   });
-  
+ 
   console.log("✅ Riga cancellata da Sheets");
   return;
 }
