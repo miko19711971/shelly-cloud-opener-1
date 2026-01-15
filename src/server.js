@@ -1054,12 +1054,14 @@ app.post("/hostaway-booking-webhook", async (req, res) => {
     };
     
     // ✅ Usa LA STESSA URL del feedback che funziona
-     await axios.post(
+      await axios.post(
   "https://script.google.com/macros/s/AKfycbyBSm76cluEYl8A1T0yc3Jf7tDszUPhJW6LeRU-ISVyIRdTsSWjgfST7ExPAJdJ122s/exec",
   rowData,
-  { headers: { "Content-Type": "application/json" }, timeout: 10000 }
-    });
-    
+  {
+    headers: { "Content-Type": "application/json" },
+    timeout: 10000
+  }
+);
     console.log("✅ Prenotazione scritta su Sheets:", rowData.reservationId);
     
   } catch (err) {
