@@ -1021,11 +1021,20 @@ app.post("/paypal-webhook", async (req, res) => {
     const reservation = data.reservation || data || {};
 
     // 🔎 risoluzione listingId definitiva
-    let resolvedListingId = reservation.listingId || data.listingId;
+let resolvedListingId = reservation.listingId || data.listingId;
 
-    if (!resolvedListingId && reservation.reservationId) {
-      try {
-        const r = await axios.get(
+// AGGIUNGI QUESTA ESTRAZIONE DAL reservationId
+if (!resolvedListingId && reservation.reservationId) {
+  const match = String(reservation.reservationId).match(/^\d+-(\d+)-/);
+  if (match) {
+    resolvedListingId = match[1];
+    console.log("✅ listingId estratto da reservationId:", resolvedListingId);
+  }
+}
+
+if (!resolvedListingId && reservation.reservationId) {
+  try {
+    const r = await axios.get(
           `https://api.hostaway.com/v1/reservations/${reservation.reservationId}`,
           {
             headers: { Authorization: `Bearer ${HOSTAWAY_TOKEN}` },
