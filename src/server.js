@@ -1062,7 +1062,7 @@ if (!resolvedListingId && reservation.reservationId) {
   timestamp: new Date().toISOString(),
   eventType: data.event || "booking_event",
   reservationId: reservation.reservationId || reservation.id || data.reservationId,
-  apartment: apartment,  // SOLO apartment, NON listingId
+  apartment: apartment,
   guestName:
     reservation.guestName ||
     `${reservation.guestFirstName || ""} ${reservation.guestLastName || ""}`.trim(),
@@ -1070,10 +1070,9 @@ if (!resolvedListingId && reservation.reservationId) {
   guestPhone: reservation.guestPhone || reservation.phone || "",
   checkIn: reservation.checkIn || reservation.arrivalDate || "",
   checkOut: reservation.checkOut || reservation.departureDate || "",
-  nights: reservation.nights || "",
+  nights: String(reservation.nights || ""),  // ← MODIFICA QUI
   guests: reservation.numberOfGuests || ""
 };
-
     await writeToGoogleSheets(rowData);
     console.log("✅ Booking scritto su Google Sheets");
 
