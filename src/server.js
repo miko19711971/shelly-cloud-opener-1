@@ -1020,26 +1020,7 @@ app.post("/hostaway-booking-webhook", async (req, res) => {
     // 📊 Hostaway standard payload structure
     const data = req.body;
     const reservation = data.reservation || data || {};
-    // 🔎 RISOLUZIONE listingId → apartment (FIX DEFINITIVO)
-
-let resolvedListingId = reservation.listingId || data.listingId;
-
-if (!resolvedListingId && reservation.reservationId) {
-  try {
-    const r = await axios.get(
-      `https://api.hostaway.com/v1/reservations/${reservation.reservationId}`,
-      {
-        headers: {
-          Authorization: `Bearer ${HOSTAWAY_TOKEN}`
-        },
-        timeout: 10000
-      }
-    );
-    resolvedListingId = r.data?.result?.listingId;
-  } catch (e) {
-    console.error("❌ Impossibile risolvere listingId da Hostaway:", e.message);
-  }
-}
+    
     // Mappa listingId → appartamento per report
     const LISTING_MAP = {
       "194166": "Arenula",
@@ -1050,7 +1031,8 @@ if (!resolvedListingId && reservation.reservationId) {
     };
 
     // ✅ CORREZIONE (solo questa)
-     const apartment = LISTING_MAP[String(resolvedListingId)] || "N/A";
+    const resolvedListingId = reservation.listingId || data.listingId;
+    const apartment = LISTING_MAP[String(resolvedListingId)] || "N/A";
     
      const rowData = {
   source: "Hostaway",
