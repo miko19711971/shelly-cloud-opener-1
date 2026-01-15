@@ -872,7 +872,29 @@ async function writeToGoogleSheets(data) {
     return { ok: false, error: err.message };
   }
 }
+app.get("/test-paypal-simple", async (req, res) => {
+  const secret = req.query.secret;
+  if (!safeEqual(secret || "", ADMIN_SECRET)) {
+    return res.status(403).send("unauthorized");
+  }
 
+  const testData = {
+    source: "PayPal",
+    timestamp: new Date().toISOString(),
+    eventType: "PAYMENT.CAPTURE.COMPLETED",
+    paymentId: "test_paypal_" + Date.now(),
+    amount: 200.00,
+    currency: "EUR",
+    status: "COMPLETED",
+    customerEmail: "test@paypal.com",
+    customerName: "Luigi Verdi",
+    description: "Test PayPal payment",
+    metadata: "{}"
+  };
+
+  const result = await writeToGoogleSheets(testData);
+  res.type("html").send(`<h1>Test PayPal Completato</h1><pre>${JSON.stringify({ ok: result.ok, testData, result }, null, 2)}</pre>`);
+});
 // ========================================================================
 // STRIPE WEBHOOK
 // ========================================================================
