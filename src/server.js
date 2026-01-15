@@ -1041,7 +1041,7 @@ app.post("/hostaway-booking-webhook", async (req, res) => {
       apartment: LISTING_MAP[String(reservation.listingId || data.listingId)] || "N/A",
       guestName: reservation.guestName || reservation.guestFirstName + " " + reservation.guestLastName || "",
       guestEmail: reservation.guestEmail || "",
-      guestPhone: reservation.guestPhone || "",
+      guestPhone: reservation.guestPhone || reservation.phone || "",
       checkIn: reservation.checkIn || reservation.arrivalDate || "",
       checkOut: reservation.checkOut || reservation.departureDate || "",
       nights: reservation.nights || "",
