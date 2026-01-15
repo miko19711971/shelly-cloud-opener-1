@@ -1194,8 +1194,6 @@ app.post("/test-hostaway-webhook", requireAdmin, async (req, res) => {
     checkIn: "2026-02-15",
     checkOut: "2026-02-20",
     numberOfGuests: 2,
-    totalPrice: 750.00,
-    currency: "EUR",
     status: "confirmed",
     isPaid: "Yes"
   };
