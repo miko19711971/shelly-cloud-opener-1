@@ -1010,18 +1010,34 @@ app.post("/paypal-webhook", async (req, res) => {
 // ========================================================================
 
 // 🔧 HOSTAWAY BOOKING WEBHOOK - VERSIONE CORRETTA
-app.post("/hostaway-booking-webhook", async (req, res) => {
+ app.post("/hostaway-booking-webhook", async (req, res) => {
   console.log("🏠 HOSTAWAY BOOKING:", JSON.stringify(req.body, null, 2));
-  
-  // ✅ Risposta immediata 200 OK
+
+  // rispondi subito a Hostaway
   res.status(200).json({ received: true });
-  
+
   try {
-    // 📊 Hostaway standard payload structure
     const data = req.body;
     const reservation = data.reservation || data || {};
-    
-    // Mappa listingId → appartamento per report
+
+    // 🔎 risoluzione listingId definitiva
+    let resolvedListingId = reservation.listingId || data.listingId;
+
+    if (!resolvedListingId && reservation.reservationId) {
+      try {
+        const r = await axios.get(
+          `https://api.hostaway.com/v1/reservations/${reservation.reservationId}`,
+          {
+            headers: { Authorization: `Bearer ${HOSTAWAY_TOKEN}` },
+            timeout: 10000
+          }
+        );
+        resolvedListingId = r.data?.result?.listingId;
+      } catch (e) {
+        console.error("❌ Impossibile risolvere listingId:", e.message);
+      }
+    }
+
     const LISTING_MAP = {
       "194166": "Arenula",
       "194165": "Portico",
@@ -1030,25 +1046,33 @@ app.post("/hostaway-booking-webhook", async (req, res) => {
       "194162": "Scala"
     };
 
-    // ✅ CORREZIONE (solo questa)
-    const resolvedListingId = reservation.listingId || data.listingId;
     const apartment = LISTING_MAP[String(resolvedListingId)] || "N/A";
-    
-     const rowData = {
-  source: "Hostaway",
-  timestamp: new Date().toISOString(),
-  eventType: data.event || "booking_event",
-  reservationId: reservation.reservationId || reservation.id || data.reservationId,
-  listingId: resolvedListingId,
-  apartment: apartment,
-  guestName: reservation.guestName || reservation.guestFirstName + " " + reservation.guestLastName || "",
-  guestEmail: reservation.guestEmail || "",
-  guestPhone: reservation.guestPhone || reservation.phone || "",
-  checkIn: reservation.checkIn || reservation.arrivalDate || "",
-  checkOut: reservation.checkOut || reservation.departureDate || "",
-  nights: reservation.nights || "",
-  guests: reservation.numberOfGuests || ""
-};
+
+    const rowData = {
+      source: "Hostaway",
+      timestamp: new Date().toISOString(),
+      eventType: data.event || "booking_event",
+      reservationId: reservation.reservationId || reservation.id || data.reservationId,
+      listingId: resolvedListingId,
+      apartment: apartment,
+      guestName:
+        reservation.guestName ||
+        `${reservation.guestFirstName || ""} ${reservation.guestLastName || ""}`.trim(),
+      guestEmail: reservation.guestEmail || "",
+      guestPhone: reservation.guestPhone || reservation.phone || "",
+      checkIn: reservation.checkIn || reservation.arrivalDate || "",
+      checkOut: reservation.checkOut || reservation.departureDate || "",
+      nights: reservation.nights || "",
+      guests: reservation.numberOfGuests || ""
+    };
+
+    await writeToGoogleSheets(rowData);
+    console.log("✅ Booking scritto su Google Sheets");
+
+  } catch (err) {
+    console.error("❌ ERRORE hostaway-booking-webhook:", err.message);
+  }
+});
 
 // ========================================================================
 // ENDPOINT TEST MANUALE
