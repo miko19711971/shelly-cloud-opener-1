@@ -1034,24 +1034,21 @@ app.post("/hostaway-booking-webhook", async (req, res) => {
     const resolvedListingId = reservation.listingId || data.listingId;
     const apartment = LISTING_MAP[String(resolvedListingId)] || "N/A";
     
-    const rowData = {
-      source: "Hostaway",
-      timestamp: new Date().toISOString(),
-      eventType: data.event || "booking_event",
-      reservationId: reservation.reservationId || reservation.id || data.reservationId,
-      listingId: resolvedListingId,
-      apartment: apartment,
-      guestName: reservation.guestName || reservation.guestFirstName + " " + reservation.guestLastName || "",
-      guestEmail: reservation.guestEmail || "",
-      guestPhone: reservation.guestPhone || reservation.phone || "",
-      checkIn: reservation.checkIn || reservation.arrivalDate || "",
-      checkOut: reservation.checkOut || reservation.departureDate || "",
-      nights: reservation.nights || "",
-      guests: reservation.numberOfGuests || "",
-      status: reservation.status || "confirmed",
-      channel: reservation.channelName || reservation.source || "",
-      isPaid: reservation.isPaid ? "Yes" : "No"
-    };
+     const rowData = {
+  source: "Hostaway",
+  timestamp: new Date().toISOString(),
+  eventType: data.event || "booking_event",
+  reservationId: reservation.reservationId || reservation.id || data.reservationId,
+  listingId: resolvedListingId,
+  apartment: apartment,
+  guestName: reservation.guestName || reservation.guestFirstName + " " + reservation.guestLastName || "",
+  guestEmail: reservation.guestEmail || "",
+  guestPhone: reservation.guestPhone || reservation.phone || "",
+  checkIn: reservation.checkIn || reservation.arrivalDate || "",
+  checkOut: reservation.checkOut || reservation.departureDate || "",
+  nights: reservation.nights || "",
+  guests: reservation.numberOfGuests || ""
+};
 
 // ========================================================================
 // ENDPOINT TEST MANUALE
