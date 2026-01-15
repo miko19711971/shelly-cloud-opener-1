@@ -1041,12 +1041,20 @@ app.post("/paypal-webhook", async (req, res) => {
   try {
     const data = req.body;
     const reservation = data.reservation || data || {};
-if (
+ if (
   data.event === "reservation_cancelled" ||
   reservation.status === "cancelled" ||
   reservation.status === "canceled"
 ) {
-  console.log("🚫 Prenotazione cancellata - IGNORATA");
+  console.log("🗑️ Cancellazione prenotazione");
+  const reservationId = reservation.reservationId || reservation.id || data.reservationId;
+  
+  await axios.post(GOOGLE_SHEETS_WEBHOOK_URL, {
+    action: "delete",
+    reservationId: reservationId
+  });
+  
+  console.log("✅ Riga cancellata da Sheets");
   return;
 }
     // 🔎 risoluzione listingId definitiva
