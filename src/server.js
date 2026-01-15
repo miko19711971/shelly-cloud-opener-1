@@ -985,8 +985,6 @@ app.post("/paypal-webhook", async (req, res) => {
         timestamp: new Date().toISOString(),
         eventType: eventType,
         paymentId: resource.id,
-        amount: parseFloat(amount?.value || 0),
-        currency: amount?.currency_code || "EUR",
         status: resource.status,
         customerEmail: payer?.email_address || "",
         customerName: payer?.name?.given_name + " " + payer?.name?.surname || "",
