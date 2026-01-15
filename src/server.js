@@ -1005,11 +1005,11 @@ app.post("/paypal-webhook", async (req, res) => {
   }
 });
 
-// ========================================================================
+ // ========================================================================
 // HOSTAWAY BOOKING WEBHOOK (prenotazioni, non solo chat)
 // ========================================================================
 
-   // 🔧 HOSTAWAY BOOKING WEBHOOK - VERSIONE CORRETTA
+// 🔧 HOSTAWAY BOOKING WEBHOOK - VERSIONE CORRETTA
 app.post("/hostaway-booking-webhook", async (req, res) => {
   console.log("🏠 HOSTAWAY BOOKING:", JSON.stringify(req.body, null, 2));
   
@@ -1017,18 +1017,22 @@ app.post("/hostaway-booking-webhook", async (req, res) => {
   res.status(200).json({ received: true });
   
   try {
-    // Verifica firma se configurata
-  
-    
     // 📊 Hostaway standard payload structure
     const data = req.body;
     const reservation = data.reservation || data || {};
     
     // Mappa listingId → appartamento per report
     const LISTING_MAP = {
-      "194166": "Arenula", "194165": "Portico", "194163": "Leonina", 
-      "194164": "Trastevere", "194162": "Scala"
+      "194166": "Arenula",
+      "194165": "Portico",
+      "194163": "Leonina",
+      "194164": "Trastevere",
+      "194162": "Scala"
     };
+
+    // ✅ CORREZIONE (solo questa)
+    const resolvedListingId = reservation.listingId || data.listingId;
+    const apartment = LISTING_MAP[String(resolvedListingId)] || "N/A";
     
     const rowData = {
       source: "Hostaway",
@@ -1048,22 +1052,6 @@ app.post("/hostaway-booking-webhook", async (req, res) => {
       channel: reservation.channelName || reservation.source || "",
       isPaid: reservation.isPaid ? "Yes" : "No"
     };
-    
-    // ✅ Usa LA STESSA URL del feedback che funziona
-      await axios.post(
-  "https://script.google.com/macros/s/AKfycbyBSm76cluEYl8A1T0yc3Jf7tDszUPhJW6LeRU-ISVyIRdTsSWjgfST7ExPAJdJ122s/exec",
-  rowData,
-  {
-    headers: { "Content-Type": "application/json" },
-    timeout: 10000
-  }
-);
-    console.log("✅ Prenotazione scritta su Sheets:", rowData.reservationId);
-    
-  } catch (err) {
-    console.error("❌ Errore Hostaway webhook:", err.message);
-  }
-});
 
 // ========================================================================
 // ENDPOINT TEST MANUALE
