@@ -1041,7 +1041,14 @@ app.post("/paypal-webhook", async (req, res) => {
   try {
     const data = req.body;
     const reservation = data.reservation || data || {};
-
+if (
+  data.event === "reservation_cancelled" ||
+  reservation.status === "cancelled" ||
+  reservation.status === "canceled"
+) {
+  console.log("🚫 Prenotazione cancellata - IGNORATA");
+  return;
+}
     // 🔎 risoluzione listingId definitiva
 let resolvedListingId = reservation.listingId || data.listingId;
 
