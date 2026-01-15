@@ -1046,8 +1046,6 @@ app.post("/hostaway-booking-webhook", async (req, res) => {
       checkOut: reservation.checkOut || reservation.departureDate || "",
       nights: reservation.nights || "",
       guests: reservation.numberOfGuests || "",
-      totalPrice: reservation.total || reservation.totalPrice || 0,
-      currency: reservation.currency || "EUR",
       status: reservation.status || "confirmed",
       channel: reservation.channelName || reservation.source || "",
       isPaid: reservation.isPaid ? "Yes" : "No"
