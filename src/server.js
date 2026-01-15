@@ -1057,7 +1057,7 @@ if (!resolvedListingId && reservation.reservationId) {
   timestamp: new Date().toISOString(),
   eventType: data.event || "booking_event",
   reservationId: reservation.reservationId || reservation.id || data.reservationId,
-  listingId: bookingListingId,
+  listingId: resolvedListingId,
   apartment: apartment,
   guestName: reservation.guestName || reservation.guestFirstName + " " + reservation.guestLastName || "",
   guestEmail: reservation.guestEmail || "",
