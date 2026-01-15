@@ -1050,8 +1050,7 @@ if (!resolvedListingId && reservation.reservationId) {
     };
 
     // ✅ CORREZIONE (solo questa)
-    const bookingListingId = reservation.listingId || data.listingId;
-    const apartment = LISTING_MAP[String(bookingListingId)] || "N/A";
+     const apartment = LISTING_MAP[String(resolvedListingId)] || "N/A";
     
      const rowData = {
   source: "Hostaway",
