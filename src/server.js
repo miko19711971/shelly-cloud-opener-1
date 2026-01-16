@@ -1118,7 +1118,21 @@ try {
         console.error("❌ Impossibile risolvere listingId:", e.message);
       }
     }
+// ✋ FILTRA EVENTI - Scrivi SOLO per creazione prenotazione
+const eventiDaScrivere = [
+  "reservation_created",
+  "reservation_new",
+  "booking_event"
+];
 
+const eventoCorrente = data.event || "booking_event";
+
+if (!eventiDaScrivere.includes(eventoCorrente)) {
+  console.log("⏭️ Evento ignorato:", eventoCorrente);
+  return; // Non scrivere nulla
+}
+
+console.log("✅ Evento da scrivere:", eventoCorrente);
     const LISTING_MAP = {
       "194166": "Arenula",
       "194165": "Portico",
