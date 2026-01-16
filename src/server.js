@@ -1050,19 +1050,26 @@ app.post("/hostaway-booking-webhook", async (req, res) => {
     ) {
       console.log("🗑️ CANCELLAZIONE RILEVATA");
       
-      // Estrai reservationId da tutte le fonti possibili
-      const reservationId = 
-        reservation.reservationId || 
-        reservation.id || 
-        data.reservationId || 
-        data.id;
-      
-      console.log("📍 Cancellazione reservationId:", reservationId);
-      
-      if (!reservationId) {
-        console.error("❌ reservationId mancante nella cancellazione");
-        return;
-      }
+ // 🗑️ INTERCETTA CANCELLAZIONI - NON INVIARE NULLA A SHEETS
+if (
+  data.event === "reservation_cancelled" || 
+  data.event === "reservation_canceled" ||
+  reservation.status === "cancelled" ||
+  reservation.status === "canceled"
+) {
+  console.log("🗑️ CANCELLAZIONE RILEVATA");
+  
+  const reservationId = 
+    reservation.reservationId || 
+    reservation.id || 
+    data.reservationId || 
+    data.id;
+  
+  console.log("📍 Cancellazione reservationId:", reservationId);
+  console.log("⏹️ NON invio nulla a Sheets - cancellazione ignorata");
+  
+  return; // STOP - non scrivere nulla
+}
       
        const payload = {
   action: "delete",
