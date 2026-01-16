@@ -7,6 +7,7 @@ import { fileURLToPath } from "url";
 import fs from "fs/promises";
  import bodyParser from "body-parser";
 import { matchIntent } from "./matcher.js";
+import { detectLanguage } from "./language.js";
 import { ANSWERS } from "./answers.js";
 
 function safeEqual(a, b) {
@@ -712,19 +713,18 @@ app.post("/hostaway-incoming", async (req, res) => {
 
     console.log("  â Token configured");
 
-    // ======================================================
-    // ð¯ STEP 3: Match Intent + Language
-    // ======================================================
-    const match = matchIntent(message);
-    console.log("ð¯ Matcher result:", match || "NONE");
-
-    if (!match || !match.intent) {
-      console.log("ð No intent â silent");
-      return res.json({ ok: true, silent: true });
-    }
-
-    const { intent, language: detectedLang } = match;
-
+  // ======================================================
+// 🎯 STEP 3: Match Intent + Language
+// ======================================================
+const match = matchIntent(message);
+console.log("🎯 Matcher result:", match || "NONE");
+if (!match || !match.intent) {
+  console.log("👋 No intent → silent");
+  return res.json({ ok: true, silent: true });
+}
+const intent = match.intent;
+const detectedLang = detectLanguage(message);
+console.log("🌍 Lingua rilevata:", detectedLang);
     // ======================================================
     // ð  STEP 4: listingId â apartment
     // ======================================================
