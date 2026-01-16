@@ -661,6 +661,62 @@ Roma è ancora lì al risveglio.
   }
 
 };
+app.get("/monti", (req, res) => {
+  const { slot, choice } = req.query;
+
+  const data = MONTI_RESPONSES?.[slot]?.[choice];
+
+  if (!data) {
+    return res.status(404).type("html").send(`
+      <!doctype html>
+      <html lang="it">
+      <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Monti Live</title>
+        <style>
+          body{font-family:system-ui;background:#f6f6f6;padding:40px}
+          .box{max-width:600px;margin:auto;background:#fff;padding:24px;border-radius:14px}
+        </style>
+      </head>
+      <body>
+        <div class="box">
+          <h2>Momento non disponibile</h2>
+          <p>Questo contenuto non è attivo.</p>
+        </div>
+      </body>
+      </html>
+    `);
+  }
+
+  res.type("html").send(`
+    <!doctype html>
+    <html lang="it">
+    <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <title>Monti Live</title>
+      <style>
+        body{margin:0;font-family:system-ui;background:#f6f6f6;color:#222}
+        .wrap{max-width:680px;margin:0 auto;padding:24px}
+        .card{background:#fff;border-radius:16px;padding:28px;box-shadow:0 10px 28px rgba(0,0,0,.08)}
+        h1{margin-top:0;font-size:22px}
+        p{line-height:1.6;font-size:16px;white-space:pre-line}
+        .footer{margin-top:28px;font-size:13px;opacity:.6}
+      </style>
+    </head>
+    <body>
+      <div class="wrap">
+        <div class="card">
+          <h1>${data.title}</h1>
+          <p>${data.text}</p>
+        </div>
+        <div class="footer">Monti Live · Via Leonina</div>
+      </div>
+    </body>
+    </html>
+  `);
+});
 app.use(express.static(PUBLIC_DIR));
 
 
