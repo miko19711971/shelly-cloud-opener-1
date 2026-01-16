@@ -1064,15 +1064,20 @@ app.post("/hostaway-booking-webhook", async (req, res) => {
         return;
       }
       
-      try {
-        await axios.post(GOOGLE_SHEETS_WEBHOOK_URL, {
-          action: "delete",
-          reservationId: String(reservationId)
-        }, {
-          timeout: 10000
-        });
-        
-        console.log("✅ Richiesta cancellazione inviata a Sheets");
+       const payload = {
+  action: "delete",
+  reservationId: String(reservationId)
+};
+
+console.log("📤 PAYLOAD INVIATO A SHEETS:", JSON.stringify(payload));
+
+try {
+  await axios.post(GOOGLE_SHEETS_WEBHOOK_URL, payload, {
+    timeout: 10000,
+    headers: { "Content-Type": "application/json" }
+  });
+  
+  console.log("✅ Richiesta cancellazione inviata a Sheets");
       } catch (err) {
         console.error("❌ Errore invio cancellazione:", err.message);
       }
