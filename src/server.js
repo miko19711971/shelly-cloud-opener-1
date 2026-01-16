@@ -1030,49 +1030,71 @@ app.post("/paypal-webhook", async (req, res) => {
  // ========================================================================
 // HOSTAWAY BOOKING WEBHOOK (prenotazioni, non solo chat)
 // ========================================================================
-
 // 🔧 HOSTAWAY BOOKING WEBHOOK - VERSIONE CORRETTA
- app.post("/hostaway-booking-webhook", async (req, res) => {
+app.post("/hostaway-booking-webhook", async (req, res) => {
   console.log("🏠 HOSTAWAY BOOKING:", JSON.stringify(req.body, null, 2));
-
+  
   // rispondi subito a Hostaway
   res.status(200).json({ received: true });
-
+  
   try {
     const data = req.body;
     const reservation = data.reservation || data || {};
-   // 🗑️ INTERCETTA CANCELLAZIONI
-if (
-  data.event === "reservation_cancelled" ||
-  reservation.status === "cancelled" ||
-  reservation.status === "canceled"
-) {
-  console.log("🗑️ Cancellazione prenotazione");
-  const reservationId = reservation.reservationId || reservation.id || data.reservationId;
-  
-  await axios.post(GOOGLE_SHEETS_WEBHOOK_URL, {
-    action: "delete",
-    reservationId: reservationId
-  });
-  
-  console.log("✅ Riga cancellata da Sheets");
-  return;
-}
+    
+    // 🗑️ INTERCETTA CANCELLAZIONI - VERSIONE CORRETTA
+    if (
+      data.event === "reservation_cancelled" || 
+      data.event === "reservation_canceled" ||
+      reservation.status === "cancelled" ||
+      reservation.status === "canceled"
+    ) {
+      console.log("🗑️ CANCELLAZIONE RILEVATA");
+      
+      // Estrai reservationId da tutte le fonti possibili
+      const reservationId = 
+        reservation.reservationId || 
+        reservation.id || 
+        data.reservationId || 
+        data.id;
+      
+      console.log("📍 Cancellazione reservationId:", reservationId);
+      
+      if (!reservationId) {
+        console.error("❌ reservationId mancante nella cancellazione");
+        return;
+      }
+      
+      try {
+        await axios.post(GOOGLE_SHEETS_WEBHOOK_URL, {
+          action: "delete",
+          reservationId: String(reservationId)
+        }, {
+          timeout: 10000
+        });
+        
+        console.log("✅ Richiesta cancellazione inviata a Sheets");
+      } catch (err) {
+        console.error("❌ Errore invio cancellazione:", err.message);
+      }
+      
+      return;
+    }
+    
     // 🔎 risoluzione listingId definitiva
-let resolvedListingId = reservation.listingId || data.listingId;
-
-// AGGIUNGI QUESTA ESTRAZIONE DAL reservationId
-if (!resolvedListingId && reservation.reservationId) {
-  const match = String(reservation.reservationId).match(/^\d+-(\d+)-/);
-  if (match) {
-    resolvedListingId = match[1];
-    console.log("✅ listingId estratto da reservationId:", resolvedListingId);
-  }
-}
-
-if (!resolvedListingId && reservation.reservationId) {
-  try {
-    const r = await axios.get(
+    let resolvedListingId = reservation.listingId || data.listingId;
+    
+    // AGGIUNGI QUESTA ESTRAZIONE DAL reservationId
+    if (!resolvedListingId && reservation.reservationId) {
+      const match = String(reservation.reservationId).match(/^\d+-(\d+)-/);
+      if (match) {
+        resolvedListingId = match[1];
+        console.log("✅ listingId estratto da reservationId:", resolvedListingId);
+      }
+    }
+    
+    if (!resolvedListingId && reservation.reservationId) {
+      try {
+        const r = await axios.get(
           `https://api.hostaway.com/v1/reservations/${reservation.reservationId}`,
           {
             headers: { Authorization: `Bearer ${HOSTAWAY_TOKEN}` },
@@ -1095,22 +1117,23 @@ if (!resolvedListingId && reservation.reservationId) {
 
     const apartment = LISTING_MAP[String(resolvedListingId)] || "N/A";
 
-     const rowData = {
-  source: "Hostaway",
-  timestamp: new Date().toISOString(),
-  eventType: data.event || "booking_event",
-  reservationId: reservation.reservationId || reservation.id || data.reservationId,
-  apartment: apartment,
-  guestName:
-    reservation.guestName ||
-    `${reservation.guestFirstName || ""} ${reservation.guestLastName || ""}`.trim(),
-  guestEmail: reservation.guestEmail || "",
-  guestPhone: reservation.guestPhone || reservation.phone || "",
-  checkIn: reservation.checkIn || reservation.arrivalDate || "",
-  checkOut: reservation.checkOut || reservation.departureDate || "",
-  nights: String(reservation.nights || ""),  // ← MODIFICA QUI
-  guests: reservation.numberOfGuests || ""
-};
+    const rowData = {
+      source: "Hostaway",
+      timestamp: new Date().toISOString(),
+      eventType: data.event || "booking_event",
+      reservationId: reservation.reservationId || reservation.id || data.reservationId,
+      apartment: apartment,
+      guestName:
+        reservation.guestName ||
+        `${reservation.guestFirstName || ""} ${reservation.guestLastName || ""}`.trim(),
+      guestEmail: reservation.guestEmail || "",
+      guestPhone: reservation.guestPhone || reservation.phone || "",
+      checkIn: reservation.checkIn || reservation.arrivalDate || "",
+      checkOut: reservation.checkOut || reservation.departureDate || "",
+      nights: String(reservation.nights || ""),
+      guests: reservation.numberOfGuests || ""
+    };
+    
     await writeToGoogleSheets(rowData);
     console.log("✅ Booking scritto su Google Sheets");
 
