@@ -534,24 +534,7 @@ app.post("/checkin/:apt/open/door", requireCheckinToken, async (req, res) => {
 });
 
 app.use("/checkin", express.static(path.join(PUBLIC_DIR, "checkin"), { fallthrough: false }));
-app.use(express.static(PUBLIC_DIR));
-
-
-app.get("/health", (req, res) => {
-  res.json({
-    ok: true,
-    targets: Object.keys(TARGETS).length,
-    node: process.version,
-    uptime: process.uptime(),
-    baseUrl: SHELLY_BASE_URL,
-    tokenVersion: TOKEN_VERSION,
-    rotationTag: ROTATION_TAG,
-    linkPrefix: LINK_PREFIX,
-    startedAt: STARTED_AT,
-    revokeBefore: REVOKE_BEFORE
-  });
-});
- // ========================================================================
+// ========================================================================
 // MONTI LIVE — SLOT GIORNALIERI
 // ========================================================================
 
@@ -678,6 +661,24 @@ Roma è ancora lì al risveglio.
   }
 
 };
+app.use(express.static(PUBLIC_DIR));
+
+
+app.get("/health", (req, res) => {
+  res.json({
+    ok: true,
+    targets: Object.keys(TARGETS).length,
+    node: process.version,
+    uptime: process.uptime(),
+    baseUrl: SHELLY_BASE_URL,
+    tokenVersion: TOKEN_VERSION,
+    rotationTag: ROTATION_TAG,
+    linkPrefix: LINK_PREFIX,
+    startedAt: STARTED_AT,
+    revokeBefore: REVOKE_BEFORE
+  });
+});
+  
 const MAILER_URL = process.env.MAILER_URL || "https://script.google.com/macros/s/XXXXXXX/exec";
 const MAIL_SHARED_SECRET = process.env.MAIL_SHARED_SECRET;
 
