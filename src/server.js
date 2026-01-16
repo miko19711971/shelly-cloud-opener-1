@@ -1041,7 +1041,8 @@ app.post("/paypal-webhook", async (req, res) => {
   try {
     const data = req.body;
     const reservation = data.reservation || data || {};
-  if (
+   // 🗑️ INTERCETTA CANCELLAZIONI
+if (
   data.event === "reservation_cancelled" ||
   reservation.status === "cancelled" ||
   reservation.status === "canceled"
@@ -1049,12 +1050,11 @@ app.post("/paypal-webhook", async (req, res) => {
   console.log("🗑️ Cancellazione prenotazione");
   const reservationId = reservation.reservationId || reservation.id || data.reservationId;
   
-   await axios.post(GOOGLE_SHEETS_WEBHOOK_URL, {
-  action: "delete",
-  reservationId: reservationId,
-  source: "DELETE"  // ← AGGIUNGI QUESTA RIGA
-});
- 
+  await axios.post(GOOGLE_SHEETS_WEBHOOK_URL, {
+    action: "delete",
+    reservationId: reservationId
+  });
+  
   console.log("✅ Riga cancellata da Sheets");
   return;
 }
