@@ -551,7 +551,84 @@ app.get("/health", (req, res) => {
     revokeBefore: REVOKE_BEFORE
   });
 });
+/* =========================
+   MONTI LIVE — SLOT 18:00
+========================= */
 
+const MONTI_RESPONSES = {
+  "18": {
+    aperitivo: {
+      title: "🍷 Aperitivo vicino",
+      text: `
+Se vuoi fare pochissima strada, vai in Piazza della Madonna dei Monti.
+Siediti ai tavolini, ordina un calice o uno spritz e guarda il quartiere che si accende piano piano.
+È a due minuti da Via Leonina.
+`
+    },
+    sedersi: {
+      title: "🪑 Sedersi e guardare",
+      text: `
+Prenditi una pausa vera.
+Siediti in piazza o lungo una via laterale, senza meta.
+A Monti alle 18 non serve fare nulla: basta esserci.
+`
+    },
+    rientro: {
+      title: "🏠 Rientro breve",
+      text: `
+Se sei stanco davvero, rientra.
+Doccia, un momento di silenzio, magari una musica leggera.
+Tra un’ora Roma sarà di nuovo pronta per te.
+`
+    }
+  }
+};
+
+app.get("/monti", (req, res) => {
+  const { slot, choice } = req.query;
+  const data = MONTI_RESPONSES?.[slot]?.[choice];
+
+  if (!data) {
+    return res.send(`
+      <html>
+        <body style="font-family:system-ui;padding:30px">
+          <h2>Momento non disponibile</h2>
+          <p>Questo contenuto non è attivo.</p>
+        </body>
+      </html>
+    `);
+  }
+
+  res.send(`
+    <!doctype html>
+    <html lang="it">
+    <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <title>Monti Live</title>
+      <style>
+        body{margin:0;font-family:system-ui;background:#f6f6f6;color:#222}
+        .wrap{max-width:680px;margin:0 auto;padding:24px}
+        .card{background:#fff;border-radius:14px;padding:24px;box-shadow:0 8px 24px rgba(0,0,0,.06)}
+        h1{margin-top:0;font-size:22px}
+        p{line-height:1.6;font-size:16px;white-space:pre-line}
+        .footer{margin-top:24px;font-size:13px;opacity:.6}
+      </style>
+    </head>
+    <body>
+      <div class="wrap">
+        <div class="card">
+          <h1>${data.title}</h1>
+          <p>${data.text}</p>
+        </div>
+        <div class="footer">
+          Monti Live · Via Leonina
+        </div>
+      </div>
+    </body>
+    </html>
+  `);
+});
 const MAILER_URL = process.env.MAILER_URL || "https://script.google.com/macros/s/XXXXXXX/exec";
 const MAIL_SHARED_SECRET = process.env.MAIL_SHARED_SECRET;
 
