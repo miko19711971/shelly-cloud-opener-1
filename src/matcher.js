@@ -206,7 +206,7 @@ export function matchIntent(text) {
       // Parola singola → segnale debole
       else {
         if (words.includes(kwWords[0])) {
-          score += 1;
+          score += 2;
         }
       }
     }
