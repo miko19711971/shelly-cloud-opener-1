@@ -551,11 +551,45 @@ app.get("/health", (req, res) => {
     revokeBefore: REVOKE_BEFORE
   });
 });
-/* =========================
-   MONTI LIVE — SLOT 18:00
-========================= */
+ // ========================================================================
+// MONTI LIVE — SLOT GIORNALIERI
+// ========================================================================
 
 const MONTI_RESPONSES = {
+
+  // =====================
+  // 11:00 — MATTINA SOFT
+  // =====================
+  "11": {
+    passeggiata: {
+      title: "☀️ Passeggiata leggera",
+      text: `
+È il momento perfetto per uscire senza fretta.
+Fai due passi tra Via Leonina e Via del Boschetto, guarda le botteghe che aprono e prenditi il quartiere con calma.
+Monti la mattina è autentica e silenziosa.
+`
+    },
+    caffe: {
+      title: "☕ Caffè e pausa",
+      text: `
+Siediti per un caffè fatto bene.
+Un tavolino, un cornetto se ti va, e nessun programma.
+Roma a quest’ora non corre.
+`
+    },
+    rientro: {
+      title: "🏠 Rientro breve",
+      text: `
+Se preferisci, rientra.
+Sistema le tue cose, una doccia veloce, poi esci quando ti senti pronto.
+Monti è lì, non scappa.
+`
+    }
+  },
+
+  // =====================
+  // 18:00 — APERITIVO
+  // =====================
   "18": {
     aperitivo: {
       title: "🍷 Aperitivo vicino",
@@ -581,54 +615,69 @@ Doccia, un momento di silenzio, magari una musica leggera.
 Tra un’ora Roma sarà di nuovo pronta per te.
 `
     }
+  },
+
+  // =====================
+  // 20:30 — CENA / SERA
+  // =====================
+  "2030": {
+    mangiare: {
+      title: "🍽️ Mangiare senza stress",
+      text: `
+È l’ora giusta per cena.
+A Monti puoi entrare senza fretta in posti informali, mangiare bene e restare quanto vuoi.
+Niente corse, niente dress code.
+`
+    },
+    passeggiata: {
+      title: "🌙 Passeggiata serale",
+      text: `
+Fai due passi verso i Fori Imperiali.
+La luce cambia, la città rallenta, Roma di sera è tutta qui.
+È una camminata semplice e bellissima.
+`
+    },
+    rientro: {
+      title: "🏠 Serata tranquilla",
+      text: `
+Se la giornata è stata lunga, rientra.
+Una cena leggera o delivery e riposo.
+Domani Roma ti aspetta di nuovo.
+`
+    }
+  },
+
+  // =====================
+  // 23:30 — CHIUSURA
+  // =====================
+  "2330": {
+    ultimo: {
+      title: "🍸 Ultimo bicchiere",
+      text: `
+Se ti va un’ultima uscita, Monti di notte è discreta e affascinante.
+Un drink tranquillo, poche parole, luci soffuse.
+Poi rientro senza fretta.
+`
+    },
+    silenzio: {
+      title: "🌌 Rientro e silenzio",
+      text: `
+È un buon momento per fermarsi.
+Le strade si svuotano, il quartiere riposa.
+Chiudi la giornata così com’è stata, senza aggiungere altro.
+`
+    },
+    dormire: {
+      title: "😴 Riposo",
+      text: `
+Domani si riparte.
+Chiudi tutto, riposa bene.
+Roma è ancora lì al risveglio.
+`
+    }
   }
+
 };
-
-app.get("/monti", (req, res) => {
-  const { slot, choice } = req.query;
-  const data = MONTI_RESPONSES?.[slot]?.[choice];
-
-  if (!data) {
-    return res.send(`
-      <html>
-        <body style="font-family:system-ui;padding:30px">
-          <h2>Momento non disponibile</h2>
-          <p>Questo contenuto non è attivo.</p>
-        </body>
-      </html>
-    `);
-  }
-
-  res.send(`
-    <!doctype html>
-    <html lang="it">
-    <head>
-      <meta charset="utf-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1">
-      <title>Monti Live</title>
-      <style>
-        body{margin:0;font-family:system-ui;background:#f6f6f6;color:#222}
-        .wrap{max-width:680px;margin:0 auto;padding:24px}
-        .card{background:#fff;border-radius:14px;padding:24px;box-shadow:0 8px 24px rgba(0,0,0,.06)}
-        h1{margin-top:0;font-size:22px}
-        p{line-height:1.6;font-size:16px;white-space:pre-line}
-        .footer{margin-top:24px;font-size:13px;opacity:.6}
-      </style>
-    </head>
-    <body>
-      <div class="wrap">
-        <div class="card">
-          <h1>${data.title}</h1>
-          <p>${data.text}</p>
-        </div>
-        <div class="footer">
-          Monti Live · Via Leonina
-        </div>
-      </div>
-    </body>
-    </html>
-  `);
-});
 const MAILER_URL = process.env.MAILER_URL || "https://script.google.com/macros/s/XXXXXXX/exec";
 const MAIL_SHARED_SECRET = process.env.MAIL_SHARED_SECRET;
 
