@@ -1049,10 +1049,11 @@ app.post("/paypal-webhook", async (req, res) => {
   console.log("🗑️ Cancellazione prenotazione");
   const reservationId = reservation.reservationId || reservation.id || data.reservationId;
   
-  await axios.post(GOOGLE_SHEETS_WEBHOOK_URL, {
-    action: "delete",
-    reservationId: reservationId
-  });
+   await axios.post(GOOGLE_SHEETS_WEBHOOK_URL, {
+  action: "delete",
+  reservationId: reservationId,
+  source: "DELETE"  // ← AGGIUNGI QUESTA RIGA
+});
  
   console.log("✅ Riga cancellata da Sheets");
   return;
