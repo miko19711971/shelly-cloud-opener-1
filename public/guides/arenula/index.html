@@ -743,15 +743,16 @@ function welcome(){
 }
 
 /* --- invio messaggio --- */
-function send(){
+ function send(){
   const text=(input.value||'').trim(); 
   if(!text) return;
   add('me',text); 
   input.value='';
-  const {text:bot, topic} = getAnswer(text);
-  const botNode = add('wd',bot); 
-  speak(bot);
-  attachFeedbackUI(botNode, topic, bot);
+  const answer = getAnswer(text);
+  alert("DEBUG send(): topic=" + answer.topic + ", text=" + (answer.text ? "OK" : "NO")); // DEBUG
+  const botNode = add('wd',answer.text); 
+  speak(answer.text);
+  attachFeedbackUI(botNode, answer.topic, answer.text);
 }
 
 /* --- eventi --- */
