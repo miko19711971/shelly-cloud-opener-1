@@ -835,6 +835,199 @@ const MONTI_RESPONSES = {
     }
   }
 };
+// ========================================================================
+// PORTICO LIVE — VIA DEL PORTICO D’OTTAVIA
+// TEMPLATE DEFINITIVO PER TUTTE LE LIVE
+// ========================================================================
+
+const PORTICO_RESPONSES = {
+  it: {
+    "11": {
+      passeggiata: {
+        title: "☀️ Passeggiata lenta",
+        text: "La mattina qui è speciale.\nFai due passi tra Via del Portico d’Ottavia e Piazza Costaguti.\nIl quartiere si sveglia piano, senza rumore."
+      },
+      dolce: {
+        title: "🥐 Qualcosa di dolce",
+        text: "Fermati da Pasticceria Boccione.\nPizza ebraica o torta ricotta e visciole.\nSi mangia in piedi, come una volta."
+      },
+      rientro: {
+        title: "🏠 Rientro tranquillo",
+        text: "Se preferisci, rientra.\nSistema le tue cose, una pausa breve.\nQui il tempo non corre."
+      }
+    },
+    "18": {
+      aperitivo: {
+        title: "🍷 Aperitivo nel Ghetto",
+        text: "È l’ora giusta per fermarsi.\nUn calice da Il Beppe e i Suoi Formaggi o uno spritz da Ghetto 05.\nTutto è a pochi passi."
+      },
+      piazza: {
+        title: "⛲ Sedersi in piazza",
+        text: "Vai verso Piazza Mattei.\nSiediti davanti alla Fontana delle Tartarughe.\nGuarda il quartiere vivere."
+      },
+      rientro: {
+        title: "🏠 Pausa breve",
+        text: "Se sei stanco, rientra.\nUna doccia, silenzio.\nTra poco la sera cambia ritmo."
+      }
+    },
+    "2030": {
+      cena: {
+        title: "🍽️ Cena senza fretta",
+        text: "È il momento di mangiare.\nBa’Ghetto o Renato al Ghetto.\nCucina vera, senza formalità."
+      },
+      passeggiata: {
+        title: "🌙 Passeggiata serale",
+        text: "Fai due passi verso il Teatro di Marcello.\nLe rovine illuminate cambiano tutto.\nRoma di sera è qui."
+      },
+      rientro: {
+        title: "🏠 Serata calma",
+        text: "Se la giornata è stata lunga, rientra.\nCena leggera o delivery.\nDomani è un altro giorno."
+      }
+    },
+    "2330": {
+      ultimo: {
+        title: "🍸 Ultimo bicchiere",
+        text: "Se ti va ancora qualcosa, un drink discreto.\nBartaruga, senza rumore.\nPoi rientro."
+      },
+      fiume: {
+        title: "🌉 Camminata breve",
+        text: "Attraversa verso l’Isola Tiberina.\nLe luci sul Tevere chiudono la giornata.\nBasta poco."
+      },
+      dormire: {
+        title: "😴 Riposo",
+        text: "Chiudi la giornata.\nRiposa bene.\nQuesto quartiere domani è ancora qui."
+      }
+    }
+  },
+
+  en: {
+    "11": {
+      passeggiata: {
+        title: "☀️ Slow walk",
+        text: "Morning here is special.\nWalk between Via del Portico d’Ottavia and Piazza Costaguti.\nThe neighborhood wakes up quietly."
+      },
+      dolce: {
+        title: "🥐 Something sweet",
+        text: "Stop at Pasticceria Boccione.\nJewish pizza or ricotta and sour cherry cake.\nSimple and traditional."
+      },
+      rientro: {
+        title: "🏠 Short rest",
+        text: "If you prefer, go back.\nUnpack and rest a bit.\nTime moves slowly here."
+      }
+    },
+    "18": {
+      aperitivo: {
+        title: "🍷 Aperitivo time",
+        text: "Perfect time to stop.\nWine at Il Beppe e i Suoi Formaggi or a spritz nearby.\nEverything is within walking distance."
+      },
+      piazza: {
+        title: "⛲ Sit in the square",
+        text: "Go to Piazza Mattei.\nSit by the Turtle Fountain.\nWatch the neighborhood live."
+      },
+      rientro: {
+        title: "🏠 Short break",
+        text: "If tired, go back.\nShower and quiet time.\nEvening comes naturally."
+      }
+    },
+    "2030": {
+      cena: {
+        title: "🍽️ Dinner",
+        text: "Dinner time.\nBa’Ghetto or Renato al Ghetto.\nHonest food, no rush."
+      },
+      passeggiata: {
+        title: "🌙 Evening walk",
+        text: "Walk toward the Theatre of Marcellus.\nLights change everything."
+      },
+      rientro: {
+        title: "🏠 Quiet night",
+        text: "If the day was long, stay in.\nTomorrow awaits."
+      }
+    },
+    "2330": {
+      ultimo: {
+        title: "🍸 Last drink",
+        text: "If you feel like it, one last quiet drink.\nThen head back."
+      },
+      fiume: {
+        title: "🌉 River walk",
+        text: "Cross to Tiber Island.\nCity lights on the river close the day."
+      },
+      dormire: {
+        title: "😴 Sleep",
+        text: "End the day.\nRest well."
+      }
+    }
+  },
+
+  fr: {
+    "11": {
+      passeggiata: { title: "☀️ Promenade lente", text: "Le matin ici est spécial.\nPromène-toi autour du Portique d’Ottavie.\nLe quartier s’éveille doucement." },
+      dolce: { title: "🥐 Pause sucrée", text: "Arrête-toi chez Boccione.\nPizza juive ou gâteau ricotta-griottes.\nSimple et authentique." },
+      rientro: { title: "🏠 Retour calme", text: "Si tu préfères, rentre.\nIci, le temps ralentit." }
+    },
+    "18": {
+      aperitivo: { title: "🍷 Apéritif", text: "Moment parfait pour s’arrêter.\nUn verre et le quartier autour." },
+      piazza: { title: "⛲ La place", text: "Assieds-toi Piazza Mattei.\nRegarde la vie passer." },
+      rientro: { title: "🏠 Pause", text: "Si tu es fatigué, rentre.\nLe soir arrive doucement." }
+    },
+    "2030": {
+      cena: { title: "🍽️ Dîner", text: "Cuisine juive romaine.\nSans stress, sans hâte." },
+      passeggiata: { title: "🌙 Promenade", text: "Vers le Théâtre de Marcellus.\nLa lumière change tout." },
+      rientro: { title: "🏠 Soirée calme", text: "Reste tranquille.\nDemain continue." }
+    },
+    "2330": {
+      ultimo: { title: "🍸 Dernier verre", text: "Un dernier verre si tu veux.\nPuis retour." },
+      fiume: { title: "🌉 Le fleuve", text: "Traverse vers l’Île Tibérine.\nLa ville se tait." },
+      dormire: { title: "😴 Dormir", text: "Bonne nuit.\nÀ demain." }
+    }
+  },
+
+  es: {
+    "11": {
+      passeggiata: { title: "☀️ Paseo lento", text: "La mañana aquí es especial.\nEl barrio despierta despacio." },
+      dolce: { title: "🥐 Algo dulce", text: "Boccione.\nPizza judía o tarta tradicional." },
+      rientro: { title: "🏠 Volver", text: "Si prefieres, regresa.\nAquí no hay prisa." }
+    },
+    "18": {
+      aperitivo: { title: "🍷 Aperitivo", text: "Hora perfecta para parar.\nUna copa y nada más." },
+      piazza: { title: "⛲ Plaza", text: "Siéntate en Piazza Mattei.\nObserva." },
+      rientro: { title: "🏠 Descanso", text: "Ducha y calma.\nLa tarde sigue." }
+    },
+    "2030": {
+      cena: { title: "🍽️ Cena", text: "Cocina tradicional.\nSin estrés." },
+      passeggiata: { title: "🌙 Paseo", text: "Hacia el Teatro de Marcelo." },
+      rientro: { title: "🏠 Noche tranquila", text: "Descansa.\nMañana continúa." }
+    },
+    "2330": {
+      ultimo: { title: "🍸 Última copa", text: "Si te apetece, una más." },
+      fiume: { title: "🌉 Río", text: "Isla Tiberina.\nTodo se calma." },
+      dormire: { title: "😴 Dormir", text: "Buenas noches." }
+    }
+  },
+
+  de: {
+    "11": {
+      passeggiata: { title: "☀️ Ruhiger Spaziergang", text: "Der Morgen hier ist besonders.\nAlles beginnt langsam." },
+      dolce: { title: "🥐 Etwas Süßes", text: "Boccione.\nTraditionell und einfach." },
+      rientro: { title: "🏠 Zurück", text: "Wenn du willst, geh zurück.\nKeine Eile." }
+    },
+    "18": {
+      aperitivo: { title: "🍷 Aperitif", text: "Zeit für eine Pause.\nEin Glas genügt." },
+      piazza: { title: "⛲ Platz", text: "Setz dich auf den Platz.\nBeobachte." },
+      rientro: { title: "🏠 Pause", text: "Ruhe.\nDer Abend kommt." }
+    },
+    "2030": {
+      cena: { title: "🍽️ Abendessen", text: "Ehrliche Küche.\nGanz entspannt." },
+      passeggiata: { title: "🌙 Spaziergang", text: "Zum Marcellustheater." },
+      rientro: { title: "🏠 Ruhiger Abend", text: "Erholung.\nMorgen geht es weiter." }
+    },
+    "2330": {
+      ultimo: { title: "🍸 Letztes Glas", text: "Wenn du willst, noch eins." },
+      fiume: { title: "🌉 Fluss", text: "Zur Tiberinsel.\nStille." },
+      dormire: { title: "😴 Schlafen", text: "Gute Nacht." }
+    }
+  }
+};
  app.get("/monti", (req, res) => {
   const { slot, choice } = req.query;
   const langHeader = req.headers["accept-language"] || "en";
