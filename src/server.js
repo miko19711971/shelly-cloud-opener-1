@@ -842,7 +842,7 @@ const MONTI_RESPONSES = {
   const supported = ["it","en","fr","es","de"];
   const l = supported.includes(lang) ? lang : "en";
 
-  const data = MONTI_RESPONSES?.[slot]?.[choice]?.[l];
+  const data = MONTI_RESPONSES?.[l]?.[slot]?.[choice];
 
   if (!data) return res.status(404).send("Not available");
 
