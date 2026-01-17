@@ -1415,6 +1415,69 @@ const VIALE_TRASTEVERE_RESPONSES = {
   }
 };
 // ========================================================================
+// VIALE TRASTEVERE LIVE — API
+// ========================================================================
+
+app.get("/viale-trastevere", (req, res) => {
+  const { slot, choice } = req.query;
+
+  const langHeader = req.headers["accept-language"] || "en";
+  const lang = langHeader.slice(0, 2).toLowerCase();
+  const supported = ["it", "en", "fr", "es", "de"];
+  const l = supported.includes(lang) ? lang : "en";
+
+  const data =
+    VIALE_TRASTEVERE_RESPONSES?.[l]?.[slot]?.[choice];
+
+  if (!data) {
+    return res.status(404).send("Not available");
+  }
+
+  res.type("html").send(`
+<!doctype html>
+<html lang="${l}">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Viale Trastevere Live</title>
+<style>
+body {
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+  background: #f6f6f6;
+  margin: 0;
+}
+.wrap {
+  max-width: 680px;
+  margin: auto;
+  padding: 24px;
+}
+.card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 28px;
+}
+h1 {
+  font-size: 22px;
+  margin-top: 0;
+}
+p {
+  line-height: 1.6;
+  white-space: pre-line;
+}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <h1>${data.title}</h1>
+      <p>${data.text}</p>
+    </div>
+  </div>
+</body>
+</html>
+`);
+});
+// ========================================================================
 // VIA DELLA SCALA LIVE — API
 // ========================================================================
 
