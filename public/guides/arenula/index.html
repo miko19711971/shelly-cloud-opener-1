@@ -705,8 +705,7 @@ function getAnswer(text){
     method: "GET"
   }).catch(()=>{});
 }
-  function sendFeedback(vote) {
-  alert("Vote: " + vote + "\nTopic: " + window.currentTopic + "\nAnswer: " + (window.lastAnswer ? "SI" : "NO"));
+   function sendFeedback(vote) {
   postFeedback(vote, window.currentTopic, window.lastAnswer);
 }
 function attachFeedbackUI(botNode, topic, answerText) {
@@ -752,12 +751,10 @@ function welcome(){
   add('me',text); 
   input.value='';
   const answer = getAnswer(text);
-  alert("DEBUG send(): topic=" + answer.topic + ", text=" + (answer.text ? "OK" : "NO")); // DEBUG
   const botNode = add('wd',answer.text); 
   speak(answer.text);
   attachFeedbackUI(botNode, answer.topic, answer.text);
 }
-
 /* --- eventi --- */
 sendBtn.addEventListener('click',send);
 input.addEventListener('keydown',e=>{ if(e.key==='Enter') send(); });
