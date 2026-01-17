@@ -690,7 +690,7 @@ function getAnswer(text){
 
 /* --- invio feedback al Google Sheet --- */
 function postFeedback(vote, topic, answerText){
-  fetch("/feedback", {
+  fetch(GOOGLE_SCRIPT_URL, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
