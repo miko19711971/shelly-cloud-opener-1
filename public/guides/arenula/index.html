@@ -702,8 +702,8 @@ function postFeedback(vote, topic, answerText){
     })
   }).catch(()=>{});
 }
- function sendFeedback(vote) {
-  alert("Cliccato: " + vote); // TEST
+  function sendFeedback(vote) {
+  alert("Vote: " + vote + "\nTopic: " + window.currentTopic + "\nAnswer: " + (window.lastAnswer ? "SI" : "NO"));
   postFeedback(vote, window.currentTopic, window.lastAnswer);
 }
 function attachFeedbackUI(botNode, topic, answerText) {
