@@ -534,132 +534,306 @@ app.post("/checkin/:apt/open/door", requireCheckinToken, async (req, res) => {
 });
 
 app.use("/checkin", express.static(path.join(PUBLIC_DIR, "checkin"), { fallthrough: false }));
-// ========================================================================
-// MONTI LIVE — SLOT GIORNALIERI
+ // ========================================================================
+// MONTI LIVE — SLOT GIORNALIERI MULTILINGUA
+// Lingue: it, en, fr, es, de
 // ========================================================================
 
 const MONTI_RESPONSES = {
-
-  // =====================
-  // 11:00 — MATTINA SOFT
-  // =====================
-  "11": {
-    passeggiata: {
-      title: "☀️ Passeggiata leggera",
-      text: `
-È il momento perfetto per uscire senza fretta.
-Fai due passi tra Via Leonina e Via del Boschetto, guarda le botteghe che aprono e prenditi il quartiere con calma.
-Monti la mattina è autentica e silenziosa.
-`
+  it: {
+    "11": {
+      passeggiata: {
+        title: "☀️ Passeggiata leggera",
+        text: "È il momento perfetto per uscire senza fretta.\nFai due passi tra Via Leonina e Via del Boschetto, guarda le botteghe che aprono e prenditi il quartiere con calma.\nMonti la mattina è autentica e silenziosa."
+      },
+      caffe: {
+        title: "☕ Caffè e pausa",
+        text: "Siediti per un caffè fatto bene.\nUn tavolino, un cornetto se ti va, e nessun programma.\nRoma a quest’ora non corre."
+      },
+      rientro: {
+        title: "🏠 Rientro breve",
+        text: "Se preferisci, rientra.\nSistema le tue cose, una doccia veloce, poi esci quando ti senti pronto.\nMonti è lì, non scappa."
+      }
     },
-    caffe: {
-      title: "☕ Caffè e pausa",
-      text: `
-Siediti per un caffè fatto bene.
-Un tavolino, un cornetto se ti va, e nessun programma.
-Roma a quest’ora non corre.
-`
+    "18": {
+      aperitivo: {
+        title: "🍷 Aperitivo vicino",
+        text: "Se vuoi fare pochissima strada, vai in Piazza della Madonna dei Monti.\nSiediti ai tavolini, ordina un calice o uno spritz e guarda il quartiere che si accende piano piano."
+      },
+      sedersi: {
+        title: "🪑 Sedersi e guardare",
+        text: "Prenditi una pausa vera.\nSiediti in piazza o lungo una via laterale, senza meta.\nA Monti alle 18 non serve fare nulla."
+      },
+      rientro: {
+        title: "🏠 Rientro breve",
+        text: "Se sei stanco davvero, rientra.\nDoccia, silenzio, magari un po’ di musica.\nTra poco Roma riparte."
+      }
     },
-    rientro: {
-      title: "🏠 Rientro breve",
-      text: `
-Se preferisci, rientra.
-Sistema le tue cose, una doccia veloce, poi esci quando ti senti pronto.
-Monti è lì, non scappa.
-`
+    "2030": {
+      mangiare: {
+        title: "🍽️ Cena senza stress",
+        text: "È l’ora giusta per cena.\nA Monti puoi mangiare bene senza formalità.\nEntra dove ti ispira, resta quanto vuoi."
+      },
+      passeggiata: {
+        title: "🌙 Passeggiata serale",
+        text: "Fai due passi verso i Fori Imperiali.\nLa luce cambia, la città rallenta.\nRoma di sera è tutta qui."
+      },
+      rientro: {
+        title: "🏠 Serata tranquilla",
+        text: "Se la giornata è stata lunga, rientra.\nCena leggera o delivery e riposo.\nDomani si ricomincia."
+      }
+    },
+    "2330": {
+      ultimo: {
+        title: "🍸 Ultimo bicchiere",
+        text: "Se ti va un’ultima uscita, Monti di notte è discreta.\nUn drink tranquillo, poche parole.\nPoi rientro senza fretta."
+      },
+      silenzio: {
+        title: "🌌 Silenzio",
+        text: "Le strade si svuotano.\nIl quartiere riposa.\nÈ un buon momento per fermarsi."
+      },
+      dormire: {
+        title: "😴 Riposo",
+        text: "Chiudi la giornata.\nRiposa bene.\nRoma domani è ancora qui."
+      }
     }
   },
 
-  // =====================
-  // 18:00 — APERITIVO
-  // =====================
-  "18": {
-    aperitivo: {
-      title: "🍷 Aperitivo vicino",
-      text: `
-Se vuoi fare pochissima strada, vai in Piazza della Madonna dei Monti.
-Siediti ai tavolini, ordina un calice o uno spritz e guarda il quartiere che si accende piano piano.
-È a due minuti da Via Leonina.
-`
+  en: {
+    "11": {
+      passeggiata: {
+        title: "☀️ Easy walk",
+        text: "Perfect time to step out slowly.\nWalk around Via Leonina and Via del Boschetto, watch the shops open and enjoy the neighborhood.\nMorning Monti is quiet and authentic."
+      },
+      caffe: {
+        title: "☕ Coffee break",
+        text: "Sit down for a good coffee.\nNo plans, no rush.\nRome moves slowly at this hour."
+      },
+      rientro: {
+        title: "🏠 Short rest",
+        text: "If you prefer, go back inside.\nQuick shower, unpack a bit.\nMonti will wait for you."
+      }
     },
-    sedersi: {
-      title: "🪑 Sedersi e guardare",
-      text: `
-Prenditi una pausa vera.
-Siediti in piazza o lungo una via laterale, senza meta.
-A Monti alle 18 non serve fare nulla: basta esserci.
-`
+    "18": {
+      aperitivo: {
+        title: "🍷 Aperitivo nearby",
+        text: "Go to Piazza della Madonna dei Monti.\nSit outside, order a drink and watch the area come alive."
+      },
+      sedersi: {
+        title: "🪑 Sit and watch",
+        text: "Take a real break.\nSit anywhere, no destination.\nAt 6 pm Monti doesn’t ask for plans."
+      },
+      rientro: {
+        title: "🏠 Short rest",
+        text: "If you’re tired, go back.\nShower, quiet time.\nThe evening will come naturally."
+      }
     },
-    rientro: {
-      title: "🏠 Rientro breve",
-      text: `
-Se sei stanco davvero, rientra.
-Doccia, un momento di silenzio, magari una musica leggera.
-Tra un’ora Roma sarà di nuovo pronta per te.
-`
+    "2030": {
+      mangiare: {
+        title: "🍽️ Dinner",
+        text: "It’s dinner time.\nMonti offers relaxed places with good food.\nNo rush, no dress code."
+      },
+      passeggiata: {
+        title: "🌙 Evening walk",
+        text: "Walk toward the Imperial Fora.\nLights change, the city slows down.\nPure Rome."
+      },
+      rientro: {
+        title: "🏠 Quiet night",
+        text: "If the day was long, stay in.\nLight dinner and rest.\nTomorrow awaits."
+      }
+    },
+    "2330": {
+      ultimo: {
+        title: "🍸 Last drink",
+        text: "If you want, Monti at night is calm and charming.\nOne last drink, then home."
+      },
+      silenzio: {
+        title: "🌌 Silence",
+        text: "Streets empty.\nThe neighborhood sleeps.\nTime to stop."
+      },
+      dormire: {
+        title: "😴 Sleep",
+        text: "Close the day.\nRest well.\nRome is still here tomorrow."
+      }
     }
   },
 
-  // =====================
-  // 20:30 — CENA / SERA
-  // =====================
-  "2030": {
-    mangiare: {
-      title: "🍽️ Mangiare senza stress",
-      text: `
-È l’ora giusta per cena.
-A Monti puoi entrare senza fretta in posti informali, mangiare bene e restare quanto vuoi.
-Niente corse, niente dress code.
-`
+  fr: {
+    "11": {
+      passeggiata: {
+        title: "☀️ Promenade tranquille",
+        text: "Moment parfait pour sortir sans se presser.\nPromène-toi autour de Via Leonina.\nMonti le matin est calme et vrai."
+      },
+      caffe: {
+        title: "☕ Pause café",
+        text: "Installe-toi pour un bon café.\nSans programme.\nRome ralentit à cette heure."
+      },
+      rientro: {
+        title: "🏠 Retour",
+        text: "Si tu préfères, rentre.\nDouche rapide, repos.\nMonti t’attend."
+      }
     },
-    passeggiata: {
-      title: "🌙 Passeggiata serale",
-      text: `
-Fai due passi verso i Fori Imperiali.
-La luce cambia, la città rallenta, Roma di sera è tutta qui.
-È una camminata semplice e bellissima.
-`
+    "18": {
+      aperitivo: {
+        title: "🍷 Apéritif",
+        text: "Va à la Piazza della Madonna dei Monti.\nUn verre et regarde la vie passer."
+      },
+      sedersi: {
+        title: "🪑 S’asseoir",
+        text: "Prends une vraie pause.\nSans but.\nMonti suffit."
+      },
+      rientro: {
+        title: "🏠 Retour",
+        text: "Si tu es fatigué, rentre.\nCalme et silence."
+      }
     },
-    rientro: {
-      title: "🏠 Serata tranquilla",
-      text: `
-Se la giornata è stata lunga, rientra.
-Una cena leggera o delivery e riposo.
-Domani Roma ti aspetta di nuovo.
-`
+    "2030": {
+      mangiare: {
+        title: "🍽️ Dîner",
+        text: "C’est l’heure du dîner.\nRestaurants simples et bons.\nSans stress."
+      },
+      passeggiata: {
+        title: "🌙 Promenade",
+        text: "Marche vers les Forums.\nRome ralentit."
+      },
+      rientro: {
+        title: "🏠 Soirée calme",
+        text: "Reste à la maison.\nRepos mérité."
+      }
+    },
+    "2330": {
+      ultimo: {
+        title: "🍸 Dernier verre",
+        text: "Un dernier verre si tu veux.\nPuis retour tranquille."
+      },
+      silenzio: {
+        title: "🌌 Silence",
+        text: "Le quartier dort.\nMoment de calme."
+      },
+      dormire: {
+        title: "😴 Dormir",
+        text: "Bonne nuit.\nRome demain."
+      }
     }
   },
 
-  // =====================
-  // 23:30 — CHIUSURA
-  // =====================
-  "2330": {
-    ultimo: {
-      title: "🍸 Ultimo bicchiere",
-      text: `
-Se ti va un’ultima uscita, Monti di notte è discreta e affascinante.
-Un drink tranquillo, poche parole, luci soffuse.
-Poi rientro senza fretta.
-`
+  es: {
+    "11": {
+      passeggiata: {
+        title: "☀️ Paseo tranquilo",
+        text: "Momento perfecto para salir sin prisa.\nMonti por la mañana es auténtico."
+      },
+      caffe: {
+        title: "☕ Café",
+        text: "Siéntate y disfruta.\nRoma va despacio."
+      },
+      rientro: {
+        title: "🏠 Volver",
+        text: "Si prefieres, regresa.\nDescansa un poco."
+      }
     },
-    silenzio: {
-      title: "🌌 Rientro e silenzio",
-      text: `
-È un buon momento per fermarsi.
-Le strade si svuotano, il quartiere riposa.
-Chiudi la giornata così com’è stata, senza aggiungere altro.
-`
+    "18": {
+      aperitivo: {
+        title: "🍷 Aperitivo",
+        text: "Plaza Madonna dei Monti.\nUna copa y nada más."
+      },
+      sedersi: {
+        title: "🪑 Sentarse",
+        text: "Pausa real.\nSin destino."
+      },
+      rientro: {
+        title: "🏠 Volver",
+        text: "Ducha, calma."
+      }
     },
-    dormire: {
-      title: "😴 Riposo",
-      text: `
-Domani si riparte.
-Chiudi tutto, riposa bene.
-Roma è ancora lì al risveglio.
-`
+    "2030": {
+      mangiare: {
+        title: "🍽️ Cena",
+        text: "Hora de cenar.\nSin estrés."
+      },
+      passeggiata: {
+        title: "🌙 Paseo",
+        text: "Camina hacia los Foros."
+      },
+      rientro: {
+        title: "🏠 Noche tranquila",
+        text: "Descanso."
+      }
+    },
+    "2330": {
+      ultimo: {
+        title: "🍸 Última copa",
+        text: "Una última si te apetece."
+      },
+      silenzio: {
+        title: "🌌 Silencio",
+        text: "Todo se calma."
+      },
+      dormire: {
+        title: "😴 Dormir",
+        text: "Buen descanso."
+      }
+    }
+  },
+
+  de: {
+    "11": {
+      passeggiata: {
+        title: "☀️ Ruhiger Spaziergang",
+        text: "Perfekte Zeit ohne Eile.\nMonti ist morgens still."
+      },
+      caffe: {
+        title: "☕ Kaffee",
+        text: "Setz dich.\nRom ist langsam."
+      },
+      rientro: {
+        title: "🏠 Zurück",
+        text: "Wenn du willst, geh zurück.\nKurze Pause."
+      }
+    },
+    "18": {
+      aperitivo: {
+        title: "🍷 Aperitif",
+        text: "Piazza Madonna dei Monti.\nEin Glas genügt."
+      },
+      sedersi: {
+        title: "🪑 Sitzen",
+        text: "Einfach da sein."
+      },
+      rientro: {
+        title: "🏠 Zurück",
+        text: "Ruhe und Pause."
+      }
+    },
+    "2030": {
+      mangiare: {
+        title: "🍽️ Abendessen",
+        text: "Zeit zum Essen.\nGanz entspannt."
+      },
+      passeggiata: {
+        title: "🌙 Abendspaziergang",
+        text: "Zu den Foren gehen."
+      },
+      rientro: {
+        title: "🏠 Ruhiger Abend",
+        text: "Erholung."
+      }
+    },
+    "2330": {
+      ultimo: {
+        title: "🍸 Letztes Glas",
+        text: "Wenn du willst, noch eins."
+      },
+      silenzio: {
+        title: "🌌 Stille",
+        text: "Alles schläft."
+      },
+      dormire: {
+        title: "😴 Schlafen",
+        text: "Gute Nacht."
+      }
     }
   }
-
 };
 app.get("/monti", (req, res) => {
   const { slot, choice } = req.query;
