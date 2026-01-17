@@ -1222,6 +1222,199 @@ const SCALA_RESPONSES = {
   }
 };
 // ========================================================================
+// VIALE TRASTEVERE LIVE — VIALE TRASTEVERE 108
+// TEMPLATE DEFINITIVO
+// ========================================================================
+
+const VIALE_TRASTEVERE_RESPONSES = {
+  it: {
+    "11": {
+      passeggiata: {
+        title: "☀️ Passeggiata mattutina",
+        text: "La mattina qui è autentica.\nCammina verso Porta Portese o lungo il viale.\nRoma si muove lentamente, senza turisti."
+      },
+      mercato: {
+        title: "🛍️ Mercato e botteghe",
+        text: "Se è domenica, Porta Portese è a due passi.\nAltrimenti esplora le botteghe storiche della zona.\nÈ la Roma vera."
+      },
+      rientro: {
+        title: "🏠 Rientro tranquillo",
+        text: "Se preferisci, rientra.\nSistema le tue cose, una pausa breve.\nIl quartiere ti aspetta."
+      }
+    },
+    "18": {
+      aperitivo: {
+        title: "🍷 Aperitivo locale",
+        text: "È l’ora giusta per fermarsi.\nUn drink tra San Francesco a Ripa e dintorni.\nAtmosfera rilassata."
+      },
+      sedersi: {
+        title: "🪑 Sedersi e osservare",
+        text: "Siediti lungo il viale.\nGente che passa, tram che scorrono.\nTrastevere cambia ritmo."
+      },
+      rientro: {
+        title: "🏠 Pausa breve",
+        text: "Se sei stanco, rientra.\nDoccia e silenzio.\nLa sera arriva piano."
+      }
+    },
+    "2030": {
+      cena: {
+        title: "🍽️ Cena senza stress",
+        text: "È il momento di mangiare.\nCucina romana e piatti laziali.\nSenza formalità."
+      },
+      passeggiata: {
+        title: "🌙 Passeggiata serale",
+        text: "Cammina verso Piazza Mastai o il Tevere.\nLuci morbide, meno folla.\nRoma di sera è qui."
+      },
+      rientro: {
+        title: "🏠 Serata calma",
+        text: "Se la giornata è stata lunga, rientra.\nCena leggera o delivery.\nDomani continua."
+      }
+    },
+    "2330": {
+      ultimo: {
+        title: "🍸 Ultimo bicchiere",
+        text: "Se ti va ancora qualcosa, un ultimo drink.\nAtmosfera tranquilla.\nPoi rientro."
+      },
+      silenzio: {
+        title: "🌌 Silenzio",
+        text: "Il viale rallenta.\nRestano luci e passi lontani.\nÈ il momento di fermarsi."
+      },
+      dormire: {
+        title: "😴 Riposo",
+        text: "Chiudi la giornata.\nRiposa bene.\nRoma domani è ancora qui."
+      }
+    }
+  },
+
+  en: {
+    "11": {
+      passeggiata: {
+        title: "☀️ Morning walk",
+        text: "Morning here feels real.\nWalk toward Porta Portese or along the avenue.\nRome moves slowly."
+      },
+      mercato: {
+        title: "🛍️ Market & shops",
+        text: "If it’s Sunday, Porta Portese is nearby.\nOtherwise explore local shops.\nThis is real Rome."
+      },
+      rientro: {
+        title: "🏠 Short rest",
+        text: "If you prefer, go back.\nUnpack and rest a bit.\nThe area will wait."
+      }
+    },
+    "18": {
+      aperitivo: {
+        title: "🍷 Aperitivo time",
+        text: "Perfect moment to stop.\nA relaxed drink nearby.\nEasy atmosphere."
+      },
+      sedersi: {
+        title: "🪑 Sit and watch",
+        text: "Sit along the avenue.\nPeople, trams, city life.\nTrastevere shifts."
+      },
+      rientro: {
+        title: "🏠 Short break",
+        text: "If tired, go back.\nShower and quiet.\nEvening comes gently."
+      }
+    },
+    "2030": {
+      cena: {
+        title: "🍽️ Dinner",
+        text: "Dinner time.\nRoman food, relaxed places.\nNo rush."
+      },
+      passeggiata: {
+        title: "🌙 Evening walk",
+        text: "Walk toward the river.\nSoft lights, fewer crowds."
+      },
+      rientro: {
+        title: "🏠 Quiet night",
+        text: "If the day was long, stay in.\nTomorrow awaits."
+      }
+    },
+    "2330": {
+      ultimo: {
+        title: "🍸 Last drink",
+        text: "If you feel like it, one last drink.\nThen head back."
+      },
+      silenzio: {
+        title: "🌌 Silence",
+        text: "The avenue slows down.\nTime to stop."
+      },
+      dormire: {
+        title: "😴 Sleep",
+        text: "End the day.\nRest well."
+      }
+    }
+  },
+
+  fr: {
+    "11": {
+      passeggiata: { title: "☀️ Promenade", text: "Le matin ici est authentique.\nRome avance doucement." },
+      mercato: { title: "🛍️ Marché", text: "Porta Portese si tout près.\nSinon, boutiques locales." },
+      rientro: { title: "🏠 Retour", text: "Rentre si tu veux.\nLe quartier attend." }
+    },
+    "18": {
+      aperitivo: { title: "🍷 Apéritif", text: "Moment idéal pour s’arrêter.\nAmbiance détendue." },
+      sedersi: { title: "🪑 Observer", text: "Assieds-toi.\nLa ville passe." },
+      rientro: { title: "🏠 Pause", text: "Un peu de repos avant la soirée." }
+    },
+    "2030": {
+      cena: { title: "🍽️ Dîner", text: "Cuisine romaine simple.\nSans hâte." },
+      passeggiata: { title: "🌙 Promenade", text: "Vers le Tibre.\nLumières du soir." },
+      rientro: { title: "🏠 Soirée calme", text: "Repos.\nDemain continue." }
+    },
+    "2330": {
+      ultimo: { title: "🍸 Dernier verre", text: "Un dernier verre si tu veux." },
+      silenzio: { title: "🌌 Silence", text: "Tout ralentit." },
+      dormire: { title: "😴 Dormir", text: "Bonne nuit." }
+    }
+  },
+
+  es: {
+    "11": {
+      passeggiata: { title: "☀️ Paseo", text: "La mañana aquí es real.\nRoma va despacio." },
+      mercato: { title: "🛍️ Mercado", text: "Porta Portese cerca.\nTiendas locales." },
+      rientro: { title: "🏠 Volver", text: "Descanso breve.\nEl barrio espera." }
+    },
+    "18": {
+      aperitivo: { title: "🍷 Aperitivo", text: "Momento perfecto para parar." },
+      sedersi: { title: "🪑 Sentarse", text: "Observa la ciudad." },
+      rientro: { title: "🏠 Descanso", text: "Pausa antes de la noche." }
+    },
+    "2030": {
+      cena: { title: "🍽️ Cena", text: "Cocina romana sencilla." },
+      passeggiata: { title: "🌙 Paseo", text: "Hacia el río." },
+      rientro: { title: "🏠 Noche tranquila", text: "Descansa.\nMañana sigue." }
+    },
+    "2330": {
+      ultimo: { title: "🍸 Última copa", text: "Si te apetece, una más." },
+      silenzio: { title: "🌌 Silencio", text: "Todo se calma." },
+      dormire: { title: "😴 Dormir", text: "Buenas noches." }
+    }
+  },
+
+  de: {
+    "11": {
+      passeggiata: { title: "☀️ Spaziergang", text: "Der Morgen hier ist echt.\nRom bewegt sich langsam." },
+      mercato: { title: "🛍️ Markt", text: "Porta Portese in der Nähe.\nLokale Geschäfte." },
+      rientro: { title: "🏠 Zurück", text: "Kurze Pause.\nDas Viertel wartet." }
+    },
+    "18": {
+      aperitivo: { title: "🍷 Aperitif", text: "Zeit für eine Pause." },
+      sedersi: { title: "🪑 Beobachten", text: "Stadtleben beobachten." },
+      rientro: { title: "🏠 Pause", text: "Ruhe vor dem Abend." }
+    },
+    "2030": {
+      cena: { title: "🍽️ Abendessen", text: "Einfache römische Küche." },
+      passeggiata: { title: "🌙 Spaziergang", text: "Richtung Fluss." },
+      rientro: { title: "🏠 Ruhiger Abend", text: "Erholung.\nMorgen weiter." }
+    },
+    "2330": {
+      ultimo: { title: "🍸 Letztes Glas", text: "Wenn du willst, noch eins." },
+      silenzio: { title: "🌌 Stille", text: "Alles wird ruhig." },
+      dormire: { title: "😴 Schlafen", text: "Gute Nacht." }
+    }
+  }
+};
+// ========================================================================
 // VIA DELLA SCALA LIVE — API
 // ========================================================================
 
