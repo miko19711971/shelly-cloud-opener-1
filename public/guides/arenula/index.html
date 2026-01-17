@@ -702,7 +702,8 @@ function postFeedback(vote, topic, answerText){
     })
   }).catch(()=>{});
 }
-function sendFeedback(vote) {
+ function sendFeedback(vote) {
+  alert("Cliccato: " + vote); // TEST
   postFeedback(vote, window.currentTopic, window.lastAnswer);
 }
 function attachFeedbackUI(botNode, topic, answerText) {
