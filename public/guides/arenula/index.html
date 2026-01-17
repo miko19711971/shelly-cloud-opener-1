@@ -689,17 +689,17 @@ function getAnswer(text){
 }
 
 /* --- invio feedback al Google Sheet --- */
-function postFeedback(vote, topic, answerText){
-  fetch(GOOGLE_SCRIPT_URL, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      apartment: APARTMENT_ID.toLowerCase(),
-      language: lang || "en",
-      topic: topic,
-      answer: answerText || "",
-      vote: vote
-    })
+ function postFeedback(vote, topic, answerText){
+  const params = new URLSearchParams({
+    apartment: APARTMENT_ID.toLowerCase(),
+    language: lang || "en",
+    topic: topic || "",
+    answer: answerText || "",
+    vote: vote
+  });
+  
+  fetch(GOOGLE_SCRIPT_URL + "?" + params.toString(), {
+    method: "GET"
   }).catch(()=>{});
 }
   function sendFeedback(vote) {
