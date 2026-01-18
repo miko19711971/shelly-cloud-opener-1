@@ -62,6 +62,33 @@ async function isRainingToday() {
     return false; // fallback sicuro
   }
 }
+function decideSlots(arrivalTime) {
+  // fallback sicuro
+  if (!arrivalTime) {
+    return ["18", "2030", "2330"];
+  }
+
+  const [h, m] = arrivalTime.split(":").map(Number);
+  const minutes = h * 60 + (m || 0);
+
+  // arrivo mattina
+  if (minutes <= 12 * 60) {
+    return ["11", "18", "2030", "2330"];
+  }
+
+  // arrivo pomeriggio
+  if (minutes <= 17 * 60) {
+    return ["18", "2030", "2330"];
+  }
+
+  // arrivo sera
+  if (minutes <= 20 * 60) {
+    return ["2030", "2330"];
+  }
+
+  // arrivo tardi → solo chiusura
+  return ["2330"];
+}
 function safeEqual(a, b) {
   const aa = Buffer.from(String(a || ""));
   const bb = Buffer.from(String(b || ""));
