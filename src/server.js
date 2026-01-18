@@ -58,6 +58,43 @@ function slotToDate(slot) {
 
   return target;
 }
+// ========================================================================
+// SLOT SCHEDULER — PRODUZIONE (UNICO)
+// ========================================================================
+
+const SLOT_JOBS = new Map();
+
+function scheduleSlotMessages({
+  reservationId,
+  conversationId,
+  apartment,
+  slots,
+  sendFn
+}) {
+  if (!reservationId || !conversationId || !Array.isArray(slots)) return;
+
+  slots.forEach(slot => {
+    const when = slotToDate(slot);
+    const delay = when.getTime() - Date.now();
+    if (delay <= 0) return;
+
+    const key = `${reservationId}-${slot}`;
+    if (SLOT_JOBS.has(key)) return;
+
+    const timer = setTimeout(async () => {
+      try {
+        await sendFn({ conversationId, apartment, slot });
+        console.log("📨 Slot inviato:", apartment, slot);
+      } catch (e) {
+        console.error("❌ Errore slot", slot, e.message);
+      }
+      SLOT_JOBS.delete(key);
+    }, delay);
+
+    SLOT_JOBS.set(key, timer);
+    console.log("⏰ Slot schedulato:", apartment, slot, when.toISOString());
+  });
+}
  // ========================================================================
 // METEO — RAIN DETECTION (ROMA)
 // ========================================================================
