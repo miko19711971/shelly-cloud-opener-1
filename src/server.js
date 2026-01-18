@@ -2337,82 +2337,55 @@ app.post("/paypal-webhook", async (req, res) => {
 });
 
  // ========================================================================
-// HOSTAWAY BOOKING WEBHOOK (prenotazioni, non solo chat)
+// HOSTAWAY BOOKING WEBHOOK — CLEAN & WORKING
 // ========================================================================
-// 🔧 HOSTAWAY BOOKING WEBHOOK - VERSIONE CORRETTA
 app.post("/hostaway-booking-webhook", async (req, res) => {
   console.log("🏠 HOSTAWAY BOOKING:", JSON.stringify(req.body, null, 2));
-  
+
   // rispondi subito a Hostaway
   res.status(200).json({ received: true });
-  
+
   try {
-    const data = req.body;
+    const data = req.body || {};
     const reservation = data.reservation || data || {};
-    
-    // 🗑️ INTERCETTA CANCELLAZIONI - VERSIONE CORRETTA
+
+    // --------------------------------------------------
+    // 1️⃣ FILTRA CANCELLAZIONI — STOP TOTALE
+    // --------------------------------------------------
     if (
-      data.event === "reservation_cancelled" || 
+      data.event === "reservation_cancelled" ||
       data.event === "reservation_canceled" ||
       reservation.status === "cancelled" ||
       reservation.status === "canceled"
     ) {
-      console.log("🗑️ CANCELLAZIONE RILEVATA");
-      
- // 🗑️ INTERCETTA CANCELLAZIONI - NON INVIARE NULLA A SHEETS
-if (
-  data.event === "reservation_cancelled" || 
-  data.event === "reservation_canceled" ||
-  reservation.status === "cancelled" ||
-  reservation.status === "canceled"
-) {
-  console.log("🗑️ CANCELLAZIONE RILEVATA");
-  
-  const reservationId = 
-    reservation.reservationId || 
-    reservation.id || 
-    data.reservationId || 
-    data.id;
-  
-  console.log("📍 Cancellazione reservationId:", reservationId);
-  console.log("⏹️ NON invio nulla a Sheets - cancellazione ignorata");
-  
-  return; // STOP - non scrivere nulla
-}
-      
-       const payload = {
-  action: "delete",
-  reservationId: String(reservationId)
-};
-
-console.log("📤 PAYLOAD INVIATO A SHEETS:", JSON.stringify(payload));
-
-try {
-  await axios.post(GOOGLE_SHEETS_WEBHOOK_URL, payload, {
-    timeout: 10000,
-    headers: { "Content-Type": "application/json" }
-  });
-  
-  console.log("✅ Richiesta cancellazione inviata a Sheets");
-      } catch (err) {
-        console.error("❌ Errore invio cancellazione:", err.message);
-      }
-      
+      console.log("🗑️ CANCELLAZIONE — ignorata");
       return;
     }
-    
-    // 🔎 risoluzione listingId definitiva
-    let resolvedListingId = reservation.listingId || data.listingId;
-    
-    // AGGIUNGI QUESTA ESTRAZIONE DAL reservationId
-    if (!resolvedListingId && reservation.reservationId) {
-      const match = String(reservation.reservationId).match(/^\d+-(\d+)-/);
-      if (match) {
-        resolvedListingId = match[1];
-        console.log("✅ listingId estratto da reservationId:", resolvedListingId);
-      }
+
+    // --------------------------------------------------
+    // 2️⃣ FILTRA EVENTI NON DI CREAZIONE
+    // --------------------------------------------------
+    const EVENTI_VALIDI = [
+      "reservation_created",
+      "reservation_new",
+      "booking_event"
+    ];
+
+    const eventoCorrente = data.event || "booking_event";
+
+    if (!EVENTI_VALIDI.includes(eventoCorrente)) {
+      console.log("⏭️ Evento ignorato:", eventoCorrente);
+      return;
     }
-    
+
+    // --------------------------------------------------
+    // 3️⃣ RISOLUZIONE LISTING ID
+    // --------------------------------------------------
+    let resolvedListingId =
+      reservation.listingId ||
+      data.listingId ||
+      null;
+
     if (!resolvedListingId && reservation.reservationId) {
       try {
         const r = await axios.get(
@@ -2424,78 +2397,73 @@ try {
         );
         resolvedListingId = r.data?.result?.listingId;
       } catch (e) {
-        console.error("❌ Impossibile risolvere listingId:", e.message);
+        console.error("❌ ListingId non risolto:", e.message);
       }
     }
-// ✋ FILTRA EVENTI - Scrivi SOLO per creazione prenotazione
-const eventiDaScrivere = [
-  "reservation_created",
-  "reservation_new",
-  "booking_event"
-];
 
-const eventoCorrente = data.event || "booking_event";
-
-if (!eventiDaScrivere.includes(eventoCorrente)) {
-  console.log("⏭️ Evento ignorato:", eventoCorrente);
-  return; // Non scrivere nulla
-}
-
-console.log("✅ Evento da scrivere:", eventoCorrente);
     const LISTING_MAP = {
-      "194166": "Arenula",
-      "194165": "Portico",
-      "194163": "Leonina",
-      "194164": "Trastevere",
-      "194162": "Scala"
+      "194166": "arenula",
+      "194165": "portico",
+      "194163": "leonina",
+      "194164": "trastevere",
+      "194162": "scala"
     };
 
-    const apartment = LISTING_MAP[String(resolvedListingId)] || "N/A";
+    const apartment = LISTING_MAP[String(resolvedListingId)];
+    if (!apartment) {
+      console.error("❌ ListingId non mappato:", resolvedListingId);
+      return;
+    }
 
+    // --------------------------------------------------
+    // 4️⃣ ARRIVAL TIME → SLOT
+    // --------------------------------------------------
+    const arrivalTime =
+      reservation.arrivalTime ||
+      reservation.checkinTime ||
+      reservation.customFields?.arrival_time ||
+      null;
+
+    const slots = decideSlots(arrivalTime);
+    console.log("⏰ Arrival time:", arrivalTime);
+    console.log("📆 Slot calcolati:", slots);
+
+    // --------------------------------------------------
+    // 5️⃣ SCHEDULAZIONE SLOT (UNICA E CORRETTA)
+    // --------------------------------------------------
+    if (reservation.reservationId && reservation.conversationId) {
+      scheduleSlotMessages({
+        reservationId: reservation.reservationId,
+        conversationId: reservation.conversationId,
+        apartment,
+        slots,
+        sendFn: sendSlotLiveMessage
+      });
+    } else {
+      console.log("⚠️ conversationId o reservationId mancanti → no slot");
+    }
+
+    // --------------------------------------------------
+    // 6️⃣ SCRITTURA GOOGLE SHEETS
+    // --------------------------------------------------
     const rowData = {
       source: "Hostaway",
       timestamp: new Date().toISOString(),
-      eventType: data.event || "booking_event",
-      reservationId: reservation.reservationId || reservation.id || data.reservationId,
+      eventType: eventoCorrente,
+      reservationId: reservation.reservationId || reservation.id,
       apartment: apartment,
       guestName:
         reservation.guestName ||
         `${reservation.guestFirstName || ""} ${reservation.guestLastName || ""}`.trim(),
       guestEmail: reservation.guestEmail || "",
-      guestPhone: reservation.guestPhone || reservation.phone || "",
+      guestPhone: reservation.guestPhone || "",
       checkIn: reservation.checkIn || reservation.arrivalDate || "",
       checkOut: reservation.checkOut || reservation.departureDate || "",
       nights: String(reservation.nights || ""),
-      guests: reservation.numberOfGuests || ""
+      guests: reservation.numberOfGuests || "",
+      slots: slots.join(",")
     };
-       // ========================================================================
-// ARRIVAL TIME → SLOT SCHEDULING (SAFE)
-// ========================================================================
 
-// prova a leggere l'orario di arrivo
-const arrivalTime =
-  reservation.arrivalTime ||
-  reservation.checkinTime ||
-  reservation.customFields?.arrival_time ||
-  null;
-
-console.log("⏰ Arrival time ricevuto:", arrivalTime);
-if (conversationId && apartment) {
-  for (const slot of slots) {
-    await sendSlotLiveMessage({
-      conversationId,
-      apartment,
-      slot
-    });
-  }
-}
-// calcolo slot
-const slots = decideSlots(arrivalTime);
-
-console.log("📆 Slot assegnati:", slots);
-
-// esempio: salva slot (per uso futuro o scheduler)
-rowData.slots = slots.join(",");
     await writeToGoogleSheets(rowData);
     console.log("✅ Booking scritto su Google Sheets");
 
