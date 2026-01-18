@@ -107,6 +107,44 @@ app.use(bodyParser.json({
 }));
 app.disable("x-powered-by");
 app.set("trust proxy", true);
+// ========================================================================
+// ARRIVAL TIME WEBHOOK — HostAway
+// ========================================================================
+
+app.post("/arrival-time", async (req, res) => {
+  try {
+    const payload = req.body;
+
+    // sicurezza minima
+    if (!payload || !payload.reservation) {
+      return res.status(400).send("No reservation data");
+    }
+
+    const reservationId = payload.reservation.id;
+    const arrivalTime = payload.reservation.arrivalTime; // es: "15:30"
+
+    if (!arrivalTime) {
+      console.log("⏰ Arrival time missing for reservation", reservationId);
+      return res.status(200).send("No arrival time");
+    }
+
+    // usa la funzione che abbiamo già messo
+    const slots = decideSlots(arrivalTime);
+
+    console.log("📥 ARRIVAL TIME RECEIVED");
+    console.log("Reservation:", reservationId);
+    console.log("Arrival time:", arrivalTime);
+    console.log("Scheduled slots:", slots);
+
+    // per ora NON inviamo nulla
+    // nel passo 3 useremo questi slot per schedulare i messaggi
+
+    res.status(200).send("Arrival time processed");
+  } catch (err) {
+    console.error("❌ ARRIVAL TIME ERROR", err);
+    res.status(500).send("Server error");
+  }
+});
  app.post("/arrival-time", async (req, res) => {
   try {
     const { arrivalTime } = req.body; // formato "HH:MM"
