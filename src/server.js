@@ -9,6 +9,11 @@ import bodyParser from "body-parser";
 import { matchIntent } from "./matcher.js";
 import { detectLanguage } from "./language.js";
 import { ANSWERS } from "./answers.js";
+const app = express();
+
+app.use(bodyParser.json({ limit: "100kb" }));
+app.disable("x-powered-by");
+app.set("trust proxy", true);
  // ========================================================================
 // ARRIVAL SLOT DECIDER — SAFE, NON ROMPE NULLA
 // ========================================================================
