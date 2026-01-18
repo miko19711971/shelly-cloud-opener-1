@@ -2097,6 +2097,37 @@ async function writeToGoogleSheets(data) {
     return { ok: false, error: err.message };
   }
 }
+// ========================================================================
+// INVIO MESSAGGIO REALE A HOSTAWAY (PRODUZIONE)
+// ========================================================================
+
+async function sendHostawayMessage({ conversationId, message }) {
+  if (!HOSTAWAY_TOKEN) {
+    console.error("❌ HOSTAWAY_TOKEN mancante");
+    return;
+  }
+
+  try {
+    await axios.post(
+      `https://api.hostaway.com/v1/conversations/${conversationId}/messages`,
+      {
+        body: message,
+        sendToGuest: true
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${HOSTAWAY_TOKEN}`,
+          "Content-Type": "application/json"
+        },
+        timeout: 10000
+      }
+    );
+
+    console.log("📨 Messaggio inviato a HostAway");
+  } catch (err) {
+    console.error("❌ Errore invio HostAway:", err.message);
+  }
+}
 app.get("/test-paypal-simple", async (req, res) => {
   const secret = req.query.secret;
   if (!safeEqual(secret || "", ADMIN_SECRET)) {
