@@ -9,7 +9,32 @@ import fs from "fs/promises";
 import { matchIntent } from "./matcher.js";
 import { detectLanguage } from "./language.js";
 import { ANSWERS } from "./answers.js";
+// ========================================================================
+// METEO — RAIN DETECTION (ROMA)
+// ========================================================================
 
+const ROME_LAT = 41.9028;
+const ROME_LON = 12.4964;
+
+async function isRainingToday() {
+  try {
+    const url = `https://api.openweathermap.org/data/2.5/forecast?lat=${ROME_LAT}&lon=${ROME_LON}&appid=${process.env.OPENWEATHER_API_KEY}&units=metric`;
+
+    const { data } = await axios.get(url, { timeout: 8000 });
+
+    // Controlliamo le prossime ~12 ore
+    const nextHours = data.list.slice(0, 4);
+
+    return nextHours.some(item =>
+      item.weather.some(w =>
+        ["Rain", "Drizzle", "Thunderstorm"].includes(w.main)
+      )
+    );
+  } catch (err) {
+    console.error("☔ METEO ERROR → fallback asciutto", err.message);
+    return false; // fallback sicuro
+  }
+}
 function safeEqual(a, b) {
   const aa = Buffer.from(String(a || ""));
   const bb = Buffer.from(String(b || ""));
