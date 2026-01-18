@@ -402,7 +402,16 @@ function makeToken(payload) {
   const sig    = hmac(`${header}.${body}`);
   return `${header}.${body}.${sig}`;
 }
+function safeEqual(a, b) {
+  if (!a || !b) return false;
+  if (a.length !== b.length) return false;
 
+  let result = 0;
+  for (let i = 0; i < a.length; i++) {
+    result |= a.charCodeAt(i) ^ b.charCodeAt(i);
+  }
+  return result === 0;
+}
 function parseToken(token) {
   const [h, b, s] = (token || "").split(".");
   if (!h || !b || !s) return { ok: false, error: "bad_format" };
