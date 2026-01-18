@@ -5,10 +5,37 @@ import cors from "cors";
 import path from "path";
 import { fileURLToPath } from "url";
 import fs from "fs/promises";
- import bodyParser from "body-parser";
+import bodyParser from "body-parser";
 import { matchIntent } from "./matcher.js";
 import { detectLanguage } from "./language.js";
 import { ANSWERS } from "./answers.js";
+// ========================================================================
+// ARRIVAL SLOT DECIDER — SAFE, NON ROMPE NULLA
+// ========================================================================
+function decideSlots(arrivalTime) {
+  // fallback totale se non sappiamo l’orario
+  if (!arrivalTime || !arrivalTime.includes(":")) {
+    return ["11", "1230", "1830", "2030", "2330"];
+  }
+
+  const [h, m] = arrivalTime.split(":").map(Number);
+  const minutes = h * 60 + m;
+
+  // slot fissi che già usi
+  if (minutes <= 12 * 60) {
+    return ["11", "1230", "1830", "2030", "2330"];
+  }
+
+  if (minutes <= 16 * 60) {
+    return ["1830", "2030", "2330"];
+  }
+
+  if (minutes <= 19 * 60) {
+    return ["2030", "2330"];
+  }
+
+  return ["2330"];
+}
 // ========================================================================
 // METEO — RAIN DETECTION (ROMA)
 // ========================================================================
