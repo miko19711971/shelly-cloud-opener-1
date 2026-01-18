@@ -81,67 +81,7 @@ async function isRainingToday() {
   }
 }
 
-// ========================================================================
-// SIMPLE SLOT SCHEDULER (SETTIMEOUT)
-// ========================================================================
-const scheduledJobs = new Map();
-
-function scheduleSlotMessages({ reservationId, slots, sendMessageFn }) {
-  if (!reservationId || !Array.isArray(slots)) return;
-
-  slots.forEach(slot => {
-    const when = slotToDate(slot);
-    const delay = when.getTime() - Date.now();
-
-    if (delay <= 0) {
-      console.log("⏭ Slot già passato, skip:", slot);
-      return;
-    }
-
-    const key = `${reservationId}-${slot}`;
-    if (scheduledJobs.has(key)) return;
-
-    console.log("⏰ Slot schedulato:", slot, "→", when.toISOString());
-
-    const timer = setTimeout(async () => {
-      try {
-        await sendMessageFn(reservationId, slot);
-        console.log("📨 Messaggio inviato slot", slot);
-      } catch (err) {
-        console.error("❌ Errore invio slot", slot, err.message);
-      }
-      scheduledJobs.delete(key);
-    }, delay);
-
-    scheduledJobs.set(key, timer);
-  });
-}
-  scheduledJobs.set(reservationId, timeoutIds);
-}
-  } catch (err) {
-    console.error("☔ METEO ERROR → fallback asciutto", err.message);
-    return false; // fallback sicuro
-  }
-}
  
-function safeEqual(a, b) {
-  const aa = Buffer.from(String(a || ""));
-  const bb = Buffer.from(String(b || ""));
-  if (aa.length !== bb.length) return false;
-  return crypto.timingSafeEqual(aa, bb);
-}
-
-const app = express();
-const rawBodySaver = (req, res, buf) => {
-  req.rawBody = buf;
-};
-
-app.use(bodyParser.json({
-  verify: rawBodySaver,
-  limit: "100kb"
-}));
-app.disable("x-powered-by");
-app.set("trust proxy", true);
 // ========================================================================
 // ARRIVAL TIME WEBHOOK — HostAway
 // ========================================================================
