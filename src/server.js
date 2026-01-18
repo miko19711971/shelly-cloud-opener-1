@@ -57,6 +57,46 @@ async function isRainingToday() {
         ["Rain", "Drizzle", "Thunderstorm"].includes(w.main)
       )
     );
+    // ========================================================================
+// SIMPLE SLOT SCHEDULER (SETTIMEOUT)
+// ========================================================================
+
+const scheduledJobs = new Map(); // reservationId -> array timeoutIds
+
+function scheduleSlotMessages({ reservationId, slots, sendMessageFn }) {
+  if (!reservationId || !Array.isArray(slots)) return;
+
+  // Evita doppia schedulazione
+  if (scheduledJobs.has(reservationId)) {
+    console.log("⏭️ Slots already scheduled for", reservationId);
+    return;
+  }
+
+  const timeoutIds = [];
+
+  slots.forEach(slot => {
+    const runAt = slotToDate(slot);
+    const delay = runAt.getTime() - Date.now();
+
+    if (delay <= 0) {
+      console.log("⏰ Slot already passed:", slot);
+      return;
+    }
+
+    const timeoutId = setTimeout(async () => {
+      try {
+        await sendMessageFn(reservationId, slot);
+        console.log("📨 Slot message sent", reservationId, slot);
+      } catch (err) {
+        console.error("❌ Slot send error", reservationId, slot, err.message);
+      }
+    }, delay);
+
+    timeoutIds.push(timeoutId);
+  });
+
+  scheduledJobs.set(reservationId, timeoutIds);
+}
   } catch (err) {
     console.error("☔ METEO ERROR → fallback asciutto", err.message);
     return false; // fallback sicuro
