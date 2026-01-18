@@ -2441,7 +2441,15 @@ const arrivalTime =
   null;
 
 console.log("⏰ Arrival time ricevuto:", arrivalTime);
-
+if (conversationId && apartment) {
+  for (const slot of slots) {
+    await sendSlotLiveMessage({
+      conversationId,
+      apartment,
+      slot
+    });
+  }
+}
 // calcolo slot
 const slots = decideSlots(arrivalTime);
 
