@@ -2300,7 +2300,26 @@ console.log("✅ Evento da scrivere:", eventoCorrente);
       nights: String(reservation.nights || ""),
       guests: reservation.numberOfGuests || ""
     };
-    
+    // ========================================================================
+// ARRIVAL TIME → SLOT SCHEDULING (SAFE)
+// ========================================================================
+
+// prova a leggere l'orario di arrivo
+const arrivalTime =
+  reservation.arrivalTime ||
+  reservation.checkinTime ||
+  reservation.customFields?.arrival_time ||
+  null;
+
+console.log("⏰ Arrival time ricevuto:", arrivalTime);
+
+// calcolo slot
+const slots = decideSlots(arrivalTime);
+
+console.log("📆 Slot assegnati:", slots);
+
+// esempio: salva slot (per uso futuro o scheduler)
+rowData.slots = slots.join(",");
     await writeToGoogleSheets(rowData);
     console.log("✅ Booking scritto su Google Sheets");
 
