@@ -9,7 +9,7 @@ import bodyParser from "body-parser";
 import { matchIntent } from "./matcher.js";
 import { detectLanguage } from "./language.js";
 import { ANSWERS } from "./answers.js";
-// ========================================================================
+ // ========================================================================
 // ARRIVAL SLOT DECIDER — SAFE, NON ROMPE NULLA
 // ========================================================================
 function decideSlots(arrivalTime) {
@@ -35,15 +35,6 @@ function decideSlots(arrivalTime) {
   }
 
   return ["2330"];
-}
- 
-
-  // Se l’orario è già passato oggi → domani
-  if (target.getTime() <= now.getTime()) {
-    target.setDate(target.getDate() + 1);
-  }
-
-  return target;
 }
 function slotToDate(slot) {
   const now = new Date();
