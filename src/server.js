@@ -107,7 +107,26 @@ app.use(bodyParser.json({
 }));
 app.disable("x-powered-by");
 app.set("trust proxy", true);
- 
+ app.post("/arrival-time", async (req, res) => {
+  try {
+    const { arrivalTime } = req.body; // formato "HH:MM"
+
+    if (!arrivalTime || !arrivalTime.includes(":")) {
+      return res.status(400).json({ error: "arrivalTime missing or invalid" });
+    }
+
+    const slots = decideSlots(arrivalTime);
+
+    return res.json({
+      ok: true,
+      arrivalTime,
+      slots
+    });
+  } catch (err) {
+    console.error("ARRIVAL TIME ERROR", err);
+    return res.status(500).json({ error: "internal error" });
+  }
+});
 
 app.use((req, res, next) => {
   if (req.url.includes("/feedback")) {
