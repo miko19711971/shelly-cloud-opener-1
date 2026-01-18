@@ -2434,12 +2434,44 @@ app.post("/hostaway-booking-webhook", async (req, res) => {
       null;
 
     const slots = decideSlots(arrivalTime);
+   
     console.log("⏰ Arrival time:", arrivalTime);
     console.log("📆 Slot calcolati:", slots);
 
     // --------------------------------------------------
     // 5️⃣ SCHEDULAZIONE SLOT (UNICA E CORRETTA)
     // --------------------------------------------------
+   // ================= SLOT SCHEDULING & INVIO HOSTAWAY =================
+
+// verifica dati minimi
+if (!conversationId || !apartment) {
+  console.log("⚠️ conversationId o apartment mancanti → skip invio slot");
+} else {
+  for (const slot of slots) {
+    const when = slotToDate(slot);
+    const delay = when.getTime() - Date.now();
+
+    if (delay <= 0) {
+      console.log("⏭ Slot già passato:", slot);
+      continue;
+    }
+
+    console.log(`⏳ Slot ${slot} schedulato per ${when.toISOString()}`);
+
+    setTimeout(async () => {
+      try {
+        await sendSlotLiveMessage({
+          conversationId,
+          apartment,
+          slot
+        });
+        console.log(`📨 Slot ${slot} inviato in chat Hostaway`);
+      } catch (err) {
+        console.error(`❌ Errore invio slot ${slot}:`, err.message);
+      }
+    }, delay);
+  }
+}
     if (reservation.reservationId && reservation.conversationId) {
       scheduleSlotMessages({
         reservationId: reservation.reservationId,
