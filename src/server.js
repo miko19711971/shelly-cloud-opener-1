@@ -36,20 +36,7 @@ function decideSlots(arrivalTime) {
 
   return ["2330"];
 }
-function slotToDate(slot) {
-  const now = new Date();
-  const hours = slot.length === 2 ? Number(slot) : Number(slot.slice(0, 2));
-  const minutes = slot.length === 2 ? 0 : Number(slot.slice(2));
-
-  const target = new Date(
-    now.getFullYear(),
-    now.getMonth(),
-    now.getDate(),
-    hours,
-    minutes,
-    0,
-    0
-  );
+ 
 
   // Se l’orario è già passato oggi → domani
   if (target.getTime() <= now.getTime()) {
