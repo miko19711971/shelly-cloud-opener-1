@@ -118,7 +118,28 @@ async function isRainingToday() {
   }
 }
 
- 
+ async function sendSlotLiveMessage({ conversationId, apartment, slot }) {
+  const baseUrlMap = {
+    arenula: "/monti",        // se Arenula usa Monti
+    leonina: "/monti",
+    portico: "/portico",
+    scala: "/scala",
+    trastevere: "/viale-trastevere"
+  };
+
+  const base = baseUrlMap[apartment];
+  if (!base) return;
+
+  const message =
+    `🕒 ${slot}\n` +
+    `Scopri cosa fare ora:\n` +
+    `${process.env.BASE_URL}${base}?slot=${slot}&choice=passeggiata`;
+
+  await sendHostawayMessage({
+    conversationId,
+    message
+  });
+}
 // ========================================================================
 // ARRIVAL TIME WEBHOOK — HostAway
 // ========================================================================
