@@ -674,23 +674,24 @@ function getAnswer(text){
   if(!m) return { text: L.ui.fallback, topic: 'fallback' };
   try{ return { text: m.t(apt), topic: m.k }; }catch{ return { text: L.ui.fallback, topic: 'fallback' }; }
 }
+
 /* --- invio feedback al Google Sheet --- */
 function postFeedback(vote, topic, answerText){
-  const cleanAnswer = (answerText || "").replace(/<[^>]+>/g, '').substring(0, 100);
-  
-  const params = new URLSearchParams({
-    apartment: APARTMENT_ID.toLowerCase(),
-    language: lang || "en",
-    topic: topic || "",
-    answer: cleanAnswer,
-    vote: vote
-  });
-  
-  fetch(GOOGLE_SCRIPT_URL + "?" + params.toString(), {
-    method: "GET"
-  }).catch(()=>{});
+  try{
+    fetch(GOOGLE_SCRIPT_URL, {
+      method:'POST',
+      mode:'no-cors',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        apartment_id: APARTMENT_ID,
+        language: (lang||'en').toUpperCase(),
+        topic: topic,
+        answer_text: answerText,
+        vote: vote
+      })
+    });
+  }catch{}
 }
- function postFeedback(vote, topic
 function attachFeedbackUI(container, topic, answerText){
   const box = document.createElement('div');
   box.className = 'fb-box';
