@@ -58,66 +58,64 @@ function slotToDate(slot) {
 
   return target;
 }
-// ========================================================================
+ // ========================================================================
 // METEO — RAIN DETECTION (ROMA)
 // ========================================================================
-
 const ROME_LAT = 41.9028;
 const ROME_LON = 12.4964;
 
 async function isRainingToday() {
   try {
     const url = `https://api.openweathermap.org/data/2.5/forecast?lat=${ROME_LAT}&lon=${ROME_LON}&appid=${process.env.OPENWEATHER_API_KEY}&units=metric`;
-
     const { data } = await axios.get(url, { timeout: 8000 });
 
-    // Controlliamo le prossime ~12 ore
     const nextHours = data.list.slice(0, 4);
-
     return nextHours.some(item =>
       item.weather.some(w =>
         ["Rain", "Drizzle", "Thunderstorm"].includes(w.main)
       )
     );
-  
+  } catch (err) {
+    console.error("☔ METEO ERROR → fallback asciutto", err.message);
+    return false;
+  }
+}
+
 // ========================================================================
 // SIMPLE SLOT SCHEDULER (SETTIMEOUT)
 // ========================================================================
-
-const scheduledJobs = new Map(); // reservationId -> array timeoutIds
+const scheduledJobs = new Map();
 
 function scheduleSlotMessages({ reservationId, slots, sendMessageFn }) {
   if (!reservationId || !Array.isArray(slots)) return;
 
-  // Evita doppia schedulazione
-  if (scheduledJobs.has(reservationId)) {
-    console.log("⏭️ Slots already scheduled for", reservationId);
-    return;
-  }
-
-  const timeoutIds = [];
-
   slots.forEach(slot => {
-    const runAt = slotToDate(slot);
-    const delay = runAt.getTime() - Date.now();
+    const when = slotToDate(slot);
+    const delay = when.getTime() - Date.now();
 
     if (delay <= 0) {
-      console.log("⏰ Slot already passed:", slot);
+      console.log("⏭ Slot già passato, skip:", slot);
       return;
     }
 
-    const timeoutId = setTimeout(async () => {
+    const key = `${reservationId}-${slot}`;
+    if (scheduledJobs.has(key)) return;
+
+    console.log("⏰ Slot schedulato:", slot, "→", when.toISOString());
+
+    const timer = setTimeout(async () => {
       try {
         await sendMessageFn(reservationId, slot);
-        console.log("📨 Slot message sent", reservationId, slot);
+        console.log("📨 Messaggio inviato slot", slot);
       } catch (err) {
-        console.error("❌ Slot send error", reservationId, slot, err.message);
+        console.error("❌ Errore invio slot", slot, err.message);
       }
+      scheduledJobs.delete(key);
     }, delay);
 
-    timeoutIds.push(timeoutId);
+    scheduledJobs.set(key, timer);
   });
-
+}
   scheduledJobs.set(reservationId, timeoutIds);
 }
   } catch (err) {
