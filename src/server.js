@@ -2468,7 +2468,7 @@ console.log("✅ Evento da scrivere:", eventoCorrente);
       nights: String(reservation.nights || ""),
       guests: reservation.numberOfGuests || ""
     };
-    // ========================================================================
+       // ========================================================================
 // ARRIVAL TIME → SLOT SCHEDULING (SAFE)
 // ========================================================================
 
