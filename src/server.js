@@ -1928,7 +1928,7 @@ if (!effectiveReservationId && conversationId) {
       `https://api.hostaway.com/v1/conversations/${conversationId}`,
       {
         headers: {
-          Authorization: `Bearer ${process.env.HOSTAWAY_API_KEY}`,
+         Authorization: `Bearer ${HOSTAWAY_TOKEN}`,
           "Content-Type": "application/json"
         }
       }
