@@ -2088,31 +2088,7 @@ function normalizeLang(lang) {
     const detectedLang = detectLanguage(message);
     console.log("🌍 Lingua rilevata:", detectedLang);
 
-    // ======================================================
-    // STEP 4: listingId → apartment
-    // ======================================================
-    const LISTING_TO_APARTMENT = {
-      "194166": "arenula",
-      "194165": "portico",
-      "194163": "leonina",
-      "194164": "trastevere",
-      "194162": "scala"
-    };
-
-    console.log("  ├─ listingId ricevuto:", resolvedListingId);
-
-    const apartment = LISTING_TO_APARTMENT[String(resolvedListingId)];
-
-    if (!apartment) {
-      console.error("❌ ListingId non mappato:", resolvedListingId);
-      return res.json({ ok: true, silent: true });
-    }
-
-    console.log("  └─ Appartamento:", apartment);
-
-    let answer = null;
-    let usedLang = null;
-    let method = null;
+    
 
     // ========================================
     // INTENT CRITICO → SOLO answers.js
