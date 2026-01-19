@@ -2315,40 +2315,10 @@ app.post("/paypal-webhook", async (req, res) => {
  // ========================================================================
 // HOSTAWAY BOOKING WEBHOOK — FIXED & DEPLOY SAFE
 // ========================================================================
-   app.post("/hostaway-booking-webhook", async (req, res) => {
-  try {
-    console.log("🏠 HOSTAWAY BOOKING:", JSON.stringify(req.body, null, 2));
+  app.post("/hostaway-booking-webhook", async (req, res) => {
+  // ACK immediato a Hostaway
+  res.status(200).json({ ok: true });
 
-    const data = req.body;
-    let reservation = data?.reservation || null;
-
-    // 🔁 FALLBACK: reservation NON presente → recupero via API
-    if (!reservation && data?.reservationId) {
-      console.log("🔁 Reservation mancante → fetch da Hostaway API");
-
-      try {
-        const r = await axios.get(
-          `https://api.hostaway.com/v1/reservations/${data.reservationId}`,
-          {
-            headers: {
-              Authorization: `Bearer ${HOSTAWAY_TOKEN}`
-            },
-            timeout: 10000
-          }
-        );
-
-        reservation = r.data?.result || null;
-      } catch (err) {
-        console.error("❌ Errore fetch reservation:", err.message);
-      }
-    }
-
-    if (!reservation) {
-      console.log("⚠️ Nessuna reservation disponibile → ignorato");
-      return res.status(200).json({ ok: true });
-    }
-
-    // 👇 DA QUI IN POI NON CAMBIA NULLA
   try {
     const data = req.body;
     const reservation = data?.reservation;
