@@ -2350,7 +2350,17 @@ app.post("/paypal-webhook", async (req, res) => {
 // ========================================================================
 app.post("/hostaway-booking-webhook", async (req, res) => {
   console.log("🏠 HOSTAWAY BOOKING:", JSON.stringify(req.body, null, 2));
-
+app.post("/hostaway-booking-webhook", async (req, res) => {
+  console.log("🏠 HOSTAWAY BOOKING:", JSON.stringify(req.body, null, 2));
+  
+  // 👇 AGGIUNGI QUESTE 5 RIGHE QUI
+  console.log("===== DEBUG CONVERSATION ID =====");
+  console.log("conversationId nel body:", req.body?.conversationId);
+  console.log("conversationId in reservation:", req.body?.reservation?.conversationId);
+  console.log("================================");
+  
+  // rispondi subito a Hostaway
+  res.status(200).json({ received: true });
   // rispondi subito a Hostaway
   res.status(200).json({ received: true });
 
