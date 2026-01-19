@@ -1945,7 +1945,7 @@ if (!effectiveReservationId && conversationId) {
 // ===============================
 // PATCH — ARRIVAL TIME VIA GUEST MESSAGE
 // ===============================
-if (reservationId && conversationId) {
+if (effectiveReservationId && conversationId) {
   try {
     const r = await axios.get(
       `https://api.hostaway.com/v1/reservations/${reservationId}`,
