@@ -1,4 +1,4 @@
- {
+{
   "name": "shelly-cloud-opener-1",
   "version": "1.0.0",
   "private": true,
@@ -9,6 +9,7 @@
     "build": "node script/fetch-guides.mjs"
   },
   "dependencies": {
+    "@google/generative-ai": "^0.24.1",
     "axios": "^1.7.7",
     "cors": "^2.8.5",
     "express": "^4.19.2",
