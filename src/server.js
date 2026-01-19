@@ -1993,15 +1993,15 @@ if (effectiveReservationId && conversationId) {
       try {
         console.log("ð Fetching reservation from HostAway:", reservationId);
 
-        const r = await axios.get(
-          `https://api.hostaway.com/v1/reservations/${reservationId}`,
-          {
-            headers: {
-              Authorization: `Bearer ${HOSTAWAY_TOKEN}`
-            },
-            timeout: 10000
-          }
-        );
+         const r = await axios.get(
+  `https://api.hostaway.com/v1/reservations/${effectiveReservationId}`,
+  {
+    headers: {
+      Authorization: `Bearer ${HOSTAWAY_TOKEN}`
+    },
+    timeout: 10000
+  }
+);
 
         console.log("ð FULL API Response:", JSON.stringify(r.data, null, 2));
 
