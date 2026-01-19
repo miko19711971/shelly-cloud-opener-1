@@ -1917,6 +1917,31 @@ app.post("/hostaway-incoming", async (req, res) => {
       listingMapId: listingId,
       guestLanguage
     } = req.body || {};
+   // PATCH: recupera reservationId dalla chat se manca
+let effectiveReservationId = reservationId;
+
+if (!effectiveReservationId && conversationId) {
+  console.log("🧩 ReservationId mancante, provo da conversationId:", conversationId);
+
+  try {
+    const r = await fetch(
+      `https://api.hostaway.com/v1/conversations/${conversationId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${process.env.HOSTAWAY_API_KEY}`,
+          "Content-Type": "application/json"
+        }
+      }
+    );
+
+    const data = await r.json();
+    effectiveReservationId = data?.result?.reservationId;
+
+    console.log("🧩 ReservationId risolto:", effectiveReservationId);
+  } catch (err) {
+    console.error("❌ Errore fetch conversation → reservation", err);
+  }
+}
 // ===============================
 // PATCH — ARRIVAL TIME VIA GUEST MESSAGE
 // ===============================
