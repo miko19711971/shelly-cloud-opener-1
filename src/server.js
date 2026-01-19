@@ -2157,7 +2157,7 @@ if (!answer) {
   }
 }
 
-// ========================================
+ // ========================================
 // INVIA RISPOSTA
 // ========================================
 await axios.post(
@@ -2183,6 +2183,13 @@ return res.json({
   method,
   intent: match?.intent,
   lang: usedLang
+});
+
+  } catch (err) {
+    console.error("❌ ERROR IN /hostaway-incoming");
+    console.error(err.message);
+    return res.status(500).json({ ok: false });
+  }
 });
 }
 const intent = match.intent;
