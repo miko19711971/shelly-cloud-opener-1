@@ -1947,15 +1947,15 @@ if (!effectiveReservationId && conversationId) {
 // ===============================
 if (effectiveReservationId && conversationId) {
   try {
-    const r = await axios.get(
-    `https://api.hostaway.com/v1/reservations/${effectiveReservationId}`
-      {
-        headers: {
-          Authorization: `Bearer ${HOSTAWAY_TOKEN}`
-        },
-        timeout: 10000
-      }
-    );
+     const r = await axios.get(
+  `https://api.hostaway.com/v1/reservations/${effectiveReservationId}`,
+  {
+    headers: {
+      Authorization: `Bearer ${HOSTAWAY_TOKEN}`
+    },
+    timeout: 10000
+  }
+);
 
     const reservation = r.data?.result;
     const arrivalTime =
