@@ -2073,11 +2073,117 @@ if (effectiveReservationId && conversationId) {
   // ======================================================
 // 🎯 STEP 3: Match Intent + Language
 // ======================================================
-const match = matchIntent(message);
-console.log("🎯 Matcher result:", match || "NONE");
-if (!match || !match.intent) {
-  console.log("👋 No intent → silent");
-  return res.json({ ok: true, silent: true });
+ const match = matchIntent(message);
+
+let answer = null;
+let usedLang = null;
+let method = null;
+
+// ========================================
+// INTENT CRITICO → SOLO answers.js
+// ========================================
+if (match && CRITICAL_INTENTS.includes(match.intent)) {
+  const intent = match.intent;
+  const platformLang = normalizeLang(guestLanguage);
+  const defaultLang = APT_DEFAULT_LANG[apartment] || "en";
+
+  // Cerca risposta
+  if (detectedLang && ANSWERS[apartment]?.[detectedLang]?.[intent]) {
+    answer = ANSWERS[apartment][detectedLang][intent];
+    usedLang = detectedLang;
+  } else if (platformLang && ANSWERS[apartment]?.[platformLang]?.[intent]) {
+    answer = ANSWERS[apartment][platformLang][intent];
+    usedLang = platformLang;
+  } else if (ANSWERS[apartment]?.[defaultLang]?.[intent]) {
+    answer = ANSWERS[apartment][defaultLang][intent];
+    usedLang = defaultLang;
+  }
+
+  // Se manca risposta critica → silent
+  if (!answer) {
+    console.log("⚠️ Intent critico senza risposta → silent");
+    return res.json({ ok: true, silent: true });
+  }
+
+  method = "answers";
+  console.log("✅ Risposta da answers.js (intent critico)");
+}
+
+// ========================================
+// INTENT NON CRITICO → prova answers.js
+// ========================================
+else if (match && match.intent) {
+  const intent = match.intent;
+  const platformLang = normalizeLang(guestLanguage);
+  const defaultLang = APT_DEFAULT_LANG[apartment] || "en";
+
+  // Prova answers.js
+  if (detectedLang && ANSWERS[apartment]?.[detectedLang]?.[intent]) {
+    answer = ANSWERS[apartment][detectedLang][intent];
+    usedLang = detectedLang;
+    method = "answers";
+  } else if (platformLang && ANSWERS[apartment]?.[platformLang]?.[intent]) {
+    answer = ANSWERS[apartment][platformLang][intent];
+    usedLang = platformLang;
+    method = "answers";
+  } else if (ANSWERS[apartment]?.[defaultLang]?.[intent]) {
+    answer = ANSWERS[apartment][defaultLang][intent];
+    usedLang = defaultLang;
+    method = "answers";
+  }
+
+  console.log(answer ? "✅ Risposta da answers.js" : "🤖 Fallback a Gemini");
+}
+
+// ========================================
+// NESSUN MATCH O MANCA RISPOSTA → GEMINI
+// ========================================
+if (!answer) {
+  try {
+    console.log("🤖 Chiamata Gemini...");
+    
+    answer = await geminiChat({
+      apartment,
+      lang: detectedLang || "en",
+      message
+    });
+    
+    usedLang = detectedLang || "en";
+    method = "gemini";
+    console.log("✅ Risposta Gemini OK");
+  } catch (err) {
+    console.error("❌ Gemini errore:", err.message);
+    return res.json({ ok: true, silent: true });
+  }
+}
+
+// ========================================
+// INVIA RISPOSTA
+// ========================================
+await axios.post(
+  `https://api.hostaway.com/v1/conversations/${conversationId}/messages`,
+  {
+    body: answer,
+    sendToGuest: true
+  },
+  {
+    headers: {
+      Authorization: `Bearer ${HOSTAWAY_TOKEN}`,
+      "Content-Type": "application/json"
+    },
+    timeout: 10000
+  }
+);
+
+console.log("✅ Reply sent");
+
+return res.json({
+  ok: true,
+  replied: true,
+  method,
+  intent: match?.intent,
+  lang: usedLang
+});
 }
 const intent = match.intent;
 const detectedLang = detectLanguage(message);
