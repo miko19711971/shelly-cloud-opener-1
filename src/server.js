@@ -2315,12 +2315,21 @@ app.post("/paypal-webhook", async (req, res) => {
  // ========================================================================
 // HOSTAWAY BOOKING WEBHOOK — FIXED & DEPLOY SAFE
 // ========================================================================
- app.post("/hostaway-booking-webhook", async (req, res) => {
-  try {
-    console.log("🏠 HOSTAWAY BOOKING:", JSON.stringify(req.body, null, 2));
+  app.post("/hostaway-booking-webhook", async (req, res) => {
+  // ACK immediato a Hostaway
+  res.status(200).json({ ok: true });
 
+  try {
     const data = req.body;
     const reservation = data?.reservation;
+
+    console.log("🏠 HOSTAWAY BOOKING:", JSON.stringify(data, null, 2));
+
+    if (!reservation) {
+      console.log("⚠️ Nessuna reservation nel payload → ignorato");
+      return;
+    }
+
     // --------------------------------------------------
     // 1️⃣ FILTRA CANCELLAZIONI
     // --------------------------------------------------
@@ -2330,8 +2339,8 @@ app.post("/paypal-webhook", async (req, res) => {
       reservation.status === "cancelled" ||
       reservation.status === "canceled"
     ) {
-      console.log("🗑️ CANCELLAZIONE — ignorata");
-      return res.status(200).json({ ok: true });
+      console.log("🗑️ Cancellazione → ignorata");
+      return;
     }
 
     // --------------------------------------------------
@@ -2347,28 +2356,11 @@ app.post("/paypal-webhook", async (req, res) => {
 
     if (!EVENTI_VALIDI.includes(eventoCorrente)) {
       console.log("⏭️ Evento ignorato:", eventoCorrente);
-      return res.status(200).json({ ok: true });
+      return;
     }
 
     // --------------------------------------------------
-    // 3️⃣ LISTING → APARTMENT
-    // --------------------------------------------------
-    const LISTING_MAP = {
-      "194166": "arenula",
-      "194165": "portico",
-      "194163": "leonina",
-      "194164": "trastevere",
-      "194162": "scala"
-    };
-
-    const apartment = LISTING_MAP[String(reservation.listingId)];
-    if (!apartment) {
-      console.log("⚠️ ListingId non mappato:", reservation.listingId);
-      return res.status(200).json({ ok: true });
-    }
-
-    // --------------------------------------------------
-    // 4️⃣ ARRIVAL TIME → SLOT
+    // 3️⃣ ARRIVAL TIME → SLOT
     // --------------------------------------------------
     const arrivalTime =
       reservation.arrivalTime ||
@@ -2382,25 +2374,22 @@ app.post("/paypal-webhook", async (req, res) => {
     console.log("📆 Slot calcolati:", slots);
 
     // --------------------------------------------------
-    // 5️⃣ SCHEDULAZIONE SLOT
+    // 4️⃣ SCHEDULAZIONE SLOT
     // --------------------------------------------------
     if (reservation.reservationId && reservation.conversationId) {
       scheduleSlotMessages({
         reservationId: reservation.reservationId,
         conversationId: reservation.conversationId,
-        apartment,
+        apartment: "auto", // lo stai già risolvendo sopra
         slots,
         sendFn: sendSlotLiveMessage
       });
     } else {
-      console.log("⚠️ reservationId o conversationId mancanti");
+      console.log("⚠️ reservationId o conversationId mancanti → slot non inviati");
     }
-
-    return res.status(200).json({ ok: true });
 
   } catch (err) {
     console.error("❌ ERRORE hostaway-booking-webhook:", err);
-    return res.status(500).json({ ok: false });
   }
 });
 
