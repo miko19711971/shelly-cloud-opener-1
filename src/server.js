@@ -1917,7 +1917,48 @@ app.post("/hostaway-incoming", async (req, res) => {
       listingMapId: listingId,
       guestLanguage
     } = req.body || {};
+// ===============================
+// PATCH — ARRIVAL TIME VIA GUEST MESSAGE
+// ===============================
+if (reservationId && conversationId) {
+  try {
+    const r = await axios.get(
+      `https://api.hostaway.com/v1/reservations/${reservationId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${HOSTAWAY_TOKEN}`
+        },
+        timeout: 10000
+      }
+    );
 
+    const reservation = r.data?.result;
+    const arrivalTime =
+      reservation?.arrivalTime ||
+      reservation?.checkinTime ||
+      reservation?.customFields?.arrival_time ||
+      null;
+
+    if (arrivalTime) {
+      const slots = decideSlots(arrivalTime);
+
+      console.log("🧩 ARRIVAL TIME (via guest message):", arrivalTime);
+      console.log("🧩 SLOT CALCOLATI:", slots);
+
+      scheduleSlotMessages({
+        reservationId,
+        conversationId,
+        apartment,
+        slots,
+        sendFn: sendSlotLiveMessage
+      });
+    } else {
+      console.log("⚠️ Arrival time non presente nella reservation");
+    }
+  } catch (e) {
+    console.error("❌ Errore fetch reservation (guest message):", e.message);
+  }
+}
     // ======================================================
     // ð Resolve Listing ID from reservation (HostAway)
     // ======================================================
