@@ -2381,18 +2381,25 @@ app.post("/paypal-webhook", async (req, res) => {
  // ========================================================================
 // HOSTAWAY BOOKING WEBHOOK — FIXED & DEPLOY SAFE
 // ========================================================================
-  app.post("/hostaway-booking-webhook", async (req, res) => {
+app.post("/hostaway-booking-webhook", async (req, res) => {
   // ACK immediato a Hostaway
   res.status(200).json({ ok: true });
 
   try {
     const data = req.body;
-    const reservation = data?.reservation;
+    
+    // GESTIONE DOPPIA STRUTTURA: reservation nested O root level
+    const reservation = data?.reservation || data;
 
     console.log("🏠 HOSTAWAY BOOKING:", JSON.stringify(data, null, 2));
 
-    if (!reservation) {
-      console.log("⚠️ Nessuna reservation nel payload → ignorato");
+    // Estrai dati in modo flessibile
+    const reservationId = reservation?.reservationId || reservation?.id;
+    const conversationId = reservation?.conversationId;
+    const arrivalTime = reservation?.arrivalTime || reservation?.checkinTime || reservation?.customFields?.arrival_time;
+
+    if (!reservationId) {
+      console.log("⚠️ ReservationId mancante → ignorato");
       return;
     }
 
@@ -2428,12 +2435,6 @@ app.post("/paypal-webhook", async (req, res) => {
     // --------------------------------------------------
     // 3️⃣ ARRIVAL TIME → SLOT
     // --------------------------------------------------
-    const arrivalTime =
-      reservation.arrivalTime ||
-      reservation.checkinTime ||
-      reservation.customFields?.arrival_time ||
-      null;
-
     const slots = decideSlots(arrivalTime);
 
     console.log("⏰ Arrival time:", arrivalTime);
@@ -2442,16 +2443,16 @@ app.post("/paypal-webhook", async (req, res) => {
     // --------------------------------------------------
     // 4️⃣ SCHEDULAZIONE SLOT
     // --------------------------------------------------
-    if (reservation.reservationId && reservation.conversationId) {
+    if (conversationId) {
       scheduleSlotMessages({
-        reservationId: reservation.reservationId,
-        conversationId: reservation.conversationId,
-        apartment: "auto", // lo stai già risolvendo sopra
+        reservationId: reservationId,
+        conversationId: conversationId,
+        apartment: "auto",
         slots,
         sendFn: sendSlotLiveMessage
       });
     } else {
-      console.log("⚠️ reservationId o conversationId mancanti → slot non inviati");
+      console.log("⚠️ conversationId mancante → slot non inviati");
     }
 
   } catch (err) {
