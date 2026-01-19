@@ -2224,27 +2224,6 @@ function normalizeLang(lang) {
     return res.status(500).json({ ok: false });
   }
 });
-
-console.log("✅ Reply sent");
-
-return res.json({
-  ok: true,
-  replied: true,
-  method,
-  intent: match?.intent,
-  lang: usedLang
-});
-
-  } catch (err) {
-    console.error("❌ ERROR IN /hostaway-incoming");
-    console.error(err.message);
-    return res.status(500).json({ ok: false });
-  }
-});
-}
-const intent = match.intent;
-const detectedLang = detectLanguage(message);
-console.log("🌍 Lingua rilevata:", detectedLang);
     // ======================================================
     // ð  STEP 4: listingId â apartment
     // ======================================================
