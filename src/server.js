@@ -1939,6 +1939,25 @@ const arrivalTime = match[0].includes(":")
   : `${match[0]}:00`;
 
 console.log("⏰ Arrival time da chat:", arrivalTime);
+   // 📆 calcolo slot
+const slots = decideSlots(arrivalTime);
+console.log("📆 Slot calcolati:", slots);
+
+// 🚀 invio slot al cliente (SOLO messaggi, niente check-in)
+if (conversationId && apartment) {
+  for (const slot of slots) {
+    await sendSlotLiveMessage({
+      conversationId,
+      apartment,
+      slot
+    });
+  }
+  console.log("✅ Slot inviati in chat");
+} else {
+  console.log("⚠️ conversationId o apartment mancanti → niente invio");
+}
+
+return res.sendStatus(200);
 // ===============================
 // PATCH — ARRIVAL TIME VIA GUEST MESSAGE
 // ===============================
