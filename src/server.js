@@ -2313,14 +2313,19 @@ app.post("/paypal-webhook", async (req, res) => {
 });
 
  // ========================================================================
-// HOSTAWAY BOOKING WEBHOOK — CLEAN & WORKING
+// HOSTAWAY BOOKING WEBHOOK — FIXED & DEPLOY SAFE
 // ========================================================================
 app.post("/hostaway-booking-webhook", async (req, res) => {
   try {
-    const data = req.body || {};
-    const reservation = data.reservation || {};
+    console.log("🏠 HOSTAWAY BOOKING:", JSON.stringify(req.body, null, 2));
 
-    console.log("🏠 HOSTAWAY BOOKING:", JSON.stringify(data, null, 2));
+    const data = req.body;
+    const reservation = data?.reservation;
+
+    if (!reservation) {
+      console.log("⚠️ Nessuna reservation nel payload");
+      return res.status(200).json({ ok: true });
+    }
 
     // --------------------------------------------------
     // 1️⃣ FILTRA CANCELLAZIONI
@@ -2332,7 +2337,7 @@ app.post("/hostaway-booking-webhook", async (req, res) => {
       reservation.status === "canceled"
     ) {
       console.log("🗑️ CANCELLAZIONE — ignorata");
-      return res.json({ ok: true });
+      return res.status(200).json({ ok: true });
     }
 
     // --------------------------------------------------
@@ -2348,7 +2353,7 @@ app.post("/hostaway-booking-webhook", async (req, res) => {
 
     if (!EVENTI_VALIDI.includes(eventoCorrente)) {
       console.log("⏭️ Evento ignorato:", eventoCorrente);
-      return res.json({ ok: true });
+      return res.status(200).json({ ok: true });
     }
 
     // --------------------------------------------------
@@ -2364,8 +2369,8 @@ app.post("/hostaway-booking-webhook", async (req, res) => {
 
     const apartment = LISTING_MAP[String(reservation.listingId)];
     if (!apartment) {
-      console.log("❌ ListingId non mappato:", reservation.listingId);
-      return res.json({ ok: true });
+      console.log("⚠️ ListingId non mappato:", reservation.listingId);
+      return res.status(200).json({ ok: true });
     }
 
     // --------------------------------------------------
@@ -2380,7 +2385,7 @@ app.post("/hostaway-booking-webhook", async (req, res) => {
     const slots = decideSlots(arrivalTime);
 
     console.log("⏰ Arrival time:", arrivalTime);
-    console.log("📆 Slot:", slots);
+    console.log("📆 Slot calcolati:", slots);
 
     // --------------------------------------------------
     // 5️⃣ SCHEDULAZIONE SLOT
@@ -2393,20 +2398,15 @@ app.post("/hostaway-booking-webhook", async (req, res) => {
         slots,
         sendFn: sendSlotLiveMessage
       });
+    } else {
+      console.log("⚠️ reservationId o conversationId mancanti");
     }
 
-    return res.json({ ok: true });
+    return res.status(200).json({ ok: true });
 
   } catch (err) {
     console.error("❌ ERRORE hostaway-booking-webhook:", err);
     return res.status(500).json({ ok: false });
-  }
-});
-await writeToGoogleSheets(rowData);
-console.log("✅ Booking scritto su Google Sheets");
-
-  } catch (err) {
-    console.error("❌ ERRORE hostaway-booking-webhook:", err.message);
   }
 });
 
