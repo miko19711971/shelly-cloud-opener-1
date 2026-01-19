@@ -2316,8 +2316,12 @@ app.post("/paypal-webhook", async (req, res) => {
 // HOSTAWAY BOOKING WEBHOOK — CLEAN & WORKING
 // ========================================================================
 app.post("/hostaway-booking-webhook", async (req, res) => {
-  console.log("🏠 HOSTAWAY BOOKING:", JSON.stringify(req.body, null, 2));
- 
+  try {
+    const data = req.body || {};
+    const reservation = data.reservation || {};
+
+    console.log("🏠 HOSTAWAY BOOKING:", JSON.stringify(data, null, 2));
+
     // --------------------------------------------------
     // 1️⃣ FILTRA CANCELLAZIONI — STOP TOTALE
     // --------------------------------------------------
@@ -2328,7 +2332,7 @@ app.post("/hostaway-booking-webhook", async (req, res) => {
       reservation.status === "canceled"
     ) {
       console.log("🗑️ CANCELLAZIONE — ignorata");
-      return;
+      return res.json({ ok: true });
     }
 
     // --------------------------------------------------
@@ -2344,7 +2348,7 @@ app.post("/hostaway-booking-webhook", async (req, res) => {
 
     if (!EVENTI_VALIDI.includes(eventoCorrente)) {
       console.log("⏭️ Evento ignorato:", eventoCorrente);
-      return;
+      return res.json({ ok: true });
     }
 
     // --------------------------------------------------
@@ -2381,59 +2385,45 @@ app.post("/hostaway-booking-webhook", async (req, res) => {
     const apartment = LISTING_MAP[String(resolvedListingId)];
     if (!apartment) {
       console.error("❌ ListingId non mappato:", resolvedListingId);
-      return;
+      return res.json({ ok: true });
     }
 
-     // --------------------------------------------------
-// 4️⃣ ARRIVAL TIME → SLOT
-// --------------------------------------------------
-const arrivalTime =
-  reservation.arrivalTime ||
-  reservation.checkinTime ||
-  reservation.customFields?.arrival_time ||
-  null;
+    // --------------------------------------------------
+    // 4️⃣ ARRIVAL TIME → SLOT
+    // --------------------------------------------------
+    const arrivalTime =
+      reservation.arrivalTime ||
+      reservation.checkinTime ||
+      reservation.customFields?.arrival_time ||
+      null;
 
-const slots = decideSlots(arrivalTime);
+    const slots = decideSlots(arrivalTime);
 
-console.log("⏰ Arrival time:", arrivalTime);
-console.log("📆 Slot calcolati:", slots);
+    console.log("⏰ Arrival time:", arrivalTime);
+    console.log("📆 Slot calcolati:", slots);
 
-// --------------------------------------------------
-// 5️⃣ SCHEDULAZIONE SLOT (UNICA E CORRETTA)
-// --------------------------------------------------
-if (reservation.reservationId && reservation.conversationId) {
-  scheduleSlotMessages({
-    reservationId: reservation.reservationId,
-    conversationId: reservation.conversationId,
-    apartment,
-    slots,
-    sendFn: sendSlotLiveMessage
-  });
-} else {
-  console.log("⚠️ conversationId o reservationId mancanti → no slot");
-}
+    // --------------------------------------------------
+    // 5️⃣ SCHEDULAZIONE SLOT
+    // --------------------------------------------------
+    if (reservation.reservationId && reservation.conversationId) {
+      scheduleSlotMessages({
+        reservationId: reservation.reservationId,
+        conversationId: reservation.conversationId,
+        apartment,
+        slots,
+        sendFn: sendSlotLiveMessage
+      });
+    } else {
+      console.log("⚠️ conversationId o reservationId mancanti → no slot");
+    }
 
-// --------------------------------------------------
-// 6️⃣ SCRITTURA GOOGLE SHEETS
-// --------------------------------------------------
-const rowData = {
-  source: "Hostaway",
-  timestamp: new Date().toISOString(),
-  eventType: eventoCorrente,
-  reservationId: reservation.reservationId || reservation.id,
-  apartment: apartment,
-  guestName:
-    reservation.guestName ||
-    `${reservation.guestFirstName || ""} ${reservation.guestLastName || ""}`.trim(),
-  guestEmail: reservation.guestEmail || "",
-  guestPhone: reservation.guestPhone || "",
-  checkIn: reservation.checkIn || reservation.arrivalDate || "",
-  checkOut: reservation.checkOut || reservation.departureDate || "",
-  nights: String(reservation.nights || ""),
-  guests: reservation.numberOfGuests || "",
-  slots: slots.join(",")
-};
+    return res.json({ ok: true });
 
+  } catch (err) {
+    console.error("❌ ERRORE hostaway-booking-webhook:", err.message);
+    return res.status(500).json({ ok: false });
+  }
+});
 await writeToGoogleSheets(rowData);
 console.log("✅ Booking scritto su Google Sheets");
 
