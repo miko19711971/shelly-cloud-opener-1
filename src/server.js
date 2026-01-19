@@ -2393,7 +2393,7 @@ app.post("/hostaway-booking-webhook", async (req, res) => {
 
     // Estrai ID (può essere "id" o "reservationId")
     const reservationId = reservation?.id || reservation?.reservationId;
-    const conversationId = reservation?.conversationId;
+    let conversationId = reservation?.conversationId;
     
     // CONVERTI checkInTime numerico → stringa "HH:00"
     let arrivalTime = reservation?.arrivalTime;
@@ -2442,7 +2442,29 @@ app.post("/hostaway-booking-webhook", async (req, res) => {
     }
 
     // --------------------------------------------------
-    // 3️⃣ ARRIVAL TIME → SLOT
+    // 3️⃣ RECUPERA CONVERSATIONID SE MANCANTE
+    // --------------------------------------------------
+    if (!conversationId && reservationId) {
+      try {
+        console.log("🔍 Tentativo recupero conversationId...");
+        
+        const convResp = await axios.get(
+          `https://api.hostaway.com/v1/conversations?reservationId=${reservationId}`,
+          {
+            headers: { Authorization: `Bearer ${HOSTAWAY_TOKEN}` },
+            timeout: 10000
+          }
+        );
+        
+        conversationId = convResp.data?.result?.[0]?.id;
+        console.log("✅ ConversationId recuperato:", conversationId);
+      } catch (e) {
+        console.error("❌ Impossibile recuperare conversationId:", e.message);
+      }
+    }
+
+    // --------------------------------------------------
+    // 4️⃣ ARRIVAL TIME → SLOT
     // --------------------------------------------------
     const slots = decideSlots(arrivalTime);
 
@@ -2450,7 +2472,7 @@ app.post("/hostaway-booking-webhook", async (req, res) => {
     console.log("📆 Slot calcolati:", slots);
 
     // --------------------------------------------------
-    // 4️⃣ SCHEDULAZIONE SLOT
+    // 5️⃣ SCHEDULAZIONE SLOT
     // --------------------------------------------------
     if (conversationId) {
       scheduleSlotMessages({
@@ -2468,7 +2490,6 @@ app.post("/hostaway-booking-webhook", async (req, res) => {
     console.error("❌ ERRORE hostaway-booking-webhook:", err);
   }
 });
-
 // ========================================================================
 // ENDPOINT TEST MANUALE
 // ========================================================================
