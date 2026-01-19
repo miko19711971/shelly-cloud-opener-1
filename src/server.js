@@ -2323,7 +2323,7 @@ app.post("/hostaway-booking-webhook", async (req, res) => {
     console.log("🏠 HOSTAWAY BOOKING:", JSON.stringify(data, null, 2));
 
     // --------------------------------------------------
-    // 1️⃣ FILTRA CANCELLAZIONI — STOP TOTALE
+    // 1️⃣ FILTRA CANCELLAZIONI
     // --------------------------------------------------
     if (
       data.event === "reservation_cancelled" ||
@@ -2336,7 +2336,7 @@ app.post("/hostaway-booking-webhook", async (req, res) => {
     }
 
     // --------------------------------------------------
-    // 2️⃣ FILTRA EVENTI NON DI CREAZIONE
+    // 2️⃣ EVENTI VALIDI
     // --------------------------------------------------
     const EVENTI_VALIDI = [
       "reservation_created",
@@ -2352,28 +2352,8 @@ app.post("/hostaway-booking-webhook", async (req, res) => {
     }
 
     // --------------------------------------------------
-    // 3️⃣ RISOLUZIONE LISTING ID
+    // 3️⃣ LISTING → APARTMENT
     // --------------------------------------------------
-    let resolvedListingId =
-      reservation.listingId ||
-      data.listingId ||
-      null;
-
-    if (!resolvedListingId && reservation.reservationId) {
-      try {
-        const r = await axios.get(
-          `https://api.hostaway.com/v1/reservations/${reservation.reservationId}`,
-          {
-            headers: { Authorization: `Bearer ${HOSTAWAY_TOKEN}` },
-            timeout: 10000
-          }
-        );
-        resolvedListingId = r.data?.result?.listingId;
-      } catch (e) {
-        console.error("❌ ListingId non risolto:", e.message);
-      }
-    }
-
     const LISTING_MAP = {
       "194166": "arenula",
       "194165": "portico",
@@ -2382,9 +2362,9 @@ app.post("/hostaway-booking-webhook", async (req, res) => {
       "194162": "scala"
     };
 
-    const apartment = LISTING_MAP[String(resolvedListingId)];
+    const apartment = LISTING_MAP[String(reservation.listingId)];
     if (!apartment) {
-      console.error("❌ ListingId non mappato:", resolvedListingId);
+      console.log("❌ ListingId non mappato:", reservation.listingId);
       return res.json({ ok: true });
     }
 
@@ -2400,7 +2380,7 @@ app.post("/hostaway-booking-webhook", async (req, res) => {
     const slots = decideSlots(arrivalTime);
 
     console.log("⏰ Arrival time:", arrivalTime);
-    console.log("📆 Slot calcolati:", slots);
+    console.log("📆 Slot:", slots);
 
     // --------------------------------------------------
     // 5️⃣ SCHEDULAZIONE SLOT
@@ -2413,14 +2393,12 @@ app.post("/hostaway-booking-webhook", async (req, res) => {
         slots,
         sendFn: sendSlotLiveMessage
       });
-    } else {
-      console.log("⚠️ conversationId o reservationId mancanti → no slot");
     }
 
     return res.json({ ok: true });
 
   } catch (err) {
-    console.error("❌ ERRORE hostaway-booking-webhook:", err.message);
+    console.error("❌ ERRORE hostaway-booking-webhook:", err);
     return res.status(500).json({ ok: false });
   }
 });
