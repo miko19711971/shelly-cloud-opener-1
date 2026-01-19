@@ -2315,18 +2315,12 @@ app.post("/paypal-webhook", async (req, res) => {
  // ========================================================================
 // HOSTAWAY BOOKING WEBHOOK — FIXED & DEPLOY SAFE
 // ========================================================================
-app.post("/hostaway-booking-webhook", async (req, res) => {
+ app.post("/hostaway-booking-webhook", async (req, res) => {
   try {
     console.log("🏠 HOSTAWAY BOOKING:", JSON.stringify(req.body, null, 2));
 
     const data = req.body;
     const reservation = data?.reservation;
-
-    if (!reservation) {
-      console.log("⚠️ Nessuna reservation nel payload");
-      return res.status(200).json({ ok: true });
-    }
-
     // --------------------------------------------------
     // 1️⃣ FILTRA CANCELLAZIONI
     // --------------------------------------------------
