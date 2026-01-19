@@ -2378,7 +2378,7 @@ app.post("/paypal-webhook", async (req, res) => {
   }
 });
 
- // ========================================================================
+  // ========================================================================
 // HOSTAWAY BOOKING WEBHOOK — FIXED & DEPLOY SAFE
 // ========================================================================
 app.post("/hostaway-booking-webhook", async (req, res) => {
@@ -2387,16 +2387,25 @@ app.post("/hostaway-booking-webhook", async (req, res) => {
 
   try {
     const data = req.body;
-    
-    // GESTIONE DOPPIA STRUTTURA: reservation nested O root level
     const reservation = data?.reservation || data;
 
     console.log("🏠 HOSTAWAY BOOKING:", JSON.stringify(data, null, 2));
 
-    // Estrai dati in modo flessibile
-    const reservationId = reservation?.reservationId || reservation?.id;
+    // Estrai ID (può essere "id" o "reservationId")
+    const reservationId = reservation?.id || reservation?.reservationId;
     const conversationId = reservation?.conversationId;
-    const arrivalTime = reservation?.arrivalTime || reservation?.checkinTime || reservation?.customFields?.arrival_time;
+    
+    // CONVERTI checkInTime numerico → stringa "HH:00"
+    let arrivalTime = reservation?.arrivalTime;
+    if (!arrivalTime && reservation?.checkInTime) {
+      const hour = reservation.checkInTime;
+      arrivalTime = `${hour}:00`;
+    }
+
+    console.log("✅ DATI ESTRATTI:");
+    console.log("   reservationId:", reservationId);
+    console.log("   conversationId:", conversationId);
+    console.log("   arrivalTime:", arrivalTime);
 
     if (!reservationId) {
       console.log("⚠️ ReservationId mancante → ignorato");
