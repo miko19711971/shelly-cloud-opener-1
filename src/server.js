@@ -9,6 +9,43 @@ import bodyParser from "body-parser";
 import { matchIntent } from "./matcher.js";
 import { detectLanguage } from "./language.js";
 import { ANSWERS } from "./answers.js";
+import { GoogleGenerativeAI } from "@google/generative-ai";
+
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+
+const CRITICAL_INTENTS = [
+  "wifi",
+  "check_in",
+  "check_out",
+  "electric_panel",
+  "emergency",
+  "heating",
+  "air_conditioning",
+  "laundry",
+  "building",
+  "trash",
+  "city_tax_info"
+];
+
+async function geminiChat({ apartment, lang, message }) {
+  const model = genAI.getModel({
+    model: "gemini-2.0-flash-exp",
+    tools: [{ googleSearch: {} }]
+  });
+
+  const prompt = `Sei l'assistente dell'appartamento ${apartment} a Roma.
+
+ISTRUZIONI:
+- Rispondi in ${lang}
+- Usa Google Search per: ristoranti, attrazioni, trasporti, parcheggi, meteo
+- Tono cordiale
+- Risposte brevi (max 4 righe)
+
+DOMANDA: ${message}`;
+
+  const result = await model.generateContent(prompt);
+  return result.response.text();
+}
 const app = express();
 
 app.use(bodyParser.json({ limit: "100kb" }));
