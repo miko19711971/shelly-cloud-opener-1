@@ -41,7 +41,7 @@ function decideSlots(arrivalTime) {
 
   return ["2330"];
 }
-function slotToDate(slot) {
+ function slotToDate(slot) {
   const now = new Date();
   const hours = slot.length === 2 ? Number(slot) : Number(slot.slice(0, 2));
   const minutes = slot.length === 2 ? 0 : Number(slot.slice(2));
@@ -55,48 +55,15 @@ function slotToDate(slot) {
     0,
     0
   );
-// ========================================================================
-// SLOT SCHEDULER (SETTIMEOUT) — PRODUZIONE
-// ========================================================================
-const scheduledJobs = new Map(); // key: reservationId-slot
 
-function scheduleSlotMessages({ reservationId, slots, sendMessageFn }) {
-  if (!reservationId || !Array.isArray(slots) || !sendMessageFn) return;
-
-  for (const slot of slots) {
-    const when = slotToDate(slot);
-    const delay = when.getTime() - Date.now();
-
-    if (delay <= 0) {
-      console.log("⏭ Slot già passato, skip:", slot);
-      continue;
-    }
-
-    const key = `${reservationId}-${slot}`;
-    if (scheduledJobs.has(key)) continue;
-
-    console.log("⏰ Slot schedulato:", slot, "→", when.toISOString());
-
-    const timer = setTimeout(async () => {
-      try {
-        await sendMessageFn({ reservationId, slot });
-        console.log("📨 Messaggio inviato slot", slot);
-      } catch (err) {
-        console.error("❌ Errore invio slot", slot, err.message);
-      }
-      scheduledJobs.delete(key);
-    }, delay);
-
-    scheduledJobs.set(key, timer);
-  }
-}
-  // Se l’orario è già passato oggi → domani
+  // Se l'orario è già passato oggi → domani
   if (target.getTime() <= now.getTime()) {
     target.setDate(target.getDate() + 1);
   }
 
   return target;
 }
+
 // ========================================================================
 // SLOT SCHEDULER — PRODUZIONE (UNICO)
 // ========================================================================
