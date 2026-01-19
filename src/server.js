@@ -1917,47 +1917,6 @@ app.post("/hostaway-incoming", async (req, res) => {
       listingMapId: listingId,
       guestLanguage
     } = req.body || {};
-   // 🔎 intercettiamo solo messaggi con orario di arrivo
-const text =
-  message?.text ||
-  message?.message ||
-  message?.content ||
-  "";
-
-if (!text) return res.sendStatus(200);
-
-// prova a estrarre un orario tipo 18:30, 7:00, 23
-const match = text.match(/([01]?\d|2[0-3])([:.]([0-5]\d))?/);
-
-if (!match) {
-  console.log("ℹ️ Nessun orario nel messaggio");
-  return res.sendStatus(200);
-}
-
-const arrivalTime = match[0].includes(":")
-  ? match[0]
-  : `${match[0]}:00`;
-
-console.log("⏰ Arrival time da chat:", arrivalTime);
-   // 📆 calcolo slot
-const slots = decideSlots(arrivalTime);
-console.log("📆 Slot calcolati:", slots);
-
-// 🚀 invio slot al cliente (SOLO messaggi, niente check-in)
-if (conversationId && apartment) {
-  for (const slot of slots) {
-    await sendSlotLiveMessage({
-      conversationId,
-      apartment,
-      slot
-    });
-  }
-  console.log("✅ Slot inviati in chat");
-} else {
-  console.log("⚠️ conversationId o apartment mancanti → niente invio");
-}
-
-return res.sendStatus(200);
 // ===============================
 // PATCH — ARRIVAL TIME VIA GUEST MESSAGE
 // ===============================
