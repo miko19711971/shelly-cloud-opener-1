@@ -1970,13 +1970,13 @@ if (effectiveReservationId && conversationId) {
       console.log("🧩 ARRIVAL TIME (via guest message):", arrivalTime);
       console.log("🧩 SLOT CALCOLATI:", slots);
 
-      scheduleSlotMessages({
-        reservationId,
-        conversationId,
-        apartment,
-        slots,
-        sendFn: sendSlotLiveMessage
-      });
+       scheduleSlotMessages({
+  reservationId: effectiveReservationId,
+  conversationId,
+  apartment,
+  slots,
+  sendFn: sendSlotLiveMessage
+});
     } else {
       console.log("⚠️ Arrival time non presente nella reservation");
     }
