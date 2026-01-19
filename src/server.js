@@ -1948,7 +1948,7 @@ if (!effectiveReservationId && conversationId) {
 if (effectiveReservationId && conversationId) {
   try {
     const r = await axios.get(
-      'https://api.hostaway.com/v1/reservations/${effectiveReservationId}'
+    `https://api.hostaway.com/v1/reservations/${effectiveReservationId}`
       {
         headers: {
           Authorization: `Bearer ${HOSTAWAY_TOKEN}`
