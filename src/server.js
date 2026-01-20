@@ -9,43 +9,6 @@ import bodyParser from "body-parser";
 import { matchIntent } from "./matcher.js";
 import { detectLanguage } from "./language.js";
 import { ANSWERS } from "./answers.js";
-import { GoogleGenerativeAI } from "@google/generative-ai";
-
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-
-const CRITICAL_INTENTS = [
-  "wifi",
-  "check_in",
-  "check_out",
-  "electric_panel",
-  "emergency",
-  "heating",
-  "air_conditioning",
-  "laundry",
-  "building",
-  "trash",
-  "city_tax_info"
-];
-
-async function geminiChat({ apartment, lang, message }) {
-  const model = genAI.getModel({
-    model: "gemini-2.0-flash-exp",
-    tools: [{ googleSearch: {} }]
-  });
-
-  const prompt = `Sei l'assistente dell'appartamento ${apartment} a Roma.
-
-ISTRUZIONI:
-- Rispondi in ${lang}
-- Usa Google Search per: ristoranti, attrazioni, trasporti, parcheggi, meteo
-- Tono cordiale
-- Risposte brevi (max 4 righe)
-
-DOMANDA: ${message}`;
-
-  const result = await model.generateContent(prompt);
-  return result.response.text();
-}
 const app = express();
 
 app.use(bodyParser.json({ limit: "100kb" }));
@@ -1938,11 +1901,11 @@ function normalizeLang(lang) {
   return lang.slice(0, 2).toLowerCase();
 }
 
- app.post("/hostaway-incoming", async (req, res) => {
+app.post("/hostaway-incoming", async (req, res) => {
   console.log("\n" + "=".repeat(60));
-  console.log("📩 HOSTAWAY WEBHOOK RECEIVED");
+  console.log("ð© HOSTAWAY WEBHOOK RECEIVED");
   console.log("=".repeat(60));
-  console.log("📦 Request Body:", JSON.stringify(req.body, null, 2));
+  console.log("ð¦ Request Body:", JSON.stringify(req.body, null, 2));
   console.log("=".repeat(60) + "\n");
 
   try {
@@ -1954,252 +1917,134 @@ function normalizeLang(lang) {
       listingMapId: listingId,
       guestLanguage
     } = req.body || {};
+   // PATCH: recupera reservationId dalla chat se manca
+let effectiveReservationId = reservationId;
 
-    // PATCH: recupera reservationId dalla chat se manca
-    let effectiveReservationId = reservationId;
+if (!effectiveReservationId && conversationId) {
+  console.log("🧩 ReservationId mancante, provo da conversationId:", conversationId);
 
-    if (!effectiveReservationId && conversationId) {
-      console.log("🧩 ReservationId mancante, provo da conversationId:", conversationId);
-
-      try {
-        const r = await fetch(
-          `https://api.hostaway.com/v1/conversations/${conversationId}`,
-          {
-            headers: {
-              Authorization: `Bearer ${HOSTAWAY_TOKEN}`,
-              "Content-Type": "application/json"
-            }
-          }
-        );
-
-        const data = await r.json();
-        effectiveReservationId = data?.result?.reservationId;
-
-        console.log("🧩 ReservationId risolto:", effectiveReservationId);
-      } catch (err) {
-        console.error("❌ Errore fetch conversation → reservation", err);
-      }
-    }
-
-    // ===============================
-    // PATCH — ARRIVAL TIME VIA GUEST MESSAGE
-    // ===============================
-    if (effectiveReservationId && conversationId) {
-      try {
-        const r = await axios.get(
-          `https://api.hostaway.com/v1/reservations/${effectiveReservationId}`,
-          {
-            headers: {
-              Authorization: `Bearer ${HOSTAWAY_TOKEN}`
-            },
-            timeout: 10000
-          }
-        );
-
-        const reservation = r.data?.result;
-        const arrivalTime =
-          reservation?.arrivalTime ||
-          reservation?.checkinTime ||
-          reservation?.customFields?.arrival_time ||
-          null;
-
-        if (arrivalTime) {
-          const slots = decideSlots(arrivalTime);
-
-          console.log("🧩 ARRIVAL TIME (via guest message):", arrivalTime);
-          console.log("🧩 SLOT CALCOLATI:", slots);
-
-          scheduleSlotMessages({
-            reservationId: effectiveReservationId,
-            conversationId,
-            apartment,
-            slots,
-            sendFn: sendSlotLiveMessage
-          });
-        } else {
-          console.log("⚠️ Arrival time non presente nella reservation");
+  try {
+    const r = await fetch(
+      `https://api.hostaway.com/v1/conversations/${conversationId}`,
+      {
+        headers: {
+         Authorization: `Bearer ${HOSTAWAY_TOKEN}`,
+          "Content-Type": "application/json"
         }
-      } catch (e) {
-        console.error("❌ Errore fetch reservation (guest message):", e.message);
       }
-    }
+    );
 
+    const data = await r.json();
+    effectiveReservationId = data?.result?.reservationId;
+
+    console.log("🧩 ReservationId risolto:", effectiveReservationId);
+  } catch (err) {
+    console.error("❌ Errore fetch conversation → reservation", err);
+  }
+}
+// ===============================
+// PATCH — ARRIVAL TIME VIA GUEST MESSAGE
+// ===============================
+if (effectiveReservationId && conversationId) {
+  try {
+     const r = await axios.get(
+  `https://api.hostaway.com/v1/reservations/${effectiveReservationId}`,
+  {
+    headers: {
+      Authorization: `Bearer ${HOSTAWAY_TOKEN}`
+    },
+    timeout: 10000
+  }
+);
+
+    const reservation = r.data?.result;
+    const arrivalTime =
+      reservation?.arrivalTime ||
+      reservation?.checkinTime ||
+      reservation?.customFields?.arrival_time ||
+      null;
+
+    if (arrivalTime) {
+      const slots = decideSlots(arrivalTime);
+
+      console.log("🧩 ARRIVAL TIME (via guest message):", arrivalTime);
+      console.log("🧩 SLOT CALCOLATI:", slots);
+
+       scheduleSlotMessages({
+  reservationId: effectiveReservationId,
+  conversationId,
+  apartment,
+  slots,
+  sendFn: sendSlotLiveMessage
+});
+    } else {
+      console.log("⚠️ Arrival time non presente nella reservation");
+    }
+  } catch (e) {
+    console.error("❌ Errore fetch reservation (guest message):", e.message);
+  }
+}
     // ======================================================
-    // Resolve Listing ID from reservation (HostAway)
+    // ð Resolve Listing ID from reservation (HostAway)
     // ======================================================
     let resolvedListingId = listingId;
 
     if (!resolvedListingId && reservationId) {
       try {
-        console.log("🔍 Fetching reservation from HostAway:", reservationId);
+        console.log("ð Fetching reservation from HostAway:", reservationId);
 
-        const r = await axios.get(
-          `https://api.hostaway.com/v1/reservations/${effectiveReservationId}`,
-          {
-            headers: {
-              Authorization: `Bearer ${HOSTAWAY_TOKEN}`
-            },
-            timeout: 10000
-          }
-        );
+         const r = await axios.get(
+  `https://api.hostaway.com/v1/reservations/${effectiveReservationId}`,
+  {
+    headers: {
+      Authorization: `Bearer ${HOSTAWAY_TOKEN}`
+    },
+    timeout: 10000
+  }
+);
 
-        console.log("📄 FULL API Response:", JSON.stringify(r.data, null, 2));
+        console.log("ð FULL API Response:", JSON.stringify(r.data, null, 2));
 
         resolvedListingId = r.data?.result?.listingId;
-        console.log("🏠 ListingId resolved from reservation:", resolvedListingId);
+        console.log("ð  ListingId resolved from reservation:", resolvedListingId);
       } catch (e) {
-        console.error("❌ Failed to resolve listingId from reservation", e.message);
+        console.error("â Failed to resolve listingId from reservation", e.message);
       }
     }
 
-    console.log("📊 STEP 1: Extract Data");
-    console.log("  ├─ message:", message);
-    console.log("  ├─ conversationId:", conversationId);
-    console.log("  ├─ guestName:", guestName);
-    console.log("  └─ reservationId:", reservationId);
+    console.log("ð STEP 1: Extract Data");
+    console.log("  ââ message:", message);
+    console.log("  ââ conversationId:", conversationId);
+    console.log("  ââ guestName:", guestName);
+    console.log("  ââ reservationId:", reservationId);
 
     if (!message || !conversationId) {
-      console.log("⚠️ Missing required fields → SILENT");
+      console.log("â ï¸ Missing required fields â SILENT");
       return res.json({ ok: true, silent: true });
     }
 
     // ======================================================
-    // STEP 2: Check HostAway Token
+    // ð STEP 2: Check HostAway Token
     // ======================================================
     if (!HOSTAWAY_TOKEN) {
-      console.error("❌ HOSTAWAY_TOKEN is NOT configured!");
+      console.error("â HOSTAWAY_TOKEN is NOT configured!");
       return res.status(500).json({ ok: false });
     }
 
-    console.log("  ✓ Token configured");
+    console.log("  â Token configured");
 
-    // ======================================================
-    // 🎯 STEP 3: Match Intent + Language
-    // ======================================================
-    const match = matchIntent(message);
-    console.log("🎯 Matcher result:", match || "NONE");
-
-    if (!match || !match.intent) {
-      console.log("👋 No intent → silent");
-      return res.json({ ok: true, silent: true });
-    }
-
-    const intent = match.intent;
-    const detectedLang = detectLanguage(message);
-    console.log("🌍 Lingua rilevata:", detectedLang);
-
-    
-
-    // ========================================
-    // INTENT CRITICO → SOLO answers.js
-    // ========================================
-    if (match && CRITICAL_INTENTS.includes(match.intent)) {
-      const platformLang = normalizeLang(guestLanguage);
-      const defaultLang = APT_DEFAULT_LANG[apartment] || "en";
-
-      // Cerca risposta
-      if (detectedLang && ANSWERS[apartment]?.[detectedLang]?.[intent]) {
-        answer = ANSWERS[apartment][detectedLang][intent];
-        usedLang = detectedLang;
-      } else if (platformLang && ANSWERS[apartment]?.[platformLang]?.[intent]) {
-        answer = ANSWERS[apartment][platformLang][intent];
-        usedLang = platformLang;
-      } else if (ANSWERS[apartment]?.[defaultLang]?.[intent]) {
-        answer = ANSWERS[apartment][defaultLang][intent];
-        usedLang = defaultLang;
-      }
-
-      // Se manca risposta critica → silent
-      if (!answer) {
-        console.log("⚠️ Intent critico senza risposta → silent");
-        return res.json({ ok: true, silent: true });
-      }
-
-      method = "answers";
-      console.log("✅ Risposta da answers.js (intent critico)");
-    }
-
-    // ========================================
-    // INTENT NON CRITICO → prova answers.js
-    // ========================================
-    else if (match && match.intent) {
-      const platformLang = normalizeLang(guestLanguage);
-      const defaultLang = APT_DEFAULT_LANG[apartment] || "en";
-
-      // Prova answers.js
-      if (detectedLang && ANSWERS[apartment]?.[detectedLang]?.[intent]) {
-        answer = ANSWERS[apartment][detectedLang][intent];
-        usedLang = detectedLang;
-        method = "answers";
-      } else if (platformLang && ANSWERS[apartment]?.[platformLang]?.[intent]) {
-        answer = ANSWERS[apartment][platformLang][intent];
-        usedLang = platformLang;
-        method = "answers";
-      } else if (ANSWERS[apartment]?.[defaultLang]?.[intent]) {
-        answer = ANSWERS[apartment][defaultLang][intent];
-        usedLang = defaultLang;
-        method = "answers";
-      }
-
-      console.log(answer ? "✅ Risposta da answers.js" : "🤖 Fallback a Gemini");
-    }
-
-    // ========================================
-    // NESSUN MATCH O MANCA RISPOSTA → GEMINI
-    // ========================================
-    if (!answer) {
-      try {
-        console.log("🤖 Chiamata Gemini...");
-
-        answer = await geminiChat({
-          apartment,
-          lang: detectedLang || "en",
-          message
-        });
-
-        usedLang = detectedLang || "en";
-        method = "gemini";
-        console.log("✅ Risposta Gemini OK");
-      } catch (err) {
-        console.error("❌ Gemini errore:", err.message);
-        return res.json({ ok: true, silent: true });
-      }
-    }
-
-    // ========================================
-    // INVIA RISPOSTA
-    // ========================================
-    await axios.post(
-      `https://api.hostaway.com/v1/conversations/${conversationId}/messages`,
-      {
-        body: answer,
-        sendToGuest: true
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${HOSTAWAY_TOKEN}`,
-          "Content-Type": "application/json"
-        },
-        timeout: 10000
-      }
-    );
-
-    console.log("✅ Reply sent");
-
-    return res.json({
-      ok: true,
-      replied: true,
-      method,
-      intent: match?.intent,
-      lang: usedLang
-    });
-
-  } catch (err) {
-    console.error("❌ ERROR IN /hostaway-incoming");
-    console.error(err.message);
-    return res.status(500).json({ ok: false });
-  }
-});
+  // ======================================================
+// 🎯 STEP 3: Match Intent + Language
+// ======================================================
+const match = matchIntent(message);
+console.log("🎯 Matcher result:", match || "NONE");
+if (!match || !match.intent) {
+  console.log("👋 No intent → silent");
+  return res.json({ ok: true, silent: true });
+}
+const intent = match.intent;
+const detectedLang = detectLanguage(message);
+console.log("🌍 Lingua rilevata:", detectedLang);
     // ======================================================
     // ð  STEP 4: listingId â apartment
     // ======================================================
