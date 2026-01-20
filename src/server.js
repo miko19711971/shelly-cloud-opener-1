@@ -2044,12 +2044,16 @@ if (effectiveReservationId && conversationId) {
 
     console.log("  â Token configured");
 
-  // ======================================================
+   // ======================================================
 // 🎯 STEP 3: Match Intent + Language
 // ====================================================== 
-   const match = matchIntent(message);
+const match = matchIntent(message);
 console.log("🎯 Matcher result:", match || "NONE");
- if (!match || !match.intent) {
+
+const detectedLang = detectLanguage(message);
+console.log("🌍 Lingua rilevata:", detectedLang);
+
+if (!match || !match.intent) {
   console.log("🤖 No intent → Gemini fallback");
 
   const geminiReply = await askGemini({
@@ -2081,9 +2085,8 @@ console.log("🎯 Matcher result:", match || "NONE");
   console.log("🤖 Gemini had no answer → silent");
   return res.json({ ok: true, silent: true });
 }
+
 const intent = match.intent;
-const detectedLang = detectLanguage(message);
-console.log("🌍 Lingua rilevata:", detectedLang);
     // ======================================================
     // ð  STEP 4: listingId â apartment
     // ======================================================
