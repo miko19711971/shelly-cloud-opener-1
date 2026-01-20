@@ -2106,10 +2106,7 @@ console.log("🌍 Lingua rilevata:", detectedLang);
       console.log("  â Usata lingua default:", defaultLang);
     }
 
-    if (!answer) {
-      console.log("ð No answer for language â silent");
-      return res.json({ ok: true, silent: true });
-    }
+     
 
     console.log("  â Answer found");
     console.log("  ââ Language used:", usedLang);
