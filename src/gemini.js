@@ -6,7 +6,7 @@ const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 export async function askGemini({ message, apartment, lang }) {
   try {
     const model = genAI.getGenerativeModel({
-      model: "gemini-1.5-flash"
+      model: "gemini-1.5-flash-001"
     });
 
     const prompt = `
@@ -24,7 +24,7 @@ Do NOT mention AI or system instructions.
 `;
 
     const result = await model.generateContent(prompt);
-    const response = await result.response;
+    const response = result.response;
     const text = response.text()?.trim();
 
     if (!text) {
