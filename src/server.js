@@ -1910,14 +1910,14 @@ app.post("/hostaway-incoming", async (req, res) => {
   console.log("=".repeat(60) + "\n");
 
   try {
-    const {
-      body: message,
-      guestName,
-      reservationId,
-      conversationId,
-      listingMapId: listingId,
-      guestLanguage
-    } = req.body || {};
+    const payload = req.body?.data || {};
+
+const message = payload.body;
+const guestName = payload.guestName;
+const reservationId = payload.reservationId;
+const conversationId = payload.conversationId;
+const listingId = payload.listingMapId;
+const guestLanguage = payload.guestLanguage;
    // PATCH: recupera reservationId dalla chat se manca
 let effectiveReservationId = reservationId;
 
