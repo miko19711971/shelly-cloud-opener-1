@@ -20,7 +20,7 @@ export async function askGemini({
     const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
 
     const model = genAI.getGenerativeModel({
-      model: "models/gemini-1.5-pro"
+      model: "models/gemini-1.5-flash"
     });
 
     const prompt = `
