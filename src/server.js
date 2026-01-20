@@ -2097,7 +2097,7 @@ console.log("🌍 Lingua rilevata:", detectedLang);
 
     console.log("  ââ listingId ricevuto:", resolvedListingId);
 
-    const apartment = LISTING_TO_APARTMENT[String(resolvedListingId)];
+     
 
     if (!apartment) {
       console.error("â ListingId non mappato:", resolvedListingId);
