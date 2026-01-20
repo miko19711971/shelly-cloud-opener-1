@@ -1,4 +1,4 @@
- import express from "express";
+import express from "express";
 import axios from "axios";
 import crypto from "crypto";
 import cors from "cors";
@@ -9,34 +9,14 @@ import bodyParser from "body-parser";
 import { matchIntent } from "./matcher.js";
 import { detectLanguage } from "./language.js";
 import { ANSWERS } from "./answers.js";
-import { GoogleGenerativeAI } from "@google/generative-ai";
-
 const app = express();
 
 app.use(bodyParser.json({ limit: "100kb" }));
 app.disable("x-powered-by");
 app.set("trust proxy", true);
-
-// ========================================================================
-// GEMINI — INIT (SOLO INIZIALIZZAZIONE, NON USATO ANCORA)
-// ========================================================================
-
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-
-async function geminiChat({ message }) {
-  const model = genAI.getGenerativeModel({
-    model: "gemini-2.0-flash-exp"
-  });
-
-  const result = await model.generateContent(message);
-  const response = await result.response;
-  return response.text();
-}
-
-// ========================================================================
+ // ========================================================================
 // ARRIVAL SLOT DECIDER — SAFE, NON ROMPE NULLA
 // ========================================================================
-
 function decideSlots(arrivalTime) {
   // fallback totale se non sappiamo l’orario
   if (!arrivalTime || !arrivalTime.includes(":")) {
@@ -61,13 +41,7 @@ function decideSlots(arrivalTime) {
 
   return ["2330"];
 }
-
-function slotToDate(slot) {
-  const now = new Date();
-  const hours = slot.length === 2 ? Number(slot) : Number(slot.slice(0, 2));
-  const minutes = slot.length === 2 ? 0 : Number(slot.slice(2));
-
-   function slotToDate(slot) {
+ function slotToDate(slot) {
   const now = new Date();
   const hours = slot.length === 2 ? Number(slot) : Number(slot.slice(0, 2));
   const minutes = slot.length === 2 ? 0 : Number(slot.slice(2));
@@ -89,6 +63,7 @@ function slotToDate(slot) {
 
   return target;
 }
+
 // ========================================================================
 // SLOT SCHEDULER — PRODUZIONE (UNICO)
 // ========================================================================
