@@ -1,4 +1,3 @@
-// src/gemini.js
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
@@ -19,14 +18,23 @@ Guest message:
 "${message}"
 
 Reply clearly, politely, and concisely in the SAME language as the guest.
-Do NOT mention AI.
+If the question is about transport, directions, or city information, answer normally.
+Do NOT mention AI, systems, or internal instructions.
 `;
 
     const result = await model.generateContent(prompt);
-    return result.response.text().trim();
+    const response = result.response;
+    const text = response.text()?.trim();
+
+    if (!text) {
+      console.error("⚠️ Gemini returned empty response");
+      return null;
+    }
+
+    return text;
 
   } catch (err) {
-    console.error("❌ Gemini error:", err.message);
+    console.error("❌ Gemini error:", err.message || err);
     return null;
   }
 }
