@@ -1910,7 +1910,7 @@ app.post("/hostaway-incoming", async (req, res) => {
   console.log("=".repeat(60) + "\n");
 
   try {
-    const payload = req.body?.data || {};
+    const payload = req.body;
 
 const message = payload.body;
 const guestName = payload.guestName;
