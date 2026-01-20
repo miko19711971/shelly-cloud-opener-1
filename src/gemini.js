@@ -1,7 +1,7 @@
 export async function askGemini({ message, apartment, lang }) {
   try {
     const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key=${process.env.GEMINI_API_KEY}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -21,6 +21,7 @@ Do not mention AI.`
       }
     );
     const data = await response.json();
+    console.log("🔍 Gemini response:", JSON.stringify(data));
     return data.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || null;
   } catch (err) {
     console.error("❌ GEMINI FAILED:", err.message);
