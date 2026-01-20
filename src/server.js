@@ -2106,7 +2106,33 @@ console.log("🌍 Lingua rilevata:", detectedLang);
       console.log("  â Usata lingua default:", defaultLang);
     }
 
-     
+     // ======================================================
+// 🤖 FALLBACK GEMINI — quando non esiste risposta interna
+// ======================================================
+if (!answer) {
+  console.log("🤖 No static answer → Gemini fallback");
+
+  try {
+    const geminiReply = await askGemini({
+      apartment,
+      lang: detectedLang || platformLang || defaultLang || "en",
+      message
+    });
+
+    if (!geminiReply) {
+      console.log("🤖 Gemini returned empty → silent");
+      return res.json({ ok: true, silent: true });
+    }
+
+    answer = geminiReply;
+    usedLang = detectedLang || platformLang || defaultLang || "en";
+
+    console.log("🤖 Gemini answer ready");
+  } catch (e) {
+    console.error("❌ Gemini error:", e.message);
+    return res.json({ ok: true, silent: true });
+  }
+}
 
     console.log("  â Answer found");
     console.log("  ââ Language used:", usedLang);
