@@ -3,7 +3,7 @@ const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 export async function askGemini({ message, apartment, lang }) {
   try {
     const model = genAI.getGenerativeModel({
-      model: "gemini-1.5-flash-001"
+      model: "gemini-pro"
     });
     const prompt = `
 You are a guest assistant for a vacation rental in Rome.
