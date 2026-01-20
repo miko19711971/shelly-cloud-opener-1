@@ -9,6 +9,7 @@ import bodyParser from "body-parser";
 import { matchIntent } from "./matcher.js";
 import { detectLanguage } from "./language.js";
 import { ANSWERS } from "./answers.js";
+import { askGemini } from "./gemini.js";
 const app = express();
 
 app.use(bodyParser.json({ limit: "100kb" }));
