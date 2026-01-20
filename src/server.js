@@ -1918,6 +1918,16 @@ const reservationId = payload.reservationId;
 const conversationId = payload.conversationId;
 const listingId = payload.listingMapId;
 const guestLanguage = payload.guestLanguage;
+   // STEP 1.5 — Resolve apartment EARLY (prima di matcher / Gemini)
+const apartment = (() => {
+  switch (listingId) {
+    case 194164: return "trastevere";
+    case 194165: return "portico_ottavia";
+    case 194166: return "arenula";
+    case 194167: return "scala";
+    default: return "rome";
+  }
+})();
    // PATCH: recupera reservationId dalla chat se manca
 let effectiveReservationId = reservationId;
 
