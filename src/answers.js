@@ -260,7 +260,10 @@ lost_keys: "En caso de que pierdan las llaves, lo primero que deben hacer es lla
       shopping: "Per informazioni su negozi e mercati consulta la tua guida interattiva: https://shelly-cloud-opener-1.onrender.com/guides/scala/?lang=it",
       attractions: "Per scoprire cosa visitare a Roma consulta la tua guida interattiva: https://shelly-cloud-opener-1.onrender.com/guides/scala/?lang=it",
       day_trips: "Per informazioni su gite ed escursioni fuori Roma consulta la tua guida interattiva: https://shelly-cloud-opener-1.onrender.com/guides/scala/?lang=it",
-      tickets: "Per informazioni su biglietti per musei, eventi e partite consulta la tua guida interattiva: https://shelly-cloud-opener-1.onrender.com/guides/scala/?lang=it"
+      tickets: "Per informazioni su biglietti per musei, eventi e partite consulta la tua guida interattiva: https://shelly-cloud-opener-1.onrender.com/guides/scala/?lang=it",
+      gas_leak: "Se sentite odore di gas, controllate subito la macchina del gas e verificate che tutte le manopole nere, cioè quelle poste sul lato destro della macchina del gas, siano ben chiuse e nella posizione corretta. Subito dopo, di fronte alla macchina del gas, leggermente sul lato destro, troverete una manopola metallica: ruotatela verso il basso per chiudere completamente il circuito del gas. Dopo aver effettuato queste operazioni, chiamatemi immediatamente, perché è necessario che io controlli l’appartamento.",
+water_leak: "Nel caso si verifichi una perdita d’acqua all’interno dell’appartamento, uscite nella corte esterna. Appena usciti, sul lato destro, nell’angolo in alto a destra, guardando verso il basso, troverete un cappuccio di metallo: rimuovetelo. Dietro il cappuccio c’è un rubinetto: ruotatelo completamente in senso opposto per chiudere il circuito dell’acqua. Dopo aver chiuso l’acqua, chiamatemi immediatamente.",
+lost_keys: "Nel caso in cui doveste perdere le chiavi, la prima cosa da fare è chiamarmi immediatamente e avvertirmi, così da poter gestire la situazione nel modo corretto."
     },
     en: {
       wifi: "Wi-Fi: The router is on the right side of the living room, placed on a bench. SSID and password are on the router label. If it doesn't work: check it's on, unplug it for 30 seconds and plug it back in. If the issue continues, message me.",
@@ -281,7 +284,10 @@ lost_keys: "En caso de que pierdan las llaves, lo primero que deben hacer es lla
       shopping: "For information on shops and markets, check your interactive guide: https://shelly-cloud-opener-1.onrender.com/guides/scala/?lang=en",
       attractions: "To discover what to visit in Rome, check your interactive guide: https://shelly-cloud-opener-1.onrender.com/guides/scala/?lang=en",
       day_trips: "For information on day trips and excursions outside Rome, check your interactive guide: https://shelly-cloud-opener-1.onrender.com/guides/scala/?lang=en",
-      tickets: "For information on tickets for museums, events and matches, check your interactive guide: https://shelly-cloud-opener-1.onrender.com/guides/scala/?lang=en"
+      tickets: "For information on tickets for museums, events and matches, check your interactive guide: https://shelly-cloud-opener-1.onrender.com/guides/scala/?lang=en",
+      gas_leak: "If you smell gas, immediately check the gas unit and make sure that all the black knobs on the right side are fully closed and in the correct position. Then, in front of the gas unit, slightly on the right side, you will find a metal valve: turn it downward to completely shut off the gas supply. After doing this, please call me immediately so I can check the apartment.",
+water_leak: "In case of a water leak inside the apartment, go outside to the external courtyard. As soon as you exit, on the right side, in the upper right corner, looking downward, you will find a metal cap: remove it. Behind the cap there is a valve: turn it fully in the opposite direction to shut off the water supply. After shutting off the water, please call me immediately.",
+lost_keys: "If you lose the keys, the first thing to do is call me immediately and inform me, so I can handle the situation properly."
     },
     fr: {
       wifi: "Wi-Fi : Le routeur se trouve à droite du salon, posé sur un banc. Le SSID et le mot de passe sont indiqués sur l'étiquette. En cas de problème : vérifiez qu'il est allumé, débranchez-le 30 secondes puis rebranchez-le.",
@@ -302,7 +308,10 @@ lost_keys: "En caso de que pierdan las llaves, lo primero que deben hacer es lla
       shopping: "Pour les informations sur magasins et marchés, consultez votre guide interactif : https://shelly-cloud-opener-1.onrender.com/guides/scala/?lang=fr",
       attractions: "Pour découvrir quoi visiter à Rome, consultez votre guide interactif : https://shelly-cloud-opener-1.onrender.com/guides/scala/?lang=fr",
       day_trips: "Pour les informations sur excursions d'une journée hors de Rome, consultez votre guide interactif : https://shelly-cloud-opener-1.onrender.com/guides/scala/?lang=fr",
-      tickets: "Pour les informations sur billets pour musées, événements et matchs, consultez votre guide interactif : https://shelly-cloud-opener-1.onrender.com/guides/scala/?lang=fr"
+      tickets: "Pour les informations sur billets pour musées, événements et matchs, consultez votre guide interactif : https://shelly-cloud-opener-1.onrender.com/guides/scala/?lang=fr",
+      gas_leak: "Si vous sentez une odeur de gaz, vérifiez immédiatement l’appareil de gaz et assurez-vous que tous les boutons noirs situés sur le côté droit sont bien fermés. Ensuite, devant l’appareil, légèrement sur la droite, vous trouverez une vanne métallique : tournez-la vers le bas pour couper complètement le gaz. Après ces opérations, appelez-moi immédiatement afin que je puisse vérifier l’appartement.",
+water_leak: "En cas de fuite d’eau à l’intérieur de l’appartement, sortez dans la cour extérieure. Dès la sortie, sur le côté droit, dans l’angle supérieur droit, en regardant vers le bas, vous trouverez un capuchon en métal : retirez-le. Derrière ce capuchon se trouve un robinet : tournez-le complètement dans le sens opposé afin de couper l’arrivée d’eau. Après avoir coupé l’eau, appelez-moi immédiatement.",
+lost_keys: "Si vous perdez les clés, la première chose à faire est de m’appeler immédiatement et de m’en informer afin que je puisse gérer la situation correctement."
     },
     de: {
       wifi: "WLAN: Der Router steht auf der rechten Seite des Wohnzimmers auf einer Bank. SSID und Passwort stehen auf dem Aufkleber. Bei Problemen: prüfen, ob er eingeschaltet ist, 30 Sekunden vom Strom trennen und wieder anschließen.",
@@ -323,7 +332,10 @@ lost_keys: "En caso de que pierdan las llaves, lo primero que deben hacer es lla
       shopping: "Für Informationen zu Geschäften und Märkten siehe deinen interaktiven Guide: https://shelly-cloud-opener-1.onrender.com/guides/scala/?lang=de",
       attractions: "Um zu entdecken, was in Rom zu besuchen ist, siehe deinen interaktiven Guide: https://shelly-cloud-opener-1.onrender.com/guides/scala/?lang=de",
       day_trips: "Für Informationen zu Tagesausflügen außerhalb Roms siehe deinen interaktiven Guide: https://shelly-cloud-opener-1.onrender.com/guides/scala/?lang=de",
-      tickets: "Für Informationen zu Tickets für Museen, Veranstaltungen und Spiele siehe deinen interaktiven Guide: https://shelly-cloud-opener-1.onrender.com/guides/scala/?lang=de"
+      tickets: "Für Informationen zu Tickets für Museen, Veranstaltungen und Spiele siehe deinen interaktiven Guide: https://shelly-cloud-opener-1.onrender.com/guides/scala/?lang=de",
+      gas_leak: "Wenn Sie Gasgeruch wahrnehmen, überprüfen Sie sofort das Gasgerät und stellen Sie sicher, dass alle schwarzen Drehknöpfe auf der rechten Seite geschlossen sind. Vor dem Gasgerät, leicht auf der rechten Seite, befindet sich ein Metallventil: Drehen Sie es nach unten, um die Gaszufuhr vollständig zu schließen. Rufen Sie mich danach bitte sofort an, damit ich die Wohnung überprüfen kann.",
+water_leak: "Falls es in der Wohnung zu einem Wasserleck kommt, gehen Sie in den Außenhof. Sobald Sie draußen sind, auf der rechten Seite, in der oberen rechten Ecke, wenn Sie nach unten schauen, finden Sie eine Metallkappe: entfernen Sie diese. Dahinter befindet sich ein Ventil: Drehen Sie es vollständig in die entgegengesetzte Richtung, um die Wasserzufuhr zu schließen. Nachdem das Wasser abgestellt wurde, rufen Sie mich bitte sofort an.",
+lost_keys: "Falls Sie die Schlüssel verlieren, rufen Sie mich bitte sofort an und informieren Sie mich, damit ich die Situation korrekt regeln kann."
     },
     es: {
       wifi: "Wi-Fi: El router está en el lado derecho del salón, sobre un banco. El SSID y la contraseña están en la etiqueta. Si hay problemas: comprueba que esté encendido, desenchúfalo 30 segundos y vuelve a conectarlo.",
@@ -344,7 +356,10 @@ lost_keys: "En caso de que pierdan las llaves, lo primero que deben hacer es lla
       shopping: "Para información sobre tiendas y mercados, consulta tu guía interactiva: https://shelly-cloud-opener-1.onrender.com/guides/scala/?lang=es",
       attractions: "Para descubrir qué visitar en Roma, consulta tu guía interactiva: https://shelly-cloud-opener-1.onrender.com/guides/scala/?lang=es",
       day_trips: "Para información sobre excursiones de un día fuera de Roma, consulta tu guía interactiva: https://shelly-cloud-opener-1.onrender.com/guides/scala/?lang=es",
-      tickets: "Para información sobre entradas para museos, eventos y partidos, consulta tu guía interactiva: https://shelly-cloud-opener-1.onrender.com/guides/scala/?lang=es"
+      tickets: "Para información sobre entradas para museos, eventos y partidos, consulta tu guía interactiva: https://shelly-cloud-opener-1.onrender.com/guides/scala/?lang=es",
+      gas_leak: "Si sienten olor a gas, revisen inmediatamente la unidad de gas y comprueben que todas las perillas negras del lado derecho estén bien cerradas. Luego, frente a la unidad de gas, ligeramente a la derecha, encontrarán una válvula metálica: gírenla hacia abajo para cerrar completamente el suministro de gas. Después de estas operaciones, llámenme inmediatamente para que pueda revisar el apartamento.",
+water_leak: "En caso de una fuga de agua dentro del apartamento, salgan al patio exterior. Nada más salir, en el lado derecho, en la esquina superior derecha, mirando hacia abajo, encontrarán un tapón metálico: retírenlo. Detrás hay una llave: gírenla completamente en sentido contrario para cerrar el circuito del agua. Después de cerrar el agua, llámenme inmediatamente.",
+lost_keys: "En caso de que pierdan las llaves, lo primero que deben hacer es llamarme inmediatamente y avisarme para poder gestionar la situación correctamente."
     }
   },
 
