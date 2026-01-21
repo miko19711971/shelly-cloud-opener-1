@@ -2511,12 +2511,12 @@ app.post("/hostaway-booking-webhook", async (req, res) => {
     // --------------------------------------------------
     // 3️⃣ RECUPERA CONVERSATIONID SE MANCANTE
     // --------------------------------------------------
-    if (!conversationId && reservationId) {
+    if (!conversationId && effectiveReservationId) {
       try {
         console.log("🔍 Tentativo recupero conversationId...");
         
         const convResp = await axios.get(
-          `https://api.hostaway.com/v1/conversations?reservationId=${reservationId}`,
+ `https://api.hostaway.com/v1/conversations?reservationId=${effectiveReservationId}`,
           {
             headers: { Authorization: `Bearer ${HOSTAWAY_TOKEN}` },
             timeout: 10000
