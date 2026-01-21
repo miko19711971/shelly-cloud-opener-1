@@ -2543,7 +2543,7 @@ app.post("/hostaway-booking-webhook", async (req, res) => {
     // --------------------------------------------------
     if (conversationId) {
       scheduleSlotMessages({
-        reservationId: reservationId,
+        reservationId: effectiveReservationId,
         conversationId: conversationId,
         apartment: "auto",
         slots,
