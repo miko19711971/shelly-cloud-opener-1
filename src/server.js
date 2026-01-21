@@ -2458,6 +2458,8 @@ app.post("/hostaway-booking-webhook", async (req, res) => {
 
     // Estrai ID (può essere "id" o "reservationId")
     const reservationId = reservation?.id || reservation?.reservationId;
+   const effectiveReservationId =
+  reservationId || data?.reservationId;
     let conversationId = reservation?.conversationId;
     
     // CONVERTI checkInTime numerico → stringa "HH:00"
