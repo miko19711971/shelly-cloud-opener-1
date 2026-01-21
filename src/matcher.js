@@ -9,6 +9,19 @@ const STRICT_INTENTS = {
     "qual è la password", "what is the password", "wifi password",
     "mot de passe", "passwort", "wlan"
   ],
+  fire: [
+  // IT
+  "fuoco", "incendio", "fiamme", "brucia", "sta bruciando",
+  "odore di bruciato", "fumo", "scintille",
+  // EN
+  "fire", "flames", "burning", "smoke", "smell of burning",
+  // ES
+  "fuego", "incendio", "llamas", "humo", "olor a quemado",
+  // FR
+  "feu", "incendie", "flammes", "fumee", "odeur de brule",
+  // DE
+  "feuer", "brand", "flammen", "rauch", "brandgeruch"
+],
 
   trash: [
     "spazzatura", "rifiuti", "immondizia", "pattumiera",
