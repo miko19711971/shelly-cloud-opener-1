@@ -2464,10 +2464,10 @@ app.post("/hostaway-booking-webhook", async (req, res) => {
     
     // CONVERTI checkInTime numerico → stringa "HH:00"
     let arrivalTime = reservation?.arrivalTime;
-     if (!arrivalTime) {
-  console.log("⚠️ Arrival time non presente nella reservation → skip");
-  return; // niente errore, niente retry HostAway
-}
+    if (!arrivalTime && reservation?.checkInTime) {
+      const hour = reservation.checkInTime;
+      arrivalTime = `${hour}:00`;
+    }
 
     console.log("✅ DATI ESTRATTI:");
     console.log("   reservationId:", reservationId);
