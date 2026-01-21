@@ -2452,11 +2452,7 @@ app.post("/hostaway-booking-webhook", async (req, res) => {
 
   try {
     const data = req.body;
-    const reservationId =
-  data?.reservationId ||
-  data?.reservation?.id ||
-  data?.reservation?.reservationId;
-
+     const reservationId = reservation?.id || reservation?.reservationId;
     console.log("🏠 HOSTAWAY BOOKING:", JSON.stringify(data, null, 2));
 
     // Estrai ID (può essere "id" o "reservationId")
