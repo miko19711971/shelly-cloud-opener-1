@@ -2472,10 +2472,10 @@ app.post("/hostaway-booking-webhook", async (req, res) => {
     console.log("   conversationId:", conversationId);
     console.log("   arrivalTime:", arrivalTime);
 
-    if (!reservationId) {
-      console.log("⚠️ ReservationId mancante → ignorato");
-      return;
-    }
+     if (!effectiveReservationId) {
+  console.log("⚠️ ReservationId mancante → ignorato");
+  return;
+}
 
     // --------------------------------------------------
     // 1️⃣ FILTRA CANCELLAZIONI
