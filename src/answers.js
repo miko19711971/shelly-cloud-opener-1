@@ -22,7 +22,8 @@ export const ANSWERS = {
       tickets: "Per informazioni su biglietti per musei, eventi e partite consulta la tua guida interattiva: https://shelly-cloud-opener-1.onrender.com/guides/arenula/?lang=it",
       gas_leak: "Se sentite odore di gas, controllate subito la macchina del gas e verificate che tutte le manopole nere, cioè quelle poste sul lato destro della macchina del gas, siano ben chiuse e nella posizione corretta. Subito dopo, di fronte alla macchina del gas, leggermente sul lato destro, troverete una manopola metallica: ruotatela verso il basso per chiudere completamente il circuito del gas. Dopo aver effettuato queste operazioni, chiamatemi immediatamente, perché è necessario che io controlli l’appartamento.",
 water_leak: "Nel caso si verifichi una perdita d’acqua nell’appartamento, la prima cosa da fare è andare in bagno. Guardando lo specchio, sul lato sinistro, leggermente nell’angolo del muro, troverete un cappuccio di metallo: svitatelo. Dietro il cappuccio c’è un rubinetto nero: chiudetelo completamente, perché è la valvola di chiusura dell’acqua dell’intero appartamento. Una volta chiusa l’acqua, chiamate il portiere e subito dopo avvertitemi.",
-lost_keys: "Nel caso in cui doveste perdere le chiavi, la prima cosa da fare è chiamarmi immediatamente e avvertirmi, così da poter gestire la situazione nel modo corretto."
+lost_keys: "Nel caso in cui doveste perdere le chiavi, la prima cosa da fare è chiamarmi immediatamente e avvertirmi, così da poter gestire la situazione nel modo corretto.",
+      fire: "Se all’interno dell’appartamento dovesse svilupparsi un incendio o prendere fuoco qualcosa, utilizzate immediatamente l’estintore per spegnere il fuoco, se possibile. Mettetevi subito in sicurezza uscendo dall’immobile. Una volta fuori, chiamate immediatamente i Vigili del Fuoco e subito dopo il mio numero."
     },
     en: {
       wifi: "Wi-Fi: The router is on the desk near the window. Turn it to read the SSID and password on the label. If it doesn't work: check it's on, unplug it for 30 seconds and plug it back in. If the issue continues, message me.",
@@ -46,7 +47,8 @@ lost_keys: "Nel caso in cui doveste perdere le chiavi, la prima cosa da fare è 
       tickets: "For information on tickets for museums, events and matches, check your interactive guide: https://shelly-cloud-opener-1.onrender.com/guides/arenula/?lang=en",
       gas_leak: "If you smell gas, immediately check the gas unit and make sure that all the black knobs on the right side are fully closed and in the correct position. Then, in front of the gas unit, slightly on the right side, you will find a metal valve: turn it downward to completely shut off the gas supply. After doing this, please call me immediately so I can check the apartment.",
 water_leak: "In case of a water leak in the apartment, go to the bathroom. Looking at the mirror, on the left side near the corner of the wall, you will find a metal cap: unscrew it. Behind the cap there is a black valve: close it completely, as it is the main water shut-off for the entire apartment. Once the water is shut off, call the building concierge and then inform me immediately.",
-lost_keys: "If you lose the keys, the first thing to do is call me immediately and inform me, so I can handle the situation properly."
+lost_keys: "If you lose the keys, the first thing to do is call me immediately and inform me, so I can handle the situation properly.",
+      fire: "If a fire starts or something catches fire inside the apartment, immediately use the fire extinguisher to put out the flames if possible. Get to safety by leaving the property right away. Once outside, call the Fire Brigade immediately and then contact me."
     },
     fr: {
       wifi: "Wi-Fi : Le routeur est sur le bureau près de la fenêtre. Tournez-le pour lire le SSID et le mot de passe sur l'étiquette. S'il ne fonctionne pas : vérifiez qu'il est allumé, débranchez-le 30 secondes puis rebranchez-le. Sinon, écrivez-moi.",
@@ -70,7 +72,8 @@ lost_keys: "If you lose the keys, the first thing to do is call me immediately a
       tickets: "Pour les informations sur billets pour musées, événements et matchs, consultez votre guide interactif : https://shelly-cloud-opener-1.onrender.com/guides/arenula/?lang=fr",
       gas_leak: "Si vous sentez une odeur de gaz, vérifiez immédiatement l’appareil de gaz et assurez-vous que tous les boutons noirs situés sur le côté droit sont bien fermés. Ensuite, devant l’appareil, légèrement sur la droite, vous trouverez une vanne métallique : tournez-la vers le bas pour couper complètement le gaz. Après ces opérations, appelez-moi immédiatement afin que je puisse vérifier l’appartement.",
 water_leak: "En cas de fuite d’eau dans l’appartement, allez dans la salle de bain. En regardant le miroir, sur le côté gauche près de l’angle du mur, vous trouverez un capuchon en métal : dévissez-le. Derrière se trouve un robinet noir : fermez-le complètement, car il s’agit de la vanne principale d’eau de l’appartement. Une fois l’eau coupée, appelez le concierge puis prévenez-moi immédiatement.",
-lost_keys: "Si vous perdez les clés, la première chose à faire est de m’appeler immédiatement et de m’en informer afin que je puisse gérer la situation correctement."
+lost_keys: "Si vous perdez les clés, la première chose à faire est de m’appeler immédiatement et de m’en informer afin que je puisse gérer la situation correctement.",
+      fire: "Si un incendie se déclare ou si quelque chose prend feu à l’intérieur de l’appartement, utilisez immédiatement l’extincteur pour éteindre le feu si possible. Mettez-vous aussitôt en sécurité en sortant du logement. Une fois à l’extérieur, appelez immédiatement les pompiers puis contactez-moi."
     },
     de: {
       wifi: "WLAN: Der Router steht auf dem Schreibtisch nahe dem Fenster. Drehen Sie ihn, um SSID und Passwort auf dem Aufkleber zu lesen. Falls es nicht funktioniert: prüfen Sie, ob er eingeschaltet ist, ziehen Sie den Stecker 30 Sekunden und stecken Sie ihn wieder ein. Dann bitte melden.",
@@ -94,7 +97,8 @@ lost_keys: "Si vous perdez les clés, la première chose à faire est de m’app
       tickets: "Für Informationen zu Tickets für Museen, Veranstaltungen und Spiele siehe deinen interaktiven Guide: https://shelly-cloud-opener-1.onrender.com/guides/arenula/?lang=de",
       gas_leak: "Wenn Sie Gasgeruch wahrnehmen, überprüfen Sie sofort das Gasgerät und stellen Sie sicher, dass alle schwarzen Drehknöpfe auf der rechten Seite geschlossen sind. Vor dem Gasgerät, leicht auf der rechten Seite, befindet sich ein Metallventil: Drehen Sie es nach unten, um die Gaszufuhr vollständig zu schließen. Rufen Sie mich danach bitte sofort an, damit ich die Wohnung überprüfen kann.",
 water_leak: "Falls es in der Wohnung zu einem Wasserleck kommt, gehen Sie ins Badezimmer. Wenn Sie in den Spiegel schauen, finden Sie auf der linken Seite nahe der Wandecke eine Metallkappe: Schrauben Sie diese ab. Dahinter befindet sich ein schwarzes Ventil: Schließen Sie es vollständig, da es das Hauptabsperrventil für das Wasser der Wohnung ist. Nachdem das Wasser abgestellt wurde, rufen Sie den Hausmeister an und informieren Sie mich anschließend sofort.",
-lost_keys: "Falls Sie die Schlüssel verlieren, rufen Sie mich bitte sofort an und informieren Sie mich, damit ich die Situation korrekt regeln kann."
+lost_keys: "Falls Sie die Schlüssel verlieren, rufen Sie mich bitte sofort an und informieren Sie mich, damit ich die Situation korrekt regeln kann.",
+      fire: "Falls es in der Wohnung zu einem Brand kommt oder etwas Feuer fängt, verwenden Sie sofort den Feuerlöscher, um das Feuer – wenn möglich – zu löschen. Bringen Sie sich anschließend sofort in Sicherheit, indem Sie das Gebäude verlassen. Rufen Sie draußen sofort die Feuerwehr an und kontaktieren Sie danach mich."
     },
     es: {
       wifi: "Wi-Fi: El router está en el escritorio cerca de la ventana. Gíralo para leer el SSID y la contraseña en la etiqueta. Si no funciona: comprueba que esté encendido, desenchúfalo 30 segundos y vuelve a conectarlo. Si continúa, escríbeme.",
@@ -118,7 +122,8 @@ lost_keys: "Falls Sie die Schlüssel verlieren, rufen Sie mich bitte sofort an u
       tickets: "Para información sobre entradas para museos, eventos y partidos, consulta tu guía interactiva: https://shelly-cloud-opener-1.onrender.com/guides/arenula/?lang=es",
       gas_leak: "Si sienten olor a gas, revisen inmediatamente la unidad de gas y comprueben que todas las perillas negras del lado derecho estén bien cerradas. Luego, frente a la unidad de gas, ligeramente a la derecha, encontrarán una válvula metálica: gírenla hacia abajo para cerrar completamente el suministro de gas. Después de estas operaciones, llámenme inmediatamente para que pueda revisar el apartamento.",
 water_leak: "En caso de una fuga de agua en el apartamento, vayan al baño. Mirando el espejo, en el lado izquierdo cerca de la esquina de la pared, encontrarán un tapón metálico: desenróscanlo. Detrás hay una válvula negra: ciérrenla completamente, ya que es la llave principal del agua del apartamento. Una vez cerrada el agua, llamen al portero y luego avísenme inmediatamente.",
-lost_keys: "En caso de que pierdan las llaves, lo primero que deben hacer es llamarme inmediatamente y avisarme para poder gestionar la situación correctamente."
+lost_keys: "En caso de que pierdan las llaves, lo primero que deben hacer es llamarme inmediatamente y avisarme para poder gestionar la situación correctamente.",
+      fire: "Si se produce un incendio o algo se prende fuego dentro del apartamento, utilicen inmediatamente el extintor para apagar el fuego, si es posible. Pónganse de inmediato a salvo saliendo del inmueble. Una vez fuera, llamen inmediatamente a los bomberos y después a mi número."
     }
   },
 
