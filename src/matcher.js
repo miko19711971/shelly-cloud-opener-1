@@ -5,7 +5,7 @@
 // =========================
 const STRICT_INTENTS = {
   wifi: [
-    "wifi", "wi fi", "wi-fi", "internet", "password", "router",
+    "wifi", "wi fi", "wi-fi",  "Wifi", "internet", "password", "router",
     "qual è la password", "what is the password", "wifi password",
     "mot de passe", "passwort", "wlan"
   ],
