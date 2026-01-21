@@ -58,7 +58,43 @@ const STRICT_INTENTS = {
   air_conditioning: [
     "aria condizionata", "condizionatore",
     "air conditioning", "climatisation", "klimaanlage"
-  ]
+  ],
+  gas_leak: [
+  // IT
+  "fuga di gas", "odore di gas", "perdita di gas", "gas che esce",
+  // EN
+  "gas leak", "smell of gas", "gas smell", "gas leaking",
+  // ES
+  "fuga de gas", "olor a gas", "perdida de gas",
+  // FR
+  "fuite de gaz", "odeur de gaz", "gaz qui fuit",
+  // DE
+  "gasleck", "gasgeruch", "gasaustritt"
+],
+  water_leak: [
+  // IT
+  "perdita d acqua", "perdita di acqua", "acqua che perde", "allagamento",
+  // EN
+  "water leak", "water leaking", "flood", "leak of water",
+  // ES
+  "fuga de agua", "perdida de agua", "agua que gotea",
+  // FR
+  "fuite d eau", "fuite d eau", "eau qui coule",
+  // DE
+  "wasserleck", "wasseraustritt", "wasser tritt aus"
+],
+  lost_keys: [
+  // IT
+  "ho perso le chiavi", "chiavi perse", "perso le chiavi",
+  // EN
+  "lost keys", "i lost the keys", "missing keys",
+  // ES
+  "perdi las llaves", "llaves perdidas", "he perdido las llaves",
+  // FR
+  "j ai perdu les cles", "cles perdues", "perdu les cles",
+  // DE
+  "schlussel verloren", "ich habe die schlussel verloren", "verlorene schlussel"
+]
 };
 
 // =========================
