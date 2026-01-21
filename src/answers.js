@@ -142,7 +142,9 @@ lost_keys: "En caso de que pierdan las llaves, lo primero que deben hacer es lla
       shopping: "Per informazioni su negozi e mercati consulta la tua guida interattiva: https://shelly-cloud-opener-1.onrender.com/guides/leonina/?lang=it",
       attractions: "Per scoprire cosa visitare a Roma consulta la tua guida interattiva: https://shelly-cloud-opener-1.onrender.com/guides/leonina/?lang=it",
       day_trips: "Per informazioni su gite ed escursioni fuori Roma consulta la tua guida interattiva: https://shelly-cloud-opener-1.onrender.com/guides/leonina/?lang=it",
-      tickets: "Per informazioni su biglietti per musei, eventi e partite consulta la tua guida interattiva: https://shelly-cloud-opener-1.onrender.com/guides/leonina/?lang=it"
+      tickets: "Per informazioni su biglietti per musei, eventi e partite consulta la tua guida interattiva: https://shelly-cloud-opener-1.onrender.com/guides/leonina/?lang=it",
+      water_leak: "Nel caso si verifichi una perdita d’acqua, la prima cosa da fare è uscire dall’appartamento. Subito sul lato destro, accanto alla porta, troverete uno sportello: apritelo. All’interno c’è il primo contatore in alto con un rubinetto: chiudetelo completamente, perché è il rubinetto dell’acqua dell’appartamento. Una volta chiusa l’acqua, avvertitemi immediatamente.",
+lost_keys: "Nel caso in cui doveste perdere le chiavi, la prima cosa da fare è chiamarmi immediatamente e avvertirmi, così da poter gestire la situazione nel modo corretto."
     },
     en: {
       wifi: "Wi-Fi: The router is on the desk near the window. Turn it to read the SSID and password on the label. If it doesn't work: check it's on, unplug it for 30 seconds and plug it back in. If the issue continues, message me.",
@@ -163,7 +165,9 @@ lost_keys: "En caso de que pierdan las llaves, lo primero que deben hacer es lla
       shopping: "For information on shops and markets, check your interactive guide: https://shelly-cloud-opener-1.onrender.com/guides/leonina/?lang=en",
       attractions: "To discover what to visit in Rome, check your interactive guide: https://shelly-cloud-opener-1.onrender.com/guides/leonina/?lang=en",
       day_trips: "For information on day trips and excursions outside Rome, check your interactive guide: https://shelly-cloud-opener-1.onrender.com/guides/leonina/?lang=en",
-      tickets: "For information on tickets for museums, events and matches, check your interactive guide: https://shelly-cloud-opener-1.onrender.com/guides/leonina/?lang=en"
+      tickets: "For information on tickets for museums, events and matches, check your interactive guide: https://shelly-cloud-opener-1.onrender.com/guides/leonina/?lang=en",
+      water_leak: "In case of a water leak, the first thing to do is exit the apartment. Immediately on the right side, next to the door, you will find a small cabinet: open it. Inside there is the first meter at the top with a valve: close it completely, as it is the apartment’s water shut-off valve. Once the water is shut off, please inform me immediately.",
+lost_keys: "If you lose the keys, the first thing to do is call me immediately and inform me, so I can handle the situation properly."
     },
     fr: {
       wifi: "Wi-Fi : Le routeur est sur le bureau près de la fenêtre. Tournez-le pour lire le SSID et le mot de passe sur l'étiquette. S'il ne fonctionne pas : vérifiez qu'il est allumé, débranchez-le 30 secondes puis rebranchez-le. Sinon, écrivez-moi.",
@@ -184,7 +188,9 @@ lost_keys: "En caso de que pierdan las llaves, lo primero que deben hacer es lla
       shopping: "Pour les informations sur magasins et marchés, consultez votre guide interactif : https://shelly-cloud-opener-1.onrender.com/guides/leonina/?lang=fr",
       attractions: "Pour découvrir quoi visiter à Rome, consultez votre guide interactif : https://shelly-cloud-opener-1.onrender.com/guides/leonina/?lang=fr",
       day_trips: "Pour les informations sur excursions d'une journée hors de Rome, consultez votre guide interactif : https://shelly-cloud-opener-1.onrender.com/guides/leonina/?lang=fr",
-      tickets: "Pour les informations sur billets pour musées, événements et matchs, consultez votre guide interactif : https://shelly-cloud-opener-1.onrender.com/guides/leonina/?lang=fr"
+      tickets: "Pour les informations sur billets pour musées, événements et matchs, consultez votre guide interactif : https://shelly-cloud-opener-1.onrender.com/guides/leonina/?lang=fr",
+      water_leak: "En cas de fuite d’eau, la première chose à faire est de sortir de l’appartement. Immédiatement sur le côté droit, près de la porte, vous trouverez un coffret : ouvrez-le. À l’intérieur se trouve le premier compteur en haut avec un robinet : fermez-le complètement, car il s’agit de la vanne d’eau de l’appartement. Une fois l’eau coupée, prévenez-moi immédiatement.",
+lost_keys: "Si vous perdez les clés, la première chose à faire est de m’appeler immédiatement et de m’en informer afin que je puisse gérer la situation correctement."
     },
     de: {
       wifi: "WLAN: Der Router steht auf dem Schreibtisch nahe dem Fenster. Drehen Sie ihn, um SSID und Passwort auf dem Aufkleber zu lesen. Falls es nicht funktioniert: prüfen Sie, ob er eingeschaltet ist, ziehen Sie den Stecker 30 Sekunden und stecken Sie ihn wieder ein. Dann bitte melden.",
@@ -205,7 +211,9 @@ lost_keys: "En caso de que pierdan las llaves, lo primero que deben hacer es lla
       shopping: "Für Informationen zu Geschäften und Märkten siehe deinen interaktiven Guide: https://shelly-cloud-opener-1.onrender.com/guides/leonina/?lang=de",
       attractions: "Um zu entdecken, was in Rom zu besuchen ist, siehe deinen interaktiven Guide: https://shelly-cloud-opener-1.onrender.com/guides/leonina/?lang=de",
       day_trips: "Für Informationen zu Tagesausflügen außerhalb Roms siehe deinen interaktiven Guide: https://shelly-cloud-opener-1.onrender.com/guides/leonina/?lang=de",
-      tickets: "Für Informationen zu Tickets für Museen, Veranstaltungen und Spiele siehe deinen interaktiven Guide: https://shelly-cloud-opener-1.onrender.com/guides/leonina/?lang=de"
+      tickets: "Für Informationen zu Tickets für Museen, Veranstaltungen und Spiele siehe deinen interaktiven Guide: https://shelly-cloud-opener-1.onrender.com/guides/leonina/?lang=de",
+      water_leak: "Falls es zu einem Wasserleck kommt, verlassen Sie zuerst die Wohnung. Direkt auf der rechten Seite, neben der Tür, befindet sich ein kleiner Schrank: öffnen Sie ihn. Darin finden Sie oben den ersten Zähler mit einem Ventil: schließen Sie es vollständig, da es sich um das Wasserabsperrventil der Wohnung handelt. Nachdem das Wasser abgestellt wurde, informieren Sie mich bitte sofort.",
+lost_keys: "Falls Sie die Schlüssel verlieren, rufen Sie mich bitte sofort an und informieren Sie mich, damit ich die Situation korrekt regeln kann."
     },
     es: {
       wifi: "Wi-Fi: El router está en el escritorio cerca de la ventana. Gíralo para leer el SSID y la contraseña en la etiqueta. Si no funciona: comprueba que esté encendido, desenchúfalo 30 segundos y vuelve a conectarlo. Si continúa, escríbeme.",
@@ -226,7 +234,9 @@ lost_keys: "En caso de que pierdan las llaves, lo primero que deben hacer es lla
       shopping: "Para información sobre tiendas y mercados, consulta tu guía interactiva: https://shelly-cloud-opener-1.onrender.com/guides/leonina/?lang=es",
       attractions: "Para descubrir qué visitar en Roma, consulta tu guía interactiva: https://shelly-cloud-opener-1.onrender.com/guides/leonina/?lang=es",
       day_trips: "Para información sobre excursiones de un día fuera de Roma, consulta tu guía interactiva: https://shelly-cloud-opener-1.onrender.com/guides/leonina/?lang=es",
-      tickets: "Para información sobre entradas para museos, eventos y partidos, consulta tu guía interactiva: https://shelly-cloud-opener-1.onrender.com/guides/leonina/?lang=es"
+      tickets: "Para información sobre entradas para museos, eventos y partidos, consulta tu guía interactiva: https://shelly-cloud-opener-1.onrender.com/guides/leonina/?lang=es",
+      water_leak: "En caso de una fuga de agua, lo primero que deben hacer es salir del apartamento. Inmediatamente a la derecha, junto a la puerta, encontrarán un armario: ábranlo. Dentro se encuentra el primer contador en la parte superior con una llave: ciérrenla completamente, ya que es la llave de paso del agua del apartamento. Una vez cerrada el agua, avísenme inmediatamente.",
+lost_keys: "En caso de que pierdan las llaves, lo primero que deben hacer es llamarme inmediatamente y avisarme para poder gestionar la situación correctamente."
     }
   },
 
