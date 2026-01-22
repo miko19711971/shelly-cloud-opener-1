@@ -10,7 +10,7 @@ import { matchIntent } from "./matcher.js";
 import { detectLanguage } from "./language.js";
 import { ANSWERS } from "./answers.js";
 import { askGemini } from "./gemini.js";
-import recruitingRouter from "./recruiting/recruiting-router.js";
+ 
 const app = express();
 
 app.use(bodyParser.json({ limit: "100kb" }));
@@ -595,7 +595,7 @@ app.use("/guides", express.static(path.join(PUBLIC_DIR, "guides"), { fallthrough
 app.use("/guest-assistant", express.static(path.join(PUBLIC_DIR, "guides"), { fallthrough: false }));
 app.use("/guides-v2", express.static(path.join(PUBLIC_DIR, "guides-v2"), { fallthrough: false }));
 app.use("/public-test-ai-html", express.static(path.join(PUBLIC_DIR, "public-test-ai-html"), { fallthrough: false }));
-app.use("/api", recruitingRouter);
+ 
 app.get("/checkin/:apt/today", (req, res) => {
   const apt = req.params.apt.toLowerCase(), today = tzToday();
   const { token } = newTokenFor(`checkin-${apt}`, { windowMin: CHECKIN_WINDOW_MIN, max: 200, day: today });
