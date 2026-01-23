@@ -2049,6 +2049,13 @@ if (effectiveReservationId && conversationId) {
 // 🎯 STEP 3: Match Intent + Language
 // ====================================================== 
 const match = matchIntent(message);
+   // 🔁 TOKEN DI RIENTRO DA GEMINI → AI INTERNA
+if (answer && answer.includes("__INTERNAL_AI__")) {
+  console.log("🔁 Rientro forzato in AI interna");
+
+  // annulliamo la risposta Gemini
+  answer = null;
+}
 console.log("🎯 Matcher result:", match || "NONE");
 
 const detectedLang = detectLanguage(message);
