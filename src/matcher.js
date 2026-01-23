@@ -62,6 +62,39 @@ const STRICT_INTENTS = {
     "indirizzo", "citofono", "portone",
     "address", "intercom"
   ],
+  apartment_info: [
+  // EN
+  "apartment address",
+  "address of the apartment",
+  "where is the apartment",
+  "where is the flat",
+  "what is the address",
+  "exact address",
+  "apartment location",
+  "flat location",
+
+  // IT
+  "indirizzo dell appartamento",
+  "indirizzo dell alloggio",
+  "qual è l indirizzo",
+  "dove si trova l appartamento",
+  "posizione dell appartamento",
+
+  // FR
+  "adresse de l appartement",
+  "ou se trouve l appartement",
+  "adresse exacte",
+
+  // ES
+  "direccion del apartamento",
+  "donde esta el apartamento",
+  "ubicacion del apartamento",
+
+  // DE
+  "adresse der wohnung",
+  "wo ist die wohnung",
+  "standort der wohnung"
+],
 
   emergency: [
     "emergenza", "urgente", "rotto", "non funziona",
