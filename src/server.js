@@ -2050,7 +2050,7 @@ if (effectiveReservationId && conversationId) {
 // ====================================================== 
 const match = matchIntent(message);
    // 🔁 TOKEN DI RIENTRO DA GEMINI → AI INTERNA
-if (answer && answer.includes("__INTERNAL_AI__")) {
+ if (geminiReply === INTERNAL_AI_TOKEN) {
   console.log("🔁 Rientro forzato in AI interna");
 
   // annulliamo la risposta Gemini
