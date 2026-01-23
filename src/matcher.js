@@ -9,19 +9,20 @@ const STRICT_INTENTS = {
     "qual è la password", "what is the password", "wifi password",
     "mot de passe", "passwort", "wlan"
   ],
+
   fire: [
-  // IT
-  "fuoco", "incendio", "fiamme", "brucia", "sta bruciando",
-  "odore di bruciato", "fumo", "scintille",
-  // EN
-  "fire", "flames", "burning", "smoke", "smell of burning",
-  // ES
-  "fuego", "incendio", "llamas", "humo", "olor a quemado",
-  // FR
-  "feu", "incendie", "flammes", "fumee", "odeur de brule",
-  // DE
-  "feuer", "brand", "flammen", "rauch", "brandgeruch"
-],
+    // IT
+    "fuoco", "incendio", "fiamme", "brucia", "sta bruciando",
+    "odore di bruciato", "fumo", "scintille",
+    // EN
+    "fire", "flames", "burning", "smoke", "smell of burning",
+    // ES
+    "fuego", "incendio", "llamas", "humo", "olor a quemado",
+    // FR
+    "feu", "incendie", "flammes", "fumee", "odeur de brule",
+    // DE
+    "feuer", "brand", "flammen", "rauch", "brandgeruch"
+  ],
 
   trash: [
     "spazzatura", "rifiuti", "immondizia", "pattumiera",
@@ -58,43 +59,45 @@ const STRICT_INTENTS = {
     "washing machine", "laundry"
   ],
 
+  // ✅ SPOSTATO QUI (PRIMA DI building)
+  apartment_info: [
+    // EN
+    "apartment address",
+    "address of the apartment",
+    "where is the apartment",
+    "where is the flat",
+    "what is the address",
+    "exact address",
+    "apartment location",
+    "flat location",
+
+    // IT
+    "indirizzo dell appartamento",
+    "indirizzo dell alloggio",
+    "qual è l indirizzo",
+    "dove si trova l appartamento",
+    "posizione dell appartamento",
+
+    // FR
+    "adresse de l appartement",
+    "ou se trouve l appartement",
+    "adresse exacte",
+
+    // ES
+    "direccion del apartamento",
+    "donde esta el apartamento",
+    "ubicacion del apartamento",
+
+    // DE
+    "adresse der wohnung",
+    "wo ist die wohnung",
+    "standort der wohnung"
+  ],
+
   building: [
     "indirizzo", "citofono", "portone",
     "address", "intercom"
   ],
-  apartment_info: [
-  // EN
-  "apartment address",
-  "address of the apartment",
-  "where is the apartment",
-  "where is the flat",
-  "what is the address",
-  "exact address",
-  "apartment location",
-  "flat location",
-
-  // IT
-  "indirizzo dell appartamento",
-  "indirizzo dell alloggio",
-  "qual è l indirizzo",
-  "dove si trova l appartamento",
-  "posizione dell appartamento",
-
-  // FR
-  "adresse de l appartement",
-  "ou se trouve l appartement",
-  "adresse exacte",
-
-  // ES
-  "direccion del apartamento",
-  "donde esta el apartamento",
-  "ubicacion del apartamento",
-
-  // DE
-  "adresse der wohnung",
-  "wo ist die wohnung",
-  "standort der wohnung"
-],
 
   emergency: [
     "emergenza", "urgente", "rotto", "non funziona",
@@ -105,42 +108,45 @@ const STRICT_INTENTS = {
     "aria condizionata", "condizionatore",
     "air conditioning", "climatisation", "klimaanlage"
   ],
+
   gas_leak: [
-  // IT
-  "fuga di gas", "odore di gas", "perdita di gas", "gas che esce",
-  // EN
-  "gas leak", "smell of gas", "gas smell", "gas leaking",
-  // ES
-  "fuga de gas", "olor a gas", "perdida de gas",
-  // FR
-  "fuite de gaz", "odeur de gaz", "gaz qui fuit",
-  // DE
-  "gasleck", "gasgeruch", "gasaustritt"
-],
+    // IT
+    "fuga di gas", "odore di gas", "perdita di gas", "gas che esce",
+    // EN
+    "gas leak", "smell of gas", "gas smell", "gas leaking",
+    // ES
+    "fuga de gas", "olor a gas", "perdida de gas",
+    // FR
+    "fuite de gaz", "odeur de gaz", "gaz qui fuit",
+    // DE
+    "gasleck", "gasgeruch", "gasaustritt"
+  ],
+
   water_leak: [
-  // IT
-  "perdita d acqua", "perdita di acqua", "acqua che perde", "allagamento",
-  // EN
-  "water leak", "water leaking", "flood", "leak of water",
-  // ES
-  "fuga de agua", "perdida de agua", "agua que gotea",
-  // FR
-  "fuite d eau", "fuite d eau", "eau qui coule",
-  // DE
-  "wasserleck", "wasseraustritt", "wasser tritt aus"
-],
+    // IT
+    "perdita d acqua", "perdita di acqua", "acqua che perde", "allagamento",
+    // EN
+    "water leak", "water leaking", "flood", "leak of water",
+    // ES
+    "fuga de agua", "perdida de agua", "agua que gotea",
+    // FR
+    "fuite d eau", "eau qui coule",
+    // DE
+    "wasserleck", "wasseraustritt", "wasser tritt aus"
+  ],
+
   lost_keys: [
-  // IT
-  "ho perso le chiavi", "chiavi perse", "perso le chiavi",
-  // EN
-  "lost keys", "i lost the keys", "missing keys",
-  // ES
-  "perdi las llaves", "llaves perdidas", "he perdido las llaves",
-  // FR
-  "j ai perdu les cles", "cles perdues", "perdu les cles",
-  // DE
-  "schlussel verloren", "ich habe die schlussel verloren", "verlorene schlussel"
-]
+    // IT
+    "ho perso le chiavi", "chiavi perse", "perso le chiavi",
+    // EN
+    "lost keys", "i lost the keys", "missing keys",
+    // ES
+    "perdi las llaves", "llaves perdidas", "he perdido las llaves",
+    // FR
+    "j ai perdu les cles", "cles perdues", "perdu les cles",
+    // DE
+    "schlussel verloren", "ich habe die schlussel verloren", "verlorene schlussel"
+  ]
 };
 
 // =========================
@@ -150,22 +156,18 @@ const SOFT_INTENTS = {
   parking: [
     "parcheggio", "garage", "parking"
   ],
-
   restaurants: [
     "ristorante", "dove mangiare", "pizzeria",
     "restaurant", "where to eat"
   ],
-
   shopping: [
     "shopping", "negozi", "supermercato",
     "store", "shop"
   ],
-
   attractions: [
     "cosa visitare", "cosa vedere", "musei",
     "what to see", "attractions"
   ],
-
   tickets: [
     "biglietti", "prenotare",
     "tickets", "book tickets"
