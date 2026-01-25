@@ -2177,7 +2177,12 @@ if (!answer) {
     return res.json({ ok: true, silent: true });
   }
 }
-
+// 🛟 SAFE FALLBACK — risposta cortese standard
+if (!answer) {
+  console.log("🛟 SAFE FALLBACK reply used");
+  answer = SAFE_FALLBACK_REPLY;
+  usedLang = detectedLang || platformLang || defaultLang || "en";
+}
     console.log("  â Answer found");
     console.log("  ââ Language used:", usedLang);
     console.log("  ââ Preview:", answer.substring(0, 80) + "...");
