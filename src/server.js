@@ -2149,7 +2149,11 @@ const intent = match.intent;
       usedLang = defaultLang;
       console.log("  â Usata lingua default:", defaultLang);
     }
-
+// ⛔ BLOCCO SENTINELLA: evita __INTERNAL_AI__
+if (answer === "__INTERNAL_AI__") {
+  console.log("⛔ INTERNAL_AI intercettato → annullato");
+  answer = null;
+}
      // ======================================================
 // 🤖 FALLBACK GEMINI — quando non esiste risposta interna
 // ======================================================
