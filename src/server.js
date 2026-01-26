@@ -2183,10 +2183,7 @@ if (!answer) {
   answer = SAFE_FALLBACK_REPLY;
   usedLang = detectedLang || platformLang || defaultLang || "en";
 }
-   if (answer === "__INTERNAL_AI__") {
-  answer = SAFE_FALLBACK_REPLY;
-  usedLang = "en";
-}
+   
     console.log("  â Answer found");
     console.log("  ââ Language used:", usedLang);
     console.log("  ââ Preview:", answer.substring(0, 80) + "...");
