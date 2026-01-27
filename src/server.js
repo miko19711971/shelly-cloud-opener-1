@@ -2050,7 +2050,11 @@ if (effectiveReservationId && conversationId) {
 // 🎯 STEP 3: Match Intent + Language
 // ====================================================== 
 const match = matchIntent(message);
-    
+    // ⛔ BLOCCO TOTALE: niente INTERNAL_AI, niente Gemini
+if (match?.route === "INTERNAL_AI") {
+  console.log("⛔ INTERNAL_AI bloccato → SILENT");
+  return res.json({ ok: true, silent: true });
+}
 console.log("🎯 Matcher result:", match || "NONE");
 
 const detectedLang = detectLanguage(message);
