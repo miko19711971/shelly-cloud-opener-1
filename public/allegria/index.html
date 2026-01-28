@@ -8,42 +8,69 @@
   <style>
     body {
       margin: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      font-family: Georgia, serif;
       background: #f6f3ee;
       color: #2f2f2f;
     }
 
-    /* === AGGIUNTA UNICA PER L’IMMAGINE === */
     .hero {
       width: 100%;
-      height: 280px;
+      height: 320px;
       background-image: url("foto-allegria.jpg");
       background-size: cover;
       background-position: center;
     }
-    /* === FINE AGGIUNTA === */
 
     .wrap {
-      max-width: 640px;
+      max-width: 720px;
       margin: 0 auto;
-      padding: 80px 24px;
+      padding: 64px 24px 80px;
+    }
+
+    .badge {
+      display: inline-block;
+      background: #8b6a4f;
+      color: #fff;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 14px;
+      margin-bottom: 24px;
+      text-decoration: none;
     }
 
     h1 {
       font-size: 42px;
-      margin-bottom: 24px;
+      margin: 16px 0 24px;
+      letter-spacing: 1px;
+    }
+
+    h2 {
+      font-size: 22px;
+      margin-top: 48px;
+      margin-bottom: 16px;
     }
 
     p {
       font-size: 18px;
       line-height: 1.6;
+      margin-bottom: 24px;
+    }
+
+    ul {
+      padding-left: 20px;
       margin-bottom: 32px;
+    }
+
+    li {
+      font-size: 18px;
+      margin-bottom: 12px;
     }
 
     .cta {
       display: inline-block;
-      padding: 14px 28px;
-      background: #7b5e3b;
+      margin-top: 32px;
+      padding: 16px 32px;
+      background: #8b6a4f;
       color: #fff;
       text-decoration: none;
       border-radius: 8px;
@@ -54,19 +81,58 @@
 
 <body>
 
-  <!-- === AGGIUNTA UNICA PER L’IMMAGINE === -->
   <div class="hero"></div>
-  <!-- === FINE AGGIUNTA === -->
 
   <div class="wrap">
-    <h1>Allegria</h1>
 
-    <p>Allegria è un servizio di presenza e compagnia non sanitaria per anziani.</p>
+    <a class="badge" href="/allegria-presenza/">Richiedi informazioni</a>
 
-    <p>È un servizio di relazione, presenza e ascolto rivolto a persone anziane che vivono sole.</p>
+    <h1>ALLEGRIA</h1>
 
-    <p>Non è un servizio sanitario, non è assistenza medica né infermieristica.</p>
+    <p>
+      Presenza e compagnia a domicilio per anziani autosufficienti
+    </p>
+
+    <p><strong>Non assistenza. Presenza.</strong></p>
+
+    <p>
+      Un servizio umano e affidabile pensato per la serenità degli anziani
+      e la tranquillità delle loro famiglie.
+    </p>
+
+    <hr style="margin:40px 0; border:none; border-top:1px solid #ddd;">
+
+    <h2>Cos’è Allegria</h2>
+
+    <p>
+      Allegria offre presenza, ascolto e compagnia a domicilio per anziani
+      autosufficienti che vivono soli o desiderano compagnia.
+    </p>
+
+    <p>
+      Non è assistenza sanitaria.<br>
+      È empatia e qualità delle relazioni umane.
+    </p>
+
+    <h2>A chi è rivolto</h2>
+
+    <ul>
+      <li>Figli e familiari che vogliono serenità per i propri cari</li>
+      <li>Anziani autosufficienti che desiderano compagnia e dialogo</li>
+    </ul>
+
+    <h2>Cosa facciamo</h2>
+
+    <ul>
+      <li>Presenza umana affidabile</li>
+      <li>Conversazione e ascolto</li>
+      <li>Attività leggere e condivise</li>
+      <li>Visite programmate a domicilio</li>
+    </ul>
+
+    <a class="cta" href="/allegria-presenza/">Invia richiesta</a>
 
   </div>
+
 </body>
 </html>
