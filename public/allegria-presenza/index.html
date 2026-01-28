@@ -1,154 +1,188 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Allegria – Presenza e compagnia</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Allegria – Presenza e compagnia</title>
 
-  <style>
-    body {
-      margin: 0;
-      font-family: "Georgia", serif;
-      background-color: #f4ede6;
-      color: #4a3b2f;
-    }
+<style>
+:root{
+  --bg:#f3ebe3;
+  --panel:#f7f1eb;
+  --text:#4b3b2f;
+  --title:#3d2f24;
+  --accent:#8b6a4f;
+}
 
-    .container {
-      display: flex;
-      min-height: 100vh;
-    }
+*{box-sizing:border-box}
 
-    .left {
-      flex: 1;
-      background-image: url("https://images.unsplash.com/photo-1607746882042-944635dfe10e");
-      background-size: cover;
-      background-position: center;
-    }
+body{
+  margin:0;
+  font-family: Georgia, serif;
+  background:var(--bg);
+  color:var(--text);
+}
 
-    .right {
-      flex: 1;
-      padding: 60px;
-      background-color: #f6efe9;
-    }
+.wrapper{
+  display:flex;
+  min-height:100vh;
+}
 
-    h1 {
-      font-size: 42px;
-      margin-bottom: 10px;
-      font-weight: 600;
-    }
+.left{
+  width:50%;
+  background:url("https://images.unsplash.com/photo-1607746882042-944635dfe10e") center/cover no-repeat;
+}
 
-    h2 {
-      font-size: 22px;
-      margin-top: 30px;
-      font-weight: 600;
-    }
+.right{
+  width:50%;
+  background:var(--panel);
+  padding:60px 70px;
+  position:relative;
+}
 
-    p {
-      font-size: 17px;
-      line-height: 1.6;
-      margin-top: 10px;
-    }
+.cta-top{
+  position:absolute;
+  top:40px;
+  right:60px;
+  background:var(--accent);
+  color:#fff;
+  padding:10px 18px;
+  border-radius:6px;
+  text-decoration:none;
+  font-weight:600;
+  font-size:14px;
+}
 
-    ul {
-      margin-top: 10px;
-      padding-left: 18px;
-    }
+h1{
+  margin:0 0 10px 0;
+  font-size:42px;
+  font-weight:600;
+  color:var(--title);
+}
 
-    li {
-      margin-bottom: 6px;
-    }
+.subtitle{
+  font-size:22px;
+  margin-bottom:14px;
+  font-weight:500;
+}
 
-    .claim {
-      font-size: 20px;
-      margin: 20px 0;
-      font-weight: 500;
-    }
+.claim{
+  font-size:18px;
+  font-weight:600;
+  margin-bottom:14px;
+}
 
-    .cta-top {
-      float: right;
-      background-color: #8a6b52;
-      color: #fff;
-      padding: 10px 18px;
-      border-radius: 6px;
-      text-decoration: none;
-      font-weight: 600;
-    }
+p{
+  font-size:17px;
+  line-height:1.6;
+  margin:0 0 18px 0;
+}
 
-    .cta-bottom {
-      display: inline-block;
-      margin-top: 40px;
-      background-color: #8a6b52;
-      color: #fff;
-      padding: 14px 28px;
-      border-radius: 8px;
-      text-decoration: none;
-      font-size: 16px;
-      font-weight: 600;
-    }
+hr{
+  border:none;
+  border-top:1px solid #d8cfc6;
+  margin:28px 0;
+}
 
-    @media (max-width: 900px) {
-      .container {
-        flex-direction: column;
-      }
-      .left {
-        min-height: 300px;
-      }
-      .cta-top {
-        float: none;
-        display: inline-block;
-        margin-bottom: 20px;
-      }
-    }
-  </style>
+.columns{
+  display:flex;
+  gap:40px;
+}
+
+.col{
+  width:50%;
+}
+
+h2{
+  font-size:20px;
+  margin:0 0 10px 0;
+  font-weight:600;
+  color:var(--title);
+}
+
+ul{
+  padding-left:18px;
+  margin:0;
+}
+
+li{
+  margin-bottom:6px;
+}
+
+.cta-bottom{
+  display:inline-block;
+  margin-top:40px;
+  background:var(--accent);
+  color:#fff;
+  padding:14px 30px;
+  border-radius:8px;
+  text-decoration:none;
+  font-weight:600;
+}
+
+@media(max-width:900px){
+  .wrapper{flex-direction:column}
+  .left,.right{width:100%}
+  .left{min-height:300px}
+  .cta-top{position:static;margin-bottom:30px;display:inline-block}
+}
+</style>
 </head>
 
 <body>
-  <div class="container">
-    <div class="left"></div>
+<div class="wrapper">
 
-    <div class="right">
-      <a href="#contatti" class="cta-top">Richiedi informazioni</a>
+  <div class="left"></div>
 
-      <h1>ALLEGRIA</h1>
+  <div class="right">
+    <a class="cta-top" href="#contatti">Richiedi informazioni</a>
 
-      <p class="claim">
-        Presenza e compagnia a domicilio per anziani autosufficienti
-      </p>
+    <h1>ALLEGRIA</h1>
+    <div class="subtitle">Presenza e compagnia a domicilio per anziani autosufficienti</div>
+    <div class="claim">Non assistenza. Presenza.</div>
 
-      <p><strong>Non assistenza. Presenza.</strong></p>
+    <p>
+      Un servizio umano e affidabile pensato per la serenità degli anziani
+      e la tranquillità delle loro famiglie.
+    </p>
 
-      <p>
-        Un servizio umano e affidabile pensato per la serenità degli anziani
-        e la tranquillità delle loro famiglie.
-      </p>
+    <hr>
 
-      <h2>Cos’è Allegria</h2>
-      <p>
-        Allegria offre presenza, ascolto e compagnia a domicilio per anziani
-        autosufficienti che vivono soli o desiderano relazioni.
-        <br><br>
-        Non è assistenza sanitaria.<br>
-        È empatia e qualità delle relazioni umane.
-      </p>
+    <div class="columns">
+      <div class="col">
+        <h2>Cos’è Allegria</h2>
+        <p>
+          Allegria offre presenza, ascolto e compagnia a domicilio per anziani
+          autosufficienti che vivono soli o desiderano compagnia.
+        </p>
+        <p>
+          Non è assistenza sanitaria.<br>
+          È empatia e qualità delle relazioni umane.
+        </p>
 
-      <h2>Cosa facciamo</h2>
-      <ul>
-        <li>Presenza umana affidabile</li>
-        <li>Conversazione e ascolto</li>
-        <li>Attività leggere e condivise</li>
-        <li>Visite programmate a domicilio</li>
-      </ul>
+        <h2>Cosa facciamo</h2>
+        <ul>
+          <li>Presenza umana affidabile</li>
+          <li>Conversazione e ascolto</li>
+          <li>Attività leggere e condivise</li>
+          <li>Visite programmate a domicilio</li>
+        </ul>
+      </div>
 
-      <h2>A chi è rivolto</h2>
-      <ul>
-        <li>Figli e familiari che vogliono serenità per i propri cari</li>
-        <li>Anziani autosufficienti che desiderano compagnia e dialogo</li>
-      </ul>
-
-      <a id="contatti" href="mailto:info@allegria.it" class="cta-bottom">
-        Invia richiesta
-      </a>
+      <div class="col">
+        <h2>A chi è rivolto</h2>
+        <ul>
+          <li>Figli e familiari che vogliono serenità per i propri cari</li>
+          <li>Anziani autosufficienti che desiderano compagnia e dialogo</li>
+        </ul>
+      </div>
     </div>
+
+    <a id="contatti" class="cta-bottom" href="mailto:info@allegria.it">
+      Invia richiesta
+    </a>
+
   </div>
+</div>
 </body>
 </html>
