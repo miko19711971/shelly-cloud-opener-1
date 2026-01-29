@@ -136,6 +136,18 @@
     <a class="cta" href="/allegria-presenza/">Invia richiesta</a>
 
   </div>
+<script>
+  const btn = document.getElementById("infoBtn");
+  const msg = document.getElementById("okMsg");
 
+  btn.addEventListener("click", () => {
+    window.location.href =
+      "mailto:mikbondi@gmail.com?subject=Richiesta%20informazioni%20Allegria";
+
+    btn.disabled = true;
+    btn.innerText = "Richiesta inviata";
+    msg.style.display = "inline";
+  });
+</script>
 </body>
 </html>
