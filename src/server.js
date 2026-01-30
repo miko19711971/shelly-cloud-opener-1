@@ -2205,6 +2205,19 @@ if (answer === "__INTERNAL_AI__") {
   console.log("⛔ INTERNAL_AI finale → SILENT");
   return res.json({ ok: true, silent: true });
 }
+   // ⛔ FINAL GUARD — niente __INTERNAL_AI__ verso Hostaway
+if (
+  !answer ||
+  answer === "__INTERNAL_AI__" ||
+  answer.trim() === ""
+) {
+  console.log("🛑 Final guard: risposta mancante o INTERNAL_AI → SILENT");
+
+  return res.json({
+    ok: true,
+    silent: true
+  });
+}
     // ======================================================
     // ð¤ STEP 6: Send Reply to HostAway
     // ======================================================
