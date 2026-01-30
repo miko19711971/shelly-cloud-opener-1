@@ -2191,7 +2191,12 @@ if (!answer) {
   answer = SAFE_FALLBACK_REPLY;
   usedLang = detectedLang || platformLang || defaultLang || "en";
 }
-   
+   // ⛔ SOSTITUZIONE DEFINITIVA INTERNAL_AI
+if (answer === "__INTERNAL_AI__") {
+  console.log("⛔ INTERNAL_AI sostituito con risposta cortese");
+  answer = SAFE_FALLBACK_REPLY;
+  usedLang = detectedLang || platformLang || defaultLang || "en";
+}
     console.log("  â Answer found");
     console.log("  ââ Language used:", usedLang);
     console.log("  ââ Preview:", answer.substring(0, 80) + "...");
