@@ -2195,7 +2195,11 @@ if (!answer) {
     console.log("  â Answer found");
     console.log("  ââ Language used:", usedLang);
     console.log("  ââ Preview:", answer.substring(0, 80) + "...");
-
+// ⛔ BLOCCO FINALE ASSOLUTO: __INTERNAL_AI__ = SILENT
+if (answer === "__INTERNAL_AI__") {
+  console.log("⛔ INTERNAL_AI finale → SILENT");
+  return res.json({ ok: true, silent: true });
+}
     // ======================================================
     // ð¤ STEP 6: Send Reply to HostAway
     // ======================================================
