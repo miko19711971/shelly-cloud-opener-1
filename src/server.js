@@ -1915,6 +1915,10 @@ app.post("/hostaway-incoming", async (req, res) => {
     const payload = req.body;
 
 const message = payload.body;
+   if (message.trim() === "__INTERNAL_AI__") {
+  console.log("🛑 Echo INTERNAL_AI → ignored");
+  return res.json({ ok: true, silent: true });
+}
 const guestName = payload.guestName;
 const reservationId = payload.reservationId;
 const conversationId = payload.conversationId;
