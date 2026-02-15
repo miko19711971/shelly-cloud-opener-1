@@ -1915,8 +1915,13 @@ app.post("/hostaway-incoming", async (req, res) => {
     const payload = req.body;
 
 // ✅ IGNORA messaggi in uscita (evita loop e __INTERNAL_AI__ in chat)
-if (payload?.status === "sent") {
-  console.log("🛑 Outgoing message (status=sent) -> ignored");
+ // ✅ IGNORA SOLO i messaggi OUTGOING (evita loop), NON quelli incoming
+const isIncoming = payload?.isIncoming;
+const sentUsingHostaway = payload?.sentUsingHostaway;
+const status = payload?.status;
+
+if (status === "sent" && (isIncoming === 0 || sentUsingHostaway === 1)) {
+  console.log("🛑 Outgoing message -> ignored", { status, isIncoming, sentUsingHostaway });
   return res.json({ ok: true, silent: true });
 }
 
