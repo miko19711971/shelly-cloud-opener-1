@@ -1912,28 +1912,46 @@ app.post("/hostaway-incoming", async (req, res) => {
   console.log("=".repeat(60) + "\n");
 
   try {
-    const payload = req.body;
+         const raw = req.body || {};
+    const payload = raw.data ? raw.data : raw;
 
-const message = payload.body;
-   if (message.trim() === "__INTERNAL_AI__") {
-  console.log("🛑 Echo INTERNAL_AI → ignored");
-  return res.json({ ok: true, silent: true });
-}
-const guestName = payload.guestName;
-const reservationId = payload.reservationId;
-const conversationId = payload.conversationId;
-const listingId = payload.listingMapId;
-const guestLanguage = payload.guestLanguage;
-   // STEP 1.5 — Resolve apartment EARLY (prima di matcher / Gemini)
-const apartment = (() => {
-  switch (listingId) {
-    case 194164: return "trastevere";
-    case 194165: return "portico_ottavia";
-    case 194166: return "arenula";
-    case 194167: return "scala";
-    default: return "rome";
-  }
-})();
+    // ✅ accetta SOLO messaggi in entrata (ospite → te)
+    if (Number(payload.isIncoming) !== 1) {
+      console.log("🛑 Non-incoming (host/outbound) → ignored. isIncoming:", payload.isIncoming);
+      return res.json({ ok: true, silent: true });
+    }
+
+    // ✅ messaggio sempre come stringa
+    const message = String(payload.body || "").trim();
+
+    // ✅ se manca testo → silent
+    if (!message) {
+      console.log("⚠️ Empty message → SILENT");
+      return res.json({ ok: true, silent: true });
+    }
+
+    // ✅ blocco echo INTERNAL_AI
+    if (message === "__INTERNAL_AI__") {
+      console.log("🛑 Echo INTERNAL_AI → ignored");
+      return res.json({ ok: true, silent: true });
+    }
+
+    const guestName = payload.guestName;
+    const reservationId = payload.reservationId;
+    const conversationId = payload.conversationId;
+    const listingId = payload.listingMapId;
+    const guestLanguage = payload.guestLanguage;
+
+    // STEP 1.5 — Resolve apartment EARLY (prima di matcher / Gemini)
+    const apartment = (() => {
+      switch (Number(listingId)) {
+        case 194164: return "trastevere";
+        case 194165: return "portico_ottavia";
+        case 194166: return "arenula";
+        case 194167: return "scala";
+        default: return "rome";
+      }
+    })();
    // PATCH: recupera reservationId dalla chat se manca
 let effectiveReservationId = reservationId;
 
