@@ -1946,7 +1946,7 @@ app.post("/hostaway-incoming", async (req, res) => {
     const apartment = (() => {
       switch (Number(listingId)) {
         case 194164: return "trastevere";
-        case 194165: return "portico_ottavia";
+        case 194165: return "portico";
         case 194166: return "arenula";
         case 194167: return "scala";
         default: return "rome";
