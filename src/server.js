@@ -2029,7 +2029,9 @@ if (effectiveReservationId && conversationId) {
       }
     }
 
-    console.log("ð STEP 1: Extract Data");
+    req.body = req.body?.data ?? req.body;
+
+    console.log("📋 STEP 1: Extract Data");
     console.log("  ââ message:", message);
     console.log("  ââ conversationId:", conversationId);
     console.log("  ââ guestName:", guestName);
