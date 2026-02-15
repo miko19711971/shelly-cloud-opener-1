@@ -2514,7 +2514,12 @@ app.post("/hostaway-booking-webhook", async (req, res) => {
   try {
     const data = req.body;
    // 🛑 Se arriva un payload messaggio chat, NON è una prenotazione
-if (data?.object === "conversationMessage" || data?.event === "message.received" || data?.body) {
+if (
+  data?.object === "conversationMessage" ||
+  data?.event === "message.received" ||
+  data?.data?.object === "conversationMessage" ||
+  data?.data?.event === "message.received"
+) {
   console.log("🛑 booking-webhook: payload messaggio → ignorato");
   return;
 }
