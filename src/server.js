@@ -1914,17 +1914,27 @@ app.post("/hostaway-incoming", async (req, res) => {
   try {
     const payload = req.body;
 
+// ✅ IGNORA messaggi in uscita (evita loop e __INTERNAL_AI__ in chat)
+if (payload?.status === "sent") {
+  console.log("🛑 Outgoing message (status=sent) -> ignored");
+  return res.json({ ok: true, silent: true });
+}
+
 const message = payload.body;
-   if (message.trim() === "__INTERNAL_AI__") {
+
+// ✅ IGNORA eco interno (se mai arriva come body)
+if (message?.trim?.() === "__INTERNAL_AI__") {
   console.log("🛑 Echo INTERNAL_AI → ignored");
   return res.json({ ok: true, silent: true });
 }
+
 const guestName = payload.guestName;
 const reservationId = payload.reservationId;
 const conversationId = payload.conversationId;
 const listingId = payload.listingMapId;
 const guestLanguage = payload.guestLanguage;
-   // STEP 1.5 — Resolve apartment EARLY (prima di matcher / Gemini)
+
+// STEP 1.5 — Resolve apartment EARLY (prima di matcher / Gemini)
 const apartment = (() => {
   switch (listingId) {
     case 194164: return "trastevere";
