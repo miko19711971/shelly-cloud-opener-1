@@ -2090,7 +2090,11 @@ if (!match || !match.intent) {
     apartment,
     lang: detectedLang || "en"
   });
-
+  // ⛔ NON inoltrare mai la sentinella o risposte vuote
+  if (!geminiReply || geminiReply.trim() === "" || geminiReply === "__INTERNAL_AI__") {
+    console.log("🤖 Gemini returned empty/sentinel → silent");
+    return res.json({ ok: true, silent: true });
+  }
   if (geminiReply) {
     await axios.post(
       `https://api.hostaway.com/v1/conversations/${conversationId}/messages`,
