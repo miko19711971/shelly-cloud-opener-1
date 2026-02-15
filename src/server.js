@@ -1912,46 +1912,24 @@ app.post("/hostaway-incoming", async (req, res) => {
   console.log("=".repeat(60) + "\n");
 
   try {
-         const raw = req.body || {};
-    const payload = raw.data ? raw.data : raw;
+    const payload = req.body;
 
-    // ✅ accetta SOLO messaggi in entrata (ospite → te)
-    if (Number(payload.isIncoming) !== 1) {
-      console.log("🛑 Non-incoming (host/outbound) → ignored. isIncoming:", payload.isIncoming);
-      return res.json({ ok: true, silent: true });
-    }
-
-    // ✅ messaggio sempre come stringa
-    const message = String(payload.body || "").trim();
-
-    // ✅ se manca testo → silent
-    if (!message) {
-      console.log("⚠️ Empty message → SILENT");
-      return res.json({ ok: true, silent: true });
-    }
-
-    // ✅ blocco echo INTERNAL_AI
-    if (message === "__INTERNAL_AI__") {
-      console.log("🛑 Echo INTERNAL_AI → ignored");
-      return res.json({ ok: true, silent: true });
-    }
-
-    const guestName = payload.guestName;
-    const reservationId = payload.reservationId;
-    const conversationId = payload.conversationId;
-    const listingId = payload.listingMapId;
-    const guestLanguage = payload.guestLanguage;
-
-    // STEP 1.5 — Resolve apartment EARLY (prima di matcher / Gemini)
-    const apartment = (() => {
-      switch (Number(listingId)) {
-        case 194164: return "trastevere";
-        case 194165: return "portico";
-        case 194166: return "arenula";
-        case 194167: return "scala";
-        default: return "rome";
-      }
-    })();
+const message = payload.body;
+const guestName = payload.guestName;
+const reservationId = payload.reservationId;
+const conversationId = payload.conversationId;
+const listingId = payload.listingMapId;
+const guestLanguage = payload.guestLanguage;
+   // STEP 1.5 — Resolve apartment EARLY (prima di matcher / Gemini)
+const apartment = (() => {
+  switch (listingId) {
+    case 194164: return "trastevere";
+    case 194165: return "portico_ottavia";
+    case 194166: return "arenula";
+    case 194167: return "scala";
+    default: return "rome";
+  }
+})();
    // PATCH: recupera reservationId dalla chat se manca
 let effectiveReservationId = reservationId;
 
@@ -2090,11 +2068,7 @@ if (!match || !match.intent) {
     apartment,
     lang: detectedLang || "en"
   });
-  // ⛔ NON inoltrare mai la sentinella o risposte vuote
-  if (!geminiReply || geminiReply.trim() === "" || geminiReply === "__INTERNAL_AI__") {
-    console.log("🤖 Gemini returned empty/sentinel → silent");
-    return res.json({ ok: true, silent: true });
-  }
+
   if (geminiReply) {
     await axios.post(
       `https://api.hostaway.com/v1/conversations/${conversationId}/messages`,
@@ -2191,11 +2165,12 @@ if (!answer) {
   console.log("🤖 No static answer → Gemini fallback");
 
   try {
-    const geminiReply = await askGemini({
+     const geminiReply = await askGemini({
   message,
-  apartment, // usa quello già risolto sopra
+  apartment: LISTING_TO_APARTMENT[listingId] || "rome",
   lang: detectedLang || "en"
 });
+
     if (!geminiReply) {
       console.log("🤖 Gemini returned empty → silent");
       return res.json({ ok: true, silent: true });
@@ -2516,16 +2491,6 @@ app.post("/hostaway-booking-webhook", async (req, res) => {
 
   try {
     const data = req.body;
-   // 🛑 Se arriva un payload messaggio chat, NON è una prenotazione
-if (
-  data?.object === "conversationMessage" ||
-  data?.event === "message.received" ||
-  data?.data?.object === "conversationMessage" ||
-  data?.data?.event === "message.received"
-) {
-  console.log("🛑 booking-webhook: payload messaggio → ignorato");
-  return;
-}
     const reservation = data?.reservation || data;
 
     console.log("🏠 HOSTAWAY BOOKING:", JSON.stringify(data, null, 2));
