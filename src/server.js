@@ -1945,7 +1945,7 @@ const apartment = (() => {
     case 194164: return "trastevere";
     case 194165: return "portico_ottavia";
     case 194166: return "arenula";
-    case 194167: return "scala";
+    case 194162: return "scala";
     default: return "rome";
   }
 })();
