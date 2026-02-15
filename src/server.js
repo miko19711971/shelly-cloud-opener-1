@@ -2095,31 +2095,36 @@ if (!match || !match.intent) {
     console.log("🤖 Gemini returned empty/sentinel → silent");
     return res.json({ ok: true, silent: true });
   }
-  if (geminiReply) {
-    await axios.post(
-      `https://api.hostaway.com/v1/conversations/${conversationId}/messages`,
-      {
-        body: geminiReply,
-        sendToGuest: true
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${HOSTAWAY_TOKEN}`,
-          "Content-Type": "application/json"
-        },
-        timeout: 10000
-      }
-    );
+  const finalReply =
+  geminiReply && geminiReply !== "__INTERNAL_AI__" && String(geminiReply).trim()
+    ? geminiReply
+    : SAFE_FALLBACK_REPLY;
 
-    console.log("🤖 Gemini reply sent");
-    return res.json({ ok: true, repliedBy: "gemini" });
+await axios.post(
+  `https://api.hostaway.com/v1/conversations/${conversationId}/messages`,
+  {
+    body: finalReply,
+    sendToGuest: true
+  },
+  {
+    headers: {
+      Authorization: `Bearer ${HOSTAWAY_TOKEN}`,
+      "Content-Type": "application/json"
+    },
+    timeout: 10000
   }
+);
 
-  console.log("🤖 Gemini had no answer → silent");
-  return res.json({ ok: true, silent: true });
-}
+console.log(
+  finalReply === SAFE_FALLBACK_REPLY
+    ? "🛟 Gemini empty/sentinel → SAFE_FALLBACK sent"
+    : "🤖 Gemini reply sent"
+);
 
-const intent = match.intent;
+return res.json({
+  ok: true,
+  repliedBy: finalReply === SAFE_FALLBACK_REPLY ? "safe_fallback" : "gemini"
+});
     // ======================================================
     // ð  STEP 4: listingId â apartment
     // ======================================================
