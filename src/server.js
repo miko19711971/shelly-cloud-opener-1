@@ -1939,13 +1939,14 @@ const conversationId = payload.conversationId;
 const listingId = payload.listingMapId;
 const guestLanguage = payload.guestLanguage;
 
-// STEP 1.5 — Resolve apartment EARLY (prima di matcher / Gemini)
+ // STEP 1.5 — Resolve apartment EARLY (prima di matcher / Gemini)
 const apartment = (() => {
   switch (listingId) {
     case 194164: return "trastevere";
-    case 194165: return "portico_ottavia";
+    case 194165: return "portico";
     case 194166: return "arenula";
     case 194162: return "scala";
+    case 194163: return "leonina";
     default: return "rome";
   }
 })();
