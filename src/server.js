@@ -2513,6 +2513,11 @@ app.post("/hostaway-booking-webhook", async (req, res) => {
 
   try {
     const data = req.body;
+   // 🛑 Se arriva un payload messaggio chat, NON è una prenotazione
+if (data?.object === "conversationMessage" || data?.event === "message.received" || data?.body) {
+  console.log("🛑 booking-webhook: payload messaggio → ignorato");
+  return;
+}
     const reservation = data?.reservation || data;
 
     console.log("🏠 HOSTAWAY BOOKING:", JSON.stringify(data, null, 2));
