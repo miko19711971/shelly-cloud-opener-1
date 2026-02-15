@@ -2187,12 +2187,11 @@ if (!answer) {
   console.log("🤖 No static answer → Gemini fallback");
 
   try {
-     const geminiReply = await askGemini({
+    const geminiReply = await askGemini({
   message,
-  apartment: LISTING_TO_APARTMENT[listingId] || "rome",
+  apartment, // usa quello già risolto sopra
   lang: detectedLang || "en"
 });
-
     if (!geminiReply) {
       console.log("🤖 Gemini returned empty → silent");
       return res.json({ ok: true, silent: true });
