@@ -2506,17 +2506,19 @@ app.post("/paypal-webhook", async (req, res) => {
   res.status(200).json({ ok: true });
 
   try {
-    const data = req.body;
-    const reservation = data?.reservation || data;
+     const data = req.body;
+// ✅ GESTISCI ENTRAMBE LE STRUTTURE
+const reservation = data?.reservation || data?.result || data;
 
-    console.log("🏠 HOSTAWAY BOOKING:", JSON.stringify(data, null, 2));
+console.log("🏠 HOSTAWAY BOOKING:", JSON.stringify(data, null, 2));
 
-    const reservationId = reservation?.id || reservation?.reservationId;
-    const effectiveReservationId = reservationId || data?.reservationId;
-    let conversationId = reservation?.conversationId;
-    
-    // ✅ ESTRAI LISTING ID
-    const listingMapId = reservation?.listingMapId || data?.listingMapId;
+const reservationId = reservation?.id || reservation?.reservationId || data?.reservationId;
+const effectiveReservationId = reservationId;
+let conversationId = reservation?.conversationId || data?.conversationId;
+
+// ✅ ESTRAI LISTING ID da più posizioni possibili
+const listingMapId = reservation?.listingMapId || data?.listingMapId || reservation?.listingId;
+
     
     // ✅ MAPPA A APPARTAMENTO
     const apartment = (() => {
