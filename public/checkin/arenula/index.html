@@ -1,3 +1,5 @@
+Arenula
+
 <!doctype html>
 <html lang="en">
 <head>
@@ -27,9 +29,7 @@
   figcaption{font-size:12px;color:var(--muted);margin-top:6px;text-align:center}
   .note{background:#fff7ed;border:1px solid #fed7aa;color:#7c2d12;padding:10px;border-radius:8px;margin-top:8px}
   .cta{display:inline-block;margin-top:10px;padding:10px 12px;border-radius:10px;background:var(--brand);color:#fff;text-decoration:none;cursor:pointer}
-  .status{font-size:13px;color:#6b7280;margin-top:6px;min-height:1.2em}
-  .status.err{color:#b91c1c}
-  .status.ok{color:#0a7b34}
+  .status{font-size:13px;color:#6b7280;margin-top:6px}
   footer{color:var(--muted);text-align:center;font-size:12px;margin:18px 0}
 </style>
 </head>
@@ -78,7 +78,11 @@
       <div>
         <h2 id="s3_t">Entering the Main Door</h2>
         <p id="s3_p" style="display:none"></p>
-        <a class="cta" id="btn_building" href="#" onclick="openWith('status','building');return false;">Open Building Door</a>
+        <!-- ✅ Bottone aggiornato: usa /token/arenula-building via openWith -->
+  <a class="cta" id="btn_building" href="#"
+   onclick="openWith('status','arenula-building');return false;">
+  Open Building Door
+</a>
         <div class="status" id="status"></div>
       </div>
     </div>
@@ -125,73 +129,37 @@
 </main>
 
 <script>
-function tMsgs(){
-  const L=(new URLSearchParams(location.search).get('lang')||'en').toLowerCase();
-  const M={
-    en:{open:'Opening…',done:'Done.',net:'Network error. Try again.',bad:'Error',missing:'Invalid link (missing token).'},
-    it:{open:'Apertura…',done:'Fatto.',net:'Errore di rete. Riprova.',bad:'Errore',missing:'Link non valido (token mancante).'},
-    fr:{open:'Ouverture…',done:'Fait.',net:'Erreur réseau. Réessayez.',bad:'Erreur',missing:'Lien invalide (token manquant).'},
-    de:{open:'Öffnen…',done:'Fertig.',net:'Netzwerkfehler. Bitte erneut versuchen.',bad:'Fehler',missing:'Ungültiger Link (Token fehlt).'},
-    es:{open:'Abriendo…',done:'Hecho.',net:'Error de red. Inténtalo de nuevo.',bad:'Error',missing:'Enlace no válido (falta token).'}
-  };
-  return M[L]||M.en;
-}
-
-async function openWith(statusId, which){
-  const s=document.getElementById(statusId);
-  const M=tMsgs();
+ async function openWith(statusId, target){
+  const s = document.getElementById(statusId);
   try{
-    const params = new URLSearchParams(window.location.search);
-    const t = params.get("t") || "";
+    const params = new URLSearchParams(location.search);
+    const token = params.get('t');   // 👈 token del check-in
 
-    s.className='status';
-    if(!t){
-      s.classList.add('err');
-      s.textContent = M.missing;
+    if(!token){
+      s.textContent = 'Link non valido (token mancante).';
       return;
     }
 
-    s.textContent = M.open;
+    s.textContent='Opening…';
 
-    const apt = location.pathname.split('/')[2] || 'arenula';
-    
-    const tries = (which === "building")
-      ? ["building"]
-      : ["door"];
+    const params2 = new URLSearchParams(window.location.search);
+    const t = params2.get("t");
 
-    for (const kind of tries) {
-      const r = await fetch(`/checkin/${apt}/open/${kind}?t=${encodeURIComponent(t)}`, {
-        method: "POST",
-        cache: "no-store",
-        headers: { 'Cache-Control': 'no-cache' }
-      });
+    const res = await fetch(`/checkin/arenula/open/building?t=${encodeURIComponent(t)}`, {
+      method: "POST"
+    });
+    const j = await res.json();
 
-      if (r.status === 404) continue;
-
-      const j = await r.json().catch(()=> ({}));
-
-      if (r.ok && j.ok) {
-        s.classList.add('ok');
-        s.textContent = M.done;
-        console.log(`✅ ${kind} opened successfully`);
-      } else {
-        const msg = (j.error || j.message) ? String(j.error || j.message) : `${M.bad} (${r.status})`;
-        s.classList.add('err');
-        s.textContent = msg;
-        console.error(`❌ ${kind} failed:`, msg);
-      }
-      return;
+    if(res.ok && j.ok){
+      s.textContent='Done.';
+    } else {
+      s.textContent = (j.error || j.message) ? String(j.error || j.message) : `Error (${res.status})`;
     }
-
-    s.classList.add('err');
-    s.textContent = `${M.bad} (endpoint not found)`;
   } catch(e){
-    s.classList.add('err');
-    s.textContent = M.net;
-    console.error('❌ Network error:', e);
+    s.textContent='Network error. Try again.';
   }
 }
-
+  /* 5 lingue + bottoni */
 const T = {
   en:{title:'Check-in Guide — Via Arenula 16',addr:'Address: Via Arenula 16, Rome • Intercom: C8 • Elevator: private, do not use',
       s1_t:'Arriving at the Building',s1_p:'When you reach Via Arenula 16, look for the large wooden entrance door with the number 16 engraved on the stone frame.',s1_cap:'Façade and main entrance — Via Arenula 16.',
@@ -208,7 +176,7 @@ const T = {
       s1_t:"Arrivo all'edificio",s1_p:'Cerca il grande portone in legno con il numero 16 inciso sulla cornice in pietra.',s1_cap:'Facciata e ingresso principale — Via Arenula 16.',
       s2_t:'Uso del citofono',s2_p:'Premi C8 sul pannello del citofono.',s2_cap:'Pannello citofono — premi C8.',
       s3_t:'Entrata dal portone',s3_p:'Spingi la porta quando è sbloccata.',
-      s4_t:"Dentro l'edificio",s4_p:"Prosegui dritto nel cortile e prendi le scale a destra dopo l'ascensore.",s4_note:"L'ascensore è strettamente privato — non possiamo usarlo.",s4_cap:'Corridoio verso il cortile; scale a destra dopo l'ascensore.',
+      s4_t:"Dentro l'edificio",s4_p:"Prosegui dritto nel cortile e prendi le scale a destra dopo l'ascensore.",s4_note:"L'ascensore è strettamente privato — non possiamo usarlo.",s4_cap:'Corridoio verso il cortile; scale a destra dopo l’ascensore.',
       s5_t:"Questa è la porta del tuo appartamento",
       s5_p:"Attaccato alla maniglia troverai un lucchetto grigio. Il codice è 6-7-9-3. All'interno troverai le chiavi: apri lo sportellino, prendi le chiavi, richiudi lo sportellino e mischia i numeri.",
       s5_cap:"Ingresso dell'appartamento.",
@@ -216,17 +184,17 @@ const T = {
       btn_building:'Apri portone',btn_apartment:'Apri porta appartamento',
       footer:'niceflatinrome.com • Guida rapida per gli arrivi a Via Arenula 16',langLabel:'Lingua',langName:'Italiano'},
 
-  fr:{title:'Guide d'enregistrement — Via Arenula 16',addr:'Adresse : Via Arenula 16, Rome • Interphone : C8 • Ascenseur : privé, ne pas utiliser',
-      s1_t:'Arriver à l'immeuble',s1_p:'À votre arrivée Via Arenula 16, repérez le grand portail en bois avec le numéro 16 gravé sur la pierre.',s1_cap:'Façade et entrée principale — Via Arenula 16.',
-      s2_t:'Utiliser l'interphone',s2_p:'Appuyez sur C8 sur le panneau de l'interphone.',s2_cap:'Panneau d'interphone — appuyez sur C8.',
+  fr:{title:'Guide d’enregistrement — Via Arenula 16',addr:'Adresse : Via Arenula 16, Rome • Interphone : C8 • Ascenseur : privé, ne pas utiliser',
+      s1_t:'Arriver à l’immeuble',s1_p:'À votre arrivée Via Arenula 16, repérez le grand portail en bois avec le numéro 16 gravé sur la pierre.',s1_cap:'Façade et entrée principale — Via Arenula 16.',
+      s2_t:'Utiliser l’interphone',s2_p:'Appuyez sur C8 sur le panneau de l’interphone.',s2_cap:'Panneau d’interphone — appuyez sur C8.',
       s3_t:'Entrer par le portail',s3_p:'Poussez la porte une fois déverrouillée.',
-      s4_t:'À l'intérieur du bâtiment',s4_p:'Traversez le couloir jusqu'à la cour, puis prenez les escaliers à droite après l'ascenseur.',s4_note:'L'ascenseur est strictement privé — nous ne sommes pas autorisés à l'utiliser.',s4_cap:'Couloir vers la cour ; escaliers à droite après l'ascenseur.',
+      s4_t:'À l’intérieur du bâtiment',s4_p:'Traversez le couloir jusqu’à la cour, puis prenez les escaliers à droite après l’ascenseur.',s4_note:'L’ascenseur est strictement privé — nous ne sommes pas autorisés à l’utiliser.',s4_cap:'Couloir vers la cour ; escaliers à droite après l’ascenseur.',
       s5_t:'Voici la porte de votre appartement',
-      s5_p:'Attachée à la poignée, vous trouverez une boîte à clés grise. Le code est 6-7-9-3. À l'intérieur se trouvent les clés : ouvrez le couvercle, prenez les clés, refermez le couvercle et mélangez les chiffres.',
-      s5_cap:"Entrée de l'appartement.",
-      help_h:'Besoin d'aide ?',help_p:'Appeler ou WhatsApp : <a class="cta" href="tel:+393355245756">+39 335 524 5756</a>',
-      btn_building:'Ouvrir le portail',btn_apartment:"Ouvrir la porte de l'appartement",
-      footer:'niceflatinrome.com • Guide visuel rapide pour l'arrivée à Via Arenula 16',langLabel:'Langue',langName:'Français'},
+      s5_p:'Attachée à la poignée, vous trouverez une boîte à clés grise. Le code est 6-7-9-3. À l’intérieur se trouvent les clés : ouvrez le couvercle, prenez les clés, refermez le couvercle et mélangez les chiffres.',
+      s5_cap:"Entrée de l’appartement.",
+      help_h:'Besoin d’aide ?',help_p:'Appeler ou WhatsApp : <a class="cta" href="tel:+393355245756">+39 335 524 5756</a>',
+      btn_building:'Ouvrir le portail',btn_apartment:"Ouvrir la porte de l’appartement",
+      footer:'niceflatinrome.com • Guide visuel rapide pour l’arrivée à Via Arenula 16',langLabel:'Langue',langName:'Français'},
 
     de:{title:'Check-in-Leitfaden — Via Arenula 16',addr:'Adresse: Via Arenula 16, Rom • Gegensprechanlage: C8 • Aufzug: privat, nicht benutzen',
       s1_t:'Ankunft am Gebäude',s1_p:'Suchen Sie an der Via Arenula 16 das große Holztor mit der Zahl 16 im Stein.',s1_cap:'Fassade und Haupteingang — Via Arenula 16.',
@@ -252,13 +220,14 @@ const T = {
       footer:'niceflatinrome.com • Guía visual rápida para llegar a Via Arenula 16',langLabel:'Idioma',langName:'Español'}
 };
 
+ /* render lingue */
 (function(){
   const params=new URLSearchParams(location.search);
   const code=(params.get('lang')||'en').toLowerCase();
   const t=T[code]||T.en;
 
   const token = params.get('t') || '';
-  const base  = 'index.html';
+  const base  = 'index.html';  // ✅ sempre sul file giusto (non /today, non la cartella)
 
   document.getElementById('langbar').innerHTML =
     `${t.langLabel}: ` +
