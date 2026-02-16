@@ -122,46 +122,62 @@
 </main>
 
 <script>
-async function openWith(statusId, which){
+ async function openWith(statusId, which){
   const s=document.getElementById(statusId);
+  const M=tMsgs();
   try{
     const params = new URLSearchParams(window.location.search);
     const t = params.get("t") || "";
 
+    s.className='status';
     if(!t){
-      s.textContent = "Link non valido (token mancante).";
+      s.classList.add('err');
+      s.textContent = M.missing;
       return;
     }
 
-    s.textContent='Opening…';
+    s.textContent = M.open;
 
-    // ✅ robusto: per la porta prova "apartment" e se non esiste prova "door"
-    const tries = (which === "building") ? ["building"] : ["apartment","door"];
+    // ✅ DINAMICO: estrae "apt" dal path corrente invece di hardcode "trastevere"
+    const apt = location.pathname.split('/')[2] || 'trastevere';
+    
+    const tries = (which === "building")
+      ? ["building"]
+      : ["door"];
 
     for (const kind of tries) {
-      const r = await fetch(`/checkin/leonina/open/${kind}?t=${encodeURIComponent(t)}`, {
+      const r = await fetch(`/checkin/${apt}/open/${kind}?t=${encodeURIComponent(t)}`, {
         method: "POST",
-        cache: "no-store"
+        cache: "no-store",
+        headers: { 'Cache-Control': 'no-cache' }
       });
 
-      // se endpoint non esiste, prova il prossimo
       if (r.status === 404) continue;
 
       const j = await r.json().catch(()=> ({}));
 
-      if(r.ok && j.ok){
-        s.textContent = "Done.";
+      if (r.ok && j.ok) {
+        s.classList.add('ok');
+        s.textContent = M.done;
+        console.log(`✅ ${kind} opened successfully`);
       } else {
-        s.textContent = (j.error || j.message) ? String(j.error || j.message) : `Error (${r.status})`;
+        const msg = (j.error || j.message) ? String(j.error || j.message) : `${M.bad} (${r.status})`;
+        s.classList.add('err');
+        s.textContent = msg;
+        console.error(`❌ ${kind} failed:`, msg);
       }
-      return; // ✅ finito (ok o errore “vero”)
+      return;
     }
 
-    s.textContent = "Error (endpoint not found).";
-  }catch(e){
-    s.textContent='Network error. Try again.';
+    s.classList.add('err');
+    s.textContent = `${M.bad} (endpoint not found)`;
+  } catch(e){
+    s.classList.add('err');
+    s.textContent = M.net;
+    console.error('❌ Network error:', e);
   }
 }
+
   /* -------- 5 lingue (bottoni inclusi) -------- */
 const T = {
   en: {
