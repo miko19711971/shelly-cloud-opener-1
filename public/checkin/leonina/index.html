@@ -27,7 +27,9 @@
   figcaption{font-size:12px;color:var(--muted);margin-top:6px;text-align:center}
   .note{background:#fff7ed;border:1px solid #fed7aa;color:#7c2d12;padding:10px;border-radius:8px;margin-top:8px}
   .cta{display:inline-block;margin-top:10px;padding:10px 12px;border-radius:10px;background:var(--brand);color:#fff;text-decoration:none;cursor:pointer}
-  .status{font-size:13px;color:#6b7280;margin-top:6px}
+  .status{font-size:13px;color:#6b7280;margin-top:6px;min-height:1.2em}
+  .status.err{color:#b91c1c}
+  .status.ok{color:#0a7b34}
   footer{color:var(--muted);text-align:center;font-size:12px;margin:18px 0}
   .imgframe{width:90%;margin:0 auto;border:1px solid var(--line);border-radius:10px;display:block}
   .imgframe object{width:100%;height:auto;display:block;border-radius:10px;aspect-ratio:3/4;background:#f9fafb}
@@ -52,11 +54,9 @@
         <h2 id="s1_t">Open the Building Door</h2>
         <p id="s1_p">Press the button below to open the building door.</p>
 
-        <!-- ✅ PATCH: non usare /token (admin). Usa /checkin/... con token t -->
         <a class="cta" href="#" onclick="openWith('statusBuilding','building');return false;" id="btn_building">➜ Open Building Door</a>
         <div class="status" id="statusBuilding"></div>
 
-        <!-- foto locale -->
         <figure>
           <img src="building-door.jpg"
                alt="Building entrance — Via Leonina 71"
@@ -99,9 +99,8 @@
       <div class="num">4</div>
       <div>
         <h2 id="s4_t">This is your apartment door</h2>
-        <p id="s4_p">Press the button only once when you are sure it’s the correct door.</p>
+        <p id="s4_p">Press the button only once when you are sure it's the correct door.</p>
 
-        <!-- ✅ PATCH: non usare /token (admin). Usa /checkin/... con token t -->
         <a class="cta" href="#" onclick="openWith('statusApartment','apartment');return false;" id="btn_apartment">➜ Open Apartment Door</a>
         <div class="status" id="statusApartment"></div>
 
@@ -122,7 +121,19 @@
 </main>
 
 <script>
- async function openWith(statusId, which){
+function tMsgs(){
+  const L=(new URLSearchParams(location.search).get('lang')||'en').toLowerCase();
+  const M={
+    en:{open:'Opening…',done:'Done.',net:'Network error. Try again.',bad:'Error',missing:'Invalid link (missing token).'},
+    it:{open:'Apertura…',done:'Fatto.',net:'Errore di rete. Riprova.',bad:'Errore',missing:'Link non valido (token mancante).'},
+    fr:{open:'Ouverture…',done:'Fait.',net:'Erreur réseau. Réessayez.',bad:'Erreur',missing:'Lien invalide (token manquant).'},
+    de:{open:'Öffnen…',done:'Fertig.',net:'Netzwerkfehler. Bitte erneut versuchen.',bad:'Fehler',missing:'Ungültiger Link (Token fehlt).'},
+    es:{open:'Abriendo…',done:'Hecho.',net:'Error de red. Inténtalo de nuevo.',bad:'Error',missing:'Enlace no válido (falta token).'}
+  };
+  return M[L]||M.en;
+}
+
+async function openWith(statusId, which){
   const s=document.getElementById(statusId);
   const M=tMsgs();
   try{
@@ -138,8 +149,7 @@
 
     s.textContent = M.open;
 
-    // ✅ DINAMICO: estrae "apt" dal path corrente invece di hardcode "trastevere"
-    const apt = location.pathname.split('/')[2] || 'trastevere';
+    const apt = location.pathname.split('/')[2] || 'leonina';
     
     const tries = (which === "building")
       ? ["building"]
@@ -178,7 +188,6 @@
   }
 }
 
-  /* -------- 5 lingue (bottoni inclusi) -------- */
 const T = {
   en: {
     title:'Check-in Guide — Via Leonina 71',
@@ -192,7 +201,7 @@ const T = {
     s3_t:'Take the elevator to the 4th floor',
     s3_p:'Get the elevator and arrive at the fourth floor.',
     s4_t:'This is your apartment door',
-    s4_p:'Press the button only once when you are sure it’s the correct door.',
+    s4_p:'Press the button only once when you are sure it's the correct door.',
     s4_cap:'Apartment entrance — green door on the top floor.',
     help_h:'Need help?',
     help_p:'Call or WhatsApp: <a class="cta" href="tel:+393355245756">+39 335 524 5756</a>',
@@ -210,12 +219,12 @@ const T = {
     s1_cap:'Facciata e ingresso — Via Leonina 71.',
     s2_t:'Vai in fondo al corridoio',
     s2_p:'Prosegui dritto fino alla fine del corridoio.',
-    s2_cap:'Fondo corridoio — l’ultima porta a destra è l’ascensore.',
-    s3_t:'Prendi l’ascensore al 4° piano',
-    s3_p:'Prendi l’ascensore e sali al quarto piano.',
+    s2_cap:'Fondo corridoio — l'ultima porta a destra è l'ascensore.',
+    s3_t:'Prendi l'ascensore al 4° piano',
+    s3_p:'Prendi l'ascensore e sali al quarto piano.',
     s4_t:'Questa è la porta del tuo appartamento',
     s4_p:'Premi il pulsante una sola volta quando sei sicuro che sia la porta corretta.',
-    s4_cap:"Ingresso dell'appartamento — porta verde all’ultimo piano.",
+    s4_cap:"Ingresso dell'appartamento — porta verde all'ultimo piano.",
     help_h:'Serve aiuto?',
     help_p:'Chiama o WhatsApp: <a class="cta" href="tel:+393355245756">+39 335 524 5756</a>',
     btn_building:'➜ Apri il portone',
@@ -224,23 +233,23 @@ const T = {
     langLabel:'Lingua', langName:'Italiano'
   },
   fr: {
-    title:'Guide d’enregistrement — Via Leonina 71',
-    addr:'Adresse : Via Leonina 71, Rome • Clavier d’entrée : 16 ou 7171 + 🔑',
-    s1_t:'Ouvrir la porte de l’immeuble',
+    title:'Guide d'enregistrement — Via Leonina 71',
+    addr:'Adresse : Via Leonina 71, Rome • Clavier d'entrée : 16 ou 7171 + 🔑',
+    s1_t:'Ouvrir la porte de l'immeuble',
     s1_p:'Appuyez sur le bouton ci-dessous pour ouvrir la porte.',
     s1_cap:'Façade et entrée — Via Leonina 71.',
     s2_t:'Allez au bout du couloir',
-    s2_p:'Allez tout droit jusqu’au bout du couloir.',
-    s2_cap:'Fin du couloir — la dernière porte à droite est l’ascenseur.',
-    s3_t:'Prenez l’ascenseur jusqu’au 4e étage',
-    s3_p:'Prenez l’ascenseur et montez au quatrième étage.',
+    s2_p:'Allez tout droit jusqu'au bout du couloir.',
+    s2_cap:'Fin du couloir — la dernière porte à droite est l'ascenseur.',
+    s3_t:'Prenez l'ascenseur jusqu'au 4e étage',
+    s3_p:'Prenez l'ascenseur et montez au quatrième étage.',
     s4_t:'Voici la porte de votre appartement',
-    s4_p:'Appuyez une seule fois lorsque vous êtes sûr que c’est la bonne porte.',
-    s4_cap:"Entrée de l’appartement — porte verte au dernier étage.",
-    help_h:'Besoin d’aide ?',
+    s4_p:'Appuyez une seule fois lorsque vous êtes sûr que c'est la bonne porte.',
+    s4_cap:"Entrée de l'appartement — porte verte au dernier étage.",
+    help_h:'Besoin d'aide ?',
     help_p:'Appeler ou WhatsApp : <a class="cta" href="tel:+393355245756">+39 335 524 5756</a>',
-    btn_building:'➜ Ouvrir la porte de l’immeuble',
-    btn_apartment:"➜ Ouvrir la porte de l’appartement",
+    btn_building:'➜ Ouvrir la porte de l'immeuble',
+    btn_apartment:"➜ Ouvrir la porte de l'appartement",
     footer:'niceflatinrome.com • Guide visuel rapide pour les arrivées à Via Leonina 71',
     langLabel:'Langue', langName:'Français'
   },
@@ -289,16 +298,14 @@ const T = {
   }
 };
 
-/* applica lingua + barra link */
 (function(){
   const params=new URLSearchParams(location.search);
   const L=(params.get('lang')||'en').toLowerCase();
   const t=T[L]||T.en;
 
   const token = params.get('t') || '';
-  const base  = 'index.html';  // ✅ sempre sul file giusto
+  const base  = 'index.html';
 
-  // barra lingue con token preservato
   document.getElementById('langbar').innerHTML =
     `${t.langLabel}: ` +
     Object.entries(T).map(([k,v])=>{
@@ -309,7 +316,6 @@ const T = {
       return `<a class="${cls}" href="${base}?${p.toString()}">${v.langName}</a>`;
     }).join(' · ');
 
-  // applica testi
   const set = (id, val) => { const el=document.getElementById(id); if(el) el.textContent = val; };
   document.getElementById('title').textContent=t.title;
   set('h1', t.title);
@@ -324,7 +330,6 @@ const T = {
   set('btn_building', t.btn_building);
   set('btn_apartment', t.btn_apartment);
 
-  // evidenzia lingua attiva
   document.querySelectorAll('#langbar a').forEach(a=>{
     a.classList.toggle('active', a.textContent===t.langName);
   });
@@ -332,6 +337,3 @@ const T = {
 </script>
 </body>
 </html>
-
-  
-  
