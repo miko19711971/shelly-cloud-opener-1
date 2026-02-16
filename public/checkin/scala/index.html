@@ -1,4 +1,6 @@
-<!doctype html>
+Scala
+
+ <!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -27,9 +29,7 @@
   .imgframe{width:90%;margin:0 auto;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#f9fafb}
   .imgframe object,.imgframe img{width:100%;height:auto;display:block}
   .cta{display:inline-block;margin-top:10px;padding:10px 12px;border-radius:10px;background:var(--brand);color:#fff;text-decoration:none;cursor:pointer}
-  .status{font-size:13px;color:#6b7280;margin-left:8px;min-height:1.2em}
-  .status.err{color:#b91c1c}
-  .status.ok{color:#0a7b34}
+  .status{font-size:13px;color:#6b7280;margin-left:8px}
   footer{color:var(--muted);text-align:center;font-size:12px;margin:18px 0}
 </style>
 </head>
@@ -64,10 +64,11 @@
           <figcaption id="s1_cap">Main entrance — Via della Scala 17.</figcaption>
         </figure>
 
+        <!-- ✅ FIX: come Leonina (usa token t, nessun redirect, nessun /token, nessun d) -->
         <a class="cta" href="#" onclick="openWith('statusBuilding','building');return false;" id="btn_building">➜ Open Building Gates</a>
 
         <span style="float:right; font-weight:700; text-transform:uppercase; margin-left:10px;">
- At the second gate, press "A-1" and then press "Open the Building Gates" again..
+ At the second gate, press “A-1” and then press “Open the Building Gates” again..
 </span>
         <span class="status" id="statusBuilding"></span>
       </div>
@@ -97,8 +98,9 @@
       <div class="num">3</div>
       <div>
         <h2 id="s3_t">This is your apartment door</h2>
-        <p id="s3_p">You've reached the green door on the left. This is your apartment entrance.</p>
+        <p id="s3_p">You’ve reached the green door on the left. This is your apartment entrance.</p>
 
+        <!-- ✅ Nuovo paragrafo (lucchetto) qui, sotto “Entrance” -->
         <p id="s3_lock">The keys are inside the padlock. Facing the green door on the left, you will see some bicycles. On the iron bar there is a padlock. The combination is 6793. Open the padlock, take the keys, close it again, and scramble the numbers.</p>
 
         <figure>
@@ -110,6 +112,7 @@
           <figcaption id="s3_cap">Green door = your apartment entrance.</figcaption>
         </figure>
 
+        <!-- ✅ FIX: come Leonina (usa token t, nessun redirect, nessun /token, nessun d) -->
         <a class="cta" href="#" onclick="openWith('statusApartment','apartment');return false;" id="btn_apartment">➜ Open Apartment Door</a>
 
         <span class="status" id="statusApartment"></span>
@@ -126,74 +129,53 @@
 </main>
 
 <script>
-function tMsgs(){
-  const L=(new URLSearchParams(location.search).get('lang')||'en').toLowerCase();
-  const M={
-    en:{open:'Opening…',done:'Done.',net:'Network error. Try again.',bad:'Error',missing:'Invalid link (missing token).'},
-    it:{open:'Apertura…',done:'Fatto.',net:'Errore di rete. Riprova.',bad:'Errore',missing:'Link non valido (token mancante).'},
-    fr:{open:'Ouverture…',done:'Fait.',net:'Erreur réseau. Réessayez.',bad:'Erreur',missing:'Lien invalide (token manquant).'},
-    de:{open:'Öffnen…',done:'Fertig.',net:'Netzwerkfehler. Bitte erneut versuchen.',bad:'Fehler',missing:'Ungültiger Link (Token fehlt).'},
-    es:{open:'Abriendo…',done:'Hecho.',net:'Error de red. Inténtalo de nuevo.',bad:'Error',missing:'Enlace no válido (falta token).'}
-  };
-  return M[L]||M.en;
-}
+  // ✅ FIX DEFINITIVO: identico a Leonina
+  // - prende SOLO t dalla URL
+  // - chiama POST /checkin/scala/open/building?t=...
+  // - chiama POST /checkin/scala/open/apartment?t=... (fallback /door)
+  // - NON fa redirect /location.href
+  async function openWith(statusId, which){
+    const s=document.getElementById(statusId);
+    try{
+      const params = new URLSearchParams(window.location.search);
+      const t = params.get("t") || "";
 
-async function openWith(statusId, which){
-  const s=document.getElementById(statusId);
-  const M=tMsgs();
-  try{
-    const params = new URLSearchParams(window.location.search);
-    const t = params.get("t") || "";
-
-    s.className='status';
-    if(!t){
-      s.classList.add('err');
-      s.textContent = M.missing;
-      return;
-    }
-
-    s.textContent = M.open;
-
-    const apt = location.pathname.split('/')[2] || 'scala';
-    
-    const tries = (which === "building")
-      ? ["building"]
-      : ["door"];
-
-    for (const kind of tries) {
-      const r = await fetch(`/checkin/${apt}/open/${kind}?t=${encodeURIComponent(t)}`, {
-        method: "POST",
-        cache: "no-store",
-        headers: { 'Cache-Control': 'no-cache' }
-      });
-
-      if (r.status === 404) continue;
-
-      const j = await r.json().catch(()=> ({}));
-
-      if (r.ok && j.ok) {
-        s.classList.add('ok');
-        s.textContent = M.done;
-        console.log(`✅ ${kind} opened successfully`);
-      } else {
-        const msg = (j.error || j.message) ? String(j.error || j.message) : `${M.bad} (${r.status})`;
-        s.classList.add('err');
-        s.textContent = msg;
-        console.error(`❌ ${kind} failed:`, msg);
+      if(!t){
+        s.textContent = "Link non valido (token mancante).";
+        return;
       }
-      return;
+
+      s.textContent = "Opening…";
+
+      const tries = (which === "building") ? ["building"] : ["apartment","door"];
+
+      for (const kind of tries) {
+        const r = await fetch(`/checkin/scala/open/${kind}?t=${encodeURIComponent(t)}`, {
+          method: "POST",
+          cache: "no-store"
+        });
+
+        if (r.status === 404) continue;
+
+        const j = await r.json().catch(()=> ({}));
+
+        if(r.ok && j.ok){
+          // Nota: per Scala il server fa già la “doppia apertura” (sequenza) lato backend.
+          s.textContent = "Done.";
+        } else {
+          s.textContent = (j.error || j.message) ? String(j.error || j.message) : `Error (${r.status})`;
+        }
+        return;
+      }
+
+      s.textContent = "Error (endpoint not found).";
+    }catch(e){
+      s.textContent='Network error. Try again.';
     }
-
-    s.classList.add('err');
-    s.textContent = `${M.bad} (endpoint not found)`;
-  } catch(e){
-    s.classList.add('err');
-    s.textContent = M.net;
-    console.error('❌ Network error:', e);
   }
-}
 
-const T = {
+  /* ----------- Dizionario testi: 5 lingue (s3_lock) ----------- */
+  const T = {
     en: {
       title:'Check-in Guide — Via della Scala 17, unit A/1',
       addr:'Address: Via della Scala 17, Rome • Unit: A/1',
@@ -205,7 +187,7 @@ const T = {
       s2_p:'After the click, enter and turn left.',
       s2_cap:'Follow the arrow, then turn left.',
       s3_t:'This is your apartment door',
-      s3_p:'You've reached the green door on the left. This is your apartment entrance.',
+      s3_p:'You’ve reached the green door on the left. This is your apartment entrance.',
       s3_lock:'The keys are inside the padlock. Facing the green door on the left, you will see some bicycles. On the iron bar there is a padlock. The combination is 6793. Open the padlock, take the keys, close it again, and scramble the numbers.',
       s3_cap:'Green door = your apartment entrance.',
       btn_apartment:'➜ Open Apartment Door',
@@ -216,7 +198,7 @@ const T = {
     it: {
       title:'Guida Check-in — Via della Scala 17, interno A/1',
       addr:'Indirizzo: Via della Scala 17, Roma • Interno: A/1',
-      s1_t:"Individua l'ingresso del palazzo",
+      s1_t:"Individua l’ingresso del palazzo",
       s1_p:'Sei davanti al portone del tuo stabile.',
       s1_cap:'Ingresso principale — Via della Scala 17.',
       btn_building:'➜ Apri il portone',
@@ -224,8 +206,8 @@ const T = {
       s2_p:'Dopo il clic entra e gira a sinistra.',
       s2_cap:'Segui la freccia, poi gira a sinistra.',
       s3_t:'Questa è la porta del tuo appartamento',
-      s3_p:'Hai raggiunto la porta verde sulla sinistra. È l'ingresso del tuo appartamento.',
-      s3_lock:'Le chiavi sono all'interno del lucchetto. Guardando la porta verde sulla sinistra, dove ci sono le biciclette c'è una barra di ferro con un lucchetto. La combinazione è 6793. Apri il lucchetto, prendi le chiavi, richiudilo e mischia i numeri.',
+      s3_p:'Hai raggiunto la porta verde sulla sinistra. È l’ingresso del tuo appartamento.',
+      s3_lock:'Le chiavi sono all’interno del lucchetto. Guardando la porta verde sulla sinistra, dove ci sono le biciclette c’è una barra di ferro con un lucchetto. La combinazione è 6793. Apri il lucchetto, prendi le chiavi, richiudilo e mischia i numeri.',
       s3_cap:'Porta verde = ingresso del tuo appartamento.',
       btn_apartment:'➜ Apri porta appartamento',
       help_h:'Serve aiuto?',
@@ -233,23 +215,23 @@ const T = {
       footer:'niceflatinrome.com • Guida rapida per gli arrivi in Via della Scala 17, interno A/1'
     },
     fr: {
-      title:'Guide d'enregistrement — Via della Scala 17, unité A/1',
+      title:'Guide d’enregistrement — Via della Scala 17, unité A/1',
       addr:'Adresse : Via della Scala 17, Rome • Unité : A/1',
-      s1_t:"Trouver l'entrée de l'immeuble",
+      s1_t:"Trouver l’entrée de l’immeuble",
       s1_p:'Bienvenue devant la porte de votre immeuble.',
       s1_cap:'Entrée principale — Via della Scala 17.',
-      btn_building:"➜ Ouvrir le portail de l'immeuble",
+      btn_building:"➜ Ouvrir le portail de l’immeuble",
       s2_t:'Traversez le couloir',
       s2_p:'Après le clic, entrez et tournez à gauche.',
       s2_cap:'Suivez la flèche puis tournez à gauche.',
       s3_t:'Voici la porte de votre appartement',
-      s3_p:'Vous êtes arrivé à la porte verte sur la gauche. C'est l'entrée de votre appartement.',
-      s3_lock:"Les clés sont à l'intérieur du cadenas. En face de la porte verte sur la gauche, vous verrez des vélos. Sur la barre en fer, il y a un cadenas. La combinaison est 6793. Ouvrez le cadenas, prenez les clés, refermez-le et mélangez les chiffres.",
+      s3_p:'Vous êtes arrivé à la porte verte sur la gauche. C’est l’entrée de votre appartement.',
+      s3_lock:"Les clés sont à l’intérieur du cadenas. En face de la porte verte sur la gauche, vous verrez des vélos. Sur la barre en fer, il y a un cadenas. La combinaison est 6793. Ouvrez le cadenas, prenez les clés, refermez-le et mélangez les chiffres.",
       s3_cap:"Porte verte = entrée de votre appartement.",
-      btn_apartment:"➜ Ouvrir la porte de l'appartement",
-      help_h:'Besoin d'aide ?',
+      btn_apartment:"➜ Ouvrir la porte de l’appartement",
+      help_h:'Besoin d’aide ?',
       help_p:'Appeler ou WhatsApp : <a class="cta" href="tel:+393355245756">+39 335 524 5756</a>',
-      footer:"niceflatinrome.com • Guide visuel rapide d'arrivée à Via della Scala 17, unité A/1"
+      footer:"niceflatinrome.com • Guide visuel rapide d’arrivée à Via della Scala 17, unité A/1"
     },
     de: {
       title:'Check-in-Leitfaden — Via della Scala 17, Einheit A/1',
@@ -290,12 +272,12 @@ const T = {
       footer:'niceflatinrome.com • Guía visual rápida para llegadas a Via della Scala 17, unidad A/1'
     }
   };
-
-(function(){
+    (function(){
     const params=new URLSearchParams(location.search);
     const L=(params.get('lang')||'en').toLowerCase();
     const t=T[L]||T.en;
 
+    // costruisci correttamente gli href della barra lingue preservando tutti i parametri (es. t=)
     document.querySelectorAll('#langbar a').forEach(a=>{
       const lang=a.getAttribute('data-lang');
       const p=new URLSearchParams(params);
@@ -304,6 +286,7 @@ const T = {
       a.classList.toggle('active', lang===L);
     });
 
+    // applica contenuti
     document.getElementById('title').textContent=t.title;
     document.getElementById('h1').textContent=t.title;
     document.getElementById('addr').textContent=t.addr;
