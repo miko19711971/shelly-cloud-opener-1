@@ -1,3 +1,5 @@
+Viale T
+
  <!doctype html>
 <html lang="en">
 <head>
@@ -138,7 +140,7 @@ function tMsgs(){
   return M[L]||M.en;
 }
 
- async function openWith(statusId, which){
+async function openWith(statusId, which){
   const s=document.getElementById(statusId);
   const M=tMsgs();
   try{
@@ -154,18 +156,14 @@ function tMsgs(){
 
     s.textContent = M.open;
 
-    // ✅ DINAMICO: estrae "apt" dal path corrente invece di hardcode "trastevere"
-    const apt = location.pathname.split('/')[2] || 'trastevere';
-    
     const tries = (which === "building")
       ? ["building"]
-      : ["door"];
+      : ["apartment","door"]; // stesso fallback di Leonina
 
     for (const kind of tries) {
-      const r = await fetch(`/checkin/${apt}/open/${kind}?t=${encodeURIComponent(t)}`, {
+      const r = await fetch(`/checkin/trastevere/open/${kind}?t=${encodeURIComponent(t)}`, {
         method: "POST",
-        cache: "no-store",
-        headers: { 'Cache-Control': 'no-cache' }
+        cache: "no-store"
       });
 
       if (r.status === 404) continue;
@@ -175,12 +173,10 @@ function tMsgs(){
       if (r.ok && j.ok) {
         s.classList.add('ok');
         s.textContent = M.done;
-        console.log(`✅ ${kind} opened successfully`);
       } else {
         const msg = (j.error || j.message) ? String(j.error || j.message) : `${M.bad} (${r.status})`;
         s.classList.add('err');
         s.textContent = msg;
-        console.error(`❌ ${kind} failed:`, msg);
       }
       return;
     }
@@ -190,10 +186,8 @@ function tMsgs(){
   } catch(e){
     s.classList.add('err');
     s.textContent = M.net;
-    console.error('❌ Network error:', e);
   }
 }
-
 
 function imgFallback(img, list){
   if(!list || !list.length) return;
