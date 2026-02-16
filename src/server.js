@@ -2502,8 +2502,7 @@ app.post("/paypal-webhook", async (req, res) => {
   // ========================================================================
 // HOSTAWAY BOOKING WEBHOOK — FIXED & DEPLOY SAFE
 // ========================================================================
-app.post("/hostaway-booking-webhook", async (req, res) => {
-  // ACK immediato a Hostaway
+ app.post("/hostaway-booking-webhook", async (req, res) => {
   res.status(200).json({ ok: true });
 
   try {
@@ -2512,32 +2511,48 @@ app.post("/hostaway-booking-webhook", async (req, res) => {
 
     console.log("🏠 HOSTAWAY BOOKING:", JSON.stringify(data, null, 2));
 
-    // Estrai ID (può essere "id" o "reservationId")
     const reservationId = reservation?.id || reservation?.reservationId;
-   const effectiveReservationId =
-  reservationId || data?.reservationId;
+    const effectiveReservationId = reservationId || data?.reservationId;
     let conversationId = reservation?.conversationId;
     
-    // CONVERTI checkInTime numerico → stringa "HH:00"
+    // ✅ ESTRAI LISTING ID
+    const listingMapId = reservation?.listingMapId || data?.listingMapId;
+    
+    // ✅ MAPPA A APPARTAMENTO
+    const apartment = (() => {
+      switch (listingMapId) {
+        case 194164: return "trastevere";
+        case 194165: return "portico";
+        case 194166: return "arenula";
+        case 194162: return "scala";
+        case 194163: return "leonina";
+        default: return null;
+      }
+    })();
+
     let arrivalTime = reservation?.arrivalTime;
     if (!arrivalTime && reservation?.checkInTime) {
-      const hour = reservation.checkInTime;
-      arrivalTime = `${hour}:00`;
+      arrivalTime = `${reservation.checkInTime}:00`;
     }
 
     console.log("✅ DATI ESTRATTI:");
-    console.log("   reservationId:", reservationId);
+    console.log("   reservationId:", effectiveReservationId);
     console.log("   conversationId:", conversationId);
+    console.log("   listingMapId:", listingMapId);
+    console.log("   apartment:", apartment);
     console.log("   arrivalTime:", arrivalTime);
 
-     if (!effectiveReservationId) {
-  console.log("⚠️ ReservationId mancante → ignorato");
-  return;
-}
+    if (!effectiveReservationId) {
+      console.log("⚠️ ReservationId mancante → ignorato");
+      return;
+    }
 
-    // --------------------------------------------------
-    // 1️⃣ FILTRA CANCELLAZIONI
-    // --------------------------------------------------
+    if (!apartment) {
+      console.log("⚠️ Appartamento sconosciuto → ignorato");
+      return;
+    }
+
+    // Filtra cancellazioni
     if (
       data.event === "reservation_cancelled" ||
       data.event === "reservation_canceled" ||
@@ -2548,9 +2563,6 @@ app.post("/hostaway-booking-webhook", async (req, res) => {
       return;
     }
 
-    // --------------------------------------------------
-    // 2️⃣ EVENTI VALIDI
-    // --------------------------------------------------
     const EVENTI_VALIDI = [
       "reservation_created",
       "reservation_new",
@@ -2564,15 +2576,11 @@ app.post("/hostaway-booking-webhook", async (req, res) => {
       return;
     }
 
-    // --------------------------------------------------
-    // 3️⃣ RECUPERA CONVERSATIONID SE MANCANTE
-    // --------------------------------------------------
+    // Recupera conversationId se mancante
     if (!conversationId && effectiveReservationId) {
       try {
-        console.log("🔍 Tentativo recupero conversationId...");
-        
         const convResp = await axios.get(
- `https://api.hostaway.com/v1/conversations?reservationId=${effectiveReservationId}`,
+          `https://api.hostaway.com/v1/conversations?reservationId=${effectiveReservationId}`,
           {
             headers: { Authorization: `Bearer ${HOSTAWAY_TOKEN}` },
             timeout: 10000
@@ -2586,22 +2594,40 @@ app.post("/hostaway-booking-webhook", async (req, res) => {
       }
     }
 
-    // --------------------------------------------------
-    // 4️⃣ ARRIVAL TIME → SLOT
-    // --------------------------------------------------
+    // ✅ Recupera arrivalTime se mancante
+    if (!arrivalTime && effectiveReservationId) {
+      try {
+        const resResp = await axios.get(
+          `https://api.hostaway.com/v1/reservations/${effectiveReservationId}`,
+          {
+            headers: { Authorization: `Bearer ${HOSTAWAY_TOKEN}` },
+            timeout: 10000
+          }
+        );
+        
+        const resData = resResp.data?.result;
+        arrivalTime = resData?.arrivalTime;
+        
+        if (!arrivalTime && resData?.checkInTime) {
+          arrivalTime = `${resData.checkInTime}:00`;
+        }
+        
+        console.log("✅ ArrivalTime recuperato:", arrivalTime);
+      } catch (e) {
+        console.error("❌ Errore recupero arrivalTime:", e.message);
+      }
+    }
+
     const slots = decideSlots(arrivalTime);
 
     console.log("⏰ Arrival time:", arrivalTime);
     console.log("📆 Slot calcolati:", slots);
 
-    // --------------------------------------------------
-    // 5️⃣ SCHEDULAZIONE SLOT
-    // --------------------------------------------------
     if (conversationId) {
       scheduleSlotMessages({
         reservationId: effectiveReservationId,
         conversationId: conversationId,
-        apartment: "auto",
+        apartment: apartment,  // ✅ CORRETTO
         slots,
         sendFn: sendSlotLiveMessage
       });
@@ -2613,6 +2639,7 @@ app.post("/hostaway-booking-webhook", async (req, res) => {
     console.error("❌ ERRORE hostaway-booking-webhook:", err);
   }
 });
+
 // ========================================================================
 // ENDPOINT TEST MANUALE
 // ========================================================================
