@@ -132,45 +132,62 @@
   // - chiama POST /checkin/scala/open/building?t=...
   // - chiama POST /checkin/scala/open/apartment?t=... (fallback /door)
   // - NON fa redirect /location.href
-  async function openWith(statusId, which){
-    const s=document.getElementById(statusId);
-    try{
-      const params = new URLSearchParams(window.location.search);
-      const t = params.get("t") || "";
+   async function openWith(statusId, which){
+  const s=document.getElementById(statusId);
+  const M=tMsgs();
+  try{
+    const params = new URLSearchParams(window.location.search);
+    const t = params.get("t") || "";
 
-      if(!t){
-        s.textContent = "Link non valido (token mancante).";
-        return;
-      }
-
-      s.textContent = "Opening…";
-
-      const tries = (which === "building") ? ["building"] : ["apartment","door"];
-
-      for (const kind of tries) {
-        const r = await fetch(`/checkin/scala/open/${kind}?t=${encodeURIComponent(t)}`, {
-          method: "POST",
-          cache: "no-store"
-        });
-
-        if (r.status === 404) continue;
-
-        const j = await r.json().catch(()=> ({}));
-
-        if(r.ok && j.ok){
-          // Nota: per Scala il server fa già la “doppia apertura” (sequenza) lato backend.
-          s.textContent = "Done.";
-        } else {
-          s.textContent = (j.error || j.message) ? String(j.error || j.message) : `Error (${r.status})`;
-        }
-        return;
-      }
-
-      s.textContent = "Error (endpoint not found).";
-    }catch(e){
-      s.textContent='Network error. Try again.';
+    s.className='status';
+    if(!t){
+      s.classList.add('err');
+      s.textContent = M.missing;
+      return;
     }
+
+    s.textContent = M.open;
+
+    // ✅ DINAMICO: estrae "apt" dal path corrente invece di hardcode "trastevere"
+    const apt = location.pathname.split('/')[2] || 'trastevere';
+    
+    const tries = (which === "building")
+      ? ["building"]
+      : ["door"];
+
+    for (const kind of tries) {
+      const r = await fetch(`/checkin/${apt}/open/${kind}?t=${encodeURIComponent(t)}`, {
+        method: "POST",
+        cache: "no-store",
+        headers: { 'Cache-Control': 'no-cache' }
+      });
+
+      if (r.status === 404) continue;
+
+      const j = await r.json().catch(()=> ({}));
+
+      if (r.ok && j.ok) {
+        s.classList.add('ok');
+        s.textContent = M.done;
+        console.log(`✅ ${kind} opened successfully`);
+      } else {
+        const msg = (j.error || j.message) ? String(j.error || j.message) : `${M.bad} (${r.status})`;
+        s.classList.add('err');
+        s.textContent = msg;
+        console.error(`❌ ${kind} failed:`, msg);
+      }
+      return;
+    }
+
+    s.classList.add('err');
+    s.textContent = `${M.bad} (endpoint not found)`;
+  } catch(e){
+    s.classList.add('err');
+    s.textContent = M.net;
+    console.error('❌ Network error:', e);
   }
+}
+
 
   /* ----------- Dizionario testi: 5 lingue (s3_lock) ----------- */
   const T = {
