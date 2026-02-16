@@ -127,36 +127,62 @@
 </main>
 
 <script>
- async function openWith(statusId, target){
-  const s = document.getElementById(statusId);
+  async function openWith(statusId, which){
+  const s=document.getElementById(statusId);
+  const M=tMsgs();
   try{
-    const params = new URLSearchParams(location.search);
-    const token = params.get('t');   // 👈 token del check-in
+    const params = new URLSearchParams(window.location.search);
+    const t = params.get("t") || "";
 
-    if(!token){
-      s.textContent = 'Link non valido (token mancante).';
+    s.className='status';
+    if(!t){
+      s.classList.add('err');
+      s.textContent = M.missing;
       return;
     }
 
-    s.textContent='Opening…';
+    s.textContent = M.open;
 
-    const params2 = new URLSearchParams(window.location.search);
-    const t = params2.get("t");
+    // ✅ DINAMICO: estrae "apt" dal path corrente invece di hardcode "trastevere"
+    const apt = location.pathname.split('/')[2] || 'trastevere';
+    
+    const tries = (which === "building")
+      ? ["building"]
+      : ["door"];
 
-    const res = await fetch(`/checkin/arenula/open/building?t=${encodeURIComponent(t)}`, {
-      method: "POST"
-    });
-    const j = await res.json();
+    for (const kind of tries) {
+      const r = await fetch(`/checkin/${apt}/open/${kind}?t=${encodeURIComponent(t)}`, {
+        method: "POST",
+        cache: "no-store",
+        headers: { 'Cache-Control': 'no-cache' }
+      });
 
-    if(res.ok && j.ok){
-      s.textContent='Done.';
-    } else {
-      s.textContent = (j.error || j.message) ? String(j.error || j.message) : `Error (${res.status})`;
+      if (r.status === 404) continue;
+
+      const j = await r.json().catch(()=> ({}));
+
+      if (r.ok && j.ok) {
+        s.classList.add('ok');
+        s.textContent = M.done;
+        console.log(`✅ ${kind} opened successfully`);
+      } else {
+        const msg = (j.error || j.message) ? String(j.error || j.message) : `${M.bad} (${r.status})`;
+        s.classList.add('err');
+        s.textContent = msg;
+        console.error(`❌ ${kind} failed:`, msg);
+      }
+      return;
     }
+
+    s.classList.add('err');
+    s.textContent = `${M.bad} (endpoint not found)`;
   } catch(e){
-    s.textContent='Network error. Try again.';
+    s.classList.add('err');
+    s.textContent = M.net;
+    console.error('❌ Network error:', e);
   }
 }
+
   /* 5 lingue + bottoni */
 const T = {
   en:{title:'Check-in Guide — Via Arenula 16',addr:'Address: Via Arenula 16, Rome • Intercom: C8 • Elevator: private, do not use',
