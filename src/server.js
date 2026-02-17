@@ -147,26 +147,35 @@ async function isRainingToday() {
 
  async function sendSlotLiveMessage({ conversationId, apartment, slot }) {
   const baseUrlMap = {
-    arenula: "/monti",        // se Arenula usa Monti
+    arenula: "/monti",
     leonina: "/monti",
     portico: "/portico",
     scala: "/scala",
     trastevere: "/viale-trastevere"
   };
 
+  const choiceMap = {
+    "11": "passeggiata",
+    "18": "aperitivo",
+    "2030": "passeggiata",
+    "2330": "dormire"
+  };
+
   const base = baseUrlMap[apartment];
-  if (!base) return;
+  const choice = choiceMap[slot];
+  if (!base || !choice) return;
 
   const message =
     `🕒 ${slot}\n` +
     `Scopri cosa fare ora:\n` +
-    `${process.env.BASE_URL}${base}?slot=${slot}&choice=passeggiata`;
+    `${process.env.BASE_URL}${base}?slot=${slot}&choice=${choice}`;
 
   await sendHostawayMessage({
     conversationId,
     message
   });
 }
+
 // ========================================================================
 // ARRIVAL TIME WEBHOOK — HostAway
 // ========================================================================
