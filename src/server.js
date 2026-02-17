@@ -17,10 +17,10 @@ const app = express();
 app.use(bodyParser.json({ limit: "100kb" }));
 app.disable("x-powered-by");
 app.set("trust proxy", true);
- // ========================================================================
+  // ========================================================================
 // ARRIVAL SLOT DECIDER — SAFE, NON ROMPE NULLA
 // ========================================================================
- function decideSlots(arrivalTime) {
+function decideSlots(arrivalTime) {
   if (!arrivalTime || !arrivalTime.includes(":")) {
     return ["11", "18", "2030", "2330"];
   }
@@ -43,27 +43,7 @@ app.set("trust proxy", true);
   return ["2330"];
 }
 
-
-  const [h, m] = arrivalTime.split(":").map(Number);
-  const minutes = h * 60 + m;
-
-   // slot fissi che già usi
-  if (minutes <= 12 * 60) {
-    return ["11", "18", "2030", "2330"];
-  }
-
-  if (minutes <= 16 * 60) {
-    return ["18", "2030", "2330"];
-  }
-
-
-  if (minutes <= 19 * 60) {
-    return ["2030", "2330"];
-  }
-
-  return ["2330"];
-}
- function slotToDate(slot) {
+function slotToDate(slot) {
   const now = new Date();
   const hours = slot.length === 2 ? Number(slot) : Number(slot.slice(0, 2));
   const minutes = slot.length === 2 ? 0 : Number(slot.slice(2));
@@ -85,6 +65,7 @@ app.set("trust proxy", true);
 
   return target;
 }
+
 
 // ========================================================================
 // SLOT SCHEDULER — PRODUZIONE (UNICO)
