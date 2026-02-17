@@ -20,11 +20,29 @@ app.set("trust proxy", true);
  // ========================================================================
 // ARRIVAL SLOT DECIDER — SAFE, NON ROMPE NULLA
 // ========================================================================
-function decideSlots(arrivalTime) {
-  // fallback totale se non sappiamo l’orario
+ function decideSlots(arrivalTime) {
   if (!arrivalTime || !arrivalTime.includes(":")) {
-    return ["11", "1230", "1830", "2030", "2330"];
+    return ["11", "18", "2030", "2330"];
   }
+
+  const [h, m] = arrivalTime.split(":").map(Number);
+  const minutes = h * 60 + m;
+
+  if (minutes <= 12 * 60) {
+    return ["11", "18", "2030", "2330"];
+  }
+
+  if (minutes <= 16 * 60) {
+    return ["18", "2030", "2330"];
+  }
+
+  if (minutes <= 19 * 60) {
+    return ["2030", "2330"];
+  }
+
+  return ["2330"];
+}
+
 
   const [h, m] = arrivalTime.split(":").map(Number);
   const minutes = h * 60 + m;
