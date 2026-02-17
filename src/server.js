@@ -49,7 +49,7 @@ app.set("trust proxy", true);
 
   // slot fissi che già usi
   if (minutes <= 12 * 60) {
-    return ["11", "1230", "1830", "2030", "2330"];
+    
   }
 
   if (minutes <= 16 * 60) {
