@@ -47,14 +47,15 @@ app.set("trust proxy", true);
   const [h, m] = arrivalTime.split(":").map(Number);
   const minutes = h * 60 + m;
 
-  // slot fissi che già usi
+   // slot fissi che già usi
   if (minutes <= 12 * 60) {
-    
+    return ["11", "18", "2030", "2330"];
   }
 
   if (minutes <= 16 * 60) {
-    return ["1830", "2030", "2330"];
+    return ["18", "2030", "2330"];
   }
+
 
   if (minutes <= 19 * 60) {
     return ["2030", "2330"];
