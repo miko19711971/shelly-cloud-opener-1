@@ -1920,10 +1920,11 @@ const isIncoming = payload?.isIncoming;
 const sentUsingHostaway = payload?.sentUsingHostaway;
 const status = payload?.status;
 
-if (status === "sent" && (isIncoming === 0 || sentUsingHostaway === 1)) {
+ if (isIncoming === 0 || isIncoming === false || sentUsingHostaway === 1) {
   console.log("🛑 Outgoing message -> ignored", { status, isIncoming, sentUsingHostaway });
   return res.json({ ok: true, silent: true });
 }
+
 
 const message = payload.body;
 
