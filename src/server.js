@@ -127,9 +127,9 @@ async function isRainingToday() {
   }
 }
 
- async function sendSlotLiveMessage({ conversationId, apartment, slot }) {
+  async function sendSlotLiveMessage({ conversationId, apartment, slot }) {
   const baseUrlMap = {
-    arenula: "/monti",
+    arenula: "/portico",
     leonina: "/monti",
     portico: "/portico",
     scala: "/scala",
@@ -157,6 +157,7 @@ async function isRainingToday() {
     message
   });
 }
+
 
 // ========================================================================
 // ARRIVAL TIME WEBHOOK — HostAway
