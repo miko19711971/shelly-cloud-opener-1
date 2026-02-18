@@ -120,7 +120,7 @@ async function isRainingToday() {
   }
 }
 
-  async function sendSlotLiveMessage({ conversationId, apartment, slot }) {
+   async function sendSlotLiveMessage({ conversationId, apartment, slot, lang = "en" }) {
   const baseUrlMap = {
     arenula: "/portico",
     leonina: "/monti",
@@ -136,13 +136,23 @@ async function isRainingToday() {
     "2330": "dormire"
   };
 
+  const textMap = {
+    it: "Scopri cosa fare ora:",
+    en: "Discover what to do now:",
+    fr: "Découvrez quoi faire maintenant:",
+    es: "Descubre qué hacer ahora:",
+    de: "Entdecke, was du jetzt tun kannst:"
+  };
+
   const base = baseUrlMap[apartment];
   const choice = choiceMap[slot];
+  const text = textMap[lang] || textMap.en;
+  
   if (!base || !choice) return;
 
   const message =
     `🕒 ${slot}\n` +
-    `Scopri cosa fare ora:\n` +
+    `${text}\n` +
     `${process.env.BASE_URL}${base}?slot=${slot}&choice=${choice}`;
 
   await sendHostawayMessage({
@@ -150,6 +160,7 @@ async function isRainingToday() {
     message
   });
 }
+
 
 
 // ========================================================================
