@@ -2645,7 +2645,7 @@ const listingMapId = reservation?.listingMapId || data?.listingMapId || reservat
     console.log("⏰ Arrival time:", arrivalTime);
     console.log("📆 Slot calcolati:", slots);
 
-    if (conversationId) {
+ if (conversationId) {
   const checkInDate = reservation?.arrivalDate || reservation?.checkInDate;
   const guestLang = (reservation?.guestLanguage || "en").slice(0, 2).toLowerCase();
 
@@ -2657,16 +2657,14 @@ const listingMapId = reservation?.listingMapId || data?.listingMapId || reservat
     sendFn: (params) => sendSlotLiveMessage({ ...params, lang: guestLang }),
     checkInDate: checkInDate
   });
+} else {
+  console.log("⚠️ conversationId mancante → slot non inviati");
 }
 
-    } else {
-      console.log("⚠️ conversationId mancante → slot non inviati");
-    }
+} catch (err) {
+  console.error("❌ ERRORE hostaway-booking-webhook:", err);
+}
 
-  } catch (err) {
-    console.error("❌ ERRORE hostaway-booking-webhook:", err);
-  }
-});
 
 // ========================================================================
 // ENDPOINT TEST MANUALE
