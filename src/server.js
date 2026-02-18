@@ -61,19 +61,23 @@ function decideSlots(arrivalTime) {
 
 const SLOT_JOBS = new Map();
 
-function scheduleSlotMessages({
+ function scheduleSlotMessages({
   reservationId,
   conversationId,
   apartment,
   slots,
-  sendFn
+  sendFn,
+  checkInDate
 }) {
-  if (!reservationId || !conversationId || !Array.isArray(slots)) return;
+  if (!reservationId || !conversationId || !Array.isArray(slots) || !checkInDate) return;
 
   slots.forEach(slot => {
-    const when = slotToDate(slot);
+    const when = slotToDate(slot, checkInDate);
     const delay = when.getTime() - Date.now();
-    if (delay <= 0) return;
+    if (delay <= 0) {
+      console.log("⏭️ Slot già passato, ignorato:", slot, when.toISOString());
+      return;
+    }
 
     const key = `${reservationId}-${slot}`;
     if (SLOT_JOBS.has(key)) return;
@@ -89,9 +93,10 @@ function scheduleSlotMessages({
     }, delay);
 
     SLOT_JOBS.set(key, timer);
-    console.log("⏰ Slot schedulato:", apartment, slot, when.toISOString());
+    console.log("⏰ Slot schedulato:", apartment, slot, "per", when.toISOString());
   });
 }
+
  // ========================================================================
 // METEO — RAIN DETECTION (ROMA)
 // ========================================================================
