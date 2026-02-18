@@ -2641,13 +2641,19 @@ const listingMapId = reservation?.listingMapId || data?.listingMapId || reservat
     console.log("📆 Slot calcolati:", slots);
 
     if (conversationId) {
-      scheduleSlotMessages({
-        reservationId: effectiveReservationId,
-        conversationId: conversationId,
-        apartment: apartment,  // ✅ CORRETTO
-        slots,
-        sendFn: sendSlotLiveMessage
-      });
+  const checkInDate = reservation?.arrivalDate || reservation?.checkInDate;
+  const guestLang = (reservation?.guestLanguage || "en").slice(0, 2).toLowerCase();
+
+  scheduleSlotMessages({
+    reservationId: effectiveReservationId,
+    conversationId: conversationId,
+    apartment: apartment,
+    slots,
+    sendFn: (params) => sendSlotLiveMessage({ ...params, lang: guestLang }),
+    checkInDate: checkInDate
+  });
+}
+
     } else {
       console.log("⚠️ conversationId mancante → slot non inviati");
     }
