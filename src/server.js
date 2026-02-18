@@ -2664,7 +2664,7 @@ const listingMapId = reservation?.listingMapId || data?.listingMapId || reservat
 } catch (err) {
   console.error("❌ ERRORE hostaway-booking-webhook:", err);
 }
-
+ });
 
 // ========================================================================
 // ENDPOINT TEST MANUALE
