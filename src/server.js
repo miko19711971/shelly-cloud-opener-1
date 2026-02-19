@@ -2195,18 +2195,30 @@ if (answer === "__INTERNAL_AI__") {
   console.log("⛔ INTERNAL_AI intercettato → annullato");
   answer = null;
 }
-     // ======================================================
-// 🤖 FALLBACK GEMINI — quando non esiste risposta interna
+   // ======================================================
+// 🤖 FALLBACK GEMINI — domande turistiche + ringraziamenti
 // ======================================================
 if (!answer) {
-  console.log("🤖 No static answer → Gemini fallback");
+  // Controlla se è una DOMANDA
+  const isQuestion = /\?|where|what|when|who|how|why|which|dove|cosa|quando|come|perch[eé]|quale|où|quand|comment|pourquoi|quel|dónde|cuándo|cómo|por qué|cuál|wo|wann|wie|warum|welche/i.test(message);
+  
+  // Controlla se è un RINGRAZIAMENTO o FEEDBACK
+  const isThanks = /thank|thanks|grazie|merci|danke|muchas gracias|appreciate|grateful|wonderful|amazing|perfect|excellent|great|fantastic|loved|enjoyed|beautiful|best/i.test(message);
+  
+  // Se non è né domanda né ringraziamento → SILENZIO
+  if (!isQuestion && !isThanks) {
+    console.log("💬 Messaggio casual → SILENZIO (risposta manuale)");
+    return res.json({ ok: true, silent: true, reason: "casual_message" });
+  }
+
+  console.log("🤖 Domanda o ringraziamento → Gemini fallback");
 
   try {
-     const geminiReply = await askGemini({
-  message,
-  apartment: LISTING_TO_APARTMENT[listingId] || "rome",
-  lang: detectedLang || "en"
-});
+    const geminiReply = await askGemini({
+      message,
+      apartment: LISTING_TO_APARTMENT[listingId] || "rome",
+      lang: detectedLang || "en"
+    });
 
     if (!geminiReply) {
       console.log("🤖 Gemini returned empty → silent");
@@ -2222,27 +2234,19 @@ if (!answer) {
     return res.json({ ok: true, silent: true });
   }
 }
+
 // 🛟 SAFE FALLBACK — risposta cortese standard
 if (!answer) {
   console.log("🛟 SAFE FALLBACK reply used");
   answer = SAFE_FALLBACK_REPLY;
   usedLang = detectedLang || platformLang || defaultLang || "en";
 }
-   // ⛔ SOSTITUZIONE DEFINITIVA INTERNAL_AI
-if (answer === "__INTERNAL_AI__") {
-  console.log("⛔ INTERNAL_AI sostituito con risposta cortese");
-  answer = SAFE_FALLBACK_REPLY;
-  usedLang = detectedLang || platformLang || defaultLang || "en";
-}
-    console.log("  â Answer found");
-    console.log("  ââ Language used:", usedLang);
-    console.log("  ââ Preview:", answer.substring(0, 80) + "...");
-// ⛔ BLOCCO FINALE ASSOLUTO: __INTERNAL_AI__ = SILENT
-if (answer === "__INTERNAL_AI__") {
-  console.log("⛔ INTERNAL_AI finale → SILENT");
-  return res.json({ ok: true, silent: true });
-}
-   // ⛔ FINAL GUARD — niente __INTERNAL_AI__ verso Hostaway
+
+console.log("  ✅ Answer found");
+console.log("  ─→ Language used:", usedLang);
+console.log("  ─→ Preview:", answer.substring(0, 80) + "...");
+
+// ⛔ FINAL GUARD — niente __INTERNAL_AI__ verso Hostaway
 if (
   !answer ||
   answer === "__INTERNAL_AI__" ||
@@ -2255,6 +2259,7 @@ if (
     silent: true
   });
 }
+
     // ======================================================
     // ð¤ STEP 6: Send Reply to HostAway
     // ======================================================
