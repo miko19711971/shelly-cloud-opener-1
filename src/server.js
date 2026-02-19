@@ -10,6 +10,7 @@ import { matchIntent } from "./matcher.js";
 import { detectLanguage } from "./language.js";
 import { ANSWERS } from "./answers.js";
 import { askGemini } from "./gemini.js";
+import nodemailer from "nodemailer";
  const SAFE_FALLBACK_REPLY =
   "Thank you for your message. We’ve received your request and we’ll get back to you as soon as possible.";
 const app = express();
@@ -2861,6 +2862,40 @@ app.get("/test-gs", async (req, res) => {
     console.error("❌ Errore test-gs:", err);
     res.status(500).send("ERRORE: " + err.message);
   }
+});
+app.post("/allegria-info", express.urlencoded({ extended: true }), async (req, res) => {
+  const { email } = req.body;
+
+  res.send("Grazie. Riceverai le informazioni via email tra pochi minuti.");
+
+  setTimeout(async () => {
+    try {
+      const transporter = nodemailer.createTransport({
+        service: "gmail",
+        auth: {
+          user: process.env.EMAIL_USER,
+          pass: process.env.EMAIL_PASS
+        }
+      });
+
+      await transporter.sendMail({
+        from: process.env.EMAIL_USER,
+        to: email,
+        subject: "Informazioni sul servizio Allegria",
+        text: "In allegato trovi il PDF con la spiegazione completa del servizio Allegria.",
+        attachments: [
+          {
+            filename: "Allegria.pdf",
+            path: "public/allegria/Allegria.pdf"
+          }
+        ]
+      });
+
+      console.log("Email inviata a:", email);
+    } catch (err) {
+      console.error("Errore invio email:", err);
+    }
+  }, 600000); // 10 minuti
 });
 const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => {
