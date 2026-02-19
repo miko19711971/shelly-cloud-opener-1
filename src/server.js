@@ -70,6 +70,8 @@ const SLOT_JOBS = new Map();
   sendFn,
   checkInDate
 }) {
+    console.log("🔍 scheduleSlotMessages chiamata:", { reservationId, conversationId, apartment, slots, checkInDate });
+
   if (!reservationId || !conversationId || !Array.isArray(slots) || !checkInDate) return;
 
   slots.forEach(slot => {
