@@ -13,7 +13,8 @@
     "axios": "^1.7.7",
     "cors": "^2.8.5",
     "express": "^4.19.2",
-    "googleapis": "^144.0.0"
+    "googleapis": "^144.0.0",
+    "nodemailer": "^6.9.8"
   },
   "engines": {
     "node": ">=18"
