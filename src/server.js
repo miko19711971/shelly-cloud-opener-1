@@ -2841,25 +2841,17 @@ app.get("/test-gs", async (req, res) => {
 });
 app.post("/allegria-info", express.urlencoded({ extended: true }), async (req, res) => {
   const { email } = req.body;
-// === SALVATAGGIO LEAD SU GOOGLE SHEET ===
+ // === SALVATAGGIO LEAD SU GOOGLE SHEET (Webhook) ===
 try {
-  const timestamp = new Date().toISOString();
-  const ip = req.headers["x-forwarded-for"] || req.socket.remoteAddress || "N/A";
-
-  await sheets.spreadsheets.values.append({
-    spreadsheetId: process.env.GOOGLE_SPREADSHEET_ID,
-    range: "LEAD_FAMIGLIE!A:D",
-    valueInputOption: "USER_ENTERED",
-    requestBody: {
-      values: [
-        [timestamp, email, ip, "Landing Allegria"]
-      ]
-    }
+  await writeToGoogleSheets({
+    source: "Allegria Landing",
+    timestamp: new Date().toISOString(),
+    email: email
   });
 
   console.log("Lead salvato:", email);
 } catch (err) {
-  console.error("Errore salvataggio lead:", err);
+  console.error("Errore salvataggio lead:", err.message);
 }
   res.send("Grazie. Riceverai le informazioni via email tra pochi minuti.");
 
