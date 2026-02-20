@@ -74,11 +74,15 @@ const SLOT_JOBS = new Map();
 
   if (!reservationId || !conversationId || !Array.isArray(slots) || !checkInDate) return;
 
-  slots.forEach(slot => {
+   slots.forEach(slot => {
     const when = slotToDate(slot, checkInDate);
     const delay = when.getTime() - Date.now();
     if (delay <= 0) {
       console.log("⏭️ Slot già passato, ignorato:", slot, when.toISOString());
+      return;
+    }
+    if (delay > 86400000) {
+      console.log("⏭️ Slot troppo lontano, ignorato:", slot, when.toISOString());
       return;
     }
 
@@ -99,6 +103,7 @@ const SLOT_JOBS = new Map();
     console.log("⏰ Slot schedulato:", apartment, slot, "per", when.toISOString());
   });
 }
+
 
  // ========================================================================
 // METEO — RAIN DETECTION (ROMA)
