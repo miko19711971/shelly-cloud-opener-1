@@ -2843,7 +2843,7 @@ app.post("/allegria-info", express.urlencoded({ extended: true }), async (req, r
   const { email } = req.body;
  // === SALVATAGGIO LEAD SU GOOGLE SHEET (Webhook) ===
 try {
- await axios.post(process.env.GOOGLE_SHEETS_WEBHOOK_LEAD, {
+ await axios.post(process.env.GS_WEBHOOK_URL, {
   source: "Allegria Landing",
   timestamp: new Date().toISOString(),
   email: email,
