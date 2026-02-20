@@ -2199,15 +2199,23 @@ if (answer === "__INTERNAL_AI__") {
   return res.json({ ok: true, silent: true });
 }
 
-   // ======================================================
+ // ======================================================
 // 🤖 FALLBACK GEMINI — domande turistiche + ringraziamenti
 // ======================================================
 if (!answer) {
-  // Controlla se è una DOMANDA
-  const isQuestion = /\?|where|what|when|who|how|why|which|dove|cosa|quando|come|perch[eé]|quale|où|quand|comment|pourquoi|quel|dónde|cuándo|cómo|por qué|cuál|wo|wann|wie|warum|welche/i.test(message);
+  // BLOCCA domande sulla prenotazione
+  const isBookingQuestion = /people|guest|accommodate|room|bed|extra|date|night|stay|cancel|refund|change|modify|price|cost|pay|book|ospiti|persone|prenotazione|capienza|letti|camera|notte|cancellare|cambiare|prezzo|pagare/i.test(message);
   
-  // Controlla se è un RINGRAZIAMENTO o FEEDBACK
-  const isThanks = /thank|thanks|grazie|merci|danke|muchas gracias|appreciate|grateful|wonderful|amazing|perfect|excellent|great|fantastic|loved|enjoyed|beautiful|best/i.test(message);
+  if (isBookingQuestion) {
+    console.log("📋 Domanda sulla prenotazione → SILENZIO (gestione manuale)");
+    return res.json({ ok: true, silent: true, reason: "booking_question" });
+  }
+
+  // Controlla se è una DOMANDA turistica
+  const isQuestion = /\?|where|what|when|how|which|dove|cosa|quando|come|où|quand|comment|dónde|cuándo|cómo|wo|wann|wie/i.test(message);
+  
+  // Controlla se è un RINGRAZIAMENTO
+  const isThanks = /thank|thanks|grazie|merci|danke|appreciate|wonderful|amazing|perfect|excellent|great|fantastic|loved|enjoyed|beautiful/i.test(message);
   
   // Se non è né domanda né ringraziamento → SILENZIO
   if (!isQuestion && !isThanks) {
@@ -2215,7 +2223,7 @@ if (!answer) {
     return res.json({ ok: true, silent: true, reason: "casual_message" });
   }
 
-  console.log("🤖 Domanda o ringraziamento → Gemini fallback");
+  console.log("🤖 Domanda turistica o ringraziamento → Gemini");
 
   try {
     const geminiReply = await askGemini({
@@ -2257,12 +2265,9 @@ if (
   answer.trim() === ""
 ) {
   console.log("🛑 Final guard: risposta mancante o INTERNAL_AI → SILENT");
-
-  return res.json({
-    ok: true,
-    silent: true
-  });
+  return res.json({ ok: true, silent: true });
 }
+
 
     // ======================================================
     // ð¤ STEP 6: Send Reply to HostAway
