@@ -2912,7 +2912,8 @@ async function initScheduledSlots() {
     const today = new Date().toISOString().slice(0, 10);
     const tomorrow = new Date(Date.now() + 86400000).toISOString().slice(0, 10);
     const r = await axios.get(
-      `https://api.hostaway.com/v1/reservations?limit=100`,
+      `https://api.hostaway.com/v1/reservations?checkInStartDate=${today}&checkInEndDate=${today}&limit=50`,
+
 
 
 
