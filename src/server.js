@@ -2899,7 +2899,38 @@ app.post("/allegria-info", express.urlencoded({ extended: true }), async (req, r
     }
   }, 600000); // 10 minuti
 });
+async function initScheduledSlots() {
+  try {
+    console.log("🚀 Init slot al boot...");
+    const today = new Date().toISOString().slice(0, 10);
+    const tomorrow = new Date(Date.now() + 86400000).toISOString().slice(0, 10);
+    const r = await axios.get(
+      `https://api.hostaway.com/v1/reservations?checkInStartDate=${today}&checkInEndDate=${tomorrow}&limit=50`,
+      { headers: { Authorization: `Bearer ${process.env.HOSTAWAY_TOKEN}` }, timeout: 10000 }
+    );
+    const reservations = r.data?.result || [];
+    console.log(`📋 Prenotazioni trovate al boot: ${reservations.length}`);
+    for (const res of reservations) {
+      const arrivalTime = res.arrivalTime || null;
+      const slots = decideSlots(arrivalTime);
+      const checkInDate = res.arrivalDate || res.checkInDate;
+      const guestLang = (res.guestLanguage || "en").slice(0, 2).toLowerCase();
+      scheduleSlotMessages({
+        reservationId: res.id,
+        conversationId: res.conversationId,
+        apartment: res.listingMapId,
+        slots,
+        sendFn: (params) => sendSlotLiveMessage({ ...params, lang: guestLang }),
+        checkInDate
+      });
+    }
+  } catch (e) {
+    console.error("❌ initScheduledSlots error:", e.message);
+  }
+}
+
 const PORT = process.env.PORT || 10000;
-app.listen(PORT, () => {
+app.listen(PORT, async () => {
   console.log("Server running on", PORT);
+  await initScheduledSlots();
 });
