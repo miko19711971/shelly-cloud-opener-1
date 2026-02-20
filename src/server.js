@@ -2911,7 +2911,6 @@ async function getConversationId(reservationId) {
     return null;
   }
 }
-
 async function initScheduledSlots() {
   try {
     console.log("🚀 Init slot al boot...");
@@ -2923,32 +2922,27 @@ async function initScheduledSlots() {
     );
     const reservations = r.data?.result || [];
     console.log(`📋 Prenotazioni trovate al boot: ${reservations.length}`);
-     for (const res of reservations) {
-  const checkInDate = res.arrivalDate || res.checkInDate;
-  if (!checkInDate) continue;
-
-  // Solo prenotazioni con check-in oggi
-  if (checkInDate !== today) continue;
-
-  const arrivalTime = res.arrivalTime || null;
-  const slots = decideSlots(arrivalTime);
-  const guestLang = (res.guestLanguage || "en").slice(0, 2).toLowerCase();
-
-  scheduleSlotMessages({
-    reservationId: res.id,
-    conversationId: await getConversationId(res.id),
-    apartment: res.listingMapId,
-    slots,
-    sendFn: (params) => sendSlotLiveMessage({ ...params, lang: guestLang }),
-    checkInDate
-  });
-}
-
+    for (const res of reservations) {
+      const checkInDate = res.arrivalDate || res.checkInDate;
+      if (!checkInDate) continue;
+      if (checkInDate !== today) continue;
+      const arrivalTime = res.arrivalTime || null;
+      const slots = decideSlots(arrivalTime);
+      const guestLang = (res.guestLanguage || "en").slice(0, 2).toLowerCase();
+      scheduleSlotMessages({
+        reservationId: res.id,
+        conversationId: await getConversationId(res.id),
+        apartment: res.listingMapId,
+        slots,
+        sendFn: (params) => sendSlotLiveMessage({ ...params, lang: guestLang }),
+        checkInDate
+      });
     }
   } catch (e) {
     console.error("❌ initScheduledSlots error:", e.message);
   }
 }
+
 
 const PORT = process.env.PORT || 10000;
 app.listen(PORT, async () => {
