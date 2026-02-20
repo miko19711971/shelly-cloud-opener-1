@@ -2027,16 +2027,20 @@ if (effectiveReservationId && conversationId) {
       console.log("🧩 SLOT CALCOLATI:", slots);
 
    const checkInDate = reservation?.arrivalDate || reservation?.checkInDate;
-const guestLang = (reservation?.guestLanguage || "en").slice(0, 2).toLowerCase();
-
-scheduleSlotMessages({
-  reservationId: effectiveReservationId,
-  conversationId,
-  apartment,
-  slots,
-  sendFn: (params) => sendSlotLiveMessage({ ...params, lang: guestLang }),
-  checkInDate: checkInDate
-});
+const today = new Date().toISOString().slice(0, 10);
+if (checkInDate !== today) {
+  console.log("⏭️ Check-in non oggi, slot ignorati:", checkInDate);
+} else {
+  const guestLang = (reservation?.guestLanguage || "en").slice(0, 2).toLowerCase();
+  scheduleSlotMessages({
+    reservationId: effectiveReservationId,
+    conversationId,
+    apartment,
+    slots,
+    sendFn: (params) => sendSlotLiveMessage({ ...params, lang: guestLang }),
+    checkInDate: checkInDate
+  });
+}
 
     } else {
       console.log("⚠️ Arrival time non presente nella reservation");
