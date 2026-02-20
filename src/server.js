@@ -2906,16 +2906,13 @@ async function getConversationId(reservationId) {
     return null;
   }
 }
-async function initScheduledSlots() {
+ async function initScheduledSlots() {
   try {
     console.log("🚀 Init slot al boot...");
     const today = new Date().toISOString().slice(0, 10);
-    const tomorrow = new Date(Date.now() + 86400000).toISOString().slice(0, 10);
     const r = await axios.get(
-     `https://api.hostaway.com/v1/conversations?checkInStartDate=${today}&checkInEndDate=${today}&limit=50`,
-
-
-      { headers: { Authorization: `Bearer ${process.env.HOSTAWAY_TOKEN}` }, timeout: 10000 }
+      `https://api.hostaway.com/v1/reservations?limit=500`,
+      { headers: { Authorization: `Bearer ${process.env.HOSTAWAY_TOKEN}` }, timeout: 15000 }
     );
     const reservations = r.data?.result || [];
     console.log(`📋 Prenotazioni trovate al boot: ${reservations.length}`);
@@ -2923,6 +2920,7 @@ async function initScheduledSlots() {
       const checkInDate = res.arrivalDate || res.checkInDate;
       if (!checkInDate) continue;
       if (checkInDate !== today) continue;
+      console.log("✅ Check-in oggi trovato:", res.id, checkInDate);
       const arrivalTime = res.arrivalTime || null;
       const slots = decideSlots(arrivalTime);
       const guestLang = (res.guestLanguage || "en").slice(0, 2).toLowerCase();
@@ -2939,6 +2937,7 @@ async function initScheduledSlots() {
     console.error("❌ initScheduledSlots error:", e.message);
   }
 }
+
 // Ogni giorno alle 07:00 ricarica gli slot del giorno
 setInterval(async () => {
   const now = new Date();
