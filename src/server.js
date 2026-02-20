@@ -2942,6 +2942,14 @@ async function initScheduledSlots() {
     console.error("❌ initScheduledSlots error:", e.message);
   }
 }
+// Ogni giorno alle 07:00 ricarica gli slot del giorno
+setInterval(async () => {
+  const now = new Date();
+  if (now.getHours() === 7 && now.getMinutes() === 0) {
+    console.log("🔄 Cron giornaliero slot...");
+    await initScheduledSlots();
+  }
+}, 60000); // controlla ogni minuto
 
 
 const PORT = process.env.PORT || 10000;
