@@ -2899,6 +2899,19 @@ app.post("/allegria-info", express.urlencoded({ extended: true }), async (req, r
     }
   }, 600000); // 10 minuti
 });
+async function getConversationId(reservationId) {
+  try {
+    const r = await axios.get(
+      `https://api.hostaway.com/v1/conversations?reservationId=${reservationId}&limit=1`,
+      { headers: { Authorization: `Bearer ${process.env.HOSTAWAY_TOKEN}` }, timeout: 8000 }
+    );
+    return r.data?.result?.[0]?.id || null;
+  } catch (e) {
+    console.error("❌ getConversationId error:", e.message);
+    return null;
+  }
+}
+
 async function initScheduledSlots() {
   try {
     console.log("🚀 Init slot al boot...");
@@ -2917,7 +2930,7 @@ async function initScheduledSlots() {
       const guestLang = (res.guestLanguage || "en").slice(0, 2).toLowerCase();
       scheduleSlotMessages({
         reservationId: res.id,
-        conversationId: res.conversationId,
+        conversationId: await getConversationId(res.id),
         apartment: res.listingMapId,
         slots,
         sendFn: (params) => sendSlotLiveMessage({ ...params, lang: guestLang }),
