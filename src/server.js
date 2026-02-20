@@ -2193,11 +2193,12 @@ const intent = match.intent;
       usedLang = defaultLang;
       console.log("  â Usata lingua default:", defaultLang);
     }
-// ⛔ BLOCCO SENTINELLA: evita __INTERNAL_AI__
+ // ⛔ BLOCCO SENTINELLA: se AI interna dice di tacere → TACI
 if (answer === "__INTERNAL_AI__") {
-  console.log("⛔ INTERNAL_AI intercettato → annullato");
-  answer = null;
+  console.log("⛔ INTERNAL_AI → sistema deve tacere");
+  return res.json({ ok: true, silent: true });
 }
+
    // ======================================================
 // 🤖 FALLBACK GEMINI — domande turistiche + ringraziamenti
 // ======================================================
