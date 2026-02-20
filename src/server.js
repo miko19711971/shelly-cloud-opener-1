@@ -2919,6 +2919,8 @@ async function getConversationId(reservationId) {
     for (const res of reservations) {
       const checkInDate = res.arrivalDate || res.checkInDate;
       if (!checkInDate) continue;
+     if (res.status === 'cancelled') continue;
+
       if (checkInDate !== today) continue;
       console.log("✅ Check-in oggi trovato:", res.id, checkInDate);
       const arrivalTime = res.arrivalTime || null;
