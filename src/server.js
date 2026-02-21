@@ -2897,13 +2897,14 @@ try {
         ]
       });
 
-      console.log("Email inviata a:", email);
+       console.log("Email inviata a:", email);
     } catch (err) {
       console.error("Errore invio email:", err);
     }
   }, 600000); // 10 minuti
 });
- async function getConversationId(reservationId) {
+
+async function getConversationId(reservationId) {
   try {
     const r = await axios.get(
       `https://api.hostaway.com/v1/conversations?reservationId=${reservationId}&limit=1`,
@@ -2916,19 +2917,7 @@ try {
   }
 }
 
-
-// Ogni giorno alle 07:00 ricarica gli slot del giorno
-setInterval(async () => {
-  const now = new Date();
-  if (now.getHours() === 7 && now.getMinutes() === 0) {
-    console.log("🔄 Cron giornaliero slot...");
-    await initScheduledSlots();
-  }
-}, 60000); // controlla ogni minuto
-
-
 const PORT = process.env.PORT || 10000;
-app.listen(PORT, async () => {
+app.listen(PORT, () => {
   console.log("Server running on", PORT);
-  await initScheduledSlots();
 });
