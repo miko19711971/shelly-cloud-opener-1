@@ -123,6 +123,8 @@ if (checkInDate !== today && checkInDate !== yesterday) continue;
       }
     }
   } catch (e) {
+   console.log("✅ runSlotCron completato:", currentSlot);
+
     console.error("❌ runSlotCron error:", e.message);
   }
 }
