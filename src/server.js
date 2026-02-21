@@ -1637,10 +1637,11 @@ const VIALE_TRASTEVERE_RESPONSES = {
 app.get("/viale-trastevere", (req, res) => {
   const { slot, choice } = req.query;
 
-  const langHeader = req.headers["accept-language"] || "en";
-  const lang = langHeader.slice(0, 2).toLowerCase();
   const supported = ["it", "en", "fr", "es", "de"];
-  const l = supported.includes(lang) ? lang : "en";
+const langParam = (req.query.lang || "").slice(0, 2).toLowerCase();
+const langHeader = (req.headers["accept-language"] || "en").slice(0, 2).toLowerCase();
+const l = supported.includes(langParam) ? langParam : supported.includes(langHeader) ? langHeader : "en";
+
 
   const data =
     VIALE_TRASTEVERE_RESPONSES?.[l]?.[slot]?.[choice];
@@ -1700,10 +1701,11 @@ p {
 app.get("/scala", (req, res) => {
   const { slot, choice } = req.query;
 
-  const langHeader = req.headers["accept-language"] || "en";
-  const lang = langHeader.slice(0, 2).toLowerCase();
-  const supported = ["it", "en", "fr", "es", "de"];
-  const l = supported.includes(lang) ? lang : "en";
+   const supported = ["it", "en", "fr", "es", "de"];
+const langParam = (req.query.lang || "").slice(0, 2).toLowerCase();
+const langHeader = (req.headers["accept-language"] || "en").slice(0, 2).toLowerCase();
+const l = supported.includes(langParam) ? langParam : supported.includes(langHeader) ? langHeader : "en";
+
 
   const data =
     SCALA_RESPONSES?.[l]?.[slot]?.[choice];
