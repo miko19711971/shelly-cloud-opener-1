@@ -68,7 +68,8 @@ const SENT_SLOTS = new Set();
 
  async function runSlotCron() {
   const now = new Date();
-  const today = now.toISOString().slice(0, 10);
+  const today = now.toLocaleString("it-IT", { timeZone: "Europe/Rome", year: "numeric", month: "2-digit", day: "2-digit" }).split("/").reverse().join("-");
+
  const romeHour = now.toLocaleString("it-IT", { timeZone: "Europe/Rome", hour: "numeric", hour12: false });
 const romeMinute = now.toLocaleString("it-IT", { timeZone: "Europe/Rome", minute: "numeric" });
 const h = parseInt(romeHour);
