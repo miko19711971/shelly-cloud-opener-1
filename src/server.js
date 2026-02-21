@@ -1805,10 +1805,11 @@ p{line-height:1.6;white-space:pre-line}
 });
  app.get("/monti", (req, res) => {
   const { slot, choice } = req.query;
-  const langHeader = req.headers["accept-language"] || "en";
-  const lang = langHeader.slice(0, 2).toLowerCase();
-  const supported = ["it","en","fr","es","de"];
-  const l = supported.includes(lang) ? lang : "en";
+ const supported = ["it", "en", "fr", "es", "de"];
+const langParam = (req.query.lang || "").slice(0, 2).toLowerCase();
+const langHeader = (req.headers["accept-language"] || "en").slice(0, 2).toLowerCase();
+const l = supported.includes(langParam) ? langParam : supported.includes(langHeader) ? langHeader : "en";
+
 
   const data = MONTI_RESPONSES?.[l]?.[slot]?.[choice];
 
