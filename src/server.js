@@ -1764,10 +1764,11 @@ app.get("/portico", (req, res) => {
   const { slot, choice } = req.query;
 
   // lingua automatica dal browser
-  const langHeader = req.headers["accept-language"] || "en";
-  const lang = langHeader.slice(0, 2).toLowerCase();
   const supported = ["it", "en", "fr", "es", "de"];
-  const l = supported.includes(lang) ? lang : "en";
+const langParam = (req.query.lang || "").slice(0, 2).toLowerCase();
+const langHeader = (req.headers["accept-language"] || "en").slice(0, 2).toLowerCase();
+const l = supported.includes(langParam) ? langParam : supported.includes(langHeader) ? langHeader : "en";
+
 
   const data =
     PORTICO_RESPONSES?.[l]?.[slot]?.[choice];
