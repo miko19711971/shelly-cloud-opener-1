@@ -77,6 +77,7 @@ const SENT_SLOTS = new Set();
     null;
 
   if (!currentSlot) return;
+console.log("🔄 runSlotCron slot:", currentSlot, new Date().toISOString());
 
   try {
     const r = await axios.get(
