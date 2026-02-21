@@ -21,28 +21,32 @@ app.set("trust proxy", true);
   // ========================================================================
 // ARRIVAL SLOT DECIDER — SAFE, NON ROMPE NULLA
 // ========================================================================
-function decideSlots(arrivalTime) {
-  if (!arrivalTime || !arrivalTime.includes(":")) {
-    return ["11", "18", "2030", "2330"];
+ function decideSlots(arrivalTime, checkInDate) {
+  const allSlots = ["11", "18", "2030", "2330"];
+  const slotMinutes = { "11": 660, "18": 1080, "2030": 1230, "2330": 1410 };
+
+  if (!arrivalTime || !arrivalTime.includes(":") || !checkInDate) {
+    return allSlots.map(slot => ({ slot, date: checkInDate }));
   }
 
   const [h, m] = arrivalTime.split(":").map(Number);
-  const minutes = h * 60 + m;
+  const arrivalMinutes = h * 60 + m;
 
-  if (minutes <= 12 * 60) {
-    return ["11", "18", "2030", "2330"];
+  const result = [];
+  let daysOffset = 0;
+
+  for (const slot of allSlots) {
+    if (slotMinutes[slot] <= arrivalMinutes) {
+      daysOffset = 1;
+    }
+    const date = new Date(checkInDate + "T12:00:00");
+    date.setDate(date.getDate() + daysOffset);
+    result.push({ slot, date: date.toISOString().slice(0, 10) });
   }
 
-  if (minutes <= 16 * 60) {
-    return ["18", "2030", "2330"];
-  }
-
-  if (minutes <= 19 * 60) {
-    return ["2030", "2330"];
-  }
-
-  return ["2330"];
+  return result;
 }
+
 
  function slotToDate(slot, checkInDate) {
   const hours = slot.length === 2 ? Number(slot) : Number(slot.slice(0, 2));
