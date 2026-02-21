@@ -56,53 +56,62 @@ function decideSlots(arrivalTime) {
 
 
 
+ // ========================================================================
+// SLOT SCHEDULER — CRON OGNI MINUTO (DEPLOY-SAFE)
 // ========================================================================
-// SLOT SCHEDULER — PRODUZIONE (UNICO)
-// ========================================================================
 
-const SLOT_JOBS = new Map();
+const SENT_SLOTS = new Set();
 
- function scheduleSlotMessages({
-  reservationId,
-  conversationId,
-  apartment,
-  slots,
-  sendFn,
-  checkInDate
-}) {
-    console.log("🔍 scheduleSlotMessages chiamata:", { reservationId, conversationId, apartment, slots, checkInDate });
+async function runSlotCron() {
+  const now = new Date();
+  const today = now.toISOString().slice(0, 10);
+  const currentSlot = 
+    now.getHours() === 11 && now.getMinutes() === 0 ? "11" :
+    now.getHours() === 18 && now.getMinutes() === 0 ? "18" :
+    now.getHours() === 20 && now.getMinutes() === 30 ? "2030" :
+    now.getHours() === 23 && now.getMinutes() === 30 ? "2330" :
+    null;
 
-  if (!reservationId || !conversationId || !Array.isArray(slots) || !checkInDate) return;
+  if (!currentSlot) return;
 
-   slots.forEach(slot => {
-    const when = slotToDate(slot, checkInDate);
-    const delay = when.getTime() - Date.now();
-    if (delay <= 0) {
-      console.log("⏭️ Slot già passato, ignorato:", slot, when.toISOString());
-      return;
-    }
-    if (delay > 86400000) {
-      console.log("⏭️ Slot troppo lontano, ignorato:", slot, when.toISOString());
-      return;
-    }
+  try {
+    const r = await axios.get(
+      `https://api.hostaway.com/v1/reservations?limit=500`,
+      { headers: { Authorization: `Bearer ${process.env.HOSTAWAY_TOKEN}` }, timeout: 10000 }
+    );
+    const reservations = r.data?.result || [];
+    for (const res of reservations) {
+      const checkInDate = res.arrivalDate || res.checkInDate;
+      if (!checkInDate || checkInDate !== today) continue;
+      if (res.status === 'cancelled') continue;
 
-    const key = `${reservationId}-${slot}`;
-    if (SLOT_JOBS.has(key)) return;
+      const arrivalTime = res.arrivalTime || null;
+      const slots = decideSlots(arrivalTime);
+      if (!slots.includes(currentSlot)) continue;
 
-    const timer = setTimeout(async () => {
+      const key = `${res.id}-${currentSlot}`;
+      if (SENT_SLOTS.has(key)) continue;
+
+      const conversationId = await getConversationId(res.id);
+      if (!conversationId) continue;
+
+      const guestLang = (res.guestLanguage || "en").slice(0, 2).toLowerCase();
+      const apartment = res.listingMapId;
+
       try {
-        await sendFn({ conversationId, apartment, slot });
-        console.log("📨 Slot inviato:", apartment, slot);
+        await sendSlotLiveMessage({ conversationId, apartment, slot: currentSlot, lang: guestLang });
+        SENT_SLOTS.add(key);
+        console.log("📨 Slot inviato:", apartment, currentSlot);
       } catch (e) {
-        console.error("❌ Errore slot", slot, e.message);
+        console.error("❌ Errore slot", currentSlot, e.message);
       }
-      SLOT_JOBS.delete(key);
-    }, delay);
-
-    SLOT_JOBS.set(key, timer);
-    console.log("⏰ Slot schedulato:", apartment, slot, "per", when.toISOString());
-  });
+    }
+  } catch (e) {
+    console.error("❌ runSlotCron error:", e.message);
+  }
 }
+
+setInterval(runSlotCron, 60000);
 
 
  // ========================================================================
