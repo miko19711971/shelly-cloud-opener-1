@@ -66,7 +66,7 @@ app.set("trust proxy", true);
 
 const SENT_SLOTS = new Set();
 
-async function runSlotCron() {
+ async function runSlotCron() {
   const now = new Date();
   const today = now.toISOString().slice(0, 10);
   const currentSlot = 
@@ -86,12 +86,13 @@ async function runSlotCron() {
     const reservations = r.data?.result || [];
     for (const res of reservations) {
       const checkInDate = res.arrivalDate || res.checkInDate;
-      if (!checkInDate || checkInDate !== today) continue;
+      if (!checkInDate) continue;
       if (res.status === 'cancelled') continue;
 
       const arrivalTime = res.arrivalTime || null;
-      const slots = decideSlots(arrivalTime);
-      if (!slots.includes(currentSlot)) continue;
+      const slots = decideSlots(arrivalTime, checkInDate);
+      const matchingSlot = slots.find(s => s.slot === currentSlot && s.date === today);
+      if (!matchingSlot) continue;
 
       const key = `${res.id}-${currentSlot}`;
       if (SENT_SLOTS.has(key)) continue;
@@ -101,15 +102,14 @@ async function runSlotCron() {
 
       const guestLang = (res.guestLanguage || "en").slice(0, 2).toLowerCase();
       const apartmentMap = {
-  194164: "trastevere",
-  194165: "portico",
-  194166: "arenula",
-  194162: "scala",
-  194163: "leonina"
-};
-const apartment = apartmentMap[res.listingMapId];
-if (!apartment) continue;
-
+        194164: "trastevere",
+        194165: "portico",
+        194166: "arenula",
+        194162: "scala",
+        194163: "leonina"
+      };
+      const apartment = apartmentMap[res.listingMapId];
+      if (!apartment) continue;
 
       try {
         await sendSlotLiveMessage({ conversationId, apartment, slot: currentSlot, lang: guestLang });
@@ -125,6 +125,7 @@ if (!apartment) continue;
 }
 
 setInterval(runSlotCron, 60000);
+
 
 
  // ========================================================================
