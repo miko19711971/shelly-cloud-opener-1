@@ -96,7 +96,16 @@ async function runSlotCron() {
       if (!conversationId) continue;
 
       const guestLang = (res.guestLanguage || "en").slice(0, 2).toLowerCase();
-      const apartment = res.listingMapId;
+      const apartmentMap = {
+  194164: "trastevere",
+  194165: "portico",
+  194166: "arenula",
+  194162: "scala",
+  194163: "leonina"
+};
+const apartment = apartmentMap[res.listingMapId];
+if (!apartment) continue;
+
 
       try {
         await sendSlotLiveMessage({ conversationId, apartment, slot: currentSlot, lang: guestLang });
