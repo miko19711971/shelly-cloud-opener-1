@@ -86,7 +86,9 @@ const SENT_SLOTS = new Set();
     const reservations = r.data?.result || [];
     for (const res of reservations) {
       const checkInDate = res.arrivalDate || res.checkInDate;
-      if (!checkInDate) continue;
+      const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
+if (checkInDate !== today && checkInDate !== yesterday) continue;
+
       if (res.status === 'cancelled') continue;
 
       const arrivalTime = res.arrivalTime || null;
