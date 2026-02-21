@@ -186,7 +186,8 @@ async function isRainingToday() {
   const message =
     `🕒 ${slot}\n` +
     `${text}\n` +
-    `${process.env.BASE_URL}${base}?slot=${slot}&choice=${choice}`;
+    `${process.env.BASE_URL}${base}?slot=${slot}&choice=${choice}&lang=${lang}`;
+
 
   await sendHostawayMessage({
     conversationId,
