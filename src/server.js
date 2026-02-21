@@ -69,12 +69,17 @@ const SENT_SLOTS = new Set();
  async function runSlotCron() {
   const now = new Date();
   const today = now.toISOString().slice(0, 10);
-  const currentSlot = 
-    now.getHours() === 11 && now.getMinutes() === 0 ? "11" :
-    now.getHours() === 18 && now.getMinutes() === 0 ? "18" :
-    now.getHours() === 20 && now.getMinutes() === 30 ? "2030" :
-    now.getHours() === 23 && now.getMinutes() === 30 ? "2330" :
-    null;
+ const romeHour = now.toLocaleString("it-IT", { timeZone: "Europe/Rome", hour: "numeric", hour12: false });
+const romeMinute = now.toLocaleString("it-IT", { timeZone: "Europe/Rome", minute: "numeric" });
+const h = parseInt(romeHour);
+const m = parseInt(romeMinute);
+const currentSlot = 
+  h === 11 && m === 0 ? "11" :
+  h === 18 && m === 0 ? "18" :
+  h === 20 && m === 30 ? "2030" :
+  h === 23 && m === 30 ? "2330" :
+  null;
+
 
   if (!currentSlot) return;
 console.log("🔄 runSlotCron slot:", currentSlot, new Date().toISOString());
