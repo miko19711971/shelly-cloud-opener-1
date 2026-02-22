@@ -30,12 +30,22 @@ app.set("trust proxy", true);
   const allSlots = ["11", "18", "2030", "2330"];
   const slotMinutes = { "11": 660, "18": 1080, "2030": 1230, "2330": 1410 };
 
-  if (!arrivalTime || !arrivalTime.includes(":") || !checkInDate) {
-    return allSlots.map(slot => ({ slot, date: checkInDate }));
-  }
+  if (!arrivalTime || !checkInDate) {
+  return allSlots.map(slot => ({ slot, date: checkInDate }));
+}
 
-  const [h, m] = arrivalTime.split(":").map(Number);
-  const arrivalMinutes = h * 60 + m;
+let arrivalMinutes;
+if (arrivalTime.includes(":")) {
+  const parts = arrivalTime.replace(/[apm]/gi, "").trim().split(":");
+  let h = parseInt(parts[0]);
+  const m = parseInt(parts[1]) || 0;
+  if (/pm/i.test(arrivalTime) && h !== 12) h += 12;
+  if (/am/i.test(arrivalTime) && h === 12) h = 0;
+  arrivalMinutes = h * 60 + m;
+} else {
+  return allSlots.map(slot => ({ slot, date: checkInDate }));
+}
+
 
   const result = [];
   let daysOffset = 0;
