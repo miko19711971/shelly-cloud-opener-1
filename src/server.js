@@ -114,7 +114,8 @@ const dayBeforeYesterday = new Date(Date.now() - 172800000).toLocaleString("it-I
 
     for (const res of reservations) {
       const checkInDate = res.arrivalDate || res.checkInDate;
-      if (checkInDate !== today && checkInDate !== yesterday) continue;
+      if (checkInDate !== today && checkInDate !== yesterday && checkInDate !== dayBeforeYesterday) continue;
+
       if (res.status === 'cancelled') continue;
 
       console.log("🔍 res:", res.id, checkInDate, res.arrivalTime, res.listingMapId);
