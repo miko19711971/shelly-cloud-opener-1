@@ -30,9 +30,13 @@ app.set("trust proxy", true);
   const allSlots = ["11", "18", "2030", "2330"];
   const slotMinutes = { "11": 660, "18": 1080, "2030": 1230, "2330": 1410 };
 
-  if (!arrivalTime || !checkInDate) {
+   if (!checkInDate) {
   return allSlots.map(slot => ({ slot, date: checkInDate }));
 }
+if (!arrivalTime) {
+  arrivalTime = "13:00";
+}
+
 
 let arrivalMinutes;
 if (arrivalTime.includes(":")) {
