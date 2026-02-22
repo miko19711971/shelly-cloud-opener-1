@@ -14,8 +14,7 @@ import nodemailer from "nodemailer";
  const SAFE_FALLBACK_REPLY =
   "Thank you for your message. We’ve received your request and we’ll get back to you as soon as possible.";
 const app = express();
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+ 
 
 app.use(express.static(path.join(__dirname, 'public')));
 
