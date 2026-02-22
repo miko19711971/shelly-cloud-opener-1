@@ -79,26 +79,25 @@ if (arrivalTime.includes(":")) {
 // SLOT SCHEDULER — CRON OGNI MINUTO (DEPLOY-SAFE)
 // ========================================================================
 
-const SENT_SLOTS = new Set();
+ const SENT_SLOTS = new Set();
 
- async function runSlotCron() {
+async function runSlotCron() {
   const now = new Date();
   const today = now.toLocaleString("it-IT", { timeZone: "Europe/Rome", year: "numeric", month: "2-digit", day: "2-digit" }).split("/").reverse().join("-");
 
- const romeHour = now.toLocaleString("it-IT", { timeZone: "Europe/Rome", hour: "numeric", hour12: false });
-const romeMinute = now.toLocaleString("it-IT", { timeZone: "Europe/Rome", minute: "numeric" });
-const h = parseInt(romeHour);
-const m = parseInt(romeMinute);
-const currentSlot = 
-  h === 11 && m === 0 ? "11" :
-  h === 18 && m === 0 ? "18" :
-  h === 20 && m === 30 ? "2030" :
-  h === 23 && m === 30 ? "2330" :
-  null;
-
+  const romeHour = now.toLocaleString("it-IT", { timeZone: "Europe/Rome", hour: "numeric", hour12: false });
+  const romeMinute = now.toLocaleString("it-IT", { timeZone: "Europe/Rome", minute: "numeric" });
+  const h = parseInt(romeHour);
+  const m = parseInt(romeMinute);
+  const currentSlot = 
+    h === 11 && m === 0 ? "11" :
+    h === 18 && m === 0 ? "18" :
+    h === 20 && m === 30 ? "2030" :
+    h === 23 && m === 30 ? "2330" :
+    null;
 
   if (!currentSlot) return;
-console.log("🔄 runSlotCron slot:", currentSlot, new Date().toISOString());
+  console.log("🔄 runSlotCron slot:", currentSlot, new Date().toISOString());
 
   try {
     const r = await axios.get(
@@ -106,17 +105,29 @@ console.log("🔄 runSlotCron slot:", currentSlot, new Date().toISOString());
       { headers: { Authorization: `Bearer ${process.env.HOSTAWAY_TOKEN}` }, timeout: 10000 }
     );
     const reservations = r.data?.result || [];
+    const yesterday = new Date(Date.now() - 86400000).toLocaleString("it-IT", { timeZone: "Europe/Rome", year: "numeric", month: "2-digit", day: "2-digit" }).split("/").reverse().join("-");
+
     for (const res of reservations) {
       const checkInDate = res.arrivalDate || res.checkInDate;
-      const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
-if (checkInDate !== today && checkInDate !== yesterday) continue;
-
+      if (checkInDate !== today && checkInDate !== yesterday) continue;
       if (res.status === 'cancelled') continue;
 
-      const arrivalTime = res.arrivalTime || null;
-     if (checkInDate === today || checkInDate === yesterday) {
-  console.log("🔍 res:", res.id, checkInDate, arrivalTime, res.listingMapId);
-}
+      console.log("🔍 res:", res.id, checkInDate, res.arrivalTime, res.listingMapId);
+
+      let arrivalTime = res.arrivalTime || null;
+
+      if (!arrivalTime) {
+        try {
+          const resDetail = await axios.get(
+            `https://api.hostaway.com/v1/reservations/${res.id}`,
+            { headers: { Authorization: `Bearer ${process.env.HOSTAWAY_TOKEN}` }, timeout: 8000 }
+          );
+          arrivalTime = resDetail.data?.result?.arrivalTime || null;
+          console.log("🔎 arrivalTime dal dettaglio:", res.id, arrivalTime);
+        } catch (e) {
+          console.error("❌ Errore fetch dettaglio:", res.id, e.message);
+        }
+      }
 
       const slots = decideSlots(arrivalTime, checkInDate);
       const matchingSlot = slots.find(s => s.slot === currentSlot && s.date === today);
@@ -147,9 +158,8 @@ if (checkInDate !== today && checkInDate !== yesterday) continue;
         console.error("❌ Errore slot", currentSlot, e.message);
       }
     }
+    console.log("✅ runSlotCron completato:", currentSlot);
   } catch (e) {
-   console.log("✅ runSlotCron completato:", currentSlot);
-
     console.error("❌ runSlotCron error:", e.message);
   }
 }
