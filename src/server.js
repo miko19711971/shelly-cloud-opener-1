@@ -16,7 +16,8 @@ import nodemailer from "nodemailer";
 const app = express();
  
 
-app.use(express.static(path.join(path.dirname(fileURLToPath(import.meta.url)), 'public')));
+app.use(express.static(path.join(path.dirname(fileURLToPath(import.meta.url)), '..', 'public')));
+
 
 
 app.use(bodyParser.json({ limit: "100kb" }));
