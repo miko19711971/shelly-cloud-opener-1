@@ -110,6 +110,7 @@ async function runSlotCron() {
     );
     const reservations = r.data?.result || [];
     const yesterday = new Date(Date.now() - 86400000).toLocaleString("it-IT", { timeZone: "Europe/Rome", year: "numeric", month: "2-digit", day: "2-digit" }).split("/").reverse().join("-");
+const dayBeforeYesterday = new Date(Date.now() - 172800000).toLocaleString("it-IT", { timeZone: "Europe/Rome", year: "numeric", month: "2-digit", day: "2-digit" }).split("/").reverse().join("-");
 
     for (const res of reservations) {
       const checkInDate = res.arrivalDate || res.checkInDate;
