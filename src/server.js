@@ -2077,36 +2077,9 @@ if (effectiveReservationId && conversationId) {
       reservation?.checkinTime ||
       reservation?.customFields?.arrival_time ||
       null;
+console.log("⏭️ Slot gestiti dal cron, webhook ignorato");
 
-    if (arrivalTime) {
-      const slots = decideSlots(arrivalTime);
-
-      console.log("🧩 ARRIVAL TIME (via guest message):", arrivalTime);
-      console.log("🧩 SLOT CALCOLATI:", slots);
-
-   const checkInDate = reservation?.arrivalDate || reservation?.checkInDate;
-const today = new Date().toISOString().slice(0, 10);
-if (checkInDate !== today) {
-  console.log("⏭️ Check-in non oggi, slot ignorati:", checkInDate);
-} else {
-  const guestLang = (reservation?.guestLanguage || "en").slice(0, 2).toLowerCase();
-  scheduleSlotMessages({
-    reservationId: effectiveReservationId,
-    conversationId,
-    apartment,
-    slots,
-    sendFn: (params) => sendSlotLiveMessage({ ...params, lang: guestLang }),
-    checkInDate: checkInDate
-  });
-}
-
-    } else {
-      console.log("⚠️ Arrival time non presente nella reservation");
-    }
-  } catch (e) {
-    console.error("❌ Errore fetch reservation (guest message):", e.message);
-  }
-}
+   
     // ======================================================
     // ð Resolve Listing ID from reservation (HostAway)
     // ======================================================
