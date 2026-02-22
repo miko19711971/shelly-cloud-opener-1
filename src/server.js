@@ -136,6 +136,14 @@ const dayBeforeYesterday = new Date(Date.now() - 172800000).toLocaleString("it-I
       }
 
       const slots = decideSlots(arrivalTime, checkInDate);
+if (checkInDate === yesterday || checkInDate === dayBeforeYesterday) {
+  slots.forEach(s => {
+    const d = new Date(s.date + "T12:00:00");
+    d.setDate(d.getDate() + 1);
+    s.date = d.toISOString().slice(0, 10);
+  });
+}
+
       const matchingSlot = slots.find(s => s.slot === currentSlot && s.date === today);
       if (!matchingSlot) continue;
 
