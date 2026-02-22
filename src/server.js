@@ -104,6 +104,10 @@ if (checkInDate !== today && checkInDate !== yesterday) continue;
       if (res.status === 'cancelled') continue;
 
       const arrivalTime = res.arrivalTime || null;
+     if (checkInDate === today || checkInDate === yesterday) {
+  console.log("🔍 res:", res.id, checkInDate, arrivalTime, res.listingMapId);
+}
+
       const slots = decideSlots(arrivalTime, checkInDate);
       const matchingSlot = slots.find(s => s.slot === currentSlot && s.date === today);
       if (!matchingSlot) continue;
