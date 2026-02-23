@@ -2619,21 +2619,7 @@ const listingMapId = reservation?.listingMapId || data?.listingMapId || reservat
     console.log("⏰ Arrival time:", arrivalTime);
     console.log("📆 Slot calcolati:", slots);
 
- if (conversationId) {
-  const checkInDate = reservation?.arrivalDate || reservation?.checkInDate;
-  const guestLang = (reservation?.guestLanguage || "en").slice(0, 2).toLowerCase();
-
-  scheduleSlotMessages({
-    reservationId: effectiveReservationId,
-    conversationId: conversationId,
-    apartment: apartment,
-    slots,
-    sendFn: (params) => sendSlotLiveMessage({ ...params, lang: guestLang }),
-    checkInDate: checkInDate
-  });
-} else {
-  console.log("⚠️ conversationId mancante → slot non inviati");
-}
+  
 
 } catch (err) {
   console.error("❌ ERRORE hostaway-booking-webhook:", err);
