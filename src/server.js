@@ -15,6 +15,7 @@ import nodemailer from "nodemailer";
   "Thank you for your message. We’ve received your request and we’ll get back to you as soon as possible.";
 const app = express();
  
+app.use(express.json({ strict: false, type: '*/*' }));
 
 app.use(express.static(path.join(path.dirname(fileURLToPath(import.meta.url)), '..', 'public')));
 
