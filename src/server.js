@@ -249,29 +249,31 @@ async function isRainingToday() {
 }
 
 
-
-// ========================================================================
-// ARRIVAL TIME WEBHOOK — HostAway
+ // ========================================================================
+// ARRIVAL TIME WEBHOOK — SAFE
 // ========================================================================
 
 app.post("/arrival-time", async (req, res) => {
+
+  // ⚠️ Rispondi SEMPRE 200 subito
+  res.status(200).send("OK");
+
   try {
     const payload = req.body;
 
-    // sicurezza minima
     if (!payload || !payload.reservation) {
-      return res.status(400).send("No reservation data");
+      console.log("ℹ️ Evento non valido per arrival-time → ignorato");
+      return;
     }
 
     const reservationId = payload.reservation.id;
-    const arrivalTime = payload.reservation.arrivalTime; // es: "15:30"
+    const arrivalTime = payload.reservation.arrivalTime;
 
     if (!arrivalTime) {
       console.log("⏰ Arrival time missing for reservation", reservationId);
-      return res.status(200).send("No arrival time");
+      return;
     }
 
-    // usa la funzione che abbiamo già messo
     const slots = decideSlots(arrivalTime);
 
     console.log("📥 ARRIVAL TIME RECEIVED");
@@ -279,13 +281,8 @@ app.post("/arrival-time", async (req, res) => {
     console.log("Arrival time:", arrivalTime);
     console.log("Scheduled slots:", slots);
 
-    // per ora NON inviamo nulla
-    // nel passo 3 useremo questi slot per schedulare i messaggi
-
-    res.status(200).send("Arrival time processed");
   } catch (err) {
     console.error("❌ ARRIVAL TIME ERROR", err);
-    res.status(500).send("Server error");
   }
 });
  
