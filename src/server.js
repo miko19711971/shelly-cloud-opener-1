@@ -491,8 +491,8 @@ function parseToken(token) {
   } catch {
     return { ok: false, error: "bad_payload" };
   }
-  if (typeof payload.ver !== "number" || payload.ver !== TOKEN_VERSION) return { ok: false, error: "bad_version" };
-  if (REVOKE_BEFORE && typeof payload.iat === "number" && payload.iat < REVOKE_BEFORE) return { ok: false, error: "revoked" };
+  // if (typeof payload.iat !== "number" || payload.iat < STARTED_AT)
+//   return { ok: false, error: "revoked_boot" };
   if (typeof payload.iat !== "number" || payload.iat < STARTED_AT) return { ok: false, error: "revoked_boot" };
   return { ok: true, payload };
 }
