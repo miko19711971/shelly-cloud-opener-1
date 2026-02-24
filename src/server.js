@@ -77,6 +77,21 @@ if (arrivalTime.includes(":")) {
  // ========================================================================
 // SLOT SCHEDULER — CRON OGNI MINUTO (DEPLOY-SAFE)
 // ========================================================================
+async function getConversationId(reservationId) {
+  try {
+    const r = await axios.get(
+      `https://api.hostaway.com/v1/conversations?reservationId=${reservationId}`,
+      {
+        headers: { Authorization: `Bearer ${process.env.HOSTAWAY_TOKEN}` },
+        timeout: 10000
+      }
+    );
+    return r.data?.result?.[0]?.id || null;
+  } catch (e) {
+    console.error("❌ getConversationId error:", e.message);
+    return null;
+  }
+}
 
  const SENT_SLOTS = new Set();
 
