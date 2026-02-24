@@ -754,9 +754,14 @@ app.get("/checkin/:apt/index.html", (req, res) => {
   }
 });
 
-function requireCheckinToken(req, res, next) {
+ function requireCheckinToken(req, res, next) {
   const apt = String(req.params.apt || "").toLowerCase();
-  const t = String(req.query.t || "");
+  let t = String(req.query.t || "");
+  if (!t) {
+    const ref = req.headers.referer || "";
+    const m = ref.match(/[?&]t=([^&]+)/);
+    if (m) t = decodeURIComponent(m[1]);
+  }
   const parsed = parseToken(t);
   if (!parsed.ok) return res.status(410).json({ ok: false, error: "bad_token" });
   const p = parsed.payload || {};
@@ -766,6 +771,7 @@ function requireCheckinToken(req, res, next) {
   if (!isYYYYMMDD(day) || day !== tzToday()) return res.status(410).json({ ok: false, error: "wrong_day" });
   next();
 }
+
 
 app.post("/checkin/:apt/open/building", requireCheckinToken, async (req, res) => {
   const apt = String(req.params.apt || "").toLowerCase();
