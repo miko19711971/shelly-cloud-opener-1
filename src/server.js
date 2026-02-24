@@ -2881,4 +2881,5 @@ const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => {
   console.log("Server running on", PORT);
 });
-Questo dovrebbe quello essere che funzionano i bottoni delle porte e tutte le altre cose non combaciano 
+
+
