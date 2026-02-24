@@ -20,7 +20,7 @@ app.set("trust proxy", true);
   // ========================================================================
 // ARRIVAL SLOT DECIDER — SAFE, NON ROMPE NULLA
 // ========================================================================
-function decideSlots(arrivalTime, checkInDate) {
+ function decideSlots(arrivalTime, checkInDate) {
   const allSlots = ["11", "18", "2030", "2330"];
   const slotMinutes = { "11": 660, "18": 1080, "2030": 1230, "2330": 1410 };
 
@@ -48,12 +48,9 @@ function decideSlots(arrivalTime, checkInDate) {
   }
 
   const result = [];
-  let daysOffset = 0;
 
   for (const slot of allSlots) {
-    if (slotMinutes[slot] <= arrivalMinutes) {
-      daysOffset = 1;
-    }
+    const daysOffset = slotMinutes[slot] <= arrivalMinutes ? 1 : 0;
 
     const date = new Date(checkInDate + "T12:00:00");
     date.setDate(date.getDate() + daysOffset);
@@ -66,6 +63,7 @@ function decideSlots(arrivalTime, checkInDate) {
 
   return result;
 }
+
 
 function slotToDate(slot, checkInDate) {
   const hours = slot.length === 2
