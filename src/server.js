@@ -249,31 +249,29 @@ async function isRainingToday() {
 }
 
 
- // ========================================================================
-// ARRIVAL TIME WEBHOOK — SAFE
+
+// ========================================================================
+// ARRIVAL TIME WEBHOOK — HostAway
 // ========================================================================
 
 app.post("/arrival-time", async (req, res) => {
-
-  // ⚠️ Rispondi SEMPRE 200 subito
-  res.status(200).send("OK");
-
   try {
     const payload = req.body;
 
+    // sicurezza minima
     if (!payload || !payload.reservation) {
-      console.log("ℹ️ Evento non valido per arrival-time → ignorato");
-      return;
+      return res.status(400).send("No reservation data");
     }
 
     const reservationId = payload.reservation.id;
-    const arrivalTime = payload.reservation.arrivalTime;
+    const arrivalTime = payload.reservation.arrivalTime; // es: "15:30"
 
     if (!arrivalTime) {
       console.log("⏰ Arrival time missing for reservation", reservationId);
-      return;
+      return res.status(200).send("No arrival time");
     }
 
+    // usa la funzione che abbiamo già messo
     const slots = decideSlots(arrivalTime);
 
     console.log("📥 ARRIVAL TIME RECEIVED");
@@ -281,8 +279,13 @@ app.post("/arrival-time", async (req, res) => {
     console.log("Arrival time:", arrivalTime);
     console.log("Scheduled slots:", slots);
 
+    // per ora NON inviamo nulla
+    // nel passo 3 useremo questi slot per schedulare i messaggi
+
+    res.status(200).send("Arrival time processed");
   } catch (err) {
     console.error("❌ ARRIVAL TIME ERROR", err);
+    res.status(500).send("Server error");
   }
 });
  
@@ -491,8 +494,8 @@ function parseToken(token) {
   } catch {
     return { ok: false, error: "bad_payload" };
   }
-  // if (typeof payload.iat !== "number" || payload.iat < STARTED_AT)
-//   return { ok: false, error: "revoked_boot" };
+  if (typeof payload.ver !== "number" || payload.ver !== TOKEN_VERSION) return { ok: false, error: "bad_version" };
+  if (REVOKE_BEFORE && typeof payload.iat === "number" && payload.iat < REVOKE_BEFORE) return { ok: false, error: "revoked" };
   if (typeof payload.iat !== "number" || payload.iat < STARTED_AT) return { ok: false, error: "revoked_boot" };
   return { ok: true, payload };
 }
@@ -716,83 +719,56 @@ app.get("/checkin/:apt/:rawDate([^/.]+)", (req, res) => {
   res.redirect(302, url);
 });
 
- app.get("/checkin/:apt/", (req, res) => {
+app.get("/checkin/:apt/", (req, res) => {
   const apt = req.params.apt.toLowerCase(), today = tzToday();
   const raw = (req.query.d || "").toString();
   let day = normalizeCheckinDate(raw);
-
   if (!day) {
     if (ALLOW_TODAY_FALLBACK) day = today;
     else return res.status(410).send("Link scaduto.");
   }
-
-  // ✅ FIX UNICO: qualsiasi sia ?d=..., il token viene generato per OGGI
-  day = today;
-
+  if (day !== today) return res.status(410).send("Link scaduto.");
+  if (day !== today) return res.status(410).send("Questo link Ã¨ valido solo nel giorno di check-in.");
   const { token } = newTokenFor(`checkin-${apt}`, { windowMin: CHECKIN_WINDOW_MIN, max: 200, day });
   const url = `${req.protocol}://${req.get("host")}/checkin/${apt}/index.html?t=${token}`;
   res.redirect(302, url);
 });
 
- app.get("/checkin/:apt/index.html", async (req, res) => {
+app.get("/checkin/:apt/index.html", (req, res) => {
   try {
     const apt = req.params.apt.toLowerCase(), t = String(req.query.t || "");
     const parsed = parseToken(t);
-    if (!parsed.ok) return res.status(410).send("Questo link non è più valido.");
+    if (!parsed.ok) return res.status(410).send("Questo link non Ã¨ piÃ¹ valido.");
     const p = parsed.payload || {};
-    if (typeof p.exp !== "number" || Date.now() > p.exp) return res.status(410).send("Questo link è scaduto. Richiedi un nuovo link.");
+    if (typeof p.exp !== "number" || Date.now() > p.exp) return res.status(410).send("Questo link Ã¨ scaduto. Richiedi un nuovo link.");
     const { tgt, day } = p;
     if (tgt !== `checkin-${apt}`) return res.status(410).send("Link non valido.");
-    if (!isYYYYMMDD(day) || day !== tzToday()) return res.status(410).send("Questo link è valido solo nel giorno di check-in.");
+    if (!isYYYYMMDD(day) || day !== tzToday()) return res.status(410).send("Questo link Ã¨ valido solo nel giorno di check-in.");
     const filePath = path.join(PUBLIC_DIR, "checkin", apt, "index.html");
-    let html = await fs.readFile(filePath, "utf8");
-    // Inietta il token in tutte le fetch verso /open/building e /open/door
-    html = html.replace(
-      /fetch\((['"`])([^'"`]*\/open\/(?:building|door))\1/g,
-      `fetch($1$2?t=${encodeURIComponent(t)}$1`
-    );
-    res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0");
-    res.type("html").send(html);
+    return res.sendFile(filePath, (err) => {
+      if (err) {
+        console.error("â sendFile error:", { filePath, code: err.code, message: err.message });
+        if (!res.headersSent) return res.status(err.statusCode || 404).send("Check-in page missing on server.");
+      }
+    });
   } catch (e) {
-    console.error("❌ /checkin/:apt/index.html crashed:", e);
+    console.error("â /checkin/:apt/index.html crashed:", e);
     return res.status(500).send("Internal Server Error");
   }
 });
 
-
-  function requireCheckinToken(req, res, next) {
+function requireCheckinToken(req, res, next) {
   const apt = String(req.params.apt || "").toLowerCase();
-
-  // 1) token da query (?t=...)
-  let t = String(req.query.t || "");
-
-  // 2) fallback: token dal Referer (URL della pagina index.html?t=...)
-  if (!t) {
-    const ref = String(req.get("referer") || "");
-    try {
-      const u = new URL(ref);
-      t = String(u.searchParams.get("t") || "");
-    } catch (_) {}
-  }
-
-  if (!t) return res.status(410).json({ ok: false, error: "token_missing" });
-
+  const t = String(req.query.t || "");
   const parsed = parseToken(t);
   if (!parsed.ok) return res.status(410).json({ ok: false, error: "bad_token" });
-
   const p = parsed.payload || {};
-  if (typeof p.exp !== "number" || Date.now() > p.exp)
-    return res.status(410).json({ ok: false, error: "expired" });
-
-  if (p.tgt !== `checkin-${apt}`)
-    return res.status(410).json({ ok: false, error: "token_target_mismatch" });
-
-  if (!p.day || p.day !== tzToday())
-    return res.status(410).json({ ok: false, error: "wrong_day" });
-
+  if (typeof p.exp !== "number" || Date.now() > p.exp) return res.status(410).json({ ok: false, error: "expired" });
+  const { tgt, day } = p;
+  if (tgt !== `checkin-${apt}`) return res.status(410).json({ ok: false, error: "token_target_mismatch" });
+  if (!isYYYYMMDD(day) || day !== tzToday()) return res.status(410).json({ ok: false, error: "wrong_day" });
   next();
 }
-
 
 app.post("/checkin/:apt/open/building", requireCheckinToken, async (req, res) => {
   const apt = String(req.params.apt || "").toLowerCase();
@@ -2643,21 +2619,7 @@ const listingMapId = reservation?.listingMapId || data?.listingMapId || reservat
     console.log("⏰ Arrival time:", arrivalTime);
     console.log("📆 Slot calcolati:", slots);
 
- if (conversationId) {
-  const checkInDate = reservation?.arrivalDate || reservation?.checkInDate;
-  const guestLang = (reservation?.guestLanguage || "en").slice(0, 2).toLowerCase();
-
-  scheduleSlotMessages({
-    reservationId: effectiveReservationId,
-    conversationId: conversationId,
-    apartment: apartment,
-    slots,
-    sendFn: (params) => sendSlotLiveMessage({ ...params, lang: guestLang }),
-    checkInDate: checkInDate
-  });
-} else {
-  console.log("⚠️ conversationId mancante → slot non inviati");
-}
+  
 
 } catch (err) {
   console.error("❌ ERRORE hostaway-booking-webhook:", err);
@@ -2919,3 +2881,4 @@ const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => {
   console.log("Server running on", PORT);
 });
+Questo dovrebbe quello essere che funzionano i bottoni delle porte e tutte le altre cose non combaciano 
