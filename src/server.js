@@ -716,16 +716,19 @@ app.get("/checkin/:apt/:rawDate([^/.]+)", (req, res) => {
   res.redirect(302, url);
 });
 
-app.get("/checkin/:apt/", (req, res) => {
+ app.get("/checkin/:apt/", (req, res) => {
   const apt = req.params.apt.toLowerCase(), today = tzToday();
   const raw = (req.query.d || "").toString();
   let day = normalizeCheckinDate(raw);
+
   if (!day) {
     if (ALLOW_TODAY_FALLBACK) day = today;
     else return res.status(410).send("Link scaduto.");
   }
-  if (day !== today) return res.status(410).send("Link scaduto.");
-  if (day !== today) return res.status(410).send("Questo link Ã¨ valido solo nel giorno di check-in.");
+
+  // ✅ FIX UNICO: qualsiasi sia ?d=..., il token viene generato per OGGI
+  day = today;
+
   const { token } = newTokenFor(`checkin-${apt}`, { windowMin: CHECKIN_WINDOW_MIN, max: 200, day });
   const url = `${req.protocol}://${req.get("host")}/checkin/${apt}/index.html?t=${token}`;
   res.redirect(302, url);
