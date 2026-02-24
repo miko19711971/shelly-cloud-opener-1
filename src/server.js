@@ -731,23 +731,31 @@ app.get("/checkin/:apt/", (req, res) => {
   res.redirect(302, url);
 });
 
-app.get("/checkin/:apt/index.html", (req, res) => {
+ app.get("/checkin/:apt/index.html", async (req, res) => {
   try {
     const apt = req.params.apt.toLowerCase(), t = String(req.query.t || "");
     const parsed = parseToken(t);
-    if (!parsed.ok) return res.status(410).send("Questo link non Ã¨ piÃ¹ valido.");
+    if (!parsed.ok) return res.status(410).send("Questo link non è più valido.");
     const p = parsed.payload || {};
-    if (typeof p.exp !== "number" || Date.now() > p.exp) return res.status(410).send("Questo link Ã¨ scaduto. Richiedi un nuovo link.");
+    if (typeof p.exp !== "number" || Date.now() > p.exp) return res.status(410).send("Questo link è scaduto. Richiedi un nuovo link.");
     const { tgt, day } = p;
     if (tgt !== `checkin-${apt}`) return res.status(410).send("Link non valido.");
-    if (!isYYYYMMDD(day) || day !== tzToday()) return res.status(410).send("Questo link Ã¨ valido solo nel giorno di check-in.");
+    if (!isYYYYMMDD(day) || day !== tzToday()) return res.status(410).send("Questo link è valido solo nel giorno di check-in.");
     const filePath = path.join(PUBLIC_DIR, "checkin", apt, "index.html");
-    return res.sendFile(filePath, (err) => {
-      if (err) {
-        console.error("â sendFile error:", { filePath, code: err.code, message: err.message });
-        if (!res.headersSent) return res.status(err.statusCode || 404).send("Check-in page missing on server.");
-      }
-    });
+    let html = await fs.readFile(filePath, "utf8");
+    // Inietta il token in tutte le fetch verso /open/building e /open/door
+    html = html.replace(
+      /fetch\((['"`])([^'"`]*\/open\/(?:building|door))\1/g,
+      `fetch($1$2?t=${encodeURIComponent(t)}$1`
+    );
+    res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0");
+    res.type("html").send(html);
+  } catch (e) {
+    console.error("❌ /checkin/:apt/index.html crashed:", e);
+    return res.status(500).send("Internal Server Error");
+  }
+});
+
   } catch (e) {
     console.error("â /checkin/:apt/index.html crashed:", e);
     return res.status(500).send("Internal Server Error");
