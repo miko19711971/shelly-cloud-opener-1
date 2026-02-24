@@ -10,16 +10,9 @@ import { matchIntent } from "./matcher.js";
 import { detectLanguage } from "./language.js";
 import { ANSWERS } from "./answers.js";
 import { askGemini } from "./gemini.js";
-import nodemailer from "nodemailer";
  const SAFE_FALLBACK_REPLY =
   "Thank you for your message. We’ve received your request and we’ll get back to you as soon as possible.";
 const app = express();
- 
-app.use(express.json({ strict: false, type: '*/*' }));
-
-app.use(express.static(path.join(path.dirname(fileURLToPath(import.meta.url)), '..', 'public')));
-
-
 
 app.use(bodyParser.json({ limit: "100kb" }));
 app.disable("x-powered-by");
@@ -27,46 +20,28 @@ app.set("trust proxy", true);
   // ========================================================================
 // ARRIVAL SLOT DECIDER — SAFE, NON ROMPE NULLA
 // ========================================================================
- function decideSlots(arrivalTime, checkInDate) {
-  const allSlots = ["11", "18", "2030", "2330"];
-  const slotMinutes = { "11": 660, "18": 1080, "2030": 1230, "2330": 1410 };
-
-   if (!checkInDate) {
-  return allSlots.map(slot => ({ slot, date: checkInDate }));
-}
-if (!arrivalTime) {
-  arrivalTime = "13:00";
-}
-
-
-let arrivalMinutes;
-if (arrivalTime.includes(":")) {
-  const parts = arrivalTime.replace(/[apm]/gi, "").trim().split(":");
-  let h = parseInt(parts[0]);
-  const m = parseInt(parts[1]) || 0;
-  if (/pm/i.test(arrivalTime) && h !== 12) h += 12;
-  if (/am/i.test(arrivalTime) && h === 12) h = 0;
-  arrivalMinutes = h * 60 + m;
-} else {
-  return allSlots.map(slot => ({ slot, date: checkInDate }));
-}
-
-
-  const result = [];
-  let daysOffset = 0;
-
-  for (const slot of allSlots) {
-    if (slotMinutes[slot] <= arrivalMinutes) {
-      daysOffset = 1;
-    }
-    const date = new Date(checkInDate + "T12:00:00");
-    date.setDate(date.getDate() + daysOffset);
-    result.push({ slot, date: date.toISOString().slice(0, 10) });
+function decideSlots(arrivalTime) {
+  if (!arrivalTime || !arrivalTime.includes(":")) {
+    return ["11", "18", "2030", "2330"];
   }
 
-  return result;
-}
+  const [h, m] = arrivalTime.split(":").map(Number);
+  const minutes = h * 60 + m;
 
+  if (minutes <= 12 * 60) {
+    return ["11", "18", "2030", "2330"];
+  }
+
+  if (minutes <= 16 * 60) {
+    return ["18", "2030", "2330"];
+  }
+
+  if (minutes <= 19 * 60) {
+    return ["2030", "2330"];
+  }
+
+  return ["2330"];
+}
 
  function slotToDate(slot, checkInDate) {
   const hours = slot.length === 2 ? Number(slot) : Number(slot.slice(0, 2));
@@ -80,108 +55,47 @@ if (arrivalTime.includes(":")) {
 
 
 
- // ========================================================================
-// SLOT SCHEDULER — CRON OGNI MINUTO (DEPLOY-SAFE)
+// ========================================================================
+// SLOT SCHEDULER — PRODUZIONE (UNICO)
 // ========================================================================
 
- const SENT_SLOTS = new Set();
+const SLOT_JOBS = new Map();
 
-async function runSlotCron() {
-  const now = new Date();
-  const today = now.toLocaleString("it-IT", { timeZone: "Europe/Rome", year: "numeric", month: "2-digit", day: "2-digit" }).split("/").reverse().join("-");
+ function scheduleSlotMessages({
+  reservationId,
+  conversationId,
+  apartment,
+  slots,
+  sendFn,
+  checkInDate
+}) {
+  if (!reservationId || !conversationId || !Array.isArray(slots) || !checkInDate) return;
 
-  const romeHour = now.toLocaleString("it-IT", { timeZone: "Europe/Rome", hour: "numeric", hour12: false });
-  const romeMinute = now.toLocaleString("it-IT", { timeZone: "Europe/Rome", minute: "numeric" });
-  const h = parseInt(romeHour);
-  const m = parseInt(romeMinute);
-  const currentSlot = 
-    h === 11 && m === 0 ? "11" :
-    h === 18 && m === 0 ? "18" :
-    h === 20 && m === 30 ? "2030" :
-    h === 23 && m === 30 ? "2330" :
-    null;
+  slots.forEach(slot => {
+    const when = slotToDate(slot, checkInDate);
+    const delay = when.getTime() - Date.now();
+    if (delay <= 0) {
+      console.log("⏭️ Slot già passato, ignorato:", slot, when.toISOString());
+      return;
+    }
 
-  if (!currentSlot) return;
-  console.log("🔄 runSlotCron slot:", currentSlot, new Date().toISOString());
+    const key = `${reservationId}-${slot}`;
+    if (SLOT_JOBS.has(key)) return;
 
-  try {
-    const r = await axios.get(
-      `https://api.hostaway.com/v1/reservations?limit=500`,
-      { headers: { Authorization: `Bearer ${process.env.HOSTAWAY_TOKEN}` }, timeout: 10000 }
-    );
-    const reservations = r.data?.result || [];
-    const yesterday = new Date(Date.now() - 86400000).toLocaleString("it-IT", { timeZone: "Europe/Rome", year: "numeric", month: "2-digit", day: "2-digit" }).split("/").reverse().join("-");
-const dayBeforeYesterday = new Date(Date.now() - 172800000).toLocaleString("it-IT", { timeZone: "Europe/Rome", year: "numeric", month: "2-digit", day: "2-digit" }).split("/").reverse().join("-");
-
-    for (const res of reservations) {
-      const checkInDate = res.arrivalDate || res.checkInDate;
-      if (checkInDate !== today && checkInDate !== yesterday && checkInDate !== dayBeforeYesterday) continue;
-
-      if (res.status === 'cancelled') continue;
-
-      console.log("🔍 res:", res.id, checkInDate, res.arrivalTime, res.listingMapId);
-
-      let arrivalTime = res.arrivalTime || null;
-
-      if (!arrivalTime) {
-        try {
-          const resDetail = await axios.get(
-            `https://api.hostaway.com/v1/reservations/${res.id}`,
-            { headers: { Authorization: `Bearer ${process.env.HOSTAWAY_TOKEN}` }, timeout: 8000 }
-          );
-          arrivalTime = resDetail.data?.result?.arrivalTime || null;
-          console.log("🔎 arrivalTime dal dettaglio:", res.id, arrivalTime);
-        } catch (e) {
-          console.error("❌ Errore fetch dettaglio:", res.id, e.message);
-        }
+    const timer = setTimeout(async () => {
+      try {
+        await sendFn({ conversationId, apartment, slot });
+        console.log("📨 Slot inviato:", apartment, slot);
+      } catch (e) {
+        console.error("❌ Errore slot", slot, e.message);
       }
+      SLOT_JOBS.delete(key);
+    }, delay);
 
-      const slots = decideSlots(arrivalTime, checkInDate);
-if (checkInDate === yesterday || checkInDate === dayBeforeYesterday) {
-  slots.forEach(s => {
-    const d = new Date(s.date + "T12:00:00");
-    d.setDate(d.getDate() + 1);
-    s.date = d.toISOString().slice(0, 10);
+    SLOT_JOBS.set(key, timer);
+    console.log("⏰ Slot schedulato:", apartment, slot, "per", when.toISOString());
   });
 }
-
-      const matchingSlot = slots.find(s => s.slot === currentSlot && s.date === today);
-      if (!matchingSlot) continue;
-
-      const key = `${res.id}-${currentSlot}`;
-      if (SENT_SLOTS.has(key)) continue;
-
-      const conversationId = await getConversationId(res.id);
-      if (!conversationId) continue;
-
-      const guestLang = (res.guestLanguage || "en").slice(0, 2).toLowerCase();
-      const apartmentMap = {
-        194164: "trastevere",
-        194165: "portico",
-        194166: "arenula",
-        194162: "scala",
-        194163: "leonina"
-      };
-      const apartment = apartmentMap[res.listingMapId];
-      if (!apartment) continue;
-
-      try {
-        await sendSlotLiveMessage({ conversationId, apartment, slot: currentSlot, lang: guestLang });
-        SENT_SLOTS.add(key);
-        console.log("📨 Slot inviato:", apartment, currentSlot);
-      } catch (e) {
-        console.error("❌ Errore slot", currentSlot, e.message);
-      }
-    }
-    console.log("✅ runSlotCron completato:", currentSlot);
-  } catch (e) {
-    console.error("❌ runSlotCron error:", e.message);
-  }
-}
-
-setInterval(runSlotCron, 60000);
-
-
 
  // ========================================================================
 // METEO — RAIN DETECTION (ROMA)
@@ -239,8 +153,7 @@ async function isRainingToday() {
   const message =
     `🕒 ${slot}\n` +
     `${text}\n` +
-    `${process.env.BASE_URL}${base}?slot=${slot}&choice=${choice}&lang=${lang}`;
-
+    `${process.env.BASE_URL}${base}?slot=${slot}&choice=${choice}`;
 
   await sendHostawayMessage({
     conversationId,
@@ -1690,11 +1603,10 @@ const VIALE_TRASTEVERE_RESPONSES = {
 app.get("/viale-trastevere", (req, res) => {
   const { slot, choice } = req.query;
 
+  const langHeader = req.headers["accept-language"] || "en";
+  const lang = langHeader.slice(0, 2).toLowerCase();
   const supported = ["it", "en", "fr", "es", "de"];
-const langParam = (req.query.lang || "").slice(0, 2).toLowerCase();
-const langHeader = (req.headers["accept-language"] || "en").slice(0, 2).toLowerCase();
-const l = supported.includes(langParam) ? langParam : supported.includes(langHeader) ? langHeader : "en";
-
+  const l = supported.includes(lang) ? lang : "en";
 
   const data =
     VIALE_TRASTEVERE_RESPONSES?.[l]?.[slot]?.[choice];
@@ -1754,11 +1666,10 @@ p {
 app.get("/scala", (req, res) => {
   const { slot, choice } = req.query;
 
-   const supported = ["it", "en", "fr", "es", "de"];
-const langParam = (req.query.lang || "").slice(0, 2).toLowerCase();
-const langHeader = (req.headers["accept-language"] || "en").slice(0, 2).toLowerCase();
-const l = supported.includes(langParam) ? langParam : supported.includes(langHeader) ? langHeader : "en";
-
+  const langHeader = req.headers["accept-language"] || "en";
+  const lang = langHeader.slice(0, 2).toLowerCase();
+  const supported = ["it", "en", "fr", "es", "de"];
+  const l = supported.includes(lang) ? lang : "en";
 
   const data =
     SCALA_RESPONSES?.[l]?.[slot]?.[choice];
@@ -1819,11 +1730,10 @@ app.get("/portico", (req, res) => {
   const { slot, choice } = req.query;
 
   // lingua automatica dal browser
+  const langHeader = req.headers["accept-language"] || "en";
+  const lang = langHeader.slice(0, 2).toLowerCase();
   const supported = ["it", "en", "fr", "es", "de"];
-const langParam = (req.query.lang || "").slice(0, 2).toLowerCase();
-const langHeader = (req.headers["accept-language"] || "en").slice(0, 2).toLowerCase();
-const l = supported.includes(langParam) ? langParam : supported.includes(langHeader) ? langHeader : "en";
-
+  const l = supported.includes(lang) ? lang : "en";
 
   const data =
     PORTICO_RESPONSES?.[l]?.[slot]?.[choice];
@@ -1860,11 +1770,10 @@ p{line-height:1.6;white-space:pre-line}
 });
  app.get("/monti", (req, res) => {
   const { slot, choice } = req.query;
- const supported = ["it", "en", "fr", "es", "de"];
-const langParam = (req.query.lang || "").slice(0, 2).toLowerCase();
-const langHeader = (req.headers["accept-language"] || "en").slice(0, 2).toLowerCase();
-const l = supported.includes(langParam) ? langParam : supported.includes(langHeader) ? langHeader : "en";
-
+  const langHeader = req.headers["accept-language"] || "en";
+  const lang = langHeader.slice(0, 2).toLowerCase();
+  const supported = ["it","en","fr","es","de"];
+  const l = supported.includes(lang) ? lang : "en";
 
   const data = MONTI_RESPONSES?.[l]?.[slot]?.[choice];
 
@@ -2081,7 +1990,103 @@ if (!effectiveReservationId && conversationId) {
     console.error("❌ Errore fetch conversation → reservation", err);
   }
 }
-// Slot gestiti dal cron - nessuna azione nel webhook
+// ===============================
+// PATCH — ARRIVAL TIME VIA GUEST MESSAGE
+// ===============================
+if (effectiveReservationId && conversationId) {
+  try {
+     const r = await axios.get(
+  `https://api.hostaway.com/v1/reservations/${effectiveReservationId}`,
+  {
+    headers: {
+      Authorization: `Bearer ${HOSTAWAY_TOKEN}`
+    },
+    timeout: 10000
+  }
+);
+
+    const reservation = r.data?.result;
+    const arrivalTime =
+      reservation?.arrivalTime ||
+      reservation?.checkinTime ||
+      reservation?.customFields?.arrival_time ||
+      null;
+
+    if (arrivalTime) {
+      const slots = decideSlots(arrivalTime);
+
+      console.log("🧩 ARRIVAL TIME (via guest message):", arrivalTime);
+      console.log("🧩 SLOT CALCOLATI:", slots);
+
+   const checkInDate = reservation?.arrivalDate || reservation?.checkInDate;
+const guestLang = (reservation?.guestLanguage || "en").slice(0, 2).toLowerCase();
+
+scheduleSlotMessages({
+  reservationId: effectiveReservationId,
+  conversationId,
+  apartment,
+  slots,
+  sendFn: (params) => sendSlotLiveMessage({ ...params, lang: guestLang }),
+  checkInDate: checkInDate
+});
+
+    } else {
+      console.log("⚠️ Arrival time non presente nella reservation");
+    }
+  } catch (e) {
+    console.error("❌ Errore fetch reservation (guest message):", e.message);
+  }
+}
+    // ======================================================
+    // ð Resolve Listing ID from reservation (HostAway)
+    // ======================================================
+    let resolvedListingId = listingId;
+
+    if (!resolvedListingId && reservationId) {
+      try {
+        console.log("ð Fetching reservation from HostAway:", reservationId);
+
+         const r = await axios.get(
+  `https://api.hostaway.com/v1/reservations/${effectiveReservationId}`,
+  {
+    headers: {
+      Authorization: `Bearer ${HOSTAWAY_TOKEN}`
+    },
+    timeout: 10000
+  }
+);
+
+        console.log("ð FULL API Response:", JSON.stringify(r.data, null, 2));
+
+        resolvedListingId = r.data?.result?.listingId;
+        console.log("ð  ListingId resolved from reservation:", resolvedListingId);
+      } catch (e) {
+        console.error("â Failed to resolve listingId from reservation", e.message);
+      }
+    }
+
+    req.body = req.body?.data ?? req.body;
+
+    console.log("📋 STEP 1: Extract Data");
+    console.log("  ââ message:", message);
+    console.log("  ââ conversationId:", conversationId);
+    console.log("  ââ guestName:", guestName);
+    console.log("  ââ reservationId:", reservationId);
+
+    if (!message || !conversationId) {
+      console.log("â ï¸ Missing required fields â SILENT");
+      return res.json({ ok: true, silent: true });
+    }
+
+    // ======================================================
+    // ð STEP 2: Check HostAway Token
+    // ======================================================
+    if (!HOSTAWAY_TOKEN) {
+      console.error("â HOSTAWAY_TOKEN is NOT configured!");
+      return res.status(500).json({ ok: false });
+    }
+
+    console.log("  â Token configured");
 
    // ======================================================
 // 🎯 STEP 3: Match Intent + Language
@@ -2092,8 +2097,40 @@ console.log("🎯 Matcher result:", match || "NONE");
 const detectedLang = detectLanguage(message);
 console.log("🌍 Lingua rilevata:", detectedLang);
 
- const intent = match?.intent || null;
+if (!match || !match.intent) {
+  console.log("🤖 No intent → Gemini fallback");
 
+  const geminiReply = await askGemini({
+    message,
+    apartment,
+    lang: detectedLang || "en"
+  });
+
+  if (geminiReply) {
+    await axios.post(
+      `https://api.hostaway.com/v1/conversations/${conversationId}/messages`,
+      {
+        body: geminiReply,
+        sendToGuest: true
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${HOSTAWAY_TOKEN}`,
+          "Content-Type": "application/json"
+        },
+        timeout: 10000
+      }
+    );
+
+    console.log("🤖 Gemini reply sent");
+    return res.json({ ok: true, repliedBy: "gemini" });
+  }
+
+  console.log("🤖 Gemini had no answer → silent");
+  return res.json({ ok: true, silent: true });
+}
+
+const intent = match.intent;
     // ======================================================
     // ð  STEP 4: listingId â apartment
     // ======================================================
@@ -2153,29 +2190,20 @@ console.log("🌍 Lingua rilevata:", detectedLang);
       usedLang = defaultLang;
       console.log("  â Usata lingua default:", defaultLang);
     }
- // ⛔ BLOCCO SENTINELLA: se AI interna dice di tacere → TACI
+// ⛔ BLOCCO SENTINELLA: evita __INTERNAL_AI__
 if (answer === "__INTERNAL_AI__") {
-  console.log("⛔ INTERNAL_AI → sistema deve tacere");
-  return res.json({ ok: true, silent: true });
+  console.log("⛔ INTERNAL_AI intercettato → annullato");
+  answer = null;
 }
-
- // ======================================================
+   // ======================================================
 // 🤖 FALLBACK GEMINI — domande turistiche + ringraziamenti
 // ======================================================
 if (!answer) {
-  // BLOCCA domande sulla prenotazione
-  const isBookingQuestion = /people|guest|accommodate|room|bed|extra|date|night|stay|cancel|refund|change|modify|price|cost|pay|book|ospiti|persone|prenotazione|capienza|letti|camera|notte|cancellare|cambiare|prezzo|pagare/i.test(message);
+  // Controlla se è una DOMANDA
+  const isQuestion = /\?|where|what|when|who|how|why|which|dove|cosa|quando|come|perch[eé]|quale|où|quand|comment|pourquoi|quel|dónde|cuándo|cómo|por qué|cuál|wo|wann|wie|warum|welche/i.test(message);
   
-  if (isBookingQuestion) {
-    console.log("📋 Domanda sulla prenotazione → SILENZIO (gestione manuale)");
-    return res.json({ ok: true, silent: true, reason: "booking_question" });
-  }
-
-  // Controlla se è una DOMANDA turistica
-  const isQuestion = /\?|where|what|when|how|which|dove|cosa|quando|come|où|quand|comment|dónde|cuándo|cómo|wo|wann|wie/i.test(message);
-  
-  // Controlla se è un RINGRAZIAMENTO
-  const isThanks = /thank|thanks|grazie|merci|danke|appreciate|wonderful|amazing|perfect|excellent|great|fantastic|loved|enjoyed|beautiful/i.test(message);
+  // Controlla se è un RINGRAZIAMENTO o FEEDBACK
+  const isThanks = /thank|thanks|grazie|merci|danke|muchas gracias|appreciate|grateful|wonderful|amazing|perfect|excellent|great|fantastic|loved|enjoyed|beautiful|best/i.test(message);
   
   // Se non è né domanda né ringraziamento → SILENZIO
   if (!isQuestion && !isThanks) {
@@ -2183,7 +2211,7 @@ if (!answer) {
     return res.json({ ok: true, silent: true, reason: "casual_message" });
   }
 
-  console.log("🤖 Domanda turistica o ringraziamento → Gemini");
+  console.log("🤖 Domanda o ringraziamento → Gemini fallback");
 
   try {
     const geminiReply = await askGemini({
@@ -2225,9 +2253,12 @@ if (
   answer.trim() === ""
 ) {
   console.log("🛑 Final guard: risposta mancante o INTERNAL_AI → SILENT");
-  return res.json({ ok: true, silent: true });
-}
 
+  return res.json({
+    ok: true,
+    silent: true
+  });
+}
 
     // ======================================================
     // ð¤ STEP 6: Send Reply to HostAway
@@ -2619,7 +2650,21 @@ const listingMapId = reservation?.listingMapId || data?.listingMapId || reservat
     console.log("⏰ Arrival time:", arrivalTime);
     console.log("📆 Slot calcolati:", slots);
 
-  
+ if (conversationId) {
+  const checkInDate = reservation?.arrivalDate || reservation?.checkInDate;
+  const guestLang = (reservation?.guestLanguage || "en").slice(0, 2).toLowerCase();
+
+  scheduleSlotMessages({
+    reservationId: effectiveReservationId,
+    conversationId: conversationId,
+    apartment: apartment,
+    slots,
+    sendFn: (params) => sendSlotLiveMessage({ ...params, lang: guestLang }),
+    checkInDate: checkInDate
+  });
+} else {
+  console.log("⚠️ conversationId mancante → slot non inviati");
+}
 
 } catch (err) {
   console.error("❌ ERRORE hostaway-booking-webhook:", err);
@@ -2817,69 +2862,7 @@ app.get("/test-gs", async (req, res) => {
     res.status(500).send("ERRORE: " + err.message);
   }
 });
-app.post("/allegria-info", express.urlencoded({ extended: true }), async (req, res) => {
-  const { email } = req.body;
- // === SALVATAGGIO LEAD SU GOOGLE SHEET (Webhook) ===
-try {
- await axios.post(process.env.GS_WEBHOOK_URL, {
-  source: "Allegria Landing",
-  timestamp: new Date().toISOString(),
-  email: email,
-  ip: req.headers["x-forwarded-for"] || req.socket.remoteAddress || ""
-});
-
-  console.log("Lead salvato:", email);
-} catch (err) {
-  console.error("Errore salvataggio lead:", err.message);
-}
-  res.send("Grazie. Riceverai le informazioni via email tra pochi minuti.");
-
-  setTimeout(async () => {
-    try {
-      const transporter = nodemailer.createTransport({
-        service: "gmail",
-        auth: {
-          user: process.env.EMAIL_USER,
-          pass: process.env.EMAIL_PASS
-        }
-      });
-
-      await transporter.sendMail({
-        from: process.env.EMAIL_USER,
-        to: email,
-        subject: "Informazioni sul servizio Allegria",
-        text: "In allegato trovi il PDF con la spiegazione completa del servizio Allegria.",
-        attachments: [
-          {
-            filename: "Allegria.pdf",
-            path: "public/allegria/Allegria.pdf"
-          }
-        ]
-      });
-
-       console.log("Email inviata a:", email);
-    } catch (err) {
-      console.error("Errore invio email:", err);
-    }
-  }, 600000); // 10 minuti
-});
-
-async function getConversationId(reservationId) {
-  try {
-    const r = await axios.get(
-      `https://api.hostaway.com/v1/conversations?reservationId=${reservationId}&limit=1`,
-      { headers: { Authorization: `Bearer ${process.env.HOSTAWAY_TOKEN}` }, timeout: 8000 }
-    );
-    return r.data?.result?.[0]?.id || null;
-  } catch (e) {
-    console.error("❌ getConversationId error:", e.message);
-    return null;
-  }
-}
-
 const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => {
   console.log("Server running on", PORT);
 });
-
-
