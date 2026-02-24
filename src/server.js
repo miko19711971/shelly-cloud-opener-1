@@ -756,11 +756,6 @@ app.get("/checkin/:apt/", (req, res) => {
   }
 });
 
-  } catch (e) {
-    console.error("â /checkin/:apt/index.html crashed:", e);
-    return res.status(500).send("Internal Server Error");
-  }
-});
 
  function requireCheckinToken(req, res, next) {
   const apt = String(req.params.apt || "").toLowerCase();
