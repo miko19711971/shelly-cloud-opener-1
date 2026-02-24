@@ -20,32 +20,61 @@ app.set("trust proxy", true);
   // ========================================================================
 // ARRIVAL SLOT DECIDER — SAFE, NON ROMPE NULLA
 // ========================================================================
-function decideSlots(arrivalTime) {
-  if (!arrivalTime || !arrivalTime.includes(":")) {
-    return ["11", "18", "2030", "2330"];
+function decideSlots(arrivalTime, checkInDate) {
+  const allSlots = ["11", "18", "2030", "2330"];
+  const slotMinutes = { "11": 660, "18": 1080, "2030": 1230, "2330": 1410 };
+
+  if (!checkInDate) {
+    return allSlots.map(slot => ({ slot, date: checkInDate }));
   }
 
-  const [h, m] = arrivalTime.split(":").map(Number);
-  const minutes = h * 60 + m;
-
-  if (minutes <= 12 * 60) {
-    return ["11", "18", "2030", "2330"];
+  if (!arrivalTime) {
+    arrivalTime = "13:00";
   }
 
-  if (minutes <= 16 * 60) {
-    return ["18", "2030", "2330"];
+  let arrivalMinutes;
+
+  if (arrivalTime.includes(":")) {
+    const parts = arrivalTime.replace(/[apm]/gi, "").trim().split(":");
+    let h = parseInt(parts[0]);
+    const m = parseInt(parts[1]) || 0;
+
+    if (/pm/i.test(arrivalTime) && h !== 12) h += 12;
+    if (/am/i.test(arrivalTime) && h === 12) h = 0;
+
+    arrivalMinutes = h * 60 + m;
+  } else {
+    return allSlots.map(slot => ({ slot, date: checkInDate }));
   }
 
-  if (minutes <= 19 * 60) {
-    return ["2030", "2330"];
+  const result = [];
+  let daysOffset = 0;
+
+  for (const slot of allSlots) {
+    if (slotMinutes[slot] <= arrivalMinutes) {
+      daysOffset = 1;
+    }
+
+    const date = new Date(checkInDate + "T12:00:00");
+    date.setDate(date.getDate() + daysOffset);
+
+    result.push({
+      slot,
+      date: date.toISOString().slice(0, 10)
+    });
   }
 
-  return ["2330"];
+  return result;
 }
 
- function slotToDate(slot, checkInDate) {
-  const hours = slot.length === 2 ? Number(slot) : Number(slot.slice(0, 2));
-  const minutes = slot.length === 2 ? 0 : Number(slot.slice(2));
+function slotToDate(slot, checkInDate) {
+  const hours = slot.length === 2
+    ? Number(slot)
+    : Number(slot.slice(0, 2));
+
+  const minutes = slot.length === 2
+    ? 0
+    : Number(slot.slice(2));
 
   const target = new Date(checkInDate);
   target.setHours(hours, minutes, 0, 0);
@@ -53,49 +82,175 @@ function decideSlots(arrivalTime) {
   return target;
 }
 
-
-
 // ========================================================================
-// SLOT SCHEDULER — PRODUZIONE (UNICO)
+// SLOT SCHEDULER — CRON OGNI MINUTO (DEPLOY-SAFE)
 // ========================================================================
 
-const SLOT_JOBS = new Map();
+const SENT_SLOTS = new Set();
 
- function scheduleSlotMessages({
-  reservationId,
-  conversationId,
-  apartment,
-  slots,
-  sendFn,
-  checkInDate
-}) {
-  if (!reservationId || !conversationId || !Array.isArray(slots) || !checkInDate) return;
+async function runSlotCron() {
+  const now = new Date();
 
-  slots.forEach(slot => {
-    const when = slotToDate(slot, checkInDate);
-    const delay = when.getTime() - Date.now();
-    if (delay <= 0) {
-      console.log("⏭️ Slot già passato, ignorato:", slot, when.toISOString());
-      return;
+  const today = now
+    .toLocaleString("it-IT", {
+      timeZone: "Europe/Rome",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit"
+    })
+    .split("/")
+    .reverse()
+    .join("-");
+
+  const romeHour = now.toLocaleString("it-IT", {
+    timeZone: "Europe/Rome",
+    hour: "numeric",
+    hour12: false
+  });
+
+  const romeMinute = now.toLocaleString("it-IT", {
+    timeZone: "Europe/Rome",
+    minute: "numeric"
+  });
+
+  const h = parseInt(romeHour);
+  const m = parseInt(romeMinute);
+
+  const currentSlot =
+    h === 11 && m === 0 ? "11" :
+    h === 18 && m === 0 ? "18" :
+    h === 20 && m === 30 ? "2030" :
+    h === 23 && m === 30 ? "2330" :
+    null;
+
+  if (!currentSlot) return;
+
+  console.log("🔄 runSlotCron slot:", currentSlot, new Date().toISOString());
+
+  try {
+    const r = await axios.get(
+      `https://api.hostaway.com/v1/reservations?limit=500`,
+      {
+        headers: { Authorization: `Bearer ${process.env.HOSTAWAY_TOKEN}` },
+        timeout: 10000
+      }
+    );
+
+    const reservations = r.data?.result || [];
+
+    const yesterday = new Date(Date.now() - 86400000)
+      .toLocaleString("it-IT", {
+        timeZone: "Europe/Rome",
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit"
+      })
+      .split("/")
+      .reverse()
+      .join("-");
+
+    const dayBeforeYesterday = new Date(Date.now() - 172800000)
+      .toLocaleString("it-IT", {
+        timeZone: "Europe/Rome",
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit"
+      })
+      .split("/")
+      .reverse()
+      .join("-");
+
+    for (const res of reservations) {
+      const checkInDate = res.arrivalDate || res.checkInDate;
+
+      if (
+        checkInDate !== today &&
+        checkInDate !== yesterday &&
+        checkInDate !== dayBeforeYesterday
+      ) continue;
+
+      if (res.status === "cancelled") continue;
+
+      let arrivalTime = res.arrivalTime || null;
+
+      if (!arrivalTime) {
+        try {
+          const resDetail = await axios.get(
+            `https://api.hostaway.com/v1/reservations/${res.id}`,
+            {
+              headers: { Authorization: `Bearer ${process.env.HOSTAWAY_TOKEN}` },
+              timeout: 8000
+            }
+          );
+
+          arrivalTime = resDetail.data?.result?.arrivalTime || null;
+        } catch (e) {
+          console.error("❌ Errore fetch dettaglio:", res.id, e.message);
+        }
+      }
+
+      const slots = decideSlots(arrivalTime, checkInDate);
+
+      if (
+        checkInDate === yesterday ||
+        checkInDate === dayBeforeYesterday
+      ) {
+        slots.forEach(s => {
+          const d = new Date(s.date + "T12:00:00");
+          d.setDate(d.getDate() + 1);
+          s.date = d.toISOString().slice(0, 10);
+        });
+      }
+
+      const matchingSlot = slots.find(
+        s => s.slot === currentSlot && s.date === today
+      );
+
+      if (!matchingSlot) continue;
+
+      const key = `${res.id}-${currentSlot}`;
+      if (SENT_SLOTS.has(key)) continue;
+
+      const conversationId = await getConversationId(res.id);
+      if (!conversationId) continue;
+
+      const guestLang = (res.guestLanguage || "en")
+        .slice(0, 2)
+        .toLowerCase();
+
+      const apartmentMap = {
+        194164: "trastevere",
+        194165: "portico",
+        194166: "arenula",
+        194162: "scala",
+        194163: "leonina"
+      };
+
+      const apartment = apartmentMap[res.listingMapId];
+      if (!apartment) continue;
+
+      try {
+        await sendSlotLiveMessage({
+          conversationId,
+          apartment,
+          slot: currentSlot,
+          lang: guestLang
+        });
+
+        SENT_SLOTS.add(key);
+        console.log("📨 Slot inviato:", apartment, currentSlot);
+      } catch (e) {
+        console.error("❌ Errore slot", currentSlot, e.message);
+      }
     }
 
-    const key = `${reservationId}-${slot}`;
-    if (SLOT_JOBS.has(key)) return;
-
-    const timer = setTimeout(async () => {
-      try {
-        await sendFn({ conversationId, apartment, slot });
-        console.log("📨 Slot inviato:", apartment, slot);
-      } catch (e) {
-        console.error("❌ Errore slot", slot, e.message);
-      }
-      SLOT_JOBS.delete(key);
-    }, delay);
-
-    SLOT_JOBS.set(key, timer);
-    console.log("⏰ Slot schedulato:", apartment, slot, "per", when.toISOString());
-  });
+    console.log("✅ runSlotCron completato:", currentSlot);
+  } catch (e) {
+    console.error("❌ runSlotCron error:", e.message);
+  }
 }
+
+setInterval(runSlotCron, 60000);
 
  // ========================================================================
 // METEO — RAIN DETECTION (ROMA)
