@@ -757,21 +757,36 @@ app.get("/checkin/:apt/", (req, res) => {
 });
 
 
- function requireCheckinToken(req, res, next) {
+  function requireCheckinToken(req, res, next) {
   const apt = String(req.params.apt || "").toLowerCase();
+
+  // 1) token da query (?t=...)
   let t = String(req.query.t || "");
+
+  // 2) fallback: token dal Referer (URL della pagina index.html?t=...)
   if (!t) {
-    const ref = req.headers.referer || "";
-    const m = ref.match(/[?&]t=([^&]+)/);
-    if (m) t = decodeURIComponent(m[1]);
+    const ref = String(req.get("referer") || "");
+    try {
+      const u = new URL(ref);
+      t = String(u.searchParams.get("t") || "");
+    } catch (_) {}
   }
+
+  if (!t) return res.status(410).json({ ok: false, error: "token_missing" });
+
   const parsed = parseToken(t);
   if (!parsed.ok) return res.status(410).json({ ok: false, error: "bad_token" });
+
   const p = parsed.payload || {};
-  if (typeof p.exp !== "number" || Date.now() > p.exp) return res.status(410).json({ ok: false, error: "expired" });
-  const { tgt, day } = p;
-  if (tgt !== `checkin-${apt}`) return res.status(410).json({ ok: false, error: "token_target_mismatch" });
-  if (!isYYYYMMDD(day) || day !== tzToday()) return res.status(410).json({ ok: false, error: "wrong_day" });
+  if (typeof p.exp !== "number" || Date.now() > p.exp)
+    return res.status(410).json({ ok: false, error: "expired" });
+
+  if (p.tgt !== `checkin-${apt}`)
+    return res.status(410).json({ ok: false, error: "token_target_mismatch" });
+
+  if (!p.day || p.day !== tzToday())
+    return res.status(410).json({ ok: false, error: "wrong_day" });
+
   next();
 }
 
