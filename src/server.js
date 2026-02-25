@@ -82,7 +82,7 @@ async function runSlotCron() {
 
   const h = parseInt(now.toLocaleString("it-IT", { timeZone: "Europe/Rome", hour: "numeric", hour12: false }));
   const m = parseInt(now.toLocaleString("it-IT", { timeZone: "Europe/Rome", minute: "numeric" }));
-console.log("⏱️ Ora Roma:", h, m);
+
 
   const currentSlot =
     h === 11 && m === 0 ? "11" :
