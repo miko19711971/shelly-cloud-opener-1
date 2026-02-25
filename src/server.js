@@ -53,7 +53,7 @@ function decideSlots(arrivalTime, checkInDate) {
   });
 }
 
-// ========================================================================
+ // ========================================================================
 // SLOT SCHEDULER — CRON OGNI MINUTO (DEPLOY-SAFE)
 // ========================================================================
 const SENT_SLOTS = new Set();
@@ -83,12 +83,12 @@ async function runSlotCron() {
     );
     const reservations = r.data?.result || [];
 
+    // FIX: solo oggi e ieri, rimosso dayBeforeYesterday
     const yesterday = new Date(Date.now() - 86400000).toLocaleString("it-IT", { timeZone: "Europe/Rome", year: "numeric", month: "2-digit", day: "2-digit" }).split("/").reverse().join("-");
-    const dayBeforeYesterday = new Date(Date.now() - 172800000).toLocaleString("it-IT", { timeZone: "Europe/Rome", year: "numeric", month: "2-digit", day: "2-digit" }).split("/").reverse().join("-");
 
     for (const res of reservations) {
       const checkInDate = res.arrivalDate || res.checkInDate;
-      if (checkInDate !== today && checkInDate !== yesterday && checkInDate !== dayBeforeYesterday) continue;
+      if (checkInDate !== today && checkInDate !== yesterday) continue;
       if (res.status === 'cancelled') continue;
 
       console.log("🔍 res:", res.id, checkInDate, res.arrivalTime, res.listingMapId);
@@ -108,14 +108,8 @@ async function runSlotCron() {
         }
       }
 
+      // FIX: decideSlots assegna già le date corrette, nessun +1 aggiuntivo
       const slots = decideSlots(arrivalTime, checkInDate);
-      if (checkInDate === yesterday || checkInDate === dayBeforeYesterday) {
-        slots.forEach(s => {
-          const d = new Date(s.date + "T12:00:00");
-          d.setDate(d.getDate() + 1);
-          s.date = d.toISOString().slice(0, 10);
-        });
-      }
 
       const matchingSlot = slots.find(s => s.slot === currentSlot && s.date === today);
       if (!matchingSlot) continue;
@@ -150,6 +144,9 @@ async function runSlotCron() {
     console.error("❌ runSlotCron error:", e.message);
   }
 }
+
+setInterval(runSlotCron, 60000);
+
 
 setInterval(runSlotCron, 60000);
 
