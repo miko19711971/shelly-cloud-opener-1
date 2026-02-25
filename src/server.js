@@ -228,47 +228,7 @@ async function isRainingToday() {
   }
 }
 
-   async function sendSlotLiveMessage({ conversationId, apartment, slot, lang = "en" }) {
-  const baseUrlMap = {
-    arenula: "/portico",
-    leonina: "/monti",
-    portico: "/portico",
-    scala: "/scala",
-    trastevere: "/viale-trastevere"
-  };
-
-  const choiceMap = {
-    "11": "passeggiata",
-    "18": "aperitivo",
-    "2030": "passeggiata",
-    "2330": "dormire"
-  };
-
-  const textMap = {
-    it: "Scopri cosa fare ora:",
-    en: "Discover what to do now:",
-    fr: "Découvrez quoi faire maintenant:",
-    es: "Descubre qué hacer ahora:",
-    de: "Entdecke, was du jetzt tun kannst:"
-  };
-
-  const base = baseUrlMap[apartment];
-  const choice = choiceMap[slot];
-  const text = textMap[lang] || textMap.en;
-  
-  if (!base || !choice) return;
-
-  const message =
-    `🕒 ${slot}\n` +
-    `${text}\n` +
-    `${process.env.BASE_URL}${base}?slot=${slot}&choice=${choice}&lang=${lang}`;
-
-
-  await sendHostawayMessage({
-    conversationId,
-    message
-  });
-}
+    
 
 
  // ========================================================================
