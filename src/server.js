@@ -1984,6 +1984,10 @@ const status = payload?.status;
 
 
 const message = payload.body;
+if (message && message.includes("shelly-cloud-opener-1.onrender.com")) {
+  console.log("🛑 Slot message echo → ignored");
+  return res.json({ ok: true, silent: true });
+}
 
 // ✅ IGNORA eco interno (se mai arriva come body)
 if (message?.trim?.() === "__INTERNAL_AI__") {
