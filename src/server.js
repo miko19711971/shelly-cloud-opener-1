@@ -23,7 +23,8 @@ app.set("trust proxy", true);
 // ========================================================================
 function decideSlots(arrivalTime, checkInDate) {
   const allSlots = ["11", "18", "2030", "2330"];
-  const slotMinutes = { "11": 660, "18": 1080, "2030": 1230, "2330": 1410 };
+  const slotMinutes = { "11": 660, "18": 1110, "2030": 1230, "2330": 1410 };
+
 
   if (!checkInDate) {
     return allSlots.map(slot => ({ slot, date: checkInDate }));
@@ -68,7 +69,8 @@ async function runSlotCron() {
   const m = parseInt(romeMinute);
   const currentSlot =
     h === 11 && m === 0 ? "11" :
-    h === 18 && m === 0 ? "18" :
+    h === 18 && m === 30 ? "18" :
+
     h === 20 && m === 30 ? "2030" :
     h === 23 && m === 30 ? "2330" :
     null;
