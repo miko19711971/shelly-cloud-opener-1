@@ -2884,60 +2884,7 @@ app.get("/test-gs", async (req, res) => {
     res.status(500).send("ERRORE: " + err.message);
   }
 });
-app.get("/test-all-slots", async (req, res) => {
-  const toRomeDate = (d) =>
-    d.toLocaleString("it-IT", { timeZone: "Europe/Rome", year: "numeric", month: "2-digit", day: "2-digit" })
-     .split("/").reverse().join("-");
-
-  const today = toRomeDate(new Date());
-  const yesterday = toRomeDate(new Date(Date.now() - 86400000));
-  const dayBeforeYesterday = toRomeDate(new Date(Date.now() - 172800000));
-
-  const r = await axios.get(
-    `https://api.hostaway.com/v1/reservations?limit=500`,
-    { headers: { Authorization: `Bearer ${process.env.HOSTAWAY_TOKEN}` }, timeout: 10000 }
-  );
-
-  const reservations = r.data?.result || [];
-  const allSlots = ["11", "18", "2030", "2330"];
-  const report = {};
-
-  for (const res of reservations) {
-    const checkInDate = res.arrivalDate || res.checkInDate;
-    if (checkInDate !== today && checkInDate !== yesterday && checkInDate !== dayBeforeYesterday) continue;
-    if (res.status === "cancelled") continue;
-
-    let arrivalTime = res.arrivalTime || null;
-    const slots = decideSlots(arrivalTime, checkInDate);
-    if (checkInDate === yesterday || checkInDate === dayBeforeYesterday) {
-      slots.forEach(s => {
-        const d = new Date(s.date + "T12:00:00");
-        d.setDate(d.getDate() + 1);
-        s.date = d.toISOString().slice(0, 10);
-      });
-    }
-
-    const apartmentMap = {
-      194164: "trastevere", 194165: "portico",
-      194166: "arenula", 194162: "scala", 194163: "leonina"
-    };
-    const apartment = apartmentMap[res.listingMapId] || "unknown";
-
-    report[res.id] = {
-      apartment,
-      checkInDate,
-      arrivalTime: arrivalTime || "null→default 13:00",
-      slots: {}
-    };
-
-    for (const slot of allSlots) {
-      const match = slots.find(s => s.slot === slot && s.date === today);
-      report[res.id].slots[slot] = match ? "✅ invierebbe" : "❌ non oggi";
-    }
-  }
-
-  res.json({ today, yesterday, dayBeforeYesterday, report });
-});
+ 
 
 const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => {
