@@ -18,7 +18,7 @@ app.use(bodyParser.json({ limit: "100kb" }));
 app.disable("x-powered-by");
 app.set("trust proxy", true);
   
-  // ========================================================================
+ // ========================================================================
 // ARRIVAL SLOT DECIDER
 // ========================================================================
 function decideSlots(arrivalTime, checkInDate) {
@@ -44,19 +44,13 @@ function decideSlots(arrivalTime, checkInDate) {
     arrivalMinutes = 780;
   }
 
-  const result = [];
-  let daysOffset = 0;
-
-  for (const slot of allSlots) {
-    if (slotMinutes[slot] <= arrivalMinutes) {
-      daysOffset = 1;
-    }
+  // FIX: ogni slot calcola il proprio offset indipendentemente
+  return allSlots.map(slot => {
+    const offset = slotMinutes[slot] <= arrivalMinutes ? 1 : 0;
     const date = new Date(checkInDate + "T12:00:00");
-    date.setDate(date.getDate() + daysOffset);
-    result.push({ slot, date: date.toISOString().slice(0, 10) });
-  }
-
-  return result;
+    date.setDate(date.getDate() + offset);
+    return { slot, date: date.toISOString().slice(0, 10) };
+  });
 }
 
 // ========================================================================
