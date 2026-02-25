@@ -19,32 +19,30 @@ app.disable("x-powered-by");
 app.set("trust proxy", true);
   
   // ========================================================================
-// ARRIVAL SLOT DECIDER — SAFE, NON ROMPE NULLA
+// ARRIVAL SLOT DECIDER
 // ========================================================================
- function decideSlots(arrivalTime, checkInDate) {
+function decideSlots(arrivalTime, checkInDate) {
   const allSlots = ["11", "18", "2030", "2330"];
   const slotMinutes = { "11": 660, "18": 1080, "2030": 1230, "2330": 1410 };
 
-   if (!checkInDate) {
-  return allSlots.map(slot => ({ slot, date: checkInDate }));
-}
-if (!arrivalTime) {
-  arrivalTime = "13:00";
-}
+  if (!checkInDate) {
+    return allSlots.map(slot => ({ slot, date: checkInDate }));
+  }
+  if (!arrivalTime) {
+    arrivalTime = "13:00";
+  }
 
-
-let arrivalMinutes;
-if (arrivalTime.includes(":")) {
-  const parts = arrivalTime.replace(/[apm]/gi, "").trim().split(":");
-  let h = parseInt(parts[0]);
-  const m = parseInt(parts[1]) || 0;
-  if (/pm/i.test(arrivalTime) && h !== 12) h += 12;
-  if (/am/i.test(arrivalTime) && h === 12) h = 0;
-  arrivalMinutes = h * 60 + m;
-} else {
-  return allSlots.map(slot => ({ slot, date: checkInDate }));
-}
-
+  let arrivalMinutes;
+  if (arrivalTime.includes(":")) {
+    const parts = arrivalTime.replace(/[apm]/gi, "").trim().split(":");
+    let h = parseInt(parts[0]);
+    const m = parseInt(parts[1]) || 0;
+    if (/pm/i.test(arrivalTime) && h !== 12) h += 12;
+    if (/am/i.test(arrivalTime) && h === 12) h = 0;
+    arrivalMinutes = h * 60 + m;
+  } else {
+    arrivalMinutes = 780;
+  }
 
   const result = [];
   let daysOffset = 0;
@@ -61,39 +59,10 @@ if (arrivalTime.includes(":")) {
   return result;
 }
 
-
- function slotToDate(slot, checkInDate) {
-  const hours = slot.length === 2 ? Number(slot) : Number(slot.slice(0, 2));
-  const minutes = slot.length === 2 ? 0 : Number(slot.slice(2));
-
-  const target = new Date(checkInDate);
-  target.setHours(hours, minutes, 0, 0);
-
-  return target;
-}
-
-
-
- // ========================================================================
+// ========================================================================
 // SLOT SCHEDULER — CRON OGNI MINUTO (DEPLOY-SAFE)
 // ========================================================================
-async function getConversationId(reservationId) {
-  try {
-    const r = await axios.get(
-      `https://api.hostaway.com/v1/conversations?reservationId=${reservationId}`,
-      {
-        headers: { Authorization: `Bearer ${process.env.HOSTAWAY_TOKEN}` },
-        timeout: 10000
-      }
-    );
-    return r.data?.result?.[0]?.id || null;
-  } catch (e) {
-    console.error("❌ getConversationId error:", e.message);
-    return null;
-  }
-}
-
- const SENT_SLOTS = new Set();
+const SENT_SLOTS = new Set();
 
 async function runSlotCron() {
   const now = new Date();
@@ -103,7 +72,7 @@ async function runSlotCron() {
   const romeMinute = now.toLocaleString("it-IT", { timeZone: "Europe/Rome", minute: "numeric" });
   const h = parseInt(romeHour);
   const m = parseInt(romeMinute);
-  const currentSlot = 
+  const currentSlot =
     h === 11 && m === 0 ? "11" :
     h === 18 && m === 0 ? "18" :
     h === 20 && m === 30 ? "2030" :
@@ -119,13 +88,13 @@ async function runSlotCron() {
       { headers: { Authorization: `Bearer ${process.env.HOSTAWAY_TOKEN}` }, timeout: 10000 }
     );
     const reservations = r.data?.result || [];
+
     const yesterday = new Date(Date.now() - 86400000).toLocaleString("it-IT", { timeZone: "Europe/Rome", year: "numeric", month: "2-digit", day: "2-digit" }).split("/").reverse().join("-");
-const dayBeforeYesterday = new Date(Date.now() - 172800000).toLocaleString("it-IT", { timeZone: "Europe/Rome", year: "numeric", month: "2-digit", day: "2-digit" }).split("/").reverse().join("-");
+    const dayBeforeYesterday = new Date(Date.now() - 172800000).toLocaleString("it-IT", { timeZone: "Europe/Rome", year: "numeric", month: "2-digit", day: "2-digit" }).split("/").reverse().join("-");
 
     for (const res of reservations) {
       const checkInDate = res.arrivalDate || res.checkInDate;
       if (checkInDate !== today && checkInDate !== yesterday && checkInDate !== dayBeforeYesterday) continue;
-
       if (res.status === 'cancelled') continue;
 
       console.log("🔍 res:", res.id, checkInDate, res.arrivalTime, res.listingMapId);
@@ -146,13 +115,13 @@ const dayBeforeYesterday = new Date(Date.now() - 172800000).toLocaleString("it-I
       }
 
       const slots = decideSlots(arrivalTime, checkInDate);
-if (checkInDate === yesterday || checkInDate === dayBeforeYesterday) {
-  slots.forEach(s => {
-    const d = new Date(s.date + "T12:00:00");
-    d.setDate(d.getDate() + 1);
-    s.date = d.toISOString().slice(0, 10);
-  });
-}
+      if (checkInDate === yesterday || checkInDate === dayBeforeYesterday) {
+        slots.forEach(s => {
+          const d = new Date(s.date + "T12:00:00");
+          d.setDate(d.getDate() + 1);
+          s.date = d.toISOString().slice(0, 10);
+        });
+      }
 
       const matchingSlot = slots.find(s => s.slot === currentSlot && s.date === today);
       if (!matchingSlot) continue;
@@ -189,6 +158,50 @@ if (checkInDate === yesterday || checkInDate === dayBeforeYesterday) {
 }
 
 setInterval(runSlotCron, 60000);
+
+// ========================================================================
+// SEND SLOT LIVE MESSAGE
+// ========================================================================
+async function sendSlotLiveMessage({ conversationId, apartment, slot, lang = "en" }) {
+  const baseUrlMap = {
+    arenula: "/portico",
+    leonina: "/monti",
+    portico: "/portico",
+    scala: "/scala",
+    trastevere: "/viale-trastevere"
+  };
+
+  const choiceMap = {
+    "11": "passeggiata",
+    "18": "aperitivo",
+    "2030": "passeggiata",
+    "2330": "dormire"
+  };
+
+  const textMap = {
+    it: "Scopri cosa fare ora:",
+    en: "Discover what to do now:",
+    fr: "Découvrez quoi faire maintenant:",
+    es: "Descubre qué hacer ahora:",
+    de: "Entdecke, was du jetzt tun kannst:"
+  };
+
+  const base = baseUrlMap[apartment];
+  const choice = choiceMap[slot];
+  const text = textMap[lang] || textMap.en;
+
+  if (!base || !choice) return;
+
+  const message =
+    `🕒 ${slot}\n` +
+    `${text}\n` +
+    `${process.env.BASE_URL}${base}?slot=${slot}&choice=${choice}&lang=${lang}`;
+
+  await sendHostawayMessage({
+    conversationId,
+    message
+  });
+}
 
 
 
