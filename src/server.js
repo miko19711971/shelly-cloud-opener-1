@@ -1918,7 +1918,7 @@ app.post('/allegria-info', async (req, res) => {
 <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Allegria</title>
 <style>body{font-family:Georgia,serif;background:#f6f3ee;color:#2f2f2f;display:flex;align-items:center;justify-content:center;height:100vh;margin:0;}
-.box{text-align:center;padding:40px;}.btn{display:inline-block;margin-top:24px;padding:14px 28px;background:#8b6a4f;color:#fff;text-decoration:none;border-radius:8px;font-size:16px;}</style>
+.box{text-align:center;padding:40px;} .btn{display:inline-block;margin-top:24px;padding:14px 28px;background:#8b6a4f;color:#fff;text-decoration:none;border-radius:8px;font-size:16px;}.back{display:inline-block;padding:14px 28px;background:#8b6a4f;color:#fff;text-decoration:none;border-radius:8px;font-size:16px;}</style>
 </head>
 <body>
 <div class="box">
