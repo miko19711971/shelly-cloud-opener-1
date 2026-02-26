@@ -1902,14 +1902,14 @@ app.post('/allegria-info', async (req, res) => {
      const htmlBody = `
   <p>Grazie per l'interesse ad Allegria.</p>
   <p>Allegria offre presenza e compagnia a domicilio per anziani autosufficienti.</p>
-  <p><a href="https://www.vitasemper.com/allegria/Allegria.pdf">📄 Scarica la nostra presentazione</a></p>
+  <p><a href="https://www.vitasemper.com/allegria/Allegria.">📄 Scarica la nostra presentazione</a></p>
   <p>Per candidarti come operatore o per richiedere il servizio, rispondi a questa email.</p>
   <p>Un saluto,<br>Vita Semper S.r.l.</p>
 `;
 
     await axios.post(
       `${MAILER_URL}?secret=${encodeURIComponent(MAIL_SHARED_SECRET)}`,
-      { to: email, subject: 'Informazioni Allegria', htmlBody },
+      { to: email, subject: 'Informazioni allegria/info', htmlBody },
       { headers: { 'Content-Type': 'application/json' }, timeout: 10000 }
     );
 
