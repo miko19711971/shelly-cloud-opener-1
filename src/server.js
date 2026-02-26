@@ -1902,7 +1902,7 @@ app.post('/allegria-info', async (req, res) => {
      const htmlBody = `
   <p>Grazie per l'interesse ad Allegria.</p>
   <p>Allegria offre presenza e compagnia a domicilio per anziani autosufficienti.</p>
-  <p><a href="https://www.vitasemper.com/allegria/info"> Scopri il servizio Allegria</a></p>
+  <p><a href="https://www.vitasemper.com/allegria/info.html">📄 Scopri il servizio Allegria</a></p>
   <p>Per candidarti come operatore o per richiedere il servizio, rispondi a questa email.</p>
   <p>Un saluto,<br>Vita Semper S.r.l.</p>
 `;
