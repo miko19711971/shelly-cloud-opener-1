@@ -1893,7 +1893,30 @@ app.post("/hostaway-outbound", requireAdmin, async (req, res) => {
     return res.status(500).json({ ok: false, error: "server_error" });
   }
 });
+app.post('/allegria-info', async (req, res) => {
+  try {
+    const email = req.body?.email;
+    if (!email) return res.status(400).send('Email mancante');
 
+    const htmlBody = `
+      <p>Grazie per l'interesse ad Allegria.</p>
+      <p>Allegria offre presenza e compagnia a domicilio per anziani autosufficienti.</p>
+      <p>Per candidarti come operatore o per richiedere il servizio, rispondi a questa email.</p>
+      <p>Un saluto,<br>Vita Semper S.r.l.</p>
+    `;
+
+    await axios.post(
+      `${MAILER_URL}?secret=${encodeURIComponent(MAIL_SHARED_SECRET)}`,
+      { to: email, subject: 'Informazioni Allegria', htmlBody },
+      { headers: { 'Content-Type': 'application/json' }, timeout: 10000 }
+    );
+
+    res.send('ok');
+  } catch (err) {
+    console.error('Errore allegria-info:', err.message);
+    res.status(500).send('Errore');
+  }
+});
 app.get("/test-mail", requireAdmin, (req, res) => {
   res.type("html").send(`<!doctype html><meta charset="utf-8">
 <div style="font-family: system-ui; max-width: 680px; margin: 24px auto;">
