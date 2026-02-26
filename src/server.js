@@ -2131,7 +2131,7 @@ console.log("🎯 Matcher result:", match || "NONE");
 const detectedLang = detectLanguage(message);
 console.log("🌍 Lingua rilevata:", detectedLang);
 
- if (!match || !match.intent) {
+if (!match || !match.intent) {
   console.log("🤖 No intent → Gemini fallback");
 
   const geminiReply = await askGemini({
@@ -2165,7 +2165,6 @@ console.log("🌍 Lingua rilevata:", detectedLang);
 }
 
 const intent = match.intent;
-
     // ======================================================
     // ð  STEP 4: listingId â apartment
     // ======================================================
