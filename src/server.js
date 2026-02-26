@@ -15,6 +15,7 @@ import { askGemini } from "./gemini.js";
 const app = express();
 
 app.use(bodyParser.json({ limit: "100kb" }));
+app.use(express.urlencoded({ extended: true }));
 app.disable("x-powered-by");
 app.set("trust proxy", true);
   
