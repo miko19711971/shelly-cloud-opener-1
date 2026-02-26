@@ -145,7 +145,7 @@ async function runSlotCron() {
       const conversationId = await getConversationId(res.id);
       if (!conversationId) continue;
 
-      const guestLang = (res.guestLanguage || "en").slice(0, 2).toLowerCase();
+      const guestLang = (res.guestLanguage || res.guestLocale || res.localeForMessaging || "en").slice(0, 2).toLowerCase();
       const apartmentMap = {
         194164: "trastevere",
         194165: "portico",
