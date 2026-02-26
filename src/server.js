@@ -1899,12 +1899,13 @@ app.post('/allegria-info', async (req, res) => {
     const email = req.body?.email;
     if (!email) return res.status(400).send('Email mancante');
 
-    const htmlBody = `
-      <p>Grazie per l'interesse ad Allegria.</p>
-      <p>Allegria offre presenza e compagnia a domicilio per anziani autosufficienti.</p>
-      <p>Per candidarti come operatore o per richiedere il servizio, rispondi a questa email.</p>
-      <p>Un saluto,<br>Vita Semper S.r.l.</p>
-    `;
+     const htmlBody = `
+  <p>Grazie per l'interesse ad Allegria.</p>
+  <p>Allegria offre presenza e compagnia a domicilio per anziani autosufficienti.</p>
+  <p><a href="https://www.vitasemper.com/allegria/Allegria.pdf">📄 Scarica la nostra presentazione</a></p>
+  <p>Per candidarti come operatore o per richiedere il servizio, rispondi a questa email.</p>
+  <p>Un saluto,<br>Vita Semper S.r.l.</p>
+`;
 
     await axios.post(
       `${MAILER_URL}?secret=${encodeURIComponent(MAIL_SHARED_SECRET)}`,
