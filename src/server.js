@@ -1925,8 +1925,7 @@ app.post('/allegria-info', async (req, res) => {
   <h2>Grazie!</h2>
   <p>Ti abbiamo inviato le informazioni su Allegria.</p>
   <div style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:16px; margin-top:40px;">
-  <a href="/allegria/" class="back">← Torna alla pagina principale</a>
-  <a href="https://docs.google.com/forms/d/e/1FAIpQLSdRqFXG6GdHqFw08_p_BEO-EBGJRH2JGieZKCD1PeXgN8B1KQ/viewform?usp=header" class="back" target="_blank">Candidati come operatore →</a>
+   <a href="/allegria/" class="btn">Torna alla pagina</a>
 </div>
 </div>
 </body>
