@@ -97,7 +97,8 @@ async function runSlotCron() {
   try {
     const r = await axios.get(
       `https://api.hostaway.com/v1/reservations?limit=500`,
-      { headers: { Authorization: `Bearer ${process.env.HOSTAWAY_TOKEN}` }, timeout: 10000 }
+      { headers: { Authorization: `Bearer ${process.env.HOSTAWAY_TOKEN}` }, timeout: 30000 }
+
     );
 
     const reservations = r.data?.result || [];
