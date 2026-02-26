@@ -2130,41 +2130,9 @@ console.log("🎯 Matcher result:", match || "NONE");
 
 const detectedLang = detectLanguage(message);
 console.log("🌍 Lingua rilevata:", detectedLang);
+const intent = match?.intent || null;
 
-if (!match || !match.intent) {
-  console.log("🤖 No intent → Gemini fallback");
-
-  const geminiReply = await askGemini({
-    message,
-    apartment,
-    lang: detectedLang || "en"
-  });
-
-  if (geminiReply) {
-    await axios.post(
-      `https://api.hostaway.com/v1/conversations/${conversationId}/messages`,
-      {
-        body: geminiReply,
-        sendToGuest: true
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${HOSTAWAY_TOKEN}`,
-          "Content-Type": "application/json"
-        },
-        timeout: 10000
-      }
-    );
-
-    console.log("🤖 Gemini reply sent");
-    return res.json({ ok: true, repliedBy: "gemini" });
-  }
-
-  console.log("🤖 Gemini had no answer → silent");
-  return res.json({ ok: true, silent: true });
-}
-
-const intent = match.intent;
+ 
     // ======================================================
     // ð  STEP 4: listingId â apartment
     // ======================================================
