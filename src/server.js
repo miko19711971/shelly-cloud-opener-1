@@ -2696,7 +2696,9 @@ const listingMapId = reservation?.listingMapId || data?.listingMapId || reservat
       }
     }
 
-    const slots = decideSlots(arrivalTime);
+    const checkInDate = reservation?.arrivalDate || reservation?.checkInDate;
+const slots = decideSlots(arrivalTime, checkInDate);
+
 
     console.log("⏰ Arrival time:", arrivalTime);
     console.log("📆 Slot calcolati:", slots);
