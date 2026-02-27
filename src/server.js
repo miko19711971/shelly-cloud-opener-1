@@ -1905,7 +1905,16 @@ app.post('/allegria-info', async (req, res) => {
   try {
     const email = req.body?.email;
     if (!email) return res.status(400).send('Email mancante');
-
+// 👉 Scrive su Google Sheet (Webhook Lead)
+await axios.post(
+  "https://script.google.com/macros/s/AKfycbzsuNiIXjdnWMuRocDkpqCU4c-4sUlwVMplebibQGaPFMIVF0sE41QKjsldlMVthH-CbA/exec",
+  {
+    email: email,
+    source: "Landing Allegria",
+    timestamp: new Date().toISOString()
+  },
+  { headers: { "Content-Type": "application/json" } }
+);
      const htmlBody = `
   <p>Grazie per l'interesse ad Allegria.</p>
   <p>Allegria offre presenza e compagnia a domicilio per anziani autosufficienti.</p>
