@@ -2584,7 +2584,8 @@ app.post("/paypal-webhook", async (req, res) => {
   try {
      const data = req.body;
 // ✅ GESTISCI ENTRAMBE LE STRUTTURE
-const reservation = data?.reservation || data?.result || data;
+const reservation = data?.reservation || data?.result || data?.data || data;
+
 
 console.log("🏠 HOSTAWAY BOOKING:", JSON.stringify(data, null, 2));
 
