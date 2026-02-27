@@ -2645,7 +2645,9 @@ const listingMapId = reservation?.listingMapId || data?.listingMapId || reservat
     const EVENTI_VALIDI = [
       "reservation_created",
       "reservation_new",
-      "booking_event"
+      "booking_event",
+"reservation.created"
+
     ];
 
     const eventoCorrente = data.event || "booking_event";
