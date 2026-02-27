@@ -145,7 +145,14 @@ async function runSlotCron() {
       const conversationId = await getConversationId(res.id);
       if (!conversationId) continue;
 
-      const guestLang = (res.guestLanguage || res.guestLocale || res.localeForMessaging || "en").slice(0, 2).toLowerCase();
+     const langRaw = (res.guestLanguage || res.guestLocale || "en").toLowerCase();
+const langMap = {
+  "spanish": "es", "castilian": "es", "french": "fr", "italian": "it",
+  "german": "de", "english": "en", "deutsch": "de", "italiano": "it",
+  "français": "fr", "español": "es"
+};
+const guestLang = langMap[langRaw.split(",")[0].trim()] || langRaw.slice(0, 2) || "en";
+
       const apartmentMap = {
         194164: "trastevere",
         194165: "portico",
