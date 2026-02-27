@@ -2574,6 +2574,9 @@ app.post("/paypal-webhook", async (req, res) => {
     return res.status(500).json({ ok: false, error: err.message });
   }
 });
+app.post('/arrival-time', (req, res) => {
+  res.sendStatus(200);
+});
 
   // ========================================================================
 // HOSTAWAY BOOKING WEBHOOK — FIXED & DEPLOY SAFE
