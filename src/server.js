@@ -2902,19 +2902,7 @@ app.get("/test-gs", async (req, res) => {
   }
 });
  
-app.get("/test-lang", async (req, res) => {
-  const r = await axios.get(
-    `https://api.hostaway.com/v1/reservations?limit=10`,
-    { headers: { Authorization: `Bearer ${process.env.HOSTAWAY_TOKEN}` }, timeout: 10000 }
-  );
-  const results = (r.data?.result || []).map(res => ({
-    id: res.id,
-    guestLanguage: res.guestLanguage,
-    guestLocale: res.guestLocale,
-    localeForMessaging: res.localeForMessaging
-  }));
-  res.json(results);
-});
+ 
 
 const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => {
