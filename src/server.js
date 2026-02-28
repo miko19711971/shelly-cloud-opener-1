@@ -2159,7 +2159,7 @@ const guestLang = (reservation?.guestLanguage || "en").slice(0, 2).toLowerCase()
   } catch (e) {
     console.error("❌ Errore fetch reservation (guest message):", e.message);
   }
-}
+
     // ======================================================
     // ð Resolve Listing ID from reservation (HostAway)
     // ======================================================
