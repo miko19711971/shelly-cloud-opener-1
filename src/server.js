@@ -58,7 +58,7 @@ function decideSlots(arrivalTime, checkInDate) {
 // SLOT SCHEDULER — CRON OGNI MINUTO
 // ========================================================================
 
-const SENT_SLOTS = new Set();
+
 
 async function getConversationId(reservationId) {
   try {
@@ -181,7 +181,7 @@ const guestLang = langMap[langRaw.split(",")[0].trim()] || langRaw.slice(0, 2) |
 
       try {
         await sendSlotLiveMessage({ conversationId, apartment, slot: currentSlot, lang: guestLang });
-        SENT_SLOTS.add(key);
+        
         console.log("📨 Slot inviato:", apartment, currentSlot);
       } catch (e) {
         console.error("❌ Errore slot", currentSlot, e.message);
