@@ -4,8 +4,7 @@ import crypto from "crypto";
 import cors from "cors";
 import path from "path";
 import { fileURLToPath } from "url";
-import fs from "fs";
-import fsPromises from "fs/promises";
+import fs from "fs/promises";
 import bodyParser from "body-parser";
 import { matchIntent } from "./matcher.js";
 import { detectLanguage } from "./language.js";
@@ -14,27 +13,7 @@ import { askGemini } from "./gemini.js";
  const SAFE_FALLBACK_REPLY =
   "Thank you for your message. We’ve received your request and we’ll get back to you as soon as possible.";
 const app = express();
-// ========================================================================
-// SLOT ANTI-DUPLICATION — FILE JSON (SIMPLE VERSION)
-// ========================================================================
 
-const SLOT_FILE = "./sent-slots.json";
-
-let SENT_SLOTS = new Set();
-
-if (fs.existsSync(SLOT_FILE)) {
-  try {
-    const data = JSON.parse(fs.readFileSync(SLOT_FILE, "utf8"));
-    SENT_SLOTS = new Set(data);
-    console.log("✅ Slot caricati da file:", SENT_SLOTS.size);
-  } catch (e) {
-    console.error("❌ Errore lettura sent-slots.json");
-  }
-}
-
-function persistSlots() {
-  fs.writeFileSync(SLOT_FILE, JSON.stringify([...SENT_SLOTS]));
-}
 app.use(bodyParser.json({ limit: "100kb" }));
 app.use(express.urlencoded({ extended: true }));
 app.disable("x-powered-by");
@@ -79,6 +58,7 @@ function decideSlots(arrivalTime, checkInDate) {
 // SLOT SCHEDULER — CRON OGNI MINUTO
 // ========================================================================
 
+const SENT_SLOTS = new Set();
 
 async function getConversationId(reservationId) {
   try {
@@ -183,26 +163,15 @@ const guestLang = langMap[langRaw.split(",")[0].trim()] || langRaw.slice(0, 2) |
       const apartment = apartmentMap[res.listingMapId];
       if (!apartment) continue;
 
- try {
-  await sendSlotLiveMessage({ 
-    conversationId, 
-    apartment, 
-    slot: currentSlot, 
-    lang: guestLang 
-  });
-
-  SENT_SLOTS.add(key);
-  persistSlots();   // 🔒 salva su file per evitare duplicazioni dopo restart
-
-  console.log("📨 Slot inviato:", apartment, currentSlot);
-
-} catch (e) {
-  console.error("❌ Errore slot", currentSlot, e.message);
-}
+      try {
+        await sendSlotLiveMessage({ conversationId, apartment, slot: currentSlot, lang: guestLang });
+        SENT_SLOTS.add(key);
+        console.log("📨 Slot inviato:", apartment, currentSlot);
+      } catch (e) {
+        console.error("❌ Errore slot", currentSlot, e.message);
+      }
     }
-
     console.log("✅ runSlotCron completato:", currentSlot);
-
   } catch (e) {
     console.error("❌ runSlotCron error:", e.message);
   }
@@ -1936,16 +1905,7 @@ app.post('/allegria-info', async (req, res) => {
   try {
     const email = req.body?.email;
     if (!email) return res.status(400).send('Email mancante');
-// 👉 Scrive su Google Sheet (Webhook Lead)
-await axios.post(
-  "https://script.google.com/macros/s/AKfycbzsuNiIXjdnWMuRocDkpqCU4c-4sUlwVMplebibQGaPFMIVF0sE41QKjsldlMVthH-CbA/exec",
-  {
-    email: email,
-    source: "Landing Allegria",
-    timestamp: new Date().toISOString()
-  },
-  { headers: { "Content-Type": "application/json" } }
-);
+
      const htmlBody = `
   <p>Grazie per l'interesse ad Allegria.</p>
   <p>Allegria offre presenza e compagnia a domicilio per anziani autosufficienti.</p>
@@ -2142,24 +2102,24 @@ if (effectiveReservationId && conversationId) {
       reservation?.customFields?.arrival_time ||
       null;
 
-     
+    if (arrivalTime) {
+      const slots = decideSlots(arrivalTime);
 
       console.log("🧩 ARRIVAL TIME (via guest message):", arrivalTime);
-      
+      console.log("🧩 SLOT CALCOLATI:", slots);
 
    const checkInDate = reservation?.arrivalDate || reservation?.checkInDate;
 const guestLang = (reservation?.guestLanguage || "en").slice(0, 2).toLowerCase();
 
  
 
- if (!arrivalTime) {
-  console.log("⚠️ Arrival time non presente nella reservation");
-}
-    
+    } else {
+      console.log("⚠️ Arrival time non presente nella reservation");
+    }
   } catch (e) {
     console.error("❌ Errore fetch reservation (guest message):", e.message);
   }
-} 
+}
     // ======================================================
     // ð Resolve Listing ID from reservation (HostAway)
     // ======================================================
@@ -2614,9 +2574,6 @@ app.post("/paypal-webhook", async (req, res) => {
     return res.status(500).json({ ok: false, error: err.message });
   }
 });
-app.post('/arrival-time', (req, res) => {
-  res.sendStatus(200);
-});
 
   // ========================================================================
 // HOSTAWAY BOOKING WEBHOOK — FIXED & DEPLOY SAFE
@@ -2688,9 +2645,7 @@ const listingMapId = reservation?.listingMapId || data?.listingMapId || reservat
     const EVENTI_VALIDI = [
       "reservation_created",
       "reservation_new",
-      "booking_event",
-"reservation.created"
-
+      "booking_event"
     ];
 
     const eventoCorrente = data.event || "booking_event";
@@ -2953,4 +2908,4 @@ app.get("/test-gs", async (req, res) => {
 const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => {
   console.log("Server running on", PORT);
-});
+}); questo è il secondo analizza le attendi istruzioni
