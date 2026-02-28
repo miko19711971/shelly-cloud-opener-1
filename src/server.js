@@ -2142,11 +2142,10 @@ if (effectiveReservationId && conversationId) {
       reservation?.customFields?.arrival_time ||
       null;
 
-    if (arrivalTime) {
-      const slots = decideSlots(arrivalTime);
+     
 
       console.log("🧩 ARRIVAL TIME (via guest message):", arrivalTime);
-      console.log("🧩 SLOT CALCOLATI:", slots);
+      
 
    const checkInDate = reservation?.arrivalDate || reservation?.checkInDate;
 const guestLang = (reservation?.guestLanguage || "en").slice(0, 2).toLowerCase();
