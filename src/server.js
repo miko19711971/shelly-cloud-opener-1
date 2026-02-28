@@ -137,22 +137,7 @@ async function runSlotCron() {
        
 
       const matchingSlot = slots.find(s => s.slot === currentSlot && s.date === today);
-      const now = new Date();
-const today = now.toISOString().slice(0, 10);
-const hour = now.getHours();
-const minute = now.getMinutes();
-
-if (
-  today !== matchingSlot.date ||
-  (
-    (currentSlot === "11"   && !(hour === 11 && minute === 0)) ||
-    (currentSlot === "18"   && !(hour === 18 && minute === 0)) ||
-    (currentSlot === "2030" && !(hour === 20 && minute === 30)) ||
-    (currentSlot === "2330" && !(hour === 23 && minute === 30))
-  )
-) {
-  continue;
-}
+     
      if (!matchingSlot) continue;
 
       const key = `${res.id}-${currentSlot}`;
