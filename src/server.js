@@ -2152,8 +2152,9 @@ const guestLang = (reservation?.guestLanguage || "en").slice(0, 2).toLowerCase()
 
  
 
-    } else {
-      console.log("⚠️ Arrival time non presente nella reservation");
+ if (!arrivalTime) {
+  console.log("⚠️ Arrival time non presente nella reservation");
+}
     }
   } catch (e) {
     console.error("❌ Errore fetch reservation (guest message):", e.message);
