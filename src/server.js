@@ -79,7 +79,6 @@ function decideSlots(arrivalTime, checkInDate) {
 // SLOT SCHEDULER — CRON OGNI MINUTO
 // ========================================================================
 
-const SENT_SLOTS = new Set();
 
 async function getConversationId(reservationId) {
   try {
