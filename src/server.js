@@ -183,15 +183,26 @@ const guestLang = langMap[langRaw.split(",")[0].trim()] || langRaw.slice(0, 2) |
       const apartment = apartmentMap[res.listingMapId];
       if (!apartment) continue;
 
-      try {
-        await sendSlotLiveMessage({ conversationId, apartment, slot: currentSlot, lang: guestLang });
-        SENT_SLOTS.add(key);
-        console.log("📨 Slot inviato:", apartment, currentSlot);
-      } catch (e) {
-        console.error("❌ Errore slot", currentSlot, e.message);
-      }
+ try {
+  await sendSlotLiveMessage({ 
+    conversationId, 
+    apartment, 
+    slot: currentSlot, 
+    lang: guestLang 
+  });
+
+  SENT_SLOTS.add(key);
+  persistSlots();   // 🔒 salva su file per evitare duplicazioni dopo restart
+
+  console.log("📨 Slot inviato:", apartment, currentSlot);
+
+} catch (e) {
+  console.error("❌ Errore slot", currentSlot, e.message);
+}
     }
+
     console.log("✅ runSlotCron completato:", currentSlot);
+
   } catch (e) {
     console.error("❌ runSlotCron error:", e.message);
   }
