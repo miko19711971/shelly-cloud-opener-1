@@ -4,7 +4,8 @@ import crypto from "crypto";
 import cors from "cors";
 import path from "path";
 import { fileURLToPath } from "url";
-import fs from "fs/promises";
+import fs from "fs";
+import fsPromises from "fs/promises";
 import bodyParser from "body-parser";
 import { matchIntent } from "./matcher.js";
 import { detectLanguage } from "./language.js";
@@ -13,7 +14,27 @@ import { askGemini } from "./gemini.js";
  const SAFE_FALLBACK_REPLY =
   "Thank you for your message. We’ve received your request and we’ll get back to you as soon as possible.";
 const app = express();
+// ========================================================================
+// SLOT ANTI-DUPLICATION — FILE JSON (SIMPLE VERSION)
+// ========================================================================
 
+const SLOT_FILE = "./sent-slots.json";
+
+let SENT_SLOTS = new Set();
+
+if (fs.existsSync(SLOT_FILE)) {
+  try {
+    const data = JSON.parse(fs.readFileSync(SLOT_FILE, "utf8"));
+    SENT_SLOTS = new Set(data);
+    console.log("✅ Slot caricati da file:", SENT_SLOTS.size);
+  } catch (e) {
+    console.error("❌ Errore lettura sent-slots.json");
+  }
+}
+
+function persistSlots() {
+  fs.writeFileSync(SLOT_FILE, JSON.stringify([...SENT_SLOTS]));
+}
 app.use(bodyParser.json({ limit: "100kb" }));
 app.use(express.urlencoded({ extended: true }));
 app.disable("x-powered-by");
