@@ -185,7 +185,7 @@ setInterval(runSlotCron, 60000);
 // ========================================================================
 // SEND SLOT LIVE MESSAGE
 // ========================================================================
-async function sendSlotLiveMessage({ conversationId, apartment, slot, lang = "en" }) {
+ async function sendSlotLiveMessage({ conversationId, apartment, slot, lang = "en" }) {
   const baseUrlMap = {
     arenula: "/portico",
     leonina: "/monti",
@@ -201,6 +201,13 @@ async function sendSlotLiveMessage({ conversationId, apartment, slot, lang = "en
     "2330": "dormire"
   };
 
+  const rainSafeChoiceMap = {
+    "11": "caffe",
+    "18": "aperitivo",
+    "2030": "cena",
+    "2330": "dormire"
+  };
+
   const textMap = {
     it: "Scopri cosa fare ora:",
     en: "Discover what to do now:",
@@ -210,10 +217,22 @@ async function sendSlotLiveMessage({ conversationId, apartment, slot, lang = "en
   };
 
   const base = baseUrlMap[apartment];
-  const choice = choiceMap[slot];
-  const text = textMap[lang] || textMap.en;
+  if (!base) return;
 
-  if (!base || !choice) return;
+  let raining = false;
+  try {
+    raining = await isRainingToday();
+  } catch (e) {
+    console.error("☔ Rain check error:", e.message);
+  }
+
+  const choice = raining
+    ? rainSafeChoiceMap[slot]
+    : choiceMap[slot];
+
+  if (!choice) return;
+
+  const text = textMap[lang] || textMap.en;
 
   const message =
     `🕒 ${slot}\n` +
@@ -225,7 +244,6 @@ async function sendSlotLiveMessage({ conversationId, apartment, slot, lang = "en
     message
   });
 }
-
 
 
  // ========================================================================
