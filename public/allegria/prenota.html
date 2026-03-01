@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="it">
 <head>
 <meta charset="UTF-8">
@@ -7,11 +7,12 @@
 
 <style>
 body {
-  font-family: Arial, sans-serif;
+  font-family: "Georgia", serif;
   background: #f5f2ed;
   margin: 0;
-  padding: 40px;
+  padding: 60px 20px;
   text-align: center;
+  color: #4b3f36;
 }
 
 .container {
@@ -20,32 +21,51 @@ body {
 }
 
 h1 {
-  color: #4b3f36;
+  font-size: 32px;
+  margin-bottom: 10px;
+}
+
+.subtitle {
+  font-size: 18px;
+  color: #6d5f54;
+  margin-bottom: 40px;
 }
 
 .slot {
   background: #ffffff;
-  border: 1px solid #d6cfc7;
-  padding: 15px;
-  margin: 10px;
+  border: 1px solid #e2d9cf;
+  padding: 18px;
+  margin: 15px 0;
   cursor: pointer;
-  border-radius: 8px;
-  transition: 0.3s;
+  border-radius: 12px;
+  transition: all 0.3s ease;
   font-size: 18px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
 }
 
 .slot:hover {
   background: #e8dfd5;
+  transform: translateY(-2px);
 }
 
+.footer {
+  margin-top: 60px;
+  font-size: 14px;
+  color: #8c7d70;
+}
 </style>
 </head>
 <body>
 
 <div class="container">
   <h1>Prenota la tua Call Conoscitiva</h1>
-  <p>Seleziona uno slot disponibile.</p>
+  <div class="subtitle">
+    Scegli uno degli orari disponibili per conoscerci.
+  </div>
   <div id="slots"></div>
+  <div class="footer">
+    Vita Semper S.r.l.
+  </div>
 </div>
 
 <script>
@@ -59,20 +79,28 @@ if (!email) {
 
 const endpoint = "https://script.google.com/macros/s/AKfycby1gUrXAG-r1NVLXi3BdPSyWl3HEacXMna-mAVzwJ7oCY2YOFJGPvugwdyJ-e3N5Xjsbw/exec";
 
-fetch(endpoint + "?email=" + email)
+fetch(endpoint + "?email=" + encodeURIComponent(email))
   .then(res => res.json())
   .then(data => {
 
     const container = document.getElementById("slots");
 
+    if (!data.slots || data.slots.length === 0) {
+      container.innerHTML = "<p>Nessuno slot disponibile al momento.</p>";
+      return;
+    }
+
     data.slots.forEach(slot => {
 
       const div = document.createElement("div");
       div.className = "slot";
-      div.innerText = slot.date + " - " + slot.time;
+      div.innerText = slot.date + " – " + slot.time;
 
       div.onclick = () => {
-        book(slot.iso);
+        window.location.href =
+          endpoint +
+          "?email=" + encodeURIComponent(email) +
+          "&date=" + encodeURIComponent(slot.iso);
       };
 
       container.appendChild(div);
@@ -80,24 +108,6 @@ fetch(endpoint + "?email=" + email)
     });
 
   });
-
-function book(dateISO) {
-
-  fetch(endpoint, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      email: email,
-      date: dateISO
-    })
-  })
-  .then(res => res.text())
-  .then(() => {
-    alert("Call prenotata con successo. Riceverai email di conferma.");
-    window.location.href = "/allegria/";
-  });
-
-}
 
 </script>
 
