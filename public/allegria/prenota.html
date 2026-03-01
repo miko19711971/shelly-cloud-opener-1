@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prenota Call – Allegria</title>
+
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background: #f5f2ed;
+  margin: 0;
+  padding: 40px;
+  text-align: center;
+}
+
+.container {
+  max-width: 700px;
+  margin: auto;
+}
+
+h1 {
+  color: #4b3f36;
+}
+
+.slot {
+  background: #ffffff;
+  border: 1px solid #d6cfc7;
+  padding: 15px;
+  margin: 10px;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: 0.3s;
+  font-size: 18px;
+}
+
+.slot:hover {
+  background: #e8dfd5;
+}
+
+</style>
+</head>
+<body>
+
+<div class="container">
+  <h1>Prenota la tua Call Conoscitiva</h1>
+  <p>Seleziona uno slot disponibile.</p>
+  <div id="slots"></div>
+</div>
+
+<script>
+
+const params = new URLSearchParams(window.location.search);
+const email = params.get("email");
+
+if (!email) {
+  document.body.innerHTML = "<h2>Email mancante</h2>";
+}
+
+const endpoint = "https://script.google.com/macros/s/AKfycby1gUrXAG-r1NVLXi3BdPSyWl3HEacXMna-mAVzwJ7oCY2YOFJGPvugwdyJ-e3N5Xjsbw/exec";
+
+fetch(endpoint + "?email=" + email)
+  .then(res => res.json())
+  .then(data => {
+
+    const container = document.getElementById("slots");
+
+    data.slots.forEach(slot => {
+
+      const div = document.createElement("div");
+      div.className = "slot";
+      div.innerText = slot.date + " - " + slot.time;
+
+      div.onclick = () => {
+        book(slot.iso);
+      };
+
+      container.appendChild(div);
+
+    });
+
+  });
+
+function book(dateISO) {
+
+  fetch(endpoint, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      email: email,
+      date: dateISO
+    })
+  })
+  .then(res => res.text())
+  .then(() => {
+    alert("Call prenotata con successo. Riceverai email di conferma.");
+    window.location.href = "/allegria/";
+  });
+
+}
+
+</script>
+
+</body>
+</html>
