@@ -2714,6 +2714,9 @@ const slots = decideSlots(arrivalTime, checkInDate);
   console.error("❌ ERRORE hostaway-booking-webhook:", err);
 }
  });
+app.post("/arrival-time", async (req, res) => {
+  res.status(200).json({ ok: true });
+});
 
 // ========================================================================
 // ENDPOINT TEST MANUALE
