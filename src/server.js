@@ -153,6 +153,7 @@ const langMap = {
   "français": "fr", "español": "es"
 };
 const guestLang = langMap[langRaw.split(",")[0].trim()] || langRaw.slice(0, 2) || "en";
+console.log("🌍 Lingua rilevata:", res.id, langRaw, "→", guestLang);
 
       const apartmentMap = {
         194164: "trastevere",
