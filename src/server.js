@@ -781,7 +781,7 @@ app.post("/checkin/:apt/open/door", requireCheckinToken, async (req, res) => {
   return res.json({ ok: true, opened: result });
 });
 
-app.use("/checkin", express.static(path.join(PUBLIC_DIR, "checkin"), { fallthrough: false }));
+ app.use("/checkin", express.static(path.join(PUBLIC_DIR, "checkin"), { fallthrough: true }));
  // ========================================================================
 // MONTI LIVE — SLOT GIORNALIERI MULTILINGUA
 // Lingue: it, en, fr, es, de
