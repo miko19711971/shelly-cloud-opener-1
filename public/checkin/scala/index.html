@@ -8,190 +8,29 @@ Scala
 <title id="title">Check-in Guide — Via della Scala 17, unit A/1</title>
 <link rel="icon" href="building-door.jpg">
 <link rel="preload" as="image" href="building-door.jpg?v=10">
-<style>
-  :root{
-    --brand:#4A3F35;
-    --brand-2:#6F523C;
-    --ink:#2B241F;
-    --muted:#7A6E63;
-    --bg:#F5F1E8;
-    --card:#FFF9F0;
-    --line:rgba(74,63,53,.12);
-    --shadow:0 18px 40px rgba(43,36,31,.10);
-    --radius:18px;
-  }
-
+style>
+  :root { --brand:#2b2118; --ink:#1f2937; --muted:#6b7280; --bg:#f7f7f7; --card:#ffffff; --line:#e5e7eb; }
   *{box-sizing:border-box}
-
-  body{
-    margin:0;
-    font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
-    background:
-      radial-gradient(900px 400px at 20% -10%, rgba(111,82,60,.15), transparent 60%),
-      var(--bg);
-    color:var(--ink);
-  }
-
-  .wrap{
-    max-width:880px;
-    margin:0 auto;
-    padding:22px 18px 40px;
-  }
-
-  header{
-    position:sticky;
-    top:0;
-    background:rgba(255,249,240,.85);
-    backdrop-filter:blur(8px);
-    border-bottom:1px solid var(--line);
-    padding:18px 18px;
-    z-index:5;
-  }
-
-  h1{
-    font-size:22px;
-    margin:0;
-    font-weight:600;
-    letter-spacing:.3px;
-  }
-
-  .addr{
-    font-size:14px;
-    color:var(--muted);
-    margin-top:4px;
-  }
-
-  .lang{
-    font-size:13px;
-    margin-top:8px;
-  }
-
-  .lang a{
-    color:var(--brand);
-    text-decoration:none;
-    opacity:.7;
-    font-weight:500;
-  }
-
-  .lang a.active{
-    opacity:1;
-    text-decoration:underline;
-  }
-
-  .card{
-    background:var(--card);
-    border:1px solid var(--line);
-    border-radius:var(--radius);
-    padding:22px;
-    margin:20px 0;
-    box-shadow:var(--shadow);
-    transition:all .25s ease;
-  }
-
-  .card:hover{
-    transform:translateY(-3px);
-  }
-
-  .step{
-    display:flex;
-    gap:16px;
-    align-items:flex-start;
-  }
-
-  .num{
-    flex:0 0 42px;
-    height:42px;
-    border-radius:50%;
-    background:linear-gradient(135deg,var(--brand),var(--brand-2));
-    color:#fff;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-weight:700;
-    font-size:16px;
-    box-shadow:0 6px 18px rgba(43,36,31,.25);
-  }
-
-  h2{
-    margin:6px 0 8px 0;
-    font-size:19px;
-    font-weight:600;
-  }
-
-  p{
-    margin:8px 0;
-    line-height:1.55;
-    font-size:15px;
-  }
-
-  figure{margin:14px 0}
-
-  figcaption{
-    font-size:12px;
-    color:var(--muted);
-    margin-top:8px;
-    text-align:center;
-  }
-
-  .imgframe{
-    width:95%;
-    margin:0 auto;
-    border-radius:14px;
-    overflow:hidden;
-    border:1px solid var(--line);
-    background:#fff;
-    box-shadow:0 10px 24px rgba(43,36,31,.08);
-  }
-
-  .imgframe object,
-  .imgframe img{
-    width:100%;
-    height:auto;
-    display:block;
-  }
-
-  .cta{
-    display:inline-block;
-    margin-top:14px;
-    padding:14px 18px;
-    border-radius:14px;
-    background:linear-gradient(135deg,var(--brand),var(--brand-2));
-    color:#fff;
-    text-decoration:none;
-    font-weight:600;
-    letter-spacing:.4px;
-    transition:all .2s ease;
-    box-shadow:0 8px 22px rgba(43,36,31,.25);
-  }
-
-  .cta:hover{
-    transform:translateY(-2px);
-    box-shadow:0 14px 30px rgba(43,36,31,.30);
-  }
-
-  .cta:active{
-    transform:scale(.98);
-  }
-
-  .status{
-    font-size:13px;
-    margin-left:10px;
-    color:var(--muted);
-    font-weight:500;
-  }
-
-  footer{
-    color:var(--muted);
-    text-align:center;
-    font-size:12px;
-    margin:30px 0 10px;
-    opacity:.8;
-  }
-
-  @media (max-width:640px){
-    .step{flex-direction:column}
-    .num{margin-bottom:8px}
-  }
+  body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--ink)}
+  .wrap{max-width:860px;margin:0 auto;padding:16px}
+  header{position:sticky;top:0;background:var(--card);border-bottom:1px solid var(--line);padding:12px 14px;z-index:5}
+  h1{font-size:20px;margin:0}
+  .addr{font-size:14px;color:var(--muted)}
+  .lang{font-size:14px;margin-top:6px}
+  .lang a{color:var(--ink);text-decoration:none}
+  .lang a.active{text-decoration:underline}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin:14px 0}
+  .step{display:flex;gap:12px;align-items:flex-start}
+  .num{flex:0 0 36px;height:36px;border-radius:50%;background:var(--brand);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700}
+  h2{margin:6px 0 8px 0;font-size:18px}
+  p{margin:6px 0;line-height:1.45}
+  figure{margin:10px 0}
+  figcaption{font-size:12px;color:var(--muted);margin-top:6px;text-align:center}
+  .imgframe{width:90%;margin:0 auto;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#f9fafb}
+  .imgframe object,.imgframe img{width:100%;height:auto;display:block}
+  .cta{display:inline-block;margin-top:10px;padding:10px 12px;border-radius:10px;background:var(--brand);color:#fff;text-decoration:none;cursor:pointer}
+  .status{font-size:13px;color:#6b7280;margin-left:8px}
+  footer{color:var(--muted);text-align:center;font-size:12px;margin:18px 0}
 </style>
 </head>
 <body>
