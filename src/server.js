@@ -1669,10 +1669,9 @@ const VIALE_TRASTEVERE_RESPONSES = {
 app.get("/viale-trastevere", (req, res) => {
   const { slot, choice } = req.query;
 
-  const langHeader = req.headers["accept-language"] || "en";
-  const lang = langHeader.slice(0, 2).toLowerCase();
-  const supported = ["it", "en", "fr", "es", "de"];
-  const l = supported.includes(lang) ? lang : "en";
+   const supported = ["it","en","fr","es","de"];
+const l = supported.includes(req.query.lang) ? req.query.lang : "en";
+
 
   const data =
     VIALE_TRASTEVERE_RESPONSES?.[l]?.[slot]?.[choice];
@@ -1732,10 +1731,9 @@ p {
 app.get("/scala", (req, res) => {
   const { slot, choice } = req.query;
 
-  const langHeader = req.headers["accept-language"] || "en";
-  const lang = langHeader.slice(0, 2).toLowerCase();
-  const supported = ["it", "en", "fr", "es", "de"];
-  const l = supported.includes(lang) ? lang : "en";
+   const supported = ["it","en","fr","es","de"];
+const l = supported.includes(req.query.lang) ? req.query.lang : "en";
+
 
   const data =
     SCALA_RESPONSES?.[l]?.[slot]?.[choice];
@@ -1796,10 +1794,8 @@ app.get("/portico", (req, res) => {
   const { slot, choice } = req.query;
 
   // lingua automatica dal browser
-  const langHeader = req.headers["accept-language"] || "en";
-  const lang = langHeader.slice(0, 2).toLowerCase();
-  const supported = ["it", "en", "fr", "es", "de"];
-  const l = supported.includes(lang) ? lang : "en";
+   const supported = ["it","en","fr","es","de"];
+const l = supported.includes(req.query.lang) ? req.query.lang : "en";
 
   const data =
     PORTICO_RESPONSES?.[l]?.[slot]?.[choice];
@@ -1836,10 +1832,9 @@ p{line-height:1.6;white-space:pre-line}
 });
  app.get("/monti", (req, res) => {
   const { slot, choice } = req.query;
-  const langHeader = req.headers["accept-language"] || "en";
-  const lang = langHeader.slice(0, 2).toLowerCase();
   const supported = ["it","en","fr","es","de"];
-  const l = supported.includes(lang) ? lang : "en";
+const l = supported.includes(req.query.lang) ? req.query.lang : "en";
+
 
   const data = MONTI_RESPONSES?.[l]?.[slot]?.[choice];
 
