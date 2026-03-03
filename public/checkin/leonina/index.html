@@ -255,25 +255,102 @@ async function openWith(statusId, which){
 }
 
 /* ---------- 5 lingue ---------- */
-const T={
-  en:{title:"Check-in Guide — Via Leonina 71",addr:"Address: Via Leonina 71, Rome • Entrance keypad: 16 or 7171 + 🔑",
-      s1_t:"Open the Building Door",s1_p:"Press the button below to open the building door.",
-      s2_t:"Walk to the end of the corridor",s2_p:"Go straight until the end of the corridor.",
-      s3_t:"Take the elevator to the 4th floor",s3_p:"Get the elevator and arrive at the fourth floor.",
-      s4_t:"This is your apartment door",s4_p:"Press the button only once when you are sure it’s the correct door.",
-      help_h:"Need help?",help_p:'Call or WhatsApp: <a class="cta" href="tel:+393355245756">+39 335 524 5756</a>',
-      btn_building:"➜ Open Building Door",btn_apartment:"➜ Open Apartment Door",
-      footer:"niceflatinrome.com • Quick visual guide for arrivals at Via Leonina 71",langName:"English"},
-  it:{title:"Guida Check-in — Via Leonina 71",addr:"Indirizzo: Via Leonina 71, Roma • Tastierino ingresso: 16 oppure 7171 + 🔑",
-      s1_t:"Apri il portone del palazzo",s1_p:"Premi il pulsante qui sotto per aprire il portone.",
-      s2_t:"Vai in fondo al corridoio",s2_p:"Prosegui dritto fino alla fine del corridoio.",
-      s3_t:"Prendi l’ascensore al 4° piano",s3_p:"Prendi l’ascensore e sali al quarto piano.",
-      s4_t:"Questa è la porta del tuo appartamento",s4_p:"Premi il pulsante una sola volta quando sei sicuro che sia la porta corretta.",
-      help_h:"Serve aiuto?",help_p:'Chiama o WhatsApp: <a class="cta" href="tel:+393355245756">+39 335 524 5756</a>',
-      btn_building:"➜ Apri il portone",btn_apartment:"➜ Apri porta appartamento",
-      footer:"niceflatinrome.com • Guida rapida per gli arrivi a Via Leonina 71",langName:"Italiano"}
-};
+ const T={
+  en:{
+    title:"Check-in Guide — Via Leonina 71",
+    addr:"Address: Via Leonina 71, Rome • Entrance keypad: 16 or 7171 + 🔑",
+    s1_t:"Open the Building Door",
+    s1_p:"Press the button below to open the building door.",
+    s2_t:"Walk to the end of the corridor",
+    s2_p:"Go straight until the end of the corridor.",
+    s3_t:"Take the elevator to the 4th floor",
+    s3_p:"Get the elevator and arrive at the fourth floor.",
+    s4_t:"This is your apartment door",
+    s4_p:"Press the button only once when you are sure it’s the correct door.",
+    help_h:"Need help?",
+    help_p:'Call or WhatsApp: <a class="cta" href="tel:+393355245756">+39 335 524 5756</a>',
+    btn_building:"➜ Open Building Door",
+    btn_apartment:"➜ Open Apartment Door",
+    footer:"niceflatinrome.com • Quick visual guide for arrivals at Via Leonina 71",
+    langName:"English"
+  },
 
+  it:{
+    title:"Guida Check-in — Via Leonina 71",
+    addr:"Indirizzo: Via Leonina 71, Roma • Tastierino ingresso: 16 oppure 7171 + 🔑",
+    s1_t:"Apri il portone del palazzo",
+    s1_p:"Premi il pulsante qui sotto per aprire il portone.",
+    s2_t:"Vai in fondo al corridoio",
+    s2_p:"Prosegui dritto fino alla fine del corridoio.",
+    s3_t:"Prendi l’ascensore al 4° piano",
+    s3_p:"Prendi l’ascensore e sali al quarto piano.",
+    s4_t:"Questa è la porta del tuo appartamento",
+    s4_p:"Premi il pulsante una sola volta quando sei sicuro che sia la porta corretta.",
+    help_h:"Serve aiuto?",
+    help_p:'Chiama o WhatsApp: <a class="cta" href="tel:+393355245756">+39 335 524 5756</a>',
+    btn_building:"➜ Apri il portone",
+    btn_apartment:"➜ Apri porta appartamento",
+    footer:"niceflatinrome.com • Guida rapida per gli arrivi a Via Leonina 71",
+    langName:"Italiano"
+  },
+
+  fr:{
+    title:"Guide d’enregistrement — Via Leonina 71",
+    addr:"Adresse : Via Leonina 71, Rome • Clavier d’entrée : 16 ou 7171 + 🔑",
+    s1_t:"Ouvrir la porte de l’immeuble",
+    s1_p:"Appuyez sur le bouton ci-dessous pour ouvrir la porte.",
+    s2_t:"Allez au bout du couloir",
+    s2_p:"Allez tout droit jusqu’au bout du couloir.",
+    s3_t:"Prenez l’ascenseur jusqu’au 4e étage",
+    s3_p:"Prenez l’ascenseur et montez au quatrième étage.",
+    s4_t:"Voici la porte de votre appartement",
+    s4_p:"Appuyez une seule fois lorsque vous êtes sûr que c’est la bonne porte.",
+    help_h:"Besoin d’aide ?",
+    help_p:'Appeler ou WhatsApp : <a class="cta" href="tel:+393355245756">+39 335 524 5756</a>',
+    btn_building:"➜ Ouvrir la porte de l’immeuble",
+    btn_apartment:"➜ Ouvrir la porte de l’appartement",
+    footer:"niceflatinrome.com • Guide visuel rapide pour les arrivées à Via Leonina 71",
+    langName:"Français"
+  },
+
+  de:{
+    title:"Check-in-Leitfaden — Via Leonina 71",
+    addr:"Adresse: Via Leonina 71, Rom • Eingangstastatur: 16 oder 7171 + 🔑",
+    s1_t:"Haustür öffnen",
+    s1_p:"Drücken Sie unten auf die Taste, um die Haustür zu öffnen.",
+    s2_t:"Bis zum Ende des Flurs gehen",
+    s2_p:"Gehen Sie geradeaus bis zum Ende des Flurs.",
+    s3_t:"Mit dem Aufzug in den 4. Stock",
+    s3_p:"Nehmen Sie den Aufzug in den vierten Stock.",
+    s4_t:"Das ist Ihre Wohnungstür",
+    s4_p:"Drücken Sie die Taste nur einmal, wenn Sie sicher sind, dass es die richtige Tür ist.",
+    help_h:"Brauchen Sie Hilfe?",
+    help_p:'Anrufen oder WhatsApp: <a class="cta" href="tel:+393355245756">+39 335 524 5756</a>',
+    btn_building:"➜ Haustür öffnen",
+    btn_apartment:"➜ Wohnungstür öffnen",
+    footer:"niceflatinrome.com • Kurzanleitung für die Anreise in die Via Leonina 71",
+    langName:"Deutsch"
+  },
+
+  es:{
+    title:"Guía de check-in — Via Leonina 71",
+    addr:"Dirección: Via Leonina 71, Roma • Teclado de entrada: 16 o 7171 + 🔑",
+    s1_t:"Abrir la puerta del edificio",
+    s1_p:"Pulsa el botón de abajo para abrir la puerta del edificio.",
+    s2_t:"Ve hasta el final del pasillo",
+    s2_p:"Sigue recto hasta el final del pasillo.",
+    s3_t:"Toma el ascensor hasta el 4º piso",
+    s3_p:"Toma el ascensor y sube al cuarto piso.",
+    s4_t:"Esta es la puerta de tu apartamento",
+    s4_p:"Pulsa el botón solo una vez cuando estés seguro de que es la puerta correcta.",
+    help_h:"¿Necesitas ayuda?",
+    help_p:'Llama o WhatsApp: <a class="cta" href="tel:+393355245756">+39 335 524 5756</a>',
+    btn_building:"➜ Abrir puerta del edificio",
+    btn_apartment:"➜ Abrir puerta del apartamento",
+    footer:"niceflatinrome.com • Guía visual rápida para llegadas a Via Leonina 71",
+    langName:"Español"
+  }
+};
 (function(){
   const params=new URLSearchParams(location.search);
   const L=(params.get("lang")||"en").toLowerCase();
