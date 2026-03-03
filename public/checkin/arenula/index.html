@@ -1,311 +1,501 @@
 <!doctype html>
+
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title id="doc_title">Check-in Guide — Via Arenula 16</title>
+<title id="title">Check-in Guide — Via Arenula 16</title>
 <link rel="icon" href="building-door.jpg">
-
 <style>
 :root{
-  --bg:#F6F3EE;
-  --card:#FFFFFF;
-  --ink:#24201D;
-  --muted:#7A7067;
-  --brand:#3E2F26;
-  --accent:#8A6A4A;
-  --line:#E7E2DA;
-  --radius:16px;
-  --shadow:0 18px 40px rgba(36,32,29,.08);
+  --brand:#4b2e1e;
+  --brand-light:#6a4630;
+  --bg:#f2e9dd;
+  --card:#f8f3ea;
+  --ink:#2c1e16;
+  --muted:#8c7766;
+  --line:#e2d6c8;
+  --note-bg:#f3e6d8;
+  --note-border:#d6bfa8;
 }
 
 *{box-sizing:border-box}
 
 body{
-  margin:0;
-  font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
-  color:var(--ink);
-  background:
-    radial-gradient(900px 500px at 15% -20%, rgba(138,106,74,.15), transparent 60%),
-    radial-gradient(800px 400px at 95% 0%, rgba(62,47,38,.10), transparent 55%),
-    var(--bg);
+margin:0;
+font-family:“Georgia”,serif;
+background:var(–bg);
+color:var(–ink);
+letter-spacing:.2px;
 }
 
-.wrap{max-width:920px;margin:0 auto;padding:18px 16px 44px}
-
-header.wrap{
-  position:sticky;top:0;z-index:10;
-  border:1px solid var(--line);
-  border-radius:20px;
-  padding:16px;
-  background:rgba(246,243,238,.85);
-  backdrop-filter:blur(8px);
-  margin-bottom:16px;
+.wrap{
+max-width:900px;
+margin:0 auto;
+padding:40px 30px 60px;
 }
 
-h1{margin:0;font-size:18px;font-weight:650}
-.addr{margin-top:4px;font-size:13px;color:var(--muted)}
+header{
+text-align:center;
+border-bottom:1px solid var(–line);
+padding-bottom:25px;
+margin-bottom:45px;
+}
+
+h1{
+font-size:30px;
+font-weight:600;
+margin:0;
+}
+
+.addr{
+margin-top:10px;
+font-size:16px;
+color:var(–muted);
+}
 
 .lang{
-  margin-top:10px;
-  font-size:12px;
-  display:flex;
-  gap:8px;
-  flex-wrap:wrap;
+margin-top:15px;
+font-size:15px;
 }
+
 .lang a{
-  color:var(--brand);
-  text-decoration:none;
-  padding:6px 10px;
-  border-radius:999px;
-  font-weight:600;
-  opacity:.7;
+text-decoration:none;
+color:var(–muted);
+margin:0 6px;
+font-weight:600;
 }
+
 .lang a.active{
-  opacity:1;
-  background:rgba(138,106,74,.10);
-  border:1px solid rgba(62,47,38,.15);
+color:var(–brand);
 }
 
 .card{
-  background:var(--card);
-  border:1px solid var(--line);
-  border-radius:var(--radius);
-  box-shadow:var(--shadow);
-  margin-bottom:16px;
+background:var(–card);
+border:1px solid var(–line);
+border-radius:18px;
+padding:30px;
+margin-bottom:40px;
+box-shadow:0 15px 35px rgba(60,40,25,0.08);
 }
 
-.cardHead{
-  display:flex;
-  gap:14px;
-  padding:18px 18px 0;
+.step{
+display:flex;
+gap:22px;
+align-items:flex-start;
 }
-
-.cardBody{padding:0 18px 18px}
 
 .num{
-  flex:0 0 38px;
-  height:38px;
-  border-radius:50%;
-  background:linear-gradient(135deg,var(--brand),#60483B);
-  color:#fff;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-weight:800;
+flex:0 0 48px;
+height:48px;
+border-radius:50%;
+background:var(–brand);
+color:#fff;
+font-weight:bold;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:20px;
 }
 
-h2{margin:2px 0 6px;font-size:17px;font-weight:650}
-p{margin:6px 0;line-height:1.5;font-size:14.5px}
-
-figure{margin:14px 0}
-img{width:100%;border-radius:14px;border:1px solid var(--line);display:block}
-figcaption{font-size:12px;color:var(--muted);margin-top:6px;text-align:center}
-
-.ctaRow{
-  display:flex;
-  align-items:center;
-  gap:14px;
-  flex-wrap:wrap;
-  margin-top:12px;
+h2{
+font-size:22px;
+margin:0 0 12px 0;
 }
 
-.cta{
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  padding:12px 16px;
-  border-radius:12px;
-  background:linear-gradient(135deg,var(--brand),#60483B);
-  color:#fff;
-  text-decoration:none;
-  font-weight:750;
-  box-shadow:0 10px 22px rgba(36,32,29,.18);
+p{
+font-size:16px;
+line-height:1.6;
+margin:8px 0;
 }
-.cta:hover{background:linear-gradient(135deg,#2f221b,#533f33)}
-.cta:active{transform:translateY(1px)}
 
-.status{
-  font-size:12.5px;
-  color:var(--muted);
-  font-weight:650;
+img{
+width:100%;
+border-radius:14px;
+box-shadow:0 10px 25px rgba(0,0,0,0.08);
+border:none;
+margin-top:18px;
+}
+
+figcaption{
+text-align:center;
+font-size:14px;
+color:var(–muted);
+margin-top:8px;
+font-style:italic;
 }
 
 .note{
-  display:inline-block;
-  margin-top:12px;
-  padding:10px 12px;
-  border-radius:12px;
-  border:1px dashed rgba(62,47,38,.25);
-  background:rgba(138,106,74,.08);
-  color:var(--brand);
-  font-weight:700;
-  font-size:12px;
+background:var(–note-bg);
+border:1px solid var(–note-border);
+padding:14px;
+border-radius:12px;
+margin-top:16px;
+font-size:15px;
 }
+
+.cta{
+display:inline-block;
+margin-top:20px;
+padding:14px 28px;
+border-radius:40px;
+background:linear-gradient(180deg,var(–brand-light),var(–brand));
+color:#fff;
+text-decoration:none;
+font-weight:600;
+font-size:15px;
+transition:all .25s ease;
+}
+
+.cta:hover{
+transform:translateY(-2px);
+box-shadow:0 8px 20px rgba(0,0,0,0.15);
+}
+
+.status{
+font-size:14px;
+margin-top:10px;
+min-height:1.2em;
+}
+
+.status.ok{color:#2f6b3c;}
+.status.err{color:#8b1e1e;}
 
 footer{
-  text-align:center;
-  font-size:12px;
-  color:var(--muted);
-  margin-top:18px;
-}
-@media(max-width:640px){
-  .cardHead{flex-direction:column}
+text-align:center;
+font-size:14px;
+margin-top:60px;
+color:var(–muted);
+border-top:1px solid var(–line);
+padding-top:25px;
 }
 </style>
-</head>
-<body>
 
+</head>
+
+<body>
 <header class="wrap">
-  <h1 id="title">Check-in Guide — Via Arenula 16</h1>
-  <div class="addr" id="addr">Address: Via Arenula 16, Rome • Intercom: C8 • Elevator: private, do not use</div>
-  <div class="lang" id="langbar"></div>
+  <h1 id="h1">Check-in Guide — Via Arenula 16</h1>
+  <div class="addr" id="addr">Address: Via Arenula 16, Rome • Intercom: C8 • Do not use the elevator</div>
+  <div class="lang" id="langbar">Language: <!-- filled by JS --></div>
 </header>
 
 <main class="wrap">
 
-<section class="card">
-  <div class="cardHead">
-    <div class="num">1</div>
-    <div>
-      <h2 id="s1_t">Arriving at the Building</h2>
-      <p id="s1_p">When you reach Via Arenula 16, look for the large wooden entrance door with the number 16 engraved on the stone frame.</p>
-    </div>
-  </div>
-  <div class="cardBody">
-    <figure>
-      <img src="building-facade.jpg" alt="Building façade — Via Arenula 16">
-      <figcaption id="s1_cap">Façade and main entrance — Via Arenula 16.</figcaption>
-    </figure>
-  </div>
-</section>
+  <!-- 1. Arriving at the building -->
 
-<section class="card">
-  <div class="cardHead">
-    <div class="num">2</div>
-    <div>
-      <h2 id="s2_t">Using the Intercom</h2>
-      <p id="s2_p">Press C8 on the intercom panel.</p>
+  <section class="card">
+    <div class="step">
+      <div class="num">1</div>
+      <div>
+        <h2 id="s1_t">Arriving at the Building</h2>
+        <p id="s1_p">When you reach Via Arenula 16, look for the large wooden entrance door with the number 16 engraved on the stone frame.</p>
+        <figure>
+          <img src="building-facade.jpg" alt="Building façade — Via Arenula 16"
+               onerror="imgFallback(this,['building-door.jpg'])">
+          <figcaption id="s1_cap">Façade and main entrance — Via Arenula 16.</figcaption>
+        </figure>
+      </div>
     </div>
-  </div>
-  <div class="cardBody">
-    <figure>
-      <img src="intercom.jpg" alt="Intercom panel — press C8">
-      <figcaption id="s2_cap">Intercom panel — press C8.</figcaption>
-    </figure>
-  </div>
-</section>
+  </section>
 
-<section class="card">
-  <div class="cardHead">
-    <div class="num">3</div>
-    <div>
-      <h2 id="s3_t">Entering the Main Door</h2>
-      <p id="s3_p">Push the door once it is unlocked.</p>
-    </div>
-  </div>
-  <div class="cardBody">
-    <div class="ctaRow">
-      <a class="cta" id="btn_building" href="#" onclick="openWith('status','arenula-building');return false;">
-        Open Building Door
-      </a>
-      <span class="status" id="status"></span>
-    </div>
-  </div>
-</section>
+  <!-- 2. Intercom -->
 
-<section class="card">
-  <div class="cardHead">
-    <div class="num">4</div>
-    <div>
-      <h2 id="s4_t">Inside the Building</h2>
-      <p id="s4_p">Walk straight across the corridor into the courtyard, then take the stairs on your right after the elevator.</p>
-      <div class="note" id="s4_note">The elevator is strictly private — We are not allowed to use it.</div>
+  <section class="card">
+    <div class="step">
+      <div class="num">2</div>
+      <div>
+        <h2 id="s2_t">Using the Intercom</h2>
+        <p id="s2_p">Press C8 on the intercom panel.</p>
+        <figure>
+          <img src="intercom.jpg" alt="Intercom panel — press C8"
+               onerror="imgFallback(this,['intercom-panel.jpg'])">
+          <figcaption id="s2_cap">Intercom panel — press C8.</figcaption>
+        </figure>
+      </div>
     </div>
-  </div>
-  <div class="cardBody">
-    <figure>
-      <img src="hallway.jpg" alt="Inside corridor and courtyard access">
-      <figcaption id="s4_cap">Corridor to the courtyard; stairs are on the right after the elevator.</figcaption>
-    </figure>
-  </div>
-</section>
+  </section>
 
-<section class="card">
-  <div class="cardHead">
-    <div class="num">5</div>
-    <div>
-      <h2 id="s5_t">This is your apartment door</h2>
-      <p id="s5_p">Attached to the handle you will find a grey lockbox. The code is 6-7-9-3. Inside you will find the keys: open the cover, take the keys, close the cover again, and scramble the numbers.</p>
-    </div>
-  </div>
-  <div class="cardBody">
-    <figure>
-      <img src="apartment-door.jpg" alt="Apartment door — Via Arenula 16">
-      <figcaption id="s5_cap">Apartment entrance.</figcaption>
-    </figure>
-  </div>
-</section>
+  <!-- 3. Open building door -->
 
-<section class="card">
-  <div class="cardBody">
-    <h2 id="help_h">Need help?</h2>
-    <p id="help_p">Call or WhatsApp:
-      <a class="cta" href="tel:+393355245756">+39 335 524 5756</a>
+  <section class="card">
+    <div class="step">
+      <div class="num">3</div>
+      <div>
+        <h2 id="s3_t">Entering the Main Door</h2>
+        <p id="s3_p">Press the button below, then push the door once it is unlocked.</p>
+
+```
+    <a class="cta" href="#"
+       onclick="openWith('statusBuilding','building');return false;"
+       id="btn_building">➜ Open Building Door</a>
+    <div class="status" id="statusBuilding"></div>
+
+    <p class="note" id="s3_note">
+      For security, each key is single-use and expires after 24 hours. If it expires, press the button again to generate a new one-time key.
     </p>
   </div>
-</section>
+</div>
+```
 
-<footer id="footer">
-niceflatinrome.com • Quick visual guide for arrivals at Via Arenula 16
-</footer>
+  </section>
+
+  <!-- 4. Inside the building -->
+
+  <section class="card">
+    <div class="step">
+      <div class="num">4</div>
+      <div>
+        <h2 id="s4_t">Inside the Building</h2>
+        <p id="s4_p">Walk straight across the corridor into the courtyard, then take the stairs on your right after the elevator.</p>
+        <p class="note" id="s4_note">The elevator is strictly private — we are not allowed to use it.</p>
+        <figure>
+          <img src="hallway.jpg" alt="Inside corridor and courtyard access"
+               onerror="imgFallback(this,['corridor.jpg'])">
+          <figcaption id="s4_cap">Corridor to the courtyard; stairs are on the right after the elevator.</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. Apartment door / lockbox -->
+
+  <section class="card">
+    <div class="step">
+      <div class="num">5</div>
+      <div>
+        <h2 id="s5_t">Your Apartment Door</h2>
+        <p id="s5_p">Attached to the handle you will find a grey lockbox. The code is 6-7-9-3. Open the cover, take the keys, close the cover again, and scramble the numbers.</p>
+        <figure>
+          <img src="apartment-door.jpg" alt="Apartment door — Via Arenula 16"
+               onerror="imgFallback(this,['apt-door.jpg','door.jpg'])">
+          <figcaption id="s5_cap">Apartment entrance.</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2 id="help_h">Need help?</h2>
+    <p id="help_p">Call or WhatsApp: <a class="cta" href="tel:+393355245756">+39 335 524 5756</a></p>
+  </section>
+
+  <footer id="footer">niceflatinrome.com • Self check-in guide for Via Arenula 16</footer>
 
 </main>
 
 <script>
-async function openWith(statusId){
-  const s=document.getElementById(statusId);
-  try{
-    const params=new URLSearchParams(location.search);
-    const t=params.get("t");
-    if(!t){s.textContent="Link non valido (token mancante).";return;}
-    s.textContent="Opening…";
-    const r=await fetch(`/checkin/arenula/open/building?t=${encodeURIComponent(t)}`,{method:"POST"});
-    const j=await r.json().catch(()=>({}));
-    if(r.ok&&j.ok){s.textContent="Done.";}
-    else{s.textContent=(j.error||j.message)?String(j.error||j.message):`Error (${r.status})`;}
-  }catch(e){s.textContent="Network error. Try again.";}
+function tMsgs(){
+  const L=(new URLSearchParams(location.search).get('lang')||'en').toLowerCase();
+  const M={
+    en:{open:'Opening…',done:'Done.',net:'Network error. Try again.',bad:'Error',missing:'Invalid link (missing token).'},
+    it:{open:'Apertura…',done:'Fatto.',net:'Errore di rete. Riprova.',bad:'Errore',missing:'Link non valido (token mancante).'},
+    fr:{open:'Ouverture…',done:'Fait.',net:'Erreur réseau. Réessayez.',bad:'Erreur',missing:'Lien invalide (token manquant).'},
+    de:{open:'Öffnen…',done:'Fertig.',net:'Netzwerkfehler. Bitte erneut versuchen.',bad:'Fehler',missing:'Ungültiger Link (Token fehlt).'},
+    es:{open:'Abriendo…',done:'Hecho.',net:'Error de red. Inténtalo de nuevo.',bad:'Error',missing:'Enlace no válido (falta token).'}
+  };
+  return M[L]||M.en;
 }
 
-/* --- 5 lingue complete --- */
-const T = { /* identico blocco lingue che mi hai fornito sopra */ };
+async function openWith(statusId, which){
+  const s=document.getElementById(statusId);
+  const M=tMsgs();
+  try{
+    const params=new URLSearchParams(window.location.search);
+    const t=params.get("t")||"";
 
+    s.className='status';
+    if(!t){
+      s.classList.add('err');
+      s.textContent=M.missing;
+      return;
+    }
+
+    s.textContent=M.open;
+
+    const r=await fetch(`/checkin/arenula/open/building?t=${encodeURIComponent(t)}`,{
+      method:"POST",
+      cache:"no-store"
+    });
+
+    const j=await r.json().catch(()=>({}));
+
+    if(r.ok&&j.ok){
+      s.classList.add('ok');
+      s.textContent=M.done;
+    } else {
+      const msg=(j.error||j.message)?String(j.error||j.message):`${M.bad} (${r.status})`;
+      s.classList.add('err');
+      s.textContent=msg;
+    }
+  } catch(e){
+    s.classList.add('err');
+    s.textContent=M.net;
+  }
+}
+
+function imgFallback(img,list){
+  if(!list||!list.length)return;
+  const next=list.shift();
+  img.onerror=()=>imgFallback(img,list);
+  img.src=next;
+}
+</script>
+
+<script>
+const T={
+  en:{
+    title:'Check-in Guide — Via Arenula 16',
+    addr:'Address: Via Arenula 16, Rome • Intercom: C8 • Do not use the elevator',
+    s1_t:'Arriving at the Building',
+    s1_p:'When you reach Via Arenula 16, look for the large wooden entrance door with the number 16 engraved on the stone frame.',
+    s1_cap:'Façade and main entrance — Via Arenula 16.',
+    s2_t:'Using the Intercom',
+    s2_p:'Press C8 on the intercom panel.',
+    s2_cap:'Intercom panel — press C8.',
+    s3_t:'Entering the Main Door',
+    s3_p:'Press the button below, then push the door once it is unlocked.',
+    s3_note:'For security, each key is single-use and expires after 24 hours. If it expires, press the button again to generate a new one-time key.',
+    s4_t:'Inside the Building',
+    s4_p:'Walk straight across the corridor into the courtyard, then take the stairs on your right after the elevator.',
+    s4_cap:'Corridor to the courtyard; stairs are on the right after the elevator.',
+    s4_note:'The elevator is strictly private — we are not allowed to use it.',
+    s5_t:'Your Apartment Door',
+    s5_p:'Attached to the handle you will find a grey lockbox. The code is 6-7-9-3. Open the cover, take the keys, close the cover again, and scramble the numbers.',
+    s5_cap:'Apartment entrance.',
+    help_h:'Need help?',
+    help_p:'Call or WhatsApp: <a class="cta" href="tel:+393355245756">+39 335 524 5756</a>',
+    btn_building:'➜ Open Building Door',
+    footer:'niceflatinrome.com • Self check-in guide for Via Arenula 16',
+    langLabel:'Language',langName:'English'
+  },
+  it:{
+    title:'Guida Check-in — Via Arenula 16',
+    addr:'Indirizzo: Via Arenula 16, Roma • Citofono: C8 • Non usare l\'ascensore',
+    s1_t:'Arrivo al Palazzo',
+    s1_p:'Quando arrivi a Via Arenula 16, cerca il grande portone in legno con il numero 16 inciso sul portale in pietra.',
+    s1_cap:'Facciata e ingresso principale — Via Arenula 16.',
+    s2_t:'Usare il Citofono',
+    s2_p:'Premi C8 sul pannello del citofono.',
+    s2_cap:'Pannello citofono — premi C8.',
+    s3_t:'Entrare nel Portone',
+    s3_p:'Premi il pulsante qui sotto, poi spingi il portone quando si sblocca.',
+    s3_note:'Per sicurezza, ogni chiave è monouso e scade dopo 24 ore. Se scade, premi di nuovo il pulsante per generarne una nuova.',
+    s4_t:'All\'interno del Palazzo',
+    s4_p:'Attraversa il corridoio fino al cortile interno, poi prendi le scale sulla tua destra dopo l\'ascensore.',
+    s4_cap:'Corridoio verso il cortile; le scale sono a destra dopo l\'ascensore.',
+    s4_note:'L\'ascensore è strettamente privato — non è consentito utilizzarlo.',
+    s5_t:'La tua Porta d\'Appartamento',
+    s5_p:'Sulla maniglia troverai una cassettina grigia. Il codice è 6-7-9-3. Apri il coperchio, prendi le chiavi, richiudi il coperchio e mescola i numeri.',
+    s5_cap:'Ingresso appartamento.',
+    help_h:'Serve aiuto?',
+    help_p:'Chiama o WhatsApp: <a class="cta" href="tel:+393355245756">+39 335 524 5756</a>',
+    btn_building:'➜ Apri il portone',
+    footer:'niceflatinrome.com • Guida self check-in — Via Arenula 16',
+    langLabel:'Lingua',langName:'Italiano'
+  },
+  fr:{
+    title:'Guide d\'enregistrement — Via Arenula 16',
+    addr:'Adresse : Via Arenula 16, Rome • Interphone : C8 • Ne pas utiliser l\'ascenseur',
+    s1_t:'Arrivée à l\'immeuble',
+    s1_p:'Lorsque vous arrivez Via Arenula 16, cherchez la grande porte en bois avec le numéro 16 gravé sur le cadre en pierre.',
+    s1_cap:'Façade et entrée principale — Via Arenula 16.',
+    s2_t:'Utiliser l\'interphone',
+    s2_p:'Appuyez sur C8 sur le panneau de l\'interphone.',
+    s2_cap:'Panneau interphone — appuyez sur C8.',
+    s3_t:'Entrer dans le bâtiment',
+    s3_p:'Appuyez sur le bouton ci-dessous, puis poussez la porte une fois déverrouillée.',
+    s3_note:'Pour des raisons de sécurité, chaque clé est à usage unique et expire après 24 heures. Si elle expire, appuyez à nouveau pour en générer une nouvelle.',
+    s4_t:'À l\'intérieur de l\'immeuble',
+    s4_p:'Traversez le couloir jusqu\'à la cour intérieure, puis prenez les escaliers sur votre droite après l\'ascenseur.',
+    s4_cap:'Couloir vers la cour ; les escaliers sont à droite après l\'ascenseur.',
+    s4_note:'L\'ascenseur est strictement privé — nous n\'avons pas le droit de l\'utiliser.',
+    s5_t:'Votre porte d\'appartement',
+    s5_p:'Sur la poignée vous trouverez une boîte à clés grise. Le code est 6-7-9-3. Ouvrez le couvercle, prenez les clés, refermez et mélangez les chiffres.',
+    s5_cap:'Entrée de l\'appartement.',
+    help_h:'Besoin d\'aide ?',
+    help_p:'Appeler ou WhatsApp : <a class="cta" href="tel:+393355245756">+39 335 524 5756</a>',
+    btn_building:'➜ Ouvrir la porte de l\'immeuble',
+    footer:'niceflatinrome.com • Guide d\'auto check-in — Via Arenula 16',
+    langLabel:'Langue',langName:'Français'
+  },
+  de:{
+    title:'Check-in-Leitfaden — Via Arenula 16',
+    addr:'Adresse: Via Arenula 16, Rom • Gegensprechanlage: C8 • Aufzug nicht benutzen',
+    s1_t:'Ankommen am Gebäude',
+    s1_p:'Wenn Sie Via Arenula 16 erreichen, suchen Sie die große Holzeingangstür mit der ins Steinrahmen gravierten Nummer 16.',
+    s1_cap:'Fassade und Haupteingang — Via Arenula 16.',
+    s2_t:'Gegensprechanlage benutzen',
+    s2_p:'Drücken Sie C8 auf dem Bedienfeld der Gegensprechanlage.',
+    s2_cap:'Gegensprechanlage — drücken Sie C8.',
+    s3_t:'Eingang durch die Haustür',
+    s3_p:'Drücken Sie die Schaltfläche unten, dann drücken Sie die Tür auf, sobald sie entriegelt ist.',
+    s3_note:'Aus Sicherheitsgründen ist jeder Schlüssel einmalig und läuft nach 24 Stunden ab. Wenn er abläuft, erzeugen Sie über die Schaltfläche einen neuen.',
+    s4_t:'Im Inneren des Gebäudes',
+    s4_p:'Gehen Sie geradeaus durch den Flur in den Innenhof, dann nehmen Sie die Treppe auf Ihrer rechten Seite nach dem Aufzug.',
+    s4_cap:'Flur zum Innenhof; Treppe rechts nach dem Aufzug.',
+    s4_note:'Der Aufzug ist streng privat — wir dürfen ihn nicht benutzen.',
+    s5_t:'Ihre Wohnungstür',
+    s5_p:'Am Griff finden Sie einen grauen Schlüsselkasten. Der Code ist 6-7-9-3. Öffnen Sie den Deckel, nehmen Sie die Schlüssel, schließen Sie den Deckel wieder und mischen Sie die Zahlen.',
+    s5_cap:'Wohnungseingang.',
+    help_h:'Brauchen Sie Hilfe?',
+    help_p:'Anrufen oder WhatsApp: <a class="cta" href="tel:+393355245756">+39 335 524 5756</a>',
+    btn_building:'➜ Haustür öffnen',
+    footer:'niceflatinrome.com • Self Check-in Leitfaden — Via Arenula 16',
+    langLabel:'Sprache',langName:'Deutsch'
+  },
+  es:{
+    title:'Guía de check-in — Via Arenula 16',
+    addr:'Dirección: Via Arenula 16, Roma • Interfono: C8 • No usar el ascensor',
+    s1_t:'Llegando al edificio',
+    s1_p:'Cuando llegues a Via Arenula 16, busca la gran puerta de madera con el número 16 grabado en el marco de piedra.',
+    s1_cap:'Fachada y entrada principal — Via Arenula 16.',
+    s2_t:'Usar el interfono',
+    s2_p:'Pulsa C8 en el panel del interfono.',
+    s2_cap:'Panel del interfono — pulsa C8.',
+    s3_t:'Entrar por la puerta principal',
+    s3_p:'Pulsa el botón de abajo, luego empuja la puerta cuando se desbloquee.',
+    s3_note:'Por seguridad, cada llave es de un solo uso y caduca a las 24 horas. Si caduca, pulsa de nuevo el botón para generar otra.',
+    s4_t:'Dentro del edificio',
+    s4_p:'Camina recto por el corredor hacia el patio interior, luego toma las escaleras a tu derecha después del ascensor.',
+    s4_cap:'Corredor hacia el patio; escaleras a la derecha después del ascensor.',
+    s4_note:'El ascensor es estrictamente privado — no nos está permitido usarlo.',
+    s5_t:'La puerta de tu apartamento',
+    s5_p:'En el pomo encontrarás una caja de seguridad gris. El código es 6-7-9-3. Abre la tapa, coge las llaves, cierra la tapa y mezcla los números.',
+    s5_cap:'Entrada del apartamento.',
+    help_h:'¿Necesitas ayuda?',
+    help_p:'Llama o WhatsApp: <a class="cta" href="tel:+393355245756">+39 335 524 5756</a>',
+    btn_building:'➜ Abrir puerta del edificio',
+    footer:'niceflatinrome.com • Guía de self check-in — Via Arenula 16',
+    langLabel:'Idioma',langName:'Español'
+  }
+};
+</script>
+
+<script>
 (function(){
   const params=new URLSearchParams(location.search);
-  const code=(params.get('lang')||'en').toLowerCase();
-  const token=params.get('t')||'';
-  const t=T[code]||T.en;
+  const L=(params.get('lang')||'en').toLowerCase();
+  const t=T[L]||T.en;
 
-  document.getElementById('langbar').innerHTML =
-    `${t.langLabel}: ` +
-    Object.entries(T).map(([k,v])=>{
-      const p=new URLSearchParams();p.set('lang',k);if(token)p.set('t',token);
-      return `<a class="${k===code?'active':''}" href="?${p.toString()}">${v.langName}</a>`;
-    }).join(' · ');
-
-  const set=(id,val)=>{const el=document.getElementById(id);if(el)el.textContent=val;};
-  const setHTML=(id,val)=>{const el=document.getElementById(id);if(el)el.innerHTML=val;};
-
-  set('title',t.title); set('doc_title',t.title);
-  set('addr',t.addr);
+  const set=(id,html)=>{const el=document.getElementById(id);if(el)el.innerHTML=html;};
+  document.getElementById('title').textContent=t.title;
+  set('h1',t.title); set('addr',t.addr);
   set('s1_t',t.s1_t); set('s1_p',t.s1_p); set('s1_cap',t.s1_cap);
   set('s2_t',t.s2_t); set('s2_p',t.s2_p); set('s2_cap',t.s2_cap);
-  set('s3_t',t.s3_t); set('s3_p',t.s3_p);
+  set('s3_t',t.s3_t); set('s3_p',t.s3_p); set('s3_note',t.s3_note);
   set('s4_t',t.s4_t); set('s4_p',t.s4_p); set('s4_cap',t.s4_cap); set('s4_note',t.s4_note);
   set('s5_t',t.s5_t); set('s5_p',t.s5_p); set('s5_cap',t.s5_cap);
-  set('help_h',t.help_h); setHTML('help_p',t.help_p);
-  set('btn_building',t.btn_building);
+  set('help_h',t.help_h); set('help_p',t.help_p);
   set('footer',t.footer);
+  document.getElementById('btn_building').textContent=t.btn_building;
+
+  // Barra lingue: conserva TUTTI i parametri già presenti (es. ?t=)
+  const bar=document.getElementById('langbar');
+  bar.innerHTML=`${t.langLabel}: `+Object.keys(T).map(k=>{
+    const p=new URLSearchParams(params);p.set('lang',k);
+    return `<a class="${k===L?'active':''}" href="${location.pathname+'?'+p.toString()}">${T[k].langName}</a>`;
+  }).join(' · ');
 })();
 </script>
 
