@@ -253,10 +253,71 @@ niceflatinrome.com • Quick visual guide for arrivals at Via del Portico d’Ot
 
 </main>
 
-<!-- JS IDENTICO AL TUO (NON TOCCATO) -->
 <script>
-/* Tuo JS invariato */
-...
+
+/* ---------- 5 lingue (solo testi) ---------- */
+const T = {
+  en:{title:"Check-in Guide — Via del Portico d’Ottavia 1D",addr:"Address: Via del Portico d’Ottavia 1D, Rome",
+      s1_t:"Open the Building Door",s1_p:"Use the button below to unlock the main door.",s1_note:"",
+      s1_cap:"Main entrance — Via del Portico d’Ottavia 1D.",s1_cap2:"Press this button to turn on the indoor corridor lights.",
+      s2_t:"Arrive at the Third Floor",s2_p:"Go up to the 3rd floor.",
+      s3_t:"This is Your Apartment Door",s3_p:"Please press the button only once when you are certain this is the correct door.",s3_cap:"Apartment door — 3rd floor.",
+      help_h:"Need help?",help_p:'Call or WhatsApp: <a class="cta" href="tel:+393355245756">+39 335 524 5756</a>',
+      btn_building:"➜ Open Building Door",btn_apartment:"➜ Open Apartment Door",
+      footer:"niceflatinrome.com • Quick visual guide for arrivals at Via del Portico d’Ottavia 1D"},
+  it:{title:"Guida Check-in — Via del Portico d’Ottavia 1D",addr:"Indirizzo: Via del Portico d’Ottavia 1D, Roma",
+      s1_t:"Apri il portone dell’edificio",s1_p:"Usa il pulsante qui sotto per sbloccare il portone.",s1_note:"",
+      s1_cap:"Ingresso principale — Via del Portico d’Ottavia 1D.",s1_cap2:"Le luci del corridoio si accendono automaticamente quando apri il portone.",
+      s2_t:"Arriva al terzo piano",s2_p:"Sali al 3° piano.",
+      s3_t:"Questa è la porta del tuo appartamento",s3_p:"Premi il pulsante una sola volta quando sei certo che sia la porta corretta.",s3_cap:"Porta dell’appartamento — 3° piano.",
+      help_h:"Serve aiuto?",help_p:'Chiama o WhatsApp: <a class="cta" href="tel:+393355245756">+39 335 524 5756</a>',
+      btn_building:"➜ Apri il portone",btn_apartment:"➜ Apri porta appartamento",
+      footer:"niceflatinrome.com • Guida rapida di arrivo a Via del Portico d’Ottavia 1D"}
+};
+
+(function(){
+  const params=new URLSearchParams(location.search);
+  const L=(params.get('lang')||'en').toLowerCase();
+  const token = params.get('t') || '';
+  const t=T[L]||T.en;
+
+  document.querySelectorAll('#langbar a').forEach(a=>{
+    const code = a.getAttribute('data-lang') || 'en';
+    const p = new URLSearchParams();
+    p.set('lang', code);
+    if(token) p.set('t', token);
+    a.setAttribute('href', `?${p.toString()}`);
+  });
+
+  document.querySelectorAll('#langbar a').forEach(a=>{
+    a.classList.toggle('active', a.getAttribute('data-lang')===L);
+  });
+
+  document.getElementById('title').textContent=t.title;
+  document.getElementById('h1').textContent=t.title;
+  document.getElementById('addr').textContent=t.addr;
+
+  document.getElementById('s1_t').textContent=t.s1_t;
+  document.getElementById('s1_p').textContent=t.s1_p;
+  document.getElementById('s1_note').textContent=t.s1_note;
+  document.getElementById('s1_cap').textContent=t.s1_cap;
+  document.getElementById('s1_cap2').textContent=t.s1_cap2;
+
+  document.getElementById('s2_t').textContent=t.s2_t;
+  document.getElementById('s2_p').textContent=t.s2_p;
+
+  document.getElementById('s3_t').textContent=t.s3_t;
+  document.getElementById('s3_p').textContent=t.s3_p;
+  document.getElementById('s3_cap').textContent=t.s3_cap;
+
+  document.getElementById('help_h').textContent=t.help_h;
+  document.getElementById('help_p').innerHTML=t.help_p;
+
+  document.getElementById('btn_building').textContent=t.btn_building;
+  document.getElementById('btn_apartment').textContent=t.btn_apartment;
+
+  document.getElementById('footer').textContent=t.footer;
+})();
 </script>
 
 </body>
