@@ -1,5 +1,4 @@
-
- <!doctype html>
+<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -7,53 +6,265 @@
 <title id="title">Check-in Guide — Via della Scala 17, unit A/1</title>
 <link rel="icon" href="building-door.jpg">
 <link rel="preload" as="image" href="building-door.jpg?v=10">
+
 <style>
-  :root { --brand:#2b2118; --ink:#1f2937; --muted:#6b7280; --bg:#f7f7f7; --card:#ffffff; --line:#e5e7eb; }
+  :root{
+    --bg:#F6F3EE;
+    --card:#FFFFFF;
+    --ink:#24201D;
+    --muted:#7A7067;
+    --brand:#3E2F26;
+    --accent:#8A6A4A;
+    --line:#E7E2DA;
+
+    --radius:16px;
+    --shadow:0 18px 40px rgba(36,32,29,.08);
+  }
+
   *{box-sizing:border-box}
-  body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--ink)}
-  .wrap{max-width:860px;margin:0 auto;padding:16px}
-  header{position:sticky;top:0;background:var(--card);border-bottom:1px solid var(--line);padding:12px 14px;z-index:5}
-  h1{font-size:20px;margin:0}
-  .addr{font-size:14px;color:var(--muted)}
-  .lang{font-size:14px;margin-top:6px}
-  .lang a{color:var(--ink);text-decoration:none}
-  .lang a.active{text-decoration:underline}
-  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin:14px 0}
-  .step{display:flex;gap:12px;align-items:flex-start}
-  .num{flex:0 0 36px;height:36px;border-radius:50%;background:var(--brand);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700}
-  h2{margin:6px 0 8px 0;font-size:18px}
-  p{margin:6px 0;line-height:1.45}
-  figure{margin:10px 0}
-  figcaption{font-size:12px;color:var(--muted);margin-top:6px;text-align:center}
-  .imgframe{width:90%;margin:0 auto;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#f9fafb}
-  .imgframe object,.imgframe img{width:100%;height:auto;display:block}
-  .cta{display:inline-block;margin-top:10px;padding:10px 12px;border-radius:10px;background:var(--brand);color:#fff;text-decoration:none;cursor:pointer}
-  .status{font-size:13px;color:#6b7280;margin-left:8px}
-  footer{color:var(--muted);text-align:center;font-size:12px;margin:18px 0}
+  html,body{height:100%}
+
+  body{
+    margin:0;
+    font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+    color:var(--ink);
+    background:
+      radial-gradient(900px 500px at 15% -20%, rgba(138,106,74,.14), transparent 60%),
+      radial-gradient(800px 420px at 95% 0%, rgba(62,47,38,.10), transparent 55%),
+      var(--bg);
+  }
+
+  .wrap{max-width:920px;margin:0 auto;padding:18px 16px 44px}
+
+  /* Top bar */
+  header.wrap{
+    position:sticky; top:0; z-index:10;
+    padding:14px 16px;
+    margin-bottom:14px;
+    border:1px solid var(--line);
+    border-radius:20px;
+    background:rgba(246,243,238,.82);
+    backdrop-filter: blur(8px);
+  }
+
+  .top{
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+    gap:14px;
+  }
+
+  .brandbox{display:flex;gap:12px;align-items:flex-start}
+  .mark{
+    width:44px;height:44px;border-radius:14px;
+    background:linear-gradient(135deg,var(--brand),#60483B);
+    box-shadow:0 10px 26px rgba(36,32,29,.18);
+    flex:0 0 auto;
+    position:relative;
+  }
+  .mark:after{
+    content:"";
+    position:absolute;
+    inset:12px 14px 14px 12px;
+    border:2px solid rgba(255,255,255,.78);
+    border-radius:10px;
+    transform:rotate(6deg);
+  }
+
+  h1{margin:0;font-size:18px;font-weight:650;letter-spacing:.2px}
+  .addr{margin-top:4px;font-size:13px;color:var(--muted)}
+
+  /* language bar */
+  .lang{
+    margin-top:10px;
+    font-size:12px;
+    color:var(--muted);
+    display:flex; align-items:center; gap:10px; flex-wrap:wrap;
+  }
+  .lang a{
+    color:var(--brand);
+    text-decoration:none;
+    padding:6px 10px;
+    border-radius:999px;
+    border:1px solid transparent;
+    background:transparent;
+    opacity:.70;
+    font-weight:600;
+  }
+  .lang a.active{
+    opacity:1;
+    border-color:rgba(62,47,38,.18);
+    background:rgba(138,106,74,.10);
+    text-decoration:none;
+  }
+
+  /* Main layout */
+  main.wrap{padding-top:0}
+
+  .grid{
+    display:grid;
+    grid-template-columns: 1fr;
+    gap:16px;
+  }
+
+  .card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    box-shadow:var(--shadow);
+    overflow:hidden;
+  }
+
+  .cardHead{
+    display:flex;
+    gap:14px;
+    align-items:flex-start;
+    padding:18px 18px 0;
+  }
+
+  .num{
+    flex:0 0 38px;
+    height:38px;
+    border-radius:50%;
+    background:linear-gradient(135deg,var(--brand),#60483B);
+    color:#fff;
+    display:flex;align-items:center;justify-content:center;
+    font-weight:800;
+    box-shadow:0 8px 18px rgba(36,32,29,.18);
+  }
+
+  .cardBody{padding:0 18px 18px}
+
+  h2{margin:2px 0 6px;font-size:18px;font-weight:650}
+  p{margin:8px 0;line-height:1.55;font-size:14.5px;color:#2f2a26}
+
+  /* Image */
+  figure{margin:14px 0 10px}
+  .imgframe{
+    border-radius:14px;
+    overflow:hidden;
+    border:1px solid var(--line);
+    background:#fff;
+  }
+  .imgframe object,.imgframe img{width:100%;display:block;height:auto}
+  figcaption{margin-top:8px;font-size:12px;color:var(--muted);text-align:center}
+
+  /* CTA row */
+  .ctaRow{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    margin-top:12px;
+    flex-wrap:wrap;
+  }
+
+  .cta{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    padding:12px 16px;
+    border-radius:12px;
+    background:linear-gradient(135deg,var(--brand),#60483B);
+    color:#fff;
+    text-decoration:none;
+    font-weight:750;
+    letter-spacing:.2px;
+    box-shadow:0 10px 22px rgba(36,32,29,.18);
+    user-select:none;
+  }
+  .cta:hover{background:linear-gradient(135deg,#2f221b,#533f33)}
+  .cta:active{transform:translateY(1px)}
+
+  .status{
+    font-size:12.5px;
+    color:var(--muted);
+    font-weight:650;
+    white-space:nowrap;
+  }
+
+  /* Note badge (the “A-1” note) */
+  .note{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    padding:10px 12px;
+    border-radius:12px;
+    border:1px dashed rgba(62,47,38,.25);
+    background:rgba(138,106,74,.08);
+    color:var(--brand);
+    font-weight:800;
+    text-transform:uppercase;
+    letter-spacing:.02em;
+    font-size:12px;
+    max-width:100%;
+  }
+
+  /* Help card */
+  .help{
+    padding:18px;
+  }
+  .help h2{margin:0 0 8px}
+  .help p{margin:0}
+  .help .cta{padding:10px 14px; font-weight:800}
+
+  footer{
+    color:var(--muted);
+    text-align:center;
+    font-size:12px;
+    margin:20px 0 0;
+    opacity:.9;
+  }
+
+  @media (max-width:640px){
+    header.wrap{border-radius:16px}
+    .cardHead{padding:16px 16px 0}
+    .cardBody{padding:0 16px 16px}
+    .ctaRow{align-items:flex-start}
+    .status{white-space:normal}
+  }
 </style>
 </head>
+
 <body>
 <header class="wrap">
-  <h1 id="h1">Check-in Guide — Via della Scala 17, unit A/1</h1>
-  <div class="addr" id="addr">Address: Via della Scala 17, Rome • Unit: A/1</div>
+  <div class="top">
+    <div class="brandbox">
+      <div class="mark" aria-hidden="true"></div>
+      <div>
+        <h1 id="h1">Check-in Guide — Via della Scala 17, unit A/1</h1>
+        <div class="addr" id="addr">Address: Via della Scala 17, Rome • Unit: A/1</div>
+      </div>
+    </div>
+
+    <!-- spazio a destra volutamente “pulito” per look boutique -->
+  </div>
+
   <div class="lang" id="langbar">
-    Language:
-    <a href="#" data-lang="en" class="active">English</a> ·
-    <a href="#" data-lang="it">Italiano</a> ·
-    <a href="#" data-lang="fr">Français</a> ·
-    <a href="#" data-lang="de">Deutsch</a> ·
+    <span style="font-weight:700;color:var(--muted)">Language:</span>
+    <a href="#" data-lang="en" class="active">English</a>
+    <a href="#" data-lang="it">Italiano</a>
+    <a href="#" data-lang="fr">Français</a>
+    <a href="#" data-lang="de">Deutsch</a>
     <a href="#" data-lang="es">Español</a>
   </div>
 </header>
 
 <main class="wrap">
-  <!-- 1. BUILDING DOOR -->
-  <section class="card">
-    <div class="step">
-      <div class="num">1</div>
-      <div>
-        <h2 id="s1_t">Finding the Building Entrance</h2>
-        <p id="s1_p">Welcome in front of your building door.</p>
+  <div class="grid">
+
+    <!-- 1 -->
+    <section class="card">
+      <div class="cardHead">
+        <div class="num">1</div>
+        <div>
+          <h2 id="s1_t">Finding the Building Entrance</h2>
+          <p id="s1_p">Welcome in front of your building door.</p>
+        </div>
+      </div>
+
+      <div class="cardBody">
         <figure>
           <div class="imgframe">
             <object data="building-door.jpg?v=10" type="image/jpeg">
@@ -63,24 +274,28 @@
           <figcaption id="s1_cap">Main entrance — Via della Scala 17.</figcaption>
         </figure>
 
-        <!-- ✅ FIX: come Leonina (usa token t, nessun redirect, nessun /token, nessun d) -->
-        <a class="cta" href="#" onclick="openWith('statusBuilding','building');return false;" id="btn_building">➜ Open Building Gates</a>
+        <div class="ctaRow">
+          <a class="cta" href="#" onclick="openWith('statusBuilding','building');return false;" id="btn_building">➜ Open Building Gates</a>
+          <span class="status" id="statusBuilding"></span>
+        </div>
 
-        <span style="float:right; font-weight:700; text-transform:uppercase; margin-left:10px;">
- At the second gate, press “A-1” and then press “Open the Building Gates” again..
-</span>
-        <span class="status" id="statusBuilding"></span>
+        <div style="margin-top:12px">
+          <span class="note">At the second gate, press “A-1” and then press “Open the Building Gates” again..</span>
+        </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- 2. CORRIDOR / ARROW -->
-  <section class="card">
-    <div class="step">
-      <div class="num">2</div>
-      <div>
-        <h2 id="s2_t">Go through the corridor</h2>
-        <p id="s2_p">After the click, enter and turn left.</p>
+    <!-- 2 -->
+    <section class="card">
+      <div class="cardHead">
+        <div class="num">2</div>
+        <div>
+          <h2 id="s2_t">Go through the corridor</h2>
+          <p id="s2_p">After the click, enter and turn left.</p>
+        </div>
+      </div>
+
+      <div class="cardBody">
         <figure>
           <div class="imgframe">
             <img id="img-courtyard" src="courtyard.jpg?v=10" alt="Follow the arrow, then turn left"
@@ -89,17 +304,19 @@
           <figcaption id="s2_cap">Follow the arrow, then turn left.</figcaption>
         </figure>
       </div>
-    </div>
-  </section>
-    <!-- 3. APARTMENT DOOR -->
-  <section class="card">
-    <div class="step">
-      <div class="num">3</div>
-      <div>
-        <h2 id="s3_t">This is your apartment door</h2>
-        <p id="s3_p">You’ve reached the green door on the left. This is your apartment entrance.</p>
+    </section>
 
-        <!-- ✅ Nuovo paragrafo (lucchetto) qui, sotto “Entrance” -->
+    <!-- 3 -->
+    <section class="card">
+      <div class="cardHead">
+        <div class="num">3</div>
+        <div>
+          <h2 id="s3_t">This is your apartment door</h2>
+          <p id="s3_p">You’ve reached the green door on the left. This is your apartment entrance.</p>
+        </div>
+      </div>
+
+      <div class="cardBody">
         <p id="s3_lock">The keys are inside the padlock. Facing the green door on the left, you will see some bicycles. On the iron bar there is a padlock. The combination is 6793. Open the padlock, take the keys, close it again, and scramble the numbers.</p>
 
         <figure>
@@ -111,20 +328,21 @@
           <figcaption id="s3_cap">Green door = your apartment entrance.</figcaption>
         </figure>
 
-        <!-- ✅ FIX: come Leonina (usa token t, nessun redirect, nessun /token, nessun d) -->
-        <a class="cta" href="#" onclick="openWith('statusApartment','apartment');return false;" id="btn_apartment">➜ Open Apartment Door</a>
-
-        <span class="status" id="statusApartment"></span>
+        <div class="ctaRow">
+          <a class="cta" href="#" onclick="openWith('statusApartment','apartment');return false;" id="btn_apartment">➜ Open Apartment Door</a>
+          <span class="status" id="statusApartment"></span>
+        </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <section class="card">
-    <h2 id="help_h">Need help?</h2>
-    <p id="help_p">Call or WhatsApp: <a class="cta" href="tel:+393355245756">+39 335 524 5756</a></p>
-  </section>
+    <!-- Help -->
+    <section class="card help">
+      <h2 id="help_h">Need help?</h2>
+      <p id="help_p">Call or WhatsApp: <a class="cta" href="tel:+393355245756">+39 335 524 5756</a></p>
+    </section>
 
-  <footer id="footer">niceflatinrome.com • Quick visual guide for arrivals at Via della Scala 17, unit A/1</footer>
+    <footer id="footer">niceflatinrome.com • Quick visual guide for arrivals at Via della Scala 17, unit A/1</footer>
+  </div>
 </main>
 
 <script>
@@ -271,7 +489,8 @@
       footer:'niceflatinrome.com • Guía visual rápida para llegadas a Via della Scala 17, unidad A/1'
     }
   };
-    (function(){
+
+  (function(){
     const params=new URLSearchParams(location.search);
     const L=(params.get('lang')||'en').toLowerCase();
     const t=T[L]||T.en;
