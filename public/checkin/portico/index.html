@@ -4,129 +4,37 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title id="title">Check-in Guide — Via del Portico d’Ottavia 1D</title>
+
 <link rel="icon" href="/checkin/portico/building-door.jpg">
 
 <style>
-:root{
-  --brand:#2b2118;
-  --ink:#1f2937;
-  --muted:#6b7280;
-  --bg:#f7f7f7;
-  --card:#ffffff;
-  --line:#e5e7eb;
-}
-
+:root { --brand:#2b2118; --ink:#1f2937; --muted:#6b7280; --bg:#f7f7f7; --card:#ffffff; --line:#e5e7eb; }
 *{box-sizing:border-box}
-
-body{
-  margin:0;
-  font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
-  background:var(--bg);
-  color:var(--ink);
-}
-
-.wrap{
-  max-width:860px;
-  margin:0 auto;
-  padding:16px;
-}
-
-header{
-  position:sticky;
-  top:0;
-  background:var(--card);
-  border-bottom:1px solid var(--line);
-  padding:14px 16px;
-  z-index:10;
-}
-
+body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--ink)}
+.wrap{max-width:860px;margin:0 auto;padding:16px}
+header{position:sticky;top:0;background:var(--card);border-bottom:1px solid var(--line);padding:12px 14px;z-index:5}
 h1{font-size:20px;margin:0}
 .addr{font-size:14px;color:var(--muted)}
 .lang{font-size:14px;margin-top:6px}
 .lang a{color:var(--ink);text-decoration:none}
 .lang a.active{text-decoration:underline}
-
-.card{
-  background:var(--card);
-  border:1px solid var(--line);
-  border-radius:14px;
-  padding:16px;
-  margin:16px 0;
-}
-
-.step{
-  display:flex;
-  gap:14px;
-  align-items:flex-start;
-}
-
-.num{
-  flex:0 0 36px;
-  height:36px;
-  border-radius:50%;
-  background:var(--brand);
-  color:#fff;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-weight:700;
-}
-
-h2{margin:4px 0 8px;font-size:18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin:14px 0}
+.step{display:flex;gap:12px;align-items:flex-start}
+.num{flex:0 0 36px;height:36px;border-radius:50%;background:var(--brand);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700}
+h2{margin:6px 0 8px 0;font-size:18px}
 p{margin:6px 0;line-height:1.45}
-
-figure{margin:12px 0}
-img{
-  max-width:100%;
-  height:auto;
-  border-radius:10px;
-  border:1px solid var(--line);
-  display:block;
-}
-
-figcaption{
-  font-size:12px;
-  color:var(--muted);
-  margin-top:6px;
-  text-align:center;
-}
-
-.cta{
-  display:inline-block;
-  margin-top:10px;
-  padding:10px 14px;
-  border-radius:10px;
-  background:var(--brand);
-  color:#fff;
-  text-decoration:none;
-  cursor:pointer;
-}
-
-.status{
-  font-size:13px;
-  color:var(--muted);
-  margin-top:6px;
-}
-
-.note{
-  background:#fff7ed;
-  border:1px solid #fed7aa;
-  color:#7c2d12;
-  padding:10px;
-  border-radius:8px;
-  margin-top:8px;
-}
-
-footer{
-  color:var(--muted);
-  text-align:center;
-  font-size:12px;
-  margin:18px 0;
-}
+figure{margin:10px 0}
+img{max-width:100%;height:auto;border-radius:10px;border:1px solid var(--line);display:block}
+figcaption{font-size:12px;color:var(--muted);margin-top:6px;text-align:center}
+.note{background:#fff7ed;border:1px solid #fed7aa;color:#7c2d12;padding:10px;border-radius:8px;margin-top:8px}
+.cta{display:inline-block;margin-top:10px;padding:10px 12px;border-radius:10px;background:var(--brand);color:#fff;text-decoration:none;cursor:pointer}
+.status{font-size:13px;color:#6b7280;margin-top:6px}
+footer{color:var(--muted);text-align:center;font-size:12px;margin:18px 0}
 </style>
 </head>
 
 <body>
+
 <header class="wrap">
   <h1 id="h1">Check-in Guide — Via del Portico d’Ottavia 1D</h1>
   <div class="addr" id="addr">Address: Via del Portico d’Ottavia 1D, Rome</div>
@@ -149,16 +57,17 @@ footer{
 <h2 id="s1_t">Open the Building Door</h2>
 <p id="s1_p">Use the button below to unlock the main door.</p>
 
-<a class="cta" onclick="openWith('statusBuilding','building')"
+<a class="cta"
+onclick="openWith('statusBuilding','building')"
 id="btn_building">➜ Open Building Door</a>
+
 <div class="status" id="statusBuilding"></div>
 
 <figure>
 <img src="building-door.jpg"
-alt="Building entrance — Via del Portico d’Ottavia 1D">
-<figcaption id="s1_cap">
-Main entrance — Via del Portico d’Ottavia 1D.
-</figcaption>
+onerror="this.onerror=null;this.src='https://raw.githubusercontent.com/miko19711971/shelly-cloud-opener-1/main/public/checkin/portico/building-door.jpg';"
+alt="Building entrance">
+<figcaption id="s1_cap">Main entrance — Via del Portico d’Ottavia 1D</figcaption>
 </figure>
 </div>
 </div>
@@ -183,18 +92,15 @@ Main entrance — Via del Portico d’Ottavia 1D.
 
 <a class="cta"
 onclick="openWith('statusApartment','door')"
-id="btn_apartment">
-➜ Open Apartment Door
-</a>
+id="btn_apartment">➜ Open Apartment Door</a>
 
 <div class="status" id="statusApartment"></div>
 
 <figure>
 <img src="apartment-door.jpg"
-alt="Apartment door — Via del Portico d’Ottavia 1D">
-<figcaption id="s3_cap">
-Apartment door — 3rd floor.
-</figcaption>
+onerror="this.onerror=null;this.src='https://raw.githubusercontent.com/miko19711971/shelly-cloud-opener-1/main/public/checkin/portico/apartment-door.jpg';"
+alt="Apartment door">
+<figcaption id="s3_cap">Apartment door — 3rd floor</figcaption>
 </figure>
 </div>
 </div>
@@ -204,33 +110,30 @@ Apartment door — 3rd floor.
 <h2 id="help_h">Need help?</h2>
 <p id="help_p">
 Call or WhatsApp:
-<a class="cta" href="tel:+393355245756">
-+39 335 524 5756
-</a>
+<a class="cta" href="tel:+393355245756">+39 335 524 5756</a>
 </p>
 </section>
 
 <footer id="footer">
-niceflatinrome.com • Quick visual guide for arrivals
+niceflatinrome.com • Quick visual guide for arrivals at Via del Portico d’Ottavia 1D
 </footer>
 
 </main>
 
 <script>
-async function openWith(statusId, type){
+async function openWith(statusId,type){
 const s=document.getElementById(statusId);
 try{
 const params=new URLSearchParams(window.location.search);
 const t=params.get("t");
-if(!t){s.textContent="Link non valido.";return;}
+if(!t){s.textContent="Link non valido (token mancante).";return;}
 
 const endpoint = type==="building"
 ? "/checkin/portico/open/building"
 : "/checkin/portico/open/door";
 
 s.textContent="Opening…";
-const r=await fetch(`${endpoint}?t=${encodeURIComponent(t)}`,
-{method:"POST",cache:"no-store"});
+const r=await fetch(`${endpoint}?t=${encodeURIComponent(t)}`,{method:"POST",cache:"no-store"});
 const j=await r.json().catch(()=>({}));
 
 if(r.ok && j.ok){s.textContent="Done.";}
