@@ -1956,8 +1956,6 @@ app.post("/hostaway-outbound", requireAdmin, async (req, res) => {
       { headers: { 'Content-Type': 'application/json' }, timeout: 10000 }
     );
 
-    res.send("OK");
-
   } catch (err) {
     console.error('Errore allegria-info:', err.message);
     res.status(500).send('Errore');
