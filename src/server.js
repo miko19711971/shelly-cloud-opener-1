@@ -1916,28 +1916,18 @@ app.post("/hostaway-outbound", requireAdmin, async (req, res) => {
     return res.status(500).json({ ok: false, error: "server_error" });
   }
 });
- app.post('/allegria-info', async (req, res) => {
+  app.post('/allegria-info', async (req, res) => {
   try {
-
     const email = req.body?.email;
     if (!email) return res.status(400).send('Email mancante');
 
-    // salva lead su Google Sheet
     try {
       await axios.post(
         "https://script.google.com/macros/s/AKfycbzsuNiIXjdnWMuRocDkpqCU4c-4sUlwVMplebibQGaPFMIVF0sE41QKjsldlMVthH-CbA/exec",
-        {
-          email: email,
-          source: "Landing Allegria"
-        },
-        {
-          headers: { "Content-Type": "application/json" },
-          timeout: 10000
-        }
+        { email: email, source: "Landing Allegria" },
+        { headers: { "Content-Type": "application/json" }, timeout: 10000 }
       );
-
       console.log("Lead salvato:", email);
-
     } catch (err) {
       console.error("Errore Google Sheet:", err.message);
     }
@@ -1956,10 +1946,6 @@ app.post("/hostaway-outbound", requireAdmin, async (req, res) => {
       { headers: { 'Content-Type': 'application/json' }, timeout: 10000 }
     );
 
-  } catch (err) {
-    console.error('Errore allegria-info:', err.message);
-    res.status(500).send('Errore');
-  }
     res.send(`<!DOCTYPE html>
 <html lang="it">
 <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
@@ -1977,11 +1963,13 @@ app.post("/hostaway-outbound", requireAdmin, async (req, res) => {
 </div>
 </body>
 </html>`);
+
   } catch (err) {
     console.error('Errore allegria-info:', err.message);
     res.status(500).send('Errore');
   }
 });
+
 app.get("/test-mail", requireAdmin, (req, res) => {
   res.type("html").send(`<!doctype html><meta charset="utf-8">
 <div style="font-family: system-ui; max-width: 680px; margin: 24px auto;">
