@@ -1960,7 +1960,6 @@ app.post("/hostaway-outbound", requireAdmin, async (req, res) => {
     console.error('Errore allegria-info:', err.message);
     res.status(500).send('Errore');
   }
-});
     res.send(`<!DOCTYPE html>
 <html lang="it">
 <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
