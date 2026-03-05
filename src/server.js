@@ -1932,14 +1932,32 @@ app.post("/hostaway-outbound", requireAdmin, async (req, res) => {
       console.error("Errore Google Sheet:", err.message);
     }
 
-    const htmlBody = `
-      <p>Grazie per l'interesse ad Allegria.</p>
-      <p>Allegria offre presenza e compagnia a domicilio per anziani autosufficienti.</p>
-      <p><a href="https://www.vitasemper.com/allegria/info.html">Scopri il servizio Allegria</a></p>
-      <p>Per candidarti come operatore o per richiedere il servizio, rispondi a questa email.</p>
-      <p>Un saluto,<br>Vita Semper S.r.l.</p>
-    `;
+     const htmlBody = `
+<p>Grazie per aver richiesto informazioni sul servizio <strong>Allegria</strong>.</p>
 
+<p>Allegria offre presenza e compagnia a domicilio per persone anziane autosufficienti.</p>
+
+<p>Per capire se il servizio è adatto alla vostra situazione possiamo fare una breve call conoscitiva.</p>
+
+<p>
+<a href="https://calendar.app.google/PjsT822J9aG9VnSq6"
+style="background:#8b6a4f;color:white;padding:12px 18px;border-radius:6px;text-decoration:none;">
+Prenota la call conoscitiva
+</a>
+</p>
+
+<p>Oppure puoi leggere prima i dettagli del servizio:</p>
+
+<p>
+<a href="https://www.vitasemper.com/allegria/info.html">
+Scopri il servizio Allegria
+</a>
+</p>
+
+<p>Un caro saluto<br>
+Michele<br>
+Vita Semper S.r.l.</p>
+`;
     await axios.post(
       `${MAILER_URL}?secret=${encodeURIComponent(MAIL_SHARED_SECRET)}`,
       { to: email, subject: 'Informazioni allegria/info', htmlBody },
