@@ -1916,32 +1916,39 @@ app.post("/hostaway-outbound", requireAdmin, async (req, res) => {
     return res.status(500).json({ ok: false, error: "server_error" });
   }
 });
-app.post('/allegria-info', async (req, res) => {
+ app.post('/allegria-info', async (req, res) => {
   try {
-  await axios.post(
-    "https://script.google.com/macros/s/AKfycbzsuNiIXjdnWMuRocDkpqCU4c-4sUlwVMplebibQGaPFMIVF0sE41QKjsldlMVthH-CbA/exec",
-    {
-      email: email,
-      source: "Landing Allegria"
-    },
-    {
-      headers: { "Content-Type": "application/json" },
-      timeout: 10000
+
+    const email = req.body?.email;
+    if (!email) return res.status(400).send('Email mancante');
+
+    // salva lead su Google Sheet
+    try {
+      await axios.post(
+        "https://script.google.com/macros/s/AKfycbzsuNiIXjdnWMuRocDkpqCU4c-4sUlwVMplebibQGaPFMIVF0sE41QKjsldlMVthH-CbA/exec",
+        {
+          email: email,
+          source: "Landing Allegria"
+        },
+        {
+          headers: { "Content-Type": "application/json" },
+          timeout: 10000
+        }
+      );
+
+      console.log("Lead salvato:", email);
+
+    } catch (err) {
+      console.error("Errore Google Sheet:", err.message);
     }
-  );
 
-  console.log("Lead salvato su Google Sheet:", email);
-
-} catch (err) {
-  console.error("Errore salvataggio Google Sheet:", err.message);
-}
-     const htmlBody = `
-  <p>Grazie per l'interesse ad Allegria.</p>
-  <p>Allegria offre presenza e compagnia a domicilio per anziani autosufficienti.</p>
-  <p><a href="https://www.vitasemper.com/allegria/info.html"> Scopri il servizio Allegria</a></p>
-  <p>Per candidarti come operatore o per richiedere il servizio, rispondi a questa email.</p>
-  <p>Un saluto,<br>Vita Semper S.r.l.</p>
-`;
+    const htmlBody = `
+      <p>Grazie per l'interesse ad Allegria.</p>
+      <p>Allegria offre presenza e compagnia a domicilio per anziani autosufficienti.</p>
+      <p><a href="https://www.vitasemper.com/allegria/info.html">Scopri il servizio Allegria</a></p>
+      <p>Per candidarti come operatore o per richiedere il servizio, rispondi a questa email.</p>
+      <p>Un saluto,<br>Vita Semper S.r.l.</p>
+    `;
 
     await axios.post(
       `${MAILER_URL}?secret=${encodeURIComponent(MAIL_SHARED_SECRET)}`,
@@ -1949,6 +1956,13 @@ app.post('/allegria-info', async (req, res) => {
       { headers: { 'Content-Type': 'application/json' }, timeout: 10000 }
     );
 
+    res.send("OK");
+
+  } catch (err) {
+    console.error('Errore allegria-info:', err.message);
+    res.status(500).send('Errore');
+  }
+});
     res.send(`<!DOCTYPE html>
 <html lang="it">
 <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
