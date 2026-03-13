@@ -11,7 +11,7 @@ import { detectLanguage } from "./language.js";
 import { ANSWERS } from "./answers.js";
 import { askGemini } from "./gemini.js";
  const SAFE_FALLBACK_REPLY =
-  "Thank you for your message. We’ve received your request and we’ll get back to you as soon as possible.";
+  "Thank you for your message. We've received your request and we'll get back to you as soon as possible.";
 const app = express();
 
 app.use(bodyParser.json({ limit: "100kb" }));
@@ -24,7 +24,7 @@ app.set("trust proxy", true);
 // ========================================================================
 function decideSlots(arrivalTime, checkInDate) {
   const allSlots = ["11", "18", "2030", "2330"];
-  const slotMinutes = { "11": 660, "18": 1110, "2030": 1230, "2330": 1410 };
+  const slotMinutes = { "11": 660, "18": 1080, "2030": 1230, "2330": 1410 };
 
 
   if (!checkInDate) {
@@ -134,26 +134,25 @@ async function runSlotCron() {
       }
 
       const slots = decideSlots(arrivalTime, checkInDate);
-       
 
       const matchingSlot = slots.find(s => s.slot === currentSlot && s.date === today);
      
-     if (!matchingSlot) continue;
+      if (!matchingSlot) continue;
 
       const key = `${res.id}-${currentSlot}`;
-      
+      if (SENT_SLOTS.has(key)) continue;
 
       const conversationId = await getConversationId(res.id);
       if (!conversationId) continue;
 
-     const langRaw = (res.guestLanguage || res.guestLocale || "en").toLowerCase();
-const langMap = {
-  "spanish": "es", "castilian": "es", "french": "fr", "italian": "it",
-  "german": "de", "english": "en", "deutsch": "de", "italiano": "it",
-  "français": "fr", "español": "es"
-};
-const guestLang = langMap[langRaw.split(",")[0].trim()] || langRaw.slice(0, 2) || "en";
-console.log("🌍 Lingua rilevata:", res.id, langRaw, "→", guestLang);
+      const langRaw = (res.guestLanguage || res.guestLocale || "en").toLowerCase();
+      const langMap = {
+        "spanish": "es", "castilian": "es", "french": "fr", "italian": "it",
+        "german": "de", "english": "en", "deutsch": "de", "italiano": "it",
+        "français": "fr", "español": "es"
+      };
+      const guestLang = langMap[langRaw.split(",")[0].trim()] || langRaw.slice(0, 2) || "en";
+      console.log("🌍 Lingua rilevata:", res.id, langRaw, "→", guestLang);
 
       const apartmentMap = {
         194164: "trastevere",
@@ -167,7 +166,7 @@ console.log("🌍 Lingua rilevata:", res.id, langRaw, "→", guestLang);
 
       try {
         await sendSlotLiveMessage({ conversationId, apartment, slot: currentSlot, lang: guestLang });
-        
+        SENT_SLOTS.add(key);
         console.log("📨 Slot inviato:", apartment, currentSlot);
       } catch (e) {
         console.error("❌ Errore slot", currentSlot, e.message);
@@ -179,8 +178,8 @@ console.log("🌍 Lingua rilevata:", res.id, langRaw, "→", guestLang);
   }
 }
 
+const SENT_SLOTS = new Set();
 setInterval(runSlotCron, 60000);
-
 
 // ========================================================================
 // SEND SLOT LIVE MESSAGE
