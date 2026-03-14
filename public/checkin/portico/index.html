@@ -252,26 +252,7 @@ niceflatinrome.com • Quick visual guide for arrivals at Via del Portico d’Ot
 </footer>
 
 </main>
-footer>
 
-</main>
-<script>
-async function openWith(statusId, path){
-  const s = document.getElementById(statusId);
-  try {
-    const params = new URLSearchParams(window.location.search);
-    const t = params.get("t") || "";
-    if(!t){ s.textContent = "Link non valido (token mancante)."; return; }
-    s.textContent = "Opening…";
-    const r = await fetch(`${path}?t=${encodeURIComponent(t)}`, {method:"POST", cache:"no-store"});
-    const j = await r.json().catch(()=>({}));
-    if(r.ok && j.ok){ s.textContent = "Done."; }
-    else { s.textContent = (j.error||j.message) ? String(j.error||j.message) : `Error (${r.status})`; }
-  } catch(e) {
-    s.textContent = "Network error. Try again.";
-  }
-}
-</
 <script>
 
 /* ---------- 5 lingue (solo testi) ---------- */
