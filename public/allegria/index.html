@@ -170,6 +170,47 @@ display:none;">
     </ul>
 
   </div>
+<script>
 
+async function caricaBriefing() {
+
+  const params = new URLSearchParams(window.location.search);
+  const cliente = params.get("cliente");
+
+  if (!cliente) return;
+
+  const url = "https://script.google.com/macros/s/AKfycbzORvHQMUnyWEVylh4bd99W305GpyHx6Yx31DxtWC35nemRPTd2F23ikYkFZ7BJs9QCyw/exec?page=briefing&cliente=" + cliente;
+
+  const res = await fetch(url);
+  const data = await res.json();
+
+  const box = document.getElementById("briefing");
+
+  let html = `
+  <h2>Profilo cliente</h2>
+  <p><b>Formato visita:</b> ${data.formato}</p>
+  <p><b>Idea incontro:</b> ${data.idea}</p>
+  <p><b>Nota operatore:</b> ${data.nota}</p>
+  `;
+
+  if (data.jolly !== "NON ATTIVO") {
+
+    html += `
+    <h2>Esperienza Jolly</h2>
+    <p><b>Tipo:</b> ${data.jolly.tipo}</p>
+    <p><b>Leve:</b> ${data.jolly.leve}</p>
+    <p><b>Obiettivo:</b> ${data.jolly.obiettivo}</p>
+    <p><b>Limiti:</b> ${data.jolly.limiti}</p>
+    `;
+  }
+
+  box.innerHTML = html;
+  box.style.display = "block";
+
+}
+
+caricaBriefing();
+
+</script>
 </body>
 </html>
