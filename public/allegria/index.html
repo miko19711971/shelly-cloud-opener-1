@@ -78,21 +78,24 @@
       border-radius: 8px;
       font-size: 16px;
     }
- .brand-header {
-  text-align: center;
-  margin: 40px auto 20px auto;
-}
-.company {
-  font-size: 22px;
-  letter-spacing: 2px;
-  font-weight: 600;
-}
 
-.presenta {
-  font-style: italic;
-  margin: 8px 0 20px 0;
-  opacity: 0.8;
-}
+    .brand-header {
+      text-align: center;
+      margin: 40px auto 20px auto;
+    }
+
+    .company {
+      font-size: 22px;
+      letter-spacing: 2px;
+      font-weight: 600;
+    }
+
+    .presenta {
+      font-style: italic;
+      margin: 8px 0 20px 0;
+      opacity: 0.8;
+    }
+
   </style>
 </head>
 
@@ -114,18 +117,12 @@
         Richiedi informazioni
       </button>
     </form>
-<div class="brand-header">
-  <div class="company">VITA SEMPER S.R.L.</div>
-  <div class="presenta">presenta</div>
-</div>
-    <div id="briefing" style="
-background:#ffffff;
-border:1px solid #e5e0d8;
-padding:20px;
-border-radius:8px;
-margin-bottom:40px;
-display:none;">
-</div>
+
+    <div class="brand-header">
+      <div class="company">VITA SEMPER S.R.L.</div>
+      <div class="presenta">presenta</div>
+    </div>
+    
     <h1>ALLEGRIA</h1>
 
     <p>
@@ -170,47 +167,6 @@ display:none;">
     </ul>
 
   </div>
-<script>
 
-async function caricaBriefing() {
-
-  const params = new URLSearchParams(window.location.search);
-  const cliente = params.get("cliente");
-
-  if (!cliente) return;
-
-  const url = "https://script.google.com/macros/s/AKfycbzORvHQMUnyWEVylh4bd99W305GpyHx6Yx31DxtWC35nemRPTd2F23ikYkFZ7BJs9QCyw/exec?page=briefing&cliente=" + cliente;
-
-  const res = await fetch(url);
-  const data = await res.json();
-
-  const box = document.getElementById("briefing");
-
-  let html = `
-  <h2>Profilo cliente</h2>
-  <p><b>Formato visita:</b> ${data.formato}</p>
-  <p><b>Idea incontro:</b> ${data.idea}</p>
-  <p><b>Nota operatore:</b> ${data.nota}</p>
-  `;
-
-  if (data.jolly !== "NON ATTIVO") {
-
-    html += `
-    <h2>Esperienza Jolly</h2>
-    <p><b>Tipo:</b> ${data.jolly.tipo}</p>
-    <p><b>Leve:</b> ${data.jolly.leve}</p>
-    <p><b>Obiettivo:</b> ${data.jolly.obiettivo}</p>
-    <p><b>Limiti:</b> ${data.jolly.limiti}</p>
-    `;
-  }
-
-  box.innerHTML = html;
-  box.style.display = "block";
-
-}
-
-caricaBriefing();
-
-</script>
 </body>
 </html>
