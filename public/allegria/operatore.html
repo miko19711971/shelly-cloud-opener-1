@@ -71,7 +71,11 @@ async function caricaBriefing(){
 
 const params = new URLSearchParams(window.location.search);
 const cliente = params.get("cliente");
-
+const visita = params.get("visita");
+const operatore = params.get("operatore");
+document.getElementById("visita").textContent = visita || "-";
+document.getElementById("cliente").textContent = cliente || "-";
+document.getElementById("operatore").textContent = operatore || "-";
 if(!cliente){
 document.getElementById("briefing").innerHTML="Cliente non specificato";
 return;
