@@ -90,23 +90,22 @@ const url="https://script.google.com/macros/s/AKfycbzORvHQMUnyWEVylh4bd99W305Gpy
 const res = await fetch(url);
 const data = await res.json();
 
-let html=`
+let html = `
 <h2>Profilo cliente</h2>
-
-<p><b>Formato visita:</b> ${data.formato}</p>
-<p><b>Idea incontro:</b> ${data.idea}</p>
-<p><b>Nota operatore:</b> ${data.nota}</p>
+<p><b>Spunti utili sul cliente:</b> ${data.formato}</p>
+<p><b>Possibile tema di relazione:</b> ${data.idea}</p>
+<p><b>Osservazioni dalla visita precedente:</b> ${data.nota}</p>
 `;
 
 if(data.jolly !== "NON ATTIVO"){
 
-html+=`
-<h2>Esperienza Jolly</h2>
+html += `
+<h2>Possibile esperienza Jolly</h2>
 
-<p><b>Tipo:</b> ${data.jolly.tipo}</p>
-<p><b>Leve:</b> ${data.jolly.leve}</p>
-<p><b>Obiettivo:</b> ${data.jolly.obiettivo}</p>
-<p><b>Limiti:</b> ${data.jolly.limiti}</p>
+<p><b>Tipologia suggerita:</b> ${data.jolly.tipo}</p>
+<p><b>Elementi che possono favorire la relazione:</b> ${data.jolly.leve}</p>
+<p><b>Finalità relazionale possibile:</b> ${data.jolly.obiettivo}</p>
+<p><b>Elementi di attenzione:</b> ${data.jolly.limiti}</p>
 `;
 }
 
