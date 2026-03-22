@@ -1931,12 +1931,21 @@ app.post("/hostaway-outbound", requireAdmin, async (req, res) => {
       console.error("Errore Google Sheet:", err.message);
     }
 
-     const htmlBody = `
+      const htmlBody = `
 <p>Grazie per aver richiesto informazioni sul servizio <strong>Allegria</strong>.</p>
 
 <p>Allegria offre presenza e compagnia a domicilio per persone anziane autosufficienti.</p>
 
-<p>Per capire se il servizio è adatto alla vostra situazione possiamo fare una breve call conoscitiva.</p>
+<p>Per velocizzare la call, compila prima questo breve questionario (2 minuti):</p>
+
+<p>
+<a href="https://docs.google.com/forms/d/e/1FAIpQLSeCW1NSxx0UyypaxrY9hQvo2ISs2S7sHfIhB-DjvGGdIiHTBQ/viewform"
+style="background:#8b6a4f;color:white;padding:12px 18px;border-radius:6px;text-decoration:none;">
+Compila il questionario preliminare
+</a>
+</p>
+
+<p>Poi prenota la call conoscitiva:</p>
 
 <p>
 <a href="https://calendar.app.google/PjsT822J9aG9VnSq6"
