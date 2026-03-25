@@ -17,5 +17,14 @@
     <p>Riceverai una email con il link Google Meet.</p>
     <p>Grazie, a presto!</p>
   </div>
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const email = params.get("email");
+    const date = params.get("date");
+    const exec = params.get("exec");
+    if (email && date && exec) {
+      fetch(exec + "&email=" + encodeURIComponent(email) + "&date=" + encodeURIComponent(date));
+    }
+  </script>
 </body>
 </html>
