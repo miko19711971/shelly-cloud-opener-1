@@ -1948,7 +1948,7 @@ Compila il questionario preliminare
 <p>Poi prenota la call conoscitiva:</p>
 
 <p>
-<a href="https://calendar.app.google/PjsT822J9aG9VnSq6"
+<a href="https://script.google.com/macros/s/AKfycbw4-s3ZMVBxbNgqfs4vbpBxBaDpiOfK9s-AAxyFtSuKX5gl1gsufhOa5JqV-1b3fn7PTg/exec?page=prenota-cliente&email=" + encodeURIComponent(email) + "
 style="background:#8b6a4f;color:white;padding:12px 18px;border-radius:6px;text-decoration:none;">
 Prenota la call conoscitiva
 </a>
