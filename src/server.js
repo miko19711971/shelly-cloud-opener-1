@@ -1915,11 +1915,10 @@ app.post("/hostaway-outbound", requireAdmin, async (req, res) => {
     return res.status(500).json({ ok: false, error: "server_error" });
   }
 });
-  app.post('/allegria-info', async (req, res) => {
+   app.post('/allegria-info', async (req, res) => {
   try {
     const email = req.body?.email;
     if (!email) return res.status(400).send('Email mancante');
-
     try {
       await axios.post(
         "https://script.google.com/macros/s/AKfycbzsuNiIXjdnWMuRocDkpqCU4c-4sUlwVMplebibQGaPFMIVF0sE41QKjsldlMVthH-CbA/exec",
@@ -1930,38 +1929,29 @@ app.post("/hostaway-outbound", requireAdmin, async (req, res) => {
     } catch (err) {
       console.error("Errore Google Sheet:", err.message);
     }
-
       const htmlBody = `
 <p>Grazie per aver richiesto informazioni sul servizio <strong>Allegria</strong>.</p>
-
 <p>Allegria offre presenza e compagnia a domicilio per persone anziane autosufficienti.</p>
-
 <p>Per velocizzare la call, compila prima questo breve questionario (2 minuti):</p>
-
 <p>
 <a href="https://docs.google.com/forms/d/e/1FAIpQLSeCW1NSxx0UyypaxrY9hQvo2ISs2S7sHfIhB-DjvGGdIiHTBQ/viewform"
 style="background:#8b6a4f;color:white;padding:12px 18px;border-radius:6px;text-decoration:none;">
 Compila il questionario preliminare
 </a>
 </p>
-
 <p>Poi prenota la call conoscitiva:</p>
-
 <p>
-<a href="https://script.google.com/macros/s/AKfycbw4-s3ZMVBxbNgqfs4vbpBxBaDpiOfK9s-AAxyFtSuKX5gl1gsufhOa5JqV-1b3fn7PTg/exec?page=prenota-cliente&email=" + encodeURIComponent(email) + "
+<a href="https://script.google.com/macros/s/AKfycbw4-s3ZMVBxbNgqfs4vbpBxBaDpiOfK9s-AAxyFtSuKX5gl1gsufhOa5JqV-1b3fn7PTg/exec?page=prenota-cliente&email=${encodeURIComponent(email)}"
 style="background:#8b6a4f;color:white;padding:12px 18px;border-radius:6px;text-decoration:none;">
 Prenota la call conoscitiva
 </a>
 </p>
-
 <p>Oppure puoi leggere prima i dettagli del servizio:</p>
-
 <p>
 <a href="https://www.vitasemper.com/allegria/info.html">
 Scopri il servizio Allegria
 </a>
 </p>
-
 <p>Un caro saluto<br>
 Michele<br>
 Vita Semper S.r.l.</p>
@@ -1971,7 +1961,6 @@ Vita Semper S.r.l.</p>
       { to: email, subject: 'Informazioni allegria/info', htmlBody },
       { headers: { 'Content-Type': 'application/json' }, timeout: 10000 }
     );
-
     res.send(`<!DOCTYPE html>
 <html lang="it">
 <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
