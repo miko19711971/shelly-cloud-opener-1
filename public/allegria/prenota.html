@@ -1,10 +1,9 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="it">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Prenota Call – Allegria</title>
-
 <style>
 body {
   font-family: "Georgia", serif;
@@ -14,23 +13,9 @@ body {
   text-align: center;
   color: #4b3f36;
 }
-
-.container {
-  max-width: 700px;
-  margin: auto;
-}
-
-h1 {
-  font-size: 32px;
-  margin-bottom: 10px;
-}
-
-.subtitle {
-  font-size: 18px;
-  color: #6d5f54;
-  margin-bottom: 40px;
-}
-
+.container { max-width: 700px; margin: auto; }
+h1 { font-size: 32px; margin-bottom: 10px; }
+.subtitle { font-size: 18px; color: #6d5f54; margin-bottom: 40px; }
 .slot {
   background: #ffffff;
   border: 1px solid #e2d9cf;
@@ -42,74 +27,28 @@ h1 {
   font-size: 18px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.05);
 }
-
-.slot:hover {
-  background: #e8dfd5;
-  transform: translateY(-2px);
-}
-
-.footer {
-  margin-top: 60px;
-  font-size: 14px;
-  color: #8c7d70;
-}
+.slot:hover { background: #e8dfd5; transform: translateY(-2px); }
+.footer { margin-top: 60px; font-size: 14px; color: #8c7d70; }
 </style>
 </head>
 <body>
-
 <div class="container">
   <h1>Prenota la tua Call Conoscitiva</h1>
-  <div class="subtitle">
-    Scegli uno degli orari disponibili per conoscerci.
-  </div>
+  <div class="subtitle">Scegli uno degli orari disponibili per conoscerci.</div>
   <div id="slots"></div>
-  <div class="footer">
-    Vita Semper S.r.l.
-  </div>
+  <div class="footer">Vita Semper S.r.l.</div>
 </div>
-
 <script>
-
 const params = new URLSearchParams(window.location.search);
 const email = params.get("email");
-
 if (!email) {
   document.body.innerHTML = "<h2>Email mancante</h2>";
 }
+const baseUrl = "https://script.google.com/macros/s/AKfycbw4-s3ZMVBxbNgqfs4vbpBxBaDpiOfK9s-AAxyFtSuKX5gl1gsufhOa5JqV-1b3fn7PTg/exec";
 
-const endpoint = "https://script.google.com/macros/s/AKfycbw4-s3ZMVBxbNgqfs4vbpBxBaDpiOfK9s-AAxyFtSuKX5gl1gsufhOa5JqV-1b3fn7PTg/exec?page=prenota-cliente";
+document.getElementById("slots").innerHTML = "<p>Caricamento slot...</p>";
 
-fetch(endpoint + "?email=" + encodeURIComponent(email))
-  .then(res => res.json())
-  .then(data => {
-
-    const container = document.getElementById("slots");
-
-    if (!data.slots || data.slots.length === 0) {
-      container.innerHTML = "<p>Nessuno slot disponibile al momento.</p>";
-      return;
-    }
-
-    data.slots.forEach(slot => {
-
-      const div = document.createElement("div");
-      div.className = "slot";
-      div.innerText = slot.date + " – " + slot.time;
-
-      div.onclick = () => {
-        window.location.href =
-          endpoint +
-          "?email=" + encodeURIComponent(email) +
-          "&date=" + encodeURIComponent(slot.iso);
-      };
-
-      container.appendChild(div);
-
-    });
-
-  });
-
+window.location.href = baseUrl + "?page=prenota-cliente&email=" + encodeURIComponent(email);
 </script>
-
 </body>
 </html>
