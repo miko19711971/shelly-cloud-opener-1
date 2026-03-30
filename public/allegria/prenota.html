@@ -77,7 +77,7 @@ if (!email) {
   document.body.innerHTML = "<h2>Email mancante</h2>";
 }
 
-const endpoint = "https://script.google.com/macros/s/AKfycby1gUrXAG-r1NVLXi3BdPSyWl3HEacXMna-mAVzwJ7oCY2YOFJGPvugwdyJ-e3N5Xjsbw/exec";
+const endpoint = "https://script.google.com/macros/s/AKfycbw4-s3ZMVBxbNgqfs4vbpBxBaDpiOfK9s-AAxyFtSuKX5gl1gsufhOa5JqV-1b3fn7PTg/exec?page=prenota-cliente";
 
 fetch(endpoint + "?email=" + encodeURIComponent(email))
   .then(res => res.json())
