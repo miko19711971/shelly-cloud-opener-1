@@ -682,7 +682,34 @@ app.get("/checkin/:apt/today", (req, res) => {
   const url = `${req.protocol}://${req.get("host")}/checkin/${apt}/index.html?t=${token}`;
   return res.redirect(302, url);
 });
+app.get("/checkin/:apt/res/:reservationId", async (req, res) => {
+  const apt = req.params.apt.toLowerCase();
+  const reservationId = req.params.reservationId;
 
+  try {
+    const r = await axios.get(
+      `https://api.hostaway.com/v1/reservations/${reservationId}`,
+      { headers: { Authorization: `Bearer ${HOSTAWAY_TOKEN}` }, timeout: 10000 }
+    );
+
+    const reservation = r.data?.result;
+    if (!reservation) return res.status(404).send("Reservation not found");
+
+    const day = reservation.arrivalDate || reservation.checkInDate;
+    if (!day || !isYYYYMMDD(day)) return res.status(400).send("Invalid date");
+
+    const today = tzToday();
+    if (day !== today) return res.status(410).send("Link scaduto.");
+
+    const { token } = newTokenFor(`checkin-${apt}`, { windowMin: CHECKIN_WINDOW_MIN, max: 200, day });
+    const url = `${req.protocol}://${req.get("host")}/checkin/${apt}/index.html?t=${token}`;
+    return res.redirect(302, url);
+
+  } catch (e) {
+    console.error("❌ /checkin/res error:", e.message);
+    return res.status(500).send("Errore interno");
+  }
+});
 app.get("/checkin/:apt/:rawDate([^/.]+)", (req, res) => {
   const apt = req.params.apt.toLowerCase(), today = tzToday();
   const raw = String(req.params.rawDate || "");
