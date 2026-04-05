@@ -105,7 +105,7 @@
 
   <div class="wrap">
 
-    <form action="/allegria-info" method="POST" style="margin-bottom:24px;">
+    <form id="allegria-form" action="/allegria-info" method="POST" style="margin-bottom:24px;">
       <input 
         type="email" 
         name="email" 
@@ -117,6 +117,12 @@
         Richiedi informazioni
       </button>
     </form>
+    <script>
+      const form = document.getElementById("allegria-form");
+      form.addEventListener("submit", function() {
+        form.querySelector("button").disabled = true;
+      });
+    </script>
 
     <div class="brand-header">
       <div class="company">VITA SEMPER S.R.L.</div>
@@ -138,7 +144,7 @@
 
     <hr style="margin:40px 0; border:none; border-top:1px solid #ddd;">
 
-    <h2>Cos’è Allegria</h2>
+    <h2>Cos'è Allegria</h2>
 
     <p>
       Allegria offre presenza, ascolto e compagnia a domicilio per anziani
