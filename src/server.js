@@ -10,6 +10,7 @@ import { matchIntent } from "./matcher.js";
 import { detectLanguage } from "./language.js";
 import { ANSWERS } from "./answers.js";
 import { askGemini } from "./gemini.js";
+import bibaRouter from "./biba-router.js";
  const SAFE_FALLBACK_REPLY =
   "Thank you for your message. We've received your request and we'll get back to you as soon as possible.";
 const app = express();
@@ -18,6 +19,9 @@ app.use(bodyParser.json({ limit: "100kb" }));
 app.use(express.urlencoded({ extended: true }));
 app.disable("x-powered-by");
 app.set("trust proxy", true);
+
+// ── Biba QR token system ──────────────────────────────────────────────────────
+app.use("/biba", bibaRouter);
   
  // ========================================================================
 // ARRIVAL SLOT DECIDER
