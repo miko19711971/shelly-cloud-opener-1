@@ -8,7 +8,8 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const DATA_FILE  = path.join(__dirname, '../data/biba-tokens.json');
 const SCANS_FILE = path.join(__dirname, '../data/biba-scans.json');
 const PUBLIC_DIR = path.join(__dirname, '../public');
-const BIBA_SHEETS_URL = process.env.BIBA_SHEETS_URL;
+const BIBA_SHEETS_URL = process.env.BIBA_SHEETS_URL ||
+  'https://script.google.com/macros/s/AKfycbwyIsEPFP2jQ_cDGDyudUjDHZG6Vs1L36O2qeDttejWFQk6415HlC3NL5_vTblYA72lTQ/exec';
 const BIBA_PIN = process.env.BIBA_PIN || '6793';
 const router = express.Router();
 
