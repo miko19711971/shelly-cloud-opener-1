@@ -186,12 +186,10 @@ document.getElementById('slides-wrapper').addEventListener('touchend', e=>{
 </script>
 
 <script>
-// ─── Cassa scan log (Biba Scansioni) ─────────────────────────────────────────
 fetch('/biba/log-scan', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({ tipo: 'cassa' })
-}).catch(() => {});
+  method:'POST', headers:{'Content-Type':'application/json'},
+  body: JSON.stringify({tipo:'cassa'})
+}).catch(()=>{});
 </script>
 
 </body>

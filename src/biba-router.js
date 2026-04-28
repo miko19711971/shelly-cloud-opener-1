@@ -3,6 +3,12 @@ import fs from 'fs/promises';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import crypto from 'crypto';
+import cors from 'cors';
+
+const bibaCors = cors({
+  origin: ['https://biba-boutique.onrender.com', 'http://localhost:3000'],
+  methods: ['GET', 'POST', 'OPTIONS']
+});
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const DATA_FILE  = path.join(__dirname, '../data/biba-tokens.json');
@@ -69,7 +75,8 @@ function newToken() {
 
 // Vetrina QR → chiamato da biba_vetrina.html al caricamento
 // Genera token, logga "vetrina" su Sheet, restituisce il token
-router.get('/new-token', async (req, res) => {
+router.options('/new-token', bibaCors);
+router.get('/new-token', bibaCors, async (req, res) => {
   const tokens = await loadTokens();
   const token = newToken();
   const now = new Date().toISOString();
@@ -88,7 +95,8 @@ router.get('/new-token', async (req, res) => {
 
 // Cassa QR → chiamato da biba_cassa.html al caricamento
 // Logga "cassa" su Sheet
-router.post('/log-scan', async (req, res) => {
+router.options('/log-scan', bibaCors);
+router.post('/log-scan', bibaCors, async (req, res) => {
   const { token, tipo } = req.body;
   const now = new Date().toISOString();
 
@@ -126,7 +134,8 @@ router.get('/referral', (req, res) => {
 });
 
 // Cassa: attiva token (richiede PIN cassiera)
-router.post('/activate/:token', async (req, res) => {
+router.options('/activate/:token', bibaCors);
+router.post('/activate/:token', bibaCors, async (req, res) => {
   const { token } = req.params;
   const { pin } = req.body;
 
