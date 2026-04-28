@@ -5,24 +5,41 @@ import { fileURLToPath } from 'url';
 import crypto from 'crypto';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const DATA_FILE = path.join(__dirname, '../data/biba-tokens.json');
+const DATA_FILE  = path.join(__dirname, '../data/biba-tokens.json');
+const SCANS_FILE = path.join(__dirname, '../data/biba-scans.json');
 const PUBLIC_DIR = path.join(__dirname, '../public');
 const BIBA_SHEETS_URL = process.env.BIBA_SHEETS_URL;
 const BIBA_PIN = process.env.BIBA_PIN || '6793';
 const router = express.Router();
 
-// ─── Google Sheet "Biba Scansioni" ────────────────────────────────────────────
+// ─── Scansioni storage ────────────────────────────────────────────────────────
 
-async function logBibaSheet(data) {
-  if (!BIBA_SHEETS_URL) return;
+async function loadScans() {
   try {
-    const { default: axios } = await import('axios');
-    await axios.post(BIBA_SHEETS_URL, data, {
-      headers: { 'Content-Type': 'application/json' },
-      timeout: 10000
-    });
-  } catch (err) {
-    console.error('❌ Biba Sheets log error:', err.message);
+    const raw = await fs.readFile(SCANS_FILE, 'utf-8');
+    return JSON.parse(raw);
+  } catch {
+    return [];
+  }
+}
+
+async function logScan(data) {
+  await fs.mkdir(path.dirname(SCANS_FILE), { recursive: true });
+  const scans = await loadScans();
+  scans.push(data);
+  await fs.writeFile(SCANS_FILE, JSON.stringify(scans, null, 2));
+
+  // Opzionale: invia anche a Google Sheets se configurato
+  if (BIBA_SHEETS_URL) {
+    try {
+      const { default: axios } = await import('axios');
+      await axios.post(BIBA_SHEETS_URL, data, {
+        headers: { 'Content-Type': 'application/json' },
+        timeout: 10000
+      });
+    } catch (err) {
+      console.error('❌ Biba Sheets log error:', err.message);
+    }
   }
 }
 
@@ -58,7 +75,7 @@ router.get('/new-token', async (req, res) => {
   tokens[token] = { created: now, uses: 0, history: [], source: 'vetrina' };
   await saveTokens(tokens);
 
-  logBibaSheet({
+  logScan({
     token,
     tipo: 'vetrina',
     timestamp: now,
@@ -74,7 +91,7 @@ router.post('/log-scan', async (req, res) => {
   const { token, tipo } = req.body;
   const now = new Date().toISOString();
 
-  logBibaSheet({
+  logScan({
     token: token || '',
     tipo: tipo || 'cassa',
     timestamp: now,
@@ -91,7 +108,7 @@ router.get('/scan', async (req, res) => {
   const now = new Date().toISOString();
   tokens[token] = { created: now, uses: 0, history: [], source: 'scan' };
   await saveTokens(tokens);
-  logBibaSheet({ token, tipo: 'scan', timestamp: now, userAgent: req.headers['user-agent'] || '' });
+  logScan({ token, tipo: 'scan', timestamp: now, userAgent: req.headers['user-agent'] || '' });
   res.redirect(`/biba/unlock?t=${token}`);
 });
 
@@ -124,6 +141,27 @@ router.post('/activate/:token', async (req, res) => {
   return res.json({ status: t.uses === 1 ? 'first' : 'referral' });
 });
 
+// Scansioni admin — tabella HTML
+router.get('/scansioni', async (req, res) => {
+  const scans = await loadScans();
+  res.send(scansHTML(scans));
+});
+
+// Scansioni admin — export CSV
+router.get('/scansioni.csv', async (req, res) => {
+  const scans = await loadScans();
+  const rows = scans.map(s => [
+    s.token || '',
+    s.tipo  || '',
+    s.timestamp ? s.timestamp.replace('T',' ').slice(0,19) : '',
+    (s.userAgent || '').replace(/,/g,' ')
+  ].join(','));
+  const csv = 'Token,Tipo,Timestamp,UserAgent\n' + rows.join('\n');
+  res.setHeader('Content-Type', 'text/csv');
+  res.setHeader('Content-Disposition', 'attachment; filename="biba-scansioni.csv"');
+  res.send(csv);
+});
+
 // Statistiche admin
 router.get('/stats', async (req, res) => {
   const tokens = await loadTokens();
@@ -143,6 +181,47 @@ router.get('/stats', async (req, res) => {
 export default router;
 
 // ─── HTML Pages ───────────────────────────────────────────────────────────────
+
+function scansHTML(scans) {
+  const rows = [...scans].reverse().slice(0, 200).map(s => {
+    const ts = s.timestamp ? s.timestamp.replace('T',' ').slice(0,19) : '';
+    const tipo = s.tipo === 'vetrina'
+      ? '<span style="color:#c9a84c">VETRINA</span>'
+      : '<span style="color:#4caf50">CASSA</span>';
+    return `<tr><td>${ts}</td><td>${tipo}</td><td style="font-family:monospace">${s.token||'—'}</td></tr>`;
+  }).join('');
+  return `<!DOCTYPE html>
+<html><head><meta charset="UTF-8"/><title>Biba Scansioni</title>
+<style>
+  body{background:#0d0d0d;color:#f0e6cc;font-family:monospace;padding:30px;max-width:900px;margin:0 auto}
+  h1{color:#c9a84c;letter-spacing:4px;margin-bottom:8px}
+  .sub{font-size:12px;color:#444;margin-bottom:24px}
+  .btn{display:inline-block;background:#c9a84c;color:#000;font-size:11px;font-weight:700;
+    letter-spacing:2px;text-transform:uppercase;padding:8px 18px;text-decoration:none;
+    border-radius:2px;margin-bottom:28px}
+  .tot{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:28px}
+  .card{background:#111;border:1px solid #222;padding:16px;text-align:center}
+  .num{font-size:30px;font-weight:700;color:#c9a84c}
+  .lbl{font-size:10px;color:#555;margin-top:4px;letter-spacing:2px;text-transform:uppercase}
+  table{width:100%;border-collapse:collapse}
+  th,td{padding:9px 12px;text-align:left;border-bottom:1px solid #1a1a1a;font-size:12px}
+  th{color:#c9a84c;font-size:10px;letter-spacing:2px;text-transform:uppercase}
+</style></head>
+<body>
+<h1>BIBA · SCANSIONI</h1>
+<div class="sub">Ultime 200 — aggiornato in tempo reale</div>
+<a class="btn" href="/biba/scansioni.csv">⬇ Esporta CSV</a>
+<div class="tot">
+  <div class="card"><div class="num">${scans.length}</div><div class="lbl">Totale</div></div>
+  <div class="card"><div class="num">${scans.filter(s=>s.tipo==='vetrina').length}</div><div class="lbl">Vetrina</div></div>
+  <div class="card"><div class="num">${scans.filter(s=>s.tipo==='cassa').length}</div><div class="lbl">Cassa</div></div>
+</div>
+<table>
+  <thead><tr><th>Timestamp</th><th>Tipo</th><th>Token</th></tr></thead>
+  <tbody>${rows}</tbody>
+</table>
+</body></html>`;
+}
 
 function statsHTML(stats) {
   const rows = stats.recent.map(t =>
