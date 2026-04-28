@@ -186,11 +186,20 @@ document.getElementById('slides-wrapper').addEventListener('touchend', e=>{
 </script>
 
 <script>
-fetch('/biba/log-scan', {
-  method:'POST', headers:{'Content-Type':'application/json'},
-  body: JSON.stringify({tipo:'cassa'})
-}).catch(()=>{});
+(function(){
+  var GAS_URL = '';
+  function logScan(data){
+    try{
+      fetch(GAS_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});
+    }catch(e){}
+  }
+  document.addEventListener('DOMContentLoaded',function(){
+    var token = sessionStorage.getItem('bibaToken') || '';
+    var ua = navigator.userAgent;
+    var now = new Date().toISOString();
+    logScan({token: token, tipo: 'cassa', timestamp: now, userAgent: ua});
+  });
+})();
 </script>
-
 </body>
 </html>
