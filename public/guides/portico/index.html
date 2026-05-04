@@ -96,7 +96,7 @@ const DATA = {
       fb_thanks:"Thanks for your feedback!"
     },
     apt: {
-      checkin_time:"15:00", 
+      checkin_time:"13:00", 
       checkout_time:"11:00",
       wifi_note:"Look at the bed. On the right side there's a storage bench with the router on top. SSID and password are on the router label.",
       wifi_ssid:"See router label", 
@@ -112,6 +112,7 @@ const DATA = {
       supermarkets:"Carrefour Express on Via Arenula 41. Conad City on Via di Santa Maria del Pianto 4. Punto Simply on Via dei Falegnami 4.",
       pharmacies:"Farmacia della Reginella on Via della Reginella 25. Farmacia Internazionale at Largo Arenula 14. Farmacia San Salvatore at Piazza dell'Enciclopedia Italiana 53.",
       luggage:"Radical Storage at Largo di Torre Argentina, about 5 minutes walk.",
+      sims:"SIM card shops: Vodafone at Corso Vittorio Emanuele II 209, TIM at Piazza Venezia 2, Iliad at Via del Corso 282.",
       laundry:"Self-service laundry on Via Arenula 47.",
       hospital:"Fatebenefratelli Hospital on Tiber Island.",
       atms:"Unicredit at Largo Arenula 1. BNL on Via Arenula 41. Intesa on Via Arenula 27.",
@@ -142,7 +143,7 @@ const DATA = {
       
       {k:"kitchen",keys:["kitchen","cook","cooking","stove"],t:a=>`<b>KITCHEN</b><br>${a.kitchen_note}`},
       
-      {k:"services",keys:["pharmacy","hospital","atm","sim","laundry","luggage","supermarket","groceries"],t:a=>`<b>USEFUL SERVICES</b><br><br><b>Supermarkets:</b> ${a.supermarkets}<br><br><b>Pharmacies:</b> ${a.pharmacies}<br><br><b>Hospital:</b> ${a.hospital}<br><br><b>ATMs:</b> ${a.atms}<br><br><b>Laundry:</b> ${a.laundry}<br><br><b>Luggage storage:</b> ${a.luggage}`},
+      {k:"services",keys:["pharmacy","hospital","atm","sim","laundry","luggage","supermarket","groceries","services"],t:a=>`<b>USEFUL SERVICES</b><br><br><b>Supermarkets:</b> ${a.supermarkets}<br><br><b>Pharmacies:</b> ${a.pharmacies}<br><br><b>Hospital:</b> ${a.hospital}<br><br><b>ATMs:</b> ${a.atms}<br><br><b>Laundry:</b> ${a.laundry}<br><br><b>Luggage storage:</b> ${a.luggage}<br><br><b>SIM cards:</b> ${a.sims}`},
       
       {k:"transport",keys:["transport","tram","bus","taxi","airport","train","metro","getting around"],t:a=>`<b>TRANSPORT</b><br>${a.transport}<br><br><b>Airports:</b> ${a.airports}`},
       
@@ -200,7 +201,7 @@ const DATA = {
       fb_thanks:"Grazie per il tuo feedback!"
     },
     apt:{
-      checkin_time:"15:00", 
+      checkin_time:"13:00", 
       checkout_time:"11:00",
       wifi_note:"Guarda il letto. Sul lato destro c'è una panca contenitore con sopra il router. SSID e password sono sull'etichetta del router.",
       wifi_ssid:"Vedi etichetta del router", 
@@ -216,6 +217,7 @@ const DATA = {
       supermarkets:"Carrefour Express in Via Arenula 41. Conad City in Via di Santa Maria del Pianto 4. Punto Simply in Via dei Falegnami 4.",
       pharmacies:"Farmacia della Reginella in Via della Reginella 25. Farmacia Internazionale in Largo Arenula 14. Farmacia San Salvatore in Piazza dell'Enciclopedia Italiana 53.",
       luggage:"Radical Storage in Largo di Torre Argentina, circa cinque minuti a piedi.",
+      sims:"Negozi SIM card: Vodafone in Corso Vittorio Emanuele II 209, TIM in Piazza Venezia 2, Iliad in Via del Corso 282.",
       laundry:"Lavanderia self service in Via Arenula 47.",
       hospital:"Ospedale Fatebenefratelli sull'Isola Tiberina.",
       atms:"Unicredit in Largo Arenula 1. BNL in Via Arenula 41. Intesa in Via Arenula 27.",
@@ -246,7 +248,7 @@ const DATA = {
       
       {k:"cucina",keys:["cucina","cucinare","fornelli","stufa"],t:a=>`<b>CUCINA</b><br>${a.kitchen_note}`},
       
-      {k:"servizi",keys:["farmacia","ospedale","bancomat","sim","lavanderia","bagagli","supermercato","spesa"],t:a=>`<b>SERVIZI UTILI</b><br><br><b>Supermercati:</b> ${a.supermarkets}<br><br><b>Farmacie:</b> ${a.pharmacies}<br><br><b>Ospedale:</b> ${a.hospital}<br><br><b>Bancomat:</b> ${a.atms}<br><br><b>Lavanderia:</b> ${a.laundry}<br><br><b>Deposito bagagli:</b> ${a.luggage}`},
+      {k:"servizi",keys:["farmacia","ospedale","bancomat","sim","lavanderia","bagagli","supermercato","spesa","servizi"],t:a=>`<b>SERVIZI UTILI</b><br><br><b>Supermercati:</b> ${a.supermarkets}<br><br><b>Farmacie:</b> ${a.pharmacies}<br><br><b>Ospedale:</b> ${a.hospital}<br><br><b>Bancomat:</b> ${a.atms}<br><br><b>Lavanderia:</b> ${a.laundry}<br><br><b>Deposito bagagli:</b> ${a.luggage}<br><br><b>SIM card:</b> ${a.sims}`},
       
       {k:"trasporti",keys:["trasporti","tram","bus","taxi","aeroporto","treno","metro","muoversi"],t:a=>`<b>TRASPORTI</b><br>${a.transport}<br><br><b>Aeroporti:</b> ${a.airports}`},
       
@@ -303,7 +305,7 @@ const DATA = {
       fb_thanks:"Merci pour votre retour !"
     },
     apt:{
-      checkin_time:"15:00", 
+      checkin_time:"13:00", 
       checkout_time:"11:00",
       wifi_note:"Regardez le lit. Sur le côté droit, il y a un banc-coffre avec le routeur dessus. SSID et mot de passe sont sur l'étiquette du routeur.",
       wifi_ssid:"Voir l'étiquette du routeur", 
@@ -319,6 +321,7 @@ const DATA = {
       supermarkets:"Carrefour Express dans la Via Arenula 41. Conad City dans la Via di Santa Maria del Pianto 4. Punto Simply dans la Via dei Falegnami 4.",
       pharmacies:"Farmacia della Reginella dans la Via della Reginella 25. Farmacia Internazionale au Largo Arenula 14. Farmacia San Salvatore à la Piazza dell'Enciclopedia Italiana 53.",
       luggage:"Radical Storage au Largo di Torre Argentina, environ 5 minutes à pied.",
+      sims:"Boutiques de cartes SIM : Vodafone à Corso Vittorio Emanuele II 209, TIM à Piazza Venezia 2, Iliad à Via del Corso 282.",
       laundry:"Laverie en libre-service dans la Via Arenula 47.",
       hospital:"Hôpital Fatebenefratelli sur l'Île Tibérine.",
       atms:"Unicredit au Largo Arenula 1. BNL dans la Via Arenula 41. Intesa dans la Via Arenula 27.",
@@ -349,7 +352,7 @@ const DATA = {
       
       {k:"cuisine",keys:["cuisine","cuisiner","plaques","four"],t:a=>`<b>CUISINE</b><br>${a.kitchen_note}`},
       
-      {k:"services",keys:["pharmacie","hôpital","dab","sim","laverie","consigne","supermarché","courses"],t:a=>`<b>SERVICES UTILES</b><br><br><b>Supermarchés :</b> ${a.supermarkets}<br><br><b>Pharmacies :</b> ${a.pharmacies}<br><br><b>Hôpital :</b> ${a.hospital}<br><br><b>Distributeurs :</b> ${a.atms}<br><br><b>Laverie :</b> ${a.laundry}<br><br><b>Consigne à bagages :</b> ${a.luggage}`},
+      {k:"services",keys:["pharmacie","hôpital","dab","sim","laverie","consigne","supermarché","courses","services"],t:a=>`<b>SERVICES UTILES</b><br><br><b>Supermarchés :</b> ${a.supermarkets}<br><br><b>Pharmacies :</b> ${a.pharmacies}<br><br><b>Hôpital :</b> ${a.hospital}<br><br><b>Distributeurs :</b> ${a.atms}<br><br><b>Laverie :</b> ${a.laundry}<br><br><b>Consigne à bagages :</b> ${a.luggage}<br><br><b>Cartes SIM :</b> ${a.sims}`},
       
       {k:"transports",keys:["transports","tram","bus","taxi","aéroport","train","métro","se déplacer"],t:a=>`<b>TRANSPORTS</b><br>${a.transport}<br><br><b>Aéroports :</b> ${a.airports}`},
       
@@ -407,7 +410,7 @@ const DATA = {
       fb_thanks:"Danke für dein Feedback!"
     },
     apt:{
-      checkin_time:"15:00", 
+      checkin_time:"13:00", 
       checkout_time:"11:00",
       wifi_note:"Schau auf das Bett. Auf der rechten Seite steht eine Truhenbank mit dem Router darauf. SSID und Passwort stehen auf dem Router-Etikett.",
       wifi_ssid:"Siehe Router-Etikett", 
@@ -423,6 +426,7 @@ const DATA = {
       supermarkets:"Carrefour Express in der Via Arenula 41. Conad City in der Via di Santa Maria del Pianto 4. Punto Simply in der Via dei Falegnami 4.",
       pharmacies:"Farmacia della Reginella in der Via della Reginella 25. Farmacia Internazionale am Largo Arenula 14. Farmacia San Salvatore an der Piazza dell'Enciclopedia Italiana 53.",
       luggage:"Radical Storage am Largo di Torre Argentina, etwa 5 Minuten zu Fuß.",
+      sims:"SIM-Karten-Shops: Vodafone am Corso Vittorio Emanuele II 209, TIM an der Piazza Venezia 2, Iliad in der Via del Corso 282.",
       laundry:"Selbstbedienungs-Waschsalon in der Via Arenula 47.",
       hospital:"Krankenhaus Fatebenefratelli auf der Tiberinsel.",
       atms:"Unicredit am Largo Arenula 1. BNL in der Via Arenula 41. Intesa in der Via Arenula 27.",
@@ -453,7 +457,7 @@ const DATA = {
       
       {k:"Küche",keys:["küche","kochen","herd","ofen"],t:a=>`<b>KÜCHE</b><br>${a.kitchen_note}`},
       
-      {k:"Services",keys:["apotheke","krankenhaus","geldautomat","sim","wäscherei","gepäck","supermarkt","einkauf"],t:a=>`<b>NÜTZLICHE SERVICES</b><br><br><b>Supermärkte:</b> ${a.supermarkets}<br><br><b>Apotheken:</b> ${a.pharmacies}<br><br><b>Krankenhaus:</b> ${a.hospital}<br><br><b>Geldautomaten:</b> ${a.atms}<br><br><b>Waschsalon:</b> ${a.laundry}<br><br><b>Gepäckaufbewahrung:</b> ${a.luggage}`},
+      {k:"Services",keys:["apotheke","krankenhaus","geldautomat","sim","wäscherei","gepäck","supermarkt","einkauf","services"],t:a=>`<b>NÜTZLICHE SERVICES</b><br><br><b>Supermärkte:</b> ${a.supermarkets}<br><br><b>Apotheken:</b> ${a.pharmacies}<br><br><b>Krankenhaus:</b> ${a.hospital}<br><br><b>Geldautomaten:</b> ${a.atms}<br><br><b>Waschsalon:</b> ${a.laundry}<br><br><b>Gepäckaufbewahrung:</b> ${a.luggage}<br><br><b>SIM-Karten:</b> ${a.sims}`},
       
       {k:"Verkehr",keys:["verkehr","straßenbahn","bus","taxi","flughafen","zug","metro","fortbewegen"],t:a=>`<b>VERKEHR</b><br>${a.transport}<br><br><b>Flughäfen:</b> ${a.airports}`},
       
@@ -511,7 +515,7 @@ const DATA = {
       fb_thanks:"¡Gracias por tu opinión!"
     },
     apt:{
-      checkin_time:"15:00", 
+      checkin_time:"13:00", 
       checkout_time:"11:00",
       wifi_note:"Mira la cama. En el lado derecho hay un banco-baúl con el router encima. SSID y contraseña están en la etiqueta del router.",
       wifi_ssid:"Ver etiqueta del router", 
@@ -527,6 +531,7 @@ const DATA = {
       supermarkets:"Carrefour Express en Via Arenula 41. Conad City en Via di Santa Maria del Pianto 4. Punto Simply en Via dei Falegnami 4.",
       pharmacies:"Farmacia della Reginella en Via della Reginella 25. Farmacia Internazionale en Largo Arenula 14. Farmacia San Salvatore en Piazza dell'Enciclopedia Italiana 53.",
       luggage:"Radical Storage en Largo di Torre Argentina, unos 5 minutos a pie.",
+      sims:"Tiendas de tarjetas SIM: Vodafone en Corso Vittorio Emanuele II 209, TIM en Piazza Venezia 2, Iliad en Via del Corso 282.",
       laundry:"Lavandería autoservicio en Via Arenula 47.",
       hospital:"Hospital Fatebenefratelli en la Isla Tiberina.",
       atms:"Unicredit en Largo Arenula 1. BNL en Via Arenula 41. Intesa en Via Arenula 27.",
@@ -557,7 +562,7 @@ const DATA = {
       
       {k:"cocina",keys:["cocina","cocinar","hornillos","estufa"],t:a=>`<b>COCINA</b><br>${a.kitchen_note}`},
       
-      {k:"servicios",keys:["farmacia","hospital","cajero","sim","lavandería","equipaje","supermercado","compra"],t:a=>`<b>SERVICIOS ÚTILES</b><br><br><b>Supermercados:</b> ${a.supermarkets}<br><br><b>Farmacias:</b> ${a.pharmacies}<br><br><b>Hospital:</b> ${a.hospital}<br><br><b>Cajeros:</b> ${a.atms}<br><br><b>Lavandería:</b> ${a.laundry}<br><br><b>Consigna de equipaje:</b> ${a.luggage}`},
+      {k:"servicios",keys:["farmacia","hospital","cajero","sim","lavandería","equipaje","supermercado","compra","servicios"],t:a=>`<b>SERVICIOS ÚTILES</b><br><br><b>Supermercados:</b> ${a.supermarkets}<br><br><b>Farmacias:</b> ${a.pharmacies}<br><br><b>Hospital:</b> ${a.hospital}<br><br><b>Cajeros:</b> ${a.atms}<br><br><b>Lavandería:</b> ${a.laundry}<br><br><b>Consigna de equipaje:</b> ${a.luggage}<br><br><b>Tarjetas SIM:</b> ${a.sims}`},
       
       {k:"transporte",keys:["transporte","tranvía","autobús","taxi","aeropuerto","tren","metro","moverse"],t:a=>`<b>TRANSPORTE</b><br>${a.transport}<br><br><b>Aeropuertos:</b> ${a.airports}`},
       
