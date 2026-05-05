@@ -1,4 +1,4 @@
- import fs from "fs/promises";
+import fs from "fs/promises";
 import path from "path";
 import { fileURLToPath } from "url";
 
@@ -23,6 +23,7 @@ export async function reply({ apartment, message }) {
     const guide = JSON.parse(fileContent);
 
     const text = message.toLowerCase();
+    const words = text.split(/\s+/);
 
     // 2. DETERMINA LA LINGUA DALLA FRASE
     let detectedLang = "en"; // Default
@@ -36,16 +37,28 @@ export async function reply({ apartment, message }) {
       }
     }
 
-    // 3. TROVA L'INTENT (Sfrutta gli "intents" che hai già nel tuo JSON)
+    // 3. TROVA L'INTENT con scoring (vince chi ha piu keyword corrispondenti)
     const langIntents = guide.intents[detectedLang] || guide.intents.en;
     const langAnswers = guide.answers[detectedLang] || guide.answers.en;
-    
+
     let foundIntent = null;
+    let bestScore = 0;
 
     for (const [intentName, keywords] of Object.entries(langIntents)) {
-      if (keywords.some(kw => text.includes(kw.toLowerCase()))) {
+      let score = 0;
+      for (const kw of keywords) {
+        const normalized = kw.toLowerCase();
+        // Frasi multi-parola: cerca nella stringa completa
+        // Parole singole: controlla confini di parola per evitare match parziali
+        if (normalized.includes(" ")) {
+          if (text.includes(normalized)) score += 2;
+        } else {
+          if (words.includes(normalized)) score += 1;
+        }
+      }
+      if (score > bestScore) {
+        bestScore = score;
         foundIntent = intentName;
-        break; 
       }
     }
 
@@ -54,11 +67,11 @@ export async function reply({ apartment, message }) {
       return langAnswers[foundIntent];
     }
 
-    // Fallback se non capisce il tema: Wi-Fi o la prima risposta disponibile
-    return langAnswers.wifi || langAnswers.check_in || Object.values(langAnswers)[0];
+    // Nessun intent trovato -> null, il chiamante puo decidere se passare a Gemini
+    return null;
 
   } catch (error) {
     console.error("Errore nel motore AI:", error);
-    return "I'm sorry, I'm having trouble accessing the guide. Please try again later.";
+    return null;
   }
 }

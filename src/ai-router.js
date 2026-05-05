@@ -8,42 +8,25 @@
  */
 
 // INTENTS GIÀ COPERTI DALLA GUIDA DI ARENULA
-const GUIDE_INTENTS = new Set([
+const GUIDE_INTENTS = // allineati con STRICT_INTENTS di matcher.js
+new Set([
   "wifi",
-  "wifi_troubleshooting",
+  "fire",
   "trash",
   "heating",
-  "AC",
   "electric_panel",
-  "water",
-  "bathroom",
-  "linens_towels",
-  "kitchen",
   "check_in",
-  "early_checkin",
   "check_out",
-  "late_checkout",
-  "building",
-  "transport",
-  "luggage_storage",
-  "eat",
-  "drink",
-  "visit",
-  "experiences",
-  "day_trips",
-  "tickets",
-  "museums",
-  "exhibitions",
   "city_tax_info",
-  "city_tax_payment_issue",
-  "payment_methods",
-  "id_documents",
-  "receipt_rental",
-  "receipt_city_tax",
-  "house_rules",
   "laundry",
+  "apartment_info",
+  "building",
   "emergency",
-  "services"
+  "malfunction",
+  "air_conditioning",
+  "gas_leak",
+  "water_leak",
+  "lost_keys"
 ]);
 
 /**

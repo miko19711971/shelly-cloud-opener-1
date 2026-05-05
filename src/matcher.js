@@ -26,27 +26,27 @@ const STRICT_INTENTS = {
 
   trash: [
     "spazzatura", "rifiuti", "immondizia", "pattumiera",
-    "trash", "garbage", "basura", "déchets", "müll"
+    "trash", "garbage", "waste", "recycling", "bins", "basura", "déchets", "müll"
   ],
 
   heating: [
     "riscaldamento", "termostato", "fa freddo",
-    "heating", "heater", "chauffage", "heizung"
+    "heating", "heater", "calefaccion", "hace frio", "chauffage", "heizung"
   ],
 
   electric_panel: [
     "corrente", "quadro elettrico", "salvavita",
-    "blackout", "no power", "kein strom"
+    "blackout", "no power", "sin luz", "no hay luz", "pas d electricite", "kein strom", "stromausfall"
   ],
 
   check_in: [
     "check in", "check-in", "arrivo", "come entro",
-    "arrival", "llegada", "arrivée"
+    "arrival", "llegada", "arrivee", "ankunft", "einchecken"
   ],
 
   check_out: [
     "check out", "check-out", "partenza",
-    "departure", "salida", "départ"
+    "departure", "salida", "depart", "abreise", "auschecken"
   ],
 
   city_tax_info: [
@@ -56,7 +56,7 @@ const STRICT_INTENTS = {
 
   laundry: [
     "lavatrice", "lavanderia",
-    "washing machine", "laundry"
+    "washing machine", "laundry", "lavadora", "machine a laver", "waschmaschine"
   ],
 
   // ✅ SPOSTATO QUI (PRIMA DI building)
@@ -100,8 +100,19 @@ const STRICT_INTENTS = {
   ],
 
   emergency: [
-    "emergenza", "urgente", "rotto", "non funziona",
-    "emergency", "urgent", "not working"
+    "emergenza", "urgente", "aiuto", "soccorso",
+    "emergency", "urgent", "help me", "need help",
+    "emergencia", "ayuda", "socorro",
+    "urgence", "au secours",
+    "notfall", "hilfe"
+  ],
+
+  malfunction: [
+    "non funziona", "rotto", "guasto",
+    "not working", "broken",
+    "no funciona", "roto",
+    "ne fonctionne pas",
+    "funktioniert nicht", "kaputt"
   ],
 
   air_conditioning: [
@@ -154,7 +165,10 @@ const STRICT_INTENTS = {
 // =========================
 const SOFT_INTENTS = {
   parking: [
-    "parcheggio", "garage", "parking"
+    "parcheggio", "dove parcheggio",
+    "parking", "where to park",
+    "stationnement",
+    "estacionamiento", "donde aparcar"
   ],
   restaurants: [
     "ristorante", "dove mangiare", "pizzeria",
@@ -169,8 +183,20 @@ const SOFT_INTENTS = {
     "what to see", "attractions"
   ],
   tickets: [
-    "biglietti", "prenotare",
-    "tickets", "book tickets"
+    "biglietti", "prenotare visita",
+    "tickets", "book tickets",
+    "billets", "entradas"
+  ],
+  transport: [
+    "autobus", "metro", "taxi", "come ci arrivo",
+    "bus", "subway", "how to get there",
+    "transporte publico",
+    "wie komme ich hin"
+  ],
+  nightlife: [
+    "bar", "aperitivo", "discoteca",
+    "nightlife", "night out",
+    "nachtleben"
   ]
 };
 
@@ -193,8 +219,8 @@ function normalize(text) {
 const LANG = {
   it: ["come", "dove", "quando", "quanto"],
   en: ["what", "how", "where", "when"],
-  fr: ["que", "comment", "ou"],
-  es: ["que", "como", "donde"],
+  fr: ["comment", "merci", "pourquoi", "bonjour"],
+  es: ["que", "como", "donde", "gracias", "hola"],
   de: ["was", "wie", "wo"]
 };
 

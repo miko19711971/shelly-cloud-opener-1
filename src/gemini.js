@@ -44,11 +44,16 @@ async function detectGeminiModel() {
         !name.includes("preview")
       );
 
-    if (validGeminiModels.length > 0) {
+    const PREFERRED = ["gemini-1.5-pro", "gemini-1.5-flash", "gemini-1.0-pro"];
+    const best = PREFERRED.find(p => validGeminiModels.some(name => name.includes(p)));
+    if (best) {
+      CURRENT_GEMINI_MODEL = validGeminiModels.find(name => name.includes(best)) || best;
+      console.log("🔮 Gemini attivo:", CURRENT_GEMINI_MODEL);
+    } else if (validGeminiModels.length > 0) {
       CURRENT_GEMINI_MODEL = validGeminiModels[0];
-      console.log("🔮 Gemini attivo (API):", CURRENT_GEMINI_MODEL);
+      console.log("🔮 Gemini attivo (primo disponibile):", CURRENT_GEMINI_MODEL);
     } else {
-      console.log("⚠️ Gemini: nessun modello compatibile trovato, fallback:", CURRENT_GEMINI_MODEL);
+      console.log("⚠️ Gemini: nessun modello preferito disponibile, fallback:", CURRENT_GEMINI_MODEL);
     }
   } catch (err) {
     console.log("⚠️ Gemini detect error → fallback:", CURRENT_GEMINI_MODEL);
@@ -71,7 +76,8 @@ const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 export async function askGemini({ message, apartment, lang }) {
   try {
     const model = genAI.getGenerativeModel({
-      model: CURRENT_GEMINI_MODEL
+      model: CURRENT_GEMINI_MODEL,
+      systemInstruction: 
     });
 
     const prompt = `
@@ -106,7 +112,7 @@ Domanda ospite:
 ${message}
 `;
 
-    const result = await model.generateContent(prompt);
+    const result = await model.generateContent(message);
 
     const text = result?.response?.text?.();
 
