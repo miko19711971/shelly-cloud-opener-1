@@ -859,6 +859,11 @@ const MONTI_RESPONSES = {
       rientro: {
         title: "🏠 Serata tranquilla",
         text: "Se la giornata è stata lunga, rientra.\nCena leggera o delivery e riposo.\nDomani si ricomincia."
+      },
+    
+      cena: {
+        title: "🍽️ Cena senza stress",
+        text: "È l'ora giusta per cena.\nA Monti puoi mangiare bene senza formalità.\nEntra dove ti ispira, resta quanto vuoi."
       }
     },
     "2330": {
@@ -918,6 +923,11 @@ const MONTI_RESPONSES = {
       rientro: {
         title: "🏠 Quiet night",
         text: "If the day was long, stay in.\nLight dinner and rest.\nTomorrow awaits."
+      },
+    
+      cena: {
+        title: "🍽️ Dinner",
+        text: "It's dinner time.\nMonti offers relaxed places with good food.\nNo rush, no dress code."
       }
     },
     "2330": {
@@ -977,7 +987,9 @@ const MONTI_RESPONSES = {
       rientro: {
         title: "🏠 Soirée calme",
         text: "Reste à la maison.\nRepos mérité."
-      }
+      },
+    
+      cena: { title: "🍽️ Dîner", text: "C'est l'heure du dîner.\nRestaurants simples et bons.\nSans stress." }
     },
     "2330": {
       ultimo: {
@@ -1036,7 +1048,9 @@ const MONTI_RESPONSES = {
       rientro: {
         title: "🏠 Noche tranquila",
         text: "Descanso."
-      }
+      },
+    
+      cena: { title: "🍽️ Cena", text: "Hora de cenar.\nSin estrés." }
     },
     "2330": {
       ultimo: {
@@ -1095,7 +1109,9 @@ const MONTI_RESPONSES = {
       rientro: {
         title: "🏠 Ruhiger Abend",
         text: "Erholung."
-      }
+      },
+    
+      cena: { title: "🍽️ Abendessen", text: "Zeit zum Essen.\nGanz entspannt." }
     },
     "2330": {
       ultimo: {
@@ -1132,6 +1148,11 @@ const PORTICO_RESPONSES = {
       rientro: {
         title: "🏠 Rientro tranquillo",
         text: "Se preferisci, rientra.\nSistema le tue cose, una pausa breve.\nQui il tempo non corre."
+      },
+    
+      caffe: {
+        title: "☕ Caffè nel Ghetto",
+        text: "Fermati per un caffè tranquillo.\nUn bar del quartiere, niente folla.\nLa mattina nel Ghetto inizia piano."
       }
     },
     "18": {
@@ -1191,6 +1212,11 @@ const PORTICO_RESPONSES = {
       rientro: {
         title: "🏠 Short rest",
         text: "If you prefer, go back.\nUnpack and rest a bit.\nTime moves slowly here."
+      },
+    
+      caffe: {
+        title: "☕ Coffee in the Ghetto",
+        text: "Stop for a quiet coffee.\nA local bar, no crowds.\nMorning in the Jewish quarter starts slowly."
       }
     },
     "18": {
@@ -1241,7 +1267,9 @@ const PORTICO_RESPONSES = {
     "11": {
       passeggiata: { title: "☀️ Promenade lente", text: "Le matin ici est spécial.\nPromène-toi autour du Portique d’Ottavie.\nLe quartier s’éveille doucement." },
       dolce: { title: "🥐 Pause sucrée", text: "Arrête-toi chez Boccione.\nPizza juive ou gâteau ricotta-griottes.\nSimple et authentique." },
-      rientro: { title: "🏠 Retour calme", text: "Si tu préfères, rentre.\nIci, le temps ralentit." }
+      rientro: { title: "🏠 Retour calme", text: "Si tu préfères, rentre.\nIci, le temps ralentit." },
+    
+      caffe: { title: "☕ Café", text: "Un café simple.\nLe matin ici est calme." }
     },
     "18": {
       aperitivo: { title: "🍷 Apéritif", text: "Moment parfait pour s’arrêter.\nUn verre et le quartier autour." },
@@ -1264,7 +1292,9 @@ const PORTICO_RESPONSES = {
     "11": {
       passeggiata: { title: "☀️ Paseo lento", text: "La mañana aquí es especial.\nEl barrio despierta despacio." },
       dolce: { title: "🥐 Algo dulce", text: "Boccione.\nPizza judía o tarta tradicional." },
-      rientro: { title: "🏠 Volver", text: "Si prefieres, regresa.\nAquí no hay prisa." }
+      rientro: { title: "🏠 Volver", text: "Si prefieres, regresa.\nAquí no hay prisa." },
+    
+      caffe: { title: "☕ Café", text: "Un café tranquilo.\nSin prisa." }
     },
     "18": {
       aperitivo: { title: "🍷 Aperitivo", text: "Hora perfecta para parar.\nUna copa y nada más." },
@@ -1287,7 +1317,9 @@ const PORTICO_RESPONSES = {
     "11": {
       passeggiata: { title: "☀️ Ruhiger Spaziergang", text: "Der Morgen hier ist besonders.\nAlles beginnt langsam." },
       dolce: { title: "🥐 Etwas Süßes", text: "Boccione.\nTraditionell und einfach." },
-      rientro: { title: "🏠 Zurück", text: "Wenn du willst, geh zurück.\nKeine Eile." }
+      rientro: { title: "🏠 Zurück", text: "Wenn du willst, geh zurück.\nKeine Eile." },
+    
+      caffe: { title: "☕ Kaffee", text: "Einfach sitzen.\nOhne Eile." }
     },
     "18": {
       aperitivo: { title: "🍷 Aperitif", text: "Zeit für eine Pause.\nEin Glas genügt." },
@@ -1518,6 +1550,11 @@ const VIALE_TRASTEVERE_RESPONSES = {
       rientro: {
         title: "🏠 Rientro tranquillo",
         text: "Se preferisci, rientra.\nSistema le tue cose, una pausa breve.\nIl quartiere ti aspetta."
+      },
+    
+      caffe: {
+        title: "☕ Caffè a Trastevere",
+        text: "Fermati per un caffè.\nUn tavolino, la luce del mattino.\nTrastevere si sveglia lentamente."
       }
     },
     "18": {
@@ -1577,6 +1614,11 @@ const VIALE_TRASTEVERE_RESPONSES = {
       rientro: {
         title: "🏠 Short rest",
         text: "If you prefer, go back.\nUnpack and rest a bit.\nThe area will wait."
+      },
+    
+      caffe: {
+        title: "☕ Coffee in Trastevere",
+        text: "Stop for a coffee.\nA small table, morning light.\nTrastevere wakes up slowly."
       }
     },
     "18": {
@@ -1627,7 +1669,9 @@ const VIALE_TRASTEVERE_RESPONSES = {
     "11": {
       passeggiata: { title: "☀️ Promenade", text: "Le matin ici est authentique.\nRome avance doucement." },
       mercato: { title: "🛍️ Marché", text: "Porta Portese si tout près.\nSinon, boutiques locales." },
-      rientro: { title: "🏠 Retour", text: "Rentre si tu veux.\nLe quartier attend." }
+      rientro: { title: "🏠 Retour", text: "Rentre si tu veux.\nLe quartier attend." },
+    
+      caffe: { title: "☕ Café", text: "Un café simple.\nTrastevere s'éveille doucement." }
     },
     "18": {
       aperitivo: { title: "🍷 Apéritif", text: "Moment idéal pour s’arrêter.\nAmbiance détendue." },
@@ -1650,7 +1694,9 @@ const VIALE_TRASTEVERE_RESPONSES = {
     "11": {
       passeggiata: { title: "☀️ Paseo", text: "La mañana aquí es real.\nRoma va despacio." },
       mercato: { title: "🛍️ Mercado", text: "Porta Portese cerca.\nTiendas locales." },
-      rientro: { title: "🏠 Volver", text: "Descanso breve.\nEl barrio espera." }
+      rientro: { title: "🏠 Volver", text: "Descanso breve.\nEl barrio espera." },
+    
+      caffe: { title: "☕ Café", text: "Un café tranquilo.\nTrastevere despierta despacio." }
     },
     "18": {
       aperitivo: { title: "🍷 Aperitivo", text: "Momento perfecto para parar." },
@@ -1673,7 +1719,9 @@ const VIALE_TRASTEVERE_RESPONSES = {
     "11": {
       passeggiata: { title: "☀️ Spaziergang", text: "Der Morgen hier ist echt.\nRom bewegt sich langsam." },
       mercato: { title: "🛍️ Markt", text: "Porta Portese in der Nähe.\nLokale Geschäfte." },
-      rientro: { title: "🏠 Zurück", text: "Kurze Pause.\nDas Viertel wartet." }
+      rientro: { title: "🏠 Zurück", text: "Kurze Pause.\nDas Viertel wartet." },
+    
+      caffe: { title: "☕ Kaffee", text: "Einfach sitzen.\nTrastevere erwacht langsam." }
     },
     "18": {
       aperitivo: { title: "🍷 Aperitif", text: "Zeit für eine Pause." },
