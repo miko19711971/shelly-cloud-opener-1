@@ -2225,6 +2225,12 @@ const guestLang = (reservation?.guestLanguage || "en").slice(0, 2).toLowerCase()
 const match = matchIntent(message); 
 console.log("🎯 Matcher result:", match || "NONE");
 
+// Se il matcher ha rilevato una semplice affermazione -> silenzio
+if (match?.route === "IGNORE") {
+  console.log("🔇 Affermazione rilevata -> SILENZIO");
+  return res.json({ ok: true, silent: true, reason: "statement" });
+}
+
 const detectedLang = detectLanguage(message);
 console.log("🌍 Lingua rilevata:", detectedLang);
 const intent = match?.intent || null;
