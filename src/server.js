@@ -186,6 +186,49 @@ const SENT_SLOTS = new Set();
 setInterval(runSlotCron, 60000);
 
 // ========================================================================
+// PHASE 3 GUIDE SCHEDULER
+// ========================================================================
+// Map<key, { conversationId, apartment, lang, sendAt: Date, sent: boolean }>
+const PENDING_PHASE3 = new Map();
+
+async function sendPhase3GuideMessage({ conversationId, apartment, lang = "en" }) {
+  const guideUrl = `https://shelly-cloud-opener-1.onrender.com/guides/${apartment}/premium_rome_concierge.html?phase=3`;
+
+  const textMap = {
+    en: `🗝 Your apartment is ready!\nYour guide is now fully unlocked — digital keys and all apartment info inside:\n${guideUrl}`,
+    it: `🗝 Il tuo appartamento è pronto!\nLa guida è ora completamente sbloccata — chiavi digitali e tutte le info:\n${guideUrl}`,
+    fr: `🗝 Votre appartement est prêt!\nVotre guide est maintenant débloqué — clés numériques et toutes les infos:\n${guideUrl}`,
+    de: `🗝 Ihre Wohnung ist bereit!\nIhr Guide ist jetzt vollständig freigeschaltet — digitale Schlüssel und alle Infos:\n${guideUrl}`,
+    es: `🗝 ¡Tu apartamento está listo!\nTu guía está ahora completamente desbloqueada — llaves digitales y toda la info:\n${guideUrl}`,
+  };
+
+  const message = textMap[lang] || textMap.en;
+  await sendHostawayMessage({ conversationId, message });
+  console.log(`📲 Phase 3 guide sent: ${apartment} | lang:${lang}`);
+}
+
+async function runPhase3Cron() {
+  const now = new Date();
+  for (const [key, entry] of PENDING_PHASE3.entries()) {
+    if (entry.sent) continue;
+    if (now >= entry.sendAt) {
+      try {
+        await sendPhase3GuideMessage({
+          conversationId: entry.conversationId,
+          apartment: entry.apartment,
+          lang: entry.lang,
+        });
+        entry.sent = true;
+        console.log(`✅ Phase 3 inviato: ${key}`);
+      } catch (e) {
+        console.error(`❌ Errore phase 3 send: ${key}`, e.message);
+      }
+    }
+  }
+}
+setInterval(runPhase3Cron, 60000);
+
+// ========================================================================
 // SEND SLOT LIVE MESSAGE
 // ========================================================================
  async function sendSlotLiveMessage({ conversationId, apartment, slot, lang = "en" }) {
@@ -2272,6 +2315,48 @@ const guestLang = (reservation?.guestLanguage || "en").slice(0, 2).toLowerCase()
       console.log("â ï¸ Missing required fields â SILENT");
       return res.json({ ok: true, silent: true });
     }
+
+    // ======================================================
+    // CHECK-IN FORM SUBMITTED -> schedule phase=3 guide
+    // ======================================================
+    if (message.toLowerCase().includes('submitted') && message.toLowerCase().includes('check')) {
+      console.log('CHECK-IN FORM SUBMITTED detected for reservation:', effectiveReservationId);
+      res.json({ ok: true, silent: true });
+
+      try {
+        const resResp = await axios.get(
+          `https://api.hostaway.com/v1/reservations/${effectiveReservationId}`,
+          { headers: { Authorization: `Bearer ${HOSTAWAY_TOKEN}` }, timeout: 10000 }
+        );
+        const resData = resResp.data?.result;
+        const arrivalTime = resData?.arrivalTime || null;
+        const arrivalDate = resData?.arrivalDate || resData?.checkInDate || null;
+        const langRaw = (resData?.guestLanguage || resData?.guestLocale || 'en').toLowerCase();
+        const langMap = { spanish:'es', french:'fr', italian:'it', german:'de', english:'en', deutsch:'de', italiano:'it' };
+        const guestLang = langMap[langRaw.split(',')[0].trim()] || langRaw.slice(0,2) || 'en';
+
+        const now = new Date();
+        let sendAt = new Date(now.getTime() + 2 * 60 * 1000); // default: now + 2 min
+
+        if (arrivalTime && arrivalDate) {
+          const parts = arrivalTime.replace(/[apm]/gi, '').trim().split(':').map(Number);
+          const h = parts[0] || 13;
+          const m = parts[1] || 0;
+          const candidate = new Date(`${arrivalDate}T${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:00+02:00`);
+          candidate.setMinutes(candidate.getMinutes() + 2);
+          if (candidate > now) sendAt = candidate;
+          // if arrival time is past -> keep default (now + 2 min)
+        }
+
+        const phase3Key = `phase3-${effectiveReservationId}`;
+        PENDING_PHASE3.set(phase3Key, { conversationId, apartment, lang: guestLang, sendAt, sent: false });
+        console.log(`Phase 3 scheduled: ${apartment} | sendAt: ${sendAt.toISOString()} | lang: ${guestLang}`);
+      } catch (e) {
+        console.error('Errore scheduling phase 3:', e.message);
+      }
+      return;
+    }
+
 
     // ======================================================
     // ð STEP 2: Check HostAway Token
