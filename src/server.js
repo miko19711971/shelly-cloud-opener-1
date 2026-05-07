@@ -9,7 +9,7 @@ import bodyParser from "body-parser";
 import { matchIntent } from "./matcher.js";
 import { detectLanguage } from "./language.js";
 import { ANSWERS } from "./answers.js";
-import { askGemini } from "./gemini.js";
+import { askGemini, askGeminiGuide } from "./gemini.js";
 import bibaRouter from "./biba-router.js";
  const SAFE_FALLBACK_REPLY =
   "Thank you for your message. We've received your request and we'll get back to you as soon as possible.";
@@ -1964,14 +1964,12 @@ app.get("/health", (req, res) => {
 
 app.post("/api/ai/guide", cors(), async (req, res) => {
   try {
-    const { message, systemPrompt, history, apartment, lang } = req.body || {};
+    const { message, systemPrompt, history } = req.body || {};
     if (!message) return res.status(400).json({ ok: false, error: "missing message" });
-    const reply = await askGemini({
-      message: systemPrompt
-        ? `${systemPrompt}\n\n---\n\nUser: ${message}`
-        : message,
-      apartment: apartment || "arenula",
-      lang: lang || "en"
+    const reply = await askGeminiGuide({
+      message,
+      systemPrompt: systemPrompt || "You are a helpful Rome apartment concierge. Answer in the same language the user writes in.",
+      history: Array.isArray(history) ? history : []
     });
     res.json({ ok: true, reply: reply || null });
   } catch (e) {

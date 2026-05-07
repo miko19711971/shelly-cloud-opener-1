@@ -50,6 +50,38 @@ await detectGeminiModel();
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
+/**
+ * Funzione dedicata alla guida ospiti premium.
+ * Usa un system prompt fornito dall'esterno (con tutti i dati dell'appartamento)
+ * e risponde senza filtri interni.
+ */
+export async function askGeminiGuide({ message, systemPrompt, history = [] }) {
+  try {
+    const model = genAI.getGenerativeModel({
+      model: CURRENT_GEMINI_MODEL,
+      systemInstruction: systemPrompt
+    });
+
+    const chat = model.startChat({
+      history: history.length > 0 ? history : undefined,
+      generationConfig: { temperature: 0.7, maxOutputTokens: 512 }
+    });
+
+    const result = await chat.sendMessage(message);
+    const text = result?.response?.text?.();
+
+    if (!text || !text.trim()) {
+      console.log("⚠️ Gemini Guide risposta vuota");
+      return null;
+    }
+
+    return text.trim();
+  } catch (err) {
+    console.error("❌ Gemini Guide error:", err?.message || err);
+    return null;
+  }
+}
+
 export async function askGemini({ message, apartment, lang }) {
   try {
     const systemParts = [
