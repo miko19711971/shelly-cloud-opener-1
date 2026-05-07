@@ -178,6 +178,22 @@
             <div id="transSub" class="text-xs text-white/50 mt-1">Airport, taxi & mobility</div>
           </button>
         </div>
+
+        <!-- ASK GEMINI ABOUT ROME -->
+        <div class="px-5 pb-5">
+          <div class="border-t border-white/10 pt-5">
+            <div id="romeAiLabel" class="text-xs uppercase tracking-[0.2em] opacity-50 mb-2">Ask Gemini about Rome</div>
+            <div id="romeAiChat" class="flex flex-col gap-2 mb-3" style="display:none!important"></div>
+            <div id="romeAiChatVisible" class="flex flex-col gap-2 mb-3"></div>
+            <div id="romeChips" class="flex flex-wrap gap-2 mb-3"></div>
+            <div class="flex gap-2">
+              <input id="romeAiInput" type="text"
+                class="flex-1 bg-white/10 border border-white/15 rounded-xl px-3 py-2.5 text-sm text-white placeholder:text-white/40 outline-none"
+                style="min-width:0">
+              <button onclick="sendRomeAI()" class="bg-white/20 border border-white/20 text-white px-4 py-2.5 rounded-xl text-sm font-semibold flex-shrink-0">→</button>
+            </div>
+          </div>
+        </div>
       </div>
 
       <!-- AI CONCIERGE -->
@@ -248,6 +264,9 @@ en:{
     chips:['Best pizza nearby','Taxi to airport','Pharmacy open now','Romantic dinner'],
     aiPlaceholder:'Type your question…',
     keysPhase2:'Your digital keys will be available from 13:00 on check-in day.',
+    romeAiLabel:'Ask Gemini about Rome',
+    romeAiPlaceholder:'Best restaurant near me? Hidden gems?',
+    romeChips:['Best pizza in Rome','Wine bar tonight','Hidden gems nearby','Market this weekend'],
   },
   apt:{
     checkin_time:'13:00', checkout_time:'11:00',
@@ -318,6 +337,9 @@ it:{
     chips:['Migliore pizza vicina','Taxi per l\'aeroporto','Farmacia aperta','Cena romantica'],
     aiPlaceholder:'Scrivi la tua domanda…',
     keysPhase2:'Le tue chiavi digitali saranno disponibili dalle 13:00 il giorno del check-in.',
+    romeAiLabel:'Chiedi a Gemini su Roma',
+    romeAiPlaceholder:'Miglior ristorante vicino? Posti nascosti?',
+    romeChips:['Migliore pizza a Roma','Wine bar stasera','Posti nascosti vicini','Mercato questo weekend'],
   },
   apt:{
     checkin_time:'13:00', checkout_time:'11:00',
@@ -362,7 +384,7 @@ it:{
 },
 fr:{
   ui:{
-    heroTitle:'Bienvenue à Rome ✨',heroSub:'Hospitalité de luxe au cœur de Rome.',aptLabel:'Appartement',aptSection:'Concierge Appartement',aptTitle:'Votre Appartement 🏠',aptDesc:'Tout ce qui concerne votre appartement, accès et assistance.',romeSection:'Concierge Expérience Rome',romeTitle:'Explorer Rome 🌙',romeDesc:'Restaurants, lieux cachés, vie nocturne et expériences sélectionnées.',aiLabel:'AI Concierge',aiTitle:'Posez toutes vos questions sur Rome ou votre appartement.',qAddress:'Adresse',qCheckout:'Départ',qEmergency:'Urgence',keysTitle:'Clés Numériques',keysSub:'Ouvrir l\'immeuble et l\'appartement',wifiTitle:'Wi‑Fi',wifiSub:'Réseau et mot de passe',houseTitle:'Guide Logement',houseSub:'Instructions et assistance',helpTitle:'Besoin d\'aide?',helpSub:'Support concierge',eatTitle:'Manger & Boire',eatSub:'Restaurants, petit-déj & apéritif',tonightTitle:'Ce soir à Rome',tonightSub:'Bars, rooftops & idées soirée',tickTitle:'Billetterie',tickSub:'Musées, visites & expériences',transTitle:'Transport',transSub:'Aéroport, taxi & mobilité',footerHelp:'Besoin d\'aide?',phase1Text:'Complétez votre check-in en ligne pour débloquer les informations.',phaseBadge:['📋 Après Réservation','✅ Après Check-in','🗝 Jour d\'Arrivée'],chips:['Meilleure pizza proche','Taxi aéroport','Pharmacie ouverte','Dîner romantique'],aiPlaceholder:'Posez votre question…',keysPhase2:'Vos clés seront disponibles à partir de 13h00 le jour d\'arrivée.',
+    heroTitle:'Bienvenue à Rome ✨',heroSub:'Hospitalité de luxe au cœur de Rome.',aptLabel:'Appartement',aptSection:'Concierge Appartement',aptTitle:'Votre Appartement 🏠',aptDesc:'Tout ce qui concerne votre appartement, accès et assistance.',romeSection:'Concierge Expérience Rome',romeTitle:'Explorer Rome 🌙',romeDesc:'Restaurants, lieux cachés, vie nocturne et expériences sélectionnées.',aiLabel:'AI Concierge',aiTitle:'Posez toutes vos questions sur Rome ou votre appartement.',qAddress:'Adresse',qCheckout:'Départ',qEmergency:'Urgence',keysTitle:'Clés Numériques',keysSub:'Ouvrir l\'immeuble et l\'appartement',wifiTitle:'Wi‑Fi',wifiSub:'Réseau et mot de passe',houseTitle:'Guide Logement',houseSub:'Instructions et assistance',helpTitle:'Besoin d\'aide?',helpSub:'Support concierge',eatTitle:'Manger & Boire',eatSub:'Restaurants, petit-déj & apéritif',tonightTitle:'Ce soir à Rome',tonightSub:'Bars, rooftops & idées soirée',tickTitle:'Billetterie',tickSub:'Musées, visites & expériences',transTitle:'Transport',transSub:'Aéroport, taxi & mobilité',footerHelp:'Besoin d\'aide?',phase1Text:'Complétez votre check-in en ligne pour débloquer les informations.',phaseBadge:['📋 Après Réservation','✅ Après Check-in','🗝 Jour d\'Arrivée'],chips:['Meilleure pizza proche','Taxi aéroport','Pharmacie ouverte','Dîner romantique'],aiPlaceholder:'Posez votre question…',keysPhase2:'Vos clés seront disponibles à partir de 13h00 le jour d\'arrivée.',romeAiLabel:'Demandez à Gemini sur Rome',romeAiPlaceholder:'Meilleur resto? Lieux cachés?',romeChips:['Meilleure pizza à Rome','Bar à vin ce soir','Trésors cachés','Marché ce weekend'],
   },
   apt:{
     checkin_time:'13:00',checkout_time:'11:00',wifi_note:'Le routeur est sur le bureau près de la fenêtre.',wifi_ssid:'Voir étiquette routeur',wifi_password:'Voir étiquette routeur',water_note:'L\'eau du robinet est sûre et potable.',ac_note:'Veuillez éteindre la climatisation lorsque vous sortez.',bathroom:'Papier toilette, savon, tapis de bain et sèche-cheveux.',towels:'Par personne: 1 grande et 1 moyenne serviette. Le lit est prêt à votre arrivée.',gas:'Ouvrez la vanne (horizontale=ouvert). Allumez une allumette. Tournez et appuyez sur le bouton noir jusqu\'à la flamme stable.',intercom:'C8',elevator:'Ascenseur réservé aux propriétaires.',door_hours:'Porte principale ouverte 08h00–13h00 et 15h30–18h00.',concierge:'Paolo',phone:'+39 335 524 5756',pharmacy:'Farmacia Arenula — Via Arenula 19–21 · +39 06 686 8815',hospital:'Hôpital Fatebenefratelli, Île Tibérine 1',atm:'Unicredit — Largo Arenula 1 · BNL — Via Arenula 41',sim:'Vodafone: Corso Vittorio Emanuele II 209 · TIM: Piazza Venezia 2',laundry:'Laverie self-service Via Arenula 47',luggage:'Radical Storage — Largo di Torre Argentina (5 min à pied)',city_transport:'Tram 8 → Trastevere ou Piazza Venezia. Bus 40/64 → Termini & Vatican. Taxi: +39 06 3570.',airports:'Fiumicino: tram 8 → Trastevere → train FL1 (~45 min). Ciampino: bus Terravision.',emergency:'Urgences: 112 · Police: 113 · Ambulance: 118 · Pompiers: 115',eat:'Roscioli · Emma Pizzeria · Ditirambo · Osteria da Fortunata · Pianostrada · Forno Campo de\' Fiori · Gelateria del Teatro.',drink:'Caffè Camerino — Largo Arenula 30 · Irish Pub Largo Argentina · Modius Radisson Rooftop.',tonight:'Promenade du soir: Largo Argentina → Ghetto → Île Tibérine → Théâtre de Marcellus. Apéritif au Caffè Camerino. Coucher de soleil sur le Lungotevere.',checkout_note:'Éteignez lumières & clim, fermez les fenêtres, laissez les clés sur la table.',keys_msg:'Vos clés numériques ont été envoyées par email par Hostaway. Vérifiez votre boîte. Les clés ne sont jamais transmises avant 13h00.',
@@ -374,7 +396,7 @@ fr:{
 },
 de:{
   ui:{
-    heroTitle:'Willkommen in Rom ✨',heroSub:'Kuratierter Luxus im Herzen Roms.',aptLabel:'Apartment',aptSection:'Apartment Concierge',aptTitle:'Ihr Apartment 🏠',aptDesc:'Alles rund um Ihr Apartment, Zugang und Unterstützung.',romeSection:'Rom Erlebnis Concierge',romeTitle:'Rom Entdecken 🌙',romeDesc:'Restaurants, versteckte Orte, Nachtleben und kuratierte Erlebnisse.',aiLabel:'AI Concierge',aiTitle:'Stellen Sie jede Frage über Rom oder Ihr Apartment.',qAddress:'Adresse',qCheckout:'Checkout',qEmergency:'Notfall',keysTitle:'Digitale Schlüssel',keysSub:'Gebäude & Apartment öffnen',wifiTitle:'WLAN',wifiSub:'Netzwerk & Passwort',houseTitle:'Hausführer',houseSub:'Anweisungen und Hilfe',helpTitle:'Hilfe benötigt?',helpSub:'Concierge-Support',eatTitle:'Essen & Trinken',eatSub:'Restaurants, Frühstück & Aperitif',tonightTitle:'Heute Abend in Rom',tonightSub:'Bars, Rooftops & Abendideen',tickTitle:'Tickets',tickSub:'Museen, Touren & Erlebnisse',transTitle:'Transport',transSub:'Flughafen, Taxi & Mobilität',footerHelp:'Hilfe benötigt?',phase1Text:'Füllen Sie das Online-Check-in aus um die Apartment-Informationen freizuschalten.',phaseBadge:['📋 Nach Buchung','✅ Nach Check-in','🗝 Check-in-Tag'],chips:['Beste Pizza in der Nähe','Taxi zum Flughafen','Geöffnete Apotheke','Romantisches Dinner'],aiPlaceholder:'Frage eingeben…',keysPhase2:'Schlüssel ab 13:00 Uhr am Check-in-Tag verfügbar.',
+    heroTitle:'Willkommen in Rom ✨',heroSub:'Kuratierter Luxus im Herzen Roms.',aptLabel:'Apartment',aptSection:'Apartment Concierge',aptTitle:'Ihr Apartment 🏠',aptDesc:'Alles rund um Ihr Apartment, Zugang und Unterstützung.',romeSection:'Rom Erlebnis Concierge',romeTitle:'Rom Entdecken 🌙',romeDesc:'Restaurants, versteckte Orte, Nachtleben und kuratierte Erlebnisse.',aiLabel:'AI Concierge',aiTitle:'Stellen Sie jede Frage über Rom oder Ihr Apartment.',qAddress:'Adresse',qCheckout:'Checkout',qEmergency:'Notfall',keysTitle:'Digitale Schlüssel',keysSub:'Gebäude & Apartment öffnen',wifiTitle:'WLAN',wifiSub:'Netzwerk & Passwort',houseTitle:'Hausführer',houseSub:'Anweisungen und Hilfe',helpTitle:'Hilfe benötigt?',helpSub:'Concierge-Support',eatTitle:'Essen & Trinken',eatSub:'Restaurants, Frühstück & Aperitif',tonightTitle:'Heute Abend in Rom',tonightSub:'Bars, Rooftops & Abendideen',tickTitle:'Tickets',tickSub:'Museen, Touren & Erlebnisse',transTitle:'Transport',transSub:'Flughafen, Taxi & Mobilität',footerHelp:'Hilfe benötigt?',phase1Text:'Füllen Sie das Online-Check-in aus um die Apartment-Informationen freizuschalten.',phaseBadge:['📋 Nach Buchung','✅ Nach Check-in','🗝 Check-in-Tag'],chips:['Beste Pizza in der Nähe','Taxi zum Flughafen','Geöffnete Apotheke','Romantisches Dinner'],aiPlaceholder:'Frage eingeben…',keysPhase2:'Schlüssel ab 13:00 Uhr am Check-in-Tag verfügbar.',romeAiLabel:'Gemini über Rom fragen',romeAiPlaceholder:'Bestes Restaurant? Geheimtipps?',romeChips:['Beste Pizza in Rom','Weinbar heute Abend','Geheimtipps in der Nähe','Markt dieses Wochenende'],
   },
   apt:{
     checkin_time:'13:00',checkout_time:'11:00',wifi_note:'Der Router befindet sich auf dem Schreibtisch am Fenster.',wifi_ssid:'Siehe Router-Etikett',wifi_password:'Siehe Router-Etikett',water_note:'Leitungswasser ist sicher und trinkbar.',ac_note:'Bitte schalten Sie die Klimaanlage aus, wenn Sie die Wohnung verlassen.',bathroom:'Toilettenpapier, Handseife, Badematte und Föhn.',towels:'Pro Gast: 1 großes und 1 mittleres Handtuch.',gas:'Gashahn öffnen (waagerecht=offen). Streichholz anzünden. Knopf drehen und drücken bis Flamme stabil.',intercom:'C8',elevator:'Aufzug nur für Eigentümer.',door_hours:'Haupttür geöffnet 08:00–13:00 und 15:30–18:00.',concierge:'Paolo',phone:'+39 335 524 5756',pharmacy:'Farmacia Arenula — Via Arenula 19–21 · +39 06 686 8815',hospital:'Krankenhaus Fatebenefratelli, Tiberinsel 1',atm:'Unicredit — Largo Arenula 1 · BNL — Via Arenula 41',sim:'Vodafone: Corso Vittorio Emanuele II 209 · TIM: Piazza Venezia 2',laundry:'Waschsalon Via Arenula 47',luggage:'Radical Storage — Largo di Torre Argentina (5 Min. zu Fuß)',city_transport:'Straßenbahn 8 → Trastevere oder Piazza Venezia. Bus 40/64 → Termini & Vatikan. Taxi: +39 06 3570.',airports:'Fiumicino: Str.bahn 8 → Trastevere → Zug FL1 (~45 Min.). Ciampino: Terravision-Bus.',emergency:'Notruf: 112 · Polizei: 113 · Rettung: 118 · Feuerwehr: 115',eat:'Roscioli · Emma Pizzeria · Ditirambo · Osteria da Fortunata · Pianostrada · Gelateria del Teatro.',drink:'Caffè Camerino — Largo Arenula 30 · Irish Pub Largo Argentina · Modius Radisson Rooftop.',tonight:'Abendspaziergang: Largo Argentina → Ghetto → Tiberinsel → Theater des Marcellus. Aperitif im Caffè Camerino. Sonnenuntergang am Lungotevere.',checkout_note:'Lichter & Klimaanlage ausschalten, Fenster schließen, Schlüssel auf dem Tisch lassen.',keys_msg:'Ihre digitalen Schlüssel wurden per E-Mail von Hostaway gesendet. Überprüfen Sie Ihren Posteingang. Schlüssel werden nie vor 13:00 Uhr freigegeben.',
@@ -386,7 +408,7 @@ de:{
 },
 es:{
   ui:{
-    heroTitle:'Bienvenido a Roma ✨',heroSub:'Hospitalidad de lujo en el corazón de Roma.',aptLabel:'Apartamento',aptSection:'Conserje Apartamento',aptTitle:'Tu Apartamento 🏠',aptDesc:'Todo lo relacionado con tu apartamento, acceso y asistencia.',romeSection:'Conserje Experiencia Roma',romeTitle:'Explora Roma 🌙',romeDesc:'Restaurantes, lugares escondidos, vida nocturna y experiencias curadas.',aiLabel:'AI Conserje',aiTitle:'Pregunta cualquier cosa sobre Roma o tu apartamento.',qAddress:'Dirección',qCheckout:'Salida',qEmergency:'Emergencia',keysTitle:'Llaves Digitales',keysSub:'Abrir edificio y apartamento',wifiTitle:'Wi‑Fi',wifiSub:'Red y contraseña',houseTitle:'Guía del Piso',houseSub:'Instrucciones y ayuda',helpTitle:'¿Necesitas ayuda?',helpSub:'Soporte del conserje',eatTitle:'Comer & Beber',eatSub:'Restaurantes, desayuno & aperitivo',tonightTitle:'Esta noche en Roma',tonightSub:'Bares, rooftops & ideas de noche',tickTitle:'Entradas',tickSub:'Museos, tours y experiencias',transTitle:'Transporte',transSub:'Aeropuerto, taxi y movilidad',footerHelp:'¿Necesitas ayuda?',phase1Text:'Completa el check-in online para desbloquear la información del apartamento.',phaseBadge:['📋 Tras Reserva','✅ Tras Check-in','🗝 Día del Check-in'],chips:['Mejor pizza cercana','Taxi al aeropuerto','Farmacia abierta','Cena romántica'],aiPlaceholder:'Escribe tu pregunta…',keysPhase2:'Llaves disponibles desde las 13:00 el día del check-in.',
+    heroTitle:'Bienvenido a Roma ✨',heroSub:'Hospitalidad de lujo en el corazón de Roma.',aptLabel:'Apartamento',aptSection:'Conserje Apartamento',aptTitle:'Tu Apartamento 🏠',aptDesc:'Todo lo relacionado con tu apartamento, acceso y asistencia.',romeSection:'Conserje Experiencia Roma',romeTitle:'Explora Roma 🌙',romeDesc:'Restaurantes, lugares escondidos, vida nocturna y experiencias curadas.',aiLabel:'AI Conserje',aiTitle:'Pregunta cualquier cosa sobre Roma o tu apartamento.',qAddress:'Dirección',qCheckout:'Salida',qEmergency:'Emergencia',keysTitle:'Llaves Digitales',keysSub:'Abrir edificio y apartamento',wifiTitle:'Wi‑Fi',wifiSub:'Red y contraseña',houseTitle:'Guía del Piso',houseSub:'Instrucciones y ayuda',helpTitle:'¿Necesitas ayuda?',helpSub:'Soporte del conserje',eatTitle:'Comer & Beber',eatSub:'Restaurantes, desayuno & aperitivo',tonightTitle:'Esta noche en Roma',tonightSub:'Bares, rooftops & ideas de noche',tickTitle:'Entradas',tickSub:'Museos, tours y experiencias',transTitle:'Transporte',transSub:'Aeropuerto, taxi y movilidad',footerHelp:'¿Necesitas ayuda?',phase1Text:'Completa el check-in online para desbloquear la información del apartamento.',phaseBadge:['📋 Tras Reserva','✅ Tras Check-in','🗝 Día del Check-in'],chips:['Mejor pizza cercana','Taxi al aeropuerto','Farmacia abierta','Cena romántica'],aiPlaceholder:'Escribe tu pregunta…',keysPhase2:'Llaves disponibles desde las 13:00 el día del check-in.',romeAiLabel:'Pregunta a Gemini sobre Roma',romeAiPlaceholder:'¿Mejor restaurante? ¿Lugares escondidos?',romeChips:['Mejor pizza en Roma','Bar de vinos esta noche','Rincones escondidos','Mercado este fin de semana'],
   },
   apt:{
     checkin_time:'13:00',checkout_time:'11:00',wifi_note:'El router está en el escritorio junto a la ventana.',wifi_ssid:'Ver etiqueta del router',wifi_password:'Ver etiqueta del router',water_note:'El agua del grifo es segura y potable.',ac_note:'Por favor apaga el aire acondicionado cuando salgas.',bathroom:'Papel higiénico, jabón de manos, alfombrilla y secador.',towels:'Por huésped: 1 toalla grande y 1 mediana.',gas:'Abre la llave (horizontal=abierto). Enciende una cerilla. Gira y presiona el botón negro hasta llama estable.',intercom:'C8',elevator:'Ascensor reservado para propietarios.',door_hours:'Puerta principal abierta 08:00–13:00 y 15:30–18:00.',concierge:'Paolo',phone:'+39 335 524 5756',pharmacy:'Farmacia Arenula — Via Arenula 19–21 · +39 06 686 8815',hospital:'Hospital Fatebenefratelli, Isla Tiberina 1',atm:'Unicredit — Largo Arenula 1 · BNL — Via Arenula 41',sim:'Vodafone: Corso Vittorio Emanuele II 209 · TIM: Piazza Venezia 2',laundry:'Lavandería autoservicio en Via Arenula 47',luggage:'Radical Storage — Largo di Torre Argentina (5 min a pie)',city_transport:'Tranvía 8 → Trastevere o Piazza Venezia. Autobuses 40/64 → Termini y Vaticano. Taxi: +39 06 3570.',airports:'Fiumicino: tranvía 8 → Trastevere → tren FL1 (~45 min). Ciampino: bus Terravision.',emergency:'Emergencias: 112 · Policía: 113 · Ambulancia: 118 · Bomberos: 115',eat:'Roscioli · Emma Pizzeria · Ditirambo · Osteria da Fortunata · Pianostrada · Gelateria del Teatro.',drink:'Caffè Camerino — Largo Arenula 30 · Irish Pub Largo Argentina · Modius Radisson Rooftop.',tonight:'Paseo nocturno: Largo Argentina → Gueto → Isla Tiberina → Teatro de Marcelo. Aperitivo en Caffè Camerino. Atardecer por el Lungotevere.',checkout_note:'Apaga luces y AC, cierra las ventanas, deja las llaves en la mesa.',keys_msg:'Tus llaves digitales han sido enviadas por email por Hostaway. Revisa tu bandeja. Las llaves nunca se envían antes de las 13:00.',
@@ -434,6 +456,19 @@ function renderUI() {
     if (el) el.textContent = txt;
   });
   document.getElementById('aiInput').placeholder = ui.aiPlaceholder;
+  document.getElementById('romeAiLabel').textContent = ui.romeAiLabel;
+  document.getElementById('romeAiInput').placeholder = ui.romeAiPlaceholder;
+
+  // rome chips
+  const romeChips = document.getElementById('romeChips');
+  romeChips.innerHTML = '';
+  ui.romeChips.forEach(c => {
+    const b = document.createElement('button');
+    b.style.cssText = 'background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);border-radius:999px;padding:5px 11px;font-size:11px;color:#fff;white-space:nowrap;cursor:pointer';
+    b.textContent = c;
+    b.onclick = () => sendRomeAI(c);
+    romeChips.appendChild(b);
+  });
 
   // chips
   const chips = document.getElementById('aiChips');
@@ -481,6 +516,7 @@ document.getElementById('langNav').addEventListener('click', e => {
   u.searchParams.set('lang', lang);
   history.replaceState(null,'',u);
   aiHistory = [];
+  romeAiHistory = [];
   renderUI();
 });
 
@@ -555,6 +591,58 @@ function sendAI() {
   const v = document.getElementById('aiInput').value.trim();
   if (v) askAI(v);
 }
+
+/* ── ROME AI ── */
+let romeAiHistory = [];
+
+function buildRomeSystemPrompt() {
+  return `You are a Rome local expert concierge for guests staying at Via Arenula 16 in the historic center. Answer in the same language the user writes in. Give practical, specific, honest recommendations about Rome — restaurants, bars, hidden gems, events, markets, nightlife, day trips. No generic tourist clichés. Be warm and concise. The apartment is steps from Campo de' Fiori, Jewish Ghetto, Trastevere and Largo Argentina.`;
+}
+
+async function sendRomeAI(prefill) {
+  const input = document.getElementById('romeAiInput');
+  const text = prefill || input.value.trim();
+  if (!text) return;
+  input.value = '';
+  addRomeBubble(text, 'user');
+  const spinner = addRomeBubble('<div class="spin"></div>', 'bot');
+  try {
+    const res = await fetch(`${SERVER_URL}/api/ai/guide`, {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ message:text, systemPrompt:buildRomeSystemPrompt(), history:romeAiHistory })
+    });
+    const json = await res.json();
+    if (!json.ok || !json.reply) throw new Error();
+    spinner.innerHTML = json.reply.replace(/\n/g,'<br>');
+    romeAiHistory.push({role:'user', parts:[{text}]});
+    romeAiHistory.push({role:'model', parts:[{text:json.reply}]});
+  } catch {
+    spinner.innerHTML = '⚠️ ' + A().phone;
+  }
+}
+
+function addRomeBubble(html, role) {
+  const wrap = document.getElementById('romeAiChatVisible');
+  wrap.style.display = 'flex';
+  wrap.style.flexDirection = 'column';
+  wrap.style.gap = '8px';
+  wrap.style.marginBottom = '8px';
+  const d = document.createElement('div');
+  if (role === 'user') {
+    d.style.cssText = 'background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);border-radius:18px 18px 4px 18px;padding:8px 12px;font-size:12px;align-self:flex-end;max-width:88%;color:#fff;';
+  } else {
+    d.style.cssText = 'background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:18px 18px 18px 4px;padding:8px 12px;font-size:12px;max-width:88%;color:rgba(255,255,255,.9);';
+  }
+  d.innerHTML = html;
+  wrap.appendChild(d);
+  wrap.scrollTop = wrap.scrollHeight;
+  return d;
+}
+
+document.getElementById('romeAiInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') sendRomeAI();
+});
 
 function addBubble(html, role) {
   const chat = document.getElementById('aiChat');
