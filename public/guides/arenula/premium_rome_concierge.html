@@ -6,795 +6,505 @@
 <title>Via Arenula 16 — NiceFlatInRome</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <style>
-  body { font-family: system-ui,-apple-system,Segoe UI,Roboto,sans-serif; }
-  .hero-bg { background: linear-gradient(to bottom, #d9c7aa, #c7ae88); }
-  .card-dark { background: linear-gradient(135deg, #1d1a18 0%, #2c221d 50%, #151515 100%); }
-  .drawer-sheet { transform: translateY(100%); transition: transform .35s cubic-bezier(.32,.72,0,1); }
-  .drawer-sheet.open { transform: translateY(0); }
-  .overlay { opacity: 0; pointer-events: none; transition: opacity .3s; }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background-color: #f5f1ea; font-family: system-ui, -apple-system, sans-serif; }
+
+  /* Drawer */
+  .drawer { transform: translateY(100%); transition: transform .35s cubic-bezier(.32,.72,0,1); }
+  .drawer.open { transform: translateY(0); }
+  .overlay { opacity: 0; pointer-events: none; transition: opacity .25s; }
   .overlay.open { opacity: 1; pointer-events: all; }
-  .locked-card { opacity: .4; filter: blur(.5px); pointer-events: none; }
-  .phase-lock-badge { background: rgba(0,0,0,.55); backdrop-filter: blur(4px); }
-  .ai-bubble-user { background: #e8f0fe; border: 1px solid #c5d5ff; margin-left: auto; border-radius: 18px 18px 4px 18px; }
-  .ai-bubble-bot  { background: #fff; border: 1px solid #e5e7eb; border-radius: 18px 18px 18px 4px; }
-  .chip { display: inline-block; background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.15); border-radius: 999px; padding: 6px 12px; font-size: 12px; cursor: pointer; white-space: nowrap; }
-  .chip:active { transform: scale(.97); }
-  a { color: #1d4ed8; text-decoration: underline; }
-  .card-btn { transition: transform .15s, box-shadow .15s; }
-  .card-btn:active { transform: scale(.97); }
-  #aiChat { display: none; flex-direction: column; gap: 10px; max-height: 320px; overflow-y: auto; padding: 4px 0; }
+
+  /* AI chat bubbles */
+  #aiChat { display: none; flex-direction: column; gap: 8px; max-height: 260px; overflow-y: auto; padding: 8px 0; }
   #aiChat.visible { display: flex; }
-  .spinner { display: inline-block; width: 18px; height: 18px; border: 2px solid rgba(0,0,0,.15); border-top-color: #555; border-radius: 50%; animation: spin .7s linear infinite; }
-  @keyframes spin { to { transform: rotate(360deg); } }
+  .bubble-user { background: #e8f0fe; border: 1px solid #c5d5ff; border-radius: 18px 18px 4px 18px; padding: 10px 12px; font-size: 13px; align-self: flex-end; max-width: 88%; }
+  .bubble-bot  { background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.12); border-radius: 18px 18px 18px 4px; padding: 10px 12px; font-size: 13px; max-width: 88%; color: #fff; }
+
+  /* Spinner */
+  .spin { display: inline-block; width: 16px; height: 16px; border: 2px solid rgba(255,255,255,.25); border-top-color: #fff; border-radius: 50%; animation: sp .7s linear infinite; }
+  @keyframes sp { to { transform: rotate(360deg); } }
+
+  /* Locked state */
+  .locked { opacity: .3; pointer-events: none; filter: blur(1px); }
+
+  /* Drawer links */
+  #drawerBody a { color: #1d4ed8; text-decoration: underline; }
+  #drawerBody h3 { font-weight: 600; margin-top: 14px; margin-bottom: 4px; }
+  #drawerBody h3:first-child { margin-top: 0; }
+
+  button { cursor: pointer; }
+  button:active { transform: scale(.97); }
 </style>
 </head>
-<body class="bg-[#f5f1ea] min-h-screen">
+<body>
 
 <!-- OVERLAY -->
 <div id="overlay" class="overlay fixed inset-0 bg-black/50 z-40" onclick="closeDrawer()"></div>
 
 <!-- DRAWER -->
-<div id="drawer" class="drawer-sheet fixed bottom-0 left-0 right-0 z-50 bg-white rounded-t-[32px] max-h-[85vh] overflow-y-auto shadow-2xl">
-  <div class="sticky top-0 bg-white pt-4 pb-3 px-5 flex items-center justify-between border-b border-neutral-100 rounded-t-[32px]">
-    <span id="drawerTitle" class="font-semibold text-lg"></span>
-    <button onclick="closeDrawer()" class="w-9 h-9 rounded-full bg-neutral-100 flex items-center justify-center text-xl leading-none">×</button>
+<div id="drawer" class="drawer fixed bottom-0 left-0 right-0 z-50 bg-white rounded-t-3xl max-h-[85vh] overflow-y-auto shadow-2xl">
+  <div class="sticky top-0 bg-white pt-4 pb-3 px-5 flex items-center justify-between border-b border-neutral-100">
+    <span id="drawerTitle" class="font-semibold text-base text-black"></span>
+    <button onclick="closeDrawer()" class="w-8 h-8 rounded-full bg-neutral-100 flex items-center justify-center text-xl leading-none">×</button>
   </div>
-  <div id="drawerBody" class="px-5 py-5 text-sm leading-relaxed text-neutral-700 space-y-3"></div>
+  <div id="drawerBody" class="px-5 py-5 text-sm leading-relaxed text-neutral-700 space-y-2"></div>
 </div>
 
-<!-- MAIN APP -->
-<div class="flex justify-center min-h-screen p-3">
-<main class="w-full max-w-sm bg-white rounded-[40px] shadow-2xl overflow-hidden border border-[#eadfce] mb-6">
+<!-- WRAPPER -->
+<div class="min-h-screen bg-[#f5f1ea] flex justify-center p-4">
+  <main class="w-full max-w-sm bg-white rounded-[40px] shadow-2xl overflow-hidden border border-[#eadfce]" style="align-self:flex-start;margin-bottom:1.5rem;">
 
-  <!-- HERO -->
-  <section class="hero-bg px-6 pt-10 pb-8 text-black">
-    <div class="flex items-center justify-between mb-6">
-      <div class="text-xs uppercase tracking-[.35em] opacity-70">NICEFLAT ROME CONCIERGE</div>
-      <!-- lang switcher -->
-      <div id="langNav" class="flex gap-1.5">
-        <button data-lang="en" class="lang-btn text-xs px-2 py-1 rounded-lg border border-black/20 bg-black/10 font-medium">EN</button>
-        <button data-lang="it" class="lang-btn text-xs px-2 py-1 rounded-lg border border-black/20 font-medium">IT</button>
-        <button data-lang="fr" class="lang-btn text-xs px-2 py-1 rounded-lg border border-black/20 font-medium">FR</button>
-        <button data-lang="de" class="lang-btn text-xs px-2 py-1 rounded-lg border border-black/20 font-medium">DE</button>
-        <button data-lang="es" class="lang-btn text-xs px-2 py-1 rounded-lg border border-black/20 font-medium">ES</button>
+    <!-- HERO -->
+    <section class="bg-gradient-to-b from-[#d9c7aa] to-[#c7ae88] px-6 pt-10 pb-8 text-black">
+      <div class="flex items-center justify-between mb-4">
+        <div id="phaseBadge" class="text-[10px] uppercase tracking-widest opacity-60 font-medium"></div>
+        <div id="langNav" class="flex gap-1">
+          <button data-lang="en" class="lb text-[10px] px-1.5 py-0.5 rounded border border-black/25 font-semibold">EN</button>
+          <button data-lang="it" class="lb text-[10px] px-1.5 py-0.5 rounded border border-black/20 font-semibold">IT</button>
+          <button data-lang="fr" class="lb text-[10px] px-1.5 py-0.5 rounded border border-black/20 font-semibold">FR</button>
+          <button data-lang="de" class="lb text-[10px] px-1.5 py-0.5 rounded border border-black/20 font-semibold">DE</button>
+          <button data-lang="es" class="lb text-[10px] px-1.5 py-0.5 rounded border border-black/20 font-semibold">ES</button>
+        </div>
       </div>
-    </div>
-
-    <h1 id="heroTitle" class="text-4xl font-semibold leading-tight">Welcome to Rome ✨</h1>
-    <p id="heroSub" class="text-sm opacity-80 mt-3 leading-relaxed">Curated luxury hospitality in the heart of Rome.</p>
-
-    <!-- Apartment card -->
-    <div class="mt-6 bg-[#171717] text-white rounded-[28px] border border-white/10 px-5 py-4 flex items-center justify-between shadow-lg">
-      <div>
-        <div class="text-xs uppercase tracking-wide opacity-60" id="aptLabel">Apartment</div>
-        <div class="font-medium mt-1">Via Arenula 16 · Historic Center</div>
+      <div class="text-xs uppercase tracking-[0.35em] opacity-70 mb-3">NICEFLAT ROME CONCIERGE</div>
+      <h1 id="heroTitle" class="text-4xl font-semibold leading-tight">Welcome to Rome ✨</h1>
+      <p id="heroSub" class="text-sm opacity-80 mt-4 leading-relaxed max-w-[90%]">Curated luxury hospitality in the heart of Rome.</p>
+      <div class="mt-6 bg-[#171717] text-white rounded-[28px] border border-white/10 px-5 py-4 flex items-center justify-between shadow-lg">
+        <div>
+          <div id="aptLabel" class="text-xs uppercase tracking-wide opacity-70">Apartment</div>
+          <div class="font-medium mt-1">Via Arenula 16 • Historic Center</div>
+        </div>
+        <button onclick="handleOpen()" class="bg-white text-black px-4 py-2 rounded-xl text-sm font-semibold">OPEN</button>
       </div>
-      <button id="openDoorBtn" onclick="handleOpenDoor()" class="bg-white text-black px-4 py-2 rounded-xl text-sm font-semibold card-btn">OPEN</button>
-    </div>
+    </section>
 
-    <!-- Phase badge -->
-    <div id="phaseBadge" class="mt-4 text-xs opacity-70 text-center"></div>
-  </section>
+    <!-- QUICK CARDS -->
+    <section class="grid grid-cols-3 gap-3 px-5 pt-5">
+      <button onclick="openDrawer('address')" class="bg-neutral-100 rounded-2xl p-3 text-center border border-neutral-200">
+        <div class="text-lg">📍</div>
+        <div id="qAddress" class="text-xs mt-1 font-medium">Address</div>
+      </button>
+      <button id="checkoutBtn" onclick="openDrawer('checkout')" class="bg-neutral-100 rounded-2xl p-3 text-center border border-neutral-200">
+        <div class="text-lg">⏰</div>
+        <div id="qCheckout" class="text-xs mt-1 font-medium">Checkout</div>
+      </button>
+      <button onclick="openDrawer('emergency')" class="bg-neutral-100 rounded-2xl p-3 text-center border border-neutral-200">
+        <div class="text-lg">🚨</div>
+        <div id="qEmergency" class="text-xs mt-1 font-medium">Emergency</div>
+      </button>
+    </section>
 
-  <!-- QUICK ACTIONS -->
-  <section class="grid grid-cols-3 gap-3 px-5 pt-5">
-    <button onclick="openDrawer('address')" class="bg-neutral-100 rounded-2xl p-3 text-center border border-neutral-200 card-btn">
-      <div class="text-lg">📍</div>
-      <div id="qAddress" class="text-xs mt-1 font-medium">Address</div>
-    </button>
-    <button id="checkoutQuickBtn" onclick="openDrawer('checkout')" class="bg-neutral-100 rounded-2xl p-3 text-center border border-neutral-200 card-btn">
-      <div class="text-lg">⏰</div>
-      <div id="qCheckout" class="text-xs mt-1 font-medium">Checkout</div>
-    </button>
-    <button onclick="openDrawer('emergency')" class="bg-neutral-100 rounded-2xl p-3 text-center border border-neutral-200 card-btn">
-      <div class="text-lg">🚨</div>
-      <div id="qEmergency" class="text-xs mt-1 font-medium">Emergency</div>
-    </button>
-  </section>
+    <!-- SECTIONS -->
+    <section class="p-5 space-y-6">
 
-  <section class="p-5 space-y-6">
-
-    <!-- ====== APARTMENT SECTION ====== -->
-    <div class="bg-white border border-[#eadfce] rounded-[38px] overflow-hidden shadow-[0_10px_40px_rgba(0,0,0,.06)]">
-      <div class="bg-gradient-to-r from-[#efe5d6] to-[#f8f4ee] p-6 border-b border-[#eadfce]">
-        <div class="flex items-center justify-between gap-4">
-          <div>
-            <div id="aptSectionLabel" class="text-xs uppercase tracking-[.3em] text-neutral-500 mb-2">Apartment Concierge</div>
-            <h2 id="aptSectionTitle" class="text-3xl font-semibold leading-tight text-black">Your Apartment 🏠</h2>
+      <!-- APARTMENT -->
+      <div class="bg-white border border-[#eadfce] rounded-[38px] overflow-hidden shadow-[0_10px_40px_rgba(0,0,0,0.05)]">
+        <div class="bg-gradient-to-r from-[#efe5d6] to-[#f8f4ee] p-6 border-b border-[#eadfce]">
+          <div class="flex items-center justify-between gap-4">
+            <div>
+              <div id="aptSectionLabel" class="text-xs uppercase tracking-[0.3em] text-neutral-500 mb-2">Apartment Concierge</div>
+              <h2 id="aptSectionTitle" class="text-3xl font-semibold leading-tight text-black">Your Apartment 🏠</h2>
+            </div>
+            <div class="text-5xl">🗝</div>
           </div>
-          <div class="text-5xl">🗝</div>
+          <p id="aptSectionDesc" class="text-sm text-neutral-600 mt-4 leading-relaxed">Everything related to your apartment, access and assistance.</p>
         </div>
-        <p id="aptSectionDesc" class="text-sm text-neutral-600 mt-4 leading-relaxed">Everything related to your apartment, access and assistance.</p>
-      </div>
 
-      <!-- PHASE 1: locked teaser -->
-      <div id="phase1AptMsg" class="p-5 hidden">
-        <div class="bg-[#faf7f2] rounded-[24px] p-5 border border-[#eadfce] text-center text-sm text-neutral-500 leading-relaxed">
-          <div class="text-3xl mb-3">🔒</div>
-          <p id="phase1AptText">Complete your online check-in to unlock apartment info.</p>
-        </div>
-      </div>
-
-      <!-- PHASE 2+: apartment cards -->
-      <div id="phase2AptCards" class="p-5 grid grid-cols-2 gap-4 hidden">
-        <button onclick="openDrawer('wifi')" class="bg-[#faf7f2] rounded-[28px] p-5 border border-[#eadfce] text-left card-btn">
-          <div class="text-3xl">📶</div>
-          <div id="wifiTitle" class="mt-3 font-semibold text-black">Wi-Fi</div>
-          <div id="wifiSub" class="text-xs text-neutral-500 mt-1">Network & password</div>
-        </button>
-        <button onclick="openDrawer('building')" class="bg-[#faf7f2] rounded-[28px] p-5 border border-[#eadfce] text-left card-btn">
-          <div class="text-3xl">🏛</div>
-          <div id="buildingTitle" class="mt-3 font-semibold text-black">Building</div>
-          <div id="buildingSub" class="text-xs text-neutral-500 mt-1">Intercom, door & concierge</div>
-        </button>
-        <button onclick="openDrawer('house')" class="bg-[#faf7f2] rounded-[28px] p-5 border border-[#eadfce] text-left card-btn">
-          <div class="text-3xl">💬</div>
-          <div id="houseTitle" class="mt-3 font-semibold text-black">House Guide</div>
-          <div id="houseSub" class="text-xs text-neutral-500 mt-1">Water, AC, gas, bathroom</div>
-        </button>
-        <button onclick="openDrawer('services')" class="bg-[#faf7f2] rounded-[28px] p-5 border border-[#eadfce] text-left card-btn">
-          <div class="text-3xl">🏪</div>
-          <div id="servicesTitle" class="mt-3 font-semibold text-black">Services</div>
-          <div id="servicesSub" class="text-xs text-neutral-500 mt-1">Pharmacy, ATM, laundry</div>
-        </button>
-      </div>
-
-      <!-- PHASE 3: Digital Keys (appended below phase2 cards) -->
-      <div id="phase3Keys" class="px-5 pb-5 hidden">
-        <button onclick="openDrawer('keys')" class="w-full bg-[#171717] text-white rounded-[28px] p-5 text-left card-btn">
-          <div class="text-3xl">🗝</div>
-          <div id="keysTitle" class="mt-3 font-semibold">Digital Keys</div>
-          <div id="keysSub" class="text-xs text-white/60 mt-1">Open building & apartment</div>
-        </button>
-      </div>
-
-      <!-- Phase 2 locked keys hint -->
-      <div id="phase2KeysLock" class="px-5 pb-5 hidden">
-        <div class="bg-neutral-100 rounded-[24px] p-4 text-center text-xs text-neutral-400 border border-neutral-200">
-          <span id="keysLockText">🔒 Digital keys available on check-in day from 13:00</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- ====== ROME EXPERIENCE SECTION ====== -->
-    <div class="card-dark rounded-[42px] overflow-hidden shadow-2xl text-white">
-      <div class="p-6 border-b border-white/10">
-        <div class="flex items-center justify-between gap-4">
-          <div>
-            <div id="romeSectionLabel" class="text-xs uppercase tracking-[.3em] opacity-60 mb-2">Rome Experience Concierge</div>
-            <h2 id="romeSectionTitle" class="text-3xl font-semibold leading-tight">Explore Rome 🌙</h2>
+        <!-- Phase 1: locked -->
+        <div id="phase1Msg" class="hidden p-5">
+          <div class="bg-[#faf7f2] rounded-[24px] p-6 border border-[#eadfce] text-center">
+            <div class="text-4xl mb-3">🔒</div>
+            <p id="phase1Text" class="text-sm text-neutral-500 leading-relaxed">Complete your online check-in to unlock apartment info.</p>
           </div>
-          <div class="text-5xl">🍷</div>
         </div>
-        <p id="romeSectionDesc" class="text-sm text-white/70 mt-4 leading-relaxed">Restaurants, hidden places, nightlife and curated experiences.</p>
-      </div>
-      <div class="p-5 grid grid-cols-2 gap-4">
-        <button onclick="openDrawer('eat')" class="bg-white/5 backdrop-blur-sm rounded-[30px] p-5 border border-white/10 text-left card-btn">
-          <div class="text-3xl">🍝</div>
-          <div id="eatTitle" class="mt-3 font-semibold">Eat & Drink</div>
-          <div id="eatSub" class="text-xs text-white/50 mt-1">Restaurants, breakfast & aperitivo</div>
-        </button>
-        <button onclick="openDrawer('experiences')" class="bg-white/5 backdrop-blur-sm rounded-[30px] p-5 border border-white/10 text-left card-btn">
-          <div class="text-3xl">🌙</div>
-          <div id="expTitle" class="mt-3 font-semibold">Tonight in Rome</div>
-          <div id="expSub" class="text-xs text-white/50 mt-1">Bars, rooftops & evening ideas</div>
-        </button>
-        <button onclick="openDrawer('tickets')" class="bg-white/5 backdrop-blur-sm rounded-[30px] p-5 border border-white/10 text-left card-btn">
-          <div class="text-3xl">🎟</div>
-          <div id="tickTitle" class="mt-3 font-semibold">Ticketing</div>
-          <div id="tickSub" class="text-xs text-white/50 mt-1">Museums, tours & experiences</div>
-        </button>
-        <button onclick="openDrawer('transport')" class="bg-white/5 backdrop-blur-sm rounded-[30px] p-5 border border-white/10 text-left card-btn">
-          <div class="text-3xl">🚕</div>
-          <div id="transTitle" class="mt-3 font-semibold">Transport</div>
-          <div id="transSub" class="text-xs text-white/50 mt-1">Airport, taxi & mobility</div>
-        </button>
-        <button onclick="openDrawer('visit')" class="bg-white/5 backdrop-blur-sm rounded-[30px] p-5 border border-white/10 text-left card-btn">
-          <div class="text-3xl">🏛</div>
-          <div id="visitTitle" class="mt-3 font-semibold">What to See</div>
-          <div id="visitSub" class="text-xs text-white/50 mt-1">Monuments & hidden gems</div>
-        </button>
-        <button onclick="openDrawer('daytrips')" class="bg-white/5 backdrop-blur-sm rounded-[30px] p-5 border border-white/10 text-left card-btn">
-          <div class="text-3xl">🚂</div>
-          <div id="dayTitle" class="mt-3 font-semibold">Day Trips</div>
-          <div id="daySub" class="text-xs text-white/50 mt-1">Tivoli, Ostia & Castelli</div>
-        </button>
-      </div>
-    </div>
 
-    <!-- ====== AI CONCIERGE ====== -->
-    <div class="bg-black text-white rounded-3xl p-5 shadow-xl">
-      <div id="aiLabel" class="text-xs uppercase tracking-[.2em] opacity-60 mb-1">AI Concierge</div>
-      <div id="aiTitle" class="text-lg font-semibold leading-snug mb-4">Ask anything about Rome or your apartment.</div>
-
-      <!-- Chat history -->
-      <div id="aiChat"></div>
-
-      <!-- Chips -->
-      <div id="aiChips" class="flex flex-wrap gap-2 mb-4">
-        <button class="chip" onclick="askAI(this.textContent)">Best pizza nearby</button>
-        <button class="chip" onclick="askAI(this.textContent)">Taxi to airport</button>
-        <button class="chip" onclick="askAI(this.textContent)">Pharmacy open now</button>
-        <button class="chip" onclick="askAI(this.textContent)">Romantic dinner</button>
+        <!-- Phase 2+: cards -->
+        <div id="aptCards" class="hidden p-5 grid grid-cols-2 gap-4">
+          <button id="keysCard" onclick="openDrawer('keys')" class="bg-[#faf7f2] rounded-[28px] p-5 border border-[#eadfce] text-left">
+            <div class="text-3xl">🗝</div>
+            <div id="keysTitle" class="mt-3 font-semibold text-black">Digital Keys</div>
+            <div id="keysSub" class="text-xs text-neutral-500 mt-1">Open building & apartment</div>
+          </button>
+          <button onclick="openDrawer('wifi')" class="bg-[#faf7f2] rounded-[28px] p-5 border border-[#eadfce] text-left">
+            <div class="text-3xl">📶</div>
+            <div id="wifiTitle" class="mt-3 font-semibold text-black">Wi‑Fi</div>
+            <div id="wifiSub" class="text-xs text-neutral-500 mt-1">Network & password</div>
+          </button>
+          <button onclick="openDrawer('house')" class="bg-[#faf7f2] rounded-[28px] p-5 border border-[#eadfce] text-left">
+            <div class="text-3xl">💬</div>
+            <div id="houseTitle" class="mt-3 font-semibold text-black">Apartment AI</div>
+            <div id="houseSub" class="text-xs text-neutral-500 mt-1">House instructions & help</div>
+          </button>
+          <button onclick="openDrawer('help')" class="bg-[#faf7f2] rounded-[28px] p-5 border border-[#eadfce] text-left">
+            <div class="text-3xl">☎</div>
+            <div id="helpTitle" class="mt-3 font-semibold text-black">Need Help?</div>
+            <div id="helpSub" class="text-xs text-neutral-500 mt-1">Concierge support</div>
+          </button>
+        </div>
       </div>
 
-      <!-- Input -->
-      <div class="flex gap-2 mt-1">
-        <input id="aiInput" type="text" placeholder="Type your question…"
-          class="flex-1 bg-white/10 border border-white/15 rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-white/40 outline-none focus:border-white/40"
-          onkeydown="if(event.key==='Enter') sendAI()">
-        <button onclick="sendAI()" class="bg-white text-black px-4 py-2.5 rounded-xl text-sm font-semibold card-btn" id="aiSendBtn">→</button>
+      <!-- ROME -->
+      <div class="bg-gradient-to-br from-[#1d1a18] via-[#2c221d] to-[#151515] rounded-[42px] overflow-hidden shadow-2xl text-white">
+        <div class="p-6 border-b border-white/10">
+          <div class="flex items-center justify-between gap-4">
+            <div>
+              <div id="romeSectionLabel" class="text-xs uppercase tracking-[0.3em] opacity-60 mb-2">Rome Experience Concierge</div>
+              <h2 id="romeSectionTitle" class="text-3xl font-semibold leading-tight">Explore Rome 🌙</h2>
+            </div>
+            <div class="text-5xl">🍷</div>
+          </div>
+          <p id="romeSectionDesc" class="text-sm text-white/70 mt-4 leading-relaxed">Restaurants, hidden places, nightlife and curated experiences.</p>
+        </div>
+        <div class="p-5 grid grid-cols-2 gap-4">
+          <button onclick="openDrawer('eat')" class="bg-white/5 backdrop-blur-sm rounded-[30px] p-5 border border-white/10 text-left">
+            <div class="text-3xl">🍝</div>
+            <div id="eatTitle" class="mt-3 font-semibold">Eat & Drink</div>
+            <div id="eatSub" class="text-xs text-white/50 mt-1">Restaurants, breakfast & aperitivo</div>
+          </button>
+          <button onclick="openDrawer('tonight')" class="bg-white/5 backdrop-blur-sm rounded-[30px] p-5 border border-white/10 text-left">
+            <div class="text-3xl">🌙</div>
+            <div id="tonightTitle" class="mt-3 font-semibold">Tonight in Rome</div>
+            <div id="tonightSub" class="text-xs text-white/50 mt-1">Bars, rooftops & evening ideas</div>
+          </button>
+          <button onclick="openDrawer('tickets')" class="bg-white/5 backdrop-blur-sm rounded-[30px] p-5 border border-white/10 text-left">
+            <div class="text-3xl">🎟</div>
+            <div id="tickTitle" class="mt-3 font-semibold">Ticketing</div>
+            <div id="tickSub" class="text-xs text-white/50 mt-1">Museums, tours & experiences</div>
+          </button>
+          <button onclick="openDrawer('transport')" class="bg-white/5 backdrop-blur-sm rounded-[30px] p-5 border border-white/10 text-left">
+            <div class="text-3xl">🚕</div>
+            <div id="transTitle" class="mt-3 font-semibold">Transport</div>
+            <div id="transSub" class="text-xs text-white/50 mt-1">Airport, taxi & mobility</div>
+          </button>
+        </div>
       </div>
-    </div>
 
-    <!-- Footer -->
-    <p class="text-center text-xs text-neutral-400 pb-2">
-      <a href="https://niceflatinrome.com" target="_blank" class="no-underline opacity-60">niceflatinrome.com</a>
-      · <span id="footerHelp">Need help?</span>
-      <a href="tel:+393355245756" class="text-neutral-500">+39 335 524 5756</a>
-    </p>
+      <!-- AI CONCIERGE -->
+      <div class="bg-black text-white rounded-3xl p-5 shadow-xl">
+        <div id="aiLabel" class="text-xs uppercase tracking-[0.2em] opacity-60 mb-2">AI Concierge</div>
+        <div id="aiTitle" class="text-lg font-semibold leading-snug">Ask anything about Rome or your apartment.</div>
+        <div id="aiChat"></div>
+        <div id="aiChips" class="flex flex-wrap gap-2 mt-4"></div>
+        <div class="flex gap-2 mt-4">
+          <input id="aiInput" type="text" placeholder="Type your question…"
+            class="flex-1 bg-white/10 border border-white/15 rounded-xl px-3 py-2.5 text-sm text-white placeholder:text-white/40 outline-none"
+            style="min-width:0">
+          <button onclick="sendAI()" class="bg-white text-black px-4 py-2.5 rounded-xl text-sm font-semibold flex-shrink-0">→</button>
+        </div>
+      </div>
 
-  </section>
-</main>
+      <!-- FOOTER -->
+      <p class="text-center text-xs text-neutral-400 pb-2">
+        <span id="footerHelp">Need help?</span>
+        <a href="tel:+393355245756" style="color:#737373;margin-left:4px;">+39 335 524 5756</a>
+      </p>
+
+    </section>
+  </main>
 </div>
 
 <script>
-/* ================================================================
-   CONFIG — replace with your real keys
-================================================================ */
-const GEMINI_API_KEY     = 'YOUR_GEMINI_API_KEY'; // https://aistudio.google.com/
-const GOOGLE_SCRIPT_URL  = 'https://script.google.com/macros/s/AKfycbwJcg_XcZE19sbKPmfZmkGtUqNz7U2eXqsYaTcCQi1feoTcJuYnS7DOpnEyrc3CDvQY/exec';
-const APARTMENT_ID       = 'ARENULA16';
+/* ── CONFIG ── */
+const SERVER_URL = 'https://shelly-cloud-opener-1.onrender.com';
+const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbwJcg_XcZE19sbKPmfZmkGtUqNz7U2eXqsYaTcCQi1feoTcJuYnS7DOpnEyrc3CDvQY/exec';
 
-/* ================================================================
-   PHASE — read from URL ?phase=1/2/3, persist in localStorage
-================================================================ */
-const urlParams = new URLSearchParams(location.search);
-let phase = parseInt(urlParams.get('phase') || localStorage.getItem('phase') || '1', 10);
+/* ── PHASE ── */
+const urlP = new URLSearchParams(location.search);
+let phase = parseInt(urlP.get('phase') || localStorage.getItem('phase') || '1', 10);
 if (![1,2,3].includes(phase)) phase = 1;
 localStorage.setItem('phase', phase);
 
-/* ================================================================
-   LANGUAGE — auto-detect then manual
-================================================================ */
-let lang = (urlParams.get('lang') || localStorage.getItem('lang') || (navigator.language||'en').slice(0,2)).toLowerCase();
+/* ── LANGUAGE ── */
+let lang = (urlP.get('lang') || localStorage.getItem('lang') || (navigator.language||'en').slice(0,2)).toLowerCase();
 
-/* ================================================================
-   DATA — all 5 languages, all content from old guide
-================================================================ */
+/* ── DATA ── */
 const DATA = {
-
-en: {
-  ui: {
-    heroTitle: 'Welcome to Rome ✨',
-    heroSub: 'Curated luxury hospitality in the heart of Rome.',
-    aptLabel: 'Apartment',
-    aptSection: 'Apartment Concierge',
-    aptTitle: 'Your Apartment 🏠',
-    aptDesc: 'Everything related to your apartment, access and assistance.',
-    romeSection: 'Rome Experience Concierge',
-    romeTitle: 'Explore Rome 🌙',
-    romeDesc: 'Restaurants, hidden places, nightlife and curated experiences.',
-    aiLabel: 'AI Concierge',
-    aiTitle: 'Ask anything about Rome or your apartment.',
-    qAddress: 'Address', qCheckout: 'Checkout', qEmergency: 'Emergency',
-    wifiTitle: 'Wi-Fi', wifiSub: 'Network & password',
-    buildingTitle: 'Building', buildingSub: 'Intercom, door & concierge',
-    houseTitle: 'House Guide', houseSub: 'Water, AC, gas, bathroom',
-    servicesTitle: 'Services', servicesSub: 'Pharmacy, ATM, laundry',
-    keysTitle: 'Digital Keys', keysSub: 'Open building & apartment',
-    keysLockText: '🔒 Digital keys available on check-in day from 13:00',
-    eatTitle: 'Eat & Drink', eatSub: 'Restaurants, breakfast & aperitivo',
-    expTitle: 'Tonight in Rome', expSub: 'Bars, rooftops & evening ideas',
-    tickTitle: 'Ticketing', tickSub: 'Museums, tours & experiences',
-    transTitle: 'Transport', transSub: 'Airport, taxi & mobility',
-    visitTitle: 'What to See', visitSub: 'Monuments & hidden gems',
-    dayTitle: 'Day Trips', daySub: 'Tivoli, Ostia & Castelli',
-    footerHelp: 'Need help?',
-    phase1AptText: 'Complete your online check-in to unlock apartment info.',
-    phaseBadge: ['📋 Phase 1 — After Booking', '✅ Phase 2 — After Online Check-in', '🗝 Phase 3 — Check-in Day'],
-    chips: ['Best pizza nearby','Taxi to airport','Pharmacy open now','Romantic dinner'],
-    aiPlaceholder: 'Type your question…',
-    openDoorLocked: 'Keys sent via email — check your inbox',
+en:{
+  ui:{
+    heroTitle:'Welcome to Rome ✨',
+    heroSub:'Curated luxury hospitality in the heart of Rome.',
+    aptLabel:'Apartment',
+    aptSection:'Apartment Concierge',
+    aptTitle:'Your Apartment 🏠',
+    aptDesc:'Everything related to your apartment, access and assistance.',
+    romeSection:'Rome Experience Concierge',
+    romeTitle:'Explore Rome 🌙',
+    romeDesc:'Restaurants, hidden places, nightlife and curated experiences.',
+    aiLabel:'AI Concierge',
+    aiTitle:'Ask anything about Rome or your apartment.',
+    qAddress:'Address', qCheckout:'Checkout', qEmergency:'Emergency',
+    keysTitle:'Digital Keys', keysSub:'Open building & apartment',
+    wifiTitle:'Wi‑Fi', wifiSub:'Network & password',
+    houseTitle:'Apartment AI', houseSub:'House instructions & help',
+    helpTitle:'Need Help?', helpSub:'Concierge support',
+    eatTitle:'Eat & Drink', eatSub:'Restaurants, breakfast & aperitivo',
+    tonightTitle:'Tonight in Rome', tonightSub:'Bars, rooftops & evening ideas',
+    tickTitle:'Ticketing', tickSub:'Museums, tours & experiences',
+    transTitle:'Transport', transSub:'Airport, taxi & mobility',
+    footerHelp:'Need help?',
+    phase1Text:'Complete your online check-in to unlock apartment info.',
+    phaseBadge:['📋 After Booking','✅ After Check-in','🗝 Check-in Day'],
+    chips:['Best pizza nearby','Taxi to airport','Pharmacy open now','Romantic dinner'],
+    aiPlaceholder:'Type your question…',
+    keysPhase2:'Your digital keys will be available from 13:00 on check-in day.',
   },
-  apt: {
+  apt:{
     checkin_time:'13:00', checkout_time:'11:00',
     wifi_note:'The router is on the desk by the window. Turn it to see the network name and password.',
     wifi_ssid:'See router label', wifi_password:'See router label',
     water_note:'Tap water is safe and drinkable. Hot water is always available.',
     ac_note:'Please switch off the air conditioning when you go out.',
-    bathroom_amenities:'Toilet paper, hand soap, bath mat, and hairdryer.',
-    towels_note:'Per guest: 1 large and 1 medium towel. Bed is already prepared on arrival.',
-    gas_steps:'To light the gas: open the gas valve (horizontal = open, vertical = closed). Choose the burner. Light a match or lighter and bring it close to the burner. Turn and press the black knob until the flame is steady, then release.',
-    intercom_code:'C8', elevator_note:'Elevator is reserved for owners only. Please do not use it.',
-    main_door_hours:'The main door is open 08:00–13:00 and 15:30–18:00.',
-    concierge:'Paolo', host_phone:'+39 335 5245756',
+    bathroom:'Toilet paper, hand soap, bath mat, and hairdryer provided.',
+    towels:'Per guest: 1 large and 1 medium towel. Bed is ready on arrival.',
+    gas:'Open the gas valve (horizontal = open, vertical = closed). Choose burner. Light a match. Turn and press the black knob until flame is steady, then release.',
+    intercom:'C8', elevator:'Elevator reserved for owners only — please do not use it.',
+    door_hours:'Main door open 08:00–13:00 and 15:30–18:00.',
+    concierge:'Paolo', phone:'+39 335 524 5756',
     pharmacy:'Farmacia Arenula — Via Arenula 19–21 · +39 06 686 8815',
     hospital:'Fatebenefratelli Hospital, Tiber Island 1',
-    atms:'Unicredit at Largo Arenula 1 · BNL at Via Arenula 41 · Intesa Sanpaolo at Via Arenula 27',
-    sims:'Vodafone: Corso Vittorio Emanuele II 209 · TIM: Piazza Venezia 2 · Iliad: Via del Corso 282',
+    atm:'Unicredit — Largo Arenula 1 · BNL — Via Arenula 41 · Intesa Sanpaolo — Via Arenula 27',
+    sim:'Vodafone: Corso Vittorio Emanuele II 209 · TIM: Piazza Venezia 2 · Iliad: Via del Corso 282',
     laundry:'Self-service laundry at Via Arenula 47',
     luggage:'Radical Storage — Largo di Torre Argentina (5 min walk)',
-    transport:'Tram 8 (Arenula/Cairoli stop) → Trastevere or Piazza Venezia. Bus 40/64 → Termini & Vatican. Taxi: +39 06 3570 or FreeNow app.',
+    city_transport:'Tram 8 (Arenula/Cairoli stop) → Trastevere or Piazza Venezia. Bus 40/64 → Termini & Vatican. Taxi: +39 06 3570 or FreeNow app.',
     airports:'Fiumicino: tram 8 → Trastevere → FL1 train (~45 min). Ciampino: Terravision bus or taxi. Private: Welcome Pickups.',
-    emergency:'EU emergency: 112 · Police: 113 · Ambulance: 118 · Fire: 115 · English doctor: +39 06 488 2371 · 24h vet: +39 06 660 681',
+    emergency:'EU emergency: 112 · Police: 113 · Ambulance: 118 · Fire: 115 · English-speaking doctor: +39 06 488 2371 · 24h vet: +39 06 660 681',
     eat:'Roscioli (meats & cheeses) · Emma Pizzeria (Roman pizza) · Ditirambo (creative) · Osteria da Fortunata (fresh pasta) · Pianostrada (contemporary) · Forno Campo de\' Fiori (pizza al taglio) · Gelateria del Teatro (artisan gelato).',
-    drink:'Caffè Camerino — Largo Arenula 30 (coffee & aperitivo) · Irish Pub Largo Argentina (beer) · Modius Radisson Rooftop (cocktails, panoramic view).',
-    shop:'Via Arenula: delis, bakeries, gelato. Fish market: Piazza Costaguti. Forno Boccione (traditional Jewish pastries). Mercato Monti (weekends, vintage & crafts).',
-    visit:'Largo di Torre Argentina (Roman temples + cat sanctuary) · Portico d\'Ottavia (Jewish Ghetto) · Tiber Island · Piazza Farnese · Hidden churches: Chiesa Nuova, Santa Maria in Campitelli, Santa Barbara dei Librari.',
-    experiences:'Evening walk: Largo Argentina → Ghetto → Tiber Island → Theatre of Marcellus. Aperitif at Caffè Camerino or Modius terrace. Forno Boccione pastries. Sunset stroll along Lungotevere.',
-    daytrips:'Ostia Antica (~40 min) · Tivoli — Villa d\'Este + Villa Adriana (~1 h) · Castelli Romani (picturesque villages, wine).',
-    checkout_note:'Before leaving: switch off all lights & AC, close all windows, leave keys on the table, close the front door gently.',
+    drink:'Caffè Camerino — Largo Arenula 30 · Irish Pub Largo Argentina · Modius Radisson Rooftop (cocktails, panoramic view).',
+    tonight:'Evening walk: Largo Argentina → Ghetto → Tiber Island → Theatre of Marcellus. Aperitif at Caffè Camerino or Modius terrace. Forno Boccione pastries. Sunset stroll on Lungotevere.',
+    checkout_note:'Switch off all lights & AC, close all windows, leave keys on the table, gently close the front door.',
     keys_msg:'Your digital keys have been sent to your email by Hostaway. Check your inbox — the arrival time you selected during online check-in determines the exact delivery time. Keys are never released before 13:00.',
   },
-  drawers: {
-    address:   { title:'📍 Address',       html: `<p><strong>Via Arenula 16</strong><br>Historic Center, Rome<br><br><a href="https://maps.google.com/?q=Via+Arenula+16+Roma" target="_blank">Open in Google Maps →</a></p>` },
-    emergency: { title:'🚨 Emergency',     html: (a)=>`<p>${a.emergency}</p>` },
-    checkout:  { title:'⏰ Checkout',      html: (a)=>`<p>Checkout time: <strong>${a.checkout_time}</strong></p><p>${a.checkout_note}</p>` },
-    wifi:      { title:'📶 Wi-Fi',         html: (a)=>`<p>${a.wifi_note}</p><p>Network: <strong>${a.wifi_ssid}</strong><br>Password: <strong>${a.wifi_password}</strong></p>` },
-    building:  { title:'🏛 Building',      html: (a)=>`<p><strong>Intercom code:</strong> ${a.intercom_code}</p><p><strong>Elevator:</strong> ${a.elevator_note}</p><p><strong>Main door:</strong> ${a.main_door_hours}</p><p><strong>Concierge:</strong> ${a.concierge}</p>` },
-    house:     { title:'🏠 House Guide',   html: (a)=>`<h3 class="font-semibold mb-1">Water</h3><p>${a.water_note}</p><h3 class="font-semibold mt-3 mb-1">Air Conditioning</h3><p>${a.ac_note}</p><h3 class="font-semibold mt-3 mb-1">Gas</h3><p>${a.gas_steps}</p><h3 class="font-semibold mt-3 mb-1">Bathroom</h3><p>${a.bathroom_amenities}</p><p>Towels: ${a.towels_note}</p>` },
-    services:  { title:'🏪 Services',      html: (a)=>`<p><strong>Pharmacy:</strong> ${a.pharmacy}</p><p><strong>Hospital:</strong> ${a.hospital}</p><p><strong>ATMs:</strong> ${a.atms}</p><p><strong>SIM cards:</strong> ${a.sims}</p><p><strong>Laundry:</strong> ${a.laundry}</p><p><strong>Luggage storage:</strong> ${a.luggage}</p>` },
-    keys:      { title:'🗝 Digital Keys',  html: (a)=>`<div class="text-center py-4"><div class="text-5xl mb-4">📧</div><p class="font-semibold text-base mb-3">${a.keys_msg}</p><p class="text-neutral-500 text-xs mt-4">Need help? Call <a href="tel:${a.host_phone}">${a.host_phone}</a></p></div>` },
-    eat:       { title:'🍝 Eat & Drink',   html: (a)=>`<h3 class="font-semibold mb-1">Restaurants</h3><p>${a.eat}</p><h3 class="font-semibold mt-3 mb-1">Bars & Cafés</h3><p>${a.drink}</p>` },
-    experiences:{ title:'🌙 Tonight in Rome', html:(a)=>`<p>${a.experiences}</p>` },
-    tickets:   { title:'🎟 Ticketing',     html: ()=>`<p><strong>TicketOne</strong> — concerts, theatre, sport:<br><a href="https://www.ticketone.it/en/" target="_blank">www.ticketone.it</a></p><p><strong>AS Roma</strong> tickets:<br><a href="https://www.asroma.com/en/tickets" target="_blank">www.asroma.com/tickets</a></p><p><strong>SS Lazio</strong> tickets:<br><a href="https://www.sslazio.it/en" target="_blank">www.sslazio.it</a></p><p><strong>Colosseum:</strong><br><a href="https://colosseo.it/en" target="_blank">colosseo.it</a></p><p><strong>Vatican Museums:</strong><br><a href="https://tickets.museivaticani.va/" target="_blank">tickets.museivaticani.va</a></p><p><strong>Rome Museums:</strong><br><a href="https://www.museiincomuneroma.it/en" target="_blank">museiincomuneroma.it</a></p><p><strong>Scuderie del Quirinale:</strong><br><a href="https://www.scuderiequirinale.it/" target="_blank">scuderiequirinale.it</a></p><p><strong>MAXXI:</strong><br><a href="https://www.maxxi.art/en/" target="_blank">maxxi.art</a></p>` },
-    transport: { title:'🚕 Transport',     html: (a)=>`<h3 class="font-semibold mb-1">City</h3><p>${a.transport}</p><h3 class="font-semibold mt-3 mb-1">Airports</h3><p>${a.airports}</p>` },
-    visit:     { title:'🏛 What to See',   html: (a)=>`<p>${a.visit}</p>` },
-    daytrips:  { title:'🚂 Day Trips',     html: (a)=>`<p>${a.daytrips}</p>` },
+  drawers:{
+    address:`<p><strong>Via Arenula 16</strong><br>Historic Center, Rome<br><br><a href="https://maps.google.com/?q=Via+Arenula+16+Roma" target="_blank">Open in Google Maps →</a></p>`,
+    emergency:a=>`<p>${a.emergency}</p>`,
+    checkout:a=>`<p>Checkout time: <strong>${a.checkout_time}</strong></p><p>${a.checkout_note}</p>`,
+    keys:a=>`<div style="text-align:center;padding:16px 0"><div style="font-size:48px;margin-bottom:16px">📧</div><p style="font-weight:600;margin-bottom:12px">${a.keys_msg}</p><p style="font-size:12px;color:#aaa;margin-top:16px">Need help? <a href="tel:${a.phone}">${a.phone}</a></p></div>`,
+    wifi:a=>`<p>${a.wifi_note}</p><p>Network: <strong>${a.wifi_ssid}</strong><br>Password: <strong>${a.wifi_password}</strong></p>`,
+    house:a=>`<h3>Water</h3><p>${a.water_note}</p><h3>Air Conditioning</h3><p>${a.ac_note}</p><h3>Gas</h3><p>${a.gas}</p><h3>Bathroom</h3><p>${a.bathroom}</p><p>Towels: ${a.towels}</p><h3>Building Access</h3><p>Intercom: <strong>${a.intercom}</strong> · ${a.door_hours}</p><p>${a.elevator}</p>`,
+    help:a=>`<div style="text-align:center;padding:16px 0"><div style="font-size:48px;margin-bottom:16px">📞</div><p style="font-weight:600;margin-bottom:16px">Your concierge is available for any need.</p><a href="tel:${a.phone}" style="display:block;background:#000;color:#fff;padding:14px;border-radius:16px;font-weight:600;text-decoration:none;text-align:center">${a.phone}</a><p style="font-size:12px;color:#aaa;margin-top:12px">Intercom: <strong style="color:#000">${a.intercom}</strong> · Concierge: ${a.concierge}</p></div>`,
+    eat:a=>`<h3>Restaurants</h3><p>${a.eat}</p><h3>Bars & Cafés</h3><p>${a.drink}</p>`,
+    tonight:a=>`<p>${a.tonight}</p>`,
+    tickets:`<p><strong>TicketOne</strong> — concerts, theatre, sport:<br><a href="https://www.ticketone.it/en/" target="_blank">www.ticketone.it</a></p><p><strong>AS Roma</strong>:<br><a href="https://www.asroma.com/en/tickets" target="_blank">www.asroma.com/tickets</a></p><p><strong>SS Lazio</strong>:<br><a href="https://www.sslazio.it/en" target="_blank">www.sslazio.it</a></p><p><strong>Colosseum</strong>:<br><a href="https://colosseo.it/en" target="_blank">colosseo.it</a></p><p><strong>Vatican Museums</strong>:<br><a href="https://tickets.museivaticani.va/" target="_blank">tickets.museivaticani.va</a></p><p><strong>MAXXI</strong>:<br><a href="https://www.maxxi.art/en/" target="_blank">maxxi.art</a></p>`,
+    transport:a=>`<h3>City</h3><p>${a.city_transport}</p><h3>Airports</h3><p>${a.airports}</p><h3>Luggage storage</h3><p>${a.luggage}</p>`,
   }
 },
-
-it: {
-  ui: {
-    heroTitle: 'Benvenuto a Roma ✨',
-    heroSub: 'Ospitalità di lusso nel cuore di Roma.',
-    aptLabel: 'Appartamento',
-    aptSection: 'Concierge Appartamento',
-    aptTitle: 'Il Tuo Appartamento 🏠',
-    aptDesc: 'Tutto ciò che riguarda il tuo appartamento, accesso e assistenza.',
-    romeSection: 'Concierge Esperienza Roma',
-    romeTitle: 'Esplora Roma 🌙',
-    romeDesc: 'Ristoranti, luoghi nascosti, vita notturna ed esperienze curate.',
-    aiLabel: 'AI Concierge',
-    aiTitle: 'Chiedi qualsiasi cosa su Roma o il tuo appartamento.',
-    qAddress: 'Indirizzo', qCheckout: 'Checkout', qEmergency: 'Emergenza',
-    wifiTitle: 'Wi-Fi', wifiSub: 'Rete e password',
-    buildingTitle: 'Edificio', buildingSub: 'Citofono, portone e portiere',
-    houseTitle: 'Guida Casa', houseSub: 'Acqua, AC, gas, bagno',
-    servicesTitle: 'Servizi', servicesSub: 'Farmacia, bancomat, lavanderia',
-    keysTitle: 'Chiavi Digitali', keysSub: 'Apri edificio e appartamento',
-    keysLockText: '🔒 Chiavi digitali disponibili il giorno del check-in dalle 13:00',
-    eatTitle: 'Mangiare & Bere', eatSub: 'Ristoranti, colazione & aperitivo',
-    expTitle: 'Stasera a Roma', expSub: 'Bar, rooftop & idee serali',
-    tickTitle: 'Biglietteria', tickSub: 'Musei, tour ed esperienze',
-    transTitle: 'Trasporti', transSub: 'Aeroporto, taxi e mobilità',
-    visitTitle: 'Cosa Vedere', visitSub: 'Monumenti e luoghi nascosti',
-    dayTitle: 'Gite di un Giorno', daySub: 'Tivoli, Ostia e Castelli',
-    footerHelp: 'Hai bisogno di aiuto?',
-    phase1AptText: 'Completa il check-in online per sbloccare le informazioni sull\'appartamento.',
-    phaseBadge: ['📋 Fase 1 — Dopo la prenotazione', '✅ Fase 2 — Dopo il check-in online', '🗝 Fase 3 — Giorno del check-in'],
-    chips: ['Migliore pizza vicina','Taxi per l\'aeroporto','Farmacia aperta','Cena romantica'],
-    aiPlaceholder: 'Scrivi la tua domanda…',
-    openDoorLocked: 'Chiavi inviate via email — controlla la tua casella',
+it:{
+  ui:{
+    heroTitle:'Benvenuto a Roma ✨',
+    heroSub:'Ospitalità di lusso nel cuore di Roma.',
+    aptLabel:'Appartamento',
+    aptSection:'Concierge Appartamento',
+    aptTitle:'Il Tuo Appartamento 🏠',
+    aptDesc:'Tutto ciò che riguarda il tuo appartamento, accesso e assistenza.',
+    romeSection:'Concierge Esperienza Roma',
+    romeTitle:'Esplora Roma 🌙',
+    romeDesc:'Ristoranti, luoghi nascosti, vita notturna ed esperienze curate.',
+    aiLabel:'AI Concierge',
+    aiTitle:'Chiedi qualsiasi cosa su Roma o il tuo appartamento.',
+    qAddress:'Indirizzo', qCheckout:'Checkout', qEmergency:'Emergenza',
+    keysTitle:'Chiavi Digitali', keysSub:'Apri edificio e appartamento',
+    wifiTitle:'Wi‑Fi', wifiSub:'Rete e password',
+    houseTitle:'Guida Casa', houseSub:'Istruzioni e assistenza',
+    helpTitle:'Hai Bisogno?', helpSub:'Supporto concierge',
+    eatTitle:'Mangiare & Bere', eatSub:'Ristoranti, colazione & aperitivo',
+    tonightTitle:'Stasera a Roma', tonightSub:'Bar, rooftop & idee serali',
+    tickTitle:'Biglietteria', tickSub:'Musei, tour ed esperienze',
+    transTitle:'Trasporti', transSub:'Aeroporto, taxi e mobilità',
+    footerHelp:'Hai bisogno di aiuto?',
+    phase1Text:'Completa il check-in online per sbloccare le informazioni sull\'appartamento.',
+    phaseBadge:['📋 Dopo la Prenotazione','✅ Dopo il Check-in','🗝 Giorno del Check-in'],
+    chips:['Migliore pizza vicina','Taxi per l\'aeroporto','Farmacia aperta','Cena romantica'],
+    aiPlaceholder:'Scrivi la tua domanda…',
+    keysPhase2:'Le tue chiavi digitali saranno disponibili dalle 13:00 il giorno del check-in.',
   },
-  apt: {
+  apt:{
     checkin_time:'13:00', checkout_time:'11:00',
     wifi_note:'Il router si trova sulla scrivania vicino alla finestra. Giralo per leggere nome rete e password.',
     wifi_ssid:'Vedi etichetta router', wifi_password:'Vedi etichetta router',
     water_note:'L\'acqua del rubinetto è sicura e potabile. L\'acqua calda è sempre disponibile.',
     ac_note:'Per favore spegni l\'aria condizionata quando esci dall\'appartamento.',
-    bathroom_amenities:'Carta igienica, sapone mani, tappetino bagno e asciugacapelli.',
-    towels_note:'Per ospite: 1 asciugamano grande e 1 medio. Il letto è già preparato all\'arrivo.',
-    gas_steps:'Per accendere il gas: apri la valvola (orizzontale = aperto, verticale = chiuso). Scegli il fornello. Accendi un fiammifero e avvicinalo. Gira e premi la manopola nera finché la fiamma non è stabile, poi rilascia.',
-    intercom_code:'C8', elevator_note:'L\'ascensore è riservato ai proprietari. Non utilizzarlo.',
-    main_door_hours:'Il portone è aperto 08:00–13:00 e 15:30–18:00.',
-    concierge:'Paolo', host_phone:'+39 335 5245756',
+    bathroom:'Carta igienica, sapone mani, tappetino bagno e asciugacapelli.',
+    towels:'Per ospite: 1 asciugamano grande e 1 medio. Il letto è già preparato all\'arrivo.',
+    gas:'Apri la valvola del gas (orizzontale = aperto, verticale = chiuso). Scegli il fornello. Accendi un fiammifero e avvicinalo. Gira e premi la manopola nera finché la fiamma è stabile, poi rilascia.',
+    intercom:'C8', elevator:'L\'ascensore è riservato ai proprietari. Non utilizzarlo.',
+    door_hours:'Il portone è aperto 08:00–13:00 e 15:30–18:00.',
+    concierge:'Paolo', phone:'+39 335 524 5756',
     pharmacy:'Farmacia Arenula — Via Arenula 19–21 · +39 06 686 8815',
     hospital:'Ospedale Fatebenefratelli, Isola Tiberina 1',
-    atms:'Unicredit — Largo Arenula 1 · BNL — Via Arenula 41 · Intesa Sanpaolo — Via Arenula 27',
-    sims:'Vodafone: Corso Vittorio Emanuele II 209 · TIM: Piazza Venezia 2 · Iliad: Via del Corso 282',
+    atm:'Unicredit — Largo Arenula 1 · BNL — Via Arenula 41 · Intesa Sanpaolo — Via Arenula 27',
+    sim:'Vodafone: Corso Vittorio Emanuele II 209 · TIM: Piazza Venezia 2 · Iliad: Via del Corso 282',
     laundry:'Lavanderia self-service in Via Arenula 47',
     luggage:'Radical Storage — Largo di Torre Argentina (5 min a piedi)',
-    transport:'Tram 8 (fermata Arenula/Cairoli) → Trastevere o Piazza Venezia. Bus 40/64 → Termini e Vaticano. Taxi: +39 06 3570 o app FreeNow.',
+    city_transport:'Tram 8 (fermata Arenula/Cairoli) → Trastevere o Piazza Venezia. Bus 40/64 → Termini e Vaticano. Taxi: +39 06 3570 o app FreeNow.',
     airports:'Fiumicino: tram 8 → Trastevere → treno FL1 (~45 min). Ciampino: bus Terravision o taxi. Privato: Welcome Pickups.',
-    emergency:'Emergenze UE: 112 · Polizia: 113 · Ambulanza: 118 · Vigili del fuoco: 115 · Medico inglese: +39 06 488 2371 · Vet 24h: +39 06 660 681',
-    eat:'Roscioli (salumi e formaggi) · Emma Pizzeria (pizza romana) · Ditirambo (creativa) · Osteria da Fortunata (pasta fresca) · Pianostrada (contemporanea) · Forno Campo de\' Fiori (pizza al taglio) · Gelateria del Teatro (gelato artigianale).',
-    drink:'Caffè Camerino — Largo Arenula 30 (caffè & aperitivi) · Irish Pub Largo Argentina (birra) · Modius Radisson Rooftop (cocktail, vista panoramica).',
-    shop:'Via Arenula: gastronomie, forni, gelaterie. Mercato del pesce: Piazza Costaguti. Forno Boccione (dolci ebraici). Mercato Monti (weekend, vintage & artigianato).',
-    visit:'Largo di Torre Argentina (templi romani + colonia felina) · Portico d\'Ottavia (Ghetto ebraico) · Isola Tiberina · Piazza Farnese · Chiese nascoste: Chiesa Nuova, Santa Maria in Campitelli, Santa Barbara dei Librari.',
-    experiences:'Passeggiata serale: Largo Argentina → Ghetto → Isola Tiberina → Teatro di Marcello. Aperitivo da Caffè Camerino o terrazza Modius. Dolci al Forno Boccione. Tramonto sul Lungotevere.',
-    daytrips:'Ostia Antica (~40 min) · Tivoli — Villa d\'Este + Villa Adriana (~1 h) · Castelli Romani (borghi e vino).',
-    checkout_note:'Prima di partire: spegni luci e AC, chiudi le finestre, lascia le chiavi sul tavolo, chiudi delicatamente la porta.',
-    keys_msg:'Le tue chiavi digitali sono state inviate via email da Hostaway. Controlla la casella di posta — l\'orario di arrivo che hai indicato nel modulo online determina l\'orario di consegna esatto. Le chiavi non vengono mai rilasciate prima delle 13:00.',
+    emergency:'Emergenze UE: 112 · Polizia: 113 · Ambulanza: 118 · Vigili: 115 · Medico inglese: +39 06 488 2371 · Vet 24h: +39 06 660 681',
+    eat:'Roscioli (salumi & formaggi) · Emma Pizzeria (pizza romana) · Ditirambo (creativa) · Osteria da Fortunata (pasta fresca) · Pianostrada (contemporanea) · Forno Campo de\' Fiori · Gelateria del Teatro.',
+    drink:'Caffè Camerino — Largo Arenula 30 · Irish Pub Largo Argentina · Modius Radisson Rooftop (cocktail, vista panoramica).',
+    tonight:'Passeggiata serale: Largo Argentina → Ghetto → Isola Tiberina → Teatro di Marcello. Aperitivo al Caffè Camerino o terrazza Modius. Dolci al Forno Boccione. Tramonto sul Lungotevere.',
+    checkout_note:'Spegni luci e AC, chiudi le finestre, lascia le chiavi sul tavolo, chiudi delicatamente la porta.',
+    keys_msg:'Le tue chiavi digitali sono state inviate via email da Hostaway. Controlla la casella — l\'orario di arrivo che hai indicato nel modulo online determina l\'orario esatto di consegna. Le chiavi non vengono rilasciate prima delle 13:00.',
   },
-  drawers: {
-    address:   { title:'📍 Indirizzo',       html: `<p><strong>Via Arenula 16</strong><br>Centro Storico, Roma<br><br><a href="https://maps.google.com/?q=Via+Arenula+16+Roma" target="_blank">Apri in Google Maps →</a></p>` },
-    emergency: { title:'🚨 Emergenza',       html: (a)=>`<p>${a.emergency}</p>` },
-    checkout:  { title:'⏰ Checkout',        html: (a)=>`<p>Orario checkout: <strong>${a.checkout_time}</strong></p><p>${a.checkout_note}</p>` },
-    wifi:      { title:'📶 Wi-Fi',           html: (a)=>`<p>${a.wifi_note}</p><p>Rete: <strong>${a.wifi_ssid}</strong><br>Password: <strong>${a.wifi_password}</strong></p>` },
-    building:  { title:'🏛 Edificio',        html: (a)=>`<p><strong>Citofono:</strong> ${a.intercom_code}</p><p><strong>Ascensore:</strong> ${a.elevator_note}</p><p><strong>Portone:</strong> ${a.main_door_hours}</p><p><strong>Portiere:</strong> ${a.concierge}</p>` },
-    house:     { title:'🏠 Guida Casa',      html: (a)=>`<h3 class="font-semibold mb-1">Acqua</h3><p>${a.water_note}</p><h3 class="font-semibold mt-3 mb-1">Aria Condizionata</h3><p>${a.ac_note}</p><h3 class="font-semibold mt-3 mb-1">Gas</h3><p>${a.gas_steps}</p><h3 class="font-semibold mt-3 mb-1">Bagno</h3><p>${a.bathroom_amenities}</p><p>Asciugamani: ${a.towels_note}</p>` },
-    services:  { title:'🏪 Servizi',         html: (a)=>`<p><strong>Farmacia:</strong> ${a.pharmacy}</p><p><strong>Ospedale:</strong> ${a.hospital}</p><p><strong>Bancomat:</strong> ${a.atms}</p><p><strong>SIM card:</strong> ${a.sims}</p><p><strong>Lavanderia:</strong> ${a.laundry}</p><p><strong>Deposito bagagli:</strong> ${a.luggage}</p>` },
-    keys:      { title:'🗝 Chiavi Digitali', html: (a)=>`<div class="text-center py-4"><div class="text-5xl mb-4">📧</div><p class="font-semibold text-base mb-3">${a.keys_msg}</p><p class="text-neutral-500 text-xs mt-4">Serve aiuto? Chiama <a href="tel:${a.host_phone}">${a.host_phone}</a></p></div>` },
-    eat:       { title:'🍝 Mangiare & Bere', html: (a)=>`<h3 class="font-semibold mb-1">Ristoranti</h3><p>${a.eat}</p><h3 class="font-semibold mt-3 mb-1">Bar e Locali</h3><p>${a.drink}</p>` },
-    experiences:{ title:'🌙 Stasera a Roma', html:(a)=>`<p>${a.experiences}</p>` },
-    tickets:   { title:'🎟 Biglietteria',    html: ()=>`<p><strong>TicketOne</strong> — concerti, teatro, sport:<br><a href="https://www.ticketone.it/en/" target="_blank">www.ticketone.it</a></p><p><strong>AS Roma</strong>:<br><a href="https://www.asroma.com/en/tickets" target="_blank">www.asroma.com/tickets</a></p><p><strong>SS Lazio</strong>:<br><a href="https://www.sslazio.it/en" target="_blank">www.sslazio.it</a></p><p><strong>Colosseo:</strong><br><a href="https://colosseo.it/en" target="_blank">colosseo.it</a></p><p><strong>Musei Vaticani:</strong><br><a href="https://tickets.museivaticani.va/" target="_blank">tickets.museivaticani.va</a></p><p><strong>Musei di Roma:</strong><br><a href="https://www.museiincomuneroma.it/en" target="_blank">museiincomuneroma.it</a></p><p><strong>Scuderie del Quirinale:</strong><br><a href="https://www.scuderiequirinale.it/" target="_blank">scuderiequirinale.it</a></p><p><strong>MAXXI:</strong><br><a href="https://www.maxxi.art/en/" target="_blank">maxxi.art</a></p>` },
-    transport: { title:'🚕 Trasporti',       html: (a)=>`<h3 class="font-semibold mb-1">Città</h3><p>${a.transport}</p><h3 class="font-semibold mt-3 mb-1">Aeroporti</h3><p>${a.airports}</p>` },
-    visit:     { title:'🏛 Cosa Vedere',     html: (a)=>`<p>${a.visit}</p>` },
-    daytrips:  { title:'🚂 Gite di un Giorno', html: (a)=>`<p>${a.daytrips}</p>` },
+  drawers:{
+    address:`<p><strong>Via Arenula 16</strong><br>Centro Storico, Roma<br><br><a href="https://maps.google.com/?q=Via+Arenula+16+Roma" target="_blank">Apri in Google Maps →</a></p>`,
+    emergency:a=>`<p>${a.emergency}</p>`,
+    checkout:a=>`<p>Orario checkout: <strong>${a.checkout_time}</strong></p><p>${a.checkout_note}</p>`,
+    keys:a=>`<div style="text-align:center;padding:16px 0"><div style="font-size:48px;margin-bottom:16px">📧</div><p style="font-weight:600;margin-bottom:12px">${a.keys_msg}</p><p style="font-size:12px;color:#aaa;margin-top:16px">Serve aiuto? <a href="tel:${a.phone}">${a.phone}</a></p></div>`,
+    wifi:a=>`<p>${a.wifi_note}</p><p>Rete: <strong>${a.wifi_ssid}</strong><br>Password: <strong>${a.wifi_password}</strong></p>`,
+    house:a=>`<h3>Acqua</h3><p>${a.water_note}</p><h3>Aria Condizionata</h3><p>${a.ac_note}</p><h3>Gas</h3><p>${a.gas}</p><h3>Bagno</h3><p>${a.bathroom}</p><p>Asciugamani: ${a.towels}</p><h3>Accesso Edificio</h3><p>Citofono: <strong>${a.intercom}</strong> · ${a.door_hours}</p><p>${a.elevator}</p>`,
+    help:a=>`<div style="text-align:center;padding:16px 0"><div style="font-size:48px;margin-bottom:16px">📞</div><p style="font-weight:600;margin-bottom:16px">Il tuo concierge è disponibile per qualsiasi necessità.</p><a href="tel:${a.phone}" style="display:block;background:#000;color:#fff;padding:14px;border-radius:16px;font-weight:600;text-decoration:none;text-align:center">${a.phone}</a><p style="font-size:12px;color:#aaa;margin-top:12px">Citofono: <strong style="color:#000">${a.intercom}</strong> · Portiere: ${a.concierge}</p></div>`,
+    eat:a=>`<h3>Ristoranti</h3><p>${a.eat}</p><h3>Bar e Locali</h3><p>${a.drink}</p>`,
+    tonight:a=>`<p>${a.tonight}</p>`,
+    tickets:`<p><strong>TicketOne</strong>:<br><a href="https://www.ticketone.it/en/" target="_blank">www.ticketone.it</a></p><p><strong>AS Roma</strong>:<br><a href="https://www.asroma.com/en/tickets" target="_blank">www.asroma.com/tickets</a></p><p><strong>SS Lazio</strong>:<br><a href="https://www.sslazio.it/en" target="_blank">www.sslazio.it</a></p><p><strong>Colosseo</strong>:<br><a href="https://colosseo.it/en" target="_blank">colosseo.it</a></p><p><strong>Musei Vaticani</strong>:<br><a href="https://tickets.museivaticani.va/" target="_blank">tickets.museivaticani.va</a></p><p><strong>MAXXI</strong>:<br><a href="https://www.maxxi.art/en/" target="_blank">maxxi.art</a></p>`,
+    transport:a=>`<h3>Città</h3><p>${a.city_transport}</p><h3>Aeroporti</h3><p>${a.airports}</p><h3>Deposito bagagli</h3><p>${a.luggage}</p>`,
   }
 },
-
-fr: {
-  ui: {
-    heroTitle: 'Bienvenue à Rome ✨',
-    heroSub: 'Hospitalité de luxe au cœur de Rome.',
-    aptLabel: 'Appartement',
-    aptSection: 'Concierge Appartement',
-    aptTitle: 'Votre Appartement 🏠',
-    aptDesc: 'Tout ce qui concerne votre appartement, accès et assistance.',
-    romeSection: 'Concierge Expérience Rome',
-    romeTitle: 'Explorer Rome 🌙',
-    romeDesc: 'Restaurants, lieux cachés, vie nocturne et expériences sélectionnées.',
-    aiLabel: 'AI Concierge',
-    aiTitle: 'Posez toutes vos questions sur Rome ou votre appartement.',
-    qAddress: 'Adresse', qCheckout: 'Départ', qEmergency: 'Urgence',
-    wifiTitle: 'Wi-Fi', wifiSub: 'Réseau et mot de passe',
-    buildingTitle: 'Immeuble', buildingSub: 'Interphone, porte et gardien',
-    houseTitle: 'Guide Logement', houseSub: 'Eau, clim, gaz, salle de bain',
-    servicesTitle: 'Services', servicesSub: 'Pharmacie, distributeur, laverie',
-    keysTitle: 'Clés Numériques', keysSub: 'Ouvrir l\'immeuble et l\'appartement',
-    keysLockText: '🔒 Clés numériques disponibles le jour du check-in à partir de 13h00',
-    eatTitle: 'Manger & Boire', eatSub: 'Restaurants, petit-déj & apéritif',
-    expTitle: 'Ce soir à Rome', expSub: 'Bars, rooftops & idées soirée',
-    tickTitle: 'Billetterie', tickSub: 'Musées, visites & expériences',
-    transTitle: 'Transport', transSub: 'Aéroport, taxi & mobilité',
-    visitTitle: 'À Voir', visitSub: 'Monuments & trésors cachés',
-    dayTitle: 'Excursions', daySub: 'Tivoli, Ostia & Castelli',
-    footerHelp: 'Besoin d\'aide ?',
-    phase1AptText: 'Complétez votre check-in en ligne pour débloquer les informations de l\'appartement.',
-    phaseBadge: ['📋 Phase 1 — Après réservation', '✅ Phase 2 — Après check-in en ligne', '🗝 Phase 3 — Jour d\'arrivée'],
-    chips: ['Meilleure pizza proche','Taxi aéroport','Pharmacie ouverte','Dîner romantique'],
-    aiPlaceholder: 'Posez votre question…',
-    openDoorLocked: 'Clés envoyées par email — vérifiez votre boîte',
+fr:{
+  ui:{
+    heroTitle:'Bienvenue à Rome ✨',heroSub:'Hospitalité de luxe au cœur de Rome.',aptLabel:'Appartement',aptSection:'Concierge Appartement',aptTitle:'Votre Appartement 🏠',aptDesc:'Tout ce qui concerne votre appartement, accès et assistance.',romeSection:'Concierge Expérience Rome',romeTitle:'Explorer Rome 🌙',romeDesc:'Restaurants, lieux cachés, vie nocturne et expériences sélectionnées.',aiLabel:'AI Concierge',aiTitle:'Posez toutes vos questions sur Rome ou votre appartement.',qAddress:'Adresse',qCheckout:'Départ',qEmergency:'Urgence',keysTitle:'Clés Numériques',keysSub:'Ouvrir l\'immeuble et l\'appartement',wifiTitle:'Wi‑Fi',wifiSub:'Réseau et mot de passe',houseTitle:'Guide Logement',houseSub:'Instructions et assistance',helpTitle:'Besoin d\'aide?',helpSub:'Support concierge',eatTitle:'Manger & Boire',eatSub:'Restaurants, petit-déj & apéritif',tonightTitle:'Ce soir à Rome',tonightSub:'Bars, rooftops & idées soirée',tickTitle:'Billetterie',tickSub:'Musées, visites & expériences',transTitle:'Transport',transSub:'Aéroport, taxi & mobilité',footerHelp:'Besoin d\'aide?',phase1Text:'Complétez votre check-in en ligne pour débloquer les informations.',phaseBadge:['📋 Après Réservation','✅ Après Check-in','🗝 Jour d\'Arrivée'],chips:['Meilleure pizza proche','Taxi aéroport','Pharmacie ouverte','Dîner romantique'],aiPlaceholder:'Posez votre question…',keysPhase2:'Vos clés seront disponibles à partir de 13h00 le jour d\'arrivée.',
   },
-  apt: {
-    checkin_time:'13:00', checkout_time:'11:00',
-    wifi_note:'Le routeur est sur le bureau près de la fenêtre. Retournez-le pour voir le nom du réseau et le mot de passe.',
-    wifi_ssid:'Voir étiquette routeur', wifi_password:'Voir étiquette routeur',
-    water_note:'L\'eau du robinet est sûre et potable. L\'eau chaude est toujours disponible.',
-    ac_note:'Veuillez éteindre la climatisation lorsque vous sortez.',
-    bathroom_amenities:'Papier toilette, savon, tapis de bain et sèche-cheveux.',
-    towels_note:'Par personne : 1 grande et 1 moyenne serviette. Le lit est prêt à votre arrivée.',
-    gas_steps:'Pour allumer le gaz : ouvrez la vanne (horizontale = ouvert, verticale = fermé). Choisissez le brûleur. Allumez une allumette et approchez-la. Tournez et appuyez sur le bouton noir jusqu\'à ce que la flamme soit stable, puis relâchez.',
-    intercom_code:'C8', elevator_note:'L\'ascenseur est réservé aux propriétaires. Ne pas utiliser.',
-    main_door_hours:'La porte principale est ouverte 08h00–13h00 et 15h30–18h00.',
-    concierge:'Paolo', host_phone:'+39 335 5245756',
-    pharmacy:'Farmacia Arenula — Via Arenula 19–21 · +39 06 686 8815',
-    hospital:'Hôpital Fatebenefratelli, Île Tibérine 1',
-    atms:'Unicredit — Largo Arenula 1 · BNL — Via Arenula 41 · Intesa Sanpaolo — Via Arenula 27',
-    sims:'Vodafone: Corso Vittorio Emanuele II 209 · TIM: Piazza Venezia 2 · Iliad: Via del Corso 282',
-    laundry:'Laverie self-service Via Arenula 47',
-    luggage:'Radical Storage — Largo di Torre Argentina (5 min à pied)',
-    transport:'Tram 8 (arrêt Arenula/Cairoli) → Trastevere ou Piazza Venezia. Bus 40/64 → Termini & Vatican. Taxi : +39 06 3570 ou app FreeNow.',
-    airports:'Fiumicino : tram 8 → Trastevere → train FL1 (~45 min). Ciampino : bus Terravision ou taxi. Transfert privé : Welcome Pickups.',
-    emergency:'Urgences UE : 112 · Police : 113 · Ambulance : 118 · Pompiers : 115 · Médecin anglophone : +39 06 488 2371 · Vétérinaire 24h : +39 06 660 681',
-    eat:'Roscioli (charcuteries & fromages) · Emma Pizzeria (pizza romaine) · Ditirambo (créative) · Osteria da Fortunata (pâtes fraîches) · Pianostrada (contemporain) · Forno Campo de\' Fiori (pizza à emporter) · Gelateria del Teatro (glace artisanale).',
-    drink:'Caffè Camerino — Largo Arenula 30 (café & apéritifs) · Irish Pub Largo Argentina (bière) · Modius Radisson Rooftop (cocktails, vue panoramique).',
-    shop:'Via Arenula : épiceries fines, boulangeries, glaciers. Marché aux poissons : Piazza Costaguti. Forno Boccione (pâtisseries juives). Mercato Monti (week-ends, vintage & artisanat).',
-    visit:'Largo di Torre Argentina (temples romains + refuge chats) · Portique d\'Octavie (Ghetto juif) · Île Tibérine · Piazza Farnese · Églises cachées : Chiesa Nuova, Santa Maria in Campitelli, Santa Barbara dei Librari.',
-    experiences:'Promenade du soir : Largo Argentina → Ghetto → Île Tibérine → Théâtre de Marcellus. Apéritif au Caffè Camerino ou terrasse Modius. Pâtisseries Forno Boccione. Coucher de soleil sur le Lungotevere.',
-    daytrips:'Ostia Antica (~40 min) · Tivoli — Villa d\'Este + Villa Adriana (~1 h) · Castelli Romani (villages & vin).',
-    checkout_note:'Avant de partir : éteignez lumières & clim, fermez les fenêtres, laissez les clés sur la table, fermez doucement la porte.',
-    keys_msg:'Vos clés numériques ont été envoyées par email par Hostaway. Vérifiez votre boîte de réception — l\'heure d\'arrivée que vous avez choisie lors du check-in en ligne détermine l\'heure exacte de livraison. Les clés ne sont jamais transmises avant 13h00.',
+  apt:{
+    checkin_time:'13:00',checkout_time:'11:00',wifi_note:'Le routeur est sur le bureau près de la fenêtre.',wifi_ssid:'Voir étiquette routeur',wifi_password:'Voir étiquette routeur',water_note:'L\'eau du robinet est sûre et potable.',ac_note:'Veuillez éteindre la climatisation lorsque vous sortez.',bathroom:'Papier toilette, savon, tapis de bain et sèche-cheveux.',towels:'Par personne: 1 grande et 1 moyenne serviette. Le lit est prêt à votre arrivée.',gas:'Ouvrez la vanne (horizontale=ouvert). Allumez une allumette. Tournez et appuyez sur le bouton noir jusqu\'à la flamme stable.',intercom:'C8',elevator:'Ascenseur réservé aux propriétaires.',door_hours:'Porte principale ouverte 08h00–13h00 et 15h30–18h00.',concierge:'Paolo',phone:'+39 335 524 5756',pharmacy:'Farmacia Arenula — Via Arenula 19–21 · +39 06 686 8815',hospital:'Hôpital Fatebenefratelli, Île Tibérine 1',atm:'Unicredit — Largo Arenula 1 · BNL — Via Arenula 41',sim:'Vodafone: Corso Vittorio Emanuele II 209 · TIM: Piazza Venezia 2',laundry:'Laverie self-service Via Arenula 47',luggage:'Radical Storage — Largo di Torre Argentina (5 min à pied)',city_transport:'Tram 8 → Trastevere ou Piazza Venezia. Bus 40/64 → Termini & Vatican. Taxi: +39 06 3570.',airports:'Fiumicino: tram 8 → Trastevere → train FL1 (~45 min). Ciampino: bus Terravision.',emergency:'Urgences: 112 · Police: 113 · Ambulance: 118 · Pompiers: 115',eat:'Roscioli · Emma Pizzeria · Ditirambo · Osteria da Fortunata · Pianostrada · Forno Campo de\' Fiori · Gelateria del Teatro.',drink:'Caffè Camerino — Largo Arenula 30 · Irish Pub Largo Argentina · Modius Radisson Rooftop.',tonight:'Promenade du soir: Largo Argentina → Ghetto → Île Tibérine → Théâtre de Marcellus. Apéritif au Caffè Camerino. Coucher de soleil sur le Lungotevere.',checkout_note:'Éteignez lumières & clim, fermez les fenêtres, laissez les clés sur la table.',keys_msg:'Vos clés numériques ont été envoyées par email par Hostaway. Vérifiez votre boîte. Les clés ne sont jamais transmises avant 13h00.',
   },
-  drawers: {
-    address:   { title:'📍 Adresse',         html: `<p><strong>Via Arenula 16</strong><br>Centre Historique, Rome<br><br><a href="https://maps.google.com/?q=Via+Arenula+16+Roma" target="_blank">Ouvrir dans Google Maps →</a></p>` },
-    emergency: { title:'🚨 Urgence',         html: (a)=>`<p>${a.emergency}</p>` },
-    checkout:  { title:'⏰ Départ',          html: (a)=>`<p>Heure de départ : <strong>${a.checkout_time}</strong></p><p>${a.checkout_note}</p>` },
-    wifi:      { title:'📶 Wi-Fi',           html: (a)=>`<p>${a.wifi_note}</p><p>Réseau : <strong>${a.wifi_ssid}</strong><br>Mot de passe : <strong>${a.wifi_password}</strong></p>` },
-    building:  { title:'🏛 Immeuble',        html: (a)=>`<p><strong>Interphone :</strong> ${a.intercom_code}</p><p><strong>Ascenseur :</strong> ${a.elevator_note}</p><p><strong>Porte principale :</strong> ${a.main_door_hours}</p><p><strong>Gardien :</strong> ${a.concierge}</p>` },
-    house:     { title:'🏠 Guide Logement',  html: (a)=>`<h3 class="font-semibold mb-1">Eau</h3><p>${a.water_note}</p><h3 class="font-semibold mt-3 mb-1">Climatisation</h3><p>${a.ac_note}</p><h3 class="font-semibold mt-3 mb-1">Gaz</h3><p>${a.gas_steps}</p><h3 class="font-semibold mt-3 mb-1">Salle de bain</h3><p>${a.bathroom_amenities}</p><p>Serviettes : ${a.towels_note}</p>` },
-    services:  { title:'🏪 Services',        html: (a)=>`<p><strong>Pharmacie :</strong> ${a.pharmacy}</p><p><strong>Hôpital :</strong> ${a.hospital}</p><p><strong>Distributeurs :</strong> ${a.atms}</p><p><strong>Cartes SIM :</strong> ${a.sims}</p><p><strong>Laverie :</strong> ${a.laundry}</p><p><strong>Consigne :</strong> ${a.luggage}</p>` },
-    keys:      { title:'🗝 Clés Numériques', html: (a)=>`<div class="text-center py-4"><div class="text-5xl mb-4">📧</div><p class="font-semibold text-base mb-3">${a.keys_msg}</p><p class="text-neutral-500 text-xs mt-4">Besoin d'aide ? Appelez <a href="tel:${a.host_phone}">${a.host_phone}</a></p></div>` },
-    eat:       { title:'🍝 Manger & Boire',  html: (a)=>`<h3 class="font-semibold mb-1">Restaurants</h3><p>${a.eat}</p><h3 class="font-semibold mt-3 mb-1">Bars & Cafés</h3><p>${a.drink}</p>` },
-    experiences:{ title:'🌙 Ce soir à Rome', html:(a)=>`<p>${a.experiences}</p>` },
-    tickets:   { title:'🎟 Billetterie',     html: ()=>`<p><strong>TicketOne</strong> :<br><a href="https://www.ticketone.it/en/" target="_blank">www.ticketone.it</a></p><p><strong>AS Roma</strong> :<br><a href="https://www.asroma.com/en/tickets" target="_blank">www.asroma.com/tickets</a></p><p><strong>SS Lazio</strong> :<br><a href="https://www.sslazio.it/en" target="_blank">www.sslazio.it</a></p><p><strong>Colisée :</strong><br><a href="https://colosseo.it/en" target="_blank">colosseo.it</a></p><p><strong>Musées du Vatican :</strong><br><a href="https://tickets.museivaticani.va/" target="_blank">tickets.museivaticani.va</a></p><p><strong>Musées de Rome :</strong><br><a href="https://www.museiincomuneroma.it/en" target="_blank">museiincomuneroma.it</a></p><p><strong>Scuderie del Quirinale :</strong><br><a href="https://www.scuderiequirinale.it/" target="_blank">scuderiequirinale.it</a></p><p><strong>MAXXI :</strong><br><a href="https://www.maxxi.art/en/" target="_blank">maxxi.art</a></p>` },
-    transport: { title:'🚕 Transport',       html: (a)=>`<h3 class="font-semibold mb-1">Ville</h3><p>${a.transport}</p><h3 class="font-semibold mt-3 mb-1">Aéroports</h3><p>${a.airports}</p>` },
-    visit:     { title:'🏛 À Voir',          html: (a)=>`<p>${a.visit}</p>` },
-    daytrips:  { title:'🚂 Excursions',      html: (a)=>`<p>${a.daytrips}</p>` },
+  drawers:{
+    address:`<p><strong>Via Arenula 16</strong><br>Centre Historique, Rome<br><br><a href="https://maps.google.com/?q=Via+Arenula+16+Roma" target="_blank">Ouvrir dans Google Maps →</a></p>`,
+    emergency:a=>`<p>${a.emergency}</p>`,checkout:a=>`<p>Heure de départ: <strong>${a.checkout_time}</strong></p><p>${a.checkout_note}</p>`,keys:a=>`<div style="text-align:center;padding:16px 0"><div style="font-size:48px;margin-bottom:16px">📧</div><p style="font-weight:600;margin-bottom:12px">${a.keys_msg}</p><p style="font-size:12px;color:#aaa;margin-top:16px">Besoin d'aide? <a href="tel:${a.phone}">${a.phone}</a></p></div>`,wifi:a=>`<p>${a.wifi_note}</p><p>Réseau: <strong>${a.wifi_ssid}</strong><br>Mot de passe: <strong>${a.wifi_password}</strong></p>`,house:a=>`<h3>Eau</h3><p>${a.water_note}</p><h3>Climatisation</h3><p>${a.ac_note}</p><h3>Gaz</h3><p>${a.gas}</p><h3>Salle de bain</h3><p>${a.bathroom}</p><h3>Accès</h3><p>Interphone: <strong>${a.intercom}</strong> · ${a.door_hours}</p>`,help:a=>`<div style="text-align:center;padding:16px 0"><div style="font-size:48px;margin-bottom:16px">📞</div><p style="font-weight:600;margin-bottom:16px">Votre concierge est disponible.</p><a href="tel:${a.phone}" style="display:block;background:#000;color:#fff;padding:14px;border-radius:16px;font-weight:600;text-decoration:none;text-align:center">${a.phone}</a><p style="font-size:12px;color:#aaa;margin-top:12px">Interphone: <strong style="color:#000">${a.intercom}</strong></p></div>`,eat:a=>`<h3>Restaurants</h3><p>${a.eat}</p><h3>Bars & Cafés</h3><p>${a.drink}</p>`,tonight:a=>`<p>${a.tonight}</p>`,tickets:`<p><strong>TicketOne</strong>:<br><a href="https://www.ticketone.it/en/" target="_blank">www.ticketone.it</a></p><p><strong>Colisée</strong>:<br><a href="https://colosseo.it/en" target="_blank">colosseo.it</a></p><p><strong>Musées du Vatican</strong>:<br><a href="https://tickets.museivaticani.va/" target="_blank">tickets.museivaticani.va</a></p><p><strong>MAXXI</strong>:<br><a href="https://www.maxxi.art/en/" target="_blank">maxxi.art</a></p>`,transport:a=>`<h3>Ville</h3><p>${a.city_transport}</p><h3>Aéroports</h3><p>${a.airports}</p>`,
   }
 },
-
-de: {
-  ui: {
-    heroTitle: 'Willkommen in Rom ✨',
-    heroSub: 'Kuratierter Luxus im Herzen Roms.',
-    aptLabel: 'Apartment',
-    aptSection: 'Apartment Concierge',
-    aptTitle: 'Ihr Apartment 🏠',
-    aptDesc: 'Alles rund um Ihr Apartment, Zugang und Unterstützung.',
-    romeSection: 'Rom Erlebnis Concierge',
-    romeTitle: 'Rom Entdecken 🌙',
-    romeDesc: 'Restaurants, versteckte Orte, Nachtleben und kuratierte Erlebnisse.',
-    aiLabel: 'AI Concierge',
-    aiTitle: 'Stellen Sie jede Frage über Rom oder Ihr Apartment.',
-    qAddress: 'Adresse', qCheckout: 'Checkout', qEmergency: 'Notfall',
-    wifiTitle: 'WLAN', wifiSub: 'Netzwerk & Passwort',
-    buildingTitle: 'Gebäude', buildingSub: 'Sprechanlage, Tür & Hausmeister',
-    houseTitle: 'Hausführer', houseSub: 'Wasser, Klima, Gas, Bad',
-    servicesTitle: 'Services', servicesSub: 'Apotheke, Geldautomat, Wäscherei',
-    keysTitle: 'Digitale Schlüssel', keysSub: 'Gebäude & Apartment öffnen',
-    keysLockText: '🔒 Digitale Schlüssel am Check-in-Tag ab 13:00 Uhr verfügbar',
-    eatTitle: 'Essen & Trinken', eatSub: 'Restaurants, Frühstück & Aperitif',
-    expTitle: 'Heute Abend in Rom', expSub: 'Bars, Rooftops & Abendideen',
-    tickTitle: 'Tickets', tickSub: 'Museen, Touren & Erlebnisse',
-    transTitle: 'Transport', transSub: 'Flughafen, Taxi & Mobilität',
-    visitTitle: 'Sehenswürdigkeiten', visitSub: 'Denkmäler & verborgene Schätze',
-    dayTitle: 'Tagesausflüge', daySub: 'Tivoli, Ostia & Castelli',
-    footerHelp: 'Hilfe benötigt?',
-    phase1AptText: 'Füllen Sie das Online-Check-in aus, um die Apartment-Informationen freizuschalten.',
-    phaseBadge: ['📋 Phase 1 — Nach Buchung', '✅ Phase 2 — Nach Online-Check-in', '🗝 Phase 3 — Check-in-Tag'],
-    chips: ['Beste Pizza in der Nähe','Taxi zum Flughafen','Geöffnete Apotheke','Romantisches Dinner'],
-    aiPlaceholder: 'Frage eingeben…',
-    openDoorLocked: 'Schlüssel per E-Mail gesendet — Postfach prüfen',
+de:{
+  ui:{
+    heroTitle:'Willkommen in Rom ✨',heroSub:'Kuratierter Luxus im Herzen Roms.',aptLabel:'Apartment',aptSection:'Apartment Concierge',aptTitle:'Ihr Apartment 🏠',aptDesc:'Alles rund um Ihr Apartment, Zugang und Unterstützung.',romeSection:'Rom Erlebnis Concierge',romeTitle:'Rom Entdecken 🌙',romeDesc:'Restaurants, versteckte Orte, Nachtleben und kuratierte Erlebnisse.',aiLabel:'AI Concierge',aiTitle:'Stellen Sie jede Frage über Rom oder Ihr Apartment.',qAddress:'Adresse',qCheckout:'Checkout',qEmergency:'Notfall',keysTitle:'Digitale Schlüssel',keysSub:'Gebäude & Apartment öffnen',wifiTitle:'WLAN',wifiSub:'Netzwerk & Passwort',houseTitle:'Hausführer',houseSub:'Anweisungen und Hilfe',helpTitle:'Hilfe benötigt?',helpSub:'Concierge-Support',eatTitle:'Essen & Trinken',eatSub:'Restaurants, Frühstück & Aperitif',tonightTitle:'Heute Abend in Rom',tonightSub:'Bars, Rooftops & Abendideen',tickTitle:'Tickets',tickSub:'Museen, Touren & Erlebnisse',transTitle:'Transport',transSub:'Flughafen, Taxi & Mobilität',footerHelp:'Hilfe benötigt?',phase1Text:'Füllen Sie das Online-Check-in aus um die Apartment-Informationen freizuschalten.',phaseBadge:['📋 Nach Buchung','✅ Nach Check-in','🗝 Check-in-Tag'],chips:['Beste Pizza in der Nähe','Taxi zum Flughafen','Geöffnete Apotheke','Romantisches Dinner'],aiPlaceholder:'Frage eingeben…',keysPhase2:'Schlüssel ab 13:00 Uhr am Check-in-Tag verfügbar.',
   },
-  apt: {
-    checkin_time:'13:00', checkout_time:'11:00',
-    wifi_note:'Der Router befindet sich auf dem Schreibtisch am Fenster. Drehen Sie ihn um, um Netzwerkname und Passwort zu sehen.',
-    wifi_ssid:'Siehe Router-Etikett', wifi_password:'Siehe Router-Etikett',
-    water_note:'Leitungswasser ist sicher und trinkbar. Warmwasser ist immer verfügbar.',
-    ac_note:'Bitte schalten Sie die Klimaanlage aus, wenn Sie die Wohnung verlassen.',
-    bathroom_amenities:'Toilettenpapier, Handseife, Badematte und Föhn.',
-    towels_note:'Pro Gast: 1 großes und 1 mittleres Handtuch. Das Bett ist bei Ankunft vorbereitet.',
-    gas_steps:'Gas einschalten: Gashahn öffnen (waagerecht = offen, senkrecht = geschlossen). Brenner wählen. Streichholz anzünden und zum Brenner bringen. Schwarzen Knopf drehen und drücken bis die Flamme stabil ist, dann loslassen.',
-    intercom_code:'C8', elevator_note:'Aufzug nur für Eigentümer. Bitte nicht benutzen.',
-    main_door_hours:'Haupttür geöffnet 08:00–13:00 und 15:30–18:00 Uhr.',
-    concierge:'Paolo', host_phone:'+39 335 5245756',
-    pharmacy:'Farmacia Arenula — Via Arenula 19–21 · +39 06 686 8815',
-    hospital:'Krankenhaus Fatebenefratelli, Tiberinsel 1',
-    atms:'Unicredit — Largo Arenula 1 · BNL — Via Arenula 41 · Intesa Sanpaolo — Via Arenula 27',
-    sims:'Vodafone: Corso Vittorio Emanuele II 209 · TIM: Piazza Venezia 2 · Iliad: Via del Corso 282',
-    laundry:'Selbstbedienungs-Waschsalon Via Arenula 47',
-    luggage:'Radical Storage — Largo di Torre Argentina (5 Min. zu Fuß)',
-    transport:'Straßenbahn 8 (Haltestelle Arenula/Cairoli) → Trastevere oder Piazza Venezia. Bus 40/64 → Termini & Vatikan. Taxi: +39 06 3570 oder FreeNow-App.',
-    airports:'Fiumicino: Straßenbahn 8 → Trastevere → Zug FL1 (~45 Min.). Ciampino: Terravision-Bus oder Taxi. Privat: Welcome Pickups.',
-    emergency:'EU-Notruf: 112 · Polizei: 113 · Rettungsdienst: 118 · Feuerwehr: 115 · Englischspr. Arzt: +39 06 488 2371 · 24h-Tierarzt: +39 06 660 681',
-    eat:'Roscioli (Wurstwaren & Käse) · Emma Pizzeria (röm. Pizza) · Ditirambo (kreativ) · Osteria da Fortunata (frische Pasta) · Pianostrada (zeitgenössisch) · Forno Campo de\' Fiori (Pizza) · Gelateria del Teatro (Eis).',
-    drink:'Caffè Camerino — Largo Arenula 30 · Irish Pub Largo Argentina · Modius Radisson Rooftop (Cocktails, Panoramablick).',
-    shop:'Via Arenula: Feinkostläden, Bäckereien, Eisdielen. Fischmarkt: Piazza Costaguti. Forno Boccione (jüdisches Gebäck). Mercato Monti (Wochenende, Vintage & Kunsthandwerk).',
-    visit:'Largo di Torre Argentina (röm. Tempel + Katzenkolonie) · Portikus der Octavia (Jüdisches Ghetto) · Tiberinsel · Piazza Farnese · Versteckte Kirchen: Chiesa Nuova, Santa Maria in Campitelli, Santa Barbara dei Librari.',
-    experiences:'Abendspaziergang: Largo Argentina → Ghetto → Tiberinsel → Theater des Marcellus. Aperitif im Caffè Camerino oder Modius-Terrasse. Forno Boccione Gebäck. Sonnenuntergang am Lungotevere.',
-    daytrips:'Ostia Antica (~40 Min.) · Tivoli — Villa d\'Este + Villa Adriana (~1 Std.) · Castelli Romani (Dörfer & Wein).',
-    checkout_note:'Vor der Abreise: alle Lichter & Klimaanlage ausschalten, Fenster schließen, Schlüssel auf dem Tisch lassen, Tür sanft schließen.',
-    keys_msg:'Ihre digitalen Schlüssel wurden per E-Mail von Hostaway gesendet. Überprüfen Sie Ihren Posteingang — die bei der Online-Anmeldung gewählte Ankunftszeit bestimmt den genauen Lieferzeitpunkt. Schlüssel werden nie vor 13:00 Uhr freigegeben.',
+  apt:{
+    checkin_time:'13:00',checkout_time:'11:00',wifi_note:'Der Router befindet sich auf dem Schreibtisch am Fenster.',wifi_ssid:'Siehe Router-Etikett',wifi_password:'Siehe Router-Etikett',water_note:'Leitungswasser ist sicher und trinkbar.',ac_note:'Bitte schalten Sie die Klimaanlage aus, wenn Sie die Wohnung verlassen.',bathroom:'Toilettenpapier, Handseife, Badematte und Föhn.',towels:'Pro Gast: 1 großes und 1 mittleres Handtuch.',gas:'Gashahn öffnen (waagerecht=offen). Streichholz anzünden. Knopf drehen und drücken bis Flamme stabil.',intercom:'C8',elevator:'Aufzug nur für Eigentümer.',door_hours:'Haupttür geöffnet 08:00–13:00 und 15:30–18:00.',concierge:'Paolo',phone:'+39 335 524 5756',pharmacy:'Farmacia Arenula — Via Arenula 19–21 · +39 06 686 8815',hospital:'Krankenhaus Fatebenefratelli, Tiberinsel 1',atm:'Unicredit — Largo Arenula 1 · BNL — Via Arenula 41',sim:'Vodafone: Corso Vittorio Emanuele II 209 · TIM: Piazza Venezia 2',laundry:'Waschsalon Via Arenula 47',luggage:'Radical Storage — Largo di Torre Argentina (5 Min. zu Fuß)',city_transport:'Straßenbahn 8 → Trastevere oder Piazza Venezia. Bus 40/64 → Termini & Vatikan. Taxi: +39 06 3570.',airports:'Fiumicino: Str.bahn 8 → Trastevere → Zug FL1 (~45 Min.). Ciampino: Terravision-Bus.',emergency:'Notruf: 112 · Polizei: 113 · Rettung: 118 · Feuerwehr: 115',eat:'Roscioli · Emma Pizzeria · Ditirambo · Osteria da Fortunata · Pianostrada · Gelateria del Teatro.',drink:'Caffè Camerino — Largo Arenula 30 · Irish Pub Largo Argentina · Modius Radisson Rooftop.',tonight:'Abendspaziergang: Largo Argentina → Ghetto → Tiberinsel → Theater des Marcellus. Aperitif im Caffè Camerino. Sonnenuntergang am Lungotevere.',checkout_note:'Lichter & Klimaanlage ausschalten, Fenster schließen, Schlüssel auf dem Tisch lassen.',keys_msg:'Ihre digitalen Schlüssel wurden per E-Mail von Hostaway gesendet. Überprüfen Sie Ihren Posteingang. Schlüssel werden nie vor 13:00 Uhr freigegeben.',
   },
-  drawers: {
-    address:   { title:'📍 Adresse',             html: `<p><strong>Via Arenula 16</strong><br>Historisches Zentrum, Rom<br><br><a href="https://maps.google.com/?q=Via+Arenula+16+Roma" target="_blank">In Google Maps öffnen →</a></p>` },
-    emergency: { title:'🚨 Notfall',             html: (a)=>`<p>${a.emergency}</p>` },
-    checkout:  { title:'⏰ Checkout',            html: (a)=>`<p>Check-out-Zeit: <strong>${a.checkout_time}</strong></p><p>${a.checkout_note}</p>` },
-    wifi:      { title:'📶 WLAN',               html: (a)=>`<p>${a.wifi_note}</p><p>Netzwerk: <strong>${a.wifi_ssid}</strong><br>Passwort: <strong>${a.wifi_password}</strong></p>` },
-    building:  { title:'🏛 Gebäude',            html: (a)=>`<p><strong>Sprechanlage:</strong> ${a.intercom_code}</p><p><strong>Aufzug:</strong> ${a.elevator_note}</p><p><strong>Haupttür:</strong> ${a.main_door_hours}</p><p><strong>Hausmeister:</strong> ${a.concierge}</p>` },
-    house:     { title:'🏠 Hausführer',         html: (a)=>`<h3 class="font-semibold mb-1">Wasser</h3><p>${a.water_note}</p><h3 class="font-semibold mt-3 mb-1">Klimaanlage</h3><p>${a.ac_note}</p><h3 class="font-semibold mt-3 mb-1">Gas</h3><p>${a.gas_steps}</p><h3 class="font-semibold mt-3 mb-1">Badezimmer</h3><p>${a.bathroom_amenities}</p><p>Handtücher: ${a.towels_note}</p>` },
-    services:  { title:'🏪 Services',           html: (a)=>`<p><strong>Apotheke:</strong> ${a.pharmacy}</p><p><strong>Krankenhaus:</strong> ${a.hospital}</p><p><strong>Geldautomaten:</strong> ${a.atms}</p><p><strong>SIM-Karten:</strong> ${a.sims}</p><p><strong>Waschsalon:</strong> ${a.laundry}</p><p><strong>Gepäckaufbewahrung:</strong> ${a.luggage}</p>` },
-    keys:      { title:'🗝 Digitale Schlüssel', html: (a)=>`<div class="text-center py-4"><div class="text-5xl mb-4">📧</div><p class="font-semibold text-base mb-3">${a.keys_msg}</p><p class="text-neutral-500 text-xs mt-4">Hilfe? Anrufen: <a href="tel:${a.host_phone}">${a.host_phone}</a></p></div>` },
-    eat:       { title:'🍝 Essen & Trinken',    html: (a)=>`<h3 class="font-semibold mb-1">Restaurants</h3><p>${a.eat}</p><h3 class="font-semibold mt-3 mb-1">Bars & Cafés</h3><p>${a.drink}</p>` },
-    experiences:{ title:'🌙 Heute Abend in Rom',html:(a)=>`<p>${a.experiences}</p>` },
-    tickets:   { title:'🎟 Tickets',            html: ()=>`<p><strong>TicketOne:</strong><br><a href="https://www.ticketone.it/en/" target="_blank">www.ticketone.it</a></p><p><strong>AS Roma:</strong><br><a href="https://www.asroma.com/en/tickets" target="_blank">www.asroma.com/tickets</a></p><p><strong>SS Lazio:</strong><br><a href="https://www.sslazio.it/en" target="_blank">www.sslazio.it</a></p><p><strong>Kolosseum:</strong><br><a href="https://colosseo.it/en" target="_blank">colosseo.it</a></p><p><strong>Vatikanische Museen:</strong><br><a href="https://tickets.museivaticani.va/" target="_blank">tickets.museivaticani.va</a></p><p><strong>Röm. Museen:</strong><br><a href="https://www.museiincomuneroma.it/en" target="_blank">museiincomuneroma.it</a></p><p><strong>Scuderie del Quirinale:</strong><br><a href="https://www.scuderiequirinale.it/" target="_blank">scuderiequirinale.it</a></p><p><strong>MAXXI:</strong><br><a href="https://www.maxxi.art/en/" target="_blank">maxxi.art</a></p>` },
-    transport: { title:'🚕 Transport',          html: (a)=>`<h3 class="font-semibold mb-1">Stadt</h3><p>${a.transport}</p><h3 class="font-semibold mt-3 mb-1">Flughäfen</h3><p>${a.airports}</p>` },
-    visit:     { title:'🏛 Sehenswürdigkeiten', html: (a)=>`<p>${a.visit}</p>` },
-    daytrips:  { title:'🚂 Tagesausflüge',      html: (a)=>`<p>${a.daytrips}</p>` },
+  drawers:{
+    address:`<p><strong>Via Arenula 16</strong><br>Historisches Zentrum, Rom<br><br><a href="https://maps.google.com/?q=Via+Arenula+16+Roma" target="_blank">In Google Maps öffnen →</a></p>`,
+    emergency:a=>`<p>${a.emergency}</p>`,checkout:a=>`<p>Check-out-Zeit: <strong>${a.checkout_time}</strong></p><p>${a.checkout_note}</p>`,keys:a=>`<div style="text-align:center;padding:16px 0"><div style="font-size:48px;margin-bottom:16px">📧</div><p style="font-weight:600;margin-bottom:12px">${a.keys_msg}</p><p style="font-size:12px;color:#aaa;margin-top:16px">Hilfe? <a href="tel:${a.phone}">${a.phone}</a></p></div>`,wifi:a=>`<p>${a.wifi_note}</p><p>Netzwerk: <strong>${a.wifi_ssid}</strong><br>Passwort: <strong>${a.wifi_password}</strong></p>`,house:a=>`<h3>Wasser</h3><p>${a.water_note}</p><h3>Klimaanlage</h3><p>${a.ac_note}</p><h3>Gas</h3><p>${a.gas}</p><h3>Badezimmer</h3><p>${a.bathroom}</p><h3>Zugang</h3><p>Sprechanlage: <strong>${a.intercom}</strong> · ${a.door_hours}</p>`,help:a=>`<div style="text-align:center;padding:16px 0"><div style="font-size:48px;margin-bottom:16px">📞</div><p style="font-weight:600;margin-bottom:16px">Ihr Concierge steht zur Verfügung.</p><a href="tel:${a.phone}" style="display:block;background:#000;color:#fff;padding:14px;border-radius:16px;font-weight:600;text-decoration:none;text-align:center">${a.phone}</a></div>`,eat:a=>`<h3>Restaurants</h3><p>${a.eat}</p><h3>Bars & Cafés</h3><p>${a.drink}</p>`,tonight:a=>`<p>${a.tonight}</p>`,tickets:`<p><strong>TicketOne</strong>:<br><a href="https://www.ticketone.it/en/" target="_blank">www.ticketone.it</a></p><p><strong>Kolosseum</strong>:<br><a href="https://colosseo.it/en" target="_blank">colosseo.it</a></p><p><strong>Vatikanische Museen</strong>:<br><a href="https://tickets.museivaticani.va/" target="_blank">tickets.museivaticani.va</a></p>`,transport:a=>`<h3>Stadt</h3><p>${a.city_transport}</p><h3>Flughäfen</h3><p>${a.airports}</p>`,
   }
 },
-
-es: {
-  ui: {
-    heroTitle: 'Bienvenido a Roma ✨',
-    heroSub: 'Hospitalidad de lujo en el corazón de Roma.',
-    aptLabel: 'Apartamento',
-    aptSection: 'Conserje Apartamento',
-    aptTitle: 'Tu Apartamento 🏠',
-    aptDesc: 'Todo lo relacionado con tu apartamento, acceso y asistencia.',
-    romeSection: 'Conserje Experiencia Roma',
-    romeTitle: 'Explora Roma 🌙',
-    romeDesc: 'Restaurantes, lugares escondidos, vida nocturna y experiencias curadas.',
-    aiLabel: 'AI Conserje',
-    aiTitle: 'Pregunta cualquier cosa sobre Roma o tu apartamento.',
-    qAddress: 'Dirección', qCheckout: 'Salida', qEmergency: 'Emergencia',
-    wifiTitle: 'Wi-Fi', wifiSub: 'Red y contraseña',
-    buildingTitle: 'Edificio', buildingSub: 'Portero, puerta y conserje',
-    houseTitle: 'Guía del Piso', houseSub: 'Agua, AC, gas, baño',
-    servicesTitle: 'Servicios', servicesSub: 'Farmacia, cajero, lavandería',
-    keysTitle: 'Llaves Digitales', keysSub: 'Abrir edificio y apartamento',
-    keysLockText: '🔒 Llaves digitales disponibles el día del check-in desde las 13:00',
-    eatTitle: 'Comer & Beber', eatSub: 'Restaurantes, desayuno & aperitivo',
-    expTitle: 'Esta noche en Roma', expSub: 'Bares, rooftops & ideas de noche',
-    tickTitle: 'Entradas', tickSub: 'Museos, tours y experiencias',
-    transTitle: 'Transporte', transSub: 'Aeropuerto, taxi y movilidad',
-    visitTitle: 'Qué Ver', visitSub: 'Monumentos y rincones escondidos',
-    dayTitle: 'Excursiones', daySub: 'Tivoli, Ostia y Castelli',
-    footerHelp: '¿Necesitas ayuda?',
-    phase1AptText: 'Completa el check-in online para desbloquear la información del apartamento.',
-    phaseBadge: ['📋 Fase 1 — Tras reserva', '✅ Fase 2 — Tras check-in online', '🗝 Fase 3 — Día del check-in'],
-    chips: ['Mejor pizza cercana','Taxi al aeropuerto','Farmacia abierta','Cena romántica'],
-    aiPlaceholder: 'Escribe tu pregunta…',
-    openDoorLocked: 'Llaves enviadas por email — revisa tu bandeja',
+es:{
+  ui:{
+    heroTitle:'Bienvenido a Roma ✨',heroSub:'Hospitalidad de lujo en el corazón de Roma.',aptLabel:'Apartamento',aptSection:'Conserje Apartamento',aptTitle:'Tu Apartamento 🏠',aptDesc:'Todo lo relacionado con tu apartamento, acceso y asistencia.',romeSection:'Conserje Experiencia Roma',romeTitle:'Explora Roma 🌙',romeDesc:'Restaurantes, lugares escondidos, vida nocturna y experiencias curadas.',aiLabel:'AI Conserje',aiTitle:'Pregunta cualquier cosa sobre Roma o tu apartamento.',qAddress:'Dirección',qCheckout:'Salida',qEmergency:'Emergencia',keysTitle:'Llaves Digitales',keysSub:'Abrir edificio y apartamento',wifiTitle:'Wi‑Fi',wifiSub:'Red y contraseña',houseTitle:'Guía del Piso',houseSub:'Instrucciones y ayuda',helpTitle:'¿Necesitas ayuda?',helpSub:'Soporte del conserje',eatTitle:'Comer & Beber',eatSub:'Restaurantes, desayuno & aperitivo',tonightTitle:'Esta noche en Roma',tonightSub:'Bares, rooftops & ideas de noche',tickTitle:'Entradas',tickSub:'Museos, tours y experiencias',transTitle:'Transporte',transSub:'Aeropuerto, taxi y movilidad',footerHelp:'¿Necesitas ayuda?',phase1Text:'Completa el check-in online para desbloquear la información del apartamento.',phaseBadge:['📋 Tras Reserva','✅ Tras Check-in','🗝 Día del Check-in'],chips:['Mejor pizza cercana','Taxi al aeropuerto','Farmacia abierta','Cena romántica'],aiPlaceholder:'Escribe tu pregunta…',keysPhase2:'Llaves disponibles desde las 13:00 el día del check-in.',
   },
-  apt: {
-    checkin_time:'13:00', checkout_time:'11:00',
-    wifi_note:'El router está en el escritorio junto a la ventana. Gíralo para ver el nombre de la red y la contraseña.',
-    wifi_ssid:'Ver etiqueta del router', wifi_password:'Ver etiqueta del router',
-    water_note:'El agua del grifo es segura y potable. El agua caliente está siempre disponible.',
-    ac_note:'Por favor apaga el aire acondicionado cuando salgas del apartamento.',
-    bathroom_amenities:'Papel higiénico, jabón de manos, alfombrilla de baño y secador de pelo.',
-    towels_note:'Por huésped: 1 toalla grande y 1 mediana. La cama ya está preparada a tu llegada.',
-    gas_steps:'Para encender el gas: abre la llave (horizontal = abierto, vertical = cerrado). Elige el quemador. Enciende una cerilla y acércala. Gira y presiona el botón negro hasta que la llama sea estable, luego suelta.',
-    intercom_code:'C8', elevator_note:'El ascensor está reservado para propietarios. Por favor no lo uses.',
-    main_door_hours:'La puerta principal está abierta 08:00–13:00 y 15:30–18:00.',
-    concierge:'Paolo', host_phone:'+39 335 5245756',
-    pharmacy:'Farmacia Arenula — Via Arenula 19–21 · +39 06 686 8815',
-    hospital:'Hospital Fatebenefratelli, Isla Tiberina 1',
-    atms:'Unicredit — Largo Arenula 1 · BNL — Via Arenula 41 · Intesa Sanpaolo — Via Arenula 27',
-    sims:'Vodafone: Corso Vittorio Emanuele II 209 · TIM: Piazza Venezia 2 · Iliad: Via del Corso 282',
-    laundry:'Lavandería autoservicio en Via Arenula 47',
-    luggage:'Radical Storage — Largo di Torre Argentina (5 min a pie)',
-    transport:'Tranvía 8 (parada Arenula/Cairoli) → Trastevere o Piazza Venezia. Autobuses 40/64 → Termini y Vaticano. Taxi: +39 06 3570 o app FreeNow.',
-    airports:'Fiumicino: tranvía 8 → Trastevere → tren FL1 (~45 min). Ciampino: autobús Terravision o taxi. Privado: Welcome Pickups.',
-    emergency:'Emergencias UE: 112 · Policía: 113 · Ambulancia: 118 · Bomberos: 115 · Médico anglófono: +39 06 488 2371 · Vet 24h: +39 06 660 681',
-    eat:'Roscioli (embutidos & quesos) · Emma Pizzeria (pizza romana) · Ditirambo (creativa) · Osteria da Fortunata (pasta fresca) · Pianostrada (contemporánea) · Forno Campo de\' Fiori (pizza al corte) · Gelateria del Teatro (helado artesanal).',
-    drink:'Caffè Camerino — Largo Arenula 30 (café & aperitivos) · Irish Pub Largo Argentina (cerveza) · Modius Radisson Rooftop (cócteles, vistas panorámicas).',
-    shop:'Via Arenula: tiendas gourmet, panaderías, heladerías. Mercado de pescado: Piazza Costaguti. Forno Boccione (dulces judíos). Mercato Monti (fines de semana, vintage & artesanía).',
-    visit:'Largo di Torre Argentina (templos romanos + santuario de gatos) · Pórtico de Octavia (Gueto judío) · Isla Tiberina · Piazza Farnese · Iglesias ocultas: Chiesa Nuova, Santa Maria in Campitelli, Santa Barbara dei Librari.',
-    experiences:'Paseo nocturno: Largo Argentina → Gueto → Isla Tiberina → Teatro de Marcelo. Aperitivo en Caffè Camerino o terraza Modius. Dulces en Forno Boccione. Atardecer por el Lungotevere.',
-    daytrips:'Ostia Antica (~40 min) · Tivoli — Villa d\'Este + Villa Adriana (~1 h) · Castelli Romani (pueblos & vino).',
-    checkout_note:'Antes de salir: apaga luces y AC, cierra bien las ventanas, deja las llaves en la mesa y cierra suavemente la puerta.',
-    keys_msg:'Tus llaves digitales han sido enviadas por email por Hostaway. Revisa tu bandeja de entrada — la hora de llegada que elegiste durante el check-in online determina el momento exacto de entrega. Las llaves nunca se envían antes de las 13:00.',
+  apt:{
+    checkin_time:'13:00',checkout_time:'11:00',wifi_note:'El router está en el escritorio junto a la ventana.',wifi_ssid:'Ver etiqueta del router',wifi_password:'Ver etiqueta del router',water_note:'El agua del grifo es segura y potable.',ac_note:'Por favor apaga el aire acondicionado cuando salgas.',bathroom:'Papel higiénico, jabón de manos, alfombrilla y secador.',towels:'Por huésped: 1 toalla grande y 1 mediana.',gas:'Abre la llave (horizontal=abierto). Enciende una cerilla. Gira y presiona el botón negro hasta llama estable.',intercom:'C8',elevator:'Ascensor reservado para propietarios.',door_hours:'Puerta principal abierta 08:00–13:00 y 15:30–18:00.',concierge:'Paolo',phone:'+39 335 524 5756',pharmacy:'Farmacia Arenula — Via Arenula 19–21 · +39 06 686 8815',hospital:'Hospital Fatebenefratelli, Isla Tiberina 1',atm:'Unicredit — Largo Arenula 1 · BNL — Via Arenula 41',sim:'Vodafone: Corso Vittorio Emanuele II 209 · TIM: Piazza Venezia 2',laundry:'Lavandería autoservicio en Via Arenula 47',luggage:'Radical Storage — Largo di Torre Argentina (5 min a pie)',city_transport:'Tranvía 8 → Trastevere o Piazza Venezia. Autobuses 40/64 → Termini y Vaticano. Taxi: +39 06 3570.',airports:'Fiumicino: tranvía 8 → Trastevere → tren FL1 (~45 min). Ciampino: bus Terravision.',emergency:'Emergencias: 112 · Policía: 113 · Ambulancia: 118 · Bomberos: 115',eat:'Roscioli · Emma Pizzeria · Ditirambo · Osteria da Fortunata · Pianostrada · Gelateria del Teatro.',drink:'Caffè Camerino — Largo Arenula 30 · Irish Pub Largo Argentina · Modius Radisson Rooftop.',tonight:'Paseo nocturno: Largo Argentina → Gueto → Isla Tiberina → Teatro de Marcelo. Aperitivo en Caffè Camerino. Atardecer por el Lungotevere.',checkout_note:'Apaga luces y AC, cierra las ventanas, deja las llaves en la mesa.',keys_msg:'Tus llaves digitales han sido enviadas por email por Hostaway. Revisa tu bandeja. Las llaves nunca se envían antes de las 13:00.',
   },
-  drawers: {
-    address:   { title:'📍 Dirección',        html: `<p><strong>Via Arenula 16</strong><br>Centro Histórico, Roma<br><br><a href="https://maps.google.com/?q=Via+Arenula+16+Roma" target="_blank">Abrir en Google Maps →</a></p>` },
-    emergency: { title:'🚨 Emergencia',       html: (a)=>`<p>${a.emergency}</p>` },
-    checkout:  { title:'⏰ Salida',           html: (a)=>`<p>Hora de salida: <strong>${a.checkout_time}</strong></p><p>${a.checkout_note}</p>` },
-    wifi:      { title:'📶 Wi-Fi',            html: (a)=>`<p>${a.wifi_note}</p><p>Red: <strong>${a.wifi_ssid}</strong><br>Contraseña: <strong>${a.wifi_password}</strong></p>` },
-    building:  { title:'🏛 Edificio',         html: (a)=>`<p><strong>Portero automático:</strong> ${a.intercom_code}</p><p><strong>Ascensor:</strong> ${a.elevator_note}</p><p><strong>Puerta principal:</strong> ${a.main_door_hours}</p><p><strong>Conserje:</strong> ${a.concierge}</p>` },
-    house:     { title:'🏠 Guía del Piso',   html: (a)=>`<h3 class="font-semibold mb-1">Agua</h3><p>${a.water_note}</p><h3 class="font-semibold mt-3 mb-1">Aire Acondicionado</h3><p>${a.ac_note}</p><h3 class="font-semibold mt-3 mb-1">Gas</h3><p>${a.gas_steps}</p><h3 class="font-semibold mt-3 mb-1">Baño</h3><p>${a.bathroom_amenities}</p><p>Toallas: ${a.towels_note}</p>` },
-    services:  { title:'🏪 Servicios',        html: (a)=>`<p><strong>Farmacia:</strong> ${a.pharmacy}</p><p><strong>Hospital:</strong> ${a.hospital}</p><p><strong>Cajeros:</strong> ${a.atms}</p><p><strong>Tarjetas SIM:</strong> ${a.sims}</p><p><strong>Lavandería:</strong> ${a.laundry}</p><p><strong>Consigna:</strong> ${a.luggage}</p>` },
-    keys:      { title:'🗝 Llaves Digitales', html: (a)=>`<div class="text-center py-4"><div class="text-5xl mb-4">📧</div><p class="font-semibold text-base mb-3">${a.keys_msg}</p><p class="text-neutral-500 text-xs mt-4">¿Ayuda? Llama al <a href="tel:${a.host_phone}">${a.host_phone}</a></p></div>` },
-    eat:       { title:'🍝 Comer & Beber',   html: (a)=>`<h3 class="font-semibold mb-1">Restaurantes</h3><p>${a.eat}</p><h3 class="font-semibold mt-3 mb-1">Bares & Cafés</h3><p>${a.drink}</p>` },
-    experiences:{ title:'🌙 Esta noche en Roma',html:(a)=>`<p>${a.experiences}</p>` },
-    tickets:   { title:'🎟 Entradas',         html: ()=>`<p><strong>TicketOne:</strong><br><a href="https://www.ticketone.it/en/" target="_blank">www.ticketone.it</a></p><p><strong>AS Roma:</strong><br><a href="https://www.asroma.com/en/tickets" target="_blank">www.asroma.com/tickets</a></p><p><strong>SS Lazio:</strong><br><a href="https://www.sslazio.it/en" target="_blank">www.sslazio.it</a></p><p><strong>Coliseo:</strong><br><a href="https://colosseo.it/en" target="_blank">colosseo.it</a></p><p><strong>Museos Vaticanos:</strong><br><a href="https://tickets.museivaticani.va/" target="_blank">tickets.museivaticani.va</a></p><p><strong>Museos de Roma:</strong><br><a href="https://www.museiincomuneroma.it/en" target="_blank">museiincomuneroma.it</a></p><p><strong>Scuderie del Quirinale:</strong><br><a href="https://www.scuderiequirinale.it/" target="_blank">scuderiequirinale.it</a></p><p><strong>MAXXI:</strong><br><a href="https://www.maxxi.art/en/" target="_blank">maxxi.art</a></p>` },
-    transport: { title:'🚕 Transporte',       html: (a)=>`<h3 class="font-semibold mb-1">Ciudad</h3><p>${a.transport}</p><h3 class="font-semibold mt-3 mb-1">Aeropuertos</h3><p>${a.airports}</p>` },
-    visit:     { title:'🏛 Qué Ver',          html: (a)=>`<p>${a.visit}</p>` },
-    daytrips:  { title:'🚂 Excursiones',      html: (a)=>`<p>${a.daytrips}</p>` },
+  drawers:{
+    address:`<p><strong>Via Arenula 16</strong><br>Centro Histórico, Roma<br><br><a href="https://maps.google.com/?q=Via+Arenula+16+Roma" target="_blank">Abrir en Google Maps →</a></p>`,
+    emergency:a=>`<p>${a.emergency}</p>`,checkout:a=>`<p>Hora de salida: <strong>${a.checkout_time}</strong></p><p>${a.checkout_note}</p>`,keys:a=>`<div style="text-align:center;padding:16px 0"><div style="font-size:48px;margin-bottom:16px">📧</div><p style="font-weight:600;margin-bottom:12px">${a.keys_msg}</p><p style="font-size:12px;color:#aaa;margin-top:16px">¿Ayuda? <a href="tel:${a.phone}">${a.phone}</a></p></div>`,wifi:a=>`<p>${a.wifi_note}</p><p>Red: <strong>${a.wifi_ssid}</strong><br>Contraseña: <strong>${a.wifi_password}</strong></p>`,house:a=>`<h3>Agua</h3><p>${a.water_note}</p><h3>Aire Acondicionado</h3><p>${a.ac_note}</p><h3>Gas</h3><p>${a.gas}</p><h3>Baño</h3><p>${a.bathroom}</p><h3>Acceso</h3><p>Portero: <strong>${a.intercom}</strong> · ${a.door_hours}</p>`,help:a=>`<div style="text-align:center;padding:16px 0"><div style="font-size:48px;margin-bottom:16px">📞</div><p style="font-weight:600;margin-bottom:16px">Tu conserje está disponible.</p><a href="tel:${a.phone}" style="display:block;background:#000;color:#fff;padding:14px;border-radius:16px;font-weight:600;text-decoration:none;text-align:center">${a.phone}</a></div>`,eat:a=>`<h3>Restaurantes</h3><p>${a.eat}</p><h3>Bares & Cafés</h3><p>${a.drink}</p>`,tonight:a=>`<p>${a.tonight}</p>`,tickets:`<p><strong>TicketOne</strong>:<br><a href="https://www.ticketone.it/en/" target="_blank">www.ticketone.it</a></p><p><strong>Coliseo</strong>:<br><a href="https://colosseo.it/en" target="_blank">colosseo.it</a></p><p><strong>Museos Vaticanos</strong>:<br><a href="https://tickets.museivaticani.va/" target="_blank">tickets.museivaticani.va</a></p>`,transport:a=>`<h3>Ciudad</h3><p>${a.city_transport}</p><h3>Aeropuertos</h3><p>${a.airports}</p>`,
   }
 }
+};
 
-}; /* end DATA */
-
-/* ================================================================
-   LANGUAGE INIT
-================================================================ */
+/* ── INIT ── */
 if (!DATA[lang]) lang = 'en';
-const urlObj = new URL(location.href);
-urlObj.searchParams.set('lang', lang);
-history.replaceState(null, '', urlObj);
+const u0 = new URL(location.href);
+u0.searchParams.set('lang', lang);
+history.replaceState(null,'',u0);
 localStorage.setItem('lang', lang);
 
-/* ================================================================
-   RENDER UI
-================================================================ */
-function L() { return DATA[lang].ui; }
-function A() { return DATA[lang].apt; }
+const U = () => DATA[lang].ui;
+const A = () => DATA[lang].apt;
+const D = () => DATA[lang].drawers;
 
+/* ── RENDER ── */
 function renderUI() {
-  const ui = L();
-  const apt = A();
+  const ui = U();
+  const map = {
+    heroTitle:ui.heroTitle, heroSub:ui.heroSub, aptLabel:ui.aptLabel,
+    phaseBadge:ui.phaseBadge[phase-1]||'',
+    qAddress:ui.qAddress, qCheckout:ui.qCheckout, qEmergency:ui.qEmergency,
+    aptSectionLabel:ui.aptSection, aptSectionTitle:ui.aptTitle, aptSectionDesc:ui.aptDesc,
+    keysTitle:ui.keysTitle, keysSub:ui.keysSub,
+    wifiTitle:ui.wifiTitle, wifiSub:ui.wifiSub,
+    houseTitle:ui.houseTitle, houseSub:ui.houseSub,
+    helpTitle:ui.helpTitle, helpSub:ui.helpSub,
+    romeSectionLabel:ui.romeSection, romeSectionTitle:ui.romeTitle, romeSectionDesc:ui.romeDesc,
+    eatTitle:ui.eatTitle, eatSub:ui.eatSub,
+    tonightTitle:ui.tonightTitle, tonightSub:ui.tonightSub,
+    tickTitle:ui.tickTitle, tickSub:ui.tickSub,
+    transTitle:ui.transTitle, transSub:ui.transSub,
+    aiLabel:ui.aiLabel, aiTitle:ui.aiTitle,
+    footerHelp:ui.footerHelp, phase1Text:ui.phase1Text,
+  };
+  Object.entries(map).forEach(([id,txt]) => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = txt;
+  });
+  document.getElementById('aiInput').placeholder = ui.aiPlaceholder;
 
-  // Hero
-  document.getElementById('heroTitle').textContent = ui.heroTitle;
-  document.getElementById('heroSub').textContent   = ui.heroSub;
-  document.getElementById('aptLabel').textContent  = ui.aptLabel;
-
-  // Phase badge
-  document.getElementById('phaseBadge').textContent = ui.phaseBadge[phase - 1] || '';
-
-  // Quick cards
-  document.getElementById('qAddress').textContent   = ui.qAddress;
-  document.getElementById('qCheckout').textContent  = ui.qCheckout;
-  document.getElementById('qEmergency').textContent = ui.qEmergency;
-
-  // Apartment section
-  document.getElementById('aptSectionLabel').textContent = ui.aptSection;
-  document.getElementById('aptSectionTitle').textContent = ui.aptTitle;
-  document.getElementById('aptSectionDesc').textContent  = ui.aptDesc;
-  document.getElementById('wifiTitle').textContent       = ui.wifiTitle;
-  document.getElementById('wifiSub').textContent         = ui.wifiSub;
-  document.getElementById('buildingTitle').textContent   = ui.buildingTitle;
-  document.getElementById('buildingSub').textContent     = ui.buildingSub;
-  document.getElementById('houseTitle').textContent      = ui.houseTitle;
-  document.getElementById('houseSub').textContent        = ui.houseSub;
-  document.getElementById('servicesTitle').textContent   = ui.servicesTitle;
-  document.getElementById('servicesSub').textContent     = ui.servicesSub;
-  document.getElementById('keysTitle').textContent       = ui.keysTitle;
-  document.getElementById('keysSub').textContent         = ui.keysSub;
-  document.getElementById('keysLockText').textContent    = ui.keysLockText;
-  document.getElementById('phase1AptText').textContent   = ui.phase1AptText;
-
-  // Rome section
-  document.getElementById('romeSectionLabel').textContent = ui.romeSection;
-  document.getElementById('romeSectionTitle').textContent = ui.romeTitle;
-  document.getElementById('romeSectionDesc').textContent  = ui.romeDesc;
-  document.getElementById('eatTitle').textContent   = ui.eatTitle;
-  document.getElementById('eatSub').textContent     = ui.eatSub;
-  document.getElementById('expTitle').textContent   = ui.expTitle;
-  document.getElementById('expSub').textContent     = ui.expSub;
-  document.getElementById('tickTitle').textContent  = ui.tickTitle;
-  document.getElementById('tickSub').textContent    = ui.tickSub;
-  document.getElementById('transTitle').textContent = ui.transTitle;
-  document.getElementById('transSub').textContent   = ui.transSub;
-  document.getElementById('visitTitle').textContent = ui.visitTitle;
-  document.getElementById('visitSub').textContent   = ui.visitSub;
-  document.getElementById('dayTitle').textContent   = ui.dayTitle;
-  document.getElementById('daySub').textContent     = ui.daySub;
-
-  // AI section
-  document.getElementById('aiLabel').textContent    = ui.aiLabel;
-  document.getElementById('aiTitle').textContent    = ui.aiTitle;
-  document.getElementById('aiInput').placeholder    = ui.aiPlaceholder;
-  document.getElementById('footerHelp').textContent = ui.footerHelp;
-
-  // AI chips
-  const chipsEl = document.getElementById('aiChips');
-  chipsEl.innerHTML = '';
+  // chips
+  const chips = document.getElementById('aiChips');
+  chips.innerHTML = '';
   ui.chips.forEach(c => {
-    const btn = document.createElement('button');
-    btn.className = 'chip';
-    btn.textContent = c;
-    btn.onclick = () => askAI(c);
-    chipsEl.appendChild(btn);
+    const b = document.createElement('button');
+    b.style.cssText = 'background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);border-radius:999px;padding:6px 12px;font-size:12px;color:#fff;white-space:nowrap;cursor:pointer';
+    b.textContent = c;
+    b.onclick = () => askAI(c);
+    chips.appendChild(b);
   });
 
-  // Lang buttons active state
-  document.querySelectorAll('.lang-btn').forEach(b => {
-    const active = b.dataset.lang === lang;
-    b.className = 'lang-btn text-xs px-2 py-1 rounded-lg border font-medium ' +
-      (active ? 'bg-black/30 border-black/40' : 'border-black/20 bg-transparent');
+  // lang buttons highlight
+  document.querySelectorAll('.lb').forEach(b => {
+    b.style.background = b.dataset.lang === lang ? 'rgba(0,0,0,.25)' : 'transparent';
   });
 
-  // Phase-based visibility
   applyPhase();
 }
 
 function applyPhase() {
-  const p1msg       = document.getElementById('phase1AptMsg');
-  const p2cards     = document.getElementById('phase2AptCards');
-  const p3keys      = document.getElementById('phase3Keys');
-  const p2keyslock  = document.getElementById('phase2KeysLock');
-  const checkoutBtn = document.getElementById('checkoutQuickBtn');
+  const p1 = document.getElementById('phase1Msg');
+  const cards = document.getElementById('aptCards');
+  const keysCard = document.getElementById('keysCard');
+  const checkoutBtn = document.getElementById('checkoutBtn');
 
-  // Phase 1: show locked apartment teaser
-  p1msg.classList.toggle('hidden', phase !== 1);
-  // Phase 2+: show full apartment cards
-  p2cards.classList.toggle('hidden', phase < 2);
-  // Phase 3: show digital keys
-  p3keys.classList.toggle('hidden', phase < 3);
-  // Phase 2: show keys locked hint
-  p2keyslock.classList.toggle('hidden', phase !== 2);
-  // Checkout quick card only phase 2+
-  checkoutBtn.classList.toggle('locked-card', phase < 2);
+  // Phase 1: show lock, hide cards
+  p1.classList.toggle('hidden', phase !== 1);
+  cards.classList.toggle('hidden', phase < 2);
+
+  // Phase 2: keys locked
+  if (keysCard) keysCard.classList.toggle('locked', phase < 3);
+
+  // Checkout: locked on phase 1
+  if (checkoutBtn) checkoutBtn.classList.toggle('locked', phase < 2);
 }
 
-/* ================================================================
-   DRAWER
-================================================================ */
+/* ── LANG SWITCHER ── */
+document.getElementById('langNav').addEventListener('click', e => {
+  const btn = e.target.closest('[data-lang]');
+  if (!btn) return;
+  lang = btn.dataset.lang;
+  localStorage.setItem('lang', lang);
+  const u = new URL(location.href);
+  u.searchParams.set('lang', lang);
+  history.replaceState(null,'',u);
+  aiHistory = [];
+  renderUI();
+});
+
+/* ── DRAWER ── */
+const drawerTitles = {
+  address:{'en':'📍 Address','it':'📍 Indirizzo','fr':'📍 Adresse','de':'📍 Adresse','es':'📍 Dirección'},
+  emergency:{'en':'🚨 Emergency','it':'🚨 Emergenza','fr':'🚨 Urgence','de':'🚨 Notfall','es':'🚨 Emergencia'},
+  checkout:{'en':'⏰ Checkout','it':'⏰ Checkout','fr':'⏰ Départ','de':'⏰ Checkout','es':'⏰ Salida'},
+  keys:{'en':'🗝 Digital Keys','it':'🗝 Chiavi Digitali','fr':'🗝 Clés Numériques','de':'🗝 Digitale Schlüssel','es':'🗝 Llaves Digitales'},
+  wifi:{'en':'📶 Wi‑Fi','it':'📶 Wi‑Fi','fr':'📶 Wi‑Fi','de':'📶 WLAN','es':'📶 Wi‑Fi'},
+  house:{'en':'🏠 House Guide','it':'🏠 Guida Casa','fr':'🏠 Guide Logement','de':'🏠 Hausführer','es':'🏠 Guía del Piso'},
+  help:{'en':'☎ Need Help?','it':'☎ Hai Bisogno?','fr':'☎ Besoin d\'aide?','de':'☎ Hilfe benötigt?','es':'☎ ¿Necesitas ayuda?'},
+  eat:{'en':'🍝 Eat & Drink','it':'🍝 Mangiare & Bere','fr':'🍝 Manger & Boire','de':'🍝 Essen & Trinken','es':'🍝 Comer & Beber'},
+  tonight:{'en':'🌙 Tonight in Rome','it':'🌙 Stasera a Roma','fr':'🌙 Ce soir à Rome','de':'🌙 Heute Abend in Rom','es':'🌙 Esta noche en Roma'},
+  tickets:{'en':'🎟 Ticketing','it':'🎟 Biglietteria','fr':'🎟 Billetterie','de':'🎟 Tickets','es':'🎟 Entradas'},
+  transport:{'en':'🚕 Transport','it':'🚕 Trasporti','fr':'🚕 Transport','de':'🚕 Transport','es':'🚕 Transporte'},
+};
+
 function openDrawer(key) {
-  const d = DATA[lang].drawers[key];
+  const d = D()[key];
   if (!d) return;
-  const apt = A();
-  document.getElementById('drawerTitle').textContent = d.title;
-  const bodyEl = document.getElementById('drawerBody');
-  const html = typeof d.html === 'function' ? d.html(apt) : d.html;
-  bodyEl.innerHTML = html;
+  const html = typeof d === 'function' ? d(A()) : d;
+  document.getElementById('drawerTitle').textContent = (drawerTitles[key]||{})[lang] || key;
+  document.getElementById('drawerBody').innerHTML = html;
   document.getElementById('drawer').classList.add('open');
   document.getElementById('overlay').classList.add('open');
 }
@@ -803,155 +513,65 @@ function closeDrawer() {
   document.getElementById('overlay').classList.remove('open');
 }
 
-/* ================================================================
-   OPEN DOOR button logic (phase-gated)
-================================================================ */
-function handleOpenDoor() {
+/* ── OPEN BUTTON ── */
+function handleOpen() {
   if (phase < 3) {
-    alert(L().openDoorLocked);
+    alert(U().keysPhase2);
   } else {
     openDrawer('keys');
   }
 }
 
-/* ================================================================
-   LANGUAGE SWITCHER
-================================================================ */
-document.getElementById('langNav').addEventListener('click', e => {
-  const btn = e.target.closest('[data-lang]');
-  if (!btn) return;
-  lang = btn.dataset.lang;
-  localStorage.setItem('lang', lang);
-  const u = new URL(location.href);
-  u.searchParams.set('lang', lang);
-  history.replaceState(null, '', u);
-  aiHistory = []; // reset AI conversation on lang change
-  renderUI();
-});
-
-/* ================================================================
-   GEMINI AI
-================================================================ */
+/* ── AI ── */
 let aiHistory = [];
 
 function buildSystemPrompt() {
   const a = A();
-  return `You are a luxury concierge assistant for apartment Via Arenula 16 in Rome, managed by NiceFlatInRome.
-You MUST detect the language the user writes in and respond in that SAME language automatically.
-Be warm, helpful and concise. Use short paragraphs and bullet points where useful.
-
-APARTMENT FACTS (use these when answering apartment questions):
-- Check-in from: ${a.checkin_time} | Check-out by: ${a.checkout_time}
-- Wi-Fi: ${a.wifi_note} | SSID: ${a.wifi_ssid} | Password: ${a.wifi_password}
-- Intercom code: ${a.intercom_code} | Elevator: ${a.elevator_note}
-- Main door hours: ${a.main_door_hours} | Concierge: ${a.concierge}
-- Host phone: ${a.host_phone}
-- Water: ${a.water_note}
-- Air conditioning: ${a.ac_note}
-- Gas: ${a.gas_steps}
-- Bathroom: ${a.bathroom_amenities} | Towels: ${a.towels_note}
-- Pharmacy: ${a.pharmacy}
-- Hospital: ${a.hospital}
-- ATMs: ${a.atms}
-- SIM cards: ${a.sims}
-- Laundry: ${a.laundry}
-- Luggage storage: ${a.luggage}
-- Transport: ${a.transport}
-- Airports: ${a.airports}
-- Emergency: ${a.emergency}
-- Eat: ${a.eat}
-- Drink: ${a.drink}
-- Shop: ${a.shop}
-- Visit: ${a.visit}
-- Experiences: ${a.experiences}
-- Day trips: ${a.daytrips}
-- Checkout instructions: ${a.checkout_note}
-
-When asked about digital keys or door opening: explain that keys are sent via Hostaway to the guest's email and are available from 13:00 on check-in day.
-Never invent information not listed above.`;
-}
-
-async function callGemini(userText) {
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`;
-
-  const contents = [];
-  // Inject system prompt as first user turn (Gemini pattern)
-  if (aiHistory.length === 0) {
-    contents.push({ role: 'user', parts: [{ text: buildSystemPrompt() }] });
-    contents.push({ role: 'model', parts: [{ text: 'Understood. I am ready to assist guests of Via Arenula 16.' }] });
-  }
-  aiHistory.forEach(h => contents.push(h));
-  contents.push({ role: 'user', parts: [{ text: userText }] });
-
-  const res = await fetch(url, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ contents, generationConfig: { temperature: 0.7, maxOutputTokens: 512 } })
-  });
-  if (!res.ok) throw new Error(`Gemini error ${res.status}`);
-  const json = await res.json();
-  return json.candidates?.[0]?.content?.parts?.[0]?.text || '…';
-}
-
-function addAIBubble(text, role) {
-  const chat = document.getElementById('aiChat');
-  chat.classList.add('visible');
-  const div = document.createElement('div');
-  div.className = 'p-3 text-sm max-w-[90%] ' + (role === 'user' ? 'ai-bubble-user ml-auto' : 'ai-bubble-bot');
-  div.innerHTML = text.replace(/\n/g, '<br>');
-  chat.appendChild(div);
-  chat.scrollTop = chat.scrollHeight;
-  return div;
+  return `You are a luxury concierge for Via Arenula 16, Rome (NiceFlatInRome brand). Always detect the user's language and respond in that exact language. Be warm, concise, and helpful.\n\nAPARTMENT INFO: Check-in from ${a.checkin_time} | Check-out by ${a.checkout_time} | Wi-Fi: ${a.wifi_note} | SSID: ${a.wifi_ssid} | Password: ${a.wifi_password} | Intercom: ${a.intercom} | Elevator: ${a.elevator} | Door hours: ${a.door_hours} | Concierge: ${a.concierge} | Phone: ${a.phone} | Water: ${a.water_note} | AC: ${a.ac_note} | Gas: ${a.gas} | Bathroom: ${a.bathroom} | Towels: ${a.towels} | Pharmacy: ${a.pharmacy} | Hospital: ${a.hospital} | ATM: ${a.atm} | SIM: ${a.sim} | Laundry: ${a.laundry} | Luggage: ${a.luggage} | City transport: ${a.city_transport} | Airports: ${a.airports} | Emergency: ${a.emergency} | Restaurants: ${a.eat} | Bars: ${a.drink} | Tonight: ${a.tonight} | Checkout instructions: ${a.checkout_note} | Keys: ${a.keys_msg}`;
 }
 
 async function askAI(text) {
   if (!text.trim()) return;
   document.getElementById('aiInput').value = '';
-  addAIBubble(text, 'user');
-
-  const spinnerDiv = addAIBubble('<div class="spinner"></div>', 'bot');
-
+  addBubble(text, 'user');
+  const spinner = addBubble('<div class="spin"></div>', 'bot');
   try {
-    const reply = await callGemini(text);
-    spinnerDiv.innerHTML = reply.replace(/\n/g, '<br>');
-    // Update history
-    aiHistory.push({ role: 'user',  parts: [{ text }] });
-    aiHistory.push({ role: 'model', parts: [{ text: reply }] });
-    // Feedback
-    postFeedback('view', 'ai', text.substring(0, 80));
-  } catch (err) {
-    spinnerDiv.innerHTML = GEMINI_API_KEY === 'YOUR_GEMINI_API_KEY'
-      ? '⚠️ Set your GEMINI_API_KEY in the file to enable the AI assistant.'
-      : '⚠️ AI unavailable. Please try again or call us at ' + A().host_phone;
+    const res = await fetch(`${SERVER_URL}/api/ai/guide`, {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ message:text, systemPrompt:buildSystemPrompt(), history:aiHistory })
+    });
+    const json = await res.json();
+    if (!json.ok || !json.reply) throw new Error();
+    spinner.innerHTML = json.reply.replace(/\n/g,'<br>');
+    aiHistory.push({role:'user', parts:[{text}]});
+    aiHistory.push({role:'model', parts:[{text:json.reply}]});
+  } catch {
+    spinner.innerHTML = '⚠️ ' + A().phone;
   }
 }
 
 function sendAI() {
-  const val = document.getElementById('aiInput').value.trim();
-  if (val) askAI(val);
+  const v = document.getElementById('aiInput').value.trim();
+  if (v) askAI(v);
+}
+
+function addBubble(html, role) {
+  const chat = document.getElementById('aiChat');
+  chat.classList.add('visible');
+  const d = document.createElement('div');
+  d.className = role === 'user' ? 'bubble-user' : 'bubble-bot';
+  d.innerHTML = html;
+  chat.appendChild(d);
+  chat.scrollTop = chat.scrollHeight;
+  return d;
 }
 
 document.getElementById('aiInput').addEventListener('keydown', e => {
   if (e.key === 'Enter') sendAI();
 });
 
-/* ================================================================
-   FEEDBACK → Google Sheets
-================================================================ */
-function postFeedback(vote, topic, note) {
-  const params = new URLSearchParams({
-    apartment: APARTMENT_ID.toLowerCase(),
-    language: lang,
-    topic: topic || '',
-    answer: (note || '').substring(0, 100),
-    vote
-  });
-  fetch(GOOGLE_SCRIPT_URL + '?' + params.toString(), { method: 'GET' }).catch(() => {});
-}
-
-/* ================================================================
-   INIT
-================================================================ */
+/* ── START ── */
 renderUI();
 </script>
 </body>
