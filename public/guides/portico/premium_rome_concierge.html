@@ -313,38 +313,127 @@ const A = () => DATA[lang].apt;
 const D = () => DATA[lang].drawers;
 
 
+
+
 const APT = 'portico';
 const HAS_DOOR = true;
 
-/* -- SHELLY DOOR OPENER -- */
+/* -- SHELLY DOOR OPENER WITH OTP -- */
 const urlToken = (new URLSearchParams(location.search)).get('t') || '';
-let tokenExp = null;
+let tokenExp = null, tokenJti = null;
 if (urlToken) {
   try {
     const p = JSON.parse(atob(urlToken.split('.')[1].replace(/-/g,'+').replace(/_/g,'/')));
-    tokenExp = p.exp || null;
+    tokenExp = p.exp || null; tokenJti = p.jti || null;
   } catch {}
 }
 function tokenValid() { return tokenExp && Date.now() < tokenExp; }
 
+let sessionToken = sessionStorage.getItem('st_portico') || '';
+function sessionValid() {
+  if (!sessionToken) return false;
+  try {
+    const p = JSON.parse(atob(sessionToken.split('.')[1].replace(/-/g,'+').replace(/_/g,'/')));
+    return p.exp && Date.now() < p.exp;
+  } catch { return false; }
+}
+
+let otpSent = false;
+
 const DOOR_LABELS = {
-  en: { building:'\uD83D\uDEAA Open Building Door', door:'\uD83D\uDDD6 Open Apartment Door', expired:'Digital access expired after 24h. Contact:', opening:'Opening...', opened:'Opened!' },
-  it: { building:'\uD83D\uDEAA Apri Portone',       door:'\uD83D\uDDD6 Apri Porta Appartamento', expired:'Accesso scaduto dopo 24h. Chiama:', opening:'Apertura...', opened:'Aperto!' },
-  fr: { building:'\uD83D\uDEAA Ouvrir Portail',     door:'\uD83D\uDDD6 Ouvrir Appartement', expired:'Acc\u00e8s expir\u00e9 apr\u00e8s 24h. Contactez:', opening:'Ouverture...', opened:'Ouvert!' },
-  de: { building:'\uD83D\uDEAA Geb\u00e4ude \u00f6ffnen', door:'\uD83D\uDDD6 Wohnung \u00f6ffnen', expired:'Zugang nach 24h abgelaufen. Kontakt:', opening:'\u00d6ffne...', opened:'Ge\u00f6ffnet!' },
-  es: { building:'\uD83D\uDEAA Abrir Portal',       door:'\uD83D\uDDD6 Abrir Apartamento', expired:'Acceso expirado tras 24h. Contacta:', opening:'Abriendo...', opened:'Abierto!' },
+  en: { building:'🚪 Open Building Door', door:'🗖 Open Apartment Door',
+        send:'Send verification code', codePlaceholder:'6-digit code',
+        verify:'Verify', verifying:'Verifying...', wrongCode:'Wrong code, try again.',
+        sending:'Sending...', codeSent:'Code sent to your registered contact. Enter it below:',
+        expired:'Access expired (24h). Contact:', opening:'Opening...', opened:'Opened!',
+        verifyTitle:'Verify your identity to unlock door access' },
+  it: { building:'🚪 Apri Portone', door:'🗖 Apri Porta Appartamento',
+        send:'Invia codice di verifica', codePlaceholder:'Codice a 6 cifre',
+        verify:'Verifica', verifying:'Verifica...', wrongCode:'Codice errato, riprova.',
+        sending:'Invio...', codeSent:'Codice inviato al tuo contatto. Inseriscilo:',
+        expired:'Accesso scaduto (24h). Chiama:', opening:'Apertura...', opened:'Aperto!',
+        verifyTitle:"Verifica la tua identita per sbloccare l'accesso" },
+  fr: { building:'🚪 Ouvrir Portail', door:'🗖 Ouvrir Appartement',
+        send:'Envoyer le code', codePlaceholder:'Code 6 chiffres',
+        verify:'Vérifier', verifying:'Vérification...', wrongCode:'Code incorrect.',
+        sending:'Envoi...', codeSent:'Code envoyé à votre contact. Entrez-le:',
+        expired:'Accès expiré (24h). Contactez:', opening:'Ouverture...', opened:'Ouvert!',
+        verifyTitle:'Vérifiez votre identité pour débloquer l accès' },
+  de: { building:'🚪 Gebäude öffnen', door:'🗖 Wohnung öffnen',
+        send:'Zugangscode senden', codePlaceholder:'6-stelliger Code',
+        verify:'Bestätigen', verifying:'Bestätige...', wrongCode:'Falscher Code.',
+        sending:'Sende...', codeSent:'Code gesendet. Bitte eingeben:',
+        expired:'Zugang abgelaufen (24h). Kontakt:', opening:'Öffne...', opened:'Geöffnet!',
+        verifyTitle:'Identität bestätigen um Zugang freizuschalten' },
+  es: { building:'🚪 Abrir Portal', door:'🗖 Abrir Apartamento',
+        send:'Enviar código', codePlaceholder:'Código 6 dígitos',
+        verify:'Verificar', verifying:'Verificando...', wrongCode:'Código incorrecto.',
+        sending:'Enviando...', codeSent:'Código enviado. Intróducelo:',
+        expired:'Acceso expirado (24h). Contacta:', opening:'Abriendo...', opened:'Abierto!',
+        verifyTitle:'Verifica tu identidad para desbloquear el acceso' },
 };
 
 function buildKeysHTML(a) {
   const lbl = DOOR_LABELS[lang] || DOOR_LABELS.en;
-  const emailSection = `<div style="text-align:center;padding:16px 0"><div style="font-size:48px;margin-bottom:16px">\uD83D\uDCE7</div><p style="font-weight:600;margin-bottom:12px">${a.keys_msg}</p><p style="font-size:12px;color:#aaa;margin-top:16px">${U().footerHelp} <a href="tel:${a.phone}">${a.phone}</a></p></div>`;
+  const emailSection = `<div style="text-align:center;padding:16px 0"><div style="font-size:48px;margin-bottom:16px">📧</div><p style="font-weight:600;margin-bottom:12px">${a.keys_msg}</p><p style="font-size:12px;color:#aaa;margin-top:16px">${U().footerHelp} <a href="tel:${a.phone}">${a.phone}</a></p></div>`;
   if (!urlToken) return emailSection;
   if (!tokenValid()) {
-    return emailSection + `<div style="margin-top:12px;padding:12px;background:#fef2f2;border:1px solid #fca5a5;border-radius:12px;font-size:13px;color:#991b1b;text-align:center">\u23f1 ${lbl.expired} <a href="tel:${a.phone}">${a.phone}</a></div>`;
+    return emailSection + `<div style="margin-top:12px;padding:12px;background:#fef2f2;border:1px solid #fca5a5;border-radius:12px;font-size:13px;color:#991b1b;text-align:center">⏱ ${lbl.expired} <a href="tel:${a.phone}">${a.phone}</a></div>`;
   }
-  let btns = `<button onclick="shellyOpen('building')" id="open-building-btn" style="width:100%;background:#000;color:#fff;padding:14px;border-radius:16px;font-weight:600;font-size:15px;border:none;cursor:pointer;margin-top:12px">${lbl.building}</button>`;
-  if (HAS_DOOR) btns += `<button onclick="shellyOpen('door')" id="open-door-btn" style="width:100%;background:#1d4ed8;color:#fff;padding:14px;border-radius:16px;font-weight:600;font-size:15px;border:none;cursor:pointer;margin-top:8px">${lbl.door}</button>`;
-  return emailSection + btns;
+  if (sessionValid()) {
+    let btns = `<button onclick="shellyOpen('building')" id="open-building-btn" style="width:100%;background:#000;color:#fff;padding:14px;border-radius:16px;font-weight:600;font-size:15px;border:none;cursor:pointer;margin-top:12px">${lbl.building}</button>`;
+    if (HAS_DOOR) btns += `<button onclick="shellyOpen('door')" id="open-door-btn" style="width:100%;background:#1d4ed8;color:#fff;padding:14px;border-radius:16px;font-weight:600;font-size:15px;border:none;cursor:pointer;margin-top:8px">${lbl.door}</button>`;
+    return emailSection + btns;
+  }
+  const otpUI = otpSent
+    ? `<div style="margin-top:16px">
+        <p style="font-size:13px;color:#555;margin-bottom:8px">${lbl.codeSent}</p>
+        <input id="otp-input" type="tel" inputmode="numeric" maxlength="6" placeholder="${lbl.codePlaceholder}"
+          style="width:100%;padding:12px;border:1px solid #ddd;border-radius:12px;font-size:20px;text-align:center;letter-spacing:8px;margin-bottom:8px">
+        <button onclick="verifyOtp()" id="verify-btn" style="width:100%;background:#000;color:#fff;padding:14px;border-radius:16px;font-weight:600;font-size:15px;border:none;cursor:pointer">${lbl.verify}</button>
+        <p id="otp-error" style="font-size:12px;color:#dc2626;margin-top:8px;text-align:center"></p>
+      </div>`
+    : `<div style="margin-top:16px;padding:14px;background:#fafaf9;border:1px solid #eadfce;border-radius:16px;text-align:center">
+        <p style="font-size:13px;color:#555;margin-bottom:12px">🔐 ${lbl.verifyTitle}</p>
+        <button onclick="requestOtp()" id="send-otp-btn" style="width:100%;background:#000;color:#fff;padding:14px;border-radius:16px;font-weight:600;font-size:15px;border:none;cursor:pointer">${lbl.send}</button>
+      </div>`;
+  return emailSection + otpUI;
+}
+
+async function requestOtp() {
+  const btn = document.getElementById('send-otp-btn');
+  if (btn) { btn.disabled = true; btn.textContent = (DOOR_LABELS[lang]||DOOR_LABELS.en).sending; }
+  try {
+    const r = await fetch(`${SERVER_URL}/checkin/portico/send-otp?t=${urlToken}&lang=${lang}`, { method: 'POST' });
+    const j = await r.json();
+    if (j.ok) { otpSent = true; openDrawer('keys'); }
+    else { if (btn) { btn.disabled = false; btn.textContent = (DOOR_LABELS[lang]||DOOR_LABELS.en).send; } }
+  } catch { if (btn) btn.disabled = false; }
+}
+
+async function verifyOtp() {
+  const input = document.getElementById('otp-input');
+  const btn = document.getElementById('verify-btn');
+  const errEl = document.getElementById('otp-error');
+  if (!input || !btn) return;
+  const code = input.value.trim();
+  if (code.length < 4) return;
+  btn.disabled = true; btn.textContent = (DOOR_LABELS[lang]||DOOR_LABELS.en).verifying;
+  try {
+    const r = await fetch(`${SERVER_URL}/checkin/portico/verify-otp?t=${urlToken}`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ code })
+    });
+    const j = await r.json();
+    if (j.ok && j.st) {
+      sessionToken = j.st;
+      sessionStorage.setItem('st_portico', j.st);
+      otpSent = false;
+      openDrawer('keys');
+    } else {
+      if (errEl) errEl.textContent = (DOOR_LABELS[lang]||DOOR_LABELS.en).wrongCode;
+      btn.disabled = false; btn.textContent = (DOOR_LABELS[lang]||DOOR_LABELS.en).verify;
+    }
+  } catch { btn.disabled = false; }
 }
 
 async function shellyOpen(type) {
@@ -354,80 +443,17 @@ async function shellyOpen(type) {
   const orig = btn.textContent;
   btn.disabled = true; btn.textContent = lbl.opening;
   try {
-    const r = await fetch(`${SERVER_URL}/checkin/${APT}/open/${type}?t=${urlToken}`, { method: 'POST' });
+    const r = await fetch(`${SERVER_URL}/checkin/portico/open/${type}?t=${urlToken}&st=${sessionToken}`, { method: 'POST' });
     const j = await r.json();
     if (j.ok) {
-      btn.textContent = lbl.opened;
-      btn.style.background = '#22c55e';
-      setTimeout(() => { btn.textContent = orig; btn.style.background = type === 'building' ? '#000' : '#1d4ed8'; btn.disabled = false; }, 4000);
-    } else {
-      btn.textContent = '\u2717'; btn.disabled = false;
-      setTimeout(() => { btn.textContent = orig; }, 3000);
-    }
-  } catch {
-    btn.textContent = '\u2717'; btn.disabled = false;
-    setTimeout(() => { btn.textContent = orig; }, 3000);
-  }
+      btn.textContent = lbl.opened; btn.style.background = '#22c55e';
+      setTimeout(() => { btn.textContent = orig; btn.style.background = type==='building'?'#000':'#1d4ed8'; btn.disabled = false; }, 4000);
+    } else if (['otp_required','bad_session_token','session_expired'].includes(j.error)) {
+      sessionToken = ''; sessionStorage.removeItem('st_portico');
+      btn.disabled = false; btn.textContent = orig; openDrawer('keys');
+    } else { btn.textContent = '✗'; btn.disabled = false; setTimeout(() => { btn.textContent = orig; }, 3000); }
+  } catch { btn.textContent = '✗'; btn.disabled = false; setTimeout(() => { btn.textContent = orig; }, 3000); }
 }
-
-
-const APT = 'portico';
-const HAS_DOOR = true;
-
-/* -- SHELLY DOOR OPENER -- */
-const urlToken = (new URLSearchParams(location.search)).get('t') || '';
-let tokenExp = null;
-if (urlToken) {
-  try {
-    const p = JSON.parse(atob(urlToken.split('.')[1].replace(/-/g,'+').replace(/_/g,'/')));
-    tokenExp = p.exp || null;
-  } catch {}
-}
-function tokenValid() { return tokenExp && Date.now() < tokenExp; }
-
-const DOOR_LABELS = {
-  en: { building:'\uD83D\uDEAA Open Building Door', door:'\uD83D\uDDD6 Open Apartment Door', expired:'Digital access expired after 24h. Contact:', opening:'Opening...', opened:'Opened!' },
-  it: { building:'\uD83D\uDEAA Apri Portone',       door:'\uD83D\uDDD6 Apri Porta Appartamento', expired:'Accesso scaduto dopo 24h. Chiama:', opening:'Apertura...', opened:'Aperto!' },
-  fr: { building:'\uD83D\uDEAA Ouvrir Portail',     door:'\uD83D\uDDD6 Ouvrir Appartement', expired:'Acc\u00e8s expir\u00e9 apr\u00e8s 24h. Contactez:', opening:'Ouverture...', opened:'Ouvert!' },
-  de: { building:'\uD83D\uDEAA Geb\u00e4ude \u00f6ffnen', door:'\uD83D\uDDD6 Wohnung \u00f6ffnen', expired:'Zugang nach 24h abgelaufen. Kontakt:', opening:'\u00d6ffne...', opened:'Ge\u00f6ffnet!' },
-  es: { building:'\uD83D\uDEAA Abrir Portal',       door:'\uD83D\uDDD6 Abrir Apartamento', expired:'Acceso expirado tras 24h. Contacta:', opening:'Abriendo...', opened:'Abierto!' },
-};
-
-function buildKeysHTML(a) {
-  const lbl = DOOR_LABELS[lang] || DOOR_LABELS.en;
-  const emailSection = `<div style="text-align:center;padding:16px 0"><div style="font-size:48px;margin-bottom:16px">\uD83D\uDCE7</div><p style="font-weight:600;margin-bottom:12px">${a.keys_msg}</p><p style="font-size:12px;color:#aaa;margin-top:16px">${U().footerHelp} <a href="tel:${a.phone}">${a.phone}</a></p></div>`;
-  if (!urlToken) return emailSection;
-  if (!tokenValid()) {
-    return emailSection + `<div style="margin-top:12px;padding:12px;background:#fef2f2;border:1px solid #fca5a5;border-radius:12px;font-size:13px;color:#991b1b;text-align:center">\u23f1 ${lbl.expired} <a href="tel:${a.phone}">${a.phone}</a></div>`;
-  }
-  let btns = `<button onclick="shellyOpen('building')" id="open-building-btn" style="width:100%;background:#000;color:#fff;padding:14px;border-radius:16px;font-weight:600;font-size:15px;border:none;cursor:pointer;margin-top:12px">${lbl.building}</button>`;
-  if (HAS_DOOR) btns += `<button onclick="shellyOpen('door')" id="open-door-btn" style="width:100%;background:#1d4ed8;color:#fff;padding:14px;border-radius:16px;font-weight:600;font-size:15px;border:none;cursor:pointer;margin-top:8px">${lbl.door}</button>`;
-  return emailSection + btns;
-}
-
-async function shellyOpen(type) {
-  const btn = document.getElementById(`open-${type}-btn`);
-  if (!btn) return;
-  const lbl = DOOR_LABELS[lang] || DOOR_LABELS.en;
-  const orig = btn.textContent;
-  btn.disabled = true; btn.textContent = lbl.opening;
-  try {
-    const r = await fetch(`${SERVER_URL}/checkin/${APT}/open/${type}?t=${urlToken}`, { method: 'POST' });
-    const j = await r.json();
-    if (j.ok) {
-      btn.textContent = lbl.opened;
-      btn.style.background = '#22c55e';
-      setTimeout(() => { btn.textContent = orig; btn.style.background = type === 'building' ? '#000' : '#1d4ed8'; btn.disabled = false; }, 4000);
-    } else {
-      btn.textContent = '\u2717'; btn.disabled = false;
-      setTimeout(() => { btn.textContent = orig; }, 3000);
-    }
-  } catch {
-    btn.textContent = '\u2717'; btn.disabled = false;
-    setTimeout(() => { btn.textContent = orig; }, 3000);
-  }
-}
-
 
 function renderUI() {
   const ui = U();

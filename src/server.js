@@ -192,8 +192,10 @@ setInterval(runSlotCron, 60000);
 const PENDING_PHASE3 = new Map();
 
 async function sendPhase3GuideMessage({ conversationId, apartment, lang = "en", checkinDate = null }) {
-  const tokenData = newTokenFor(`checkin-${apartment}`, { windowMin: 1440, max: 200, day: checkinDate || tzToday() });
-  const t = tokenData.token;
+  const _now = Date.now();
+  const _jti = b64url(crypto.randomBytes(9));
+  const _tp = { tgt: `checkin-${apartment}`, exp: _now + 1440*60*1000, max: 200, used: 0, jti: _jti, iat: _now, ver: TOKEN_VERSION, day: checkinDate || tzToday(), cid: conversationId };
+  const t = makeToken(_tp);
   const guideUrl = `https://shelly-cloud-opener-1.onrender.com/guides/${apartment}/premium_rome_concierge.html?phase=3&t=${t}`;
 
   const textMap = {
@@ -230,6 +232,14 @@ async function runPhase3Cron() {
   }
 }
 setInterval(runPhase3Cron, 60000);
+
+// OTP STORE
+const OTP_STORE = new Map();
+setInterval(() => {
+  const now = Date.now();
+  for (const [k, v] of OTP_STORE.entries()) if (now > v.exp) OTP_STORE.delete(k);
+}, 60000);
+
 
 // ========================================================================
 // SEND SLOT LIVE MESSAGE
@@ -825,7 +835,65 @@ function requireCheckinToken(req, res, next) {
   next();
 }
 
-app.post("/checkin/:apt/open/building", requireCheckinToken, async (req, res) => {
+// OTP ENDPOINTS
+app.post("/checkin/:apt/send-otp", async (req, res) => {
+  const t = String(req.query.t || "");
+  const parsed = parseToken(t);
+  if (!parsed.ok) return res.status(410).json({ ok: false, error: "bad_token" });
+  const p = parsed.payload;
+  if (typeof p.exp !== "number" || Date.now() > p.exp) return res.status(410).json({ ok: false, error: "expired" });
+  if (!p.cid) return res.status(400).json({ ok: false, error: "no_cid" });
+  const code = String(Math.floor(100000 + Math.random() * 900000));
+  OTP_STORE.set(p.jti, { code, exp: Date.now() + 5 * 60 * 1000, cid: p.cid });
+  const langParam = String(req.query.lang || "en").slice(0, 2);
+  const msgs = {
+    en: `Your door access code: ${code}. Valid 5 minutes. Do not share it.`,
+    it: `Il tuo codice di accesso: ${code}. Valido 5 minuti. Non condividerlo.`,
+    fr: `Votre code: ${code}. Valable 5 minutes. Ne le partagez pas.`,
+    de: `Ihr Zugangscode: ${code}. Gueltig 5 Minuten. Nicht weitergeben.`,
+    es: `Tu codigo de acceso: ${code}. Valido 5 minutos. No lo compartas.`,
+  };
+  const message = "\uD83D\uDD10 " + (msgs[langParam] || msgs.en);
+  try { await sendHostawayMessage({ conversationId: p.cid, message }); } catch(e) { console.error("OTP send:", e.message); }
+  res.json({ ok: true });
+});
+
+app.post("/checkin/:apt/verify-otp", async (req, res) => {
+  const t = String(req.query.t || "");
+  const { code } = req.body;
+  const parsed = parseToken(t);
+  if (!parsed.ok) return res.status(410).json({ ok: false, error: "bad_token" });
+  const p = parsed.payload;
+  if (typeof p.exp !== "number" || Date.now() > p.exp) return res.status(410).json({ ok: false, error: "expired" });
+  const stored = OTP_STORE.get(p.jti);
+  if (!stored) return res.status(400).json({ ok: false, error: "no_otp_pending" });
+  if (Date.now() > stored.exp) { OTP_STORE.delete(p.jti); return res.status(400).json({ ok: false, error: "otp_expired" }); }
+  if (String(code).trim() !== stored.code) return res.status(400).json({ ok: false, error: "wrong_code" });
+  OTP_STORE.delete(p.jti);
+  const stPayload = { tgt: `session-${req.params.apt}`, jti_ref: p.jti, exp: p.exp, iat: Date.now(), ver: TOKEN_VERSION };
+  const st = makeToken(stPayload);
+  res.json({ ok: true, st });
+});
+
+function requireVerifiedToken(req, res, next) {
+  const apt = String(req.params.apt || "").toLowerCase();
+  const t = String(req.query.t || "");
+  const parsedT = parseToken(t);
+  if (!parsedT.ok) return res.status(410).json({ ok: false, error: "bad_token" });
+  const tp = parsedT.payload;
+  if (typeof tp.exp !== "number" || Date.now() > tp.exp) return res.status(410).json({ ok: false, error: "expired" });
+  if (tp.tgt !== `checkin-${apt}`) return res.status(410).json({ ok: false, error: "token_target_mismatch" });
+  const st = String(req.query.st || "");
+  if (!st) return res.status(401).json({ ok: false, error: "otp_required" });
+  const parsedSt = parseToken(st);
+  if (!parsedSt.ok) return res.status(401).json({ ok: false, error: "bad_session_token" });
+  const sp = parsedSt.payload;
+  if (typeof sp.exp !== "number" || Date.now() > sp.exp) return res.status(401).json({ ok: false, error: "session_expired" });
+  if (sp.tgt !== `session-${apt}`) return res.status(401).json({ ok: false, error: "session_target_mismatch" });
+  next();
+}
+
+app.post("/checkin/:apt/open/building", requireVerifiedToken, async (req, res) => {
   const apt = String(req.params.apt || "").toLowerCase();
   const map = {
     arenula: "arenula-building",
@@ -841,7 +909,7 @@ app.post("/checkin/:apt/open/building", requireCheckinToken, async (req, res) =>
   return res.json({ ok: true, opened: result });
 });
 
-app.post("/checkin/:apt/open/door", requireCheckinToken, async (req, res) => {
+app.post("/checkin/:apt/open/door", requireVerifiedToken, async (req, res) => {
   const apt = String(req.params.apt || "").toLowerCase();
   const map = {
     arenula: "arenula-door",
