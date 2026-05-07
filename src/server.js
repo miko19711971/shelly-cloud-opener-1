@@ -2336,17 +2336,33 @@ const guestLang = (reservation?.guestLanguage || "en").slice(0, 2).toLowerCase()
         const guestLang = langMap[langRaw.split(',')[0].trim()] || langRaw.slice(0,2) || 'en';
 
         const now = new Date();
-        let sendAt = new Date(now.getTime() + 2 * 60 * 1000); // default: now + 2 min
+        let sendAt;
 
         if (arrivalTime && arrivalDate) {
+          // Arrival time specified: schedule at arrivalTime + 2min
           const parts = arrivalTime.replace(/[apm]/gi, '').trim().split(':').map(Number);
           const h = parts[0] || 13;
           const m = parts[1] || 0;
           const candidate = new Date(`${arrivalDate}T${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:00+02:00`);
           candidate.setMinutes(candidate.getMinutes() + 2);
-          if (candidate > now) sendAt = candidate;
-          // if arrival time is past -> keep default (now + 2 min)
+          sendAt = candidate;
+        } else if (arrivalDate) {
+          // No arrival time: default to 13:02 on check-in date
+          sendAt = new Date(`${arrivalDate}T13:02:00+02:00`);
+        } else {
+          // No date at all: 13:02 today (Rome time)
+          const todayRome = now.toLocaleString('it-IT', { timeZone: 'Europe/Rome', year: 'numeric', month: '2-digit', day: '2-digit' }).split('/').reverse().join('-');
+          sendAt = new Date(`${todayRome}T13:02:00+02:00`);
         }
+
+        // Enforce minimum: never send before 13:02 (check-in starts at 13:00)
+        if (arrivalDate) {
+          const minTime = new Date(`${arrivalDate}T13:02:00+02:00`);
+          if (sendAt < minTime) sendAt = minTime;
+        }
+
+        // If sendAt is already past, send in 2 minutes
+        if (sendAt <= now) sendAt = new Date(now.getTime() + 2 * 60 * 1000);
 
         const phase3Key = `phase3-${effectiveReservationId}`;
         PENDING_PHASE3.set(phase3Key, { conversationId, apartment, lang: guestLang, sendAt, sent: false });
