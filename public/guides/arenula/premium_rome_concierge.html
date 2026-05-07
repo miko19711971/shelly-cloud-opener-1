@@ -242,7 +242,7 @@
 /* ================================================================
    CONFIG — replace with your real keys
 ================================================================ */
-const GEMINI_API_KEY     = 'YOUR_GEMINI_API_KEY'; // https://aistudio.google.com/
+const SERVER_URL         = 'https://shelly-cloud-opener-1.onrender.com';
 const GOOGLE_SCRIPT_URL  = 'https://script.google.com/macros/s/AKfycbwJcg_XcZE19sbKPmfZmkGtUqNz7U2eXqsYaTcCQi1feoTcJuYnS7DOpnEyrc3CDvQY/exec';
 const APARTMENT_ID       = 'ARENULA16';
 
@@ -872,25 +872,21 @@ Never invent information not listed above.`;
 }
 
 async function callGemini(userText) {
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`;
-
-  const contents = [];
-  // Inject system prompt as first user turn (Gemini pattern)
-  if (aiHistory.length === 0) {
-    contents.push({ role: 'user', parts: [{ text: buildSystemPrompt() }] });
-    contents.push({ role: 'model', parts: [{ text: 'Understood. I am ready to assist guests of Via Arenula 16.' }] });
-  }
-  aiHistory.forEach(h => contents.push(h));
-  contents.push({ role: 'user', parts: [{ text: userText }] });
-
-  const res = await fetch(url, {
+  const res = await fetch(`${SERVER_URL}/api/ai/guide`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ contents, generationConfig: { temperature: 0.7, maxOutputTokens: 512 } })
+    body: JSON.stringify({
+      message: userText,
+      systemPrompt: buildSystemPrompt(),
+      history: aiHistory,
+      apartment: APARTMENT_ID.toLowerCase(),
+      lang
+    })
   });
-  if (!res.ok) throw new Error(`Gemini error ${res.status}`);
+  if (!res.ok) throw new Error(`Server error ${res.status}`);
   const json = await res.json();
-  return json.candidates?.[0]?.content?.parts?.[0]?.text || '…';
+  if (!json.ok || !json.reply) throw new Error('empty reply');
+  return json.reply;
 }
 
 function addAIBubble(text, role) {
@@ -920,9 +916,7 @@ async function askAI(text) {
     // Feedback
     postFeedback('view', 'ai', text.substring(0, 80));
   } catch (err) {
-    spinnerDiv.innerHTML = GEMINI_API_KEY === 'YOUR_GEMINI_API_KEY'
-      ? '⚠️ Set your GEMINI_API_KEY in the file to enable the AI assistant.'
-      : '⚠️ AI unavailable. Please try again or call us at ' + A().host_phone;
+    spinnerDiv.innerHTML = '⚠️ AI unavailable. Please try again or call us at ' + A().host_phone;
   }
 }
 

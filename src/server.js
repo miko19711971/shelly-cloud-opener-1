@@ -1961,6 +1961,24 @@ app.get("/health", (req, res) => {
     revokeBefore: REVOKE_BEFORE
   });
 });
+
+app.post("/api/ai/guide", cors(), async (req, res) => {
+  try {
+    const { message, systemPrompt, history, apartment, lang } = req.body || {};
+    if (!message) return res.status(400).json({ ok: false, error: "missing message" });
+    const reply = await askGemini({
+      message: systemPrompt
+        ? `${systemPrompt}\n\n---\n\nUser: ${message}`
+        : message,
+      apartment: apartment || "arenula",
+      lang: lang || "en"
+    });
+    res.json({ ok: true, reply: reply || null });
+  } catch (e) {
+    console.error("❌ /api/ai/guide:", e.message);
+    res.status(500).json({ ok: false, error: "AI error" });
+  }
+});
   
 const MAILER_URL = process.env.MAILER_URL || "https://script.google.com/macros/s/XXXXXXX/exec";
 const MAIL_SHARED_SECRET = process.env.MAIL_SHARED_SECRET;
