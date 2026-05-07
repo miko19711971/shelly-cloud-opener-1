@@ -361,11 +361,11 @@ const CHECKIN_WINDOW_MIN = 1440;
 
 const GUIDE_CSP = [
   "default-src 'self'",
-  "script-src 'self' 'unsafe-inline'",
+  "script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com",
   "style-src 'self' 'unsafe-inline' https:",
   "img-src 'self' data: https:",
   "font-src 'self' data: https:",
-  "connect-src 'self' https://script.google.com https://shelly-cloud-opener-1.onrender.com",
+  "connect-src 'self' https://script.google.com https://shelly-cloud-opener-1.onrender.com https://generativelanguage.googleapis.com",
   "form-action 'self'",
   "frame-ancestors 'none'",
   "base-uri 'self'",
