@@ -191,8 +191,10 @@ setInterval(runSlotCron, 60000);
 // Map<key, { conversationId, apartment, lang, sendAt: Date, sent: boolean }>
 const PENDING_PHASE3 = new Map();
 
-async function sendPhase3GuideMessage({ conversationId, apartment, lang = "en" }) {
-  const guideUrl = `https://shelly-cloud-opener-1.onrender.com/guides/${apartment}/premium_rome_concierge.html?phase=3`;
+async function sendPhase3GuideMessage({ conversationId, apartment, lang = "en", checkinDate = null }) {
+  const tokenData = newTokenFor(`checkin-${apartment}`, { windowMin: 1440, max: 200, day: checkinDate || tzToday() });
+  const t = tokenData.token;
+  const guideUrl = `https://shelly-cloud-opener-1.onrender.com/guides/${apartment}/premium_rome_concierge.html?phase=3&t=${t}`;
 
   const textMap = {
     en: `🗝 Your apartment is ready!\nYour guide is now fully unlocked — digital keys and all apartment info inside:\n${guideUrl}`,
@@ -217,6 +219,7 @@ async function runPhase3Cron() {
           conversationId: entry.conversationId,
           apartment: entry.apartment,
           lang: entry.lang,
+          checkinDate: entry.checkinDate || null,
         });
         entry.sent = true;
         console.log(`✅ Phase 3 inviato: ${key}`);
@@ -818,7 +821,7 @@ function requireCheckinToken(req, res, next) {
   if (typeof p.exp !== "number" || Date.now() > p.exp) return res.status(410).json({ ok: false, error: "expired" });
   const { tgt, day } = p;
   if (tgt !== `checkin-${apt}`) return res.status(410).json({ ok: false, error: "token_target_mismatch" });
-  if (!isYYYYMMDD(day) || day !== tzToday()) return res.status(410).json({ ok: false, error: "wrong_day" });
+  // Token valid for 24h via exp field - no midnight cutoff
   next();
 }
 
@@ -2365,7 +2368,7 @@ const guestLang = (reservation?.guestLanguage || "en").slice(0, 2).toLowerCase()
         if (sendAt <= now) sendAt = new Date(now.getTime() + 2 * 60 * 1000);
 
         const phase3Key = `phase3-${effectiveReservationId}`;
-        PENDING_PHASE3.set(phase3Key, { conversationId, apartment, lang: guestLang, sendAt, sent: false });
+        PENDING_PHASE3.set(phase3Key, { conversationId, apartment, lang: guestLang, sendAt, checkinDate: arrivalDate, sent: false });
         console.log(`Phase 3 scheduled: ${apartment} | sendAt: ${sendAt.toISOString()} | lang: ${guestLang}`);
       } catch (e) {
         console.error('Errore scheduling phase 3:', e.message);

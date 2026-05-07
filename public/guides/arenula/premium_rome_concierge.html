@@ -288,7 +288,7 @@ en:{
     address:`<p><strong>Via Arenula 16</strong><br>Historic Center, Rome<br><br><a href="https://maps.google.com/?q=Via+Arenula+16+Roma" target="_blank">Open in Google Maps →</a></p>`,
     emergency:a=>`<p>${a.emergency}</p>`,
     checkout:a=>`<p>Checkout time: <strong>${a.checkout_time}</strong></p><p>${a.checkout_note}</p>`,
-    keys:a=>`<div style="text-align:center;padding:16px 0"><div style="font-size:48px;margin-bottom:16px">📧</div><p style="font-weight:600;margin-bottom:12px">${a.keys_msg}</p><p style="font-size:12px;color:#aaa;margin-top:16px">Need help? <a href="tel:${a.phone}">${a.phone}</a></p></div>`,
+    keys:a=>buildKeysHTML(a),
     wifi:a=>`<p>${a.wifi_note}</p><p>Network: <strong>${a.wifi_ssid}</strong><br>Password: <strong>${a.wifi_password}</strong></p>`,
     house:a=>`<h3>Water</h3><p>${a.water_note}</p><h3>Air Conditioning</h3><p>${a.ac_note}</p><h3>Gas</h3><p>${a.gas}</p><h3>Bathroom</h3><p>${a.bathroom}</p><p>Towels: ${a.towels}</p><h3>Building Access</h3><p>Intercom: <strong>${a.intercom}</strong> · ${a.door_hours}</p><p>${a.elevator}</p>`,
     help:a=>`<div style="text-align:center;padding:16px 0"><div style="font-size:48px;margin-bottom:16px">📞</div><p style="font-weight:600;margin-bottom:16px">Your concierge is available for any need.</p><a href="tel:${a.phone}" style="display:block;background:#000;color:#fff;padding:14px;border-radius:16px;font-weight:600;text-decoration:none;text-align:center">${a.phone}</a><p style="font-size:12px;color:#aaa;margin-top:12px">Intercom: <strong style="color:#000">${a.intercom}</strong> · Concierge: ${a.concierge}</p></div>`,
@@ -361,7 +361,7 @@ it:{
     address:`<p><strong>Via Arenula 16</strong><br>Centro Storico, Roma<br><br><a href="https://maps.google.com/?q=Via+Arenula+16+Roma" target="_blank">Apri in Google Maps →</a></p>`,
     emergency:a=>`<p>${a.emergency}</p>`,
     checkout:a=>`<p>Orario checkout: <strong>${a.checkout_time}</strong></p><p>${a.checkout_note}</p>`,
-    keys:a=>`<div style="text-align:center;padding:16px 0"><div style="font-size:48px;margin-bottom:16px">📧</div><p style="font-weight:600;margin-bottom:12px">${a.keys_msg}</p><p style="font-size:12px;color:#aaa;margin-top:16px">Serve aiuto? <a href="tel:${a.phone}">${a.phone}</a></p></div>`,
+    keys:a=>buildKeysHTML(a),
     wifi:a=>`<p>${a.wifi_note}</p><p>Rete: <strong>${a.wifi_ssid}</strong><br>Password: <strong>${a.wifi_password}</strong></p>`,
     house:a=>`<h3>Acqua</h3><p>${a.water_note}</p><h3>Aria Condizionata</h3><p>${a.ac_note}</p><h3>Gas</h3><p>${a.gas}</p><h3>Bagno</h3><p>${a.bathroom}</p><p>Asciugamani: ${a.towels}</p><h3>Accesso Edificio</h3><p>Citofono: <strong>${a.intercom}</strong> · ${a.door_hours}</p><p>${a.elevator}</p>`,
     help:a=>`<div style="text-align:center;padding:16px 0"><div style="font-size:48px;margin-bottom:16px">📞</div><p style="font-weight:600;margin-bottom:16px">Il tuo concierge è disponibile per qualsiasi necessità.</p><a href="tel:${a.phone}" style="display:block;background:#000;color:#fff;padding:14px;border-radius:16px;font-weight:600;text-decoration:none;text-align:center">${a.phone}</a><p style="font-size:12px;color:#aaa;margin-top:12px">Citofono: <strong style="color:#000">${a.intercom}</strong> · Portiere: ${a.concierge}</p></div>`,
@@ -380,7 +380,7 @@ fr:{
   },
   drawers:{
     address:`<p><strong>Via Arenula 16</strong><br>Centre Historique, Rome<br><br><a href="https://maps.google.com/?q=Via+Arenula+16+Roma" target="_blank">Ouvrir dans Google Maps →</a></p>`,
-    emergency:a=>`<p>${a.emergency}</p>`,checkout:a=>`<p>Heure de départ: <strong>${a.checkout_time}</strong></p><p>${a.checkout_note}</p>`,keys:a=>`<div style="text-align:center;padding:16px 0"><div style="font-size:48px;margin-bottom:16px">📧</div><p style="font-weight:600;margin-bottom:12px">${a.keys_msg}</p><p style="font-size:12px;color:#aaa;margin-top:16px">Besoin d'aide? <a href="tel:${a.phone}">${a.phone}</a></p></div>`,wifi:a=>`<p>${a.wifi_note}</p><p>Réseau: <strong>${a.wifi_ssid}</strong><br>Mot de passe: <strong>${a.wifi_password}</strong></p>`,house:a=>`<h3>Eau</h3><p>${a.water_note}</p><h3>Climatisation</h3><p>${a.ac_note}</p><h3>Gaz</h3><p>${a.gas}</p><h3>Salle de bain</h3><p>${a.bathroom}</p><h3>Accès</h3><p>Interphone: <strong>${a.intercom}</strong> · ${a.door_hours}</p>`,help:a=>`<div style="text-align:center;padding:16px 0"><div style="font-size:48px;margin-bottom:16px">📞</div><p style="font-weight:600;margin-bottom:16px">Votre concierge est disponible.</p><a href="tel:${a.phone}" style="display:block;background:#000;color:#fff;padding:14px;border-radius:16px;font-weight:600;text-decoration:none;text-align:center">${a.phone}</a><p style="font-size:12px;color:#aaa;margin-top:12px">Interphone: <strong style="color:#000">${a.intercom}</strong></p></div>`,eat:a=>`<h3>Restaurants</h3><p>${a.eat}</p><h3>Bars & Cafés</h3><p>${a.drink}</p>`,tonight:a=>`<p>${a.tonight}</p>`,tickets:`<p><strong>TicketOne</strong>:<br><a href="https://www.ticketone.it/en/" target="_blank">www.ticketone.it</a></p><p><strong>Colisée</strong>:<br><a href="https://colosseo.it/en" target="_blank">colosseo.it</a></p><p><strong>Musées du Vatican</strong>:<br><a href="https://tickets.museivaticani.va/" target="_blank">tickets.museivaticani.va</a></p><p><strong>MAXXI</strong>:<br><a href="https://www.maxxi.art/en/" target="_blank">maxxi.art</a></p>`,transport:a=>`<h3>Ville</h3><p>${a.city_transport}</p><h3>Aéroports</h3><p>${a.airports}</p>`,
+    emergency:a=>`<p>${a.emergency}</p>`,checkout:a=>`<p>Heure de départ: <strong>${a.checkout_time}</strong></p><p>${a.checkout_note}</p>`,keys:a=>buildKeysHTML(a),wifi:a=>`<p>${a.wifi_note}</p><p>Réseau: <strong>${a.wifi_ssid}</strong><br>Mot de passe: <strong>${a.wifi_password}</strong></p>`,house:a=>`<h3>Eau</h3><p>${a.water_note}</p><h3>Climatisation</h3><p>${a.ac_note}</p><h3>Gaz</h3><p>${a.gas}</p><h3>Salle de bain</h3><p>${a.bathroom}</p><h3>Accès</h3><p>Interphone: <strong>${a.intercom}</strong> · ${a.door_hours}</p>`,help:a=>`<div style="text-align:center;padding:16px 0"><div style="font-size:48px;margin-bottom:16px">📞</div><p style="font-weight:600;margin-bottom:16px">Votre concierge est disponible.</p><a href="tel:${a.phone}" style="display:block;background:#000;color:#fff;padding:14px;border-radius:16px;font-weight:600;text-decoration:none;text-align:center">${a.phone}</a><p style="font-size:12px;color:#aaa;margin-top:12px">Interphone: <strong style="color:#000">${a.intercom}</strong></p></div>`,eat:a=>`<h3>Restaurants</h3><p>${a.eat}</p><h3>Bars & Cafés</h3><p>${a.drink}</p>`,tonight:a=>`<p>${a.tonight}</p>`,tickets:`<p><strong>TicketOne</strong>:<br><a href="https://www.ticketone.it/en/" target="_blank">www.ticketone.it</a></p><p><strong>Colisée</strong>:<br><a href="https://colosseo.it/en" target="_blank">colosseo.it</a></p><p><strong>Musées du Vatican</strong>:<br><a href="https://tickets.museivaticani.va/" target="_blank">tickets.museivaticani.va</a></p><p><strong>MAXXI</strong>:<br><a href="https://www.maxxi.art/en/" target="_blank">maxxi.art</a></p>`,transport:a=>`<h3>Ville</h3><p>${a.city_transport}</p><h3>Aéroports</h3><p>${a.airports}</p>`,
   }
 },
 de:{
@@ -392,7 +392,7 @@ de:{
   },
   drawers:{
     address:`<p><strong>Via Arenula 16</strong><br>Historisches Zentrum, Rom<br><br><a href="https://maps.google.com/?q=Via+Arenula+16+Roma" target="_blank">In Google Maps öffnen →</a></p>`,
-    emergency:a=>`<p>${a.emergency}</p>`,checkout:a=>`<p>Check-out-Zeit: <strong>${a.checkout_time}</strong></p><p>${a.checkout_note}</p>`,keys:a=>`<div style="text-align:center;padding:16px 0"><div style="font-size:48px;margin-bottom:16px">📧</div><p style="font-weight:600;margin-bottom:12px">${a.keys_msg}</p><p style="font-size:12px;color:#aaa;margin-top:16px">Hilfe? <a href="tel:${a.phone}">${a.phone}</a></p></div>`,wifi:a=>`<p>${a.wifi_note}</p><p>Netzwerk: <strong>${a.wifi_ssid}</strong><br>Passwort: <strong>${a.wifi_password}</strong></p>`,house:a=>`<h3>Wasser</h3><p>${a.water_note}</p><h3>Klimaanlage</h3><p>${a.ac_note}</p><h3>Gas</h3><p>${a.gas}</p><h3>Badezimmer</h3><p>${a.bathroom}</p><h3>Zugang</h3><p>Sprechanlage: <strong>${a.intercom}</strong> · ${a.door_hours}</p>`,help:a=>`<div style="text-align:center;padding:16px 0"><div style="font-size:48px;margin-bottom:16px">📞</div><p style="font-weight:600;margin-bottom:16px">Ihr Concierge steht zur Verfügung.</p><a href="tel:${a.phone}" style="display:block;background:#000;color:#fff;padding:14px;border-radius:16px;font-weight:600;text-decoration:none;text-align:center">${a.phone}</a></div>`,eat:a=>`<h3>Restaurants</h3><p>${a.eat}</p><h3>Bars & Cafés</h3><p>${a.drink}</p>`,tonight:a=>`<p>${a.tonight}</p>`,tickets:`<p><strong>TicketOne</strong>:<br><a href="https://www.ticketone.it/en/" target="_blank">www.ticketone.it</a></p><p><strong>Kolosseum</strong>:<br><a href="https://colosseo.it/en" target="_blank">colosseo.it</a></p><p><strong>Vatikanische Museen</strong>:<br><a href="https://tickets.museivaticani.va/" target="_blank">tickets.museivaticani.va</a></p>`,transport:a=>`<h3>Stadt</h3><p>${a.city_transport}</p><h3>Flughäfen</h3><p>${a.airports}</p>`,
+    emergency:a=>`<p>${a.emergency}</p>`,checkout:a=>`<p>Check-out-Zeit: <strong>${a.checkout_time}</strong></p><p>${a.checkout_note}</p>`,keys:a=>buildKeysHTML(a),wifi:a=>`<p>${a.wifi_note}</p><p>Netzwerk: <strong>${a.wifi_ssid}</strong><br>Passwort: <strong>${a.wifi_password}</strong></p>`,house:a=>`<h3>Wasser</h3><p>${a.water_note}</p><h3>Klimaanlage</h3><p>${a.ac_note}</p><h3>Gas</h3><p>${a.gas}</p><h3>Badezimmer</h3><p>${a.bathroom}</p><h3>Zugang</h3><p>Sprechanlage: <strong>${a.intercom}</strong> · ${a.door_hours}</p>`,help:a=>`<div style="text-align:center;padding:16px 0"><div style="font-size:48px;margin-bottom:16px">📞</div><p style="font-weight:600;margin-bottom:16px">Ihr Concierge steht zur Verfügung.</p><a href="tel:${a.phone}" style="display:block;background:#000;color:#fff;padding:14px;border-radius:16px;font-weight:600;text-decoration:none;text-align:center">${a.phone}</a></div>`,eat:a=>`<h3>Restaurants</h3><p>${a.eat}</p><h3>Bars & Cafés</h3><p>${a.drink}</p>`,tonight:a=>`<p>${a.tonight}</p>`,tickets:`<p><strong>TicketOne</strong>:<br><a href="https://www.ticketone.it/en/" target="_blank">www.ticketone.it</a></p><p><strong>Kolosseum</strong>:<br><a href="https://colosseo.it/en" target="_blank">colosseo.it</a></p><p><strong>Vatikanische Museen</strong>:<br><a href="https://tickets.museivaticani.va/" target="_blank">tickets.museivaticani.va</a></p>`,transport:a=>`<h3>Stadt</h3><p>${a.city_transport}</p><h3>Flughäfen</h3><p>${a.airports}</p>`,
   }
 },
 es:{
@@ -404,7 +404,7 @@ es:{
   },
   drawers:{
     address:`<p><strong>Via Arenula 16</strong><br>Centro Histórico, Roma<br><br><a href="https://maps.google.com/?q=Via+Arenula+16+Roma" target="_blank">Abrir en Google Maps →</a></p>`,
-    emergency:a=>`<p>${a.emergency}</p>`,checkout:a=>`<p>Hora de salida: <strong>${a.checkout_time}</strong></p><p>${a.checkout_note}</p>`,keys:a=>`<div style="text-align:center;padding:16px 0"><div style="font-size:48px;margin-bottom:16px">📧</div><p style="font-weight:600;margin-bottom:12px">${a.keys_msg}</p><p style="font-size:12px;color:#aaa;margin-top:16px">¿Ayuda? <a href="tel:${a.phone}">${a.phone}</a></p></div>`,wifi:a=>`<p>${a.wifi_note}</p><p>Red: <strong>${a.wifi_ssid}</strong><br>Contraseña: <strong>${a.wifi_password}</strong></p>`,house:a=>`<h3>Agua</h3><p>${a.water_note}</p><h3>Aire Acondicionado</h3><p>${a.ac_note}</p><h3>Gas</h3><p>${a.gas}</p><h3>Baño</h3><p>${a.bathroom}</p><h3>Acceso</h3><p>Portero: <strong>${a.intercom}</strong> · ${a.door_hours}</p>`,help:a=>`<div style="text-align:center;padding:16px 0"><div style="font-size:48px;margin-bottom:16px">📞</div><p style="font-weight:600;margin-bottom:16px">Tu conserje está disponible.</p><a href="tel:${a.phone}" style="display:block;background:#000;color:#fff;padding:14px;border-radius:16px;font-weight:600;text-decoration:none;text-align:center">${a.phone}</a></div>`,eat:a=>`<h3>Restaurantes</h3><p>${a.eat}</p><h3>Bares & Cafés</h3><p>${a.drink}</p>`,tonight:a=>`<p>${a.tonight}</p>`,tickets:`<p><strong>TicketOne</strong>:<br><a href="https://www.ticketone.it/en/" target="_blank">www.ticketone.it</a></p><p><strong>Coliseo</strong>:<br><a href="https://colosseo.it/en" target="_blank">colosseo.it</a></p><p><strong>Museos Vaticanos</strong>:<br><a href="https://tickets.museivaticani.va/" target="_blank">tickets.museivaticani.va</a></p>`,transport:a=>`<h3>Ciudad</h3><p>${a.city_transport}</p><h3>Aeropuertos</h3><p>${a.airports}</p>`,
+    emergency:a=>`<p>${a.emergency}</p>`,checkout:a=>`<p>Hora de salida: <strong>${a.checkout_time}</strong></p><p>${a.checkout_note}</p>`,keys:a=>buildKeysHTML(a),wifi:a=>`<p>${a.wifi_note}</p><p>Red: <strong>${a.wifi_ssid}</strong><br>Contraseña: <strong>${a.wifi_password}</strong></p>`,house:a=>`<h3>Agua</h3><p>${a.water_note}</p><h3>Aire Acondicionado</h3><p>${a.ac_note}</p><h3>Gas</h3><p>${a.gas}</p><h3>Baño</h3><p>${a.bathroom}</p><h3>Acceso</h3><p>Portero: <strong>${a.intercom}</strong> · ${a.door_hours}</p>`,help:a=>`<div style="text-align:center;padding:16px 0"><div style="font-size:48px;margin-bottom:16px">📞</div><p style="font-weight:600;margin-bottom:16px">Tu conserje está disponible.</p><a href="tel:${a.phone}" style="display:block;background:#000;color:#fff;padding:14px;border-radius:16px;font-weight:600;text-decoration:none;text-align:center">${a.phone}</a></div>`,eat:a=>`<h3>Restaurantes</h3><p>${a.eat}</p><h3>Bares & Cafés</h3><p>${a.drink}</p>`,tonight:a=>`<p>${a.tonight}</p>`,tickets:`<p><strong>TicketOne</strong>:<br><a href="https://www.ticketone.it/en/" target="_blank">www.ticketone.it</a></p><p><strong>Coliseo</strong>:<br><a href="https://colosseo.it/en" target="_blank">colosseo.it</a></p><p><strong>Museos Vaticanos</strong>:<br><a href="https://tickets.museivaticani.va/" target="_blank">tickets.museivaticani.va</a></p>`,transport:a=>`<h3>Ciudad</h3><p>${a.city_transport}</p><h3>Aeropuertos</h3><p>${a.airports}</p>`,
   }
 }
 };
@@ -587,8 +587,62 @@ document.getElementById('romeAiInput').addEventListener('keydown', e => {
   if (e.key === 'Enter') sendRomeAI();
 });
 
-/* ── START ── */
-renderUI();
-</script>
-</body>
-</html>
+
+const APT = 'arenula';
+const HAS_DOOR = false;
+
+/* -- SHELLY DOOR OPENER -- */
+const urlToken = (new URLSearchParams(location.search)).get('t') || '';
+let tokenExp = null;
+if (urlToken) {
+  try {
+    const p = JSON.parse(atob(urlToken.split('.')[1].replace(/-/g,'+').replace(/_/g,'/')));
+    tokenExp = p.exp || null;
+  } catch {}
+}
+function tokenValid() { return tokenExp && Date.now() < tokenExp; }
+
+const DOOR_LABELS = {
+  en: { building:'\uD83D\uDEAA Open Building Door', door:'\uD83D\uDDD6 Open Apartment Door', expired:'Digital access expired after 24h. Contact:', opening:'Opening...', opened:'Opened!' },
+  it: { building:'\uD83D\uDEAA Apri Portone',       door:'\uD83D\uDDD6 Apri Porta Appartamento', expired:'Accesso scaduto dopo 24h. Chiama:', opening:'Apertura...', opened:'Aperto!' },
+  fr: { building:'\uD83D\uDEAA Ouvrir Portail',     door:'\uD83D\uDDD6 Ouvrir Appartement', expired:'Acc\u00e8s expir\u00e9 apr\u00e8s 24h. Contactez:', opening:'Ouverture...', opened:'Ouvert!' },
+  de: { building:'\uD83D\uDEAA Geb\u00e4ude \u00f6ffnen', door:'\uD83D\uDDD6 Wohnung \u00f6ffnen', expired:'Zugang nach 24h abgelaufen. Kontakt:', opening:'\u00d6ffne...', opened:'Ge\u00f6ffnet!' },
+  es: { building:'\uD83D\uDEAA Abrir Portal',       door:'\uD83D\uDDD6 Abrir Apartamento', expired:'Acceso expirado tras 24h. Contacta:', opening:'Abriendo...', opened:'Abierto!' },
+};
+
+function buildKeysHTML(a) {
+  const lbl = DOOR_LABELS[lang] || DOOR_LABELS.en;
+  const emailSection = `<div style="text-align:center;padding:16px 0"><div style="font-size:48px;margin-bottom:16px">\uD83D\uDCE7</div><p style="font-weight:600;margin-bottom:12px">${a.keys_msg}</p><p style="font-size:12px;color:#aaa;margin-top:16px">${U().footerHelp} <a href="tel:${a.phone}">${a.phone}</a></p></div>`;
+  if (!urlToken) return emailSection;
+  if (!tokenValid()) {
+    return emailSection + `<div style="margin-top:12px;padding:12px;background:#fef2f2;border:1px solid #fca5a5;border-radius:12px;font-size:13px;color:#991b1b;text-align:center">\u23f1 ${lbl.expired} <a href="tel:${a.phone}">${a.phone}</a></div>`;
+  }
+  let btns = `<button onclick="shellyOpen('building')" id="open-building-btn" style="width:100%;background:#000;color:#fff;padding:14px;border-radius:16px;font-weight:600;font-size:15px;border:none;cursor:pointer;margin-top:12px">${lbl.building}</button>`;
+  if (HAS_DOOR) btns += `<button onclick="shellyOpen('door')" id="open-door-btn" style="width:100%;background:#1d4ed8;color:#fff;padding:14px;border-radius:16px;font-weight:600;font-size:15px;border:none;cursor:pointer;margin-top:8px">${lbl.door}</button>`;
+  return emailSection + btns;
+}
+
+async function shellyOpen(type) {
+  const btn = document.getElementById(`open-${type}-btn`);
+  if (!btn) return;
+  const lbl = DOOR_LABELS[lang] || DOOR_LABELS.en;
+  const orig = btn.textContent;
+  btn.disabled = true; btn.textContent = lbl.opening;
+  try {
+    const r = await fetch(`${SERVER_URL}/checkin/${APT}/open/${type}?t=${urlToken}`, { method: 'POST' });
+    const j = await r.json();
+    if (j.ok) {
+      btn.textContent = lbl.opened;
+      btn.style.background = '#22c55e';
+      setTimeout(() => { btn.textContent = orig; btn.style.background = type === 'building' ? '#000' : '#1d4ed8'; btn.disabled = false; }, 4000);
+    } else {
+      btn.textContent = '\u2717'; btn.disabled = false;
+      setTimeout(() => { btn.textContent = orig; }, 3000);
+    }
+  } catch {
+    btn.textContent = '\u2717'; btn.disabled = false;
+    setTimeout(() => { btn.textContent = orig; }, 3000);
+  }
+}
+
+
