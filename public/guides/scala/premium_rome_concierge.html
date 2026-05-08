@@ -328,6 +328,7 @@ const D = () => DATA[lang].drawers;
 
 
 
+
 const APT = 'scala';
 const HAS_DOOR = true;
 
@@ -359,31 +360,41 @@ const DOOR_LABELS = {
         verify:'Verify', verifying:'Verifying...', wrongCode:'Wrong code, try again.',
         sending:'Sending...', codeSent:'Code sent to your registered contact. Enter it below:',
         expired:'Access expired (24h). Contact:', opening:'Opening...', opened:'Opened!',
-        verifyTitle:'Verify your identity to unlock door access' },
+        verifyTitle:'Verify your identity to unlock door access',
+        confirmBuilding:'Open the building door only when you are standing in front of the entrance.',
+        confirmDoor:'Open the apartment door only when you are in front of it.' },
   it: { building:'🚪 Apri Portone', door:'🗖 Apri Porta Appartamento',
         send:'Invia codice di verifica', codePlaceholder:'Codice a 6 cifre',
         verify:'Verifica', verifying:'Verifica...', wrongCode:'Codice errato, riprova.',
         sending:'Invio...', codeSent:'Codice inviato al tuo contatto. Inseriscilo:',
         expired:'Accesso scaduto (24h). Chiama:', opening:'Apertura...', opened:'Aperto!',
-        verifyTitle:"Verifica la tua identita per sbloccare l'accesso" },
+        verifyTitle:"Verifica la tua identita per sbloccare l'accesso",
+        confirmBuilding:"Apri il portone solo quando sei davanti all'edificio.",
+        confirmDoor:"Apri la porta solo quando sei davanti all'appartamento." },
   fr: { building:'🚪 Ouvrir Portail', door:'🗖 Ouvrir Appartement',
         send:'Envoyer le code', codePlaceholder:'Code 6 chiffres',
         verify:'Vérifier', verifying:'Vérification...', wrongCode:'Code incorrect.',
         sending:'Envoi...', codeSent:'Code envoyé à votre contact. Entrez-le:',
         expired:'Accès expiré (24h). Contactez:', opening:'Ouverture...', opened:'Ouvert!',
-        verifyTitle:'Vérifiez votre identité pour débloquer l accès' },
+        verifyTitle:'Vérifiez votre identité pour débloquer l accès',
+        confirmBuilding:"Ouvrez le portail uniquement lorsque vous êtes devant l'entrée.",
+        confirmDoor:"Ouvrez la porte uniquement lorsque vous êtes devant l'appartement." },
   de: { building:'🚪 Gebäude öffnen', door:'🗖 Wohnung öffnen',
         send:'Zugangscode senden', codePlaceholder:'6-stelliger Code',
         verify:'Bestätigen', verifying:'Bestätige...', wrongCode:'Falscher Code.',
         sending:'Sende...', codeSent:'Code gesendet. Bitte eingeben:',
         expired:'Zugang abgelaufen (24h). Kontakt:', opening:'Öffne...', opened:'Geöffnet!',
-        verifyTitle:'Identität bestätigen um Zugang freizuschalten' },
+        verifyTitle:'Identität bestätigen um Zugang freizuschalten',
+        confirmBuilding:'Bitte öffnen Sie das Eingangstor nur, wenn Sie davor stehen.',
+        confirmDoor:'Bitte öffnen Sie die Wohnungstür nur, wenn Sie davor stehen.' },
   es: { building:'🚪 Abrir Portal', door:'🗖 Abrir Apartamento',
         send:'Enviar código', codePlaceholder:'Código 6 dígitos',
         verify:'Verificar', verifying:'Verificando...', wrongCode:'Código incorrecto.',
         sending:'Enviando...', codeSent:'Código enviado. Intróducelo:',
         expired:'Acceso expirado (24h). Contacta:', opening:'Abriendo...', opened:'Abierto!',
-        verifyTitle:'Verifica tu identidad para desbloquear el acceso' },
+        verifyTitle:'Verifica tu identidad para desbloquear el acceso',
+        confirmBuilding:'Abre el portal solo cuando estés frente al edificio.',
+        confirmDoor:'Abre la puerta solo cuando estés frente al apartamento.' },
 };
 
 function buildKeysHTML(a) {
@@ -450,9 +461,11 @@ async function verifyOtp() {
 }
 
 async function shellyOpen(type) {
+  const lbl = DOOR_LABELS[lang] || DOOR_LABELS.en;
+  const confirmMsg = type === 'building' ? lbl.confirmBuilding : lbl.confirmDoor;
+  if (!confirm(confirmMsg)) return;
   const btn = document.getElementById(`open-${type}-btn`);
   if (!btn) return;
-  const lbl = DOOR_LABELS[lang] || DOOR_LABELS.en;
   const orig = btn.textContent;
   btn.disabled = true; btn.textContent = lbl.opening;
   try {
