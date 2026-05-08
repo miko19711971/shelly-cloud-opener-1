@@ -191,19 +191,39 @@ setInterval(runSlotCron, 60000);
 // Map<key, { conversationId, apartment, lang, sendAt: Date, sent: boolean }>
 const PENDING_PHASE3 = new Map();
 
+async function sendPhase2GuideMessage({ conversationId, apartment, lang = "en", checkinDate = null, checkinTime = null }) {
+  const _now = Date.now();
+  const _jti = b64url(crypto.randomBytes(9));
+  // 30-day expiry: covers pre-arrival period; guide-only token (no door open)
+  const _tp = { tgt: `guide-${apartment}`, exp: _now + 30*24*60*60*1000, jti: _jti, iat: _now, ver: TOKEN_VERSION, day: checkinDate || tzToday(), ct: checkinTime || "13:00", cid: conversationId };
+  const t = makeToken(_tp);
+  const guideUrl = `https://shelly-cloud-opener-1.onrender.com/guides/${apartment}/premium_rome_concierge.html?t=${t}`;
+
+  const textMap = {
+    en: `✅ Your online check-in is confirmed!\nYour guest guide is now available — apartment info, Wi-Fi and everything you need:\n${guideUrl}`,
+    it: `✅ Il tuo check-in online è confermato!\nLa guida è ora disponibile — info appartamento, Wi-Fi e tutto quello che ti serve:\n${guideUrl}`,
+    fr: `✅ Votre check-in en ligne est confirmé!\nVotre guide est maintenant disponible — infos appartement, Wi-Fi et tout ce dont vous avez besoin:\n${guideUrl}`,
+    de: `✅ Ihr Online-Check-in ist bestätigt!\nIhr Guide ist jetzt verfügbar — Wohnungsinfos, WLAN und alles was Sie brauchen:\n${guideUrl}`,
+    es: `✅ ¡Tu check-in online está confirmado!\nTu guía ya está disponible — info del apartamento, Wi-Fi y todo lo que necesitas:\n${guideUrl}`,
+  };
+  const message = textMap[lang] || textMap.en;
+  await sendHostawayMessage({ conversationId, message });
+  console.log(`📲 Phase 2 guide sent immediately: ${apartment} | lang:${lang}`);
+}
+
 async function sendPhase3GuideMessage({ conversationId, apartment, lang = "en", checkinDate = null }) {
   const _now = Date.now();
   const _jti = b64url(crypto.randomBytes(9));
   const _tp = { tgt: `checkin-${apartment}`, exp: _now + 1440*60*1000, max: 200, used: 0, jti: _jti, iat: _now, ver: TOKEN_VERSION, day: checkinDate || tzToday(), cid: conversationId };
   const t = makeToken(_tp);
-  const guideUrl = `https://shelly-cloud-opener-1.onrender.com/guides/${apartment}/premium_rome_concierge.html?phase=3&t=${t}`;
+  const guideUrl = `https://shelly-cloud-opener-1.onrender.com/guides/${apartment}/premium_rome_concierge.html?t=${t}`;
 
   const textMap = {
-    en: `🗝 Your apartment is ready!\nYour guide is now fully unlocked — digital keys and all apartment info inside:\n${guideUrl}`,
-    it: `🗝 Il tuo appartamento è pronto!\nLa guida è ora completamente sbloccata — chiavi digitali e tutte le info:\n${guideUrl}`,
-    fr: `🗝 Votre appartement est prêt!\nVotre guide est maintenant débloqué — clés numériques et toutes les infos:\n${guideUrl}`,
-    de: `🗝 Ihre Wohnung ist bereit!\nIhr Guide ist jetzt vollständig freigeschaltet — digitale Schlüssel und alle Infos:\n${guideUrl}`,
-    es: `🗝 ¡Tu apartamento está listo!\nTu guía está ahora completamente desbloqueada — llaves digitales y toda la info:\n${guideUrl}`,
+    en: `🗝 Your digital keys are now active!\nOpen your guide to access the building and apartment:\n${guideUrl}`,
+    it: `🗝 Le tue chiavi digitali sono ora attive!\nApri la guida per accedere al palazzo e all'appartamento:\n${guideUrl}`,
+    fr: `🗝 Vos clés numériques sont maintenant actives!\nOuvrez votre guide pour accéder à l'immeuble et à l'appartement:\n${guideUrl}`,
+    de: `🗝 Ihre digitalen Schlüssel sind jetzt aktiv!\nÖffnen Sie Ihren Guide für den Zugang zum Gebäude und zur Wohnung:\n${guideUrl}`,
+    es: `🗝 ¡Tus llaves digitales están ahora activas!\nAbre tu guía para acceder al edificio y al apartamento:\n${guideUrl}`,
   };
 
   const message = textMap[lang] || textMap.en;
@@ -535,6 +555,23 @@ function parseToken(token) {
   if (typeof payload.ver !== "number" || payload.ver !== TOKEN_VERSION) return { ok: false, error: "bad_version" };
   if (REVOKE_BEFORE && typeof payload.iat === "number" && payload.iat < REVOKE_BEFORE) return { ok: false, error: "revoked" };
   if (typeof payload.iat !== "number" || payload.iat < STARTED_AT) return { ok: false, error: "revoked_boot" };
+  return { ok: true, payload };
+}
+
+// Like parseToken but skips revoked_boot — for long-lived guide tokens
+function parseGuideToken(token) {
+  const [h, b, s] = (token || "").split(".");
+  if (!h || !b || !s) return { ok: false, error: "bad_format" };
+  const sig = hmac(`${h}.${b}`);
+  if (!safeEqual(sig, s)) return { ok: false, error: "bad_signature" };
+  let payload;
+  try {
+    payload = JSON.parse(b64urlToBuf(b).toString("utf8"));
+  } catch {
+    return { ok: false, error: "bad_payload" };
+  }
+  if (typeof payload.ver !== "number" || payload.ver !== TOKEN_VERSION) return { ok: false, error: "bad_version" };
+  if (REVOKE_BEFORE && typeof payload.iat === "number" && payload.iat < REVOKE_BEFORE) return { ok: false, error: "revoked" };
   return { ok: true, payload };
 }
 
@@ -923,6 +960,36 @@ app.post("/checkin/:apt/open/door", requireVerifiedToken, async (req, res) => {
   const result = (targetDef.ids.length === 1) ? await openOne(targetDef.ids[0]) : await openSequence(targetDef.ids, 10000);
   if (!result.ok) return res.status(502).json({ ok: false, error: "open_failed", details: result });
   return res.json({ ok: true, opened: result });
+});
+
+// ── Dynamic phase endpoint ───────────────────────────────────────────────────
+// Returns { phase: 1|2|3 } based on token type and current time (Europe/Rome)
+// Guide tokens (tgt: guide-*) → phase 2 or 3 based on time
+// Checkin tokens (tgt: checkin-*) → phase 3 if today + time reached, else 2
+app.get("/checkin/:apt/phase", (req, res) => {
+  const apt = String(req.params.apt || "").toLowerCase();
+  const t = String(req.query.t || "");
+  if (!t) return res.json({ phase: 1 });
+
+  const parsed = parseGuideToken(t);
+  if (!parsed.ok) return res.json({ phase: 1 });
+
+  const p = parsed.payload;
+  if (typeof p.exp !== "number" || Date.now() > p.exp) return res.json({ phase: 1 });
+
+  const validTargets = [`guide-${apt}`, `checkin-${apt}`];
+  if (!validTargets.includes(p.tgt)) return res.json({ phase: 1 });
+
+  const today = tzToday();
+  const day = p.day || null;
+  const checkinTime = p.ct || "13:00";
+
+  if (!day || day !== today) return res.json({ phase: 2 });
+
+  // Check if current Rome time >= checkin time
+  const nowRome = new Date().toLocaleString("en-CA", { timeZone: "Europe/Rome", hour: "2-digit", minute: "2-digit", hour12: false });
+  const phase = nowRome >= checkinTime ? 3 : 2;
+  return res.json({ phase, unlocksAt: phase < 3 ? checkinTime : null });
 });
 
  app.use("/checkin", express.static(path.join(PUBLIC_DIR, "checkin"), { fallthrough: true }));
@@ -2435,6 +2502,10 @@ const guestLang = (reservation?.guestLanguage || "en").slice(0, 2).toLowerCase()
         // If sendAt is already past, send in 2 minutes
         if (sendAt <= now) sendAt = new Date(now.getTime() + 2 * 60 * 1000);
 
+        // Send phase 2 guide immediately
+        await sendPhase2GuideMessage({ conversationId, apartment, lang: guestLang, checkinDate: arrivalDate, checkinTime: arrivalTime || "13:00" });
+
+        // Schedule phase 3 notification (keys unlock) at check-in time
         const phase3Key = `phase3-${effectiveReservationId}`;
         PENDING_PHASE3.set(phase3Key, { conversationId, apartment, lang: guestLang, sendAt, checkinDate: arrivalDate, sent: false });
         console.log(`Phase 3 scheduled: ${apartment} | sendAt: ${sendAt.toISOString()} | lang: ${guestLang}`);

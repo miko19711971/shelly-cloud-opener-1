@@ -190,9 +190,25 @@
 const SERVER_URL = 'https://shelly-cloud-opener-1.onrender.com';
 
 const urlP = new URLSearchParams(location.search);
-let phase = parseInt(urlP.get('phase') || localStorage.getItem('phase_trastevere') || '1', 10);
-if (![1,2,3].includes(phase)) phase = 1;
-localStorage.setItem('phase_trastevere', phase);
+let phase = 1;
+const urlToken = urlP.get('t') || '';
+if (urlP.has('phase')) {
+  const cp = new URLSearchParams(urlP); cp.delete('phase');
+  const qs = cp.toString();
+  history.replaceState(null, '', location.pathname + (qs ? '?' + qs : ''));
+}
+async function loadPhase() {
+  if (!urlToken) { phase = 1; applyPhase(); schedulePhaseCheck(); return; }
+  try {
+    const r = await fetch(`${SERVER_URL}/checkin/trastevere/phase?t=${encodeURIComponent(urlToken)}`);
+    if (r.ok) { const j = await r.json(); phase = j.phase || 1; }
+  } catch(e) { phase = 1; }
+  localStorage.setItem('phase_trastevere', phase);
+  applyPhase(); schedulePhaseCheck();
+}
+function schedulePhaseCheck() {
+  if (phase < 3 && urlToken) setTimeout(loadPhase, 60000);
+}
 
 let lang = (urlP.get('lang') || localStorage.getItem('lang') || (navigator.language||'en').slice(0,2)).toLowerCase();
 
@@ -493,7 +509,7 @@ function renderUI() {
     b.style.background = b.dataset.lang === lang ? 'rgba(0,0,0,.25)' : 'transparent';
   });
 
-  applyPhase();
+  loadPhase();
 }
 
 function applyPhase() {
