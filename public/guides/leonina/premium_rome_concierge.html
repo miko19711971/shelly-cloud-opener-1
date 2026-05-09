@@ -339,11 +339,11 @@ const APT = 'leonina';
 const HAS_DOOR = true;
 
 /* -- SHELLY DOOR OPENER WITH OTP -- */
-let tokenExp = null, tokenJti = null, tokenTgt = null;
+let tokenExp = null, tokenJti = null, tokenTgt = null, tokenCid = null;
 if (urlToken) {
   try {
     const p = JSON.parse(atob(urlToken.split('.')[1].replace(/-/g,'+').replace(/_/g,'/')));
-    tokenExp = p.exp || null; tokenJti = p.jti || null; tokenTgt = p.tgt || null;
+    tokenExp = p.exp || null; tokenJti = p.jti || null; tokenTgt = p.tgt || null; tokenCid = p.cid || null;
   } catch {}
 }
 function tokenValid() { return tokenExp && Date.now() < tokenExp; }
@@ -411,7 +411,8 @@ function buildKeysHTML(a) {
   }
   const isCheckinToken = tokenTgt && tokenTgt.startsWith('checkin-');
   if (!isCheckinToken) return emailSection;
-  if (sessionValid()) {
+  // Token without cid (owner/test): skip OTP, show buttons directly
+  if (!tokenCid || sessionValid()) {
     let btns = `<button onclick="shellyOpen('building')" id="open-building-btn" style="width:100%;background:#000;color:#fff;padding:14px;border-radius:16px;font-weight:600;font-size:15px;border:none;cursor:pointer;margin-top:12px">${lbl.building}</button>`;
     if (HAS_DOOR) btns += `<button onclick="shellyOpen('door')" id="open-door-btn" style="width:100%;background:#1d4ed8;color:#fff;padding:14px;border-radius:16px;font-weight:600;font-size:15px;border:none;cursor:pointer;margin-top:8px">${lbl.door}</button>`;
     return emailSection + btns;
@@ -487,7 +488,10 @@ async function shellyOpen(type) {
   const orig = btn.textContent;
   btn.disabled = true; btn.textContent = lbl.opening;
   try {
-    const r = await fetch(`${SERVER_URL}/checkin/leonina/open/${type}?t=${urlToken}&st=${sessionToken}`, { method: 'POST' });
+    const endpoint = tokenCid
+      ? `${SERVER_URL}/checkin/leonina/open/${type}?t=${urlToken}&st=${sessionToken}`
+      : `${SERVER_URL}/checkin/leonina/open-direct/${type}?t=${urlToken}`;
+    const r = await fetch(endpoint, { method: 'POST' });
     const j = await r.json();
     if (j.ok) {
       btn.textContent = lbl.opened; btn.style.background = '#22c55e';
