@@ -875,7 +875,7 @@ function requireCheckinToken(req, res, next) {
 // OTP ENDPOINTS
 app.post("/checkin/:apt/send-otp", async (req, res) => {
   const t = String(req.query.t || "");
-  const parsed = parseToken(t);
+  const parsed = parseGuideToken(t);
   if (!parsed.ok) return res.status(410).json({ ok: false, error: "bad_token" });
   const p = parsed.payload;
   if (typeof p.exp !== "number" || Date.now() > p.exp) return res.status(410).json({ ok: false, error: "expired" });
@@ -898,7 +898,7 @@ app.post("/checkin/:apt/send-otp", async (req, res) => {
 app.post("/checkin/:apt/verify-otp", async (req, res) => {
   const t = String(req.query.t || "");
   const { code } = req.body;
-  const parsed = parseToken(t);
+  const parsed = parseGuideToken(t);
   if (!parsed.ok) return res.status(410).json({ ok: false, error: "bad_token" });
   const p = parsed.payload;
   if (typeof p.exp !== "number" || Date.now() > p.exp) return res.status(410).json({ ok: false, error: "expired" });
@@ -915,7 +915,7 @@ app.post("/checkin/:apt/verify-otp", async (req, res) => {
 function requireVerifiedToken(req, res, next) {
   const apt = String(req.params.apt || "").toLowerCase();
   const t = String(req.query.t || "");
-  const parsedT = parseToken(t);
+  const parsedT = parseGuideToken(t);
   if (!parsedT.ok) return res.status(410).json({ ok: false, error: "bad_token" });
   const tp = parsedT.payload;
   if (typeof tp.exp !== "number" || Date.now() > tp.exp) return res.status(410).json({ ok: false, error: "expired" });

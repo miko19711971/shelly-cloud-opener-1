@@ -334,11 +334,11 @@ const HAS_DOOR = true;
 
 /* -- SHELLY DOOR OPENER WITH OTP -- */
 
-let tokenExp = null, tokenJti = null;
+let tokenExp = null, tokenJti = null, tokenTgt = null;
 if (urlToken) {
   try {
     const p = JSON.parse(atob(urlToken.split('.')[1].replace(/-/g,'+').replace(/_/g,'/')));
-    tokenExp = p.exp || null; tokenJti = p.jti || null;
+    tokenExp = p.exp || null; tokenJti = p.jti || null; tokenTgt = p.tgt || null;
   } catch {}
 }
 function tokenValid() { return tokenExp && Date.now() < tokenExp; }
@@ -359,7 +359,7 @@ const DOOR_LABELS = {
         send:'Send verification code', codePlaceholder:'6-digit code',
         verify:'Verify', verifying:'Verifying...', wrongCode:'Wrong code, try again.',
         sending:'Sending...', codeSent:'Code sent to your registered contact. Enter it below:',
-        expired:'Access expired (24h). Contact:', opening:'Opening...', opened:'Opened!',
+        expired:'Access expired (24h). Contact:', opening:'Opening...', opened:'Opened!', confirmBuilding:'Open the building door?', confirmDoor:'Open the apartment door?',
         verifyTitle:'Verify your identity to unlock door access',
         confirmBuilding:'Open the building door only when you are standing in front of the entrance.',
         confirmDoor:'Open the apartment door only when you are in front of it.' },
@@ -367,7 +367,7 @@ const DOOR_LABELS = {
         send:'Invia codice di verifica', codePlaceholder:'Codice a 6 cifre',
         verify:'Verifica', verifying:'Verifica...', wrongCode:'Codice errato, riprova.',
         sending:'Invio...', codeSent:'Codice inviato al tuo contatto. Inseriscilo:',
-        expired:'Accesso scaduto (24h). Chiama:', opening:'Apertura...', opened:'Aperto!',
+        expired:'Accesso scaduto (24h). Chiama:', opening:'Apertura...', opened:'Aperto!', confirmBuilding:'Aprire il portone?', confirmDoor:'Aprire la porta dell''appartamento?',
         verifyTitle:"Verifica la tua identita per sbloccare l'accesso",
         confirmBuilding:"Apri il portone solo quando sei davanti all'edificio.",
         confirmDoor:"Apri la porta solo quando sei davanti all'appartamento." },
@@ -375,7 +375,7 @@ const DOOR_LABELS = {
         send:'Envoyer le code', codePlaceholder:'Code 6 chiffres',
         verify:'Vérifier', verifying:'Vérification...', wrongCode:'Code incorrect.',
         sending:'Envoi...', codeSent:'Code envoyé à votre contact. Entrez-le:',
-        expired:'Accès expiré (24h). Contactez:', opening:'Ouverture...', opened:'Ouvert!',
+        expired:'Accès expiré (24h). Contactez:', opening:'Ouverture...', opened:'Ouvert!', confirmBuilding:'Ouvrir la porte de l''immeuble?', confirmDoor:'Ouvrir la porte de l''appartement?',
         verifyTitle:'Vérifiez votre identité pour débloquer l accès',
         confirmBuilding:"Ouvrez le portail uniquement lorsque vous êtes devant l'entrée.",
         confirmDoor:"Ouvrez la porte uniquement lorsque vous êtes devant l'appartement." },
@@ -383,7 +383,7 @@ const DOOR_LABELS = {
         send:'Zugangscode senden', codePlaceholder:'6-stelliger Code',
         verify:'Bestätigen', verifying:'Bestätige...', wrongCode:'Falscher Code.',
         sending:'Sende...', codeSent:'Code gesendet. Bitte eingeben:',
-        expired:'Zugang abgelaufen (24h). Kontakt:', opening:'Öffne...', opened:'Geöffnet!',
+        expired:'Zugang abgelaufen (24h). Kontakt:', opening:'Öffne...', opened:'Geöffnet!', confirmBuilding:'Gebäudetür öffnen?', confirmDoor:'Wohnungstür öffnen?',
         verifyTitle:'Identität bestätigen um Zugang freizuschalten',
         confirmBuilding:'Bitte öffnen Sie das Eingangstor nur, wenn Sie davor stehen.',
         confirmDoor:'Bitte öffnen Sie die Wohnungstür nur, wenn Sie davor stehen.' },
@@ -391,7 +391,7 @@ const DOOR_LABELS = {
         send:'Enviar código', codePlaceholder:'Código 6 dígitos',
         verify:'Verificar', verifying:'Verificando...', wrongCode:'Código incorrecto.',
         sending:'Enviando...', codeSent:'Código enviado. Intróducelo:',
-        expired:'Acceso expirado (24h). Contacta:', opening:'Abriendo...', opened:'Abierto!',
+        expired:'Acceso expirado (24h). Contacta:', opening:'Abriendo...', opened:'Abierto!', confirmBuilding:'¿Abrir la puerta del edificio?', confirmDoor:'¿Abrir la puerta del apartamento?',
         verifyTitle:'Verifica tu identidad para desbloquear el acceso',
         confirmBuilding:'Abre el portal solo cuando estés frente al edificio.',
         confirmDoor:'Abre la puerta solo cuando estés frente al apartamento.' },
@@ -404,6 +404,8 @@ function buildKeysHTML(a) {
   if (!tokenValid()) {
     return emailSection + `<div style="margin-top:12px;padding:12px;background:#fef2f2;border:1px solid #fca5a5;border-radius:12px;font-size:13px;color:#991b1b;text-align:center">⏱ ${lbl.expired} <a href="tel:${a.phone}">${a.phone}</a></div>`;
   }
+  const isCheckinToken = tokenTgt && tokenTgt.startsWith('checkin-');
+  if (!isCheckinToken) return emailSection;
   if (sessionValid()) {
     let btns = `<button onclick="shellyOpen('building')" id="open-building-btn" style="width:100%;background:#000;color:#fff;padding:14px;border-radius:16px;font-weight:600;font-size:15px;border:none;cursor:pointer;margin-top:12px">${lbl.building}</button>`;
     if (HAS_DOOR) btns += `<button onclick="shellyOpen('door')" id="open-door-btn" style="width:100%;background:#1d4ed8;color:#fff;padding:14px;border-radius:16px;font-weight:600;font-size:15px;border:none;cursor:pointer;margin-top:8px">${lbl.door}</button>`;
