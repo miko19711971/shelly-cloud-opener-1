@@ -1,4 +1,4 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -427,19 +427,30 @@ function buildKeysHTML(a) {
     : `<div style="margin-top:16px;padding:14px;background:#fafaf9;border:1px solid #eadfce;border-radius:16px;text-align:center">
         <p style="font-size:13px;color:#555;margin-bottom:12px">🔐 ${lbl.verifyTitle}</p>
         <button onclick="requestOtp()" id="send-otp-btn" style="width:100%;background:#000;color:#fff;padding:14px;border-radius:16px;font-weight:600;font-size:15px;border:none;cursor:pointer">${lbl.send}</button>
+        <p id="send-otp-error" style="font-size:12px;color:#dc2626;margin-top:8px;text-align:center"></p>
       </div>`;
   return emailSection + otpUI;
 }
 
 async function requestOtp() {
   const btn = document.getElementById('send-otp-btn');
-  if (btn) { btn.disabled = true; btn.textContent = (DOOR_LABELS[lang]||DOOR_LABELS.en).sending; }
+  const errEl = document.getElementById('send-otp-error');
+  const lbl = DOOR_LABELS[lang] || DOOR_LABELS.en;
+  if (btn) { btn.disabled = true; btn.textContent = lbl.sending; }
+  if (errEl) errEl.textContent = '';
+  const failMsg = {en:'Unable to send code. Please call:',it:'Impossibile inviare il codice. Chiama:',fr:"Impossible d'envoyer le code. Appelez:",de:'Fehler beim Senden. Rufen Sie an:',es:'Error al enviar. Llame:'};
   try {
     const r = await fetch(`${SERVER_URL}/checkin/leonina/send-otp?t=${urlToken}&lang=${lang}`, { method: 'POST' });
     const j = await r.json();
     if (j.ok) { otpSent = true; openDrawer('keys'); }
-    else { if (btn) { btn.disabled = false; btn.textContent = (DOOR_LABELS[lang]||DOOR_LABELS.en).send; } }
-  } catch { if (btn) btn.disabled = false; }
+    else {
+      if (btn) { btn.disabled = false; btn.textContent = lbl.send; }
+      if (errEl) errEl.textContent = (failMsg[lang] || failMsg.en) + ' ' + A().phone;
+    }
+  } catch {
+    if (btn) { btn.disabled = false; btn.textContent = lbl.send; }
+    if (errEl) errEl.textContent = 'Network error. Call: ' + A().phone;
+  }
 }
 
 async function verifyOtp() {
