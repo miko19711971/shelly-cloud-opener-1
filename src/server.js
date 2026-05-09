@@ -807,7 +807,7 @@ app.get("/checkin/:apt/res/:reservationId", async (req, res) => {
     return res.status(500).send("Errore interno");
   }
 });
-app.get("/checkin/:apt/:rawDate([^/.]+)", (req, res) => {
+app.get("/checkin/:apt/:rawDate(\\d[^/.]*)", (req, res) => {
   const apt = req.params.apt.toLowerCase(), today = tzToday();
   const raw = String(req.params.rawDate || "");
   let day = normalizeCheckinDate(raw);
