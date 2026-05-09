@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -443,7 +443,7 @@ const APT = 'arenula';
 const HAS_DOOR = false;
 
 /* -- SHELLY DOOR OPENER WITH OTP -- */
-const urlToken = (new URLSearchParams(location.search)).get('t') || '';
+
 let tokenExp = null, tokenJti = null;
 if (urlToken) {
   try {
