@@ -296,7 +296,7 @@ footer{
       const tries = (which === "building") ? ["building"] : ["apartment","door"];
 
       for (const kind of tries) {
-        const r = await fetch(`/checkin/scala/open/${kind}?t=${encodeURIComponent(t)}`, {
+        const r = await fetch(`/checkin/scala/open-direct/${kind}?t=${encodeURIComponent(t)}`, {
           method: "POST",
           cache: "no-store"
         });

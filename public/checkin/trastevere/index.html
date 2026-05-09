@@ -296,7 +296,7 @@ async function openWith(statusId, which){
       : ["apartment","door"]; // stesso fallback di Leonina
 
     for (const kind of tries) {
-      const r = await fetch(`/checkin/trastevere/open/${kind}?t=${encodeURIComponent(t)}`, {
+      const r = await fetch(`/checkin/trastevere/open-direct/${kind}?t=${encodeURIComponent(t)}`, {
         method: "POST",
         cache: "no-store"
       });

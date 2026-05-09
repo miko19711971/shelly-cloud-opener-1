@@ -139,8 +139,8 @@ async function openWith(statusId, path){
 
     // mappa dei vecchi /token/... -> nuovi endpoint check-in (pubblici)
     let endpoint = "";
-    if(String(path||"").includes("portico-1d-building")) endpoint = "/checkin/portico/open/building";
-    if(String(path||"").includes("portico-1d-door"))     endpoint = "/checkin/portico/open/door";
+    if(String(path||"").includes("portico-1d-building")) endpoint = "/checkin/portico/open-direct/building";
+    if(String(path||"").includes("portico-1d-door"))     endpoint = "/checkin/portico/open-direct/door";
 
     if(!endpoint){
       s.textContent = "Errore configurazione (endpoint mancante).";

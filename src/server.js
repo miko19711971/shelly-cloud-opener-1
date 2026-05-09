@@ -862,7 +862,7 @@ app.get("/checkin/:apt/index.html", (req, res) => {
 function requireCheckinToken(req, res, next) {
   const apt = String(req.params.apt || "").toLowerCase();
   const t = String(req.query.t || "");
-  const parsed = parseToken(t);
+  const parsed = parseGuideToken(t);
   if (!parsed.ok) return res.status(410).json({ ok: false, error: "bad_token" });
   const p = parsed.payload || {};
   if (typeof p.exp !== "number" || Date.now() > p.exp) return res.status(410).json({ ok: false, error: "expired" });
@@ -948,6 +948,52 @@ app.post("/checkin/:apt/open/building", requireVerifiedToken, async (req, res) =
 
 app.post("/checkin/:apt/open/door", requireVerifiedToken, async (req, res) => {
   const apt = String(req.params.apt || "").toLowerCase();
+  const map = {
+    arenula: "arenula-door",
+    leonina: "leonina-door",
+    scala: "via-della-scala-door",
+    portico: "portico-1d-door",
+    trastevere: "viale-trastevere-door"
+  };
+  const targetKey = map[apt], targetDef = TARGETS[targetKey];
+  if (!targetDef) return res.status(404).json({ ok: false, error: "unknown_target" });
+  const result = (targetDef.ids.length === 1) ? await openOne(targetDef.ids[0]) : await openSequence(targetDef.ids, 10000);
+  if (!result.ok) return res.status(502).json({ ok: false, error: "open_failed", details: result });
+  return res.json({ ok: true, opened: result });
+});
+
+// Direct open endpoints — no OTP required, only valid checkin-* token
+// Used by the illustrated self check-in form (/checkin/{apt}/index.html)
+app.post("/checkin/:apt/open-direct/building", async (req, res) => {
+  const apt = String(req.params.apt || "").toLowerCase();
+  const t = String(req.query.t || "");
+  const parsed = parseGuideToken(t);
+  if (!parsed.ok) return res.status(410).json({ ok: false, error: "bad_token" });
+  const p = parsed.payload;
+  if (typeof p.exp !== "number" || Date.now() > p.exp) return res.status(410).json({ ok: false, error: "expired" });
+  if (p.tgt !== `checkin-${apt}`) return res.status(410).json({ ok: false, error: "token_target_mismatch" });
+  const map = {
+    arenula: "arenula-building",
+    leonina: "leonina-building",
+    scala: "via-della-scala-building",
+    portico: "portico-1d-building",
+    trastevere: "viale-trastevere-building"
+  };
+  const targetKey = map[apt], targetDef = TARGETS[targetKey];
+  if (!targetDef) return res.status(404).json({ ok: false, error: "unknown_target" });
+  const result = (targetDef.ids.length === 1) ? await openOne(targetDef.ids[0]) : await openSequence(targetDef.ids, 10000);
+  if (!result.ok) return res.status(502).json({ ok: false, error: "open_failed", details: result });
+  return res.json({ ok: true, opened: result });
+});
+
+app.post("/checkin/:apt/open-direct/door", async (req, res) => {
+  const apt = String(req.params.apt || "").toLowerCase();
+  const t = String(req.query.t || "");
+  const parsed = parseGuideToken(t);
+  if (!parsed.ok) return res.status(410).json({ ok: false, error: "bad_token" });
+  const p = parsed.payload;
+  if (typeof p.exp !== "number" || Date.now() > p.exp) return res.status(410).json({ ok: false, error: "expired" });
+  if (p.tgt !== `checkin-${apt}`) return res.status(410).json({ ok: false, error: "token_target_mismatch" });
   const map = {
     arenula: "arenula-door",
     leonina: "leonina-door",

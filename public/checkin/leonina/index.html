@@ -243,7 +243,7 @@ async function openWith(statusId, which){
     s.textContent="Opening…";
     const tries=(which==="building")?["building"]:["apartment","door"];
     for(const kind of tries){
-      const r=await fetch(`/checkin/leonina/open/${kind}?t=${encodeURIComponent(t)}`,{method:"POST",cache:"no-store"});
+      const r=await fetch(`/checkin/leonina/open-direct/${kind}?t=${encodeURIComponent(t)}`,{method:"POST",cache:"no-store"});
       if(r.status===404) continue;
       const j=await r.json().catch(()=>({}));
       if(r.ok&&j.ok){s.textContent="Done.";}

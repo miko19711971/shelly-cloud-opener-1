@@ -292,7 +292,7 @@ async function openWith(statusId){
 
     s.textContent='Opening…';
 
-    const res = await fetch(`/checkin/arenula/open/building?t=${encodeURIComponent(token)}`, {
+    const res = await fetch(`/checkin/arenula/open-direct/building?t=${encodeURIComponent(token)}`, {
       method:"POST",
       cache:"no-store"
     });
