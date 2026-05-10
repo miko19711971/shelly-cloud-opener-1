@@ -191,11 +191,14 @@ setInterval(runSlotCron, 60000);
 // Map<key, { conversationId, apartment, lang, sendAt: Date, sent: boolean }>
 const PENDING_PHASE3 = new Map();
 
-async function sendPhase2GuideMessage({ conversationId, apartment, lang = "en", checkinDate = null, checkinTime = null }) {
+async function sendPhase2GuideMessage({ conversationId, apartment, lang = "en", checkinDate = null, checkinTime = null, checkoutDate = null }) {
   const _now = Date.now();
   const _jti = b64url(crypto.randomBytes(9));
-  // 30-day expiry: covers pre-arrival period; guide-only token (no door open)
-  const _tp = { tgt: `guide-${apartment}`, exp: _now + 30*24*60*60*1000, jti: _jti, iat: _now, ver: TOKEN_VERSION, day: checkinDate || tzToday(), ct: checkinTime || "13:00", cid: conversationId };
+  // Expiry: 11:00 AM Rome on checkout day if available, otherwise 30-day fallback
+  const _expMs = (checkoutDate && isYYYYMMDD(checkoutDate))
+    ? checkoutExpiryMs(checkoutDate)
+    : _now + 30 * 24 * 60 * 60 * 1000;
+  const _tp = { tgt: `guide-${apartment}`, exp: _expMs, jti: _jti, iat: _now, ver: TOKEN_VERSION, day: checkinDate || tzToday(), ct: checkinTime || "13:00", cid: conversationId, co: checkoutDate || null };
   const t = makeToken(_tp);
   const guideUrl = `https://shelly-cloud-opener-1.onrender.com/guides/${apartment}/premium_rome_concierge.html?t=${t}`;
 
@@ -609,6 +612,22 @@ function tzToday() {
 
 function isYYYYMMDD(s) {
   return typeof s === "string" && /^\d{4}-\d{2}-\d{2}$/.test(s);
+}
+
+// Returns UTC ms for 11:00 AM Europe/Rome on checkoutDateStr (YYYY-MM-DD).
+// Handles both CET (UTC+1) and CEST (UTC+2) automatically.
+function checkoutExpiryMs(checkoutDateStr) {
+  if (!isYYYYMMDD(checkoutDateStr)) return null;
+  const [y, mo, d] = checkoutDateStr.split('-').map(Number);
+  // Try UTC 09:00 (= 11:00 CEST) then UTC 10:00 (= 11:00 CET)
+  for (const utcH of [9, 10]) {
+    const candidate = new Date(Date.UTC(y, mo - 1, d, utcH, 0, 0));
+    const romeHour = parseInt(
+      candidate.toLocaleString('it-IT', { timeZone: 'Europe/Rome', hour: 'numeric', hour12: false })
+    );
+    if (romeHour === 11) return candidate.getTime();
+  }
+  return Date.UTC(y, mo - 1, d, 9, 0, 0); // fallback CEST
 }
 
 const MONTHS_MAP = (() => {
@@ -2542,6 +2561,7 @@ const guestLang = (reservation?.guestLanguage || "en").slice(0, 2).toLowerCase()
         const resData = resResp.data?.result;
         const arrivalTime = resData?.arrivalTime || null;
         const arrivalDate = resData?.arrivalDate || resData?.checkInDate || null;
+        const checkoutDate = resData?.departureDate || resData?.checkOutDate || resData?.checkoutDate || null;
         const langRaw = (resData?.guestLanguage || resData?.guestLocale || 'en').toLowerCase();
         const langMap = { spanish:'es', french:'fr', italian:'it', german:'de', english:'en', deutsch:'de', italiano:'it' };
         const guestLang = langMap[langRaw.split(',')[0].trim()] || langRaw.slice(0,2) || 'en';
@@ -2576,7 +2596,8 @@ const guestLang = (reservation?.guestLanguage || "en").slice(0, 2).toLowerCase()
         if (sendAt <= now) sendAt = new Date(now.getTime() + 2 * 60 * 1000);
 
         // Send phase 2 guide immediately
-        await sendPhase2GuideMessage({ conversationId, apartment, lang: guestLang, checkinDate: arrivalDate, checkinTime: arrivalTime || "13:00" });
+        await sendPhase2GuideMessage({ conversationId, apartment, lang: guestLang, checkinDate: arrivalDate, checkinTime: arrivalTime || "13:00", checkoutDate });
+        console.log(`📅 Guide expiry set to checkout: ${checkoutDate || 'fallback 30d'}`);
 
         // Schedule phase 3 notification (keys unlock) at check-in time
         const phase3Key = `phase3-${effectiveReservationId}`;
