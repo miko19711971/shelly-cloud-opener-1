@@ -20,6 +20,17 @@
   #drawerBody h3:first-child { margin-top:0; }
   button { cursor:pointer; }
   button:active { transform:scale(.97); }
+  /* Smooth scrolling drawer — iOS & Android */
+  #drawer { -webkit-overflow-scrolling: touch; overscroll-behavior: contain; }
+  #drawerBody { scroll-behavior: smooth; }
+  /* AI chat container: scrollable, never grows unbounded */
+  #romeAiChatVisible {
+    max-height: 260px;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+    scroll-behavior: smooth;
+  }
 </style>
 </head>
 <body>
@@ -628,6 +639,7 @@ function addRomeBubble(html, role) {
     : 'background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:18px 18px 18px 4px;padding:8px 12px;font-size:12px;max-width:88%;color:rgba(255,255,255,.9);';
   d.innerHTML = html;
   wrap.appendChild(d);
+  wrap.scrollTop = wrap.scrollHeight;
   return d;
 }
 
