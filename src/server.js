@@ -216,7 +216,7 @@ async function sendPhase3GuideMessage({ conversationId, apartment, lang = "en", 
   const _jti = b64url(crypto.randomBytes(9));
   const _tp = { tgt: `checkin-${apartment}`, exp: _now + 1440*60*1000, max: 200, used: 0, jti: _jti, iat: _now, ver: TOKEN_VERSION, day: checkinDate || tzToday(), cid: conversationId };
   const t = makeToken(_tp);
-  const guideUrl = `https://shelly-cloud-opener-1.onrender.com/guides/${apartment}/premium_rome_concierge.html?t=${t}`;
+  const guideUrl = `https://shelly-cloud-opener-1.onrender.com/checkin/${apartment}/index.html?t=${t}&lang=${lang}`;
 
   const textMap = {
     en: `🗝 Your digital keys are now active!\nOpen your guide to access the building and apartment:\n${guideUrl}`,
@@ -775,8 +775,9 @@ app.use("/public-test-ai-html", express.static(path.join(PUBLIC_DIR, "public-tes
  
 app.get("/checkin/:apt/today", (req, res) => {
   const apt = req.params.apt.toLowerCase(), today = tzToday();
+  const lang = String(req.query.lang || "en").slice(0, 2).toLowerCase();
   const { token } = newTokenFor(`checkin-${apt}`, { windowMin: CHECKIN_WINDOW_MIN, max: 200, day: today });
-  const url = `${req.protocol}://${req.get("host")}/checkin/${apt}/index.html?t=${token}`;
+  const url = `${req.protocol}://${req.get("host")}/checkin/${apt}/index.html?t=${token}&lang=${lang}`;
   return res.redirect(302, url);
 });
 app.get("/checkin/:apt/res/:reservationId", async (req, res) => {
@@ -1007,6 +1008,32 @@ app.post("/checkin/:apt/open-direct/door", async (req, res) => {
   if (!result.ok) return res.status(502).json({ ok: false, error: "open_failed", details: result });
   return res.json({ ok: true, opened: result });
 });
+
+
+// Alias apartment endpoint for premium check-in guides.
+// The HTML guides call /open-direct/apartment.
+// /open-direct/door remains available as fallback.
+app.post("/checkin/:apt/open-direct/apartment", async (req, res) => {
+  const apt = String(req.params.apt || "").toLowerCase();
+  const t = String(req.query.t || "");
+  const parsed = parseGuideToken(t);
+  if (!parsed.ok) return res.status(410).json({ ok: false, error: "bad_token" });
+  const p = parsed.payload;
+  if (typeof p.exp !== "number" || Date.now() > p.exp) return res.status(410).json({ ok: false, error: "expired" });
+  if (p.tgt !== `checkin-${apt}`) return res.status(410).json({ ok: false, error: "token_target_mismatch" });
+  const map = {
+    leonina: "leonina-door",
+    scala: "via-della-scala-door",
+    portico: "portico-1d-door",
+    trastevere: "viale-trastevere-door"
+  };
+  const targetKey = map[apt], targetDef = TARGETS[targetKey];
+  if (!targetDef) return res.status(404).json({ ok: false, error: "unknown_target" });
+  const result = (targetDef.ids.length === 1) ? await openOne(targetDef.ids[0]) : await openSequence(targetDef.ids, 10000);
+  if (!result.ok) return res.status(502).json({ ok: false, error: "open_failed", details: result });
+  return res.json({ ok: true, opened: result });
+});
+
 
 // ── Dynamic phase endpoint ───────────────────────────────────────────────────
 // Returns { phase: 1|2|3 } based on token type and current time (Europe/Rome)
