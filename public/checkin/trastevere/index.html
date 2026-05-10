@@ -122,6 +122,39 @@ h1 {
   backdrop-filter:blur(16px);
   font-weight:800;
 }
+.address-card {{
+  margin-top:28px;
+  display:inline-grid;
+  grid-template-columns:auto minmax(210px,1fr) auto;
+  gap:14px;
+  align-items:center;
+  padding:13px 16px;
+  border-radius:18px;
+  background:rgba(255,255,255,.14);
+  border:1px solid rgba(255,255,255,.22);
+  backdrop-filter:blur(16px);
+  font-weight:800;
+  max-width:min(100%,680px);
+}}
+
+.address-card-split .addr-pin {{
+  font-size:20px;
+  line-height:1;
+}}
+
+.address-card-split .addr-main {{
+  white-space:nowrap;
+}}
+
+.address-card-split .addr-side {{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:2px;
+  padding-left:14px;
+  border-left:1px solid rgba(255,255,255,.34);
+  white-space:nowrap;
+  text-align:left;
+}}
 .intro-grid {
   display:grid;
   grid-template-columns:1.1fr .9fr;
@@ -364,6 +397,23 @@ footer {
   font-size:14px;
 }
 @media (max-width:820px) {
+  .address-card {
+    grid-template-columns:auto 1fr;
+    max-width:100%;
+  }
+
+  .address-card-split .addr-side {
+    grid-column:2;
+    padding-left:0;
+    border-left:0;
+    margin-top:-4px;
+    color:rgba(255,255,255,.82);
+  }
+
+  .address-card-split .addr-main {
+    white-space:normal;
+  }
+
   .page { width:min(100% - 22px,720px); padding-top:12px; }
   .hero { min-height:560px; padding:22px; border-radius:28px; }
   .brand-row { align-items:flex-start; flex-direction:column; }
@@ -398,7 +448,14 @@ footer {
       <div class="eyebrow" data-i18n="eyebrow">Private check-in guide</div>
       <h1 data-i18n="heroTitle">Welcome to Viale Trastevere 108</h1>
       <p class="subtitle" data-i18n="heroSubtitle">Ring B-9 at the intercom, open the building door, walk through the corridor, then go to Stair B, 4th floor, and reach your apartment door.</p>
-      <div class="address-card" id="addr">📍 Viale Trastevere 108, Rome • Stair B • 4th Floor</div>
+      <div class="address-card address-card-split" id="addr">
+        <span class="addr-pin">📍</span>
+        <span class="addr-main" data-i18n="addrMain">Viale Trastevere 108, Rome</span>
+        <span class="addr-side">
+          <span data-i18n="addrStair">Stair B</span>
+          <span data-i18n="addrFloor">4th Floor</span>
+        </span>
+      </div>
     </div>
   </section>
 
@@ -548,7 +605,9 @@ const T = {
     eyebrow:'Private check-in guide',
     heroTitle:'Welcome to Viale Trastevere 108',
     heroSubtitle:'Ring B-9 at the intercom, open the building door, walk through the corridor, then go to Stair B, 4th floor, and reach your apartment door.',
-    addr:'📍 Viale Trastevere 108, Rome • Stair B • 4th Floor',
+    addrMain:'Viale Trastevere 108, Rome',
+    addrStair:'Stair B',
+    addrFloor:'4th Floor',
     beforeTitle:'Before you start',
     beforeText:'Keep this page open during arrival. Use the opening button only when you are physically at the building entrance or in front of your apartment door.',
     routeTitle:'Your route',
@@ -581,7 +640,9 @@ const T = {
     eyebrow:'Guida check-in privata',
     heroTitle:'Benvenuto a Viale Trastevere 108',
     heroSubtitle:'Suona B-9 al citofono, apri il portone, percorri il corridoio, poi vai alla Scala B, 4° piano, e raggiungi la porta dell’appartamento.',
-    addr:'📍 Viale Trastevere 108, Roma • Scala B • 4° piano',
+    addrMain:'Viale Trastevere 108, Roma',
+    addrStair:'Scala B',
+    addrFloor:'4° piano',
     beforeTitle:'Prima di iniziare',
     beforeText:'Tieni questa pagina aperta durante l’arrivo. Usa il pulsante di apertura solo quando sei fisicamente davanti al portone o alla porta dell’appartamento.',
     routeTitle:'Il percorso',
@@ -614,7 +675,9 @@ const T = {
     eyebrow:'Guide privé de check-in',
     heroTitle:'Bienvenue à Viale Trastevere 108',
     heroSubtitle:'Sonnez B-9 à l’interphone, ouvrez la porte de l’immeuble, traversez le couloir, puis allez à l’escalier B, 4e étage, et rejoignez la porte de votre appartement.',
-    addr:'📍 Viale Trastevere 108, Rome • Escalier B • 4e étage',
+    addrMain:'Viale Trastevere 108, Rome',
+    addrStair:'Escalier B',
+    addrFloor:'4e étage',
     beforeTitle:'Avant de commencer',
     beforeText:'Gardez cette page ouverte pendant votre arrivée. Utilisez le bouton d’ouverture uniquement lorsque vous êtes devant la bonne porte.',
     routeTitle:'Votre parcours',
@@ -647,7 +710,9 @@ const T = {
     eyebrow:'Private Check-in-Anleitung',
     heroTitle:'Willkommen in Viale Trastevere 108',
     heroSubtitle:'Klingeln Sie B-9 an der Gegensprechanlage, öffnen Sie die Haustür, gehen Sie durch den Flur, dann zur Treppe B in den 4. Stock und zur Wohnungstür.',
-    addr:'📍 Viale Trastevere 108, Rom • Treppe B • 4. Stock',
+    addrMain:'Viale Trastevere 108, Rom',
+    addrStair:'Treppe B',
+    addrFloor:'4. Stock',
     beforeTitle:'Bevor Sie beginnen',
     beforeText:'Lassen Sie diese Seite während Ihrer Ankunft geöffnet. Verwenden Sie die Öffnungstaste nur, wenn Sie direkt vor der richtigen Tür stehen.',
     routeTitle:'Ihr Weg',
@@ -680,7 +745,9 @@ const T = {
     eyebrow:'Guía privada de check-in',
     heroTitle:'Bienvenido a Viale Trastevere 108',
     heroSubtitle:'Llama al B-9 en el portero, abre la puerta del edificio, recorre el pasillo, luego ve a la escalera B, 4º piso, y llega a la puerta del apartamento.',
-    addr:'📍 Viale Trastevere 108, Roma • Escalera B • 4º piso',
+    addrMain:'Viale Trastevere 108, Roma',
+    addrStair:'Escalera B',
+    addrFloor:'4º piso',
     beforeTitle:'Antes de empezar',
     beforeText:'Mantén esta página abierta durante la llegada. Usa el botón de apertura solo cuando estés físicamente frente a la puerta correcta.',
     routeTitle:'Tu recorrido',
@@ -718,8 +785,6 @@ function setLang(lang) {
     const key = el.getAttribute("data-i18n");
     if (t[key]) el.textContent = t[key];
   });
-  const addr = document.getElementById("addr");
-  if (addr) addr.textContent = t.addr;
   document.querySelectorAll(".language button").forEach(btn => {
     btn.classList.toggle("active", btn.dataset.lang === lang);
   });
