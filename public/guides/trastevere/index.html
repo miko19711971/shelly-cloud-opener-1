@@ -88,7 +88,11 @@ const DATA = {
       voice_on: "🔊 Voice: On",
       voice_off: "🔇 Voice: Off",
       quick: ["wifi","check in","check out","water","AC","bathroom","kitchen","building","eat","drink","shop","visit","experience","day trips","tickets & events","museums & sites","exhibitions","transport","services","emergency"],
-      fallback: "I did not find a direct answer. Try a quick button (wifi, kitchen, transport, visit…)."
+      fallback: "I did not find a direct answer. Try a quick button (wifi, kitchen, transport, visit…).",
+      fb_helpful: "Was this helpful?",
+      fb_like: "👍 Like",
+      fb_dislike: "👎 Dislike",
+      fb_thanks: "Thanks for your feedback!"
     },
     apt: {
       checkin_time:'13:00', checkout_time:'11:00',
@@ -182,7 +186,11 @@ const DATA = {
       placeholder:"Ciao, sono Samantha, la tua guida virtuale. Tocca un pulsante — oppure scrivi qui…",
       apt_label:"Appartamento", voice_on:"🔊 Voce: On", voice_off:"🔇 Voce: Off",
       quick:["wifi","check in","check out","acqua","aria condizionata","bagno","cucina","edificio","mangiare","bere","shopping","visitare","esperienze","gite di un giorno","biglietti & eventi","musei & siti","mostre","trasporti","servizi","emergenza"],
-      fallback:"Non ho trovato una risposta diretta. Prova un pulsante (wifi, cucina, trasporti, visitare…)."
+      fallback:"Non ho trovato una risposta diretta. Prova un pulsante (wifi, cucina, trasporti, visitare…).",
+      fb_helpful: "Questa risposta ti è stata utile?",
+      fb_like: "👍 Utile",
+      fb_dislike: "👎 Non utile",
+      fb_thanks: "Grazie per il tuo feedback!"
     },
     apt:{
       checkin_time:'13:00', checkout_time:'11:00',
@@ -237,34 +245,33 @@ const DATA = {
       {k:'esperienze',keys:['esperienze','passeggiata','tour','itinerario','tramonto','romantico'],t:a=>`${a.experiences}\nPercorso romantico: ${a.romantic_walk}`},
       {k:'gite di un giorno',keys:['gite','gita','tivoli','ostia','castelli','escursione','bracciano'],t:a=>a.daytrips},
 
-      /* 👇 NUOVI 3 INTENT, ma testo in inglese */
       {
         k:'biglietti & eventi',
         keys:['biglietti','eventi','ticket','concerti','partita','roma','lazio'],
         t: a =>
-`TICKETS & EVENTS (Rome)
-• TicketOne (concerts, theatre, sports): https://www.ticketone.it/en/
-• AS Roma — Official tickets: https://www.asroma.com/en/tickets
-• SS Lazio — Official tickets: https://www.sslazio.it/en`
+`BIGLIETTI & EVENTI (Roma)
+• TicketOne (concerti, teatro, sport): https://www.ticketone.it/
+• AS Roma — Biglietti ufficiali: https://www.asroma.com/it/biglietti
+• SS Lazio — Biglietti ufficiali: https://www.sslazio.it/it`
       },
       {
         k:'musei & siti',
         keys:['musei','siti','museo','vaticano','colosseo','foro','palatino','borghese'],
         t: a =>
-`MUSEUMS & SITES — ROME
-• Vatican Museums: https://www.museivaticani.va/content/museivaticani/en.html
-• Colosseum, Roman Forum & Palatine Hill: https://parcocolosseo.it/en/
-• Galleria Borghese (reservation required): https://galleriaborghese.beniculturali.it/en/`
+`MUSEI & SITI — ROMA
+• Musei Vaticani: https://www.museivaticani.va/content/museivaticani/it.html
+• Colosseo, Foro Romano & Palatino: https://parcocolosseo.it/
+• Galleria Borghese (prenotazione obbligatoria): https://galleriaborghese.beniculturali.it/`
       },
       {
         k:'mostre',
         keys:['mostre','maxxi','palazzo','scuderie','esposizioni'],
         t: a =>
-`EXHIBITIONS — ROME
-• MAXXI — National Museum of 21st Century Arts: https://www.maxxi.art/en/
+`MOSTRE — ROMA
+• MAXXI — Museo Nazionale delle Arti del XXI Secolo: https://www.maxxi.art/
 • Palazzo delle Esposizioni: https://www.palazzoesposizioni.it/
-• Scuderie del Quirinale: https://www.scuderiequirinale.it/en
-• Palazzo Bonaparte (Arthemisia): https://www.arthemisia.it/en/home/`
+• Scuderie del Quirinale: https://www.scuderiequirinale.it/
+• Palazzo Bonaparte (Arthemisia): https://www.arthemisia.it/`
       },
 
       {k:'emergenza',keys:['emergenza','polizia','ambulanza','fuoco','medico','veterinario'],t:a=>a.emergency}
@@ -277,7 +284,11 @@ const DATA = {
       placeholder:"Bonjour, je suis Samantha, votre guide virtuel. Touchez un bouton — ou écrivez ici…",
       apt_label:"Appartement", voice_on:"🔊 Voix : Activée", voice_off:"🔇 Voix : Désactivée",
       quick:["wifi","check in","check out","eau","climatisation","salle de bain","cuisine","immeuble","manger","boire","shopping","visiter","expériences","excursions","billets & événements","musées & sites","expositions","transports","services","urgence"],
-      fallback:"Je n’ai pas trouvé de réponse directe. Essayez un bouton (wifi, cuisine, transports, visiter…)."
+      fallback:"Je n’ai pas trouvé de réponse directe. Essayez un bouton (wifi, cuisine, transports, visiter…).",
+      fb_helpful: "Cette réponse vous a-t-elle aidé·e ?",
+      fb_like: "👍 Utile",
+      fb_dislike: "👎 Pas utile",
+      fb_thanks: "Merci pour votre retour !"
     },
     apt:{
   checkin_time:'13:00', checkout_time:'11:00',
@@ -333,34 +344,33 @@ const DATA = {
       {k:'expériences',keys:['expériences','balade','itinéraire','coucher de soleil','romantique'],t:a=>`${a.experiences}\nParcours romantique : ${a.romantic_walk}`},
       {k:'excursions',keys:['excursions','ostia','tivoli','castelli','journée'],t:a=>a.daytrips},
 
-      /* 👇 nuovi 3, testo in inglese */
       {
         k:'billets & événements',
         keys:['billets','événements','concert','match','roma','lazio'],
         t: a =>
-`TICKETS & EVENTS (Rome)
-• TicketOne (concerts, theatre, sports): https://www.ticketone.it/en/
-• AS Roma — Official tickets: https://www.asroma.com/en/tickets
-• SS Lazio — Official tickets: https://www.sslazio.it/en`
+`BILLETS & ÉVÉNEMENTS (Rome)
+• TicketOne (concerts, théâtre, sports) : https://www.ticketone.it/
+• AS Roma — Billets officiels : https://www.asroma.com/en/tickets
+• SS Lazio — Billets officiels : https://www.sslazio.it/en`
       },
       {
         k:'musées & sites',
         keys:['musées','sites','vatican','colisée','forum','palatin','borghese'],
         t: a =>
-`MUSEUMS & SITES — ROME
-• Vatican Museums: https://www.museivaticani.va/content/museivaticani/en.html
-• Colosseum, Roman Forum & Palatine Hill: https://parcocolosseo.it/en/
-• Galleria Borghese (reservation required): https://galleriaborghese.beniculturali.it/en/`
+`MUSÉES & SITES — ROME
+• Musées du Vatican : https://www.museivaticani.va/content/museivaticani/fr.html
+• Colisée, Forum romain & Palatin : https://parcocolosseo.it/en/
+• Galerie Borghèse (réservation obligatoire) : https://galleriaborghese.beniculturali.it/en/`
       },
       {
         k:'expositions',
         keys:['expositions','maxxi','palais','scuderie','art'],
         t: a =>
-`EXHIBITIONS — ROME
-• MAXXI — National Museum of 21st Century Arts: https://www.maxxi.art/en/
-• Palazzo delle Esposizioni: https://www.palazzoesposizioni.it/
-• Scuderie del Quirinale: https://www.scuderiequirinale.it/en
-• Palazzo Bonaparte (Arthemisia): https://www.arthemisia.it/en/home/`
+`EXPOSITIONS — ROME
+• MAXXI — Musée national des arts du XXIe siècle : https://www.maxxi.art/en/
+• Palazzo delle Esposizioni : https://www.palazzoesposizioni.it/
+• Scuderie del Quirinale : https://www.scuderiequirinale.it/en
+• Palazzo Bonaparte (Arthemisia) : https://www.arthemisia.it/en/home/`
       },
 
       {k:'urgence',keys:['urgence','police','ambulance','pompiers','médecin','vétérinaire'],t:a=>a.emergency}
@@ -373,7 +383,11 @@ const DATA = {
       placeholder:"Hallo, ich bin Samantha, dein virtueller Guide. Tippe auf einen Button — oder schreibe hier…",
       apt_label:"Apartment", voice_on:"🔊 Stimme: An", voice_off:"🔇 Stimme: Aus",
       quick:["WLAN","check in","check out","Wasser","Klimaanlage","Bad","Küche","Gebäude","Essen","Trinken","Shopping","Sehenswürdigkeiten","Erlebnisse","Tagesausflüge","Tickets & Events","Museen & Stätten","Ausstellungen","Verkehr","Services","Notfall"],
-      fallback:"Keine direkte Antwort gefunden. Nutze einen Button (WLAN, Küche, Verkehr, Sehenswürdigkeiten…)."
+      fallback:"Keine direkte Antwort gefunden. Nutze einen Button (WLAN, Küche, Verkehr, Sehenswürdigkeiten…).",
+      fb_helpful: "War das hilfreich?",
+      fb_like: "👍 Hilfreich",
+      fb_dislike: "👎 Nicht hilfreich",
+      fb_thanks: "Danke für dein Feedback!"
     },
     apt:{
   checkin_time:'13:00', checkout_time:'11:00',
@@ -429,31 +443,30 @@ const DATA = {
       {k:'Erlebnisse',keys:['erlebnisse','spaziergang','tour','route','sonnenuntergang','romantisch'],t:a=>`${a.experiences}\nRomantische Route: ${a.romantic_walk}`},
       {k:'Tagesausflüge',keys:['tagesausflug','tivoli','ostia','castelli','ausflug'],t:a=>a.daytrips},
 
-      /* 👇 nuovi 3 */
       {
         k:'Tickets & Events',
         keys:['tickets','events','konzert','match','roma','lazio','fussball'],
         t: a =>
-`TICKETS & EVENTS (Rome)
-• TicketOne (concerts, theatre, sports): https://www.ticketone.it/en/
-• AS Roma — Official tickets: https://www.asroma.com/en/tickets
-• SS Lazio — Official tickets: https://www.sslazio.it/en`
+`TICKETS & EVENTS (Rom)
+• TicketOne (Konzerte, Theater, Sport): https://www.ticketone.it/
+• AS Roma — Offizielle Tickets: https://www.asroma.com/en/tickets
+• SS Lazio — Offizielle Tickets: https://www.sslazio.it/en`
       },
       {
         k:'Museen & Stätten',
         keys:['museum','museen','stätten','vatican','kolosseum','forum','palatin','borghese'],
         t: a =>
-`MUSEUMS & SITES — ROME
-• Vatican Museums: https://www.museivaticani.va/content/museivaticani/en.html
-• Colosseum, Roman Forum & Palatine Hill: https://parcocolosseo.it/en/
-• Galleria Borghese (reservation required): https://galleriaborghese.beniculturali.it/en/`
+`MUSEEN & STÄTTEN — ROM
+• Vatikanische Museen: https://www.museivaticani.va/content/museivaticani/de.html
+• Kolosseum, Forum Romanum & Palatin: https://parcocolosseo.it/en/
+• Galerie Borghese (Reservierung erforderlich): https://galleriaborghese.beniculturali.it/en/`
       },
       {
         k:'Ausstellungen',
         keys:['ausstellung','ausstellungen','maxxi','palazzo','scuderie','kunst'],
         t: a =>
-`EXHIBITIONS — ROME
-• MAXXI — National Museum of 21st Century Arts: https://www.maxxi.art/en/
+`AUSSTELLUNGEN — ROM
+• MAXXI — Nationales Museum für Kunst des 21. Jahrhunderts: https://www.maxxi.art/en/
 • Palazzo delle Esposizioni: https://www.palazzoesposizioni.it/
 • Scuderie del Quirinale: https://www.scuderiequirinale.it/en
 • Palazzo Bonaparte (Arthemisia): https://www.arthemisia.it/en/home/`
@@ -469,7 +482,11 @@ const DATA = {
       placeholder:"Hola, soy Samantha, tu guía virtual. Toca un botón — o escribe aquí…",
       apt_label:"Apartamento", voice_on:"🔊 Voz: Activada", voice_off:"🔇 Voz: Desactivada",
       quick:["wifi","check in","check out","agua","aire acondicionado","baño","cocina","edificio","comer","beber","compras","visitar","experiencias","excursiones","entradas y eventos","museos y sitios","exposiciones","transporte","servicios","emergencia"],
-      fallback:"No encontré una respuesta directa. Prueba un botón (wifi, cocina, transporte, visitar…)."
+      fallback:"No encontré una respuesta directa. Prueba un botón (wifi, cocina, transporte, visitar…).",
+      fb_helpful: "¿Te ha resultado útil?",
+      fb_like: "👍 Útil",
+      fb_dislike: "👎 No útil",
+      fb_thanks: "¡Gracias por tu opinión!"
     },
     apt:{
   checkin_time:'13:00', checkout_time:'11:00',
@@ -525,31 +542,30 @@ const DATA = {
       {k:'experiencias',keys:['experiencias','paseo','tour','itinerario','atardecer','romántico'],t:a=>`${a.experiences}\nRuta romántica: ${a.romantic_walk}`},
       {k:'excursiones',keys:['excursión','ostia','tivoli','castelli','día'],t:a=>a.daytrips},
 
-      /* 👇 nuovi 3 */
       {
         k:'entradas y eventos',
         keys:['entradas','eventos','ticket','concierto','partido','roma','lazio'],
         t: a =>
-`TICKETS & EVENTS (Rome)
-• TicketOne (concerts, theatre, sports): https://www.ticketone.it/en/
-• AS Roma — Official tickets: https://www.asroma.com/en/tickets
-• SS Lazio — Official tickets: https://www.sslazio.it/en`
+`ENTRADAS Y EVENTOS (Roma)
+• TicketOne (conciertos, teatro, deportes): https://www.ticketone.it/
+• AS Roma — Entradas oficiales: https://www.asroma.com/en/tickets
+• SS Lazio — Entradas oficiales: https://www.sslazio.it/en`
       },
       {
         k:'museos y sitios',
         keys:['museos','sitios','vaticano','coliseo','foro','palatino','borghese'],
         t: a =>
-`MUSEUMS & SITES — ROME
-• Vatican Museums: https://www.museivaticani.va/content/museivaticani/en.html
-• Colosseum, Roman Forum & Palatine Hill: https://parcocolosseo.it/en/
-• Galleria Borghese (reservation required): https://galleriaborghese.beniculturali.it/en/`
+`MUSEOS Y SITIOS — ROMA
+• Museos Vaticanos: https://www.museivaticani.va/content/museivaticani/es.html
+• Coliseo, Foro Romano y Palatino: https://parcocolosseo.it/en/
+• Galería Borghese (reserva obligatoria): https://galleriaborghese.beniculturali.it/en/`
       },
       {
         k:'exposiciones',
         keys:['exposiciones','maxxi','palacio','scuderie','arte'],
         t: a =>
-`EXHIBITIONS — ROME
-• MAXXI — National Museum of 21st Century Arts: https://www.maxxi.art/en/
+`EXPOSICIONES — ROMA
+• MAXXI — Museo Nacional de las Artes del Siglo XXI: https://www.maxxi.art/en/
 • Palazzo delle Esposizioni: https://www.palazzoesposizioni.it/
 • Scuderie del Quirinale: https://www.scuderiequirinale.it/en
 • Palazzo Bonaparte (Arthemisia): https://www.arthemisia.it/en/home/`
@@ -684,17 +700,18 @@ function getAnswer(text){
   }).catch(()=>{});
 }
 function attachFeedbackUI(container, topic, answerText){
+  const L = DATA[lang].ui;
   const box = document.createElement('div');
   box.className = 'fb-box';
   const label = document.createElement('span');
   label.className = 'fb-label';
-  label.textContent = 'Was this helpful?';
+  label.textContent = L.fb_helpful;
   const likeBtn = document.createElement('button');
-  likeBtn.type='button'; likeBtn.textContent='👍 Like';
+  likeBtn.type='button'; likeBtn.textContent=L.fb_like;
   const dislikeBtn = document.createElement('button');
-  dislikeBtn.type='button'; dislikeBtn.textContent='👎 Dislike';
+  dislikeBtn.type='button'; dislikeBtn.textContent=L.fb_dislike;
   const done = document.createElement('span');
-  done.className='fb-done'; done.textContent='Thanks for your feedback!';
+  done.className='fb-done'; done.textContent=L.fb_thanks;
   done.style.display='none';
   function finish(v){
     likeBtn.disabled = true; dislikeBtn.disabled = true;
