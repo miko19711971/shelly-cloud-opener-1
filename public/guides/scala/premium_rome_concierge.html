@@ -1169,52 +1169,84 @@ function addRomeBubble(html,role){
 ═══════════════════════════════════════════════════════ */
 renderUI();
 </script>
-<!-- PWA Install Banner -->
-<div id="pwaBar" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:9999;background:rgba(18,13,9,0.97);border-top:1px solid rgba(214,176,109,0.22);padding:14px 18px;align-items:center;justify-content:space-between;gap:12px;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)">
-  <div style="flex:1;min-width:0">
-    <div style="font-size:13px;font-weight:700;color:#f5ead8">📲 Add to your phone</div>
-    <div id="pwaBarSub" style="font-size:11px;color:#b7a894;margin-top:2px;line-height:1.5">Save this guide as an app — NiceFlat Rome Concierge</div>
+<!-- PWA Full-Screen Install -->
+<div id="pwaScreen" style="display:none;position:fixed;inset:0;z-index:99999;background:#120d09;flex-direction:column;align-items:center;justify-content:center;padding:40px 24px;text-align:center;overflow-y:auto">
+  <img src="/guides/icons/icon-192.png" style="width:100px;height:100px;border-radius:24px;margin-bottom:22px;box-shadow:0 8px 40px rgba(0,0,0,0.6)">
+  <div style="font-size:11px;font-weight:700;letter-spacing:3px;color:#d6b06d;text-transform:uppercase;margin-bottom:6px">NiceFlat</div>
+  <div style="font-size:28px;font-weight:800;color:#f5ead8;margin-bottom:10px;line-height:1.2">Rome Concierge</div>
+  <div style="font-size:15px;color:#b7a894;margin-bottom:36px;line-height:1.6;max-width:300px">Your apartment guide &amp; self check-in.<br>Install the app to get started.</div>
+
+  <!-- iOS instructions -->
+  <div id="pwaIOS" style="display:none;width:100%;max-width:360px">
+    <div style="background:rgba(214,176,109,0.07);border:1px solid rgba(214,176,109,0.2);border-radius:22px;padding:28px 22px;margin-bottom:28px">
+      <div style="display:flex;align-items:center;gap:16px;margin-bottom:22px">
+        <div style="background:rgba(214,176,109,0.18);border-radius:14px;min-width:48px;height:48px;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;color:#d6b06d">1</div>
+        <div style="text-align:left">
+          <div style="color:#f5ead8;font-size:15px;font-weight:700">Tap the Share button</div>
+          <div style="color:#b7a894;font-size:13px;margin-top:3px">The <span style="color:#d6b06d;font-size:16px">⬆</span> icon at the bottom of Safari</div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:16px;margin-bottom:22px">
+        <div style="background:rgba(214,176,109,0.18);border-radius:14px;min-width:48px;height:48px;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;color:#d6b06d">2</div>
+        <div style="text-align:left">
+          <div style="color:#f5ead8;font-size:15px;font-weight:700">Tap "Add to Home Screen"</div>
+          <div style="color:#b7a894;font-size:13px;margin-top:3px">Scroll the menu and tap the <span style="color:#d6b06d">+</span> icon</div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:16px">
+        <div style="background:rgba(214,176,109,0.18);border-radius:14px;min-width:48px;height:48px;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;color:#d6b06d">3</div>
+        <div style="text-align:left">
+          <div style="color:#f5ead8;font-size:15px;font-weight:700">Tap "Add"</div>
+          <div style="color:#b7a894;font-size:13px;margin-top:3px">The app will appear on your Home Screen</div>
+        </div>
+      </div>
+    </div>
+    <div style="animation:pwaBounce 1.3s ease-in-out infinite;color:#d6b06d;font-size:36px;line-height:1">↓</div>
+    <div style="color:#b7a894;font-size:12px;margin-top:6px">Share button is at the bottom of Safari</div>
   </div>
-  <button id="pwaInstallBtn" style="background:linear-gradient(135deg,#e8c67a,#d6b06d);color:#120d09;font-weight:800;font-size:12px;padding:10px 16px;border-radius:12px;border:none;cursor:pointer;white-space:nowrap;flex-shrink:0">Install</button>
-  <button id="pwaDismissBtn" onclick="document.getElementById('pwaBar').style.display='none';sessionStorage.setItem('pwaDismissed','1')" style="background:none;border:none;color:#b7a894;font-size:22px;cursor:pointer;padding:2px 6px;flex-shrink:0;line-height:1">×</button>
+
+  <!-- Android install button -->
+  <div id="pwaAndroid" style="display:none;width:100%;max-width:360px">
+    <button id="pwaInstallBtn" style="width:100%;padding:20px;background:linear-gradient(135deg,#e8c67a,#c89a48);color:#120d09;font-weight:800;font-size:18px;border-radius:18px;border:none;cursor:pointer;letter-spacing:0.3px;box-shadow:0 6px 28px rgba(214,176,109,0.35)">
+      📲 &nbsp;Add to your phone
+    </button>
+    <div style="color:#b7a894;font-size:12px;margin-top:16px">Free · Works offline · No app store needed</div>
+  </div>
 </div>
+
+<style>
+@keyframes pwaBounce{0%,100%{transform:translateY(0)}50%{transform:translateY(10px)}}
+</style>
 
 <script>
 (function(){
-  if(sessionStorage.getItem('pwaDismissed')) return;
-  var bar=document.getElementById('pwaBar');
-  var sub=document.getElementById('pwaBarSub');
-  var installBtn=document.getElementById('pwaInstallBtn');
-  var deferredPrompt=null;
   var isIOS=/iphone|ipad|ipod/i.test(navigator.userAgent)&&!window.MSStream;
-  var isInStandalone=window.matchMedia('(display-mode: standalone)').matches||navigator.standalone;
-  if(isInStandalone) return;
+  var isStandalone=window.matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;
+  if(isStandalone) return;
+  var scr=document.getElementById('pwaScreen');
+  scr.style.display='flex';
   if(isIOS){
-    bar.style.display='flex';
-    installBtn.style.display='none';
-    sub.textContent='Tap Share → Add to Home Screen → Add';
+    document.getElementById('pwaIOS').style.display='block';
     return;
   }
+  var deferredPrompt=null;
+  var androidDiv=document.getElementById('pwaAndroid');
   window.addEventListener('beforeinstallprompt',function(e){
     e.preventDefault();
     deferredPrompt=e;
-    bar.style.display='flex';
-    installBtn.onclick=function(){
-      bar.style.display='none';
+    androidDiv.style.display='block';
+    document.getElementById('pwaInstallBtn').onclick=function(){
       deferredPrompt.prompt();
-      deferredPrompt.userChoice.then(function(){deferredPrompt=null;});
+      deferredPrompt.userChoice.then(function(r){
+        deferredPrompt=null;
+        if(r.outcome==='accepted') scr.style.display='none';
+      });
     };
   });
-  window.addEventListener('appinstalled',function(){
-    bar.style.display='none';
-    deferredPrompt=null;
-  });
+  window.addEventListener('appinstalled',function(){ scr.style.display='none'; });
 })();
-
 if('serviceWorker' in navigator){
-  window.addEventListener('load',function(){
-    navigator.serviceWorker.register('/sw.js');
-  });
+  window.addEventListener('load',function(){ navigator.serviceWorker.register('/sw.js'); });
 }
 </script>
 </body>
