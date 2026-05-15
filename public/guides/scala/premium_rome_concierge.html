@@ -4,200 +4,188 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Via della Scala 17 — NiceFlatInRome</title>
-<script src="https://cdn.tailwindcss.com"></script>
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  html, body { background-color: #f5f1ea; font-family: system-ui, -apple-system, sans-serif; }
-  .drawer { transform: translateY(100%); transition: transform .35s cubic-bezier(.32,.72,0,1); }
-  .drawer.open { transform: translateY(0); }
-  .overlay { opacity: 0; pointer-events: none; transition: opacity .25s; }
-  .overlay.open { opacity: 1; pointer-events: all; }
-  .spin { display:inline-block; width:16px; height:16px; border:2px solid rgba(255,255,255,.25); border-top-color:#fff; border-radius:50%; animation:sp .7s linear infinite; }
-  @keyframes sp { to { transform:rotate(360deg); } }
-  .locked { opacity:.3; pointer-events:none; filter:blur(1px); }
-  #drawerBody a { color:#1d4ed8; text-decoration:underline; }
-  #drawerBody h3 { font-weight:600; margin-top:14px; margin-bottom:4px; }
-  #drawerBody h3:first-child { margin-top:0; }
-  button { cursor:pointer; }
-  button:active { transform:scale(.97); }
-  /* Smooth scrolling drawer — iOS & Android */
-  #drawer { -webkit-overflow-scrolling: touch; overscroll-behavior: contain; }
-  #drawerBody { scroll-behavior: smooth; }
-  /* AI chat container: scrollable, never grows unbounded */
-  #romeAiChatVisible {
-    max-height: 260px;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-    overscroll-behavior: contain;
-    scroll-behavior: smooth;
-  }
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#120d09;--gold:#d6b06d;--cream:#f5ead8;--muted:#b7a894;--card:#1e160f;--border:#2e2218;--sheet:#1a1208}
+html,body{background:var(--bg);color:var(--cream);font-family:system-ui,-apple-system,sans-serif;min-height:100vh;padding-bottom:80px}
+button{cursor:pointer;border:none;background:none;font:inherit;color:inherit}
+button:active{transform:scale(.97)}
+a{color:var(--gold)}
+.langBar{display:flex;justify-content:center;gap:10px;padding:14px 0 6px;position:sticky;top:0;z-index:10;background:var(--bg)}
+.langBtn{font-size:22px;line-height:1;padding:4px 6px;border-radius:8px;opacity:.4;transition:opacity .15s,transform .15s}
+.langBtn.active{opacity:1;transform:scale(1.18)}
+.hero{padding:36px 20px 28px;text-align:center}
+.heroBadge{font-size:10px;letter-spacing:.35em;text-transform:uppercase;color:var(--muted);margin-bottom:14px}
+.heroTitle{font-size:30px;font-weight:700;color:var(--cream);line-height:1.2;margin-bottom:8px}
+.heroSub{font-size:13px;color:var(--muted);line-height:1.6;max-width:300px;margin:0 auto 22px}
+.heroAddr{background:rgba(214,176,109,.08);border:1px solid rgba(214,176,109,.2);border-radius:20px;padding:14px 18px;display:flex;align-items:center;justify-content:space-between;gap:12px;max-width:360px;margin:0 auto}
+.heroAddrLabel{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:3px}
+.heroAddrText{font-size:13px;color:var(--cream);line-height:1.4;text-align:left}
+.openBtn{background:var(--gold);color:#120d09;font-weight:700;font-size:11px;padding:8px 14px;border-radius:11px;white-space:nowrap;letter-spacing:.05em;flex-shrink:0}
+.phasePill{display:block;text-align:center;font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:999px;padding:4px 14px;width:fit-content;margin:10px auto 0}
+.section{padding:22px 16px 6px}
+.sectionHead{font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:var(--gold);margin-bottom:6px}
+.sectionTitle{font-size:21px;font-weight:700;color:var(--cream);margin-bottom:14px}
+.phaseLock{margin:0 16px;background:var(--card);border:1px solid var(--border);border-radius:20px;padding:30px 22px;text-align:center}
+.phaseLock .li{font-size:38px;margin-bottom:14px}
+.phaseLock p{font-size:13px;color:var(--muted);line-height:1.6}
+.cardGrid{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:18px 14px;cursor:pointer;transition:border-color .2s;text-align:left}
+.card:hover{border-color:rgba(214,176,109,.4)}
+.card.locked{opacity:.3;pointer-events:none;filter:blur(1px)}
+.cardIcon{font-size:26px;margin-bottom:10px}
+.cardTitle{font-size:13px;font-weight:600;color:var(--cream);margin-bottom:3px}
+.cardSub{font-size:11px;color:var(--muted);line-height:1.4}
+.aptGrid{padding:0 16px 8px}
+.romeGrid{padding:0 16px 8px}
+.assistant{background:linear-gradient(135deg,#1e160f,#120d09);border:1px solid var(--border);border-radius:22px;margin:16px;padding:28px 22px;text-align:center}
+.assistantTitle{font-size:19px;font-weight:700;color:var(--cream);margin-bottom:7px}
+.assistantDesc{font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:18px}
+.bigbtn{display:block;width:100%;background:var(--gold);color:#120d09;font-weight:700;font-size:12px;letter-spacing:.08em;padding:13px;border-radius:13px}
+footer{padding:14px 16px 0;text-align:center}
+.waFooter{display:inline-block;background:rgba(37,211,102,.1);border:1px solid rgba(37,211,102,.28);border-radius:13px;padding:11px 18px;font-size:12px;color:#4ade80;font-weight:500;text-decoration:none}
+.whatsappFloat{position:fixed;bottom:22px;right:18px;width:50px;height:50px;background:#25D166;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;z-index:100;box-shadow:0 4px 18px rgba(37,211,102,.38);text-decoration:none}
+.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:200;align-items:flex-end;justify-content:center}
+.modal.open{display:flex}
+.sheet{background:var(--sheet);border-radius:22px 22px 0 0;width:100%;max-width:480px;max-height:88vh;overflow-y:auto;padding-bottom:env(safe-area-inset-bottom,16px)}
+.sheetHandle{width:34px;height:4px;background:var(--border);border-radius:2px;margin:11px auto 0}
+.sheetHeader{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--sheet);z-index:1}
+.sheetHeader h3{font-size:15px;font-weight:600;color:var(--cream)}
+.closeBtn{width:30px;height:30px;border-radius:50%;background:var(--card);color:var(--muted);font-size:18px;display:flex;align-items:center;justify-content:center;line-height:1}
+.sheetBody{padding:18px}
+.sheetBody h3{color:var(--gold);font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;margin-top:16px;margin-bottom:5px}
+.sheetBody h3:first-child{margin-top:0}
+.sheetBody p{font-size:14px;color:var(--muted);line-height:1.65;margin-bottom:6px}
+.sheetBody a{color:var(--gold);text-decoration:underline}
+.sheetBody strong{color:var(--cream)}
+.spin{display:inline-block;width:15px;height:15px;border:2px solid rgba(255,255,255,.2);border-top-color:var(--gold);border-radius:50%;animation:sp .7s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+.bubble-user{background:rgba(214,176,109,.14);border:1px solid rgba(214,176,109,.22);border-radius:16px 16px 4px 16px;padding:9px 12px;font-size:13px;align-self:flex-end;max-width:88%;color:var(--cream)}
+.bubble-bot{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:16px 16px 16px 4px;padding:9px 12px;font-size:13px;max-width:88%;color:var(--muted)}
+.mini{font-size:11px;background:rgba(214,176,109,.1);border:1px solid rgba(214,176,109,.18);color:var(--gold);padding:5px 11px;border-radius:999px;white-space:nowrap;cursor:pointer}
+.mini:active{transform:scale(.96)}
 </style>
 </head>
 <body>
 
-<div id="overlay" class="overlay fixed inset-0 bg-black/50 z-40" onclick="closeDrawer()"></div>
-
-<div id="drawer" class="drawer fixed bottom-0 left-0 right-0 z-50 bg-white rounded-t-3xl max-h-[85vh] overflow-y-auto shadow-2xl">
-  <div class="sticky top-0 bg-white pt-4 pb-3 px-5 flex items-center justify-between border-b border-neutral-100">
-    <span id="drawerTitle" class="font-semibold text-base text-black"></span>
-    <button onclick="closeDrawer()" class="w-8 h-8 rounded-full bg-neutral-100 flex items-center justify-center text-xl leading-none">×</button>
-  </div>
-  <div id="drawerBody" class="px-5 py-5 text-sm leading-relaxed text-neutral-700 space-y-2"></div>
+<div class="langBar">
+  <button class="langBtn" data-lang="it" onclick="setLang('it')">🇮🇹</button>
+  <button class="langBtn" data-lang="en" onclick="setLang('en')">🇬🇧</button>
+  <button class="langBtn" data-lang="fr" onclick="setLang('fr')">🇫🇷</button>
+  <button class="langBtn" data-lang="de" onclick="setLang('de')">🇩🇪</button>
+  <button class="langBtn" data-lang="es" onclick="setLang('es')">🇪🇸</button>
 </div>
 
-<div class="min-h-screen bg-[#f5f1ea] flex justify-center p-4">
-  <main class="w-full max-w-sm bg-white rounded-[40px] shadow-2xl overflow-hidden border border-[#eadfce]" style="align-self:flex-start;margin-bottom:1.5rem;">
+<div class="hero">
+  <div class="heroBadge">NICEFLAT ROME CONCIERGE</div>
+  <h1 class="heroTitle" id="heroTitle">Welcome to Rome ✨</h1>
+  <p class="heroSub" id="heroSub">Curated luxury hospitality in the heart of Rome.</p>
+  <div class="heroAddr">
+    <div class="heroAddrText">
+      <div class="heroAddrLabel" id="aptLabel">Apartment</div>
+      Via della Scala 17 · Trastevere
+    </div>
+    <button class="openBtn" onclick="handleOpen()">OPEN</button>
+  </div>
+</div>
+<div id="phasePill" class="phasePill"></div>
 
-    <!-- HERO -->
-    <section class="bg-gradient-to-b from-[#d9c7aa] to-[#c7ae88] px-6 pt-10 pb-8 text-black">
-      <div class="flex items-center justify-between mb-4">
-        <div id="phaseBadge" class="text-[10px] uppercase tracking-widest opacity-60 font-medium"></div>
-        <div id="langNav" class="flex gap-1">
-          <button data-lang="en" class="lb text-[10px] px-1.5 py-0.5 rounded border border-black/25 font-semibold">EN</button>
-          <button data-lang="it" class="lb text-[10px] px-1.5 py-0.5 rounded border border-black/20 font-semibold">IT</button>
-          <button data-lang="fr" class="lb text-[10px] px-1.5 py-0.5 rounded border border-black/20 font-semibold">FR</button>
-          <button data-lang="de" class="lb text-[10px] px-1.5 py-0.5 rounded border border-black/20 font-semibold">DE</button>
-          <button data-lang="es" class="lb text-[10px] px-1.5 py-0.5 rounded border border-black/20 font-semibold">ES</button>
-        </div>
-      </div>
-      <div class="text-xs uppercase tracking-[0.35em] opacity-70 mb-3">NICEFLAT ROME CONCIERGE</div>
-      <h1 id="heroTitle" class="text-4xl font-semibold leading-tight">Welcome to Rome ✨</h1>
-      <p id="heroSub" class="text-sm opacity-80 mt-4 leading-relaxed max-w-[90%]">Curated luxury hospitality in the heart of Rome.</p>
-      <div class="mt-6 bg-[#171717] text-white rounded-[28px] border border-white/10 px-5 py-4 flex items-center justify-between shadow-lg">
-        <div>
-          <div id="aptLabel" class="text-xs uppercase tracking-wide opacity-70">Apartment</div>
-          <div class="font-medium mt-1">Via della Scala 17 • Trastevere</div>
-        </div>
-        <button id="openBtn" onclick="handleOpen()" class="bg-white text-black px-4 py-2 rounded-xl text-sm font-semibold">OPEN</button>
-      </div>
-    </section>
+<div class="section">
+  <div class="sectionHead" id="sectionAptHead"></div>
+  <div class="sectionTitle" id="sectionAptTitle"></div>
+</div>
 
-    <!-- QUICK CARDS -->
-    <section class="grid grid-cols-3 gap-3 px-5 pt-5">
-      <button onclick="openDrawer('address')" class="bg-neutral-100 rounded-2xl p-3 text-center border border-neutral-200">
-        <div class="text-lg">📍</div>
-        <div id="qAddress" class="text-xs mt-1 font-medium">Address</div>
-      </button>
-      <button id="checkoutBtn" onclick="openDrawer('checkout')" class="bg-neutral-100 rounded-2xl p-3 text-center border border-neutral-200">
-        <div class="text-lg">⏰</div>
-        <div id="qCheckout" class="text-xs mt-1 font-medium">Checkout</div>
-      </button>
-      <button onclick="openDrawer('emergency')" class="bg-neutral-100 rounded-2xl p-3 text-center border border-neutral-200">
-        <div class="text-lg">🚨</div>
-        <div id="qEmergency" class="text-xs mt-1 font-medium">Emergency</div>
-      </button>
-    </section>
+<div id="phaseLock" class="phaseLock" style="display:none">
+  <div class="li">🔒</div>
+  <p id="phase1Text"></p>
+</div>
 
-    <!-- SECTIONS -->
-    <section class="p-5 space-y-6">
+<div id="aptGrid" class="aptGrid" style="display:none">
+  <div class="cardGrid">
+    <div class="card" onclick="openModal('apt')">
+      <div class="cardIcon">📍</div>
+      <div class="cardTitle" id="aptCardTitle"></div>
+      <div class="cardSub" id="aptCardSub"></div>
+    </div>
+    <div class="card locked" id="keysCard" onclick="openModal('keys')">
+      <div class="cardIcon">🗝</div>
+      <div class="cardTitle" id="keysTitle"></div>
+      <div class="cardSub" id="keysSub"></div>
+    </div>
+    <div class="card" onclick="openModal('wifi')">
+      <div class="cardIcon">📶</div>
+      <div class="cardTitle" id="wifiTitle"></div>
+      <div class="cardSub" id="wifiSub"></div>
+    </div>
+    <div class="card" onclick="openModal('house')">
+      <div class="cardIcon">💬</div>
+      <div class="cardTitle" id="houseTitle"></div>
+      <div class="cardSub" id="houseSub"></div>
+    </div>
+    <div class="card" onclick="openModal('help')" style="grid-column:1/-1">
+      <div class="cardIcon">☎</div>
+      <div class="cardTitle" id="helpTitle"></div>
+      <div class="cardSub" id="helpSub"></div>
+    </div>
+  </div>
+</div>
 
-      <!-- APARTMENT -->
-      <div class="bg-white border border-[#eadfce] rounded-[38px] overflow-hidden shadow-[0_10px_40px_rgba(0,0,0,0.05)]">
-        <div class="bg-gradient-to-r from-[#efe5d6] to-[#f8f4ee] p-6 border-b border-[#eadfce]">
-          <div class="flex items-center justify-between gap-4">
-            <div>
-              <div id="aptSectionLabel" class="text-xs uppercase tracking-[0.3em] text-neutral-500 mb-2">Apartment Concierge</div>
-              <h2 id="aptSectionTitle" class="text-3xl font-semibold leading-tight text-black">Your Apartment 🏠</h2>
-            </div>
-            <div class="text-5xl">🗝</div>
-          </div>
-          <p id="aptSectionDesc" class="text-sm text-neutral-600 mt-4 leading-relaxed">Everything related to your apartment, access and assistance.</p>
-        </div>
+<div class="section">
+  <div class="sectionHead" id="sectionRomeHead"></div>
+  <div class="sectionTitle" id="sectionRomeTitle"></div>
+</div>
+<div class="romeGrid">
+  <div class="cardGrid">
+    <div class="card" onclick="openModal('eat')">
+      <div class="cardIcon">🍝</div>
+      <div class="cardTitle" id="eatTitle"></div>
+      <div class="cardSub" id="eatSub"></div>
+    </div>
+    <div class="card" onclick="openModal('tonight')">
+      <div class="cardIcon">🌙</div>
+      <div class="cardTitle" id="tonightTitle"></div>
+      <div class="cardSub" id="tonightSub"></div>
+    </div>
+    <div class="card" onclick="openModal('tickets')">
+      <div class="cardIcon">🎟</div>
+      <div class="cardTitle" id="tickTitle"></div>
+      <div class="cardSub" id="tickSub"></div>
+    </div>
+    <div class="card" onclick="openModal('transport')">
+      <div class="cardIcon">🚋</div>
+      <div class="cardTitle" id="transTitle"></div>
+      <div class="cardSub" id="transSub"></div>
+    </div>
+  </div>
+</div>
 
-        <div id="phase1Msg" class="hidden p-5">
-          <div class="bg-[#faf7f2] rounded-[24px] p-6 border border-[#eadfce] text-center">
-            <div class="text-4xl mb-3">🔒</div>
-            <p id="phase1Text" class="text-sm text-neutral-500 leading-relaxed">Complete your online check-in to unlock apartment info.</p>
-          </div>
-        </div>
+<div class="assistant">
+  <div class="assistantTitle" id="assistantTitle"></div>
+  <p class="assistantDesc" id="assistantDesc"></p>
+  <button class="bigbtn" id="assistantBtn" onclick="openModal('chat')"></button>
+</div>
 
-        <div id="aptCards" class="hidden p-5 grid grid-cols-2 gap-4">
-          <button id="keysCard" onclick="openDrawer('keys')" class="bg-[#faf7f2] rounded-[28px] p-5 border border-[#eadfce] text-left">
-            <div class="text-3xl">🗝</div>
-            <div id="keysTitle" class="mt-3 font-semibold text-black">Digital Keys</div>
-            <div id="keysSub" class="text-xs text-neutral-500 mt-1">Open building & apartment</div>
-          </button>
-          <button onclick="openDrawer('wifi')" class="bg-[#faf7f2] rounded-[28px] p-5 border border-[#eadfce] text-left">
-            <div class="text-3xl">📶</div>
-            <div id="wifiTitle" class="mt-3 font-semibold text-black">Wi‑Fi</div>
-            <div id="wifiSub" class="text-xs text-neutral-500 mt-1">Network & password</div>
-          </button>
-          <button onclick="openDrawer('house')" class="bg-[#faf7f2] rounded-[28px] p-5 border border-[#eadfce] text-left">
-            <div class="text-3xl">💬</div>
-            <div id="houseTitle" class="mt-3 font-semibold text-black">House Guide</div>
-            <div id="houseSub" class="text-xs text-neutral-500 mt-1">Instructions & tips</div>
-          </button>
-          <button onclick="openDrawer('help')" class="bg-[#faf7f2] rounded-[28px] p-5 border border-[#eadfce] text-left">
-            <div class="text-3xl">☎</div>
-            <div id="helpTitle" class="mt-3 font-semibold text-black">Need Help?</div>
-            <div id="helpSub" class="text-xs text-neutral-500 mt-1">Concierge support</div>
-          </button>
-        </div>
-      </div>
+<footer>
+  <a href="https://wa.me/393355245756" class="waFooter" id="whatsappBtn" target="_blank"></a>
+</footer>
 
-      <!-- ROME -->
-      <div class="bg-gradient-to-br from-[#1d1a18] via-[#2c221d] to-[#151515] rounded-[42px] overflow-hidden shadow-2xl text-white">
-        <div class="p-6 border-b border-white/10">
-          <div class="flex items-center justify-between gap-4">
-            <div>
-              <div id="romeSectionLabel" class="text-xs uppercase tracking-[0.3em] opacity-60 mb-2">Rome Experience Concierge</div>
-              <h2 id="romeSectionTitle" class="text-3xl font-semibold leading-tight">Explore Rome 🌙</h2>
-            </div>
-            <div class="text-5xl">🍷</div>
-          </div>
-          <p id="romeSectionDesc" class="text-sm text-white/70 mt-4 leading-relaxed">Restaurants, hidden places, nightlife and curated experiences.</p>
-        </div>
-        <div class="p-5 grid grid-cols-2 gap-4">
-          <button onclick="openDrawer('eat')" class="bg-white/5 backdrop-blur-sm rounded-[30px] p-5 border border-white/10 text-left">
-            <div class="text-3xl">🍝</div>
-            <div id="eatTitle" class="mt-3 font-semibold">Eat & Drink</div>
-            <div id="eatSub" class="text-xs text-white/50 mt-1">Restaurants, breakfast & aperitivo</div>
-          </button>
-          <button onclick="openDrawer('tonight')" class="bg-white/5 backdrop-blur-sm rounded-[30px] p-5 border border-white/10 text-left">
-            <div class="text-3xl">🌙</div>
-            <div id="tonightTitle" class="mt-3 font-semibold">Tonight in Rome</div>
-            <div id="tonightSub" class="text-xs text-white/50 mt-1">Bars, rooftops & evening ideas</div>
-          </button>
-          <button onclick="openDrawer('tickets')" class="bg-white/5 backdrop-blur-sm rounded-[30px] p-5 border border-white/10 text-left">
-            <div class="text-3xl">🎟</div>
-            <div id="tickTitle" class="mt-3 font-semibold">Ticketing</div>
-            <div id="tickSub" class="text-xs text-white/50 mt-1">Museums, tours & experiences</div>
-          </button>
-          <button onclick="openDrawer('transport')" class="bg-white/5 backdrop-blur-sm rounded-[30px] p-5 border border-white/10 text-left">
-            <div class="text-3xl">🚋</div>
-            <div id="transTitle" class="mt-3 font-semibold">Transport</div>
-            <div id="transSub" class="text-xs text-white/50 mt-1">Tram, taxi & airports</div>
-          </button>
-        </div>
+<a href="https://wa.me/393355245756" class="whatsappFloat" target="_blank">💬</a>
 
-        <!-- GEMINI -->
-        <div class="px-5 pb-5">
-          <div class="border-t border-white/10 pt-5">
-            <div id="romeAiLabel" class="text-sm font-semibold opacity-70 mb-3">Ask Gemini — Rome &amp; your apartment</div>
-            <div id="romeAiChatVisible" class="flex flex-col gap-2 mb-3"></div>
-            <div id="romeChips" class="flex flex-wrap gap-2 mb-3"></div>
-            <div class="flex gap-2">
-              <input id="romeAiInput" type="text"
-                class="flex-1 bg-white/10 border border-white/15 rounded-xl px-3 py-2.5 text-sm text-white placeholder:text-white/40 outline-none"
-                style="min-width:0">
-              <button onclick="sendRomeAI()" class="bg-white/20 border border-white/20 text-white px-4 py-2.5 rounded-xl text-sm font-semibold flex-shrink-0">→</button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- FOOTER -->
-      <p class="text-center text-xs text-neutral-400 pb-2">
-        <span id="footerHelp">Need help?</span>
-        <a href="tel:+393355245756" style="color:#737373;margin-left:4px;">+39 335 524 5756</a>
-      </p>
-
-    </section>
-  </main>
+<div id="modalBg" class="modal" onclick="outsideClose(event)">
+  <div class="sheet" id="modalSheet">
+    <div class="sheetHandle"></div>
+    <div class="sheetHeader">
+      <h3 id="modalTitle"></h3>
+      <button class="closeBtn" onclick="closeModal()">×</button>
+    </div>
+    <div class="sheetBody" id="modalBody"></div>
+  </div>
 </div>
 
 <script>
 const SERVER_URL = 'https://shelly-cloud-opener-1.onrender.com';
+const APT = 'scala';
+const HAS_DOOR = true;
 
 const urlP = new URLSearchParams(location.search);
 let phase = 1;
@@ -225,38 +213,27 @@ let lang = (urlP.get('lang') || localStorage.getItem('lang') || (navigator.langu
 const DATA = {
 en:{
   ui:{
-    heroTitle:'Welcome to Rome ✨',
-    heroSub:'Curated luxury hospitality in the heart of Rome.',
-    aptLabel:'Apartment',
-    aptSection:'Apartment Concierge',
-    aptTitle:'Your Apartment 🏠',
-    aptDesc:'Everything related to your apartment, access and assistance.',
-    romeSection:'Rome Experience Concierge',
-    romeTitle:'Explore Rome 🌙',
-    romeDesc:'Restaurants, hidden places, nightlife and curated experiences.',
-    qAddress:'Address', qCheckout:'Checkout', qEmergency:'Emergency',
-    keysTitle:'Digital Keys', keysSub:'Open building & apartment',
-    wifiTitle:'Wi‑Fi', wifiSub:'Network & password',
-    houseTitle:'House Guide', houseSub:'Instructions & tips',
-    helpTitle:'Need Help?', helpSub:'Concierge support',
-    eatTitle:'Eat & Drink', eatSub:'Restaurants, breakfast & aperitivo',
-    tonightTitle:'Tonight in Rome', tonightSub:'Bars, rooftops & evening ideas',
-    tickTitle:'Ticketing', tickSub:'Museums, tours & experiences',
-    transTitle:'Transport', transSub:'Tram, taxi & airports',
+    heroTitle:'Welcome to Rome ✨',heroSub:'Curated luxury hospitality in the heart of Rome.',aptLabel:'Apartment',
+    aptTitle:'Your Apartment 🏠',romeTitle:'Explore Rome 🌙',
+    keysTitle:'Digital Keys',keysSub:'Open building & apartment',
+    wifiTitle:'Wi‑Fi',wifiSub:'Network & password',
+    houseTitle:'House Guide',houseSub:'Instructions & tips',
+    helpTitle:'Need Help?',helpSub:'Concierge support',
+    eatTitle:'Eat & Drink',eatSub:'Restaurants, breakfast & aperitivo',
+    tonightTitle:'Tonight in Rome',tonightSub:'Bars, rooftops & evening ideas',
+    tickTitle:'Ticketing',tickSub:'Museums, tours & experiences',
+    transTitle:'Transport',transSub:'Tram, taxi & airports',
     footerHelp:'Need help?',
     phase1Text:'Complete your online check-in to unlock apartment info.',
     phaseBadge:['📋 After Booking','✅ After Check-in','🗝 Check-in Day'],
     keysPhase2:'Your digital keys will be available from 13:00 on check-in day.',
-    romeAiLabel:'Ask Gemini — Rome & your apartment',
     romeAiPlaceholder:'Gas stove, WiFi, restaurants, Ponte Sisto…',
     romeChips:['Best restaurant in Trastevere','WiFi password','Checkout time','Romantic walk'],
-    open_btn:'OPEN',
-    network_error:'Network error. Call: ',
   },
   apt:{
-    checkin_time:'13:00', checkout_time:'11:00',
+    checkin_time:'13:00',checkout_time:'11:00',
     wifi_note:'The router is on the right side of the living room, resting on a bench. It\'s a black cylindrical device. Turn it to read the SSID and password on the back.',
-    wifi_ssid:'See router label', wifi_password:'See router label',
+    wifi_ssid:'See router label',wifi_password:'See router label',
     water_note:'Tap water is safe and drinkable. Hot water is always available.',
     ac_note:'Air conditioning is available. Please turn it OFF when you leave the apartment.',
     bathroom:'Toilet paper, hand soap, hairdryer, and bath mat.',
@@ -265,103 +242,298 @@ en:{
     washer:'Washing machine manual is in the kitchen drawer. If you can\'t find it, search for the model online and download the PDF.',
     intercom:'At the entrance there are two intercom columns. Yours is in the column closest to the door, on the left side, first from the bottom. After the first door, the second intercom corresponds to unit A/1.',
     phone:'+39 335 524 5756',
-    pharmacy:'Farmacia Trastevere — Viale Trastevere 116 (3 min walk) · Open Mon–Sat 8:30–20:00 · Night pharmacy: Farmacia Notturna, Via Lungaretta 7',
-    hospital:'Ospedale Nuovo Regina Margherita — Via Emilio Morosini 30 (10 min walk) · Emergency: 118 · Pronto Soccorso open 24h',
-    atm:'Intesa Sanpaolo ATM — Piazza Santa Maria in Trastevere (2 min) · UniCredit ATM — Viale Trastevere 108 (4 min)',
-    sim:'Vodafone — Viale Trastevere 143 · TIM — Piazza San Cosimato 70 · Tourist SIM from ~€10',
-    laundry:'OndaBlu self-service laundry — Via della Scala 51 (1 min walk) · Open daily 7:00–22:00',
-    luggage:'Radical Storage Trastevere — book online at radicalstorage.com · Also at Largo Argentina · From €5/day per bag',
-    city_transport:'🚋 Tram 8: stop Belli or Sonnino (~2 min walk) → Campo de\'Fiori (2 stops), Largo Argentina (3 stops), Piazza Venezia (4 stops). 🚌 Bus H: direct to Termini (~25 min). Bus 23: Lungotevere → Vatican. Bus 280: Lungotevere. Night bus nMB. Tickets: €1.50/90 min, €7/day. App: Moovit.',
-    airports:'✈️ Fiumicino (FCO): Tram 8 → Trastevere Station (5 min walk or 1 stop) → FL1 train (~40 min, ~€8, every 15 min). 🛬 Ciampino (CIA): bus Terravision from Termini (~50 min, ~€6 — book at terravision.eu). 🚕 Taxi fixed rate: Fiumicino ~€50–55 (night +€10), Ciampino ~€35. 🚗 Private transfer: Welcome Pickups (welcomepickups.com) — fixed price, English-speaking drivers.',
-    taxi:'Radio Taxi Roma: +39 06 3570 (24h) · Apps: FreeNow, itTaxi · Fixed rate to Fiumicino ~€50–55 · Fixed rate to Ciampino ~€35 · Always confirm fixed rate before getting in.',
-    emergency:'🚑 EU emergency: 112 · Police: 113 · Ambulance: 118 · Fire: 115 · English-speaking doctor: +39 06 488 2371 · 24h vet: +39 06 660 681 · Nearest hospital: Nuovo Regina Margherita, Via Morosini 30 (10 min walk)',
-    eat:'🌅 Breakfast: Bar San Calisto (Piazza San Calisto — classic Roman bar, cheap & beloved) · Biscottificio Innocenti (Via della Luce 21, legendary cookies). 🍝 Lunch/Dinner: Da Teo (Piazza dei Ponziani 7, iconic trattoria, book ahead +39 06 581 8355) · Tonnarello (Via della Paglia 1, lively atmosphere) · Da Carlone (Piazza Sant\'Apollonia 7, neighborhood gem) · Osteria der Belli (Piazza Sant\'Apollonia 11) · La Tavernaccia (Via Giovanni da Castel Bolognese 63) · Nannarella (Via Francesco a Ripa 142, excellent cacio e pepe). 🥗 Vegetarian/Modern: Retrogusto (Via della Mole Gianicolense).',
-    drink:'🍹 Aperitivo: Freni e Frizioni (Via del Politeama 4, ~3 min walk, famous buffet aperitivo, opens 18:30) · Bar San Calisto (Piazza San Calisto 5, cheap & authentic, beloved by locals) · Piazza Trilussa bars (~4 min). 🍷 Wine: VinAllegro (Via delle Fratte di Trastevere 52) · Enoteca Trastevere (Via della Lungaretta 86). 🍦 Gelato: Fior di Luna (Via della Lungaretta 96, artisanal, outstanding).',
-    shop:'🛒 Mercato di San Cosimato (Piazza San Cosimato, Mon–Sat mornings, 5 min) — fresh produce, cheese, flowers. 🥖 Bakery: Le Levain (Via Luigi Santini 22, excellent sourdough). 🧀 Deli: Antica Norcineria Iacozzilli (Via della Scala 62, right next door!). 👗 Vintage: Twice Vintage (Via della Lungaretta) · Carlo Cecchini Leather (handmade bags). 🎪 Porta Portese flea market (Piazza di Porta Portese, Sun 7:00–14:00, 8 min walk).',
-    tonight:'🌙 Aperitivo at Freni e Frizioni (Via del Politeama 4, opens 18:30) or Bar San Calisto. 🌅 Golden hour: walk to Ponte Sisto (~5 min) for a stunning Tiber sunset, then cross to Campo de\'Fiori. 🍷 Wine bar crawl: VinAllegro → Piazza Trilussa bars → cobblestone alleys. ✨ Late night: Santa Maria in Trastevere piazza glows — locals gather until late. 🍦 Nightcap: gelato at Fior di Luna (open late in summer).',
-    visit:'🕍 Santa Maria in Trastevere (2 min, free) — Rome\'s oldest basilica, golden 12th-c mosaics. 🎵 Santa Cecilia in Trastevere (5 min) — Maderno sculpture, Roman excavations below. 🎨 Villa Farnesina (8 min) — Raphael frescoes. 🌿 Orto Botanico (8 min) — tranquil botanical garden. 🖼 Museo di Roma in Trastevere (5 min). 🌄 Gianicolo Hill (12 min) — best panoramic view of Rome.',
-    hidden_gems:'🔍 Fontana del Prigione — a forgotten Michelangelo fountain hidden in a courtyard on Via della Scala (steps from your door). 🏛 Piazza di Piscinula — one of Trastevere\'s most atmospheric tiny squares, medieval tower. 🕌 Tempietto del Bramante — inside San Pietro in Montorio on Gianicolo (free), a perfect Renaissance gem. 🗺 Via dell\'Arco di San Calisto — the most photogenic alley at golden hour.',
-    romantic_walk:'💑 The perfect Trastevere evening (~2h): Start at Via della Scala 17 → stroll to Piazza Santa Maria in Trastevere (glowing mosaics) → Via della Lungaretta → Ponte Sisto at sunset (iconic Tiber view) → Campo de\'Fiori → wine bar → Piazza Navona → return via Ponte Sisto → gelato at Fior di Luna → nightcap on Piazza Trilussa. Total: ~5 km.',
-    checkout_note:'Please switch off ALL lights and AC, close all windows and shutters, leave the keys on the kitchen table, and gently pull the front door shut (it self-locks). Thank you for staying — we hope to host you again!',
-    keys_msg:'Your digital keys have been sent to your email by Hostaway. Check your inbox (and spam folder) — the arrival time you selected during online check-in determines the exact delivery time. Keys are never released before 13:00. Any issues? Call +39 335 524 5756.',
+    pharmacy:'Farmacia Trastevere — Viale Trastevere 116 · Pharmacy near Piazza Trilussa',
+    hospital:'Ospedale Nuovo Regina Margherita — Via Emilio Morosini 30',
+    atm:'Intesa — Piazza Santa Maria in Trastevere · UniCredit — Viale Trastevere 108',
+    sim:'Vodafone — Viale Trastevere 143 · TIM — Piazza San Cosimato 70',
+    laundry:'Self-service laundry — Via della Scala 51',
+    luggage:'Radical Storage — Trastevere area or Largo Argentina (book online)',
+    city_transport:'Tram 8 from Trastevere toward Piazza Venezia. Buses 23 and H connect Vatican, Piazza Venezia and Termini. Trastevere is perfect for walking.',
+    airports:'Fiumicino: Tram 8 to Trastevere Station then FL1 train (~45 min). Ciampino: Terravision bus or taxi. Private: Welcome Pickups.',
+    taxi:'Radio Taxi: +39 06 3570 or FreeNow app.',
+    emergency:'EU emergency: 112 · Police: 113 · Ambulance: 118 · Fire: 115 · English doctor: +39 06 488 2371 · 24h vet: +39 06 660 681',
+    eat:'Da Teo (Piazza dei Ponziani) · La Scala (Piazza della Scala) · Da Carlone (Piazza Sant\'Apollonia) · Osteria Fernanda · Osteria der Belli · Tonnarello · La Tavernaccia · Nannarella.',
+    drink:'VinAllegro (aperitivo) · Freni e Frizioni (cocktails) · Bar San Calisto · La Vite (Piazza San Cosimato).',
+    shop:'Mercato di San Cosimato · Antica Norcineria Iacozzilli · Valzani (pastries) · Le Levain (bakery) · Porta Portese market (Sundays) · Twice Vintage · Carlo Cecchini Leather.',
+    tonight:'Aperitivo at Freni e Frizioni or Bar San Calisto. Sunset walk over Ponte Sisto to Campo de\' Fiori. Wine at VinAllegro. Stroll through Santa Maria in Trastevere at night. Gelato at Fior di Luna.',
+    visit:'Santa Maria in Trastevere · Santa Cecilia · Museo di Roma in Trastevere · Orto Botanico · Villa Farnesina · Gianicolo Hill (panoramic view of Rome).',
+    hidden_gems:'Fontana del Prigione (hidden fountain) · Piazza di Piscinula · Sant\'Egidio church & museum · Bramante\'s Tempietto at Via della Lungara.',
+    romantic_walk:'Via della Scala 17 → Santa Maria in Trastevere → Ponte Sisto at sunset → Campo de\' Fiori → Piazza Navona → gelato at Fior di Luna → Biscottificio Innocenti → return.',
+    checkout_note:'Switch off all lights & AC, close all windows, leave keys on the table, gently close the front door.',
+    keys_msg:'Your digital keys have been sent to your email by Hostaway. Check your inbox — the arrival time you selected during online check-in determines the exact delivery time. Keys are never released before 13:00.',
   },
   drawers:{
-    address:`<h3>📍 Your Address</h3><p><strong>Via della Scala 17</strong><br>Trastevere, Rome 00153</p><p>You are in the <strong>heart of Trastevere</strong> — one of Rome's most atmospheric neighborhoods, famous for cobblestone alleys, Santa Maria in Trastevere, great restaurants and vibrant nightlife.</p><p><a href="https://maps.google.com/?q=Via+della+Scala+17+Roma" target="_blank">📍 Open in Google Maps →</a></p><h3>🚶 Walkable from here</h3><ul><li>Santa Maria in Trastevere — <strong>2 min</strong></li><li>Piazza Trilussa — <strong>4 min</strong></li><li>Freni e Frizioni (aperitivo) — <strong>3 min</strong></li><li>Orto Botanico — <strong>8 min</strong></li><li>Gianicolo Hill panorama — <strong>12 min</strong></li><li>Campo de' Fiori (via Ponte Sisto) — <strong>18 min</strong></li><li>Piazza Navona — <strong>25 min</strong></li></ul>`,
-    emergency:a=>`<h3>🚨 Emergency Numbers</h3><ul><li>🆘 EU Emergency: <strong>112</strong></li><li>🚓 Police: <strong>113</strong></li><li>🚑 Ambulance: <strong>118</strong></li><li>🔥 Fire: <strong>115</strong></li><li>🩺 English-speaking doctor: <strong>+39 06 488 2371</strong></li><li>🐾 24h Vet: <strong>+39 06 660 681</strong></li></ul><h3>🏥 Nearest Hospital</h3><p>Ospedale Nuovo Regina Margherita<br>Via Emilio Morosini 30 — <strong>10 min walk</strong><br>Pronto Soccorso (A&E) open 24h</p><h3>💊 Nearest Pharmacy</h3><p>Farmacia Trastevere — Viale Trastevere 116 (<strong>3 min</strong>)<br>Night pharmacy: Farmacia Notturna, Via Lungaretta 7</p><h3>📞 Your Host</h3><p>Always your first call for any issue:<br><a href="tel:${a.phone}" style="font-weight:600">${a.phone}</a></p>`,
-    checkout:a=>`<h3>⏰ Checkout Time: <strong>${a.checkout_time}</strong></h3><h3>✅ Checkout Checklist</h3><ul><li>Switch off all lights and AC</li><li>Close all windows and shutters</li><li>Leave the keys on the kitchen table</li><li>Gently pull the front door shut (it self-locks)</li></ul><p style="margin-top:8px">${a.checkout_note}</p><h3>🧳 Luggage after checkout?</h3><p>${a.luggage}</p>`,
+    address:`<p><strong>Via della Scala 17</strong><br>Trastevere, Rome<br><br><a href="https://maps.google.com/?q=Via+della+Scala+17+Roma" target="_blank">Open in Google Maps →</a></p>`,
+    emergency:a=>`<p>${a.emergency}</p>`,
+    checkout:a=>`<p>Checkout time: <strong>${a.checkout_time}</strong></p><p>${a.checkout_note}</p>`,
     keys:a=>buildKeysHTML(a),
-    wifi:a=>`<h3>📶 Wi-Fi Connection</h3><p>${a.wifi_note}</p><p>Network: <strong>${a.wifi_ssid}</strong><br>Password: <strong>${a.wifi_password}</strong></p><h3>📱 Useful Apps</h3><ul><li><strong>Moovit</strong> — public transport directions</li><li><strong>FreeNow / itTaxi</strong> — book a taxi</li><li><strong>Google Maps</strong> — offline maps (download Rome before arriving)</li><li><strong>TheFork</strong> — restaurant reservations</li></ul>`,
-    house:a=>`<h3>💧 Water</h3><p>${a.water_note}</p><h3>❄️ Air Conditioning</h3><p>${a.ac_note}</p><h3>🔥 Gas Stove</h3><p>${a.gas}</p><h3>🫧 Washing Machine</h3><p>${a.washer}</p><h3>🚿 Bathroom</h3><p>${a.bathroom}</p><p>Towels: ${a.towels}</p><h3>🚪 Building Access & Intercom</h3><p>${a.intercom}</p><h3>💊 Pharmacy</h3><p>${a.pharmacy}</p><h3>🏥 Hospital</h3><p>${a.hospital}</p><h3>🏧 ATMs nearby</h3><p>${a.atm}</p><h3>📱 SIM Cards</h3><p>${a.sim}</p><h3>🫧 Laundry</h3><p>${a.laundry}</p>`,
-    help:a=>`<div style="text-align:center;padding:16px 0"><div style="font-size:48px;margin-bottom:12px">📞</div><p style="font-weight:600;font-size:15px;margin-bottom:8px">Your concierge is available for any need.</p><p style="font-size:13px;color:#555;margin-bottom:16px">Call or WhatsApp us — we typically reply within minutes.</p><a href="tel:${a.phone}" style="display:block;background:#000;color:#fff;padding:14px;border-radius:16px;font-weight:600;text-decoration:none;text-align:center;font-size:16px">${a.phone}</a><a href="https://wa.me/393355245756" target="_blank" style="display:block;background:#25D366;color:#fff;padding:14px;border-radius:16px;font-weight:600;text-decoration:none;text-align:center;margin-top:8px">💬 WhatsApp us</a></div><h3>🚨 Emergency numbers</h3><ul><li>EU Emergency: 112 · Ambulance: 118 · Police: 113</li><li>English doctor: +39 06 488 2371</li><li>Nearest hospital: Nuovo Regina Margherita, Via Morosini 30</li></ul>`,
-    eat:a=>`<h3>🌅 Breakfast & Morning</h3><p>${a.eat.split('🍝')[0]}</p><h3>🍝 Lunch & Dinner</h3><p>🍝 ${a.eat.split('🍝')[1]}</p><h3>🍹 Aperitivo & Drinks</h3><p>${a.drink}</p><h3>🛒 Shopping & Markets</h3><p>${a.shop}</p>`,
-    tonight:a=>`<h3>🌙 Your Evening in Trastevere</h3><p>${a.tonight}</p><h3>🏛 What to Visit</h3><p>${a.visit}</p><h3>🔍 Hidden Gems</h3><p>${a.hidden_gems}</p><h3>💑 Romantic Walk</h3><p>${a.romantic_walk}</p>`,
-    tickets:`<h3>🏛 Nearby — Free Entry</h3><ul><li><strong>Santa Maria in Trastevere</strong> — free, 2 min walk, open daily</li><li><strong>Santa Cecilia in Trastevere</strong> — church free, crypt €3, 5 min</li><li><strong>Orto Botanico</strong> — <a href="https://www.ortobotanicoroma.it" target="_blank">ortobotanicoroma.it</a> — €8, 8 min walk</li></ul><h3>🎟 Must-Book in Advance</h3><ul><li><strong>Colosseum + Forum</strong>: <a href="https://colosseo.it/en" target="_blank">colosseo.it</a> — €18, book weeks ahead</li><li><strong>Vatican Museums + Sistine Chapel</strong>: <a href="https://tickets.museivaticani.va/" target="_blank">tickets.museivaticani.va</a> — ~€20</li><li><strong>Villa Farnesina</strong> (10 min walk): <a href="https://www.villafarnesina.it" target="_blank">villafarnesina.it</a> — €12, Raphael frescoes</li><li><strong>Borghese Gallery</strong>: <a href="https://www.galleriaborghese.it" target="_blank">galleriaborghese.it</a> — €15, mandatory booking</li></ul><h3>🎫 General Ticketing</h3><ul><li><strong>TicketOne</strong>: <a href="https://www.ticketone.it/en/" target="_blank">ticketone.it</a> — concerts & events</li><li><strong>MAXXI Museum</strong>: <a href="https://www.maxxi.art/en/" target="_blank">maxxi.art</a></li></ul><h3>🚂 Day Trips from Trastevere Station</h3><ul><li><strong>Ostia Antica</strong> — FL5 train (~35 min, €3) — ancient Roman port, stunning</li><li><strong>Orvieto</strong> — Italo/Trenitalia (~1h15, ~€15) — hilltop medieval city</li><li><strong>Naples + Pompeii</strong> — Italo (~1h10, from €19) — day trip possible</li></ul>`,
-    transport:a=>`<h3>🚋 City Transport</h3><p>${a.city_transport}</p><h3>✈️ Airports</h3><p>${a.airports}</p><h3>🚕 Taxi</h3><p>${a.taxi}</p><h3>🧳 Luggage Storage</h3><p><a href="https://radicalstorage.com" target="_blank">radicalstorage.com</a> — Trastevere area or Largo Argentina · From €5/day per bag</p>`,
+    wifi:a=>`<p>${a.wifi_note}</p><p>Network: <strong>${a.wifi_ssid}</strong><br>Password: <strong>${a.wifi_password}</strong></p>`,
+    house:a=>`<h3>Water</h3><p>${a.water_note}</p><h3>Air Conditioning</h3><p>${a.ac_note}</p><h3>Gas Stove 🔥</h3><p>${a.gas}</p><h3>Washing Machine</h3><p>${a.washer}</p><h3>Bathroom</h3><p>${a.bathroom}</p><p>Towels: ${a.towels}</p><h3>Building Access</h3><p>Intercom: ${a.intercom}</p><h3>Nearby Services</h3><p>Pharmacy: ${a.pharmacy}</p><p>Hospital: ${a.hospital}</p><p>ATMs: ${a.atm}</p><p>Laundry: ${a.laundry}</p>`,
+    help:a=>`<div style="text-align:center;padding:16px 0"><div style="font-size:46px;margin-bottom:14px">📞</div><p style="font-weight:600;margin-bottom:14px;color:var(--cream)">Your concierge is available for any need.</p><a href="tel:${a.phone}" style="display:block;background:var(--gold);color:#120d09;padding:13px;border-radius:14px;font-weight:700;text-decoration:none;text-align:center">${a.phone}</a></div>`,
+    eat:a=>`<h3>Restaurants</h3><p>${a.eat}</p><h3>Bars & Aperitivo</h3><p>${a.drink}</p><h3>Shopping & Markets</h3><p>${a.shop}</p>`,
+    tonight:a=>`<p>${a.tonight}</p><h3>What to Visit</h3><p>${a.visit}</p><h3>Hidden Gems</h3><p>${a.hidden_gems}</p><h3>Romantic Walk 💑</h3><p>${a.romantic_walk}</p>`,
+    tickets:`<p><strong>TicketOne</strong>:<br><a href="https://www.ticketone.it/en/" target="_blank">www.ticketone.it</a></p><p><strong>AS Roma</strong>:<br><a href="https://www.asroma.com/en/tickets" target="_blank">www.asroma.com/tickets</a></p><p><strong>SS Lazio</strong>:<br><a href="https://www.sslazio.it/en" target="_blank">www.sslazio.it</a></p><p><strong>Colosseum</strong>:<br><a href="https://colosseo.it/en" target="_blank">colosseo.it</a></p><p><strong>Vatican Museums</strong>:<br><a href="https://tickets.museivaticani.va/" target="_blank">tickets.museivaticani.va</a></p><p><strong>Galleria Borghese</strong>:<br><a href="https://galleriaborghese.cultura.gov.it/" target="_blank">galleriaborghese.cultura.gov.it</a></p><p><strong>MAXXI</strong>:<br><a href="https://www.maxxi.art/en/" target="_blank">maxxi.art</a></p>`,
+    transport:a=>`<h3>City</h3><p>${a.city_transport}</p><h3>Airports</h3><p>${a.airports}</p><h3>Taxi</h3><p>${a.taxi}</p><h3>Luggage storage</h3><p>${a.luggage}</p>`,
   }
 },
 it:{
   ui:{
-    heroTitle:'Benvenuto a Roma ✨',heroSub:'Ospitalità di lusso nel cuore di Roma.',aptLabel:'Appartamento',aptSection:'Concierge Appartamento',aptTitle:'Il Tuo Appartamento 🏠',aptDesc:'Tutto ciò che riguarda il tuo appartamento, accesso e assistenza.',romeSection:'Concierge Esperienza Roma',romeTitle:'Esplora Roma 🌙',romeDesc:'Ristoranti, luoghi nascosti, vita notturna ed esperienze curate.',qAddress:'Indirizzo',qCheckout:'Checkout',qEmergency:'Emergenza',keysTitle:'Chiavi Digitali',keysSub:'Apri edificio e appartamento',wifiTitle:'Wi‑Fi',wifiSub:'Rete e password',houseTitle:'Guida Casa',houseSub:'Istruzioni e consigli',helpTitle:'Hai Bisogno?',helpSub:'Supporto concierge',eatTitle:'Mangiare & Bere',eatSub:'Ristoranti, colazione & aperitivo',tonightTitle:'Stasera a Roma',tonightSub:'Bar, rooftop & idee serali',tickTitle:'Biglietteria',tickSub:'Musei, tour ed esperienze',transTitle:'Trasporti',transSub:'Tram, taxi e aeroporti',footerHelp:'Hai bisogno di aiuto?',phase1Text:'Completa il check-in online per sbloccare le informazioni sull\'appartamento.',phaseBadge:['📋 Dopo la Prenotazione','✅ Dopo il Check-in','🗝 Giorno del Check-in'],keysPhase2:'Le tue chiavi digitali saranno disponibili dalle 13:00 il giorno del check-in.',romeAiLabel:'Chiedi a Gemini — Roma e il tuo appartamento',romeAiPlaceholder:'Gas, WiFi, ristoranti, Ponte Sisto…',romeChips:['Miglior ristorante a Trastevere','Password WiFi','Orario checkout','Passeggiata romantica'],
-    open_btn:'APRI',
-    network_error:'Errore di rete. Chiama: ',
+    heroTitle:'Benvenuto a Roma ✨',heroSub:'Ospitalità di lusso nel cuore di Roma.',aptLabel:'Appartamento',
+    aptTitle:'Il Tuo Appartamento 🏠',romeTitle:'Esplora Roma 🌙',
+    keysTitle:'Chiavi Digitali',keysSub:'Apri edificio e appartamento',
+    wifiTitle:'Wi‑Fi',wifiSub:'Rete e password',
+    houseTitle:'Guida Casa',houseSub:'Istruzioni e consigli',
+    helpTitle:'Hai Bisogno?',helpSub:'Supporto concierge',
+    eatTitle:'Mangiare & Bere',eatSub:'Ristoranti, colazione & aperitivo',
+    tonightTitle:'Stasera a Roma',tonightSub:'Bar, rooftop & idee serali',
+    tickTitle:'Biglietteria',tickSub:'Musei, tour ed esperienze',
+    transTitle:'Trasporti',transSub:'Tram, taxi e aeroporti',
+    footerHelp:'Hai bisogno di aiuto?',
+    phase1Text:"Completa il check-in online per sbloccare le informazioni sull'appartamento.",
+    phaseBadge:['📋 Dopo la Prenotazione','✅ Dopo il Check-in','🗝 Giorno del Check-in'],
+    keysPhase2:'Le tue chiavi digitali saranno disponibili dalle 13:00 il giorno del check-in.',
+    romeAiPlaceholder:'Gas, WiFi, ristoranti, Ponte Sisto…',
+    romeChips:['Miglior ristorante a Trastevere','Password WiFi','Orario checkout','Passeggiata romantica'],
   },
   apt:{
-    checkin_time:'13:00',checkout_time:'11:00',wifi_note:'Il router si trova sul lato destro del soggiorno, appoggiato su una panca. È un dispositivo cilindrico nero. Giralo per leggere SSID e password sul retro.',wifi_ssid:'Vedi etichetta router',wifi_password:'Vedi etichetta router',water_note:'L\'acqua del rubinetto è potabile. L\'acqua calda è sempre disponibile.',ac_note:'Aria condizionata presente. Spegnila sempre quando esci dall\'appartamento.',bathroom:'Carta igienica, sapone per le mani, asciugacapelli e tappetino.',towels:'Per ogni ospite: asciugamano grande e medio. Letti pronti all\'arrivo.',gas:'Davanti al contatore del gas: leva in posizione orizzontale = APERTO, verso il basso = CHIUSO. Per cucinare: scegli il fuoco, premi e gira la manopola, tienila premuta qualche secondo finché la fiamma è stabile, poi rilascia.',washer:'Il manuale della lavatrice è nel cassetto della cucina. Se non lo trovi, cerca il modello online e scarica il manuale PDF.',intercom:'All\'ingresso ci sono due colonne di citofoni. Il tuo si trova nella colonna più vicina alla porta, sul lato sinistro, il primo dal basso. Dopo il primo portone, il secondo citofono corrisponde all\'interno A/1.',phone:'+39 335 524 5756',pharmacy:'Farmacia Trastevere — Viale Trastevere 116 (3 min a piedi) · Orario: Lun–Sab 8:30–20:00 · Farmacia notturna: Via Lungaretta 7',hospital:'Ospedale Nuovo Regina Margherita — Via Emilio Morosini 30 (10 min a piedi) · Pronto Soccorso aperto 24h · Emergenza: 118',atm:'Intesa Sanpaolo ATM — Piazza Santa Maria in Trastevere (2 min) · UniCredit ATM — Viale Trastevere 108 (4 min)',sim:'Vodafone — Viale Trastevere 143 · TIM — Piazza San Cosimato 70 · SIM turistica da ~€10',laundry:'Lavanderia OndaBlu self service — Via della Scala 51 (1 min) · Aperta tutti i giorni 7:00–22:00',luggage:'Radical Storage Trastevere — prenota su radicalstorage.com · Anche a Largo Argentina · Da €5/giorno a borsa',city_transport:'🚋 Tram 8: fermata Belli o Sonnino (~2 min a piedi) → Campo de\'Fiori (2 fermate), Largo Argentina (3 fermate), Piazza Venezia (4 fermate). 🚌 Bus H: diretto a Termini (~25 min). Bus 23: Lungotevere → Vaticano. Bus 280: Lungotevere. Bus notturno: nMB. Biglietti: €1,50/90 min, €7/giorno. App: Moovit.',airports:'✈️ Fiumicino (FCO): Tram 8 → Stazione Trastevere (5 min a piedi o 1 fermata) → treno FL1 (~40 min, ~€8, ogni 15 min). 🛬 Ciampino (CIA): bus Terravision da Termini (~50 min, ~€6 — prenota su terravision.eu). 🚕 Taxi tariffa fissa: Fiumicino ~€50–55 (notturno +€10), Ciampino ~€35. 🚗 Transfer privato: Welcome Pickups (welcomepickups.com) — prezzo fisso, autisti di lingua inglese.',taxi:'Radio Taxi Roma: +39 06 3570 (24h) · App: FreeNow, itTaxi · Tariffa fissa Fiumicino ~€50–55 · Tariffa fissa Ciampino ~€35 · Chiedi sempre la tariffa fissa prima di salire.',emergency:'🚑 Emergenze EU: 112 · Polizia: 113 · Ambulanza: 118 · Vigili del fuoco: 115 · Medico di lingua inglese: +39 06 488 2371 · Veterinario 24h: +39 06 660 681 · Ospedale più vicino: Nuovo Regina Margherita, Via Morosini 30 (10 min a piedi)',eat:'🌅 Colazione: Bar San Calisto (Piazza San Calisto — bar romano autentico, amatissimo dai locali) · Biscottificio Innocenti (Via della Luce 21, biscotti artigianali leggendari). 🍝 Pranzo/Cena: Da Teo (Piazza dei Ponziani 7, trattoria iconica, prenotare — +39 06 581 8355) · Tonnarello (Via della Paglia 1, atmosfera vivace) · Da Carlone (Piazza Sant\'Apollonia 7) · Osteria der Belli (Piazza Sant\'Apollonia 11) · La Tavernaccia (Via Giovanni da Castel Bolognese 63) · Nannarella (Via Francesco a Ripa 142, cacio e pepe eccellente). 🥗 Vegetariano: Retrogusto (Via della Mole Gianicolense).',drink:'🍹 Aperitivo: Freni e Frizioni (Via del Politeama 4, ~3 min a piedi, famoso buffet aperitivo, apre 18:30) · Bar San Calisto (Piazza San Calisto 5, economico e autentico) · Bar di Piazza Trilussa (~4 min). 🍷 Vino: VinAllegro (Via delle Fratte di Trastevere 52) · Enoteca Trastevere (Via della Lungaretta 86). 🍦 Gelato: Fior di Luna (Via della Lungaretta 96, artigianale, eccezionale).',shop:'🛒 Mercato di San Cosimato (Piazza San Cosimato, Lun–Sab mattina, 5 min) — frutta, verdura, formaggi, fiori. 🥖 Panificio: Le Levain (Via Luigi Santini 22, eccellente). 🧀 Salumeria: Antica Norcineria Iacozzilli (Via della Scala 62, proprio accanto!). 👗 Vintage: Twice Vintage (Via della Lungaretta) · Carlo Cecchini Leather (borse artigianali). 🎪 Mercato Porta Portese (Piazza Porta Portese, Dom 7:00–14:00, 8 min a piedi).',tonight:'🌙 Aperitivo da Freni e Frizioni (Via del Politeama 4, apre 18:30) o Bar San Calisto. 🌅 Ora dorata: passeggia fino a Ponte Sisto (~5 min) per un tramonto sul Tevere, poi attraversa verso Campo de\'Fiori. 🍷 Wine bar crawl: VinAllegro → bar di Piazza Trilussa → vicoli illuminati. ✨ Notte tarda: la piazza di Santa Maria in Trastevere splende — i romani si riuniscono fino a tardi. 🍦 Dopocena: gelato da Fior di Luna (aperto fino a tardi in estate).',visit:'🕍 Santa Maria in Trastevere (2 min, ingresso libero) — una delle basiliche più antiche di Roma, mosaici dorati del XII sec. 🎵 Santa Cecilia in Trastevere (5 min) — capolavoro di Maderno, scavi romani sotto. 🎨 Villa Farnesina (8 min) — affreschi di Raffaello. 🌿 Orto Botanico (8 min) — rifugio tranquillo. 🖼 Museo di Roma in Trastevere (5 min). 🌄 Gianicolo (12 min) — miglior panorama di Roma.',hidden_gems:'🔍 Fontana del Prigione — fontana nascosta di Michelangelo in un cortile di Via della Scala (a due passi da casa tua). 🏛 Piazza di Piscinula — una delle piazzette più atmosferiche di Trastevere, torre medievale. 🕌 Tempietto del Bramante — nel San Pietro in Montorio sul Gianicolo (gratuito), gioiello rinascimentale perfetto. 🗺 Via dell\'Arco di San Calisto — il vicolo più fotografato all\'ora dorata.',romantic_walk:'💑 La passeggiata romantica di Trastevere (~2h): Partenza da Via della Scala 17 → Piazza Santa Maria in Trastevere (mosaici illuminati) → Via della Lungaretta → Ponte Sisto al tramonto (vista iconica sul Tevere) → Campo de\'Fiori → wine bar → Piazza Navona → ritorno via Ponte Sisto → gelato da Fior di Luna → dopocena a Piazza Trilussa. Totale: ~5 km.',checkout_note:'Spegni TUTTE le luci e l\'AC, chiudi finestre e persiane, lascia le chiavi sul tavolo della cucina, chiudi delicatamente la porta (si blocca da sola). Grazie per aver soggiornato con noi!',keys_msg:'Le tue chiavi digitali sono state inviate via email da Hostaway. Controlla la casella (anche lo spam) — l\'orario di arrivo indicato nel check-in online determina l\'orario di consegna. Le chiavi non vengono rilasciate prima delle 13:00. Problemi? Chiama +39 335 524 5756.',
+    checkin_time:'13:00',checkout_time:'11:00',
+    wifi_note:"Il router si trova sul lato destro del soggiorno, appoggiato su una panca. È un dispositivo cilindrico nero. Giralo per leggere SSID e password sul retro.",
+    wifi_ssid:'Vedi etichetta router',wifi_password:'Vedi etichetta router',
+    water_note:"L'acqua del rubinetto è potabile. L'acqua calda è sempre disponibile.",
+    ac_note:"Aria condizionata presente. Spegnila sempre quando esci dall'appartamento.",
+    bathroom:'Carta igienica, sapone per le mani, asciugacapelli e tappetino.',
+    towels:"Per ogni ospite: asciugamano grande e medio. Letti pronti all'arrivo.",
+    gas:"Davanti al contatore del gas: leva in posizione orizzontale = APERTO, verso il basso = CHIUSO. Per cucinare: scegli il fuoco, premi e gira la manopola, tienila premuta qualche secondo finché la fiamma è stabile, poi rilascia.",
+    washer:"Il manuale della lavatrice è nel cassetto della cucina. Se non lo trovi, cerca il modello online e scarica il manuale PDF.",
+    intercom:"All'ingresso ci sono due colonne di citofoni. Il tuo si trova nella colonna più vicina alla porta, sul lato sinistro, il primo dal basso. Dopo il primo portone, il secondo citofono corrisponde all'interno A/1.",
+    phone:'+39 335 524 5756',
+    pharmacy:'Farmacia Trastevere — Viale Trastevere 116 · Farmacia vicino Piazza Trilussa',
+    hospital:'Ospedale Nuovo Regina Margherita — Via Emilio Morosini 30',
+    atm:'Intesa — Piazza Santa Maria in Trastevere · UniCredit — Viale Trastevere 108',
+    sim:'Vodafone — Viale Trastevere 143 · TIM — Piazza San Cosimato 70',
+    laundry:'Lavanderia self service — Via della Scala 51',
+    luggage:'Radical Storage — zona Trastevere o Largo Argentina (prenotazione online)',
+    city_transport:'Tram 8 da Trastevere verso Piazza Venezia. Bus 23 e H collegano Vaticano, Piazza Venezia e Termini. Trastevere è perfetta da girare a piedi.',
+    airports:'Fiumicino: Tram 8 fino a Stazione Trastevere poi treno FL1 (~45 min). Ciampino: bus Terravision o taxi. Privato: Welcome Pickups.',
+    taxi:'Radio Taxi: +39 06 3570 o app FreeNow.',
+    emergency:'Emergenze UE: 112 · Polizia: 113 · Ambulanza: 118 · Vigili: 115 · Medico inglese: +39 06 488 2371 · Vet 24h: +39 06 660 681',
+    eat:"Da Teo (Piazza dei Ponziani) · La Scala (Piazza della Scala) · Da Carlone (Piazza Sant'Apollonia) · Osteria Fernanda · Osteria der Belli · Tonnarello · La Tavernaccia · Nannarella.",
+    drink:'VinAllegro (aperitivo) · Freni e Frizioni (cocktail) · Bar San Calisto · La Vite (Piazza San Cosimato).',
+    shop:'Mercato di San Cosimato · Antica Norcineria Iacozzilli · Valzani (dolci) · Le Levain (panificio) · Porta Portese (domenica) · Twice Vintage · Carlo Cecchini Leather.',
+    tonight:"Aperitivo da Freni e Frizioni o Bar San Calisto. Tramonto su Ponte Sisto verso Campo de' Fiori. Vino da VinAllegro. Passeggiata notturna in Santa Maria in Trastevere. Gelato da Fior di Luna.",
+    visit:'Santa Maria in Trastevere · Santa Cecilia · Museo di Roma in Trastevere · Orto Botanico · Villa Farnesina · Gianicolo (panorama su Roma).',
+    hidden_gems:"Fontana del Prigione · Piazza di Piscinula · Chiesa di Sant'Egidio · Tempietto del Bramante in Via della Lungara.",
+    romantic_walk:"Partenza da Via della Scala 17 → Santa Maria in Trastevere → Ponte Sisto al tramonto → Campo de' Fiori → Piazza Navona → gelato da Fior di Luna → Biscottificio Innocenti → rientro.",
+    checkout_note:'Spegni luci e AC, chiudi le finestre, lascia le chiavi sul tavolo, chiudi delicatamente la porta.',
+    keys_msg:"Le tue chiavi digitali sono state inviate via email da Hostaway. Controlla la casella — l'orario di arrivo che hai indicato nel check-in online determina l'orario di consegna. Le chiavi non vengono rilasciate prima delle 13:00.",
   },
   drawers:{
-    address:`<h3>📍 Il tuo indirizzo</h3><p><strong>Via della Scala 17</strong><br>Trastevere, Roma 00153</p><p>Sei nel <strong>cuore di Trastevere</strong> — uno dei quartieri più atmosferici di Roma, famoso per i vicoli in sampietrini, Santa Maria in Trastevere, ottimi ristoranti e vita notturna vivace.</p><p><a href="https://maps.google.com/?q=Via+della+Scala+17+Roma" target="_blank">📍 Apri in Google Maps →</a></p><h3>🚶 Raggiungibile a piedi</h3><ul><li>Santa Maria in Trastevere — <strong>2 min</strong></li><li>Piazza Trilussa — <strong>4 min</strong></li><li>Freni e Frizioni (aperitivo) — <strong>3 min</strong></li><li>Orto Botanico — <strong>8 min</strong></li><li>Gianicolo — <strong>12 min</strong></li><li>Campo de' Fiori (via Ponte Sisto) — <strong>18 min</strong></li><li>Piazza Navona — <strong>25 min</strong></li></ul>`,
-    emergency:a=>`<h3>🚨 Numeri di emergenza</h3><ul><li>🆘 Emergenze EU: <strong>112</strong></li><li>🚓 Polizia: <strong>113</strong></li><li>🚑 Ambulanza: <strong>118</strong></li><li>🔥 Vigili del fuoco: <strong>115</strong></li><li>🩺 Medico di lingua inglese: <strong>+39 06 488 2371</strong></li><li>🐾 Veterinario 24h: <strong>+39 06 660 681</strong></li></ul><h3>🏥 Ospedale più vicino</h3><p>Ospedale Nuovo Regina Margherita<br>Via Emilio Morosini 30 — <strong>10 min a piedi</strong><br>Pronto Soccorso aperto 24h</p><h3>💊 Farmacia più vicina</h3><p>Farmacia Trastevere — Viale Trastevere 116 (<strong>3 min</strong>)<br>Farmacia notturna: Via Lungaretta 7</p><h3>📞 Il tuo host</h3><p>Sempre il primo numero da chiamare per qualsiasi problema:<br><a href="tel:${a.phone}" style="font-weight:600">${a.phone}</a></p>`,checkout:a=>`<h3>⏰ Orario checkout: <strong>${a.checkout_time}</strong></h3><h3>✅ Lista checkout</h3><ul><li>Spegni tutte le luci e l'AC</li><li>Chiudi finestre e persiane</li><li>Lascia le chiavi sul tavolo della cucina</li><li>Chiudi delicatamente la porta (si blocca da sola)</li></ul><p style="margin-top:8px">${a.checkout_note}</p><h3>🧳 Bagagli dopo il checkout?</h3><p>${a.luggage}</p>`,keys:a=>buildKeysHTML(a),wifi:a=>`<h3>📶 Connessione Wi-Fi</h3><p>${a.wifi_note}</p><p>Rete: <strong>${a.wifi_ssid}</strong><br>Password: <strong>${a.wifi_password}</strong></p><h3>📱 App utili</h3><ul><li><strong>Moovit</strong> — indicazioni trasporto pubblico</li><li><strong>FreeNow / itTaxi</strong> — prenota un taxi</li><li><strong>Google Maps</strong> — mappe offline (scarica Roma prima di arrivare)</li><li><strong>TheFork</strong> — prenotazioni ristoranti</li></ul>`,house:a=>`<h3>💧 Acqua</h3><p>${a.water_note}</p><h3>❄️ Aria Condizionata</h3><p>${a.ac_note}</p><h3>🔥 Cucina a gas</h3><p>${a.gas}</p><h3>🫧 Lavatrice</h3><p>${a.washer}</p><h3>🚿 Bagno</h3><p>${a.bathroom}</p><p>Asciugamani: ${a.towels}</p><h3>🚪 Accesso edificio e citofono</h3><p>${a.intercom}</p><h3>💊 Farmacia</h3><p>${a.pharmacy}</p><h3>🏥 Ospedale</h3><p>${a.hospital}</p><h3>🏧 Bancomat vicini</h3><p>${a.atm}</p><h3>📱 SIM</h3><p>${a.sim}</p><h3>🫧 Lavanderia</h3><p>${a.laundry}</p>`,help:a=>`<div style="text-align:center;padding:16px 0"><div style="font-size:48px;margin-bottom:12px">📞</div><p style="font-weight:600;font-size:15px;margin-bottom:8px">Il tuo concierge è disponibile per qualsiasi necessità.</p><p style="font-size:13px;color:#555;margin-bottom:16px">Chiama o scrivi su WhatsApp — rispondiamo in pochi minuti.</p><a href="tel:${a.phone}" style="display:block;background:#000;color:#fff;padding:14px;border-radius:16px;font-weight:600;text-decoration:none;text-align:center;font-size:16px">${a.phone}</a><a href="https://wa.me/393355245756" target="_blank" style="display:block;background:#25D366;color:#fff;padding:14px;border-radius:16px;font-weight:600;text-decoration:none;text-align:center;margin-top:8px">💬 Scrivici su WhatsApp</a></div><h3>🚨 Numeri di emergenza</h3><ul><li>Emergenze EU: 112 · Ambulanza: 118 · Polizia: 113</li><li>Medico inglese: +39 06 488 2371</li><li>Ospedale: Nuovo Regina Margherita, Via Morosini 30</li></ul>`,eat:a=>`<h3>🌅 Colazione & Mattina</h3><p>${a.eat.split('🍝')[0]}</p><h3>🍝 Pranzo & Cena</h3><p>🍝 ${a.eat.split('🍝')[1]}</p><h3>🍹 Aperitivo & Drink</h3><p>${a.drink}</p><h3>🛒 Shopping & Mercati</h3><p>${a.shop}</p>`,tonight:a=>`<h3>🌙 La tua serata a Trastevere</h3><p>${a.tonight}</p><h3>🏛 Cosa visitare</h3><p>${a.visit}</p><h3>🔍 Posti nascosti</h3><p>${a.hidden_gems}</p><h3>💑 Percorso romantico</h3><p>${a.romantic_walk}</p>`,tickets:`<h3>🏛 Vicini — Ingresso gratuito</h3><ul><li><strong>Santa Maria in Trastevere</strong> — gratuito, 2 min a piedi, aperto tutti i giorni</li><li><strong>Santa Cecilia in Trastevere</strong> — chiesa gratuita, cripta €3, 5 min</li><li><strong>Orto Botanico</strong> — <a href="https://www.ortobotanicoroma.it" target="_blank">ortobotanicoroma.it</a> — €8, 8 min a piedi</li></ul><h3>🎟 Da prenotare in anticipo</h3><ul><li><strong>Colosseo + Foro Romano</strong>: <a href="https://colosseo.it/en" target="_blank">colosseo.it</a> — €18, prenota settimane prima</li><li><strong>Musei Vaticani + Cappella Sistina</strong>: <a href="https://tickets.museivaticani.va/" target="_blank">tickets.museivaticani.va</a> — ~€20</li><li><strong>Villa Farnesina</strong> (10 min a piedi): <a href="https://www.villafarnesina.it" target="_blank">villafarnesina.it</a> — €12, affreschi di Raffaello</li><li><strong>Galleria Borghese</strong>: <a href="https://www.galleriaborghese.it" target="_blank">galleriaborghese.it</a> — €15, prenotazione obbligatoria</li></ul><h3>🎫 Biglietteria generale</h3><ul><li><strong>TicketOne</strong>: <a href="https://www.ticketone.it/en/" target="_blank">ticketone.it</a> — concerti ed eventi</li><li><strong>MAXXI</strong>: <a href="https://www.maxxi.art/" target="_blank">maxxi.art</a></li></ul><h3>🚂 Gite da Stazione Trastevere</h3><ul><li><strong>Ostia Antica</strong> — FL5 (~35 min, €3) — porto romano antico</li><li><strong>Orvieto</strong> — Trenitalia (~1h15, ~€15) — città medievale su roccia</li><li><strong>Napoli + Pompei</strong> — Italo (~1h10, da €19) — gita in giornata</li></ul>`,transport:a=>`<h3>🚋 Trasporto urbano</h3><p>${a.city_transport}</p><h3>✈️ Aeroporti</h3><p>${a.airports}</p><h3>🚕 Taxi</h3><p>${a.taxi}</p><h3>🧳 Deposito bagagli</h3><p><a href="https://radicalstorage.com" target="_blank">radicalstorage.com</a> — zona Trastevere o Largo Argentina · Da €5/giorno a borsa</p>`,
+    address:`<p><strong>Via della Scala 17</strong><br>Trastevere, Roma<br><br><a href="https://maps.google.com/?q=Via+della+Scala+17+Roma" target="_blank">Apri in Google Maps →</a></p>`,
+    emergency:a=>`<p>${a.emergency}</p>`,
+    checkout:a=>`<p>Orario checkout: <strong>${a.checkout_time}</strong></p><p>${a.checkout_note}</p>`,
+    keys:a=>buildKeysHTML(a),
+    wifi:a=>`<p>${a.wifi_note}</p><p>Rete: <strong>${a.wifi_ssid}</strong><br>Password: <strong>${a.wifi_password}</strong></p>`,
+    house:a=>`<h3>Acqua</h3><p>${a.water_note}</p><h3>Aria Condizionata</h3><p>${a.ac_note}</p><h3>Gas 🔥</h3><p>${a.gas}</p><h3>Lavatrice</h3><p>${a.washer}</p><h3>Bagno</h3><p>${a.bathroom}</p><p>Asciugamani: ${a.towels}</p><h3>Accesso Edificio</h3><p>Citofono: ${a.intercom}</p><h3>Servizi Vicini</h3><p>Farmacia: ${a.pharmacy}</p><p>Ospedale: ${a.hospital}</p><p>Bancomat: ${a.atm}</p><p>Lavanderia: ${a.laundry}</p>`,
+    help:a=>`<div style="text-align:center;padding:16px 0"><div style="font-size:46px;margin-bottom:14px">📞</div><p style="font-weight:600;margin-bottom:14px;color:var(--cream)">Il tuo concierge è disponibile per qualsiasi necessità.</p><a href="tel:${a.phone}" style="display:block;background:var(--gold);color:#120d09;padding:13px;border-radius:14px;font-weight:700;text-decoration:none;text-align:center">${a.phone}</a></div>`,
+    eat:a=>`<h3>Ristoranti</h3><p>${a.eat}</p><h3>Bar & Aperitivo</h3><p>${a.drink}</p><h3>Shopping & Mercati</h3><p>${a.shop}</p>`,
+    tonight:a=>`<p>${a.tonight}</p><h3>Cosa Visitare</h3><p>${a.visit}</p><h3>Posti Nascosti</h3><p>${a.hidden_gems}</p><h3>Percorso Romantico 💑</h3><p>${a.romantic_walk}</p>`,
+    tickets:`<p><strong>TicketOne</strong>:<br><a href="https://www.ticketone.it/en/" target="_blank">www.ticketone.it</a></p><p><strong>AS Roma</strong>:<br><a href="https://www.asroma.com/en/tickets" target="_blank">www.asroma.com/tickets</a></p><p><strong>SS Lazio</strong>:<br><a href="https://www.sslazio.it/en" target="_blank">www.sslazio.it</a></p><p><strong>Colosseo</strong>:<br><a href="https://colosseo.it/en" target="_blank">colosseo.it</a></p><p><strong>Musei Vaticani</strong>:<br><a href="https://tickets.museivaticani.va/" target="_blank">tickets.museivaticani.va</a></p><p><strong>Galleria Borghese</strong>:<br><a href="https://galleriaborghese.cultura.gov.it/" target="_blank">galleriaborghese.cultura.gov.it</a></p><p><strong>MAXXI</strong>:<br><a href="https://www.maxxi.art/en/" target="_blank">maxxi.art</a></p>`,
+    transport:a=>`<h3>Città</h3><p>${a.city_transport}</p><h3>Aeroporti</h3><p>${a.airports}</p><h3>Taxi</h3><p>${a.taxi}</p><h3>Deposito bagagli</h3><p>${a.luggage}</p>`,
   }
 },
 fr:{
-  ui:{heroTitle:'Bienvenue à Rome ✨',heroSub:'Hospitalité de luxe au cœur de Rome.',aptLabel:'Appartement',aptSection:'Concierge Appartement',aptTitle:'Votre Appartement 🏠',aptDesc:'Tout ce qui concerne votre appartement, accès et assistance.',romeSection:'Concierge Expérience Rome',romeTitle:'Explorer Rome 🌙',romeDesc:'Restaurants, lieux cachés, vie nocturne et expériences sélectionnées.',qAddress:'Adresse',qCheckout:'Départ',qEmergency:'Urgence',keysTitle:'Clés Numériques',keysSub:'Ouvrir l\'immeuble et l\'appartement',wifiTitle:'Wi‑Fi',wifiSub:'Réseau et mot de passe',houseTitle:'Guide Logement',houseSub:'Instructions et conseils',helpTitle:'Besoin d\'aide?',helpSub:'Support concierge',eatTitle:'Manger & Boire',eatSub:'Restaurants, petit-déj & apéritif',tonightTitle:'Ce soir à Rome',tonightSub:'Bars, rooftops & idées soirée',tickTitle:'Billetterie',tickSub:'Musées, visites & expériences',transTitle:'Transport',transSub:'Tram, taxi & aéroports',footerHelp:'Besoin d\'aide?',phase1Text:'Complétez votre check-in en ligne pour débloquer les informations.',phaseBadge:['📋 Après Réservation','✅ Après Check-in','🗝 Jour d\'Arrivée'],keysPhase2:'Vos clés seront disponibles à partir de 13h00 le jour d\'arrivée.',romeAiLabel:'Demandez à Gemini — Rome & votre appartement',romeAiPlaceholder:'Gaz, WiFi, restaurants, Ponte Sisto…',romeChips:['Meilleur restaurant Trastevere','Mot de passe WiFi','Heure de départ','Promenade romantique'],open_btn:'OUVRIR',network_error:'Erreur réseau. Appelez : ',},
-  apt:{checkin_time:'13:00',checkout_time:'11:00',wifi_note:'Le routeur est sur le côté droit du salon, posé sur un banc. Appareil cylindrique noir. Tournez-le pour lire le SSID et le mot de passe au dos.',wifi_ssid:'Voir étiquette routeur',wifi_password:'Voir étiquette routeur',water_note:'L\'eau du robinet est potable. L\'eau chaude est toujours disponible.',ac_note:'Climatisation disponible. Éteignez-la impérativement en sortant de l\'appartement.',bathroom:'Papier toilette, savon pour les mains, tapis de bain et sèche-cheveux.',towels:'Par personne : 1 grande serviette et 1 serviette moyenne. Les lits sont faits à l\'arrivée.',gas:'Devant le compteur de gaz : levier horizontal = OUVERT, pointant vers le bas = FERMÉ. Pour cuisiner : choisissez le brûleur, appuyez et tournez le bouton, maintenez quelques secondes jusqu\'à ce que la flamme soit stable, puis relâchez.',washer:'Le manuel de la machine à laver est dans le tiroir de la cuisine. Si vous ne le trouvez pas, cherchez le modèle en ligne et téléchargez le PDF.',intercom:'À l\'entrée se trouvent deux colonnes d\'interphones. Le vôtre est dans la colonne la plus proche de la porte, côté gauche, premier en partant du bas. Après la première porte, le second interphone correspond à l\'unité A/1.',phone:'+39 335 524 5756',pharmacy:'Farmacia Trastevere — Viale Trastevere 116 (3 min à pied) · Lun–Sam 8h30–20h00 · Pharmacie de nuit : Farmacia Notturna, Via Lungaretta 7',hospital:'Ospedale Nuovo Regina Margherita — Via Emilio Morosini 30 (10 min à pied) · Urgences ouvertes 24h/24 · Urgences : 118',atm:'Intesa Sanpaolo — Piazza Santa Maria in Trastevere (2 min) · UniCredit — Viale Trastevere 108 (4 min)',sim:'Vodafone — Viale Trastevere 143 · TIM — Piazza San Cosimato 70 · SIM touristique à partir de ~10€',laundry:'Laverie OndaBlu — Via della Scala 51 (1 min à pied) · Ouverte tous les jours 7h00–22h00',luggage:'Radical Storage Trastevere — réservez sur radicalstorage.com · Aussi à Largo Argentina · À partir de 5€/jour par sac',city_transport:'🚋 Tram 8 : arrêt Belli ou Sonnino (~2 min à pied) → Campo de\'Fiori (2 arrêts), Largo Argentina (3 arrêts), Piazza Venezia (4 arrêts). 🚌 Bus H : direct vers Termini (~25 min). Bus 23 : Lungotevere → Vatican. Bus 280 : Lungotevere. Bus de nuit : nMB. Tickets : 1,50€/90 min, 7€/jour. Appli : Moovit.',airports:'✈️ Fiumicino (FCO) : Tram 8 → Gare de Trastevere (5 min à pied ou 1 arrêt) → train FL1 (~40 min, ~8€, toutes les 15 min). 🛬 Ciampino (CIA) : bus Terravision depuis Termini (~50 min, ~6€ — réservez sur terravision.eu). 🚕 Taxi tarif fixe : Fiumicino ~50–55€ (nuit +10€), Ciampino ~35€. 🚗 Transfert privé : Welcome Pickups (welcomepickups.com) — prix fixe, chauffeurs anglophones.',taxi:'Radio Taxi Roma : +39 06 3570 (24h) · Applis : FreeNow, itTaxi · Tarif fixe Fiumicino ~50–55€ · Tarif fixe Ciampino ~35€ · Confirmez toujours le tarif fixe avant de monter.',emergency:'🚑 Urgences EU : 112 · Police : 113 · Ambulance : 118 · Pompiers : 115 · Médecin anglophone : +39 06 488 2371 · Vétérinaire 24h : +39 06 660 681 · Hôpital le plus proche : Nuovo Regina Margherita, Via Morosini 30 (10 min à pied)',eat:'🌅 Petit-déjeuner : Bar San Calisto (Piazza San Calisto — bar romain authentique, adoré des locaux) · Biscottificio Innocenti (Via della Luce 21, biscuits artisanaux légendaires). 🍝 Déjeuner/Dîner : Da Teo (Piazza dei Ponziani 7, trattoria iconique, réserver au +39 06 581 8355) · Tonnarello (Via della Paglia 1, ambiance animée) · Da Carlone (Piazza Sant\'Apollonia 7) · Osteria der Belli (Piazza Sant\'Apollonia 11) · La Tavernaccia (Via Giovanni da Castel Bolognese 63) · Nannarella (Via Francesco a Ripa 142, excellent cacio e pepe). 🥗 Végétarien : Retrogusto (Via della Mole Gianicolense).',drink:'🍹 Apéritif : Freni e Frizioni (Via del Politeama 4, ~3 min à pied, célèbre buffet apéritif, ouvert à 18h30) · Bar San Calisto (Piazza San Calisto 5, bon marché et authentique) · Bars Piazza Trilussa (~4 min). 🍷 Vin : VinAllegro (Via delle Fratte di Trastevere 52) · Enoteca Trastevere (Via della Lungaretta 86). 🍦 Gelato : Fior di Luna (Via della Lungaretta 96, artisanal, exceptionnel).',shop:'🛒 Marché de San Cosimato (Piazza San Cosimato, Lun–Sam matin, 5 min) — produits frais, fromages, fleurs. 🥖 Boulangerie : Le Levain (Via Luigi Santini 22, excellent pain au levain). 🧀 Épicerie fine : Antica Norcineria Iacozzilli (Via della Scala 62, juste à côté !). 👗 Vintage : Twice Vintage (Via della Lungaretta) · Carlo Cecchini Leather (sacs artisanaux). 🎪 Marché aux puces Porta Portese (Piazza di Porta Portese, dim. 7h00–14h00, 8 min à pied).',tonight:'🌙 Apéritif chez Freni e Frizioni (Via del Politeama 4, ouvert à 18h30) ou Bar San Calisto. 🌅 Heure dorée : promenade jusqu\'à Ponte Sisto (~5 min) pour un coucher de soleil sur le Tibre, puis rejoignez Campo de\'Fiori. 🍷 Bar à vin : VinAllegro → bars Piazza Trilussa → ruelles éclairées. ✨ Tard le soir : la piazza Santa Maria in Trastevere rayonne — les Romains s\'y retrouvent jusqu\'à tard. 🍦 En guise de digestif : gelato chez Fior di Luna (ouvert tard en été).',visit:'🕍 Santa Maria in Trastevere (2 min, entrée libre) — l\'une des plus anciennes basiliques de Rome, mosaïques dorées du XIIe siècle. 🎵 Santa Cecilia in Trastevere (5 min) — chef-d\'œuvre de Maderno, fouilles romaines en dessous. 🎨 Villa Farnesina (8 min) — fresques de Raphaël. 🌿 Orto Botanico (8 min) — jardin botanique tranquille. 🖼 Museo di Roma in Trastevere (5 min). 🌄 Gianicolo (12 min) — meilleur panorama de Rome.',hidden_gems:'🔍 Fontana del Prigione — une fontaine oubliée de Michel-Ange cachée dans une cour de la Via della Scala (à deux pas de chez vous). 🏛 Piazza di Piscinula — l\'une des places les plus atmosphériques de Trastevere, tour médiévale. 🕌 Tempietto del Bramante — dans San Pietro in Montorio au Gianicolo (gratuit), joyau Renaissance parfait. 🗺 Via dell\'Arco di San Calisto — la ruelle la plus photogénique à l\'heure dorée.',romantic_walk:'💑 La promenade romantique de Trastevere (~2h) : Départ Via della Scala 17 → Piazza Santa Maria in Trastevere (mosaïques lumineuses) → Via della Lungaretta → Ponte Sisto au coucher du soleil (vue iconique sur le Tibre) → Campo de\'Fiori → bar à vin → Piazza Navona → retour via Ponte Sisto → gelato chez Fior di Luna → digestif Piazza Trilussa. Total : ~5 km.',checkout_note:'Éteignez TOUTES les lumières et la climatisation, fermez fenêtres et volets, laissez les clés sur la table de la cuisine, et refermez doucement la porte (elle se verrouille automatiquement). Merci pour votre séjour — nous espérons vous accueillir à nouveau !',keys_msg:'Vos clés numériques ont été envoyées par e-mail via Hostaway. Vérifiez votre boîte de réception (et les spams) — l\'heure d\'arrivée choisie lors du check-in en ligne détermine l\'heure d\'envoi. Les clés ne sont jamais transmises avant 13h00. Un problème ? Appelez le +39 335 524 5756.',},
+  ui:{
+    heroTitle:'Bienvenue à Rome ✨',heroSub:'Hospitalité de luxe au cœur de Rome.',aptLabel:'Appartement',
+    aptTitle:'Votre Appartement 🏠',romeTitle:'Explorer Rome 🌙',
+    keysTitle:'Clés Numériques',keysSub:"Ouvrir l'immeuble et l'appartement",
+    wifiTitle:'Wi‑Fi',wifiSub:'Réseau et mot de passe',
+    houseTitle:'Guide Logement',houseSub:'Instructions et conseils',
+    helpTitle:"Besoin d'aide?",helpSub:'Support concierge',
+    eatTitle:'Manger & Boire',eatSub:'Restaurants, petit-déj & apéritif',
+    tonightTitle:'Ce soir à Rome',tonightSub:'Bars, rooftops & idées soirée',
+    tickTitle:'Billetterie',tickSub:'Musées, visites & expériences',
+    transTitle:'Transport',transSub:'Tram, taxi & aéroports',
+    footerHelp:"Besoin d'aide?",
+    phase1Text:'Complétez votre check-in en ligne pour débloquer les informations.',
+    phaseBadge:["📋 Après Réservation","✅ Après Check-in","🗝 Jour d'Arrivée"],
+    keysPhase2:"Vos clés seront disponibles à partir de 13h00 le jour d'arrivée.",
+    romeAiPlaceholder:'Gaz, WiFi, restaurants, Ponte Sisto…',
+    romeChips:['Meilleur restaurant Trastevere','Mot de passe WiFi','Heure de départ','Promenade romantique'],
+  },
+  apt:{
+    checkin_time:'13:00',checkout_time:'11:00',
+    wifi_note:"Le routeur est sur le côté droit du salon, posé sur un banc. Appareil cylindrique noir. Tournez-le pour lire le SSID et le mot de passe au dos.",
+    wifi_ssid:'Voir étiquette routeur',wifi_password:'Voir étiquette routeur',
+    water_note:"L'eau du robinet est potable. Eau chaude toujours disponible.",
+    ac_note:'Climatisation disponible. Éteignez-la en sortant.',
+    bathroom:'Papier toilette, savon, tapis, sèche-cheveux.',
+    towels:'Par personne: 1 grande et 1 moyenne serviette.',
+    gas:"Devant le compteur de gaz: levier horizontal = OUVERT, vers le bas = FERMÉ. Pour cuisiner: choisissez le brûleur, appuyez et tournez, maintenez quelques secondes jusqu'à flamme stable, relâchez.",
+    washer:"Manuel de la machine à laver dans le tiroir de la cuisine. Cherchez le modèle en ligne si introuvable.",
+    intercom:"À l'entrée deux colonnes d'interphones. Le vôtre est dans la colonne la plus proche de la porte, côté gauche, premier en partant du bas. Après la première porte, le second interphone correspond à l'unité A/1.",
+    phone:'+39 335 524 5756',
+    pharmacy:'Farmacia Trastevere — Viale Trastevere 116',
+    hospital:'Ospedale Nuovo Regina Margherita — Via Emilio Morosini 30',
+    atm:'Intesa — Piazza Santa Maria in Trastevere · UniCredit — Viale Trastevere 108',
+    sim:'Vodafone — Viale Trastevere 143 · TIM — Piazza San Cosimato 70',
+    laundry:'Laverie — Via della Scala 51',
+    luggage:'Radical Storage — Trastevere ou Largo Argentina',
+    city_transport:'Tram 8 depuis Trastevere vers Piazza Venezia. Bus 23 et H vers Vatican, Piazza Venezia et Termini. Trastevere est parfait à pied.',
+    airports:'Fiumicino: Tram 8 → Trastevere puis FL1 (~45 min). Ciampino: bus Terravision ou taxi.',
+    taxi:'Radio Taxi: +39 06 3570 ou FreeNow.',
+    emergency:'Urgences: 112 · Police: 113 · Ambulance: 118 · Pompiers: 115',
+    eat:'Da Teo · La Scala · Da Carlone · Osteria Fernanda · Tonnarello · Nannarella.',
+    drink:'VinAllegro · Freni e Frizioni · Bar San Calisto · La Vite.',
+    shop:'Mercato di San Cosimato · Valzani · Le Levain · Porta Portese (dimanche) · Twice Vintage.',
+    tonight:"Apéritif chez Freni e Frizioni ou San Calisto. Coucher de soleil sur Ponte Sisto vers Campo de' Fiori. Vin chez VinAllegro. Promenade nocturne à Santa Maria in Trastevere.",
+    visit:'Santa Maria in Trastevere · Santa Cecilia · Orto Botanico · Villa Farnesina · Gianicolo.',
+    hidden_gems:"Fontana del Prigione · Piazza di Piscinula · Sant'Egidio · Tempietto de Bramante.",
+    romantic_walk:"Via della Scala 17 → Santa Maria in Trastevere → Ponte Sisto au coucher du soleil → Campo de' Fiori → Piazza Navona → gelato Fior di Luna → retour.",
+    checkout_note:'Éteignez lumières & clim, fermez fenêtres, laissez clés sur table.',
+    keys_msg:'Vos clés ont été envoyées par Hostaway. Jamais avant 13h00.',
+  },
   drawers:{
-    address:`<h3>📍 Votre adresse</h3><p><strong>Via della Scala 17</strong><br>Trastevere, Rome 00153</p><p>Vous êtes au <strong>cœur de Trastevere</strong> — l'un des quartiers les plus atmosphériques de Rome, célèbre pour ses ruelles pavées, Santa Maria in Trastevere, d'excellents restaurants et une vie nocturne animée.</p><p><a href="https://maps.google.com/?q=Via+della+Scala+17+Roma" target="_blank">📍 Ouvrir dans Google Maps →</a></p><h3>🚶 À pied depuis ici</h3><ul><li>Santa Maria in Trastevere — <strong>2 min</strong></li><li>Piazza Trilussa — <strong>4 min</strong></li><li>Freni e Frizioni (apéritif) — <strong>3 min</strong></li><li>Orto Botanico — <strong>8 min</strong></li><li>Gianicolo (panorama) — <strong>12 min</strong></li><li>Campo de' Fiori (via Ponte Sisto) — <strong>18 min</strong></li><li>Piazza Navona — <strong>25 min</strong></li></ul>`,
-    emergency:a=>`<h3>🚨 Numéros d'urgence</h3><ul><li>🆘 Urgences EU : <strong>112</strong></li><li>🚓 Police : <strong>113</strong></li><li>🚑 Ambulance : <strong>118</strong></li><li>🔥 Pompiers : <strong>115</strong></li><li>🩺 Médecin anglophone : <strong>+39 06 488 2371</strong></li><li>🐾 Vétérinaire 24h : <strong>+39 06 660 681</strong></li></ul><h3>🏥 Hôpital le plus proche</h3><p>Ospedale Nuovo Regina Margherita<br>Via Emilio Morosini 30 — <strong>10 min à pied</strong><br>Urgences ouvertes 24h/24</p><h3>💊 Pharmacie la plus proche</h3><p>Farmacia Trastevere — Viale Trastevere 116 (<strong>3 min</strong>)<br>Pharmacie de nuit : Farmacia Notturna, Via Lungaretta 7</p><h3>📞 Votre hôte</h3><p>Appelez-nous en premier pour tout problème :<br><a href="tel:${a.phone}" style="font-weight:600">${a.phone}</a></p>`,
-    checkout:a=>`<h3>⏰ Heure de départ : <strong>${a.checkout_time}</strong></h3><h3>✅ Liste de départ</h3><ul><li>Éteignez toutes les lumières et la climatisation</li><li>Fermez fenêtres et volets</li><li>Laissez les clés sur la table de la cuisine</li><li>Refermez doucement la porte (elle se verrouille automatiquement)</li></ul><p style="margin-top:8px">${a.checkout_note}</p><h3>🧳 Bagages après le départ ?</h3><p>${a.luggage}</p>`,
+    address:`<p><strong>Via della Scala 17</strong><br>Trastevere, Rome<br><br><a href="https://maps.google.com/?q=Via+della+Scala+17+Roma" target="_blank">Ouvrir dans Google Maps →</a></p>`,
+    emergency:a=>`<p>${a.emergency}</p>`,
+    checkout:a=>`<p>Heure de départ: <strong>${a.checkout_time}</strong></p><p>${a.checkout_note}</p>`,
     keys:a=>buildKeysHTML(a),
-    wifi:a=>`<h3>📶 Connexion Wi-Fi</h3><p>${a.wifi_note}</p><p>Réseau : <strong>${a.wifi_ssid}</strong><br>Mot de passe : <strong>${a.wifi_password}</strong></p><h3>📱 Applis utiles</h3><ul><li><strong>Moovit</strong> — transports en commun</li><li><strong>FreeNow / itTaxi</strong> — réserver un taxi</li><li><strong>Google Maps</strong> — cartes hors ligne (téléchargez Rome avant d'arriver)</li><li><strong>TheFork</strong> — réservations de restaurants</li></ul>`,
-    house:a=>`<h3>💧 Eau</h3><p>${a.water_note}</p><h3>❄️ Climatisation</h3><p>${a.ac_note}</p><h3>🔥 Cuisinière à gaz</h3><p>${a.gas}</p><h3>🫧 Machine à laver</h3><p>${a.washer}</p><h3>🚿 Salle de bain</h3><p>${a.bathroom}</p><p>Serviettes : ${a.towels}</p><h3>🚪 Accès immeuble & interphone</h3><p>${a.intercom}</p><h3>💊 Pharmacie</h3><p>${a.pharmacy}</p><h3>🏥 Hôpital</h3><p>${a.hospital}</p><h3>🏧 Distributeurs à proximité</h3><p>${a.atm}</p><h3>📱 Cartes SIM</h3><p>${a.sim}</p><h3>🫧 Laverie</h3><p>${a.laundry}</p>`,
-    help:a=>`<div style="text-align:center;padding:16px 0"><div style="font-size:48px;margin-bottom:12px">📞</div><p style="font-weight:600;font-size:15px;margin-bottom:8px">Votre concierge est disponible pour tout besoin.</p><p style="font-size:13px;color:#555;margin-bottom:16px">Appelez ou écrivez sur WhatsApp — nous répondons en quelques minutes.</p><a href="tel:${a.phone}" style="display:block;background:#000;color:#fff;padding:14px;border-radius:16px;font-weight:600;text-decoration:none;text-align:center;font-size:16px">${a.phone}</a><a href="https://wa.me/393355245756" target="_blank" style="display:block;background:#25D366;color:#fff;padding:14px;border-radius:16px;font-weight:600;text-decoration:none;text-align:center;margin-top:8px">💬 WhatsApp</a></div><h3>🚨 Numéros d'urgence</h3><ul><li>Urgences EU : 112 · Ambulance : 118 · Police : 113</li><li>Médecin anglophone : +39 06 488 2371</li><li>Hôpital : Nuovo Regina Margherita, Via Morosini 30</li></ul>`,
-    eat:a=>`<h3>🌅 Petit-déjeuner & Matin</h3><p>${a.eat.split('🍝')[0]}</p><h3>🍝 Déjeuner & Dîner</h3><p>🍝 ${a.eat.split('🍝')[1]}</p><h3>🍹 Apéritif & Boissons</h3><p>${a.drink}</p><h3>🛒 Shopping & Marchés</h3><p>${a.shop}</p>`,
-    tonight:a=>`<h3>🌙 Votre soirée à Trastevere</h3><p>${a.tonight}</p><h3>🏛 À visiter</h3><p>${a.visit}</p><h3>🔍 Trésors cachés</h3><p>${a.hidden_gems}</p><h3>💑 Promenade romantique</h3><p>${a.romantic_walk}</p>`,
-    tickets:`<h3>🏛 À proximité — Entrée gratuite</h3><ul><li><strong>Santa Maria in Trastevere</strong> — gratuit, 2 min à pied, ouvert tous les jours</li><li><strong>Santa Cecilia in Trastevere</strong> — église gratuite, crypte 3€, 5 min</li><li><strong>Orto Botanico</strong> — <a href="https://www.ortobotanicoroma.it" target="_blank">ortobotanicoroma.it</a> — 8€, 8 min à pied</li></ul><h3>🎟 À réserver à l'avance</h3><ul><li><strong>Colisée + Forum Romain</strong> : <a href="https://colosseo.it/en" target="_blank">colosseo.it</a> — 18€, réservez plusieurs semaines avant</li><li><strong>Musées du Vatican + Chapelle Sixtine</strong> : <a href="https://tickets.museivaticani.va/" target="_blank">tickets.museivaticani.va</a> — ~20€</li><li><strong>Villa Farnesina</strong> (10 min à pied) : <a href="https://www.villafarnesina.it" target="_blank">villafarnesina.it</a> — 12€, fresques de Raphaël</li><li><strong>Galerie Borghèse</strong> : <a href="https://www.galleriaborghese.it" target="_blank">galleriaborghese.it</a> — 15€, réservation obligatoire</li></ul><h3>🎫 Billetterie générale</h3><ul><li><strong>TicketOne</strong> : <a href="https://www.ticketone.it/en/" target="_blank">ticketone.it</a> — concerts et événements</li><li><strong>MAXXI</strong> : <a href="https://www.maxxi.art/" target="_blank">maxxi.art</a></li></ul><h3>🚂 Excursions depuis la Gare de Trastevere</h3><ul><li><strong>Ostia Antica</strong> — FL5 (~35 min, 3€) — port romain antique, époustouflant</li><li><strong>Orvieto</strong> — Trenitalia (~1h15, ~15€) — cité médiévale perchée</li><li><strong>Naples + Pompéi</strong> — Italo (~1h10, à partir de 19€) — possible en journée</li></ul>`,
-    transport:a=>`<h3>🚋 Transports en ville</h3><p>${a.city_transport}</p><h3>✈️ Aéroports</h3><p>${a.airports}</p><h3>🚕 Taxi</h3><p>${a.taxi}</p><h3>🧳 Consigne à bagages</h3><p><a href="https://radicalstorage.com" target="_blank">radicalstorage.com</a> — Trastevere ou Largo Argentina · À partir de 5€/jour par sac</p>`,
+    wifi:a=>`<p>${a.wifi_note}</p><p>Réseau: <strong>${a.wifi_ssid}</strong><br>Mot de passe: <strong>${a.wifi_password}</strong></p>`,
+    house:a=>`<h3>Eau</h3><p>${a.water_note}</p><h3>Climatisation</h3><p>${a.ac_note}</p><h3>Gaz 🔥</h3><p>${a.gas}</p><h3>Machine à laver</h3><p>${a.washer}</p><h3>Salle de bain</h3><p>${a.bathroom}</p><h3>Accès</h3><p>Interphone: ${a.intercom}</p>`,
+    help:a=>`<div style="text-align:center;padding:16px 0"><div style="font-size:46px;margin-bottom:14px">📞</div><p style="font-weight:600;margin-bottom:14px;color:var(--cream)">Votre concierge est disponible.</p><a href="tel:${a.phone}" style="display:block;background:var(--gold);color:#120d09;padding:13px;border-radius:14px;font-weight:700;text-decoration:none;text-align:center">${a.phone}</a></div>`,
+    eat:a=>`<h3>Restaurants</h3><p>${a.eat}</p><h3>Bars</h3><p>${a.drink}</p>`,
+    tonight:a=>`<p>${a.tonight}</p><h3>À voir</h3><p>${a.visit}</p><h3>Promenade Romantique 💑</h3><p>${a.romantic_walk}</p>`,
+    tickets:`<p><strong>TicketOne</strong>:<br><a href="https://www.ticketone.it/en/" target="_blank">www.ticketone.it</a></p><p><strong>Colisée</strong>:<br><a href="https://colosseo.it/en" target="_blank">colosseo.it</a></p><p><strong>Musées du Vatican</strong>:<br><a href="https://tickets.museivaticani.va/" target="_blank">tickets.museivaticani.va</a></p><p><strong>Galerie Borghèse</strong>:<br><a href="https://galleriaborghese.cultura.gov.it/" target="_blank">galleriaborghese.cultura.gov.it</a></p><p><strong>MAXXI</strong>:<br><a href="https://www.maxxi.art/en/" target="_blank">maxxi.art</a></p>`,
+    transport:a=>`<h3>Ville</h3><p>${a.city_transport}</p><h3>Aéroports</h3><p>${a.airports}</p><h3>Taxi</h3><p>${a.taxi}</p>`,
   }
 },
 de:{
-  ui:{heroTitle:'Willkommen in Rom ✨',heroSub:'Kuratierter Luxus im Herzen Roms.',aptLabel:'Apartment',aptSection:'Apartment Concierge',aptTitle:'Ihr Apartment 🏠',aptDesc:'Alles rund um Ihr Apartment, Zugang und Unterstützung.',romeSection:'Rom Erlebnis Concierge',romeTitle:'Rom Entdecken 🌙',romeDesc:'Restaurants, versteckte Orte, Nachtleben und kuratierte Erlebnisse.',qAddress:'Adresse',qCheckout:'Checkout',qEmergency:'Notfall',keysTitle:'Digitale Schlüssel',keysSub:'Gebäude & Apartment öffnen',wifiTitle:'WLAN',wifiSub:'Netzwerk & Passwort',houseTitle:'Hausführer',houseSub:'Anweisungen und Tipps',helpTitle:'Hilfe benötigt?',helpSub:'Concierge-Support',eatTitle:'Essen & Trinken',eatSub:'Restaurants, Frühstück & Aperitif',tonightTitle:'Heute Abend in Rom',tonightSub:'Bars, Rooftops & Abendideen',tickTitle:'Tickets',tickSub:'Museen, Touren & Erlebnisse',transTitle:'Transport',transSub:'Straßenbahn, Taxi & Flughäfen',footerHelp:'Hilfe benötigt?',phase1Text:'Füllen Sie das Online-Check-in aus.',phaseBadge:['📋 Nach Buchung','✅ Nach Check-in','🗝 Check-in-Tag'],keysPhase2:'Schlüssel ab 13:00 Uhr.',romeAiLabel:'Gemini fragen — Rom & Ihr Apartment',romeAiPlaceholder:'Gas, WLAN, Restaurants, Ponte Sisto…',romeChips:['Bestes Restaurant Trastevere','WLAN-Passwort','Checkout-Zeit','Romantischer Spaziergang'],open_btn:'ÖFFNEN',network_error:'Netzwerkfehler. Anrufen: ',},
-  apt:{checkin_time:'13:00',checkout_time:'11:00',wifi_note:'Der Router steht rechts im Wohnzimmer auf einer Bank. Schwarzes zylindrisches Gerät. Drehen, um SSID und Passwort auf der Rückseite zu lesen.',wifi_ssid:'Siehe Router-Etikett',wifi_password:'Siehe Router-Etikett',water_note:'Leitungswasser ist trinkbar. Warmwasser ist immer verfügbar.',ac_note:'Klimaanlage vorhanden. Bitte beim Verlassen der Wohnung unbedingt ausschalten.',bathroom:'Toilettenpapier, Handseife, Badematte und Föhn.',towels:'Pro Gast: 1 großes und 1 mittleres Handtuch. Betten sind bei der Ankunft gemacht.',gas:'Vor dem Gaszähler: Hebel horizontal = OFFEN, nach unten zeigend = GESCHLOSSEN. Zum Kochen: Brenner wählen, Knopf drücken und drehen, einige Sekunden gedrückt halten bis die Flamme stabil ist, dann loslassen.',washer:'Bedienungsanleitung der Waschmaschine in der Küchenschublade. Falls nicht auffindbar, Modell online suchen und PDF herunterladen.',intercom:'Am Eingang gibt es zwei Gegensprechanlagen-Säulen. Ihre befindet sich in der türnächsten Säule, linke Seite, erste von unten. Nach der ersten Tür entspricht die zweite Sprechanlage Einheit A/1.',phone:'+39 335 524 5756',pharmacy:'Farmacia Trastevere — Viale Trastevere 116 (3 Min. zu Fuß) · Mo–Sa 8:30–20:00 · Nachtapotheke: Farmacia Notturna, Via Lungaretta 7',hospital:'Ospedale Nuovo Regina Margherita — Via Emilio Morosini 30 (10 Min. zu Fuß) · Notaufnahme 24h geöffnet · Notruf: 118',atm:'Intesa Sanpaolo — Piazza Santa Maria in Trastevere (2 Min.) · UniCredit — Viale Trastevere 108 (4 Min.)',sim:'Vodafone — Viale Trastevere 143 · TIM — Piazza San Cosimato 70 · Touristen-SIM ab ~10€',laundry:'SB-Waschsalon OndaBlu — Via della Scala 51 (1 Min. zu Fuß) · Täglich 7:00–22:00 geöffnet',luggage:'Radical Storage Trastevere — online buchen auf radicalstorage.com · Auch am Largo Argentina · Ab 5€/Tag pro Tasche',city_transport:'🚋 Straßenbahn 8: Haltestelle Belli oder Sonnino (~2 Min. zu Fuß) → Campo de\'Fiori (2 Haltestellen), Largo Argentina (3), Piazza Venezia (4). 🚌 Bus H: direkt zum Termini (~25 Min.). Bus 23: Lungotevere → Vatikan. Bus 280: Lungotevere. Nachtbus: nMB. Tickets: 1,50€/90 Min., 7€/Tag. App: Moovit.',airports:'✈️ Fiumicino (FCO): Straßenbahn 8 → Bahnhof Trastevere (5 Min. zu Fuß oder 1 Station) → FL1-Zug (~40 Min., ~8€, alle 15 Min.). 🛬 Ciampino (CIA): Terravision-Bus ab Termini (~50 Min., ~6€ — buchen auf terravision.eu). 🚕 Taxi Festpreis: Fiumicino ~50–55€ (Nacht +10€), Ciampino ~35€. 🚗 Privater Transfer: Welcome Pickups (welcomepickups.com) — Festpreis, englischsprachige Fahrer.',taxi:'Radio Taxi Roma: +39 06 3570 (24h) · Apps: FreeNow, itTaxi · Festpreis Fiumicino ~50–55€ · Festpreis Ciampino ~35€ · Immer Festpreis vor dem Einsteigen bestätigen.',emergency:'🚑 EU-Notruf: 112 · Polizei: 113 · Rettung: 118 · Feuerwehr: 115 · Englischsprachiger Arzt: +39 06 488 2371 · 24h-Tierarzt: +39 06 660 681 · Nächstes Krankenhaus: Nuovo Regina Margherita, Via Morosini 30 (10 Min. zu Fuß)',eat:'🌅 Frühstück: Bar San Calisto (Piazza San Calisto — authentische römische Bar, bei Einheimischen sehr beliebt) · Biscottificio Innocenti (Via della Luce 21, legendäre handgemachte Kekse). 🍝 Mittag-/Abendessen: Da Teo (Piazza dei Ponziani 7, Kult-Trattoria, reservieren unter +39 06 581 8355) · Tonnarello (Via della Paglia 1, lebhafte Atmosphäre) · Da Carlone (Piazza Sant\'Apollonia 7) · Osteria der Belli (Piazza Sant\'Apollonia 11) · La Tavernaccia (Via Giovanni da Castel Bolognese 63) · Nannarella (Via Francesco a Ripa 142, ausgezeichnetes Cacio e Pepe). 🥗 Vegetarisch: Retrogusto (Via della Mole Gianicolense).',drink:'🍹 Aperitif: Freni e Frizioni (Via del Politeama 4, ~3 Min. zu Fuß, berühmtes Aperitif-Buffet, öffnet 18:30) · Bar San Calisto (Piazza San Calisto 5, günstig und authentisch) · Bars Piazza Trilussa (~4 Min.). 🍷 Wein: VinAllegro (Via delle Fratte di Trastevere 52) · Enoteca Trastevere (Via della Lungaretta 86). 🍦 Gelato: Fior di Luna (Via della Lungaretta 96, handwerklich, hervorragend).',shop:'🛒 Markt San Cosimato (Piazza San Cosimato, Mo–Sa morgens, 5 Min.) — frisches Gemüse, Käse, Blumen. 🥖 Bäckerei: Le Levain (Via Luigi Santini 22, exzellentes Sauerteigbrot). 🧀 Feinkost: Antica Norcineria Iacozzilli (Via della Scala 62, gleich nebenan!). 👗 Vintage: Twice Vintage (Via della Lungaretta) · Carlo Cecchini Leather (handgemachte Taschen). 🎪 Flohmarkt Porta Portese (Piazza di Porta Portese, So. 7:00–14:00, 8 Min. zu Fuß).',tonight:'🌙 Aperitif bei Freni e Frizioni (Via del Politeama 4, öffnet 18:30) oder Bar San Calisto. 🌅 Goldene Stunde: Spaziergang zur Ponte Sisto (~5 Min.) für einen atemberaubenden Tiber-Sonnenuntergang, dann weiter zum Campo de\'Fiori. 🍷 Weinbar-Tour: VinAllegro → Bars Piazza Trilussa → beleuchtete Gassen. ✨ Spät abends: die Piazza Santa Maria in Trastevere erstrahlt — Römer treffen sich hier bis spät in die Nacht. 🍦 Zum Abschluss: Gelato bei Fior di Luna (im Sommer bis spät geöffnet).',visit:'🕍 Santa Maria in Trastevere (2 Min., kostenlos) — eine der ältesten Basiliken Roms, goldene Mosaiken aus dem 12. Jh. 🎵 Santa Cecilia in Trastevere (5 Min.) — Maderno-Skulptur, römische Ausgrabungen darunter. 🎨 Villa Farnesina (8 Min.) — Raffael-Fresken. 🌿 Orto Botanico (8 Min.) — ruhiger botanischer Garten. 🖼 Museo di Roma in Trastevere (5 Min.). 🌄 Gianicolo-Hügel (12 Min.) — bester Panoramablick auf Rom.',hidden_gems:'🔍 Fontana del Prigione — ein vergessener Michelangelo-Brunnen, versteckt in einem Innenhof der Via della Scala (gleich bei Ihrer Tür). 🏛 Piazza di Piscinula — einer der atmosphärischsten kleinen Plätze Trasteveres, mittelalterlicher Turm. 🕌 Tempietto del Bramante — in San Pietro in Montorio auf dem Gianicolo (kostenlos), ein perfektes Renaissance-Juwel. 🗺 Via dell\'Arco di San Calisto — die fotogenste Gasse zur goldenen Stunde.',romantic_walk:'💑 Der romantische Trastevere-Abend (~2h): Start Via della Scala 17 → Piazza Santa Maria in Trastevere (leuchtende Mosaiken) → Via della Lungaretta → Ponte Sisto bei Sonnenuntergang (ikonischer Tiber-Blick) → Campo de\'Fiori → Weinbar → Piazza Navona → Rückkehr über Ponte Sisto → Gelato bei Fior di Luna → Absacker auf der Piazza Trilussa. Gesamt: ~5 km.',checkout_note:'Bitte ALLE Lichter und Klimaanlage ausschalten, alle Fenster und Läden schließen, Schlüssel auf dem Küchentisch lassen und die Haustür sanft zuziehen (selbst-verriegelnd). Vielen Dank für Ihren Aufenthalt — wir freuen uns, Sie wieder begrüßen zu dürfen!',keys_msg:'Ihre digitalen Schlüssel wurden per E-Mail von Hostaway zugesandt. Bitte Posteingang (und Spam-Ordner) prüfen — die im Online-Check-in gewählte Ankunftszeit bestimmt den genauen Versandzeitpunkt. Schlüssel werden nie vor 13:00 Uhr freigegeben. Probleme? Rufen Sie +39 335 524 5756 an.',},
+  ui:{
+    heroTitle:'Willkommen in Rom ✨',heroSub:'Kuratierter Luxus im Herzen Roms.',aptLabel:'Apartment',
+    aptTitle:'Ihr Apartment 🏠',romeTitle:'Rom Entdecken 🌙',
+    keysTitle:'Digitale Schlüssel',keysSub:'Gebäude & Apartment öffnen',
+    wifiTitle:'WLAN',wifiSub:'Netzwerk & Passwort',
+    houseTitle:'Hausführer',houseSub:'Anweisungen und Tipps',
+    helpTitle:'Hilfe benötigt?',helpSub:'Concierge-Support',
+    eatTitle:'Essen & Trinken',eatSub:'Restaurants, Frühstück & Aperitif',
+    tonightTitle:'Heute Abend in Rom',tonightSub:'Bars, Rooftops & Abendideen',
+    tickTitle:'Tickets',tickSub:'Museen, Touren & Erlebnisse',
+    transTitle:'Transport',transSub:'Straßenbahn, Taxi & Flughäfen',
+    footerHelp:'Hilfe benötigt?',
+    phase1Text:'Online-Check-in ausfüllen um Apartment-Informationen freizuschalten.',
+    phaseBadge:['📋 Nach Buchung','✅ Nach Check-in','🗝 Check-in-Tag'],
+    keysPhase2:'Schlüssel ab 13:00 Uhr am Check-in-Tag verfügbar.',
+    romeAiPlaceholder:'Gas, WLAN, Restaurants, Ponte Sisto…',
+    romeChips:['Bestes Restaurant Trastevere','WLAN-Passwort','Checkout-Zeit','Romantischer Spaziergang'],
+  },
+  apt:{
+    checkin_time:'13:00',checkout_time:'11:00',
+    wifi_note:'Der Router steht rechts im Wohnzimmer auf einer Bank. Schwarzes zylindrisches Gerät. Drehen um SSID und Passwort auf der Rückseite zu lesen.',
+    wifi_ssid:'Siehe Router-Etikett',wifi_password:'Siehe Router-Etikett',
+    water_note:'Leitungswasser trinkbar. Warmwasser immer verfügbar.',
+    ac_note:'Klimaanlage vorhanden. Beim Verlassen ausschalten.',
+    bathroom:'Toilettenpapier, Handseife, Badematte, Föhn.',
+    towels:'Pro Gast: 1 großes und 1 mittleres Handtuch.',
+    gas:'Vor dem Gaszähler: Hebel horizontal = OFFEN, nach unten = GESCHLOSSEN. Zum Kochen: Brenner wählen, drücken und drehen, halten bis Flamme stabil, loslassen.',
+    washer:'Bedienungsanleitung der Waschmaschine in der Küchenschublade.',
+    intercom:'Am Eingang zwei Sprechanlagen-Spalten. Ihre ist in der türnächsten Spalte, linke Seite, erste von unten. Nach der ersten Tür entspricht die zweite Sprechanlage Einheit A/1.',
+    phone:'+39 335 524 5756',
+    pharmacy:'Farmacia Trastevere — Viale Trastevere 116',
+    hospital:'Ospedale Nuovo Regina Margherita — Via Emilio Morosini 30',
+    atm:'Intesa — Piazza Santa Maria in Trastevere · UniCredit — Viale Trastevere 108',
+    sim:'Vodafone — Viale Trastevere 143 · TIM — Piazza San Cosimato 70',
+    laundry:'Waschsalon — Via della Scala 51',
+    luggage:'Radical Storage — Trastevere oder Largo Argentina',
+    city_transport:'Straßenbahn 8 von Trastevere Richtung Piazza Venezia. Busse 23 und H Richtung Vatikan und Termini. Trastevere ist ideal zum Laufen.',
+    airports:'Fiumicino: Straßenbahn 8 → Trastevere dann FL1 (~45 Min.). Ciampino: Terravision-Bus oder Taxi.',
+    taxi:'Radio Taxi: +39 06 3570 oder FreeNow.',
+    emergency:'Notruf: 112 · Polizei: 113 · Rettung: 118 · Feuerwehr: 115',
+    eat:'Da Teo · La Scala · Da Carlone · Osteria Fernanda · Tonnarello · Nannarella.',
+    drink:'VinAllegro · Freni e Frizioni · Bar San Calisto · La Vite.',
+    shop:'Mercato di San Cosimato · Valzani · Porta Portese (sonntags) · Twice Vintage.',
+    tonight:"Aperitif bei Freni e Frizioni oder San Calisto. Sonnenuntergang auf Ponte Sisto. Wein bei VinAllegro. Abendspaziergang bei Santa Maria in Trastevere.",
+    visit:'Santa Maria in Trastevere · Santa Cecilia · Orto Botanico · Villa Farnesina · Gianicolo.',
+    hidden_gems:'Fontana del Prigione · Piazza di Piscinula · Tempietto des Bramante.',
+    romantic_walk:"Via della Scala 17 → Santa Maria in Trastevere → Ponte Sisto bei Sonnenuntergang → Campo de' Fiori → Piazza Navona → Gelato Fior di Luna → Rückkehr.",
+    checkout_note:'Lichter & Klimaanlage ausschalten, Fenster schließen, Schlüssel auf dem Tisch.',
+    keys_msg:'Schlüssel wurden per E-Mail von Hostaway gesendet. Nie vor 13:00 Uhr.',
+  },
   drawers:{
-    address:`<h3>📍 Ihre Adresse</h3><p><strong>Via della Scala 17</strong><br>Trastevere, Rom 00153</p><p>Sie befinden sich im <strong>Herzen von Trastevere</strong> — einem der atmosphärischsten Viertel Roms, bekannt für Kopfsteinpflastergassen, Santa Maria in Trastevere, großartige Restaurants und lebendiges Nachtleben.</p><p><a href="https://maps.google.com/?q=Via+della+Scala+17+Roma" target="_blank">📍 In Google Maps öffnen →</a></p><h3>🚶 Zu Fuß erreichbar</h3><ul><li>Santa Maria in Trastevere — <strong>2 Min.</strong></li><li>Piazza Trilussa — <strong>4 Min.</strong></li><li>Freni e Frizioni (Aperitif) — <strong>3 Min.</strong></li><li>Orto Botanico — <strong>8 Min.</strong></li><li>Gianicolo-Panorama — <strong>12 Min.</strong></li><li>Campo de' Fiori (via Ponte Sisto) — <strong>18 Min.</strong></li><li>Piazza Navona — <strong>25 Min.</strong></li></ul>`,
-    emergency:a=>`<h3>🚨 Notrufnummern</h3><ul><li>🆘 EU-Notruf: <strong>112</strong></li><li>🚓 Polizei: <strong>113</strong></li><li>🚑 Rettung: <strong>118</strong></li><li>🔥 Feuerwehr: <strong>115</strong></li><li>🩺 Englischsprachiger Arzt: <strong>+39 06 488 2371</strong></li><li>🐾 24h-Tierarzt: <strong>+39 06 660 681</strong></li></ul><h3>🏥 Nächstes Krankenhaus</h3><p>Ospedale Nuovo Regina Margherita<br>Via Emilio Morosini 30 — <strong>10 Min. zu Fuß</strong><br>Notaufnahme 24h geöffnet</p><h3>💊 Nächste Apotheke</h3><p>Farmacia Trastevere — Viale Trastevere 116 (<strong>3 Min.</strong>)<br>Nachtapotheke: Farmacia Notturna, Via Lungaretta 7</p><h3>📞 Ihr Gastgeber</h3><p>Erste Anlaufstelle bei jedem Problem:<br><a href="tel:${a.phone}" style="font-weight:600">${a.phone}</a></p>`,
-    checkout:a=>`<h3>⏰ Check-out-Zeit: <strong>${a.checkout_time}</strong></h3><h3>✅ Abreise-Checkliste</h3><ul><li>Alle Lichter und Klimaanlage ausschalten</li><li>Alle Fenster und Läden schließen</li><li>Schlüssel auf dem Küchentisch lassen</li><li>Haustür sanft zuziehen (selbst-verriegelnd)</li></ul><p style="margin-top:8px">${a.checkout_note}</p><h3>🧳 Gepäck nach dem Check-out?</h3><p>${a.luggage}</p>`,
+    address:`<p><strong>Via della Scala 17</strong><br>Trastevere, Rom<br><br><a href="https://maps.google.com/?q=Via+della+Scala+17+Roma" target="_blank">In Google Maps öffnen →</a></p>`,
+    emergency:a=>`<p>${a.emergency}</p>`,
+    checkout:a=>`<p>Check-out: <strong>${a.checkout_time}</strong></p><p>${a.checkout_note}</p>`,
     keys:a=>buildKeysHTML(a),
-    wifi:a=>`<h3>📶 WLAN-Verbindung</h3><p>${a.wifi_note}</p><p>Netzwerk: <strong>${a.wifi_ssid}</strong><br>Passwort: <strong>${a.wifi_password}</strong></p><h3>📱 Nützliche Apps</h3><ul><li><strong>Moovit</strong> — öffentliche Verkehrsmittel</li><li><strong>FreeNow / itTaxi</strong> — Taxi buchen</li><li><strong>Google Maps</strong> — Offline-Karten (Rom vor der Anreise herunterladen)</li><li><strong>TheFork</strong> — Restaurantreservierungen</li></ul>`,
-    house:a=>`<h3>💧 Wasser</h3><p>${a.water_note}</p><h3>❄️ Klimaanlage</h3><p>${a.ac_note}</p><h3>🔥 Gasherd</h3><p>${a.gas}</p><h3>🫧 Waschmaschine</h3><p>${a.washer}</p><h3>🚿 Badezimmer</h3><p>${a.bathroom}</p><p>Handtücher: ${a.towels}</p><h3>🚪 Gebäudezugang & Sprechanlage</h3><p>${a.intercom}</p><h3>💊 Apotheke</h3><p>${a.pharmacy}</p><h3>🏥 Krankenhaus</h3><p>${a.hospital}</p><h3>🏧 Geldautomaten in der Nähe</h3><p>${a.atm}</p><h3>📱 SIM-Karten</h3><p>${a.sim}</p><h3>🫧 Waschsalon</h3><p>${a.laundry}</p>`,
-    help:a=>`<div style="text-align:center;padding:16px 0"><div style="font-size:48px;margin-bottom:12px">📞</div><p style="font-weight:600;font-size:15px;margin-bottom:8px">Ihr Concierge steht für alle Anliegen bereit.</p><p style="font-size:13px;color:#555;margin-bottom:16px">Anrufen oder WhatsApp — wir antworten innerhalb von Minuten.</p><a href="tel:${a.phone}" style="display:block;background:#000;color:#fff;padding:14px;border-radius:16px;font-weight:600;text-decoration:none;text-align:center;font-size:16px">${a.phone}</a><a href="https://wa.me/393355245756" target="_blank" style="display:block;background:#25D366;color:#fff;padding:14px;border-radius:16px;font-weight:600;text-decoration:none;text-align:center;margin-top:8px">💬 WhatsApp</a></div><h3>🚨 Notrufnummern</h3><ul><li>EU-Notruf: 112 · Rettung: 118 · Polizei: 113</li><li>Englischsprachiger Arzt: +39 06 488 2371</li><li>Krankenhaus: Nuovo Regina Margherita, Via Morosini 30</li></ul>`,
-    eat:a=>`<h3>🌅 Frühstück & Morgen</h3><p>${a.eat.split('🍝')[0]}</p><h3>🍝 Mittag & Abend</h3><p>🍝 ${a.eat.split('🍝')[1]}</p><h3>🍹 Aperitif & Getränke</h3><p>${a.drink}</p><h3>🛒 Shopping & Märkte</h3><p>${a.shop}</p>`,
-    tonight:a=>`<h3>🌙 Ihr Abend in Trastevere</h3><p>${a.tonight}</p><h3>🏛 Sehenswürdigkeiten</h3><p>${a.visit}</p><h3>🔍 Geheimtipps</h3><p>${a.hidden_gems}</p><h3>💑 Romantischer Spaziergang</h3><p>${a.romantic_walk}</p>`,
-    tickets:`<h3>🏛 In der Nähe — Kostenlos</h3><ul><li><strong>Santa Maria in Trastevere</strong> — kostenlos, 2 Min. zu Fuß, täglich geöffnet</li><li><strong>Santa Cecilia in Trastevere</strong> — Kirche kostenlos, Krypta 3€, 5 Min.</li><li><strong>Orto Botanico</strong> — <a href="https://www.ortobotanicoroma.it" target="_blank">ortobotanicoroma.it</a> — 8€, 8 Min. zu Fuß</li></ul><h3>🎟 Im Voraus buchen</h3><ul><li><strong>Kolosseum + Forum Romanum</strong>: <a href="https://colosseo.it/en" target="_blank">colosseo.it</a> — 18€, Wochen im Voraus buchen</li><li><strong>Vatikanische Museen + Sixtinische Kapelle</strong>: <a href="https://tickets.museivaticani.va/" target="_blank">tickets.museivaticani.va</a> — ~20€</li><li><strong>Villa Farnesina</strong> (10 Min. zu Fuß): <a href="https://www.villafarnesina.it" target="_blank">villafarnesina.it</a> — 12€, Raffael-Fresken</li><li><strong>Galleria Borghese</strong>: <a href="https://www.galleriaborghese.it" target="_blank">galleriaborghese.it</a> — 15€, Pflichtreservierung</li></ul><h3>🎫 Allgemeine Tickets</h3><ul><li><strong>TicketOne</strong>: <a href="https://www.ticketone.it/en/" target="_blank">ticketone.it</a> — Konzerte & Veranstaltungen</li><li><strong>MAXXI</strong>: <a href="https://www.maxxi.art/" target="_blank">maxxi.art</a></li></ul><h3>🚂 Tagesausflüge ab Bahnhof Trastevere</h3><ul><li><strong>Ostia Antica</strong> — FL5-Zug (~35 Min., 3€) — antiker römischer Hafen</li><li><strong>Orvieto</strong> — Trenitalia (~1h15, ~15€) — mittelalterliche Hügelstadt</li><li><strong>Neapel + Pompeji</strong> — Italo (~1h10, ab 19€) — als Tagesausflug möglich</li></ul>`,
-    transport:a=>`<h3>🚋 Stadtverkehr</h3><p>${a.city_transport}</p><h3>✈️ Flughäfen</h3><p>${a.airports}</p><h3>🚕 Taxi</h3><p>${a.taxi}</p><h3>🧳 Gepäckaufbewahrung</h3><p><a href="https://radicalstorage.com" target="_blank">radicalstorage.com</a> — Trastevere oder Largo Argentina · Ab 5€/Tag pro Tasche</p>`,
+    wifi:a=>`<p>${a.wifi_note}</p><p>Netzwerk: <strong>${a.wifi_ssid}</strong><br>Passwort: <strong>${a.wifi_password}</strong></p>`,
+    house:a=>`<h3>Wasser</h3><p>${a.water_note}</p><h3>Klimaanlage</h3><p>${a.ac_note}</p><h3>Gas 🔥</h3><p>${a.gas}</p><h3>Waschmaschine</h3><p>${a.washer}</p><h3>Badezimmer</h3><p>${a.bathroom}</p><h3>Zugang</h3><p>Sprechanlage: ${a.intercom}</p>`,
+    help:a=>`<div style="text-align:center;padding:16px 0"><div style="font-size:46px;margin-bottom:14px">📞</div><p style="font-weight:600;margin-bottom:14px;color:var(--cream)">Ihr Concierge steht zur Verfügung.</p><a href="tel:${a.phone}" style="display:block;background:var(--gold);color:#120d09;padding:13px;border-radius:14px;font-weight:700;text-decoration:none;text-align:center">${a.phone}</a></div>`,
+    eat:a=>`<h3>Restaurants</h3><p>${a.eat}</p><h3>Bars</h3><p>${a.drink}</p>`,
+    tonight:a=>`<p>${a.tonight}</p><h3>Sehenswürdigkeiten</h3><p>${a.visit}</p><h3>Romantischer Spaziergang 💑</h3><p>${a.romantic_walk}</p>`,
+    tickets:`<p><strong>TicketOne</strong>:<br><a href="https://www.ticketone.it/en/" target="_blank">www.ticketone.it</a></p><p><strong>Kolosseum</strong>:<br><a href="https://colosseo.it/en" target="_blank">colosseo.it</a></p><p><strong>Vatikanische Museen</strong>:<br><a href="https://tickets.museivaticani.va/" target="_blank">tickets.museivaticani.va</a></p><p><strong>Galleria Borghese</strong>:<br><a href="https://galleriaborghese.cultura.gov.it/" target="_blank">galleriaborghese.cultura.gov.it</a></p><p><strong>MAXXI</strong>:<br><a href="https://www.maxxi.art/en/" target="_blank">maxxi.art</a></p>`,
+    transport:a=>`<h3>Stadt</h3><p>${a.city_transport}</p><h3>Flughäfen</h3><p>${a.airports}</p><h3>Taxi</h3><p>${a.taxi}</p>`,
   }
 },
 es:{
-  ui:{heroTitle:'Bienvenido a Roma ✨',heroSub:'Hospitalidad de lujo en el corazón de Roma.',aptLabel:'Apartamento',aptSection:'Conserje Apartamento',aptTitle:'Tu Apartamento 🏠',aptDesc:'Todo lo relacionado con tu apartamento, acceso y asistencia.',romeSection:'Conserje Experiencia Roma',romeTitle:'Explora Roma 🌙',romeDesc:'Restaurantes, lugares escondidos, vida nocturna y experiencias curadas.',qAddress:'Dirección',qCheckout:'Salida',qEmergency:'Emergencia',keysTitle:'Llaves Digitales',keysSub:'Abrir edificio y apartamento',wifiTitle:'Wi‑Fi',wifiSub:'Red y contraseña',houseTitle:'Guía del Piso',houseSub:'Instrucciones y consejos',helpTitle:'¿Necesitas ayuda?',helpSub:'Soporte del conserje',eatTitle:'Comer & Beber',eatSub:'Restaurantes, desayuno & aperitivo',tonightTitle:'Esta noche en Roma',tonightSub:'Bares, rooftops & ideas de noche',tickTitle:'Entradas',tickSub:'Museos, tours y experiencias',transTitle:'Transporte',transSub:'Tranvía, taxi y aeropuertos',footerHelp:'¿Necesitas ayuda?',phase1Text:'Completa el check-in online para desbloquear la información.',phaseBadge:['📋 Tras Reserva','✅ Tras Check-in','🗝 Día del Check-in'],keysPhase2:'Llaves disponibles desde las 13:00.',romeAiLabel:'Pregunta a Gemini — Roma y tu apartamento',romeAiPlaceholder:'Gas, WiFi, restaurantes, Ponte Sisto…',romeChips:['Mejor restaurante Trastevere','Contraseña WiFi','Hora de salida','Paseo romántico'],open_btn:'ABRIR',network_error:'Error de red. Llama al: ',},
-  apt:{checkin_time:'13:00',checkout_time:'11:00',wifi_note:'El router está en el lado derecho del salón, sobre un banco. Dispositivo cilíndrico negro. Gíralo para leer el SSID y la contraseña en la parte posterior.',wifi_ssid:'Ver etiqueta del router',wifi_password:'Ver etiqueta del router',water_note:'El agua del grifo es potable y segura. El agua caliente está siempre disponible.',ac_note:'Aire acondicionado disponible. Por favor, apágalo siempre al salir del apartamento.',bathroom:'Papel higiénico, jabón de manos, alfombrilla de baño y secador de pelo.',towels:'Por huésped: 1 toalla grande y 1 mediana. Las camas están preparadas a la llegada.',gas:'Frente al contador de gas: palanca horizontal = ABIERTO, apuntando hacia abajo = CERRADO. Para cocinar: elige el quemador, presiona y gira el mando, mantenlo presionado unos segundos hasta que la llama sea estable, luego suéltalo.',washer:'El manual de la lavadora está en el cajón de la cocina. Si no lo encuentras, busca el modelo online y descarga el PDF.',intercom:'En la entrada hay dos columnas de porteros automáticos. El tuyo está en la columna más cercana a la puerta, lado izquierdo, el primero desde abajo. Tras la primera puerta, el segundo portero corresponde a la unidad A/1.',phone:'+39 335 524 5756',pharmacy:'Farmacia Trastevere — Viale Trastevere 116 (3 min a pie) · Lun–Sáb 8:30–20:00 · Farmacia de guardia: Farmacia Notturna, Via Lungaretta 7',hospital:'Ospedale Nuovo Regina Margherita — Via Emilio Morosini 30 (10 min a pie) · Urgencias abiertas 24h · Emergencias: 118',atm:'Intesa Sanpaolo — Piazza Santa Maria in Trastevere (2 min) · UniCredit — Viale Trastevere 108 (4 min)',sim:'Vodafone — Viale Trastevere 143 · TIM — Piazza San Cosimato 70 · SIM turística desde ~10€',laundry:'Lavandería autoservicio OndaBlu — Via della Scala 51 (1 min a pie) · Abierta todos los días 7:00–22:00',luggage:'Radical Storage Trastevere — reserva en radicalstorage.com · También en Largo Argentina · Desde 5€/día por bolsa',city_transport:'🚋 Tranvía 8: parada Belli o Sonnino (~2 min a pie) → Campo de\'Fiori (2 paradas), Largo Argentina (3 paradas), Piazza Venezia (4 paradas). 🚌 Bus H: directo a Termini (~25 min). Bus 23: Lungotevere → Vaticano. Bus 280: Lungotevere. Bus nocturno: nMB. Billetes: 1,50€/90 min, 7€/día. App: Moovit.',airports:'✈️ Fiumicino (FCO): Tranvía 8 → Estación Trastevere (5 min a pie o 1 parada) → tren FL1 (~40 min, ~8€, cada 15 min). 🛬 Ciampino (CIA): bus Terravision desde Termini (~50 min, ~6€ — reserva en terravision.eu). 🚕 Taxi tarifa fija: Fiumicino ~50–55€ (noche +10€), Ciampino ~35€. 🚗 Traslado privado: Welcome Pickups (welcomepickups.com) — precio fijo, conductores de habla inglesa.',taxi:'Radio Taxi Roma: +39 06 3570 (24h) · Apps: FreeNow, itTaxi · Tarifa fija Fiumicino ~50–55€ · Tarifa fija Ciampino ~35€ · Confirma siempre la tarifa fija antes de subir.',emergency:'🚑 Emergencias EU: 112 · Policía: 113 · Ambulancia: 118 · Bomberos: 115 · Médico de habla inglesa: +39 06 488 2371 · Veterinario 24h: +39 06 660 681 · Hospital más cercano: Nuovo Regina Margherita, Via Morosini 30 (10 min a pie)',eat:'🌅 Desayuno: Bar San Calisto (Piazza San Calisto — bar romano auténtico, adorado por los locales) · Biscottificio Innocenti (Via della Luce 21, galletas artesanales legendarias). 🍝 Almuerzo/Cena: Da Teo (Piazza dei Ponziani 7, trattoria icónica, reservar al +39 06 581 8355) · Tonnarello (Via della Paglia 1, ambiente animado) · Da Carlone (Piazza Sant\'Apollonia 7) · Osteria der Belli (Piazza Sant\'Apollonia 11) · La Tavernaccia (Via Giovanni da Castel Bolognese 63) · Nannarella (Via Francesco a Ripa 142, excelente cacio e pepe). 🥗 Vegetariano: Retrogusto (Via della Mole Gianicolense).',drink:'🍹 Aperitivo: Freni e Frizioni (Via del Politeama 4, ~3 min a pie, famoso buffet aperitivo, abre a las 18:30) · Bar San Calisto (Piazza San Calisto 5, barato y auténtico) · Bares de Piazza Trilussa (~4 min). 🍷 Vino: VinAllegro (Via delle Fratte di Trastevere 52) · Enoteca Trastevere (Via della Lungaretta 86). 🍦 Gelato: Fior di Luna (Via della Lungaretta 96, artesanal, extraordinario).',shop:'🛒 Mercado di San Cosimato (Piazza San Cosimato, Lun–Sáb por la mañana, 5 min) — productos frescos, quesos, flores. 🥖 Panadería: Le Levain (Via Luigi Santini 22, excelente pan de masa madre). 🧀 Charcutería: Antica Norcineria Iacozzilli (Via della Scala 62, ¡justo al lado!). 👗 Vintage: Twice Vintage (Via della Lungaretta) · Carlo Cecchini Leather (bolsos artesanales). 🎪 Mercadillo Porta Portese (Piazza di Porta Portese, dom. 7:00–14:00, 8 min a pie).',tonight:'🌙 Aperitivo en Freni e Frizioni (Via del Politeama 4, abre a las 18:30) o Bar San Calisto. 🌅 Hora dorada: paseo hasta Ponte Sisto (~5 min) para un atardecer espectacular sobre el Tíber, luego cruza hacia Campo de\'Fiori. 🍷 Ruta de bares de vino: VinAllegro → bares Piazza Trilussa → callejones iluminados. ✨ Noche avanzada: la plaza Santa Maria in Trastevere resplandece — los romanos se reúnen hasta tarde. 🍦 Para terminar: gelato en Fior di Luna (abierto hasta tarde en verano).',visit:'🕍 Santa Maria in Trastevere (2 min, entrada gratuita) — una de las basílicas más antiguas de Roma, mosaicos dorados del siglo XII. 🎵 Santa Cecilia in Trastevere (5 min) — escultura de Maderno, excavaciones romanas debajo. 🎨 Villa Farnesina (8 min) — frescos de Rafael. 🌿 Orto Botanico (8 min) — jardín botánico tranquilo. 🖼 Museo di Roma in Trastevere (5 min). 🌄 Colina del Gianicolo (12 min) — la mejor vista panorámica de Roma.',hidden_gems:'🔍 Fontana del Prigione — una olvidada fuente de Miguel Ángel escondida en un patio de la Via della Scala (a pasos de tu puerta). 🏛 Piazza di Piscinula — una de las plazas más atmosféricas de Trastevere, con torre medieval. 🕌 Tempietto del Bramante — en San Pietro in Montorio en el Gianicolo (gratuito), una joya renacentista perfecta. 🗺 Via dell\'Arco di San Calisto — el callejón más fotogénico a la hora dorada.',romantic_walk:'💑 El paseo romántico de Trastevere (~2h): Salida desde Via della Scala 17 → Piazza Santa Maria in Trastevere (mosaicos luminosos) → Via della Lungaretta → Ponte Sisto al atardecer (vista icónica del Tíber) → Campo de\'Fiori → bar de vinos → Piazza Navona → regreso por Ponte Sisto → gelato en Fior di Luna → copa en Piazza Trilussa. Total: ~5 km.',checkout_note:'Apaga TODAS las luces y el aire acondicionado, cierra todas las ventanas y persianas, deja las llaves en la mesa de la cocina y cierra suavemente la puerta principal (se bloquea sola). ¡Gracias por alojarte con nosotros — esperamos volverte a recibir!',keys_msg:'Tus llaves digitales han sido enviadas por correo electrónico a través de Hostaway. Revisa tu bandeja de entrada (y la carpeta de spam) — la hora de llegada que seleccionaste durante el check-in online determina la hora exacta de entrega. Las llaves nunca se envían antes de las 13:00. ¿Algún problema? Llama al +39 335 524 5756.',},
+  ui:{
+    heroTitle:'Bienvenido a Roma ✨',heroSub:'Hospitalidad de lujo en el corazón de Roma.',aptLabel:'Apartamento',
+    aptTitle:'Tu Apartamento 🏠',romeTitle:'Explora Roma 🌙',
+    keysTitle:'Llaves Digitales',keysSub:'Abrir edificio y apartamento',
+    wifiTitle:'Wi‑Fi',wifiSub:'Red y contraseña',
+    houseTitle:'Guía del Piso',houseSub:'Instrucciones y consejos',
+    helpTitle:'¿Necesitas ayuda?',helpSub:'Soporte del conserje',
+    eatTitle:'Comer & Beber',eatSub:'Restaurantes, desayuno & aperitivo',
+    tonightTitle:'Esta noche en Roma',tonightSub:'Bares, rooftops & ideas de noche',
+    tickTitle:'Entradas',tickSub:'Museos, tours y experiencias',
+    transTitle:'Transporte',transSub:'Tranvía, taxi y aeropuertos',
+    footerHelp:'¿Necesitas ayuda?',
+    phase1Text:'Completa el check-in online para desbloquear la información del apartamento.',
+    phaseBadge:['📋 Tras Reserva','✅ Tras Check-in','🗝 Día del Check-in'],
+    keysPhase2:'Llaves disponibles desde las 13:00 el día del check-in.',
+    romeAiPlaceholder:'Gas, WiFi, restaurantes, Ponte Sisto…',
+    romeChips:['Mejor restaurante Trastevere','Contraseña WiFi','Hora de salida','Paseo romántico'],
+  },
+  apt:{
+    checkin_time:'13:00',checkout_time:'11:00',
+    wifi_note:'El router está en el lado derecho del salón, sobre un banco. Dispositivo cilíndrico negro. Gíralo para leer el SSID y la contraseña en la parte posterior.',
+    wifi_ssid:'Ver etiqueta del router',wifi_password:'Ver etiqueta del router',
+    water_note:'El agua del grifo es potable. Agua caliente siempre disponible.',
+    ac_note:'Aire acondicionado disponible. Apágalo al salir.',
+    bathroom:'Papel higiénico, jabón, alfombrilla, secador.',
+    towels:'Por huésped: 1 toalla grande y 1 mediana.',
+    gas:'Frente al contador de gas: palanca horizontal = ABIERTO, hacia abajo = CERRADO. Para cocinar: elige el quemador, presiona y gira, mantén unos segundos hasta llama estable, suelta.',
+    washer:'Manual de la lavadora en el cajón de la cocina.',
+    intercom:'En la entrada dos columnas de porteros. El tuyo está en la columna más cercana a la puerta, lado izquierdo, primero desde abajo. Tras la primera puerta, el segundo portero corresponde a la unidad A/1.',
+    phone:'+39 335 524 5756',
+    pharmacy:'Farmacia Trastevere — Viale Trastevere 116',
+    hospital:'Ospedale Nuovo Regina Margherita — Via Emilio Morosini 30',
+    atm:'Intesa — Piazza Santa Maria in Trastevere · UniCredit — Viale Trastevere 108',
+    sim:'Vodafone — Viale Trastevere 143 · TIM — Piazza San Cosimato 70',
+    laundry:'Lavandería — Via della Scala 51',
+    luggage:'Radical Storage — Trastevere o Largo Argentina',
+    city_transport:'Tranvía 8 desde Trastevere hacia Piazza Venezia. Autobuses 23 y H hacia Vaticano y Termini. Trastevere es perfecto para caminar.',
+    airports:'Fiumicino: Tranvía 8 → Trastevere luego FL1 (~45 min). Ciampino: bus Terravision o taxi.',
+    taxi:'Radio Taxi: +39 06 3570 o FreeNow.',
+    emergency:'Emergencias: 112 · Policía: 113 · Ambulancia: 118 · Bomberos: 115',
+    eat:'Da Teo · La Scala · Da Carlone · Osteria Fernanda · Tonnarello · Nannarella.',
+    drink:'VinAllegro · Freni e Frizioni · Bar San Calisto · La Vite.',
+    shop:'Mercato di San Cosimato · Valzani · Porta Portese (domingos) · Twice Vintage.',
+    tonight:"Aperitivo en Freni e Frizioni o San Calisto. Atardecer en Ponte Sisto hacia Campo de' Fiori. Vino en VinAllegro. Paseo nocturno en Santa Maria in Trastevere.",
+    visit:'Santa Maria in Trastevere · Santa Cecilia · Orto Botanico · Villa Farnesina · Gianicolo.',
+    hidden_gems:'Fontana del Prigione · Piazza di Piscinula · Tempietto de Bramante.',
+    romantic_walk:"Via della Scala 17 → Santa Maria in Trastevere → Ponte Sisto al atardecer → Campo de' Fiori → Piazza Navona → helado Fior di Luna → regreso.",
+    checkout_note:'Apaga luces y AC, cierra ventanas, deja las llaves en la mesa.',
+    keys_msg:'Tus llaves han sido enviadas por Hostaway. Nunca antes de las 13:00.',
+  },
   drawers:{
-    address:`<h3>📍 Tu dirección</h3><p><strong>Via della Scala 17</strong><br>Trastevere, Roma 00153</p><p>Estás en el <strong>corazón de Trastevere</strong> — uno de los barrios más atmosféricos de Roma, famoso por sus calles adoquinadas, Santa Maria in Trastevere, excelentes restaurantes y vida nocturna vibrante.</p><p><a href="https://maps.google.com/?q=Via+della+Scala+17+Roma" target="_blank">📍 Abrir en Google Maps →</a></p><h3>🚶 A pie desde aquí</h3><ul><li>Santa Maria in Trastevere — <strong>2 min</strong></li><li>Piazza Trilussa — <strong>4 min</strong></li><li>Freni e Frizioni (aperitivo) — <strong>3 min</strong></li><li>Orto Botanico — <strong>8 min</strong></li><li>Gianicolo (panorama) — <strong>12 min</strong></li><li>Campo de' Fiori (por Ponte Sisto) — <strong>18 min</strong></li><li>Piazza Navona — <strong>25 min</strong></li></ul>`,
-    emergency:a=>`<h3>🚨 Números de emergencia</h3><ul><li>🆘 Emergencias EU: <strong>112</strong></li><li>🚓 Policía: <strong>113</strong></li><li>🚑 Ambulancia: <strong>118</strong></li><li>🔥 Bomberos: <strong>115</strong></li><li>🩺 Médico de habla inglesa: <strong>+39 06 488 2371</strong></li><li>🐾 Veterinario 24h: <strong>+39 06 660 681</strong></li></ul><h3>🏥 Hospital más cercano</h3><p>Ospedale Nuovo Regina Margherita<br>Via Emilio Morosini 30 — <strong>10 min a pie</strong><br>Urgencias abiertas 24h</p><h3>💊 Farmacia más cercana</h3><p>Farmacia Trastevere — Viale Trastevere 116 (<strong>3 min</strong>)<br>Farmacia de guardia: Farmacia Notturna, Via Lungaretta 7</p><h3>📞 Tu anfitrión</h3><p>Llámanos primero ante cualquier problema:<br><a href="tel:${a.phone}" style="font-weight:600">${a.phone}</a></p>`,
-    checkout:a=>`<h3>⏰ Hora de salida: <strong>${a.checkout_time}</strong></h3><h3>✅ Lista de salida</h3><ul><li>Apaga todas las luces y el aire acondicionado</li><li>Cierra todas las ventanas y persianas</li><li>Deja las llaves en la mesa de la cocina</li><li>Cierra suavemente la puerta (se bloquea sola)</li></ul><p style="margin-top:8px">${a.checkout_note}</p><h3>🧳 ¿Equipaje después del checkout?</h3><p>${a.luggage}</p>`,
+    address:`<p><strong>Via della Scala 17</strong><br>Trastevere, Roma<br><br><a href="https://maps.google.com/?q=Via+della+Scala+17+Roma" target="_blank">Abrir en Google Maps →</a></p>`,
+    emergency:a=>`<p>${a.emergency}</p>`,
+    checkout:a=>`<p>Hora de salida: <strong>${a.checkout_time}</strong></p><p>${a.checkout_note}</p>`,
     keys:a=>buildKeysHTML(a),
-    wifi:a=>`<h3>📶 Conexión Wi-Fi</h3><p>${a.wifi_note}</p><p>Red: <strong>${a.wifi_ssid}</strong><br>Contraseña: <strong>${a.wifi_password}</strong></p><h3>📱 Apps útiles</h3><ul><li><strong>Moovit</strong> — transporte público</li><li><strong>FreeNow / itTaxi</strong> — reservar un taxi</li><li><strong>Google Maps</strong> — mapas sin conexión (descarga Roma antes de llegar)</li><li><strong>TheFork</strong> — reservas de restaurantes</li></ul>`,
-    house:a=>`<h3>💧 Agua</h3><p>${a.water_note}</p><h3>❄️ Aire Acondicionado</h3><p>${a.ac_note}</p><h3>🔥 Cocina de gas</h3><p>${a.gas}</p><h3>🫧 Lavadora</h3><p>${a.washer}</p><h3>🚿 Baño</h3><p>${a.bathroom}</p><p>Toallas: ${a.towels}</p><h3>🚪 Acceso al edificio & portero</h3><p>${a.intercom}</p><h3>💊 Farmacia</h3><p>${a.pharmacy}</p><h3>🏥 Hospital</h3><p>${a.hospital}</p><h3>🏧 Cajeros automáticos cercanos</h3><p>${a.atm}</p><h3>📱 Tarjetas SIM</h3><p>${a.sim}</p><h3>🫧 Lavandería</h3><p>${a.laundry}</p>`,
-    help:a=>`<div style="text-align:center;padding:16px 0"><div style="font-size:48px;margin-bottom:12px">📞</div><p style="font-weight:600;font-size:15px;margin-bottom:8px">Tu conserje está disponible para cualquier necesidad.</p><p style="font-size:13px;color:#555;margin-bottom:16px">Llámanos o escríbenos por WhatsApp — respondemos en minutos.</p><a href="tel:${a.phone}" style="display:block;background:#000;color:#fff;padding:14px;border-radius:16px;font-weight:600;text-decoration:none;text-align:center;font-size:16px">${a.phone}</a><a href="https://wa.me/393355245756" target="_blank" style="display:block;background:#25D366;color:#fff;padding:14px;border-radius:16px;font-weight:600;text-decoration:none;text-align:center;margin-top:8px">💬 WhatsApp</a></div><h3>🚨 Números de emergencia</h3><ul><li>Emergencias EU: 112 · Ambulancia: 118 · Policía: 113</li><li>Médico de habla inglesa: +39 06 488 2371</li><li>Hospital: Nuovo Regina Margherita, Via Morosini 30</li></ul>`,
-    eat:a=>`<h3>🌅 Desayuno & Mañana</h3><p>${a.eat.split('🍝')[0]}</p><h3>🍝 Almuerzo & Cena</h3><p>🍝 ${a.eat.split('🍝')[1]}</p><h3>🍹 Aperitivo & Bebidas</h3><p>${a.drink}</p><h3>🛒 Compras & Mercados</h3><p>${a.shop}</p>`,
-    tonight:a=>`<h3>🌙 Tu noche en Trastevere</h3><p>${a.tonight}</p><h3>🏛 Qué visitar</h3><p>${a.visit}</p><h3>🔍 Joyas ocultas</h3><p>${a.hidden_gems}</p><h3>💑 Paseo romántico</h3><p>${a.romantic_walk}</p>`,
-    tickets:`<h3>🏛 Cerca — Entrada gratuita</h3><ul><li><strong>Santa Maria in Trastevere</strong> — gratuito, 2 min a pie, abierto todos los días</li><li><strong>Santa Cecilia in Trastevere</strong> — iglesia gratuita, cripta 3€, 5 min</li><li><strong>Orto Botanico</strong> — <a href="https://www.ortobotanicoroma.it" target="_blank">ortobotanicoroma.it</a> — 8€, 8 min a pie</li></ul><h3>🎟 Reservar con antelación</h3><ul><li><strong>Coliseo + Foro Romano</strong>: <a href="https://colosseo.it/en" target="_blank">colosseo.it</a> — 18€, reserva semanas antes</li><li><strong>Museos Vaticanos + Capilla Sixtina</strong>: <a href="https://tickets.museivaticani.va/" target="_blank">tickets.museivaticani.va</a> — ~20€</li><li><strong>Villa Farnesina</strong> (10 min a pie): <a href="https://www.villafarnesina.it" target="_blank">villafarnesina.it</a> — 12€, frescos de Rafael</li><li><strong>Galería Borghese</strong>: <a href="https://www.galleriaborghese.it" target="_blank">galleriaborghese.it</a> — 15€, reserva obligatoria</li></ul><h3>🎫 Taquilla general</h3><ul><li><strong>TicketOne</strong>: <a href="https://www.ticketone.it/en/" target="_blank">ticketone.it</a> — conciertos y eventos</li><li><strong>MAXXI</strong>: <a href="https://www.maxxi.art/" target="_blank">maxxi.art</a></li></ul><h3>🚂 Excursiones desde la Estación Trastevere</h3><ul><li><strong>Ostia Antica</strong> — tren FL5 (~35 min, 3€) — puerto romano antiguo, impresionante</li><li><strong>Orvieto</strong> — Trenitalia (~1h15, ~15€) — ciudad medieval en la cima de un cerro</li><li><strong>Nápoles + Pompeya</strong> — Italo (~1h10, desde 19€) — posible como excursión de un día</li></ul>`,
-    transport:a=>`<h3>🚋 Transporte urbano</h3><p>${a.city_transport}</p><h3>✈️ Aeropuertos</h3><p>${a.airports}</p><h3>🚕 Taxi</h3><p>${a.taxi}</p><h3>🧳 Consigna de equipaje</h3><p><a href="https://radicalstorage.com" target="_blank">radicalstorage.com</a> — Trastevere o Largo Argentina · Desde 5€/día por bolsa</p>`,
+    wifi:a=>`<p>${a.wifi_note}</p><p>Red: <strong>${a.wifi_ssid}</strong><br>Contraseña: <strong>${a.wifi_password}</strong></p>`,
+    house:a=>`<h3>Agua</h3><p>${a.water_note}</p><h3>Aire Acondicionado</h3><p>${a.ac_note}</p><h3>Gas 🔥</h3><p>${a.gas}</p><h3>Lavadora</h3><p>${a.washer}</p><h3>Baño</h3><p>${a.bathroom}</p><h3>Acceso</h3><p>Portero: ${a.intercom}</p>`,
+    help:a=>`<div style="text-align:center;padding:16px 0"><div style="font-size:46px;margin-bottom:14px">📞</div><p style="font-weight:600;margin-bottom:14px;color:var(--cream)">Tu conserje está disponible.</p><a href="tel:${a.phone}" style="display:block;background:var(--gold);color:#120d09;padding:13px;border-radius:14px;font-weight:700;text-decoration:none;text-align:center">${a.phone}</a></div>`,
+    eat:a=>`<h3>Restaurantes</h3><p>${a.eat}</p><h3>Bares</h3><p>${a.drink}</p>`,
+    tonight:a=>`<p>${a.tonight}</p><h3>Qué Visitar</h3><p>${a.visit}</p><h3>Paseo Romántico 💑</h3><p>${a.romantic_walk}</p>`,
+    tickets:`<p><strong>TicketOne</strong>:<br><a href="https://www.ticketone.it/en/" target="_blank">www.ticketone.it</a></p><p><strong>Coliseo</strong>:<br><a href="https://colosseo.it/en" target="_blank">colosseo.it</a></p><p><strong>Museos Vaticanos</strong>:<br><a href="https://tickets.museivaticani.va/" target="_blank">tickets.museivaticani.va</a></p><p><strong>Galería Borghese</strong>:<br><a href="https://galleriaborghese.cultura.gov.it/" target="_blank">galleriaborghese.cultura.gov.it</a></p><p><strong>MAXXI</strong>:<br><a href="https://www.maxxi.art/en/" target="_blank">maxxi.art</a></p>`,
+    transport:a=>`<h3>Ciudad</h3><p>${a.city_transport}</p><h3>Aeropuertos</h3><p>${a.airports}</p><h3>Taxi</h3><p>${a.taxi}</p>`,
   }
 }
 };
@@ -376,315 +548,239 @@ const U = () => DATA[lang].ui;
 const A = () => DATA[lang].apt;
 const D = () => DATA[lang].drawers;
 
-
-
-
-
-const APT = 'scala';
-const HAS_DOOR = true;
-
-/* -- SHELLY DOOR OPENER WITH OTP -- */
-
-let tokenExp = null, tokenJti = null, tokenTgt = null, tokenCid = null;
-if (urlToken) {
-  try {
-    const p = JSON.parse(atob(urlToken.split('.')[1].replace(/-/g,'+').replace(/_/g,'/')));
-    tokenExp = p.exp || null; tokenJti = p.jti || null; tokenTgt = p.tgt || null; tokenCid = p.cid || null;
-  } catch {}
-}
-function tokenValid() { return tokenExp && Date.now() < tokenExp; }
-
-let sessionToken = sessionStorage.getItem('st_scala') || '';
-function sessionValid() {
-  if (!sessionToken) return false;
-  try {
-    const p = JSON.parse(atob(sessionToken.split('.')[1].replace(/-/g,'+').replace(/_/g,'/')));
-    return p.exp && Date.now() < p.exp;
-  } catch { return false; }
-}
-
-let otpSent = false;
-
-const DOOR_LABELS = {
-  en: { building:'🚪 Open Building Door', door:'🗖 Open Apartment Door',
-        send:'Send verification code', codePlaceholder:'6-digit code',
-        verify:'Verify', verifying:'Verifying...', wrongCode:'Wrong code, try again.',
-        sending:'Sending...', codeSent:'Code sent to your registered contact. Enter it below:',
-        expired:'Access expired (24h). Contact:', opening:'Opening...', opened:'Opened!', confirmBuilding:'Open the building door?', confirmDoor:'Open the apartment door?',
-        verifyTitle:'Verify your identity to unlock door access',
-        confirmBuilding:'Open the building door only when you are standing in front of the entrance.',
-        confirmDoor:'Open the apartment door only when you are in front of it.' },
-  it: { building:'🚪 Apri Portone', door:'🗖 Apri Porta Appartamento',
-        send:'Invia codice di verifica', codePlaceholder:'Codice a 6 cifre',
-        verify:'Verifica', verifying:'Verifica...', wrongCode:'Codice errato, riprova.',
-        sending:'Invio...', codeSent:'Codice inviato al tuo contatto. Inseriscilo:',
-        expired:'Accesso scaduto (24h). Chiama:', opening:'Apertura...', opened:'Aperto!',
-        verifyTitle:"Verifica la tua identita per sbloccare l'accesso",
-        confirmBuilding:"Apri il portone solo quando sei davanti all'edificio.",
-        confirmDoor:"Apri la porta solo quando sei davanti all'appartamento." },
-  fr: { building:'🚪 Ouvrir Portail', door:'🗖 Ouvrir Appartement',
-        send:'Envoyer le code', codePlaceholder:'Code 6 chiffres',
-        verify:'Vérifier', verifying:'Vérification...', wrongCode:'Code incorrect.',
-        sending:'Envoi...', codeSent:'Code envoyé à votre contact. Entrez-le:',
-        expired:'Accès expiré (24h). Contactez:', opening:'Ouverture...', opened:'Ouvert!',
-        verifyTitle:'Vérifiez votre identité pour débloquer l accès',
-        confirmBuilding:"Ouvrez le portail uniquement lorsque vous êtes devant l'entrée.",
-        confirmDoor:"Ouvrez la porte uniquement lorsque vous êtes devant l'appartement." },
-  de: { building:'🚪 Gebäude öffnen', door:'🗖 Wohnung öffnen',
-        send:'Zugangscode senden', codePlaceholder:'6-stelliger Code',
-        verify:'Bestätigen', verifying:'Bestätige...', wrongCode:'Falscher Code.',
-        sending:'Sende...', codeSent:'Code gesendet. Bitte eingeben:',
-        expired:'Zugang abgelaufen (24h). Kontakt:', opening:'Öffne...', opened:'Geöffnet!', confirmBuilding:'Gebäudetür öffnen?', confirmDoor:'Wohnungstür öffnen?',
-        verifyTitle:'Identität bestätigen um Zugang freizuschalten',
-        confirmBuilding:'Bitte öffnen Sie das Eingangstor nur, wenn Sie davor stehen.',
-        confirmDoor:'Bitte öffnen Sie die Wohnungstür nur, wenn Sie davor stehen.' },
-  es: { building:'🚪 Abrir Portal', door:'🗖 Abrir Apartamento',
-        send:'Enviar código', codePlaceholder:'Código 6 dígitos',
-        verify:'Verificar', verifying:'Verificando...', wrongCode:'Código incorrecto.',
-        sending:'Enviando...', codeSent:'Código enviado. Intróducelo:',
-        expired:'Acceso expirado (24h). Contacta:', opening:'Abriendo...', opened:'Abierto!', confirmBuilding:'¿Abrir la puerta del edificio?', confirmDoor:'¿Abrir la puerta del apartamento?',
-        verifyTitle:'Verifica tu identidad para desbloquear el acceso',
-        confirmBuilding:'Abre el portal solo cuando estés frente al edificio.',
-        confirmDoor:'Abre la puerta solo cuando estés frente al apartamento.' },
+const EXTRA = {
+  it:{sectionApt:'🏠 Il tuo soggiorno',sectionRome:'🍷 Vivi Roma',aptCardTitle:'Appartamento',aptCardSub:'Indirizzo, checkout, emergenza',assistantTitle:'Il tuo Concierge a Roma',assistantDesc:"Domande sull'appartamento o Roma?",assistantBtn:'APRI IL CONCIERGE',whatsappBtn:'💬 Hai bisogno di aiuto? Scrivimi su WhatsApp'},
+  en:{sectionApt:'🏠 Your Stay',sectionRome:'🍷 Explore Rome',aptCardTitle:'Apartment',aptCardSub:'Address, checkout, emergency',assistantTitle:'Your Rome Concierge',assistantDesc:'Questions about the apartment or Rome?',assistantBtn:'OPEN CONCIERGE',whatsappBtn:'💬 Need help? Message me on WhatsApp'},
+  fr:{sectionApt:'🏠 Votre Séjour',sectionRome:'🍷 Explorer Rome',aptCardTitle:'Appartement',aptCardSub:'Adresse, départ, urgences',assistantTitle:'Votre Concierge à Rome',assistantDesc:"Questions sur l'appartement ou Rome?",assistantBtn:'OUVRIR LE CONCIERGE',whatsappBtn:"💬 Besoin d'aide? Écrivez-moi sur WhatsApp"},
+  de:{sectionApt:'🏠 Ihr Aufenthalt',sectionRome:'🍷 Rom Entdecken',aptCardTitle:'Apartment',aptCardSub:'Adresse, Checkout, Notfall',assistantTitle:'Ihr Concierge in Rom',assistantDesc:'Fragen zur Wohnung oder zu Rom?',assistantBtn:'CONCIERGE ÖFFNEN',whatsappBtn:'💬 Hilfe? WhatsApp schreiben'},
+  es:{sectionApt:'🏠 Tu Estancia',sectionRome:'🍷 Explorar Roma',aptCardTitle:'Apartamento',aptCardSub:'Dirección, salida, emergencias',assistantTitle:'Tu Concierge en Roma',assistantDesc:'¿Preguntas sobre el apartamento o Roma?',assistantBtn:'ABRIR CONCIERGE',whatsappBtn:'💬 ¿Necesitas ayuda? WhatsApp'},
 };
 
-function buildKeysHTML(a) {
-  const lbl = DOOR_LABELS[lang] || DOOR_LABELS.en;
-  const emailSection = `<div style="text-align:center;padding:16px 0"><div style="font-size:48px;margin-bottom:16px">📧</div><p style="font-weight:600;margin-bottom:12px">${a.keys_msg}</p><p style="font-size:12px;color:#aaa;margin-top:16px">${U().footerHelp} <a href="tel:${a.phone}">${a.phone}</a></p></div>`;
-  if (!urlToken) return emailSection;
-  if (!tokenValid()) {
-    return emailSection + `<div style="margin-top:12px;padding:12px;background:#fef2f2;border:1px solid #fca5a5;border-radius:12px;font-size:13px;color:#991b1b;text-align:center">⏱ ${lbl.expired} <a href="tel:${a.phone}">${a.phone}</a></div>`;
-  }
-  const isCheckinToken = tokenTgt && tokenTgt.startsWith('checkin-');
-  if (!isCheckinToken) return emailSection;
-  // Token without cid (owner/test): skip OTP, show buttons directly
-  if (!tokenCid || sessionValid()) {
-    let btns = `<button onclick="shellyOpen('building')" id="open-building-btn" style="width:100%;background:#000;color:#fff;padding:14px;border-radius:16px;font-weight:600;font-size:15px;border:none;cursor:pointer;margin-top:12px">${lbl.building}</button>`;
-    if (HAS_DOOR) btns += `<button onclick="shellyOpen('door')" id="open-door-btn" style="width:100%;background:#1d4ed8;color:#fff;padding:14px;border-radius:16px;font-weight:600;font-size:15px;border:none;cursor:pointer;margin-top:8px">${lbl.door}</button>`;
-    return emailSection + btns;
-  }
-  const otpUI = otpSent
-    ? `<div style="margin-top:16px">
-        <p style="font-size:13px;color:#555;margin-bottom:8px">${lbl.codeSent}</p>
-        <input id="otp-input" type="tel" inputmode="numeric" maxlength="6" placeholder="${lbl.codePlaceholder}"
-          style="width:100%;padding:12px;border:1px solid #ddd;border-radius:12px;font-size:20px;text-align:center;letter-spacing:8px;margin-bottom:8px">
-        <button onclick="verifyOtp()" id="verify-btn" style="width:100%;background:#000;color:#fff;padding:14px;border-radius:16px;font-weight:600;font-size:15px;border:none;cursor:pointer">${lbl.verify}</button>
-        <p id="otp-error" style="font-size:12px;color:#dc2626;margin-top:8px;text-align:center"></p>
-      </div>`
-    : `<div style="margin-top:16px;padding:14px;background:#fafaf9;border:1px solid #eadfce;border-radius:16px;text-align:center">
-        <p style="font-size:13px;color:#555;margin-bottom:12px">🔐 ${lbl.verifyTitle}</p>
-        <button onclick="requestOtp()" id="send-otp-btn" style="width:100%;background:#000;color:#fff;padding:14px;border-radius:16px;font-weight:600;font-size:15px;border:none;cursor:pointer">${lbl.send}</button>
-        <p id="send-otp-error" style="font-size:12px;color:#dc2626;margin-top:8px;text-align:center"></p>
-      </div>`;
-  return emailSection + otpUI;
-}
-
-async function requestOtp() {
-  const btn = document.getElementById('send-otp-btn');
-  const errEl = document.getElementById('send-otp-error');
-  const lbl = DOOR_LABELS[lang] || DOOR_LABELS.en;
-  if (btn) { btn.disabled = true; btn.textContent = lbl.sending; }
-  if (errEl) errEl.textContent = '';
-  const failMsg = {en:'Unable to send code. Please call:',it:'Impossibile inviare il codice. Chiama:',fr:"Impossible d'envoyer le code. Appelez:",de:'Fehler beim Senden. Rufen Sie an:',es:'Error al enviar. Llame:'};
-  try {
-    const r = await fetch(`${SERVER_URL}/checkin/scala/send-otp?t=${urlToken}&lang=${lang}`, { method: 'POST' });
-    const j = await r.json();
-    if (j.ok) { otpSent = true; openDrawer('keys'); }
-    else {
-      if (btn) { btn.disabled = false; btn.textContent = lbl.send; }
-      if (errEl) errEl.textContent = (failMsg[lang] || failMsg.en) + ' ' + A().phone;
-    }
-  } catch {
-    if (btn) { btn.disabled = false; btn.textContent = lbl.send; }
-    if (errEl) errEl.textContent = DATA[lang].ui.network_error + A().phone;
-  }
-}
-
-async function verifyOtp() {
-  const input = document.getElementById('otp-input');
-  const btn = document.getElementById('verify-btn');
-  const errEl = document.getElementById('otp-error');
-  if (!input || !btn) return;
-  const code = input.value.trim();
-  if (code.length < 4) return;
-  btn.disabled = true; btn.textContent = (DOOR_LABELS[lang]||DOOR_LABELS.en).verifying;
-  try {
-    const r = await fetch(`${SERVER_URL}/checkin/scala/verify-otp?t=${urlToken}`, {
-      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ code })
-    });
-    const j = await r.json();
-    if (j.ok && j.st) {
-      sessionToken = j.st;
-      sessionStorage.setItem('st_scala', j.st);
-      otpSent = false;
-      openDrawer('keys');
-    } else {
-      if (errEl) errEl.textContent = (DOOR_LABELS[lang]||DOOR_LABELS.en).wrongCode;
-      btn.disabled = false; btn.textContent = (DOOR_LABELS[lang]||DOOR_LABELS.en).verify;
-    }
-  } catch { btn.disabled = false; }
-}
-
-async function shellyOpen(type) {
-  const lbl = DOOR_LABELS[lang] || DOOR_LABELS.en;
-  const confirmMsg = type === 'building' ? lbl.confirmBuilding : lbl.confirmDoor;
-  if (!confirm(confirmMsg)) return;
-  const btn = document.getElementById(`open-${type}-btn`);
-  if (!btn) return;
-  const orig = btn.textContent;
-  btn.disabled = true; btn.textContent = lbl.opening;
-  try {
-    const endpoint = tokenCid
-      ? `${SERVER_URL}/checkin/scala/open/${type}?t=${urlToken}&st=${sessionToken}`
-      : `${SERVER_URL}/checkin/scala/open-direct/${type}?t=${urlToken}`;
-    const r = await fetch(endpoint, { method: 'POST' });
-    const j = await r.json();
-    if (j.ok) {
-      btn.textContent = lbl.opened; btn.style.background = '#22c55e';
-      setTimeout(() => { btn.textContent = orig; btn.style.background = type==='building'?'#000':'#1d4ed8'; btn.disabled = false; }, 4000);
-    } else if (['otp_required','bad_session_token','session_expired'].includes(j.error)) {
-      sessionToken = ''; sessionStorage.removeItem('st_scala');
-      btn.disabled = false; btn.textContent = orig; openDrawer('keys');
-    } else { btn.textContent = '✗'; btn.disabled = false; setTimeout(() => { btn.textContent = orig; }, 3000); }
-  } catch { btn.textContent = '✗'; btn.disabled = false; setTimeout(() => { btn.textContent = orig; }, 3000); }
-}
-
-function renderUI() {
-  const ui = U();
-  const map = {
-    heroTitle:ui.heroTitle, heroSub:ui.heroSub, aptLabel:ui.aptLabel,
-    phaseBadge:ui.phaseBadge[phase-1]||'',
-    qAddress:ui.qAddress, qCheckout:ui.qCheckout, qEmergency:ui.qEmergency,
-    aptSectionLabel:ui.aptSection, aptSectionTitle:ui.aptTitle, aptSectionDesc:ui.aptDesc,
-    keysTitle:ui.keysTitle, keysSub:ui.keysSub,
-    wifiTitle:ui.wifiTitle, wifiSub:ui.wifiSub,
-    houseTitle:ui.houseTitle, houseSub:ui.houseSub,
-    helpTitle:ui.helpTitle, helpSub:ui.helpSub,
-    romeSectionLabel:ui.romeSection, romeSectionTitle:ui.romeTitle, romeSectionDesc:ui.romeDesc,
-    eatTitle:ui.eatTitle, eatSub:ui.eatSub,
-    tonightTitle:ui.tonightTitle, tonightSub:ui.tonightSub,
-    tickTitle:ui.tickTitle, tickSub:ui.tickSub,
-    transTitle:ui.transTitle, transSub:ui.transSub,
-    footerHelp:ui.footerHelp, phase1Text:ui.phase1Text,
-    romeAiLabel:ui.romeAiLabel,
-  };
-  Object.entries(map).forEach(([id,txt]) => { const el=document.getElementById(id); if(el) el.textContent=txt; });
-  const openBtn = document.getElementById('openBtn'); if(openBtn) openBtn.textContent = ui.open_btn;
-  document.getElementById('romeAiInput').placeholder = ui.romeAiPlaceholder;
-
-  const romeChips = document.getElementById('romeChips');
-  romeChips.innerHTML = '';
-  ui.romeChips.forEach(c => {
-    const b = document.createElement('button');
-    b.style.cssText = 'background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);border-radius:999px;padding:5px 11px;font-size:11px;color:#fff;white-space:nowrap;cursor:pointer';
-    b.textContent = c;
-    b.onclick = () => sendRomeAI(c);
-    romeChips.appendChild(b);
-  });
-
-  document.querySelectorAll('.lb').forEach(b => {
-    b.style.background = b.dataset.lang === lang ? 'rgba(0,0,0,.25)' : 'transparent';
-  });
-
-  loadPhase();
-}
-
-function applyPhase() {
-  document.getElementById('phase1Msg').classList.toggle('hidden', phase !== 1);
-  document.getElementById('aptCards').classList.toggle('hidden', phase < 2);
-  document.getElementById('keysCard').classList.toggle('locked', phase < 3);
-  document.getElementById('checkoutBtn').classList.toggle('locked', phase < 2);
-}
-
-document.getElementById('langNav').addEventListener('click', e => {
-  const btn = e.target.closest('[data-lang]');
-  if (!btn) return;
-  lang = btn.dataset.lang;
-  localStorage.setItem('lang', lang);
-  const u = new URL(location.href);
-  u.searchParams.set('lang', lang);
-  history.replaceState(null,'',u);
-  romeAiHistory = [];
-  renderUI();
-});
-
-const drawerTitles = {
-  address:{en:'📍 Address',it:'📍 Indirizzo',fr:'📍 Adresse',de:'📍 Adresse',es:'📍 Dirección'},
-  emergency:{en:'🚨 Emergency',it:'🚨 Emergenza',fr:'🚨 Urgence',de:'🚨 Notfall',es:'🚨 Emergencia'},
-  checkout:{en:'⏰ Checkout',it:'⏰ Checkout',fr:'⏰ Départ',de:'⏰ Checkout',es:'⏰ Salida'},
-  keys:{en:'🗝 Digital Keys',it:'🗝 Chiavi Digitali',fr:'🗝 Clés Numériques',de:'🗝 Digitale Schlüssel',es:'🗝 Llaves Digitales'},
-  wifi:{en:'📶 Wi‑Fi',it:'📶 Wi‑Fi',fr:'📶 Wi‑Fi',de:'📶 WLAN',es:'📶 Wi‑Fi'},
-  house:{en:'🏠 House Guide',it:'🏠 Guida Casa',fr:'🏠 Guide Logement',de:'🏠 Hausführer',es:'🏠 Guía del Piso'},
-  help:{en:'☎ Need Help?',it:'☎ Hai Bisogno?',fr:'☎ Besoin d\'aide?',de:'☎ Hilfe?',es:'☎ ¿Ayuda?'},
-  eat:{en:'🍝 Eat & Drink',it:'🍝 Mangiare & Bere',fr:'🍝 Manger & Boire',de:'🍝 Essen & Trinken',es:'🍝 Comer & Beber'},
+const MODAL_TITLES = {
+  apt:    {en:'🏠 Apartment',it:'🏠 Appartamento',fr:'🏠 Appartement',de:'🏠 Apartment',es:'🏠 Apartamento'},
+  keys:   {en:'🗝 Digital Keys',it:'🗝 Chiavi Digitali',fr:'🗝 Clés Numériques',de:'🗝 Digitale Schlüssel',es:'🗝 Llaves Digitales'},
+  wifi:   {en:'📶 Wi‑Fi',it:'📶 Wi‑Fi',fr:'📶 Wi‑Fi',de:'📶 WLAN',es:'📶 Wi‑Fi'},
+  house:  {en:'🏠 House Guide',it:'🏠 Guida Casa',fr:'🏠 Guide Logement',de:'🏠 Hausführer',es:'🏠 Guía del Piso'},
+  help:   {en:'☎ Need Help?',it:'☎ Hai Bisogno?',fr:"☎ Besoin d'aide?",de:'☎ Hilfe?',es:'☎ ¿Ayuda?'},
+  eat:    {en:'🍝 Eat & Drink',it:'🍝 Mangiare & Bere',fr:'🍝 Manger & Boire',de:'🍝 Essen & Trinken',es:'🍝 Comer & Beber'},
   tonight:{en:'🌙 Tonight in Rome',it:'🌙 Stasera a Roma',fr:'🌙 Ce soir à Rome',de:'🌙 Heute Abend in Rom',es:'🌙 Esta noche en Roma'},
   tickets:{en:'🎟 Ticketing',it:'🎟 Biglietteria',fr:'🎟 Billetterie',de:'🎟 Tickets',es:'🎟 Entradas'},
   transport:{en:'🚋 Transport',it:'🚋 Trasporti',fr:'🚋 Transport',de:'🚋 Transport',es:'🚋 Transporte'},
+  chat:   {en:'💬 AI Concierge',it:'💬 Concierge AI',fr:'💬 Concierge IA',de:'💬 KI-Concierge',es:'💬 Conserje IA'},
 };
 
-function openDrawer(key) {
+function openModal(key) {
+  const bg = document.getElementById('modalBg');
+  const titleEl = document.getElementById('modalTitle');
+  const body = document.getElementById('modalBody');
+  titleEl.textContent = (MODAL_TITLES[key]||{})[lang] || key;
+  if (key === 'chat') {
+    body.innerHTML = buildAssistantUI();
+    bg.classList.add('open');
+    const inp = document.getElementById('romeAiInput');
+    if (inp) {
+      inp.placeholder = U().romeAiPlaceholder;
+      inp.addEventListener('keydown', e => { if(e.key==='Enter') sendRomeAI(); });
+    }
+    buildChips();
+    return;
+  }
+  if (key === 'apt') {
+    body.innerHTML = buildAptContent();
+    bg.classList.add('open');
+    return;
+  }
   const d = D()[key];
   if (!d) return;
-  document.getElementById('drawerTitle').textContent = (drawerTitles[key]||{})[lang] || key;
-  document.getElementById('drawerBody').innerHTML = typeof d === 'function' ? d(A()) : d;
-  document.getElementById('drawer').classList.add('open');
-  document.getElementById('overlay').classList.add('open');
+  body.innerHTML = typeof d === 'function' ? d(A()) : d;
+  bg.classList.add('open');
 }
-function closeDrawer() {
-  document.getElementById('drawer').classList.remove('open');
-  document.getElementById('overlay').classList.remove('open');
-}
+function closeModal() { document.getElementById('modalBg').classList.remove('open'); }
+function outsideClose(e) { if (e.target === document.getElementById('modalBg')) closeModal(); }
 
-function handleOpen() {
-  if (phase < 3) { alert(U().keysPhase2); } else { openDrawer('keys'); }
-}
-
-let romeAiHistory = [];
-
-function buildRomeSystemPrompt() {
-  const a = A();
-  return `You are the concierge for Via della Scala 17, Rome (NiceFlatInRome), located in Trastevere — one of Rome's most romantic and vibrant neighborhoods, known for cobblestone alleys, Santa Maria in Trastevere, great restaurants and nightlife. Always respond in ${({en:'English',it:'Italian',fr:'French',de:'German',es:'Spanish'})[lang]||'English'}, regardless of what language the user types. Be warm, practical, and concise.\n\nYou answer two types of questions:\n1. ROME & TRASTEVERE: restaurants, bars, hidden gems, markets (Porta Portese on Sundays!), nightlife, day trips, transport. Give specific honest tips. Trastevere is perfect for walking — Campo de' Fiori and Piazza Navona are just across Ponte Sisto.\n2. APARTMENT: Check-in from ${a.checkin_time} | Check-out by ${a.checkout_time} | Wi-Fi: ${a.wifi_note} | SSID: ${a.wifi_ssid} | Password: ${a.wifi_password} | Intercom: ${a.intercom} | Phone: ${a.phone} | Water: ${a.water_note} | AC: ${a.ac_note} | Gas stove: ${a.gas} | Washing machine: ${a.washer} | Bathroom: ${a.bathroom} | Pharmacy: ${a.pharmacy} | Transport: ${a.city_transport} | Airports: ${a.airports} | Taxi: ${a.taxi} | Emergency: ${a.emergency} | Checkout: ${a.checkout_note} | Keys: ${a.keys_msg}`;
+function buildAptContent() {
+  const a = A(); const d = D();
+  const addr = typeof d.address==='function' ? d.address(a) : d.address;
+  const co = typeof d.checkout==='function' ? d.checkout(a) : d.checkout;
+  const em = typeof d.emergency==='function' ? d.emergency(a) : d.emergency;
+  const L = {en:{a:'📍 Address',c:'⏰ Checkout',e:'🚨 Emergency'},it:{a:'📍 Indirizzo',c:'⏰ Checkout',e:'🚨 Emergenza'},fr:{a:'📍 Adresse',c:'⏰ Départ',e:'🚨 Urgence'},de:{a:'📍 Adresse',c:'⏰ Checkout',e:'🚨 Notfall'},es:{a:'📍 Dirección',c:'⏰ Salida',e:'🚨 Emergencia'}}[lang]||{a:'📍 Address',c:'⏰ Checkout',e:'🚨 Emergency'};
+  return `<h3>${L.a}</h3>${addr}<h3>${L.c}</h3>${co}<h3>${L.e}</h3>${em}`;
 }
 
-async function sendRomeAI(prefill) {
-  const input = document.getElementById('romeAiInput');
-  const text = prefill || input.value.trim();
-  if (!text) return;
-  input.value = '';
-  addRomeBubble(text, 'user');
-  const spinner = addRomeBubble('<div class="spin"></div>', 'bot');
+function buildAssistantUI() {
+  return `<div id="romeAiChatVisible" style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px;max-height:45vh;overflow-y:auto"></div><div id="romeChips" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px"></div><div style="display:flex;gap:8px"><input id="romeAiInput" type="text" style="flex:1;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:11px;padding:10px 13px;font-size:14px;color:var(--cream);outline:none;min-width:0" placeholder=""><button onclick="sendRomeAI()" style="background:var(--gold);color:#120d09;font-weight:700;padding:10px 16px;border-radius:11px;font-size:16px;flex-shrink:0;cursor:pointer;border:none">→</button></div>`;
+}
+
+function buildChips() {
+  const el = document.getElementById('romeChips'); if (!el) return;
+  el.innerHTML = '';
+  U().romeChips.forEach(c => {
+    const b = document.createElement('button');
+    b.className = 'mini'; b.textContent = c;
+    b.onclick = () => sendRomeAI(c);
+    el.appendChild(b);
+  });
+}
+
+// SHELLY OTP
+let tokenExp=null,tokenJti=null,tokenTgt=null,tokenCid=null;
+if (urlToken) {
   try {
-    const res = await fetch(`${SERVER_URL}/api/ai/guide`, {
-      method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ message:text, systemPrompt:buildRomeSystemPrompt(), history:romeAiHistory })
-    });
-    const json = await res.json();
-    if (!json.ok || !json.reply) throw new Error();
-    spinner.innerHTML = json.reply.replace(/\n/g,'<br>');
-    romeAiHistory.push({role:'user', parts:[{text}]});
-    romeAiHistory.push({role:'model', parts:[{text:json.reply}]});
-  } catch {
-    spinner.innerHTML = '⚠️ ' + A().phone;
+    const p = JSON.parse(atob(urlToken.split('.')[1].replace(/-/g,'+').replace(/_/g,'/')));
+    tokenExp=p.exp||null;tokenJti=p.jti||null;tokenTgt=p.tgt||null;tokenCid=p.cid||null;
+  } catch {}
+}
+function tokenValid(){ return tokenExp && Date.now()<tokenExp; }
+let sessionToken = sessionStorage.getItem('st_scala')||'';
+function sessionValid(){
+  if(!sessionToken) return false;
+  try{ const p=JSON.parse(atob(sessionToken.split('.')[1].replace(/-/g,'+').replace(/_/g,'/'))); return p.exp&&Date.now()<p.exp; }catch{return false;}
+}
+let otpSent=false;
+
+const DOOR_LABELS={
+  en:{building:'🚪 Open Building Door',door:'🗖 Open Apartment Door',send:'Send verification code',codePlaceholder:'6-digit code',verify:'Verify',verifying:'Verifying…',wrongCode:'Wrong code, try again.',sending:'Sending…',codeSent:'Code sent to your registered contact. Enter it below:',expired:'Access expired (24h). Contact:',opening:'Opening…',opened:'Opened!',verifyTitle:'Verify your identity to unlock door access',confirmBuilding:'Open the building door only when you are standing in front of the entrance.',confirmDoor:'Open the apartment door only when you are in front of it.'},
+  it:{building:'🚪 Apri Portone',door:'🗖 Apri Porta Appartamento',send:'Invia codice di verifica',codePlaceholder:'Codice a 6 cifre',verify:'Verifica',verifying:'Verifica…',wrongCode:'Codice errato, riprova.',sending:'Invio…',codeSent:'Codice inviato al tuo contatto. Inseriscilo:',expired:'Accesso scaduto (24h). Chiama:',opening:'Apertura…',opened:'Aperto!',verifyTitle:"Verifica la tua identità per sbloccare l'accesso",confirmBuilding:"Apri il portone solo quando sei davanti all'edificio.",confirmDoor:"Apri la porta solo quando sei davanti all'appartamento."},
+  fr:{building:'🚪 Ouvrir Portail',door:'🗖 Ouvrir Appartement',send:'Envoyer le code',codePlaceholder:'Code 6 chiffres',verify:'Vérifier',verifying:'Vérification…',wrongCode:'Code incorrect.',sending:'Envoi…',codeSent:'Code envoyé. Entrez-le:',expired:'Accès expiré (24h). Contactez:',opening:'Ouverture…',opened:'Ouvert!',verifyTitle:"Vérifiez votre identité pour débloquer l'accès",confirmBuilding:"Ouvrez le portail uniquement devant l'entrée.",confirmDoor:"Ouvrez la porte uniquement devant l'appartement."},
+  de:{building:'🚪 Gebäude öffnen',door:'🗖 Wohnung öffnen',send:'Zugangscode senden',codePlaceholder:'6-stelliger Code',verify:'Bestätigen',verifying:'Bestätige…',wrongCode:'Falscher Code.',sending:'Sende…',codeSent:'Code gesendet. Bitte eingeben:',expired:'Zugang abgelaufen (24h). Kontakt:',opening:'Öffne…',opened:'Geöffnet!',verifyTitle:'Identität bestätigen um Zugang freizuschalten',confirmBuilding:'Bitte nur öffnen wenn Sie davor stehen.',confirmDoor:'Bitte nur öffnen wenn Sie davor stehen.'},
+  es:{building:'🚪 Abrir Portal',door:'🗖 Abrir Apartamento',send:'Enviar código',codePlaceholder:'Código 6 dígitos',verify:'Verificar',verifying:'Verificando…',wrongCode:'Código incorrecto.',sending:'Enviando…',codeSent:'Código enviado. Intróducelo:',expired:'Acceso expirado (24h). Contacta:',opening:'Abriendo…',opened:'Abierto!',verifyTitle:'Verifica tu identidad para desbloquear el acceso',confirmBuilding:'Abre el portal solo cuando estés frente al edificio.',confirmDoor:'Abre la puerta solo cuando estés frente al apartamento.'},
+};
+
+function buildKeysHTML(a){
+  const lbl=DOOR_LABELS[lang]||DOOR_LABELS.en;
+  const email=`<div style="text-align:center;padding:16px 0"><div style="font-size:46px;margin-bottom:14px">📧</div><p style="font-weight:600;margin-bottom:12px;color:var(--cream)">${a.keys_msg}</p><p style="font-size:12px;color:var(--muted);margin-top:14px">${U().footerHelp} <a href="tel:${a.phone}" style="color:var(--gold)">${a.phone}</a></p></div>`;
+  if(!urlToken) return email;
+  if(!tokenValid()) return email+`<div style="margin-top:12px;padding:12px;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.25);border-radius:12px;font-size:13px;color:#fca5a5;text-align:center">⏱ ${lbl.expired} <a href="tel:${a.phone}" style="color:var(--gold)">${a.phone}</a></div>`;
+  if(!(tokenTgt&&tokenTgt.startsWith('checkin-'))) return email;
+  if(!tokenCid||sessionValid()){
+    let btns=`<button onclick="shellyOpen('building')" id="open-building-btn" style="width:100%;background:var(--gold);color:#120d09;padding:13px;border-radius:14px;font-weight:700;font-size:15px;border:none;cursor:pointer;margin-top:12px">${lbl.building}</button>`;
+    if(HAS_DOOR) btns+=`<button onclick="shellyOpen('door')" id="open-door-btn" style="width:100%;background:#1d4ed8;color:#fff;padding:13px;border-radius:14px;font-weight:700;font-size:15px;border:none;cursor:pointer;margin-top:8px">${lbl.door}</button>`;
+    return email+btns;
   }
+  const otp=otpSent
+    ?`<div style="margin-top:16px"><p style="font-size:13px;color:var(--muted);margin-bottom:8px">${lbl.codeSent}</p><input id="otp-input" type="tel" inputmode="numeric" maxlength="6" placeholder="${lbl.codePlaceholder}" style="width:100%;padding:12px;background:rgba(255,255,255,.07);border:1px solid var(--border);border-radius:11px;font-size:20px;text-align:center;letter-spacing:8px;margin-bottom:8px;color:var(--cream)"><button onclick="verifyOtp()" id="verify-btn" style="width:100%;background:var(--gold);color:#120d09;padding:13px;border-radius:14px;font-weight:700;font-size:15px;border:none;cursor:pointer">${lbl.verify}</button><p id="otp-error" style="font-size:12px;color:#fca5a5;margin-top:8px;text-align:center"></p></div>`
+    :`<div style="margin-top:16px;padding:14px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:15px;text-align:center"><p style="font-size:13px;color:var(--muted);margin-bottom:12px">🔐 ${lbl.verifyTitle}</p><button onclick="requestOtp()" id="send-otp-btn" style="width:100%;background:var(--gold);color:#120d09;padding:13px;border-radius:14px;font-weight:700;font-size:15px;border:none;cursor:pointer">${lbl.send}</button><p id="send-otp-error" style="font-size:12px;color:#fca5a5;margin-top:8px;text-align:center"></p></div>`;
+  return email+otp;
 }
 
-function addRomeBubble(html, role) {
-  const wrap = document.getElementById('romeAiChatVisible');
-  wrap.style.display = 'flex';
-  wrap.style.flexDirection = 'column';
-  wrap.style.gap = '8px';
-  wrap.style.marginBottom = '8px';
-  const d = document.createElement('div');
-  d.style.cssText = role === 'user'
-    ? 'background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);border-radius:18px 18px 4px 18px;padding:8px 12px;font-size:12px;align-self:flex-end;max-width:88%;color:#fff;'
-    : 'background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:18px 18px 18px 4px;padding:8px 12px;font-size:12px;max-width:88%;color:rgba(255,255,255,.9);';
-  d.innerHTML = html;
+async function requestOtp(){
+  const btn=document.getElementById('send-otp-btn'),errEl=document.getElementById('send-otp-error'),lbl=DOOR_LABELS[lang]||DOOR_LABELS.en;
+  if(btn){btn.disabled=true;btn.textContent=lbl.sending;}
+  if(errEl) errEl.textContent='';
+  const fail={en:'Unable to send code. Please call:',it:'Impossibile inviare il codice. Chiama:',fr:"Impossible d'envoyer le code. Appelez:",de:'Fehler beim Senden. Rufen Sie an:',es:'Error al enviar. Llame:'};
+  try{
+    const r=await fetch(`${SERVER_URL}/checkin/scala/send-otp?t=${urlToken}&lang=${lang}`,{method:'POST'});
+    const j=await r.json();
+    if(j.ok){otpSent=true;openModal('keys');}
+    else{if(btn){btn.disabled=false;btn.textContent=lbl.send;}if(errEl)errEl.textContent=(fail[lang]||fail.en)+' '+A().phone;}
+  }catch{if(btn){btn.disabled=false;btn.textContent=lbl.send;}if(errEl)errEl.textContent='Network error. Call: '+A().phone;}
+}
+
+async function verifyOtp(){
+  const input=document.getElementById('otp-input'),btn=document.getElementById('verify-btn'),errEl=document.getElementById('otp-error');
+  if(!input||!btn) return;
+  const code=input.value.trim(); if(code.length<4) return;
+  btn.disabled=true;btn.textContent=(DOOR_LABELS[lang]||DOOR_LABELS.en).verifying;
+  try{
+    const r=await fetch(`${SERVER_URL}/checkin/scala/verify-otp?t=${urlToken}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({code})});
+    const j=await r.json();
+    if(j.ok&&j.st){sessionToken=j.st;sessionStorage.setItem('st_scala',j.st);otpSent=false;openModal('keys');}
+    else{if(errEl)errEl.textContent=(DOOR_LABELS[lang]||DOOR_LABELS.en).wrongCode;btn.disabled=false;btn.textContent=(DOOR_LABELS[lang]||DOOR_LABELS.en).verify;}
+  }catch{btn.disabled=false;}
+}
+
+async function shellyOpen(type){
+  const lbl=DOOR_LABELS[lang]||DOOR_LABELS.en;
+  if(!confirm(type==='building'?lbl.confirmBuilding:lbl.confirmDoor)) return;
+  const btn=document.getElementById(`open-${type}-btn`); if(!btn) return;
+  const orig=btn.textContent; btn.disabled=true;btn.textContent=lbl.opening;
+  try{
+    const ep=tokenCid?`${SERVER_URL}/checkin/scala/open/${type}?t=${urlToken}&st=${sessionToken}`:`${SERVER_URL}/checkin/scala/open-direct/${type}?t=${urlToken}`;
+    const r=await fetch(ep,{method:'POST'});const j=await r.json();
+    if(j.ok){btn.textContent=lbl.opened;btn.style.background='#22c55e';btn.style.color='#fff';setTimeout(()=>{btn.textContent=orig;btn.style.background=type==='building'?'var(--gold)':'#1d4ed8';btn.style.color=type==='building'?'#120d09':'#fff';btn.disabled=false;},4000);}
+    else if(['otp_required','bad_session_token','session_expired'].includes(j.error)){sessionToken='';sessionStorage.removeItem('st_scala');btn.disabled=false;btn.textContent=orig;openModal('keys');}
+    else{btn.textContent='✗';btn.disabled=false;setTimeout(()=>{btn.textContent=orig;},3000);}
+  }catch{btn.textContent='✗';btn.disabled=false;setTimeout(()=>{btn.textContent=orig;},3000);}
+}
+
+// RENDER
+function setLang(l){
+  lang=l;localStorage.setItem('lang',l);
+  const u=new URL(location.href);u.searchParams.set('lang',l);history.replaceState(null,'',u);
+  romeAiHistory=[];closeModal();renderUI();
+}
+
+function setText(id,txt){const el=document.getElementById(id);if(el)el.textContent=txt;}
+
+function renderUI(){
+  const ui=U(),ex=EXTRA[lang]||EXTRA.en;
+  setText('heroTitle',ui.heroTitle);setText('heroSub',ui.heroSub);setText('aptLabel',ui.aptLabel);
+  setText('phasePill',ui.phaseBadge[phase-1]||'');
+  setText('phase1Text',ui.phase1Text);
+  setText('sectionAptHead',ex.sectionApt);setText('sectionAptTitle',ui.aptTitle);
+  setText('aptCardTitle',ex.aptCardTitle);setText('aptCardSub',ex.aptCardSub);
+  setText('keysTitle',ui.keysTitle);setText('keysSub',ui.keysSub);
+  setText('wifiTitle',ui.wifiTitle);setText('wifiSub',ui.wifiSub);
+  setText('houseTitle',ui.houseTitle);setText('houseSub',ui.houseSub);
+  setText('helpTitle',ui.helpTitle);setText('helpSub',ui.helpSub);
+  setText('sectionRomeHead',ex.sectionRome);setText('sectionRomeTitle',ui.romeTitle);
+  setText('eatTitle',ui.eatTitle);setText('eatSub',ui.eatSub);
+  setText('tonightTitle',ui.tonightTitle);setText('tonightSub',ui.tonightSub);
+  setText('tickTitle',ui.tickTitle);setText('tickSub',ui.tickSub);
+  setText('transTitle',ui.transTitle);setText('transSub',ui.transSub);
+  setText('assistantTitle',ex.assistantTitle);setText('assistantDesc',ex.assistantDesc);setText('assistantBtn',ex.assistantBtn);
+  const wa=document.getElementById('whatsappBtn');if(wa)wa.textContent=ex.whatsappBtn;
+  document.querySelectorAll('.langBtn').forEach(b=>b.classList.toggle('active',b.dataset.lang===lang));
+  loadPhase();
+}
+
+function applyPhase(){
+  const lock=document.getElementById('phaseLock'),grid=document.getElementById('aptGrid'),keys=document.getElementById('keysCard');
+  if(lock)lock.style.display=phase===1?'block':'none';
+  if(grid)grid.style.display=phase<2?'none':'block';
+  if(keys)keys.classList.toggle('locked',phase<3);
+  setText('phasePill',(U().phaseBadge||[])[phase-1]||'');
+}
+
+function handleOpen(){
+  if(phase<3){alert(U().keysPhase2);}else{openModal('keys');}
+}
+
+// GEMINI AI
+let romeAiHistory=[];
+
+function buildRomeSystemPrompt(){
+  const a=A();
+  return `You are the concierge for Via della Scala 17, Rome (NiceFlatInRome), located in Trastevere — one of Rome's most romantic and vibrant neighborhoods, known for cobblestone alleys, Santa Maria in Trastevere, great restaurants and nightlife. Campo de' Fiori and Piazza Navona are just across Ponte Sisto. Always respond in ${{en:'English',it:'Italian',fr:'French',de:'German',es:'Spanish'}[lang]||'English'}, regardless of what language the user types. Be warm, practical, and concise.\n\nApartment info: Check-in from ${a.checkin_time} | Check-out by ${a.checkout_time} | Wi-Fi: ${a.wifi_note} | SSID: ${a.wifi_ssid} | Password: ${a.wifi_password} | Intercom: ${a.intercom} | Phone: ${a.phone} | Water: ${a.water_note} | AC: ${a.ac_note} | Gas stove: ${a.gas} | Washing machine: ${a.washer} | Bathroom: ${a.bathroom} | Pharmacy: ${a.pharmacy} | Transport: ${a.city_transport} | Airports: ${a.airports} | Taxi: ${a.taxi} | Emergency: ${a.emergency} | Checkout: ${a.checkout_note} | Keys: ${a.keys_msg}`;
+}
+
+async function sendRomeAI(prefill){
+  const input=document.getElementById('romeAiInput');
+  const text=prefill||(input?input.value.trim():'');
+  if(!text) return;
+  if(input) input.value='';
+  addRomeBubble(text,'user');
+  const spin=addRomeBubble('<div class="spin"></div>','bot');
+  try{
+    const res=await fetch(`${SERVER_URL}/api/ai/guide`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:text,systemPrompt:buildRomeSystemPrompt(),history:romeAiHistory})});
+    const json=await res.json();
+    if(!json.ok||!json.reply) throw new Error();
+    spin.innerHTML=json.reply.replace(/\n/g,'<br>');
+    romeAiHistory.push({role:'user',parts:[{text}]});
+    romeAiHistory.push({role:'model',parts:[{text:json.reply}]});
+  }catch{spin.innerHTML='⚠️ '+A().phone;}
+}
+
+function addRomeBubble(html,role){
+  const wrap=document.getElementById('romeAiChatVisible');
+  if(!wrap) return {innerHTML:''};
+  const d=document.createElement('div');
+  d.className=role==='user'?'bubble-user':'bubble-bot';
+  d.innerHTML=html;
   wrap.appendChild(d);
-  wrap.scrollTop = wrap.scrollHeight;
+  wrap.scrollTop=wrap.scrollHeight;
   return d;
 }
-
-document.getElementById('romeAiInput').addEventListener('keydown', e => { if(e.key==='Enter') sendRomeAI(); });
 
 renderUI();
 </script>
