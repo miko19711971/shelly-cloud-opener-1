@@ -3,174 +3,417 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Via Arenula 16 — NiceFlatInRome</title>
+<title>Via Arenula 16 — Boutique Rome Concierge</title>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{--bg:#120d09;--gold:#d6b06d;--cream:#f5ead8;--muted:#b7a894;--card:#1e160f;--border:#2e2218;--sheet:#1a1208}
-html,body{background:var(--bg);color:var(--cream);font-family:system-ui,-apple-system,sans-serif;min-height:100vh;padding-bottom:80px}
+:root{
+  --bg:#120d09;--card:#211811;--card2:#2b2119;
+  --gold:#d6b06d;--cream:#f5ead8;--muted:#b7a894;
+  --line:rgba(214,176,109,.22);--shadow:0 18px 45px rgba(0,0,0,.35);
+  --border:#2e2218;--sheet:#1a1208;
+}
+html,body{
+  background:radial-gradient(circle at top,rgba(214,176,109,.18),transparent 34%),
+             linear-gradient(180deg,#18100b 0%,#0e0a07 100%);
+  color:var(--cream);
+  font-family:system-ui,-apple-system,'Segoe UI',sans-serif;
+  min-height:100vh;
+  padding-bottom:90px;
+}
 button{cursor:pointer;border:none;background:none;font:inherit;color:inherit}
 button:active{transform:scale(.97)}
 a{color:var(--gold)}
-.langBar{display:flex;justify-content:center;gap:10px;padding:14px 0 6px;position:sticky;top:0;z-index:10;background:var(--bg)}
-.langBtn{font-size:22px;line-height:1;padding:4px 6px;border-radius:8px;opacity:.4;transition:opacity .15s,transform .15s}
-.langBtn.active{opacity:1;transform:scale(1.18)}
-.hero{padding:36px 20px 28px;text-align:center}
-.heroBadge{font-size:10px;letter-spacing:.35em;text-transform:uppercase;color:var(--muted);margin-bottom:14px}
-.heroTitle{font-size:30px;font-weight:700;color:var(--cream);line-height:1.2;margin-bottom:8px}
-.heroSub{font-size:13px;color:var(--muted);line-height:1.6;max-width:300px;margin:0 auto 22px}
-.heroAddr{background:rgba(214,176,109,.08);border:1px solid rgba(214,176,109,.2);border-radius:20px;padding:14px 18px;display:flex;align-items:center;justify-content:space-between;gap:12px;max-width:360px;margin:0 auto}
-.heroAddrLabel{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:3px}
-.heroAddrText{font-size:13px;color:var(--cream);line-height:1.4;text-align:left}
-.openBtn{background:var(--gold);color:#120d09;font-weight:700;font-size:11px;padding:8px 14px;border-radius:11px;white-space:nowrap;letter-spacing:.05em;flex-shrink:0}
-.phasePill{display:block;text-align:center;font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:999px;padding:4px 14px;width:fit-content;margin:10px auto 0}
-.section{padding:22px 16px 6px}
-.sectionHead{font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:var(--gold);margin-bottom:6px}
-.sectionTitle{font-size:21px;font-weight:700;color:var(--cream);margin-bottom:14px}
-.phaseLock{margin:0 16px;background:var(--card);border:1px solid var(--border);border-radius:20px;padding:30px 22px;text-align:center}
-.phaseLock .li{font-size:38px;margin-bottom:14px}
-.phaseLock p{font-size:13px;color:var(--muted);line-height:1.6}
-.cardGrid{display:grid;grid-template-columns:1fr 1fr;gap:11px}
-.card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:18px 14px;cursor:pointer;transition:border-color .2s;text-align:left}
-.card:hover{border-color:rgba(214,176,109,.4)}
-.card.locked{opacity:.3;pointer-events:none;filter:blur(1px)}
-.cardIcon{font-size:26px;margin-bottom:10px}
+
+/* ── LANG BAR ── */
+.langBar{
+  display:flex;justify-content:center;gap:8px;
+  padding:12px 0 8px;
+  position:sticky;top:0;z-index:50;
+  background:rgba(18,13,9,.92);
+  backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--line);
+}
+.langBtn{
+  width:42px;height:42px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:23px;line-height:1;
+  border:2px solid transparent;
+  transition:border-color .18s,transform .18s,opacity .18s;
+  opacity:.5;
+}
+.langBtn.active{
+  opacity:1;
+  border-color:var(--gold);
+  transform:scale(1.12);
+}
+.langBtn:hover{opacity:.85}
+
+/* ── HERO ── */
+.hero{padding:38px 20px 30px;text-align:center}
+.heroBadge{
+  display:inline-block;
+  font-size:9px;letter-spacing:.42em;text-transform:uppercase;
+  color:var(--gold);
+  border:1px solid var(--line);
+  border-radius:999px;padding:4px 14px;
+  margin-bottom:18px;
+}
+.heroTitle{
+  font-size:32px;font-weight:800;color:var(--cream);
+  line-height:1.18;margin-bottom:10px;
+  letter-spacing:-.02em;
+}
+.heroSub{font-size:13px;color:var(--muted);line-height:1.65;max-width:290px;margin:0 auto 26px}
+
+.heroAddr{
+  background:rgba(214,176,109,.07);
+  border:1px solid var(--line);
+  border-radius:22px;
+  padding:14px 16px;
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  max-width:380px;margin:0 auto;
+  box-shadow:var(--shadow);
+}
+.heroAddrInfo{text-align:left;flex:1}
+.heroAddrLabel{font-size:9px;letter-spacing:.25em;text-transform:uppercase;color:var(--gold);margin-bottom:3px}
+.heroAddrText{font-size:13px;color:var(--cream);line-height:1.4}
+.openBtn{
+  background:var(--gold);color:#120d09;
+  font-weight:700;font-size:11px;letter-spacing:.06em;
+  padding:9px 15px;border-radius:12px;
+  white-space:nowrap;flex-shrink:0;
+  transition:opacity .15s;
+}
+.openBtn:hover{opacity:.88}
+
+.phasePill{
+  display:block;text-align:center;
+  font-size:10px;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--muted);
+  background:rgba(255,255,255,.04);
+  border:1px solid var(--border);
+  border-radius:999px;padding:5px 16px;
+  width:fit-content;margin:10px auto 0;
+}
+
+/* ── SECTION HEADERS ── */
+.section{padding:28px 18px 10px}
+.sectionEyebrow{font-size:10px;letter-spacing:.32em;text-transform:uppercase;color:var(--gold);margin-bottom:5px}
+.sectionTitle{font-size:22px;font-weight:700;color:var(--cream)}
+
+/* ── PHASE LOCK ── */
+.phaseLock{
+  margin:0 18px 8px;
+  background:var(--card);border:1px solid var(--border);
+  border-radius:22px;padding:32px 22px;text-align:center;
+}
+.phaseLock .lockIcon{font-size:40px;margin-bottom:14px}
+.phaseLock p{font-size:13px;color:var(--muted);line-height:1.65}
+
+/* ── CARD GRID ── */
+.cardGrid{
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:12px;padding:0 18px 6px;
+}
+.card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:20px;
+  padding:18px 15px 16px;
+  cursor:pointer;
+  transition:border-color .2s,transform .18s,box-shadow .18s;
+  text-align:left;
+  position:relative;overflow:hidden;
+}
+.card::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(214,176,109,.06),transparent 60%);
+  pointer-events:none;
+}
+.card:hover{
+  border-color:rgba(214,176,109,.45);
+  transform:translateY(-2px);
+  box-shadow:0 8px 28px rgba(0,0,0,.3);
+}
+.card.locked{opacity:.28;pointer-events:none;filter:blur(1px)}
+.cardIconWrap{
+  width:40px;height:40px;border-radius:11px;
+  background:rgba(214,176,109,.14);
+  border:1px solid var(--line);
+  display:flex;align-items:center;justify-content:center;
+  font-size:20px;margin-bottom:11px;
+}
 .cardTitle{font-size:13px;font-weight:600;color:var(--cream);margin-bottom:3px}
 .cardSub{font-size:11px;color:var(--muted);line-height:1.4}
-.aptGrid{padding:0 16px 8px}
-.romeGrid{padding:0 16px 8px}
-.assistant{background:linear-gradient(135deg,#1e160f,#120d09);border:1px solid var(--border);border-radius:22px;margin:16px;padding:28px 22px;text-align:center}
-.assistantTitle{font-size:19px;font-weight:700;color:var(--cream);margin-bottom:7px}
-.assistantDesc{font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:18px}
-.bigbtn{display:block;width:100%;background:var(--gold);color:#120d09;font-weight:700;font-size:12px;letter-spacing:.08em;padding:13px;border-radius:13px}
-footer{padding:14px 16px 0;text-align:center}
-.waFooter{display:inline-block;background:rgba(37,211,102,.1);border:1px solid rgba(37,211,102,.28);border-radius:13px;padding:11px 18px;font-size:12px;color:#4ade80;font-weight:500;text-decoration:none}
-.whatsappFloat{position:fixed;bottom:22px;right:18px;width:50px;height:50px;background:#25D166;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;z-index:100;box-shadow:0 4px 18px rgba(37,211,102,.38);text-decoration:none}
-.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:200;align-items:flex-end;justify-content:center}
+.cardArrow{
+  position:absolute;top:16px;right:14px;
+  font-size:13px;color:rgba(214,176,109,.45);
+}
+.card.wide{grid-column:1/-1}
+
+/* ── ASSISTANT ── */
+.assistantSection{
+  margin:24px 18px 6px;
+  background:linear-gradient(135deg,var(--card2),var(--card));
+  border:1px solid var(--line);
+  border-radius:24px;
+  padding:28px 22px;
+  text-align:center;
+  box-shadow:var(--shadow);
+  position:relative;overflow:hidden;
+}
+.assistantSection::before{
+  content:'';position:absolute;
+  top:-40px;right:-40px;
+  width:140px;height:140px;
+  border-radius:50%;
+  background:radial-gradient(circle,rgba(214,176,109,.12),transparent 70%);
+  pointer-events:none;
+}
+.assistantIcon{font-size:36px;margin-bottom:12px}
+.assistantTitle{font-size:20px;font-weight:700;color:var(--cream);margin-bottom:8px}
+.assistantDesc{font-size:13px;color:var(--muted);line-height:1.65;margin-bottom:20px;max-width:260px;margin-left:auto;margin-right:auto}
+.bigbtn{
+  display:block;width:100%;
+  background:var(--gold);color:#120d09;
+  font-weight:700;font-size:12px;letter-spacing:.09em;
+  padding:14px;border-radius:14px;
+  transition:opacity .15s;
+}
+.bigbtn:hover{opacity:.88}
+
+/* ── FOOTER ── */
+footer{padding:18px 18px 0;text-align:center}
+.waFooter{
+  display:inline-flex;align-items:center;gap:8px;
+  background:rgba(37,211,102,.08);
+  border:1px solid rgba(37,211,102,.25);
+  border-radius:14px;padding:11px 20px;
+  font-size:12px;color:#4ade80;font-weight:500;text-decoration:none;
+  transition:background .15s;
+}
+.waFooter:hover{background:rgba(37,211,102,.14)}
+
+/* ── WHATSAPP FLOAT ── */
+.whatsappFloat{
+  position:fixed;bottom:22px;right:18px;
+  width:52px;height:52px;
+  background:#25D166;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:26px;z-index:100;
+  box-shadow:0 4px 20px rgba(37,211,102,.42);
+  text-decoration:none;
+  transition:transform .15s;
+}
+.whatsappFloat:hover{transform:scale(1.08)}
+
+/* ── MODAL ── */
+.modal{
+  display:none;position:fixed;inset:0;
+  background:rgba(0,0,0,.7);
+  z-index:200;
+  align-items:flex-end;justify-content:center;
+}
 .modal.open{display:flex}
-.sheet{background:var(--sheet);border-radius:22px 22px 0 0;width:100%;max-width:480px;max-height:88vh;overflow-y:auto;padding-bottom:env(safe-area-inset-bottom,16px)}
-.sheetHandle{width:34px;height:4px;background:var(--border);border-radius:2px;margin:11px auto 0}
-.sheetHeader{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--sheet);z-index:1}
+.sheet{
+  background:var(--sheet);
+  border-radius:24px 24px 0 0;
+  width:100%;max-width:500px;
+  max-height:90vh;overflow-y:auto;
+  padding-bottom:env(safe-area-inset-bottom,18px);
+  box-shadow:0 -8px 40px rgba(0,0,0,.5);
+}
+.sheetHandle{width:36px;height:4px;background:rgba(214,176,109,.25);border-radius:2px;margin:12px auto 0}
+.sheetHeader{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:15px 18px;border-bottom:1px solid var(--border);
+  position:sticky;top:0;background:var(--sheet);z-index:1;
+}
 .sheetHeader h3{font-size:15px;font-weight:600;color:var(--cream)}
-.closeBtn{width:30px;height:30px;border-radius:50%;background:var(--card);color:var(--muted);font-size:18px;display:flex;align-items:center;justify-content:center;line-height:1}
-.sheetBody{padding:18px}
-.sheetBody h3{color:var(--gold);font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;margin-top:16px;margin-bottom:5px}
+.closeBtn{
+  width:32px;height:32px;border-radius:50%;
+  background:var(--card);color:var(--muted);
+  font-size:18px;display:flex;align-items:center;justify-content:center;
+  transition:background .15s;
+}
+.closeBtn:hover{background:var(--card2)}
+.sheetBody{padding:20px 18px}
+.sheetBody h3{
+  color:var(--gold);font-size:11px;font-weight:600;
+  letter-spacing:.12em;text-transform:uppercase;
+  margin-top:18px;margin-bottom:6px;
+}
 .sheetBody h3:first-child{margin-top:0}
-.sheetBody p{font-size:14px;color:var(--muted);line-height:1.65;margin-bottom:6px}
+.sheetBody p{font-size:14px;color:var(--muted);line-height:1.68;margin-bottom:8px}
 .sheetBody a{color:var(--gold);text-decoration:underline}
 .sheetBody strong{color:var(--cream)}
-.spin{display:inline-block;width:15px;height:15px;border:2px solid rgba(255,255,255,.2);border-top-color:var(--gold);border-radius:50%;animation:sp .7s linear infinite}
+
+/* ── AI CHAT ── */
+.spin{
+  display:inline-block;width:15px;height:15px;
+  border:2px solid rgba(255,255,255,.15);
+  border-top-color:var(--gold);
+  border-radius:50%;animation:sp .7s linear infinite;
+}
 @keyframes sp{to{transform:rotate(360deg)}}
-.bubble-user{background:rgba(214,176,109,.14);border:1px solid rgba(214,176,109,.22);border-radius:16px 16px 4px 16px;padding:9px 12px;font-size:13px;align-self:flex-end;max-width:88%;color:var(--cream)}
-.bubble-bot{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:16px 16px 16px 4px;padding:9px 12px;font-size:13px;max-width:88%;color:var(--muted)}
-.mini{font-size:11px;background:rgba(214,176,109,.1);border:1px solid rgba(214,176,109,.18);color:var(--gold);padding:5px 11px;border-radius:999px;white-space:nowrap;cursor:pointer}
+.bubble-user{
+  background:rgba(214,176,109,.14);
+  border:1px solid rgba(214,176,109,.22);
+  border-radius:16px 16px 4px 16px;
+  padding:10px 13px;font-size:13px;
+  align-self:flex-end;max-width:88%;color:var(--cream);
+}
+.bubble-bot{
+  background:rgba(255,255,255,.05);
+  border:1px solid rgba(255,255,255,.09);
+  border-radius:16px 16px 16px 4px;
+  padding:10px 13px;font-size:13px;
+  max-width:88%;color:var(--muted);
+}
+.mini{
+  font-size:11px;
+  background:rgba(214,176,109,.09);
+  border:1px solid rgba(214,176,109,.18);
+  color:var(--gold);
+  padding:6px 12px;border-radius:999px;
+  white-space:nowrap;cursor:pointer;transition:background .15s;
+}
+.mini:hover{background:rgba(214,176,109,.16)}
 .mini:active{transform:scale(.96)}
+
+/* ── DIVIDER ── */
+.goldDivider{
+  height:1px;background:var(--line);
+  margin:6px 18px 0;border-radius:1px;
+}
 </style>
 </head>
 <body>
 
-<div class="langBar">
-  <button class="langBtn" data-lang="it" onclick="setLang('it')">🇮🇹</button>
+<!-- LANGUAGE BAR -->
+<nav class="langBar">
+  <button class="langBtn active" data-lang="it" onclick="setLang('it')">🇮🇹</button>
   <button class="langBtn" data-lang="en" onclick="setLang('en')">🇬🇧</button>
   <button class="langBtn" data-lang="fr" onclick="setLang('fr')">🇫🇷</button>
-  <button class="langBtn" data-lang="de" onclick="setLang('de')">🇩🇪</button>
   <button class="langBtn" data-lang="es" onclick="setLang('es')">🇪🇸</button>
-</div>
+  <button class="langBtn" data-lang="de" onclick="setLang('de')">🇩🇪</button>
+</nav>
 
+<!-- HERO -->
 <div class="hero">
-  <div class="heroBadge">NICEFLAT ROME CONCIERGE</div>
-  <h1 class="heroTitle" id="heroTitle">Welcome to Rome ✨</h1>
-  <p class="heroSub" id="heroSub">Curated luxury hospitality in the heart of Rome.</p>
+  <div class="heroBadge">BOUTIQUE ROME CONCIERGE</div>
+  <h1 class="heroTitle" id="heroTitle">Benvenuto a Roma ✨</h1>
+  <p class="heroSub" id="heroSub">Ospitalità di lusso nel cuore di Roma.</p>
   <div class="heroAddr">
-    <div class="heroAddrText">
-      <div class="heroAddrLabel" id="aptLabel">Apartment</div>
-      Via Arenula 16 · Historic Center
+    <div class="heroAddrInfo">
+      <div class="heroAddrLabel" id="aptLabel">Appartamento</div>
+      <div class="heroAddrText">Via Arenula 16 · Centro Storico</div>
     </div>
-    <button class="openBtn" onclick="handleOpen()">OPEN</button>
+    <button class="openBtn" onclick="handleOpen()" id="openDoorBtn">APRI</button>
   </div>
+  <span id="phasePill" class="phasePill"></span>
 </div>
-<div id="phasePill" class="phasePill"></div>
 
+<!-- SECTION: IL TUO SOGGIORNO -->
 <div class="section">
-  <div class="sectionHead" id="sectionAptHead"></div>
+  <div class="sectionEyebrow" id="sectionAptHead"></div>
   <div class="sectionTitle" id="sectionAptTitle"></div>
 </div>
 
 <div id="phaseLock" class="phaseLock" style="display:none">
-  <div class="li">🔒</div>
+  <div class="lockIcon">🔒</div>
   <p id="phase1Text"></p>
 </div>
 
-<div id="aptGrid" class="aptGrid" style="display:none">
+<div id="aptGrid" style="display:none">
   <div class="cardGrid">
     <div class="card" onclick="openModal('apt')">
-      <div class="cardIcon">📍</div>
+      <div class="cardArrow">›</div>
+      <div class="cardIconWrap">📍</div>
       <div class="cardTitle" id="aptCardTitle"></div>
       <div class="cardSub" id="aptCardSub"></div>
     </div>
     <div class="card locked" id="keysCard" onclick="openModal('keys')">
-      <div class="cardIcon">🗝</div>
+      <div class="cardArrow">›</div>
+      <div class="cardIconWrap">🗝</div>
       <div class="cardTitle" id="keysTitle"></div>
       <div class="cardSub" id="keysSub"></div>
     </div>
     <div class="card" onclick="openModal('wifi')">
-      <div class="cardIcon">📶</div>
+      <div class="cardArrow">›</div>
+      <div class="cardIconWrap">📶</div>
       <div class="cardTitle" id="wifiTitle"></div>
       <div class="cardSub" id="wifiSub"></div>
     </div>
     <div class="card" onclick="openModal('house')">
-      <div class="cardIcon">💬</div>
+      <div class="cardArrow">›</div>
+      <div class="cardIconWrap">💬</div>
       <div class="cardTitle" id="houseTitle"></div>
       <div class="cardSub" id="houseSub"></div>
     </div>
-    <div class="card" onclick="openModal('help')" style="grid-column:1/-1">
-      <div class="cardIcon">☎</div>
+    <div class="card wide" onclick="openModal('help')">
+      <div class="cardArrow">›</div>
+      <div class="cardIconWrap">☎</div>
       <div class="cardTitle" id="helpTitle"></div>
       <div class="cardSub" id="helpSub"></div>
     </div>
   </div>
 </div>
 
+<div class="goldDivider"></div>
+
+<!-- SECTION: VIVI ROMA -->
 <div class="section">
-  <div class="sectionHead" id="sectionRomeHead"></div>
+  <div class="sectionEyebrow" id="sectionRomeHead"></div>
   <div class="sectionTitle" id="sectionRomeTitle"></div>
 </div>
-<div class="romeGrid">
-  <div class="cardGrid">
-    <div class="card" onclick="openModal('eat')">
-      <div class="cardIcon">🍝</div>
-      <div class="cardTitle" id="eatTitle"></div>
-      <div class="cardSub" id="eatSub"></div>
-    </div>
-    <div class="card" onclick="openModal('tonight')">
-      <div class="cardIcon">🌙</div>
-      <div class="cardTitle" id="tonightTitle"></div>
-      <div class="cardSub" id="tonightSub"></div>
-    </div>
-    <div class="card" onclick="openModal('tickets')">
-      <div class="cardIcon">🎟</div>
-      <div class="cardTitle" id="tickTitle"></div>
-      <div class="cardSub" id="tickSub"></div>
-    </div>
-    <div class="card" onclick="openModal('transport')">
-      <div class="cardIcon">🚕</div>
-      <div class="cardTitle" id="transTitle"></div>
-      <div class="cardSub" id="transSub"></div>
-    </div>
+
+<div class="cardGrid">
+  <div class="card" onclick="openModal('eat')">
+    <div class="cardArrow">›</div>
+    <div class="cardIconWrap">🍝</div>
+    <div class="cardTitle" id="eatTitle"></div>
+    <div class="cardSub" id="eatSub"></div>
+  </div>
+  <div class="card" onclick="openModal('tonight')">
+    <div class="cardArrow">›</div>
+    <div class="cardIconWrap">🌙</div>
+    <div class="cardTitle" id="tonightTitle"></div>
+    <div class="cardSub" id="tonightSub"></div>
+  </div>
+  <div class="card" onclick="openModal('tickets')">
+    <div class="cardArrow">›</div>
+    <div class="cardIconWrap">🎟</div>
+    <div class="cardTitle" id="tickTitle"></div>
+    <div class="cardSub" id="tickSub"></div>
+  </div>
+  <div class="card" onclick="openModal('transport')">
+    <div class="cardArrow">›</div>
+    <div class="cardIconWrap">🚕</div>
+    <div class="cardTitle" id="transTitle"></div>
+    <div class="cardSub" id="transSub"></div>
   </div>
 </div>
 
-<div class="assistant">
+<div class="goldDivider" style="margin-top:16px"></div>
+
+<!-- ASSISTANT -->
+<div class="assistantSection">
+  <div class="assistantIcon">✨</div>
   <div class="assistantTitle" id="assistantTitle"></div>
   <p class="assistantDesc" id="assistantDesc"></p>
   <button class="bigbtn" id="assistantBtn" onclick="openModal('chat')"></button>
 </div>
 
+<!-- FOOTER -->
 <footer>
-  <a href="https://wa.me/393355245756" class="waFooter" id="whatsappBtn" target="_blank"></a>
+  <a href="https://wa.me/393355245756" class="waFooter" id="whatsappBtn" target="_blank">💬 WhatsApp</a>
 </footer>
 
-<a href="https://wa.me/393355245756" class="whatsappFloat" target="_blank">💬</a>
+<!-- WHATSAPP FLOAT -->
+<a href="https://wa.me/393355245756" class="whatsappFloat" target="_blank" title="WhatsApp">💬</a>
 
+<!-- MODAL -->
 <div id="modalBg" class="modal" onclick="outsideClose(event)">
   <div class="sheet" id="modalSheet">
     <div class="sheetHandle"></div>
@@ -183,11 +426,17 @@ footer{padding:14px 16px 0;text-align:center}
 </div>
 
 <script>
+/* ================================================================
+   CONFIG
+================================================================ */
 const SERVER_URL = 'https://shelly-cloud-opener-1.onrender.com';
 const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbwJcg_XcZE19sbKPmfZmkGtUqNz7U2eXqsYaTcCQi1feoTcJuYnS7DOpnEyrc3CDvQY/exec';
 const APT = 'arenula';
 const HAS_DOOR = false;
 
+/* ================================================================
+   URL / PHASE
+================================================================ */
 const urlP = new URLSearchParams(location.search);
 let phase = 1;
 const urlToken = urlP.get('t') || '';
@@ -209,13 +458,22 @@ function schedulePhaseCheck() {
   if (phase < 3 && urlToken) setTimeout(loadPhase, 60000);
 }
 
+/* ================================================================
+   LANGUAGE
+================================================================ */
 let lang = (urlP.get('lang') || localStorage.getItem('lang') || (navigator.language||'en').slice(0,2)).toLowerCase();
 
+/* ================================================================
+   DATA
+================================================================ */
 const DATA = {
 en:{
   ui:{
-    heroTitle:'Welcome to Rome ✨',heroSub:'Curated luxury hospitality in the heart of Rome.',aptLabel:'Apartment',
-    aptTitle:'Your Apartment 🏠',romeTitle:'Explore Rome 🌙',
+    heroTitle:'Welcome to Rome ✨',
+    heroSub:'Curated luxury hospitality in the heart of Rome.',
+    aptLabel:'Apartment',
+    aptTitle:'Your Stay 🏠',
+    romeTitle:'Experience Rome 🍷',
     keysTitle:'Digital Keys',keysSub:'Open building door',
     wifiTitle:'Wi‑Fi',wifiSub:'Network & password',
     houseTitle:'House Guide',houseSub:'Instructions & tips',
@@ -225,7 +483,7 @@ en:{
     tickTitle:'Ticketing',tickSub:'Museums, tours & experiences',
     transTitle:'Transport',transSub:'Tram, taxi & airports',
     footerHelp:'Need help?',
-    phase1Text:'Complete your online check-in to unlock apartment info.',
+    phase1Text:'Complete your online check-in to unlock apartment information.',
     phaseBadge:['📋 After Booking','✅ After Check-in','🗝 Check-in Day'],
     keysPhase2:'Your digital keys will be available from 13:00 on check-in day.',
     romeAiPlaceholder:'Restaurants, WiFi, checkout, Campo de\' Fiori…',
@@ -265,17 +523,20 @@ en:{
     keys:a=>buildKeysHTML(a),
     wifi:a=>`<p>${a.wifi_note}</p><p>Network: <strong>${a.wifi_ssid}</strong><br>Password: <strong>${a.wifi_password}</strong></p>`,
     house:a=>`<h3>Water</h3><p>${a.water_note}</p><h3>Air Conditioning</h3><p>${a.ac_note}</p><h3>Gas Stove 🔥</h3><p>${a.gas}</p><h3>Bathroom</h3><p>${a.bathroom}</p><p>Towels: ${a.towels}</p><h3>Building Access</h3><p>Intercom: <strong>${a.intercom}</strong> · ${a.door_hours}</p><p>${a.elevator}</p>`,
-    help:a=>`<div style="text-align:center;padding:16px 0"><div style="font-size:46px;margin-bottom:14px">📞</div><p style="font-weight:600;margin-bottom:14px;color:var(--cream)">Your concierge is available for any need.</p><a href="tel:${a.phone}" style="display:block;background:var(--gold);color:#120d09;padding:13px;border-radius:14px;font-weight:700;text-decoration:none;text-align:center">${a.phone}</a><p style="font-size:12px;color:var(--muted);margin-top:10px">Intercom: <strong style="color:var(--cream)">${a.intercom}</strong> · Concierge: ${a.concierge}</p></div>`,
-    eat:a=>`<h3>Restaurants</h3><p>${a.eat}</p><h3>Bars & Cafés</h3><p>${a.drink}</p>`,
-    tonight:a=>`<p>${a.tonight}</p>`,
-    tickets:`<p><strong>TicketOne</strong>:<br><a href="https://www.ticketone.it/en/" target="_blank">www.ticketone.it</a></p><p><strong>AS Roma</strong>:<br><a href="https://www.asroma.com/en/tickets" target="_blank">www.asroma.com/tickets</a></p><p><strong>SS Lazio</strong>:<br><a href="https://www.sslazio.it/en" target="_blank">www.sslazio.it</a></p><p><strong>Colosseum</strong>:<br><a href="https://colosseo.it/en" target="_blank">colosseo.it</a></p><p><strong>Vatican Museums</strong>:<br><a href="https://tickets.museivaticani.va/" target="_blank">tickets.museivaticani.va</a></p><p><strong>Galleria Borghese</strong>:<br><a href="https://galleriaborghese.cultura.gov.it/" target="_blank">galleriaborghese.cultura.gov.it</a></p><p><strong>MAXXI</strong>:<br><a href="https://www.maxxi.art/en/" target="_blank">maxxi.art</a></p>`,
-    transport:a=>`<h3>City</h3><p>${a.city_transport}</p><h3>Airports</h3><p>${a.airports}</p><h3>Luggage storage</h3><p>${a.luggage}</p>`,
+    help:a=>`<div style="text-align:center;padding:16px 0"><div style="font-size:48px;margin-bottom:14px">📞</div><p style="font-weight:600;margin-bottom:14px;color:var(--cream)">Your concierge is available for any need.</p><a href="tel:${a.phone}" style="display:block;background:var(--gold);color:#120d09;padding:14px;border-radius:14px;font-weight:700;text-decoration:none;text-align:center;font-size:15px">${a.phone}</a><p style="font-size:12px;color:var(--muted);margin-top:12px">Intercom: <strong style="color:var(--cream)">${a.intercom}</strong> · Concierge: ${a.concierge}</p><div style="margin-top:14px"><a href="https://wa.me/393355245756" style="display:block;background:rgba(37,211,102,.12);border:1px solid rgba(37,211,102,.28);color:#4ade80;padding:12px;border-radius:14px;font-weight:600;text-decoration:none;text-align:center">💬 WhatsApp Michele</a></div></div>`,
+    eat:a=>`<h3>Restaurants</h3><p>${a.eat}</p><h3>Bars & Cafés</h3><p>${a.drink}</p><h3>Grocery & Pharmacy</h3><p>${a.pharmacy}</p>`,
+    tonight:a=>`<h3>Evening Walk</h3><p>${a.tonight}</p>`,
+    tickets:`<h3>Concerts & Events</h3><p><strong>TicketOne</strong>: <a href="https://www.ticketone.it/en/" target="_blank">www.ticketone.it</a></p><h3>Football</h3><p><strong>AS Roma</strong>: <a href="https://www.asroma.com/en/tickets" target="_blank">asroma.com/tickets</a><br><strong>SS Lazio</strong>: <a href="https://www.sslazio.it/en" target="_blank">sslazio.it</a></p><h3>Monuments</h3><p><strong>Colosseum</strong>: <a href="https://colosseo.it/en" target="_blank">colosseo.it</a><br><strong>Vatican Museums</strong>: <a href="https://tickets.museivaticani.va/" target="_blank">tickets.museivaticani.va</a><br><strong>Galleria Borghese</strong>: <a href="https://galleriaborghese.cultura.gov.it/" target="_blank">galleriaborghese.cultura.gov.it</a></p><h3>Contemporary Art</h3><p><strong>MAXXI</strong>: <a href="https://www.maxxi.art/en/" target="_blank">maxxi.art</a></p>`,
+    transport:a=>`<h3>City</h3><p>${a.city_transport}</p><h3>Airports</h3><p>${a.airports}</p><h3>Luggage Storage</h3><p>${a.luggage}</p><h3>Laundry</h3><p>${a.laundry}</p>`,
   }
 },
 it:{
   ui:{
-    heroTitle:'Benvenuto a Roma ✨',heroSub:'Ospitalità di lusso nel cuore di Roma.',aptLabel:'Appartamento',
-    aptTitle:'Il Tuo Appartamento 🏠',romeTitle:'Esplora Roma 🌙',
+    heroTitle:'Benvenuto a Roma ✨',
+    heroSub:'Ospitalità di lusso nel cuore di Roma.',
+    aptLabel:'Appartamento',
+    aptTitle:'Il tuo soggiorno 🏠',
+    romeTitle:'Vivi Roma 🍷',
     keysTitle:'Chiavi Digitali',keysSub:'Apri il portone',
     wifiTitle:'Wi‑Fi',wifiSub:'Rete e password',
     houseTitle:'Guida Casa',houseSub:'Istruzioni e consigli',
@@ -325,17 +586,20 @@ it:{
     keys:a=>buildKeysHTML(a),
     wifi:a=>`<p>${a.wifi_note}</p><p>Rete: <strong>${a.wifi_ssid}</strong><br>Password: <strong>${a.wifi_password}</strong></p>`,
     house:a=>`<h3>Acqua</h3><p>${a.water_note}</p><h3>Aria Condizionata</h3><p>${a.ac_note}</p><h3>Gas 🔥</h3><p>${a.gas}</p><h3>Bagno</h3><p>${a.bathroom}</p><p>Asciugamani: ${a.towels}</p><h3>Accesso Edificio</h3><p>Citofono: <strong>${a.intercom}</strong> · ${a.door_hours}</p><p>${a.elevator}</p>`,
-    help:a=>`<div style="text-align:center;padding:16px 0"><div style="font-size:46px;margin-bottom:14px">📞</div><p style="font-weight:600;margin-bottom:14px;color:var(--cream)">Il tuo concierge è disponibile per qualsiasi necessità.</p><a href="tel:${a.phone}" style="display:block;background:var(--gold);color:#120d09;padding:13px;border-radius:14px;font-weight:700;text-decoration:none;text-align:center">${a.phone}</a><p style="font-size:12px;color:var(--muted);margin-top:10px">Citofono: <strong style="color:var(--cream)">${a.intercom}</strong> · Portiere: ${a.concierge}</p></div>`,
-    eat:a=>`<h3>Ristoranti</h3><p>${a.eat}</p><h3>Bar e Locali</h3><p>${a.drink}</p>`,
-    tonight:a=>`<p>${a.tonight}</p>`,
-    tickets:`<p><strong>TicketOne</strong>:<br><a href="https://www.ticketone.it/en/" target="_blank">www.ticketone.it</a></p><p><strong>AS Roma</strong>:<br><a href="https://www.asroma.com/en/tickets" target="_blank">www.asroma.com/tickets</a></p><p><strong>SS Lazio</strong>:<br><a href="https://www.sslazio.it/en" target="_blank">www.sslazio.it</a></p><p><strong>Colosseo</strong>:<br><a href="https://colosseo.it/en" target="_blank">colosseo.it</a></p><p><strong>Musei Vaticani</strong>:<br><a href="https://tickets.museivaticani.va/" target="_blank">tickets.museivaticani.va</a></p><p><strong>Galleria Borghese</strong>:<br><a href="https://galleriaborghese.cultura.gov.it/" target="_blank">galleriaborghese.cultura.gov.it</a></p><p><strong>MAXXI</strong>:<br><a href="https://www.maxxi.art/en/" target="_blank">maxxi.art</a></p>`,
-    transport:a=>`<h3>Città</h3><p>${a.city_transport}</p><h3>Aeroporti</h3><p>${a.airports}</p><h3>Deposito bagagli</h3><p>${a.luggage}</p>`,
+    help:a=>`<div style="text-align:center;padding:16px 0"><div style="font-size:48px;margin-bottom:14px">📞</div><p style="font-weight:600;margin-bottom:14px;color:var(--cream)">Il tuo concierge è disponibile per qualsiasi necessità.</p><a href="tel:${a.phone}" style="display:block;background:var(--gold);color:#120d09;padding:14px;border-radius:14px;font-weight:700;text-decoration:none;text-align:center;font-size:15px">${a.phone}</a><p style="font-size:12px;color:var(--muted);margin-top:12px">Citofono: <strong style="color:var(--cream)">${a.intercom}</strong> · Portiere: ${a.concierge}</p><div style="margin-top:14px"><a href="https://wa.me/393355245756" style="display:block;background:rgba(37,211,102,.12);border:1px solid rgba(37,211,102,.28);color:#4ade80;padding:12px;border-radius:14px;font-weight:600;text-decoration:none;text-align:center">💬 WhatsApp Michele</a></div></div>`,
+    eat:a=>`<h3>Ristoranti</h3><p>${a.eat}</p><h3>Bar e Locali</h3><p>${a.drink}</p><h3>Farmacia</h3><p>${a.pharmacy}</p>`,
+    tonight:a=>`<h3>Passeggiata Serale</h3><p>${a.tonight}</p>`,
+    tickets:`<h3>Concerti ed eventi</h3><p><strong>TicketOne</strong>: <a href="https://www.ticketone.it/en/" target="_blank">www.ticketone.it</a></p><h3>Calcio</h3><p><strong>AS Roma</strong>: <a href="https://www.asroma.com/en/tickets" target="_blank">asroma.com/tickets</a><br><strong>SS Lazio</strong>: <a href="https://www.sslazio.it/en" target="_blank">sslazio.it</a></p><h3>Monumenti</h3><p><strong>Colosseo</strong>: <a href="https://colosseo.it/en" target="_blank">colosseo.it</a><br><strong>Musei Vaticani</strong>: <a href="https://tickets.museivaticani.va/" target="_blank">tickets.museivaticani.va</a><br><strong>Galleria Borghese</strong>: <a href="https://galleriaborghese.cultura.gov.it/" target="_blank">galleriaborghese.cultura.gov.it</a></p><h3>Arte Contemporanea</h3><p><strong>MAXXI</strong>: <a href="https://www.maxxi.art/en/" target="_blank">maxxi.art</a></p>`,
+    transport:a=>`<h3>Città</h3><p>${a.city_transport}</p><h3>Aeroporti</h3><p>${a.airports}</p><h3>Deposito bagagli</h3><p>${a.luggage}</p><h3>Lavanderia</h3><p>${a.laundry}</p>`,
   }
 },
 fr:{
   ui:{
-    heroTitle:'Bienvenue à Rome ✨',heroSub:'Hospitalité de luxe au cœur de Rome.',aptLabel:'Appartement',
-    aptTitle:'Votre Appartement 🏠',romeTitle:'Explorer Rome 🌙',
+    heroTitle:'Bienvenue à Rome ✨',
+    heroSub:'Hospitalité de luxe au cœur de Rome.',
+    aptLabel:'Appartement',
+    aptTitle:'Votre Séjour 🏠',
+    romeTitle:'Vivre Rome 🍷',
     keysTitle:'Clés Numériques',keysSub:'Ouvrir le portail',
     wifiTitle:'Wi‑Fi',wifiSub:'Réseau et mot de passe',
     houseTitle:'Guide Logement',houseSub:'Instructions et conseils',
@@ -385,17 +649,20 @@ fr:{
     keys:a=>buildKeysHTML(a),
     wifi:a=>`<p>${a.wifi_note}</p><p>Réseau: <strong>${a.wifi_ssid}</strong><br>Mot de passe: <strong>${a.wifi_password}</strong></p>`,
     house:a=>`<h3>Eau</h3><p>${a.water_note}</p><h3>Climatisation</h3><p>${a.ac_note}</p><h3>Gaz 🔥</h3><p>${a.gas}</p><h3>Salle de bain</h3><p>${a.bathroom}</p><p>Serviettes: ${a.towels}</p><h3>Accès Immeuble</h3><p>Interphone: <strong>${a.intercom}</strong> · ${a.door_hours}</p><p>${a.elevator}</p>`,
-    help:a=>`<div style="text-align:center;padding:16px 0"><div style="font-size:46px;margin-bottom:14px">📞</div><p style="font-weight:600;margin-bottom:14px;color:var(--cream)">Votre concierge est disponible.</p><a href="tel:${a.phone}" style="display:block;background:var(--gold);color:#120d09;padding:13px;border-radius:14px;font-weight:700;text-decoration:none;text-align:center">${a.phone}</a><p style="font-size:12px;color:var(--muted);margin-top:10px">Interphone: <strong style="color:var(--cream)">${a.intercom}</strong></p></div>`,
-    eat:a=>`<h3>Restaurants</h3><p>${a.eat}</p><h3>Bars & Cafés</h3><p>${a.drink}</p>`,
-    tonight:a=>`<p>${a.tonight}</p>`,
-    tickets:`<p><strong>TicketOne</strong>:<br><a href="https://www.ticketone.it/en/" target="_blank">www.ticketone.it</a></p><p><strong>Colisée</strong>:<br><a href="https://colosseo.it/en" target="_blank">colosseo.it</a></p><p><strong>Musées du Vatican</strong>:<br><a href="https://tickets.museivaticani.va/" target="_blank">tickets.museivaticani.va</a></p><p><strong>Galerie Borghèse</strong>:<br><a href="https://galleriaborghese.cultura.gov.it/" target="_blank">galleriaborghese.cultura.gov.it</a></p><p><strong>MAXXI</strong>:<br><a href="https://www.maxxi.art/en/" target="_blank">maxxi.art</a></p>`,
-    transport:a=>`<h3>Ville</h3><p>${a.city_transport}</p><h3>Aéroports</h3><p>${a.airports}</p><h3>Bagages</h3><p>${a.luggage}</p>`,
+    help:a=>`<div style="text-align:center;padding:16px 0"><div style="font-size:48px;margin-bottom:14px">📞</div><p style="font-weight:600;margin-bottom:14px;color:var(--cream)">Votre concierge est disponible.</p><a href="tel:${a.phone}" style="display:block;background:var(--gold);color:#120d09;padding:14px;border-radius:14px;font-weight:700;text-decoration:none;text-align:center;font-size:15px">${a.phone}</a><p style="font-size:12px;color:var(--muted);margin-top:12px">Interphone: <strong style="color:var(--cream)">${a.intercom}</strong></p><div style="margin-top:14px"><a href="https://wa.me/393355245756" style="display:block;background:rgba(37,211,102,.12);border:1px solid rgba(37,211,102,.28);color:#4ade80;padding:12px;border-radius:14px;font-weight:600;text-decoration:none;text-align:center">💬 WhatsApp Michele</a></div></div>`,
+    eat:a=>`<h3>Restaurants</h3><p>${a.eat}</p><h3>Bars & Cafés</h3><p>${a.drink}</p><h3>Pharmacie</h3><p>${a.pharmacy}</p>`,
+    tonight:a=>`<h3>Promenade du soir</h3><p>${a.tonight}</p>`,
+    tickets:`<h3>Concerts & événements</h3><p><strong>TicketOne</strong>: <a href="https://www.ticketone.it/en/" target="_blank">www.ticketone.it</a></p><h3>Football</h3><p><strong>AS Roma</strong>: <a href="https://www.asroma.com/en/tickets" target="_blank">asroma.com/tickets</a></p><h3>Monuments</h3><p><strong>Colisée</strong>: <a href="https://colosseo.it/en" target="_blank">colosseo.it</a><br><strong>Musées du Vatican</strong>: <a href="https://tickets.museivaticani.va/" target="_blank">tickets.museivaticani.va</a><br><strong>Galerie Borghèse</strong>: <a href="https://galleriaborghese.cultura.gov.it/" target="_blank">galleriaborghese.cultura.gov.it</a></p><h3>Art contemporain</h3><p><strong>MAXXI</strong>: <a href="https://www.maxxi.art/en/" target="_blank">maxxi.art</a></p>`,
+    transport:a=>`<h3>Ville</h3><p>${a.city_transport}</p><h3>Aéroports</h3><p>${a.airports}</p><h3>Bagages</h3><p>${a.luggage}</p><h3>Laverie</h3><p>${a.laundry}</p>`,
   }
 },
 de:{
   ui:{
-    heroTitle:'Willkommen in Rom ✨',heroSub:'Kuratierter Luxus im Herzen Roms.',aptLabel:'Apartment',
-    aptTitle:'Ihr Apartment 🏠',romeTitle:'Rom Entdecken 🌙',
+    heroTitle:'Willkommen in Rom ✨',
+    heroSub:'Kuratierter Luxus im Herzen Roms.',
+    aptLabel:'Apartment',
+    aptTitle:'Ihr Aufenthalt 🏠',
+    romeTitle:'Rom Erleben 🍷',
     keysTitle:'Digitale Schlüssel',keysSub:'Eingangstor öffnen',
     wifiTitle:'WLAN',wifiSub:'Netzwerk & Passwort',
     houseTitle:'Hausführer',houseSub:'Anweisungen und Hilfe',
@@ -445,17 +712,20 @@ de:{
     keys:a=>buildKeysHTML(a),
     wifi:a=>`<p>${a.wifi_note}</p><p>Netzwerk: <strong>${a.wifi_ssid}</strong><br>Passwort: <strong>${a.wifi_password}</strong></p>`,
     house:a=>`<h3>Wasser</h3><p>${a.water_note}</p><h3>Klimaanlage</h3><p>${a.ac_note}</p><h3>Gas 🔥</h3><p>${a.gas}</p><h3>Badezimmer</h3><p>${a.bathroom}</p><p>Handtücher: ${a.towels}</p><h3>Zugang</h3><p>Sprechanlage: <strong>${a.intercom}</strong> · ${a.door_hours}</p><p>${a.elevator}</p>`,
-    help:a=>`<div style="text-align:center;padding:16px 0"><div style="font-size:46px;margin-bottom:14px">📞</div><p style="font-weight:600;margin-bottom:14px;color:var(--cream)">Ihr Concierge steht zur Verfügung.</p><a href="tel:${a.phone}" style="display:block;background:var(--gold);color:#120d09;padding:13px;border-radius:14px;font-weight:700;text-decoration:none;text-align:center">${a.phone}</a><p style="font-size:12px;color:var(--muted);margin-top:10px">Sprechanlage: <strong style="color:var(--cream)">${a.intercom}</strong> · Hausmeister: ${a.concierge}</p></div>`,
-    eat:a=>`<h3>Restaurants</h3><p>${a.eat}</p><h3>Bars & Cafés</h3><p>${a.drink}</p>`,
-    tonight:a=>`<p>${a.tonight}</p>`,
-    tickets:`<p><strong>TicketOne</strong>:<br><a href="https://www.ticketone.it/en/" target="_blank">www.ticketone.it</a></p><p><strong>Kolosseum</strong>:<br><a href="https://colosseo.it/en" target="_blank">colosseo.it</a></p><p><strong>Vatikanische Museen</strong>:<br><a href="https://tickets.museivaticani.va/" target="_blank">tickets.museivaticani.va</a></p><p><strong>Galleria Borghese</strong>:<br><a href="https://galleriaborghese.cultura.gov.it/" target="_blank">galleriaborghese.cultura.gov.it</a></p><p><strong>MAXXI</strong>:<br><a href="https://www.maxxi.art/en/" target="_blank">maxxi.art</a></p>`,
-    transport:a=>`<h3>Stadt</h3><p>${a.city_transport}</p><h3>Flughäfen</h3><p>${a.airports}</p><h3>Gepäckaufbewahrung</h3><p>${a.luggage}</p>`,
+    help:a=>`<div style="text-align:center;padding:16px 0"><div style="font-size:48px;margin-bottom:14px">📞</div><p style="font-weight:600;margin-bottom:14px;color:var(--cream)">Ihr Concierge steht zur Verfügung.</p><a href="tel:${a.phone}" style="display:block;background:var(--gold);color:#120d09;padding:14px;border-radius:14px;font-weight:700;text-decoration:none;text-align:center;font-size:15px">${a.phone}</a><p style="font-size:12px;color:var(--muted);margin-top:12px">Sprechanlage: <strong style="color:var(--cream)">${a.intercom}</strong> · Hausmeister: ${a.concierge}</p><div style="margin-top:14px"><a href="https://wa.me/393355245756" style="display:block;background:rgba(37,211,102,.12);border:1px solid rgba(37,211,102,.28);color:#4ade80;padding:12px;border-radius:14px;font-weight:600;text-decoration:none;text-align:center">💬 WhatsApp Michele</a></div></div>`,
+    eat:a=>`<h3>Restaurants</h3><p>${a.eat}</p><h3>Bars & Cafés</h3><p>${a.drink}</p><h3>Apotheke</h3><p>${a.pharmacy}</p>`,
+    tonight:a=>`<h3>Abendspaziergang</h3><p>${a.tonight}</p>`,
+    tickets:`<h3>Konzerte & Events</h3><p><strong>TicketOne</strong>: <a href="https://www.ticketone.it/en/" target="_blank">www.ticketone.it</a></p><h3>Fußball</h3><p><strong>AS Roma</strong>: <a href="https://www.asroma.com/en/tickets" target="_blank">asroma.com/tickets</a><br><strong>SS Lazio</strong>: <a href="https://www.sslazio.it/en" target="_blank">sslazio.it</a></p><h3>Sehenswürdigkeiten</h3><p><strong>Kolosseum</strong>: <a href="https://colosseo.it/en" target="_blank">colosseo.it</a><br><strong>Vatikanische Museen</strong>: <a href="https://tickets.museivaticani.va/" target="_blank">tickets.museivaticani.va</a><br><strong>Galleria Borghese</strong>: <a href="https://galleriaborghese.cultura.gov.it/" target="_blank">galleriaborghese.cultura.gov.it</a></p><h3>Zeitgenössische Kunst</h3><p><strong>MAXXI</strong>: <a href="https://www.maxxi.art/en/" target="_blank">maxxi.art</a></p>`,
+    transport:a=>`<h3>Stadt</h3><p>${a.city_transport}</p><h3>Flughäfen</h3><p>${a.airports}</p><h3>Gepäckaufbewahrung</h3><p>${a.luggage}</p><h3>Wäscherei</h3><p>${a.laundry}</p>`,
   }
 },
 es:{
   ui:{
-    heroTitle:'Bienvenido a Roma ✨',heroSub:'Hospitalidad de lujo en el corazón de Roma.',aptLabel:'Apartamento',
-    aptTitle:'Tu Apartamento 🏠',romeTitle:'Explorar Roma 🌙',
+    heroTitle:'Bienvenido a Roma ✨',
+    heroSub:'Hospitalidad de lujo en el corazón de Roma.',
+    aptLabel:'Apartamento',
+    aptTitle:'Tu Estancia 🏠',
+    romeTitle:'Vivir Roma 🍷',
     keysTitle:'Llaves Digitales',keysSub:'Abrir el portal',
     wifiTitle:'Wi‑Fi',wifiSub:'Red y contraseña',
     houseTitle:'Guía del Piso',houseSub:'Instrucciones y ayuda',
@@ -505,21 +775,22 @@ es:{
     keys:a=>buildKeysHTML(a),
     wifi:a=>`<p>${a.wifi_note}</p><p>Red: <strong>${a.wifi_ssid}</strong><br>Contraseña: <strong>${a.wifi_password}</strong></p>`,
     house:a=>`<h3>Agua</h3><p>${a.water_note}</p><h3>Aire Acondicionado</h3><p>${a.ac_note}</p><h3>Gas 🔥</h3><p>${a.gas}</p><h3>Baño</h3><p>${a.bathroom}</p><p>Toallas: ${a.towels}</p><h3>Acceso Edificio</h3><p>Portero automático: <strong>${a.intercom}</strong> · ${a.door_hours}</p><p>${a.elevator}</p>`,
-    help:a=>`<div style="text-align:center;padding:16px 0"><div style="font-size:46px;margin-bottom:14px">📞</div><p style="font-weight:600;margin-bottom:14px;color:var(--cream)">Tu conserje está disponible.</p><a href="tel:${a.phone}" style="display:block;background:var(--gold);color:#120d09;padding:13px;border-radius:14px;font-weight:700;text-decoration:none;text-align:center">${a.phone}</a><p style="font-size:12px;color:var(--muted);margin-top:10px">Portero: <strong style="color:var(--cream)">${a.intercom}</strong> · Conserje: ${a.concierge}</p></div>`,
-    eat:a=>`<h3>Restaurantes</h3><p>${a.eat}</p><h3>Bares & Cafés</h3><p>${a.drink}</p>`,
-    tonight:a=>`<p>${a.tonight}</p>`,
-    tickets:`<p><strong>TicketOne</strong>:<br><a href="https://www.ticketone.it/en/" target="_blank">www.ticketone.it</a></p><p><strong>Coliseo</strong>:<br><a href="https://colosseo.it/en" target="_blank">colosseo.it</a></p><p><strong>Museos Vaticanos</strong>:<br><a href="https://tickets.museivaticani.va/" target="_blank">tickets.museivaticani.va</a></p><p><strong>Galería Borghese</strong>:<br><a href="https://galleriaborghese.cultura.gov.it/" target="_blank">galleriaborghese.cultura.gov.it</a></p><p><strong>MAXXI</strong>:<br><a href="https://www.maxxi.art/en/" target="_blank">maxxi.art</a></p>`,
-    transport:a=>`<h3>Ciudad</h3><p>${a.city_transport}</p><h3>Aeropuertos</h3><p>${a.airports}</p><h3>Equipaje</h3><p>${a.luggage}</p>`,
+    help:a=>`<div style="text-align:center;padding:16px 0"><div style="font-size:48px;margin-bottom:14px">📞</div><p style="font-weight:600;margin-bottom:14px;color:var(--cream)">Tu conserje está disponible.</p><a href="tel:${a.phone}" style="display:block;background:var(--gold);color:#120d09;padding:14px;border-radius:14px;font-weight:700;text-decoration:none;text-align:center;font-size:15px">${a.phone}</a><p style="font-size:12px;color:var(--muted);margin-top:12px">Portero: <strong style="color:var(--cream)">${a.intercom}</strong> · Conserje: ${a.concierge}</p><div style="margin-top:14px"><a href="https://wa.me/393355245756" style="display:block;background:rgba(37,211,102,.12);border:1px solid rgba(37,211,102,.28);color:#4ade80;padding:12px;border-radius:14px;font-weight:600;text-decoration:none;text-align:center">💬 WhatsApp Michele</a></div></div>`,
+    eat:a=>`<h3>Restaurantes</h3><p>${a.eat}</p><h3>Bares & Cafés</h3><p>${a.drink}</p><h3>Farmacia</h3><p>${a.pharmacy}</p>`,
+    tonight:a=>`<h3>Paseo Nocturno</h3><p>${a.tonight}</p>`,
+    tickets:`<h3>Conciertos y eventos</h3><p><strong>TicketOne</strong>: <a href="https://www.ticketone.it/en/" target="_blank">www.ticketone.it</a></p><h3>Fútbol</h3><p><strong>AS Roma</strong>: <a href="https://www.asroma.com/en/tickets" target="_blank">asroma.com/tickets</a><br><strong>SS Lazio</strong>: <a href="https://www.sslazio.it/en" target="_blank">sslazio.it</a></p><h3>Monumentos</h3><p><strong>Coliseo</strong>: <a href="https://colosseo.it/en" target="_blank">colosseo.it</a><br><strong>Museos Vaticanos</strong>: <a href="https://tickets.museivaticani.va/" target="_blank">tickets.museivaticani.va</a><br><strong>Galería Borghese</strong>: <a href="https://galleriaborghese.cultura.gov.it/" target="_blank">galleriaborghese.cultura.gov.it</a></p><h3>Arte contemporáneo</h3><p><strong>MAXXI</strong>: <a href="https://www.maxxi.art/en/" target="_blank">maxxi.art</a></p>`,
+    transport:a=>`<h3>Ciudad</h3><p>${a.city_transport}</p><h3>Aeropuertos</h3><p>${a.airports}</p><h3>Equipaje</h3><p>${a.luggage}</p><h3>Lavandería</h3><p>${a.laundry}</p>`,
   }
 }
 };
 
+/* ── EXTRA (section/assistant labels) ── */
 const EXTRA = {
-  it:{sectionApt:'🏠 Il tuo soggiorno',sectionRome:'🍷 Vivi Roma',aptCardTitle:'Appartamento',aptCardSub:'Indirizzo, checkout, emergenza',assistantTitle:'Il tuo Concierge a Roma',assistantDesc:"Domande sull'appartamento o Roma?",assistantBtn:'APRI IL CONCIERGE',whatsappBtn:'💬 Hai bisogno di aiuto? Scrivimi su WhatsApp'},
-  en:{sectionApt:'🏠 Your Stay',sectionRome:'🍷 Explore Rome',aptCardTitle:'Apartment',aptCardSub:'Address, checkout, emergency',assistantTitle:'Your Rome Concierge',assistantDesc:'Questions about the apartment or Rome?',assistantBtn:'OPEN CONCIERGE',whatsappBtn:'💬 Need help? Message me on WhatsApp'},
-  fr:{sectionApt:'🏠 Votre Séjour',sectionRome:'🍷 Explorer Rome',aptCardTitle:'Appartement',aptCardSub:'Adresse, départ, urgences',assistantTitle:'Votre Concierge à Rome',assistantDesc:"Questions sur l'appartement ou Rome?",assistantBtn:'OUVRIR LE CONCIERGE',whatsappBtn:"💬 Besoin d'aide? Écrivez-moi sur WhatsApp"},
-  de:{sectionApt:'🏠 Ihr Aufenthalt',sectionRome:'🍷 Rom Entdecken',aptCardTitle:'Apartment',aptCardSub:'Adresse, Checkout, Notfall',assistantTitle:'Ihr Concierge in Rom',assistantDesc:'Fragen zur Wohnung oder zu Rom?',assistantBtn:'CONCIERGE ÖFFNEN',whatsappBtn:'💬 Hilfe? WhatsApp schreiben'},
-  es:{sectionApt:'🏠 Tu Estancia',sectionRome:'🍷 Explorar Roma',aptCardTitle:'Apartamento',aptCardSub:'Dirección, salida, emergencias',assistantTitle:'Tu Concierge en Roma',assistantDesc:'¿Preguntas sobre el apartamento o Roma?',assistantBtn:'ABRIR CONCIERGE',whatsappBtn:'💬 ¿Necesitas ayuda? WhatsApp'},
+  it:{sectionApt:'🏠 Il tuo soggiorno',sectionRome:'🍷 Vivi Roma',aptCardTitle:'Appartamento',aptCardSub:'Indirizzo, checkout, emergenza',assistantTitle:'Il tuo Concierge a Roma',assistantDesc:"Domande sull'appartamento o su Roma? L'AI risponde in secondi.",assistantBtn:'APRI IL CONCIERGE AI',whatsappBtn:'💬 Hai bisogno di aiuto? Scrivimi su WhatsApp'},
+  en:{sectionApt:'🏠 Your Stay',sectionRome:'🍷 Explore Rome',aptCardTitle:'Apartment',aptCardSub:'Address, checkout, emergency',assistantTitle:'Your Rome Concierge',assistantDesc:'Questions about the apartment or Rome? The AI answers in seconds.',assistantBtn:'OPEN AI CONCIERGE',whatsappBtn:'💬 Need help? Message me on WhatsApp'},
+  fr:{sectionApt:'🏠 Votre Séjour',sectionRome:'🍷 Explorer Rome',aptCardTitle:'Appartement',aptCardSub:'Adresse, départ, urgences',assistantTitle:'Votre Concierge à Rome',assistantDesc:"Questions sur l'appartement ou Rome? L'IA répond en secondes.",assistantBtn:'OUVRIR LE CONCIERGE IA',whatsappBtn:"💬 Besoin d'aide? Écrivez-moi sur WhatsApp"},
+  de:{sectionApt:'🏠 Ihr Aufenthalt',sectionRome:'🍷 Rom Entdecken',aptCardTitle:'Apartment',aptCardSub:'Adresse, Checkout, Notfall',assistantTitle:'Ihr Concierge in Rom',assistantDesc:'Fragen zur Wohnung oder zu Rom? Die KI antwortet in Sekunden.',assistantBtn:'KI-CONCIERGE ÖFFNEN',whatsappBtn:'💬 Hilfe? Schreiben Sie auf WhatsApp'},
+  es:{sectionApt:'🏠 Tu Estancia',sectionRome:'🍷 Explorar Roma',aptCardTitle:'Apartamento',aptCardSub:'Dirección, salida, emergencias',assistantTitle:'Tu Concierge en Roma',assistantDesc:'¿Preguntas sobre el apartamento o Roma? La IA responde en segundos.',assistantBtn:'ABRIR CONCIERGE IA',whatsappBtn:'💬 ¿Necesitas ayuda? WhatsApp'},
 };
 
 if (!DATA[lang]) lang = 'en';
@@ -527,6 +798,7 @@ const U = () => DATA[lang].ui;
 const A = () => DATA[lang].apt;
 const D = () => DATA[lang].drawers;
 
+/* ── MODAL TITLES ── */
 const MODAL_TITLES = {
   apt:      {en:'🏠 Apartment',it:'🏠 Appartamento',fr:'🏠 Appartement',de:'🏠 Apartment',es:'🏠 Apartamento'},
   keys:     {en:'🗝 Digital Keys',it:'🗝 Chiavi Digitali',fr:'🗝 Clés Numériques',de:'🗝 Digitale Schlüssel',es:'🗝 Llaves Digitales'},
@@ -537,9 +809,12 @@ const MODAL_TITLES = {
   tonight:  {en:'🌙 Tonight in Rome',it:'🌙 Stasera a Roma',fr:'🌙 Ce soir à Rome',de:'🌙 Heute Abend in Rom',es:'🌙 Esta noche en Roma'},
   tickets:  {en:'🎟 Ticketing',it:'🎟 Biglietteria',fr:'🎟 Billetterie',de:'🎟 Tickets',es:'🎟 Entradas'},
   transport:{en:'🚕 Transport',it:'🚕 Trasporti',fr:'🚕 Transport',de:'🚕 Transport',es:'🚕 Transporte'},
-  chat:     {en:'💬 AI Concierge',it:'💬 Concierge AI',fr:'💬 Concierge IA',de:'💬 KI-Concierge',es:'💬 Conserje IA'},
+  chat:     {en:'✨ AI Concierge',it:'✨ Concierge AI',fr:'✨ Concierge IA',de:'✨ KI-Concierge',es:'✨ Conserje IA'},
 };
 
+/* ================================================================
+   MODAL
+================================================================ */
 function openModal(key) {
   const bg = document.getElementById('modalBg');
   const titleEl = document.getElementById('modalTitle');
@@ -578,8 +853,11 @@ function buildAptContent() {
   return `<h3>${L.a}</h3>${addr}<h3>${L.c}</h3>${co}<h3>${L.e}</h3>${em}`;
 }
 
+/* ================================================================
+   AI ASSISTANT UI
+================================================================ */
 function buildAssistantUI() {
-  return `<div id="romeAiChatVisible" style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px;max-height:45vh;overflow-y:auto"></div><div id="romeChips" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px"></div><div style="display:flex;gap:8px"><input id="romeAiInput" type="text" style="flex:1;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:11px;padding:10px 13px;font-size:14px;color:var(--cream);outline:none;min-width:0" placeholder=""><button onclick="sendRomeAI()" style="background:var(--gold);color:#120d09;font-weight:700;padding:10px 16px;border-radius:11px;font-size:16px;flex-shrink:0;cursor:pointer;border:none">→</button></div>`;
+  return `<div id="romeAiChatVisible" style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px;max-height:45vh;overflow-y:auto"></div><div id="romeChips" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px"></div><div style="display:flex;gap:8px"><input id="romeAiInput" type="text" style="flex:1;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:11px 14px;font-size:14px;color:var(--cream);outline:none;min-width:0" placeholder=""><button onclick="sendRomeAI()" style="background:var(--gold);color:#120d09;font-weight:700;padding:11px 18px;border-radius:12px;font-size:17px;flex-shrink:0;cursor:pointer;border:none">→</button></div>`;
 }
 
 function buildChips() {
@@ -593,7 +871,9 @@ function buildChips() {
   });
 }
 
-// SHELLY OTP
+/* ================================================================
+   OTP / DOOR SYSTEM
+================================================================ */
 let tokenExp=null,tokenJti=null,tokenTgt=null,tokenCid=null;
 if (urlToken) {
   try {
@@ -601,11 +881,11 @@ if (urlToken) {
     tokenExp=p.exp||null;tokenJti=p.jti||null;tokenTgt=p.tgt||null;tokenCid=p.cid||null;
   } catch {}
 }
-function tokenValid(){ return tokenExp && Date.now()<tokenExp; }
+function tokenValid(){ return tokenExp && Date.now()<tokenExp*1000; }
 let sessionToken = sessionStorage.getItem('st_arenula')||'';
 function sessionValid(){
   if(!sessionToken) return false;
-  try{ const p=JSON.parse(atob(sessionToken.split('.')[1].replace(/-/g,'+').replace(/_/g,'/'))); return p.exp&&Date.now()<p.exp; }catch{return false;}
+  try{ const p=JSON.parse(atob(sessionToken.split('.')[1].replace(/-/g,'+').replace(/_/g,'/'))); return p.exp&&Date.now()<p.exp*1000; }catch{return false;}
 }
 let otpSent=false;
 
@@ -619,18 +899,18 @@ const DOOR_LABELS={
 
 function buildKeysHTML(a){
   const lbl=DOOR_LABELS[lang]||DOOR_LABELS.en;
-  const email=`<div style="text-align:center;padding:16px 0"><div style="font-size:46px;margin-bottom:14px">📧</div><p style="font-weight:600;margin-bottom:12px;color:var(--cream)">${a.keys_msg}</p><p style="font-size:12px;color:var(--muted);margin-top:14px">${U().footerHelp} <a href="tel:${a.phone}" style="color:var(--gold)">${a.phone}</a></p></div>`;
+  const email=`<div style="text-align:center;padding:16px 0"><div style="font-size:48px;margin-bottom:14px">📧</div><p style="font-weight:600;margin-bottom:12px;color:var(--cream)">${a.keys_msg}</p><p style="font-size:12px;color:var(--muted);margin-top:14px">${U().footerHelp} <a href="tel:${a.phone}" style="color:var(--gold)">${a.phone}</a></p></div>`;
   if(!urlToken) return email;
-  if(!tokenValid()) return email+`<div style="margin-top:12px;padding:12px;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.25);border-radius:12px;font-size:13px;color:#fca5a5;text-align:center">⏱ ${lbl.expired} <a href="tel:${a.phone}" style="color:var(--gold)">${a.phone}</a></div>`;
+  if(!tokenValid()) return email+`<div style="margin-top:12px;padding:13px;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.25);border-radius:14px;font-size:13px;color:#fca5a5;text-align:center">⏱ ${lbl.expired} <a href="tel:${a.phone}" style="color:var(--gold)">${a.phone}</a></div>`;
   if(!(tokenTgt&&tokenTgt.startsWith('checkin-'))) return email;
   if(!tokenCid||sessionValid()){
-    let btns=`<button onclick="shellyOpen('building')" id="open-building-btn" style="width:100%;background:var(--gold);color:#120d09;padding:13px;border-radius:14px;font-weight:700;font-size:15px;border:none;cursor:pointer;margin-top:12px">${lbl.building}</button>`;
-    if(HAS_DOOR) btns+=`<button onclick="shellyOpen('door')" id="open-door-btn" style="width:100%;background:#1d4ed8;color:#fff;padding:13px;border-radius:14px;font-weight:700;font-size:15px;border:none;cursor:pointer;margin-top:8px">${lbl.door}</button>`;
+    let btns=`<button onclick="shellyOpen('building')" id="open-building-btn" style="width:100%;background:var(--gold);color:#120d09;padding:14px;border-radius:14px;font-weight:700;font-size:15px;border:none;cursor:pointer;margin-top:12px">${lbl.building}</button>`;
+    if(HAS_DOOR) btns+=`<button onclick="shellyOpen('door')" id="open-door-btn" style="width:100%;background:#1d4ed8;color:#fff;padding:14px;border-radius:14px;font-weight:700;font-size:15px;border:none;cursor:pointer;margin-top:8px">${lbl.door}</button>`;
     return email+btns;
   }
   const otp=otpSent
-    ?`<div style="margin-top:16px"><p style="font-size:13px;color:var(--muted);margin-bottom:8px">${lbl.codeSent}</p><input id="otp-input" type="tel" inputmode="numeric" maxlength="6" placeholder="${lbl.codePlaceholder}" style="width:100%;padding:12px;background:rgba(255,255,255,.07);border:1px solid var(--border);border-radius:11px;font-size:20px;text-align:center;letter-spacing:8px;margin-bottom:8px;color:var(--cream)"><button onclick="verifyOtp()" id="verify-btn" style="width:100%;background:var(--gold);color:#120d09;padding:13px;border-radius:14px;font-weight:700;font-size:15px;border:none;cursor:pointer">${lbl.verify}</button><p id="otp-error" style="font-size:12px;color:#fca5a5;margin-top:8px;text-align:center"></p></div>`
-    :`<div style="margin-top:16px;padding:14px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:15px;text-align:center"><p style="font-size:13px;color:var(--muted);margin-bottom:12px">🔐 ${lbl.verifyTitle}</p><button onclick="requestOtp()" id="send-otp-btn" style="width:100%;background:var(--gold);color:#120d09;padding:13px;border-radius:14px;font-weight:700;font-size:15px;border:none;cursor:pointer">${lbl.send}</button><p id="send-otp-error" style="font-size:12px;color:#fca5a5;margin-top:8px;text-align:center"></p></div>`;
+    ?`<div style="margin-top:16px"><p style="font-size:13px;color:var(--muted);margin-bottom:8px">${lbl.codeSent}</p><input id="otp-input" type="tel" inputmode="numeric" maxlength="6" placeholder="${lbl.codePlaceholder}" style="width:100%;padding:12px;background:rgba(255,255,255,.07);border:1px solid var(--border);border-radius:12px;font-size:22px;text-align:center;letter-spacing:8px;margin-bottom:8px;color:var(--cream)"><button onclick="verifyOtp()" id="verify-btn" style="width:100%;background:var(--gold);color:#120d09;padding:14px;border-radius:14px;font-weight:700;font-size:15px;border:none;cursor:pointer">${lbl.verify}</button><p id="otp-error" style="font-size:12px;color:#fca5a5;margin-top:8px;text-align:center"></p></div>`
+    :`<div style="margin-top:16px;padding:16px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:16px;text-align:center"><p style="font-size:13px;color:var(--muted);margin-bottom:12px">🔐 ${lbl.verifyTitle}</p><button onclick="requestOtp()" id="send-otp-btn" style="width:100%;background:var(--gold);color:#120d09;padding:14px;border-radius:14px;font-weight:700;font-size:15px;border:none;cursor:pointer">${lbl.send}</button><p id="send-otp-error" style="font-size:12px;color:#fca5a5;margin-top:8px;text-align:center"></p></div>`;
   return email+otp;
 }
 
@@ -674,7 +954,9 @@ async function shellyOpen(type){
   }catch{btn.textContent='✗';btn.disabled=false;setTimeout(()=>{btn.textContent=orig;},3000);}
 }
 
-// RENDER
+/* ================================================================
+   RENDER / LANG
+================================================================ */
 function setLang(l){
   lang=l;localStorage.setItem('lang',l);
   const u=new URL(location.href);u.searchParams.set('lang',l);history.replaceState(null,'',u);
@@ -685,21 +967,38 @@ function setText(id,txt){const el=document.getElementById(id);if(el)el.textConte
 
 function renderUI(){
   const ui=U(),ex=EXTRA[lang]||EXTRA.en;
-  setText('heroTitle',ui.heroTitle);setText('heroSub',ui.heroSub);setText('aptLabel',ui.aptLabel);
-  setText('phasePill',ui.phaseBadge[phase-1]||'');
+  setText('heroTitle',ui.heroTitle);
+  setText('heroSub',ui.heroSub);
+  setText('aptLabel',ui.aptLabel);
+  setText('phasePill',(ui.phaseBadge||[])[phase-1]||'');
   setText('phase1Text',ui.phase1Text);
-  setText('sectionAptHead',ex.sectionApt);setText('sectionAptTitle',ui.aptTitle);
-  setText('aptCardTitle',ex.aptCardTitle);setText('aptCardSub',ex.aptCardSub);
-  setText('keysTitle',ui.keysTitle);setText('keysSub',ui.keysSub);
-  setText('wifiTitle',ui.wifiTitle);setText('wifiSub',ui.wifiSub);
-  setText('houseTitle',ui.houseTitle);setText('houseSub',ui.houseSub);
-  setText('helpTitle',ui.helpTitle);setText('helpSub',ui.helpSub);
-  setText('sectionRomeHead',ex.sectionRome);setText('sectionRomeTitle',ui.romeTitle);
-  setText('eatTitle',ui.eatTitle);setText('eatSub',ui.eatSub);
-  setText('tonightTitle',ui.tonightTitle);setText('tonightSub',ui.tonightSub);
-  setText('tickTitle',ui.tickTitle);setText('tickSub',ui.tickSub);
-  setText('transTitle',ui.transTitle);setText('transSub',ui.transSub);
-  setText('assistantTitle',ex.assistantTitle);setText('assistantDesc',ex.assistantDesc);setText('assistantBtn',ex.assistantBtn);
+  setText('sectionAptHead',ex.sectionApt);
+  setText('sectionAptTitle',ui.aptTitle);
+  setText('aptCardTitle',ex.aptCardTitle);
+  setText('aptCardSub',ex.aptCardSub);
+  setText('keysTitle',ui.keysTitle);
+  setText('keysSub',ui.keysSub);
+  setText('wifiTitle',ui.wifiTitle);
+  setText('wifiSub',ui.wifiSub);
+  setText('houseTitle',ui.houseTitle);
+  setText('houseSub',ui.houseSub);
+  setText('helpTitle',ui.helpTitle);
+  setText('helpSub',ui.helpSub);
+  setText('sectionRomeHead',ex.sectionRome);
+  setText('sectionRomeTitle',ui.romeTitle);
+  setText('eatTitle',ui.eatTitle);
+  setText('eatSub',ui.eatSub);
+  setText('tonightTitle',ui.tonightTitle);
+  setText('tonightSub',ui.tonightSub);
+  setText('tickTitle',ui.tickTitle);
+  setText('tickSub',ui.tickSub);
+  setText('transTitle',ui.transTitle);
+  setText('transSub',ui.transSub);
+  setText('assistantTitle',ex.assistantTitle);
+  setText('assistantDesc',ex.assistantDesc);
+  setText('assistantBtn',ex.assistantBtn);
+  const openBtnEl=document.getElementById('openDoorBtn');
+  if(openBtnEl){const ol={en:'OPEN',it:'APRI',fr:'OUVRIR',de:'ÖFFNEN',es:'ABRIR'};openBtnEl.textContent=ol[lang]||'OPEN';}
   const wa=document.getElementById('whatsappBtn');if(wa)wa.textContent=ex.whatsappBtn;
   document.querySelectorAll('.langBtn').forEach(b=>b.classList.toggle('active',b.dataset.lang===lang));
   loadPhase();
@@ -717,7 +1016,9 @@ function handleOpen(){
   if(phase<3){alert(U().keysPhase2);}else{openModal('keys');}
 }
 
-// GEMINI AI
+/* ================================================================
+   GEMINI AI
+================================================================ */
 let romeAiHistory=[];
 
 function buildRomeSystemPrompt(){
@@ -753,6 +1054,7 @@ function addRomeBubble(html,role){
   return d;
 }
 
+/* ── INIT ── */
 renderUI();
 </script>
 </body>
