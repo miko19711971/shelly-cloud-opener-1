@@ -247,7 +247,7 @@ footer{padding:16px 16px 0;text-align:center;}
   <div class="heroBadge">BOUTIQUE ROME CONCIERGE</div>
   <h1 class="heroTitle" id="heroTitle">Benvenuto a Roma ✨</h1>
   <p class="heroSub" id="heroSub">Ospitalità di lusso nel cuore di Roma.</p>
-  <div class="heroAddr">
+  <div class="heroAddr" id="heroAddrBox">
     <div class="heroAddrText">
       <div class="heroAddrLabel" id="aptLabel">Appartamento</div>
       Via Leonina 71 · Monti District
@@ -924,6 +924,8 @@ function applyPhase(){
       keys.onclick=()=>{ window.location.href=checkinUrl; };
     }
   }
+  const heroBox=document.getElementById('heroAddrBox');
+  if(heroBox)heroBox.style.display=phase===3?'none':'';
   setText('phasePill',(U().phaseBadge||[])[phase-1]||'');
 }
 

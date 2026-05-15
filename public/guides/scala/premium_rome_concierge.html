@@ -291,7 +291,7 @@ footer{padding:18px 18px 0;text-align:center}
   <div class="heroName">Via della Scala 17</div>
   <h1 class="heroTitle" id="heroTitle">Welcome to Rome ✨</h1>
   <p class="heroSub" id="heroSub">Curated luxury hospitality in the heart of Rome.</p>
-  <div class="heroAddr">
+  <div class="heroAddr" id="heroAddrBox">
     <div class="heroAddrInner">
       <div class="heroAddrLabel" id="aptLabel">Apartment</div>
       <div class="heroAddrText">Via della Scala 17 · Trastevere</div>
@@ -1106,6 +1106,8 @@ function applyPhase(){
       keys.onclick=()=>{ window.location.href=checkinUrl; };
     }
   }
+  const heroBox=document.getElementById('heroAddrBox');
+  if(heroBox)heroBox.style.display=phase===3?'none':'';
   setText('phasePill',(U().phaseBadge||[])[phase-1]||'');
 }
 

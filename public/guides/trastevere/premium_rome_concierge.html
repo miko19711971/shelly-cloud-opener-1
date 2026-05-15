@@ -228,7 +228,7 @@ footer{padding:20px 16px 0;text-align:center}
   <div class="heroApt">Viale Trastevere 108</div>
   <p class="heroSub" id="heroSub">Ospitalità di lusso nel cuore di Trastevere.</p>
   <div class="goldLine"></div>
-  <div class="heroAddr">
+  <div class="heroAddr" id="heroAddrBox">
     <div class="heroAddrLeft">
       <div class="heroAddrLabel" id="aptLabel">Appartamento</div>
       <div class="heroAddrText">Viale Trastevere 108 · Trastevere</div>
@@ -941,6 +941,8 @@ function applyPhase(){
       keys.onclick=()=>{ window.location.href=checkinUrl; };
     }
   }
+  const heroBox=document.getElementById('heroAddrBox');
+  if(heroBox)heroBox.style.display=phase===3?'none':'';
   setText('phasePill',(U().phaseBadge||[])[phase-1]||'');
 }
 
