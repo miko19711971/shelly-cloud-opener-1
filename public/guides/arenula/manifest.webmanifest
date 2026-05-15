@@ -1,0 +1,25 @@
+{
+  "id": "/guides/",
+  "name": "NiceFlat Rome Concierge",
+  "short_name": "Rome Concierge",
+  "description": "Your premium concierge guide for your NiceFlat apartment in Rome",
+  "start_url": "/guides/arenula/premium_rome_concierge.html",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#120d09",
+  "theme_color": "#120d09",
+  "icons": [
+    {
+      "src": "/guides/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/guides/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

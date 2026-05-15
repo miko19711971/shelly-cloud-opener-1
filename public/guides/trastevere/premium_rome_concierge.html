@@ -3,7 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Viale Trastevere 108 — Boutique Rome Concierge</title>
+<title>NiceFlat Rome Concierge — Viale Trastevere</title>
+<link rel="manifest" href="/guides/trastevere/manifest.webmanifest">
+<meta name="theme-color" content="#120d09">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Rome Concierge">
+<link rel="apple-touch-icon" href="/guides/icons/icon-192.png">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -987,6 +993,54 @@ function addRomeBubble(html,role){
 }
 
 renderUI();
+</script>
+<!-- PWA Install Banner -->
+<div id="pwaBar" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:9999;background:rgba(18,13,9,0.97);border-top:1px solid rgba(214,176,109,0.22);padding:14px 18px;align-items:center;justify-content:space-between;gap:12px;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)">
+  <div style="flex:1;min-width:0">
+    <div style="font-size:13px;font-weight:700;color:#f5ead8">📲 Add to your phone</div>
+    <div id="pwaBarSub" style="font-size:11px;color:#b7a894;margin-top:2px;line-height:1.5">Save this guide as an app — NiceFlat Rome Concierge</div>
+  </div>
+  <button id="pwaInstallBtn" style="background:linear-gradient(135deg,#e8c67a,#d6b06d);color:#120d09;font-weight:800;font-size:12px;padding:10px 16px;border-radius:12px;border:none;cursor:pointer;white-space:nowrap;flex-shrink:0">Install</button>
+  <button id="pwaDismissBtn" onclick="document.getElementById('pwaBar').style.display='none';sessionStorage.setItem('pwaDismissed','1')" style="background:none;border:none;color:#b7a894;font-size:22px;cursor:pointer;padding:2px 6px;flex-shrink:0;line-height:1">×</button>
+</div>
+
+<script>
+(function(){
+  if(sessionStorage.getItem('pwaDismissed')) return;
+  var bar=document.getElementById('pwaBar');
+  var sub=document.getElementById('pwaBarSub');
+  var installBtn=document.getElementById('pwaInstallBtn');
+  var deferredPrompt=null;
+  var isIOS=/iphone|ipad|ipod/i.test(navigator.userAgent)&&!window.MSStream;
+  var isInStandalone=window.matchMedia('(display-mode: standalone)').matches||navigator.standalone;
+  if(isInStandalone) return;
+  if(isIOS){
+    bar.style.display='flex';
+    installBtn.style.display='none';
+    sub.textContent='Tap Share → Add to Home Screen → Add';
+    return;
+  }
+  window.addEventListener('beforeinstallprompt',function(e){
+    e.preventDefault();
+    deferredPrompt=e;
+    bar.style.display='flex';
+    installBtn.onclick=function(){
+      bar.style.display='none';
+      deferredPrompt.prompt();
+      deferredPrompt.userChoice.then(function(){deferredPrompt=null;});
+    };
+  });
+  window.addEventListener('appinstalled',function(){
+    bar.style.display='none';
+    deferredPrompt=null;
+  });
+})();
+
+if('serviceWorker' in navigator){
+  window.addEventListener('load',function(){
+    navigator.serviceWorker.register('/sw.js');
+  });
+}
 </script>
 </body>
 </html>
