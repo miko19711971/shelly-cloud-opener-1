@@ -798,11 +798,11 @@ function buildChips() {
 }
 
 // ── OTP / SHELLY DOOR OPENING ──
-let tokenExp=null,tokenJti=null,tokenTgt=null,tokenCid=null;
+let tokenExp=null,tokenJti=null,tokenTgt=null,tokenCid=null,tokenDay=null;
 if (urlToken) {
   try {
     const p = JSON.parse(atob(urlToken.split('.')[1].replace(/-/g,'+').replace(/_/g,'/')));
-    tokenExp=p.exp||null;tokenJti=p.jti||null;tokenTgt=p.tgt||null;tokenCid=p.cid||null;
+    tokenExp=p.exp||null;tokenJti=p.jti||null;tokenTgt=p.tgt||null;tokenCid=p.cid||null;tokenDay=p.day||null;
   } catch {}
 }
 function tokenValid(){ return tokenExp && Date.now()<tokenExp*1000; }
@@ -932,7 +932,15 @@ function applyPhase(){
   const lock=document.getElementById('phaseLock'),grid=document.getElementById('aptGrid'),keys=document.getElementById('keysCard');
   if(lock)lock.style.display=phase===1?'block':'none';
   if(grid)grid.style.display=phase<2?'none':'block';
-  if(keys)keys.classList.toggle('locked',phase<3);
+  if(keys){
+    keys.classList.toggle('locked',phase<3);
+    if(phase===3){
+      const icon=keys.querySelector('.cardIcon');
+      if(icon)icon.textContent='✅';
+      const checkinUrl=`${SERVER_URL}/checkin/trastevere/?d=${tokenDay||''}`;
+      keys.onclick=()=>{ window.location.href=checkinUrl; };
+    }
+  }
   setText('phasePill',(U().phaseBadge||[])[phase-1]||'');
 }
 
