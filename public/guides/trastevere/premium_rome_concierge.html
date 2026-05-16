@@ -1046,8 +1046,10 @@ renderUI();
 <script>
 (function(){
   var isIOS=/iphone|ipad|ipod/i.test(navigator.userAgent)&&!window.MSStream;
+  var isAndroid=/android/i.test(navigator.userAgent);
+  var isMobile=isIOS||isAndroid;
   var isStandalone=window.matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;
-  if(isStandalone) return;
+  if(isStandalone||!isMobile) return;
   var scr=document.getElementById('pwaScreen');
   scr.style.display='flex';
   if(isIOS){
