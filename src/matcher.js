@@ -1,6 +1,48 @@
 // matcher.js — STRICT vs SOFT (ROUTING DEFINITIVO)
 
 // =========================
+// INTENTI BLOCCO (MAI RISPONDERE — escalate all'host)
+// Vengono controllati PRIMA di tutto il resto
+// =========================
+const BLOCK_INTENTS = {
+  payment: [
+    // IT
+    "pagamento", "pagato", "ho pagato", "ho inviato", "ho mandato",
+    "bonifico", "bonifico bancario", "rimborso", "fattura", "ricevuta",
+    "paypal", "carta di credito", "transazione", "addebito",
+    // EN
+    "payment", "paid", "i paid", "i sent", "i transferred",
+    "bank transfer", "refund", "invoice", "receipt",
+    "credit card", "transaction", "charge", "sent the money",
+    "sent money", "sent payment", "email address", "resolve",
+    // FR
+    "paiement", "j ai paye", "virement", "remboursement", "facture",
+    // ES
+    "pago", "pague", "transferencia", "reembolso", "factura",
+    // DE
+    "zahlung", "bezahlt", "uberweisung", "ruckerstattung", "rechnung"
+  ],
+
+  chatbot_identity: [
+    // EN
+    "are you a bot", "are you a chatbot", "are you an ai",
+    "are you human", "are you a robot", "are you real",
+    "is this a bot", "am i talking to a bot", "talking to a machine",
+    "real person", "human agent", "speak to a human",
+    // IT
+    "sei un bot", "sei un chatbot", "sei una ai", "sei umano",
+    "sei un robot", "sei reale", "persona reale", "agente umano",
+    "parlo con un robot", "parlo con una macchina",
+    // FR
+    "es tu un bot", "es tu humain", "parler a un humain",
+    // ES
+    "eres un bot", "eres humano", "hablar con una persona",
+    // DE
+    "bist du ein bot", "bist du ein mensch", "mit einem mensch sprechen"
+  ]
+};
+
+// =========================
 // INTENTI STRICT (MAI GEMINI)
 // =========================
 const STRICT_INTENTS = {
@@ -329,6 +371,18 @@ export function matchIntent(text) {
   const normalized = normalize(text);
   const words = normalized.split(" ");
   const language = detectLanguage(text);
+
+  // 🚫 BLOCK: controlla PRIMA di tutto — pagamenti e domande sull'identità del bot
+  for (const [intent, keywords] of Object.entries(BLOCK_INTENTS)) {
+    if (matchKeywords(normalized, words, keywords) >= 2) {
+      return {
+        intent,
+        language,
+        type: "BLOCK",
+        route: "IGNORE"
+      };
+    }
+  }
 
   // 🔒 STRICT: priorita assoluta — risponde sempre (anche senza domanda)
   for (const [intent, keywords] of Object.entries(STRICT_INTENTS)) {

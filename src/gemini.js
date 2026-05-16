@@ -82,6 +82,12 @@ export async function askGemini({ message, apartment, lang }) {
       "REGOLA OBBLIGATORIA: se la domanda riguarda informazioni specifiche dell'appartamento,",
       "sicurezza, emergenze, indirizzo, citofono, accessi, istruzioni tecniche o problemi interni,",
       "rispondi SOLO con la stringa __INTERNAL_AI__ senza aggiungere nient'altro.",
+      "REGOLA OBBLIGATORIA: se ti viene chiesto se sei un bot, un chatbot, un'AI, un robot,",
+      "o se sei umano, o se l'utente vuole parlare con una persona reale,",
+      "rispondi SOLO con la stringa __INTERNAL_AI__ senza aggiungere nient'altro.",
+      "REGOLA OBBLIGATORIA: se il messaggio riguarda pagamenti, bonifici, PayPal,",
+      "rimborsi, fatture o transazioni economiche,",
+      "rispondi SOLO con la stringa __INTERNAL_AI__ senza aggiungere nient'altro.",
       "Per tutte le altre domande rispondi in modo chiaro e concreto, senza emoji, senza marketing."
     ].join(" ");
 

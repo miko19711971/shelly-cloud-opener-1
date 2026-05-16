@@ -78,6 +78,27 @@ async function getConversationId(reservationId) {
   }
 }
 
+// Restituisce true se l'ospite ha scritto un messaggio negli ultimi `minutes` minuti.
+// Usata dai cron per non interrompere conversazioni attive.
+async function hasRecentGuestMessage(conversationId, minutes = 30) {
+  try {
+    const r = await axios.get(
+      `https://api.hostaway.com/v1/conversations/${conversationId}/messages?limit=10`,
+      { headers: { Authorization: `Bearer ${process.env.HOSTAWAY_TOKEN}` }, timeout: 8000 }
+    );
+    const messages = r.data?.result || [];
+    const cutoff = Date.now() - minutes * 60 * 1000;
+    return messages.some(msg => {
+      const isGuest = msg.senderRole === "guest" || msg.authorRole === "guest";
+      const ts = new Date(msg.insertedAt || msg.createdAt || 0).getTime();
+      return isGuest && ts >= cutoff;
+    });
+  } catch (e) {
+    console.error("❌ hasRecentGuestMessage error:", conversationId, e.message);
+    return false; // In caso di errore, non bloccare l'invio
+  }
+}
+
 async function runSlotCron() {
   const now = new Date();
 
@@ -169,6 +190,13 @@ async function runSlotCron() {
       if (!apartment) continue;
 
       try {
+        // Non interrompere una conversazione attiva con l'ospite
+        const conversationBusy = await hasRecentGuestMessage(conversationId, 30);
+        if (conversationBusy) {
+          console.log("⏸ Slot skippato (conversazione attiva):", apartment, currentSlot);
+          SENT_SLOTS.add(key); // Evita retry: il messaggio di attività non è critico
+          continue;
+        }
         await sendSlotLiveMessage({ conversationId, apartment, slot: currentSlot, lang: guestLang });
         SENT_SLOTS.add(key);
         console.log("📨 Slot inviato:", apartment, currentSlot);

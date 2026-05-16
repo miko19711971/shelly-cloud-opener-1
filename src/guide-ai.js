@@ -62,8 +62,8 @@ export async function reply({ apartment, message }) {
       }
     }
 
-    // 4. RESTITUISCI LA RISPOSTA
-    if (foundIntent && langAnswers[foundIntent]) {
+    // 4. RESTITUISCI LA RISPOSTA (soglia minima 2 per evitare falsi positivi)
+    if (foundIntent && bestScore >= 2 && langAnswers[foundIntent]) {
       return langAnswers[foundIntent];
     }
 
