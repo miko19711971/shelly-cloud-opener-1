@@ -191,27 +191,19 @@ setInterval(runSlotCron, 60000);
 // Map<key, { conversationId, apartment, lang, sendAt: Date, sent: boolean }>
 const PENDING_PHASE3 = new Map();
 
-async function sendPhase2GuideMessage({ conversationId, apartment, lang = "en", checkinDate = null, checkinTime = null, checkoutDate = null }) {
-  const _now = Date.now();
-  const _jti = b64url(crypto.randomBytes(9));
-  // Expiry: 11:00 AM Rome on checkout day if available, otherwise 30-day fallback
-  const _expMs = (checkoutDate && isYYYYMMDD(checkoutDate))
-    ? checkoutExpiryMs(checkoutDate)
-    : _now + 30 * 24 * 60 * 60 * 1000;
-  const _tp = { tgt: `guide-${apartment}`, exp: _expMs, jti: _jti, iat: _now, ver: TOKEN_VERSION, day: checkinDate || tzToday(), ct: checkinTime || "13:00", cid: conversationId, co: checkoutDate || null };
-  const t = makeToken(_tp);
-  const guideUrl = `https://shelly-cloud-opener-1.onrender.com/guides/${apartment}/premium_rome_concierge.html?t=${t}`;
-
+async function sendPhase2GuideMessage({ conversationId, apartment, lang = "en", reservationId = null, checkoutDate = null }) {
+  // Send personalised /stay link — device registration + session happen server-side on first open
+  const guideUrl = `https://shelly-cloud-opener-1.onrender.com/stay/${apartment}?r=${reservationId}&lang=${lang}`;
   const textMap = {
-    en: `✅ Your online check-in is confirmed!\nYour guest guide is now available — apartment info, Wi-Fi and everything you need:\n${guideUrl}`,
-    it: `✅ Il tuo check-in online è confermato!\nLa guida è ora disponibile — info appartamento, Wi-Fi e tutto quello che ti serve:\n${guideUrl}`,
-    fr: `✅ Votre check-in en ligne est confirmé!\nVotre guide est maintenant disponible — infos appartement, Wi-Fi et tout ce dont vous avez besoin:\n${guideUrl}`,
-    de: `✅ Ihr Online-Check-in ist bestätigt!\nIhr Guide ist jetzt verfügbar — Wohnungsinfos, WLAN und alles was Sie brauchen:\n${guideUrl}`,
-    es: `✅ ¡Tu check-in online está confirmado!\nTu guía ya está disponible — info del apartamento, Wi-Fi y todo lo que necesitas:\n${guideUrl}`,
+    en: `✅ Your online check-in is confirmed!\nYour personal guest guide is now ready — apartment info, Wi-Fi and everything you need:\n${guideUrl}`,
+    it: `✅ Il tuo check-in online è confermato!\nLa tua guida personale è ora disponibile — info appartamento, Wi-Fi e tutto quello che ti serve:\n${guideUrl}`,
+    fr: `✅ Votre check-in en ligne est confirmé!\nVotre guide personnel est maintenant disponible — infos appartement, Wi-Fi et tout ce dont vous avez besoin:\n${guideUrl}`,
+    de: `✅ Ihr Online-Check-in ist bestätigt!\nIhr persönlicher Guide ist jetzt verfügbar — Wohnungsinfos, WLAN und alles was Sie brauchen:\n${guideUrl}`,
+    es: `✅ ¡Tu check-in online está confirmado!\nTu guía personal ya está disponible — info del apartamento, Wi-Fi y todo lo que necesitas:\n${guideUrl}`,
   };
   const message = textMap[lang] || textMap.en;
   await sendHostawayMessage({ conversationId, message });
-  console.log(`📲 Phase 2 guide sent immediately: ${apartment} | lang:${lang}`);
+  console.log(`📲 Phase 2 guide sent: ${apartment} | res:${reservationId} | lang:${lang}`);
 }
 
 async function sendPhase3GuideMessage({ conversationId, apartment, lang = "en", checkinDate = null }) {
@@ -393,6 +385,7 @@ const PUBLIC_DIR = path.join(__dirname, "..", "public");
 const SHELLY_API_KEY  = process.env.SHELLY_API_KEY;
 const SHELLY_BASE_URL = process.env.SHELLY_BASE_URL || "https://shelly-api-eu.shelly.cloud";
 const TOKEN_SECRET    = process.env.TOKEN_SECRET;
+const SESSION_SECRET  = process.env.SESSION_SECRET || (TOKEN_SECRET + '|guide-sessions');
 const HOSTAWAY_TOKEN  = process.env.HOSTAWAY_TOKEN;
 const HOSTAWAY_WEBHOOK_BOOKING_SECRET = process.env.HOSTAWAY_WEBHOOK_BOOKING_SECRET;
 const ADMIN_SECRET = process.env.ADMIN_SECRET;
@@ -630,6 +623,75 @@ function checkoutExpiryMs(checkoutDateStr) {
   return Date.UTC(y, mo - 1, d, 9, 0, 0); // fallback CEST
 }
 
+// ========================================================================
+// GUIDE GUARD — device registry + session cookies (max 2 devices/reservation)
+// ========================================================================
+const GUIDE_DEVICES = new Map();   // reservationId → Set<deviceId>
+const MAX_GUIDE_DEVICES = 2;
+const VALID_APARTMENTS = ['trastevere', 'portico', 'arenula', 'scala', 'leonina'];
+const APT_LISTING_MAP  = { 194164: 'trastevere', 194165: 'portico', 194166: 'arenula', 194162: 'scala', 194163: 'leonina' };
+
+function parseCookies(req) {
+  const cookies = {};
+  (req.headers.cookie || '').split(';').forEach(pair => {
+    const idx = pair.indexOf('=');
+    if (idx < 0) return;
+    try { cookies[pair.slice(0, idx).trim()] = decodeURIComponent(pair.slice(idx + 1).trim()); } catch {}
+  });
+  return cookies;
+}
+
+function signGuardCookie(payload) {
+  const data = Buffer.from(JSON.stringify(payload)).toString('base64url');
+  const sig  = crypto.createHmac('sha256', SESSION_SECRET).update(data).digest('base64url');
+  return `${data}.${sig}`;
+}
+
+function verifyGuardCookie(value) {
+  try {
+    if (!value || typeof value !== 'string') return null;
+    const dot  = value.lastIndexOf('.');
+    if (dot < 0) return null;
+    const data = value.slice(0, dot);
+    const sig  = value.slice(dot + 1);
+    const exp  = crypto.createHmac('sha256', SESSION_SECRET).update(data).digest('base64url');
+    if (sig.length !== exp.length) return null;
+    if (!crypto.timingSafeEqual(Buffer.from(sig), Buffer.from(exp))) return null;
+    return JSON.parse(Buffer.from(data, 'base64url').toString());
+  } catch { return null; }
+}
+
+function requireGuideSession(req, res, next) {
+  const apt     = String(req.params.apt || '').toLowerCase();
+  const cookies = parseCookies(req);
+  const session = verifyGuardCookie(cookies['guide_sess']);
+  if (!session || Date.now() > session.exp || session.apartment !== apt) {
+    return res.redirect(302, `/stay/${apt}`);
+  }
+  // Re-register in memory on server restart
+  if (!GUIDE_DEVICES.has(session.reservationId)) GUIDE_DEVICES.set(session.reservationId, new Set());
+  GUIDE_DEVICES.get(session.reservationId).add(session.deviceId);
+  req.guideSession = session;
+  next();
+}
+
+function blockedPage() {
+  return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NiceFlat Rome Concierge</title>
+<style>*{box-sizing:border-box}body{margin:0;min-height:100vh;background:#120d09;display:flex;align-items:center;justify-content:center;font-family:system-ui,sans-serif;padding:24px}
+.card{max-width:380px;width:100%;text-align:center}.icon{font-size:52px;margin-bottom:20px}
+h1{color:#f5ead8;font-size:22px;font-weight:700;margin:0 0 12px}
+p{color:#b7a894;font-size:15px;line-height:1.6;margin:0 0 28px}
+a.btn{display:inline-block;background:linear-gradient(135deg,#e8c67a,#c89a48);color:#120d09;font-weight:700;font-size:15px;padding:14px 28px;border-radius:14px;text-decoration:none}
+</style></head><body><div class="card">
+<div class="icon">🔒</div>
+<h1>App already active</h1>
+<p>This Concierge App is already active on the maximum number of allowed devices.<br><br>Please contact Michele for assistance.</p>
+<a class="btn" href="https://wa.me/393478783030">Contact Michele</a>
+</div></body></html>`;
+}
+// ── End Guide Guard ────────────────────────────────────────────────────────
+
 const MONTHS_MAP = (() => {
   const m = new Map();
   ["january","february","march","april","may","june","july","august","september","october","november","december"]
@@ -787,6 +849,98 @@ app.all("/api/open-now/:target", requireAdmin, (req, res) => {
   return res.redirect(302, `${LINK_PREFIX}/${targetKey}/${token}`);
 });
 
+// ── /stay/:apt — personalised entry point sent by Hostaway ───────────────
+app.get('/stay/:apt', async (req, res) => {
+  const apt          = String(req.params.apt || '').toLowerCase();
+  const reservationId = String(req.query.r || '');
+  const lang         = String(req.query.lang || 'en').slice(0, 2).toLowerCase();
+
+  if (!VALID_APARTMENTS.includes(apt)) return res.status(404).send('Not found');
+  if (!reservationId) return res.status(400).send('Missing reservation ID (r=)');
+
+  // Fetch & validate reservation
+  let reservation;
+  try {
+    const r = await axios.get(`https://api.hostaway.com/v1/reservations/${reservationId}`,
+      { headers: { Authorization: `Bearer ${HOSTAWAY_TOKEN}` }, timeout: 10000 });
+    reservation = r.data?.result;
+  } catch (e) {
+    console.error('❌ /stay fetch error:', e.message);
+    return res.status(502).send('Unable to verify reservation. Please try again in a moment.');
+  }
+  if (!reservation) return res.status(404).send('Reservation not found');
+  if (reservation.status === 'cancelled') return res.status(410).send('This reservation has been cancelled');
+
+  // Apartment must match reservation
+  const expectedApt = APT_LISTING_MAP[reservation.listingMapId];
+  if (expectedApt && expectedApt !== apt) {
+    console.warn(`⚠️ /stay apartment mismatch: expected ${expectedApt}, got ${apt}`);
+    return res.status(403).send('This link is not valid for this apartment');
+  }
+
+  // Stay must not be expired (checkout at 11:00 Rome)
+  const checkoutDate  = reservation.departureDate || reservation.checkOutDate || reservation.checkoutDate || null;
+  const checkinDate   = reservation.arrivalDate   || reservation.checkInDate  || null;
+  const checkinTime   = reservation.arrivalTime   || '13:00';
+  if (checkoutDate && isYYYYMMDD(checkoutDate)) {
+    const expMs = checkoutExpiryMs(checkoutDate);
+    if (expMs && Date.now() > expMs) return res.status(410).send('Your stay has ended. Thank you for choosing NiceFlat!');
+  }
+
+  // Device registration
+  const cookies         = parseCookies(req);
+  const existingSession = verifyGuardCookie(cookies['guide_sess']);
+  let deviceId;
+
+  if (existingSession && existingSession.reservationId === reservationId && existingSession.apartment === apt) {
+    // Same device, same reservation — returning visit
+    deviceId = existingSession.deviceId;
+    if (!GUIDE_DEVICES.has(reservationId)) GUIDE_DEVICES.set(reservationId, new Set());
+    GUIDE_DEVICES.get(reservationId).add(deviceId);
+  } else {
+    // New device
+    if (!GUIDE_DEVICES.has(reservationId)) GUIDE_DEVICES.set(reservationId, new Set());
+    const devices = GUIDE_DEVICES.get(reservationId);
+    if (devices.size >= MAX_GUIDE_DEVICES) {
+      console.warn(`⚠️ /stay max devices reached: res:${reservationId} count:${devices.size}`);
+      return res.status(403).type('html').send(blockedPage());
+    }
+    deviceId = crypto.randomBytes(16).toString('hex');
+    devices.add(deviceId);
+    console.log(`📱 Device registered: ${apt} | res:${reservationId} | total:${devices.size}`);
+  }
+
+  // Session cookie (expires at checkout + 1h grace)
+  const cookieExp = (checkoutDate && isYYYYMMDD(checkoutDate))
+    ? (checkoutExpiryMs(checkoutDate) || 0) + 3600000
+    : Date.now() + 30 * 86400000;
+
+  res.cookie('guide_sess', signGuardCookie({ reservationId, deviceId, apartment: apt, exp: cookieExp }), {
+    httpOnly: true, secure: true, sameSite: 'lax',
+    maxAge: Math.max(0, Math.floor((cookieExp - Date.now()) / 1000))
+  });
+
+  // Generate guide JWT and redirect to guide page
+  const _now = Date.now(), _jti = b64url(crypto.randomBytes(9));
+  const _expMs = (checkoutDate && isYYYYMMDD(checkoutDate))
+    ? checkoutExpiryMs(checkoutDate) || (_now + 30 * 86400000)
+    : _now + 30 * 86400000;
+  const _tp = { tgt: `guide-${apt}`, exp: _expMs, jti: _jti, iat: _now, ver: TOKEN_VERSION,
+    day: checkinDate || tzToday(), ct: checkinTime, cid: null, co: checkoutDate || null };
+  const guideToken = makeToken(_tp);
+  const safeLang   = ['en','it','fr','de','es'].includes(lang) ? lang : 'en';
+  return res.redirect(302, `/guides/${apt}/premium_rome_concierge.html?t=${guideToken}&lang=${safeLang}`);
+});
+
+// ── Protected guide HTML (session required) ──────────────────────────────
+app.get('/guides/:apt/premium_rome_concierge.html', requireGuideSession, (req, res) => {
+  const apt = String(req.params.apt || '').toLowerCase();
+  if (!VALID_APARTMENTS.includes(apt)) return res.status(404).send('Not found');
+  res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
+  res.sendFile(path.join(PUBLIC_DIR, 'guides', apt, 'premium_rome_concierge.html'));
+});
+
+// ── Static guide assets (icons, manifests — no session needed) ───────────
 app.use("/guides", express.static(path.join(PUBLIC_DIR, "guides"), { fallthrough: false }));
 app.use("/guest-assistant", express.static(path.join(PUBLIC_DIR, "guides"), { fallthrough: false }));
 app.use("/guides-v2", express.static(path.join(PUBLIC_DIR, "guides-v2"), { fallthrough: false }));
@@ -2596,7 +2750,7 @@ const guestLang = (reservation?.guestLanguage || "en").slice(0, 2).toLowerCase()
         if (sendAt <= now) sendAt = new Date(now.getTime() + 2 * 60 * 1000);
 
         // Send phase 2 guide immediately
-        await sendPhase2GuideMessage({ conversationId, apartment, lang: guestLang, checkinDate: arrivalDate, checkinTime: arrivalTime || "13:00", checkoutDate });
+        await sendPhase2GuideMessage({ conversationId, apartment, lang: guestLang, reservationId: effectiveReservationId, checkoutDate });
         console.log(`📅 Guide expiry set to checkout: ${checkoutDate || 'fallback 30d'}`);
 
         // Schedule phase 3 notification (keys unlock) at check-in time
