@@ -1239,7 +1239,8 @@ app.get("/checkin/:apt/phase", (req, res) => {
   const day = p.day || null;
   const checkinTime = p.ct || "13:00";
 
-  if (!day || day !== today) return res.json({ phase: 2 });
+  if (!day || day > today) return res.json({ phase: 2 });  // no date or future check-in
+  if (day < today) return res.json({ phase: 3 });           // past check-in day → keys always unlocked
 
   // Check if current Rome time >= checkin time
   const nowRome = new Date().toLocaleString("en-CA", { timeZone: "Europe/Rome", hour: "2-digit", minute: "2-digit", hour12: false });
