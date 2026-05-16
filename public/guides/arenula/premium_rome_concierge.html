@@ -1030,7 +1030,7 @@ function applyPhase(){
       if(_keysExpired){
         if(icon)icon.textContent='🔒';
         keys.classList.add('locked');
-        const _expMsg={en:'Keys expired. Your physical keys are in the apartment.',it:'Chiavi scadute. Le chiavi fisiche si trovano in appartamento.',fr:'Clés expirées. Les clés physiques se trouvent dans l'appartement.',de:'Schlüssel abgelaufen. Die physischen Schlüssel befinden sich in der Wohnung.',es:'Llaves caducadas. Las llaves físicas están en el apartamento.'};
+        const _expMsg={en:'Keys expired. Your physical keys are in the apartment.',it:'Chiavi scadute. Le chiavi fisiche si trovano in appartamento.',fr:"Clés expirées. Les clés physiques se trouvent dans l'appartement.",de:'Schlüssel abgelaufen. Die physischen Schlüssel befinden sich in der Wohnung.',es:'Llaves caducadas. Las llaves físicas están en el apartamento.'};
         keys.onclick=()=>{alert(_expMsg[lang]||_expMsg.en);};
       }else{
         if(icon)icon.textContent='✅';

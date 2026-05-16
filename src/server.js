@@ -859,16 +859,45 @@ app.get('/stay/:apt', async (req, res) => {
   if (!reservationId) return res.status(400).send('Missing reservation ID (r=)');
 
   // Fetch & validate reservation
+  // Strategy:
+  //   1. Direct lookup if pure numeric (internal Hostaway ID like 52098758)
+  //   2. Extract first numeric segment of compound ID (74831-...) and try direct lookup
+  //   3. Fallback: list search by channelReservationId
   let reservation;
-  try {
-    const r = await axios.get(`https://api.hostaway.com/v1/reservations/${reservationId}`,
-      { headers: { Authorization: `Bearer ${HOSTAWAY_TOKEN}` }, timeout: 10000 });
-    reservation = r.data?.result;
-  } catch (e) {
-    console.error('❌ /stay fetch error:', e.message);
-    return res.status(502).send('Unable to verify reservation. Please try again in a moment.');
+
+  // Build list of candidate IDs to try as direct lookup
+  const candidateIds = [];
+  if (/^\d+$/.test(reservationId)) {
+    candidateIds.push(reservationId);
+  } else {
+    // Compound format: take first numeric segment (e.g. "74831" from "74831-194163-2000-...")
+    const firstSegment = reservationId.split('-')[0];
+    if (/^\d+$/.test(firstSegment)) candidateIds.push(firstSegment);
   }
-  if (!reservation) return res.status(404).send('Reservation not found');
+
+  for (const id of candidateIds) {
+    try {
+      const r = await axios.get(`https://api.hostaway.com/v1/reservations/${id}`,
+        { headers: { Authorization: `Bearer ${HOSTAWAY_TOKEN}` }, timeout: 10000 });
+      if (r.data?.result) { reservation = r.data.result; break; }
+    } catch (e) {
+      console.error(`❌ /stay direct fetch (${id}) error:`, e.message);
+    }
+  }
+
+  // Fallback: search by channelReservationId
+  if (!reservation) {
+    try {
+      const r = await axios.get(
+        `https://api.hostaway.com/v1/reservations?channelReservationId=${encodeURIComponent(reservationId)}&limit=1`,
+        { headers: { Authorization: `Bearer ${HOSTAWAY_TOKEN}` }, timeout: 10000 });
+      reservation = r.data?.result?.[0];
+    } catch (e) {
+      console.error('❌ /stay channel lookup error:', e.message);
+    }
+  }
+
+  if (!reservation) return res.status(502).send('Unable to verify reservation. Please try again in a moment.');
   if (reservation.status === 'cancelled') return res.status(410).send('This reservation has been cancelled');
 
   // Apartment must match reservation
