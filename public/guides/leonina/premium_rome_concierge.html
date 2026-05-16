@@ -35,15 +35,17 @@ a{color:var(--gold)}
   border-bottom:1px solid var(--line);
 }
 .langBtn{
-  width:42px;height:42px;border-radius:50%;
-  font-size:23px;line-height:1;
-  display:flex;align-items:center;justify-content:center;
-  border:2px solid transparent;
-  background:rgba(255,255,255,.04);
-  transition:border-color .18s,transform .18s,background .18s;
-  cursor:pointer;
+  display:inline-flex;align-items:center;justify-content:center;
+  padding:4px 6px;border-radius:8px;border:none;background:none;cursor:pointer;
+  opacity:.35;transition:opacity .18s,transform .18s,box-shadow .18s;
 }
-.langBtn:hover{background:rgba(214,176,109,.1);}
+.langBtn img{
+  width:28px;height:20px;border-radius:3px;display:block;
+  box-shadow:0 1px 4px rgba(0,0,0,.45);
+}
+.langBtn.active{opacity:1;transform:scale(1.18);}
+.langBtn.active img{box-shadow:0 0 0 2px rgba(214,176,109,.7),0 2px 8px rgba(0,0,0,.5);}
+.langBtn:hover{opacity:.75}
 .langBtn.active{
   border-color:var(--gold);
   background:rgba(214,176,109,.14);
@@ -241,11 +243,11 @@ footer{padding:16px 16px 0;text-align:center;}
 
 <!-- LANG BAR -->
 <nav class="langBar">
-  <button class="langBtn active" data-lang="it" onclick="setLang('it')">🇮🇹</button>
-  <button class="langBtn" data-lang="en" onclick="setLang('en')">🇬🇧</button>
-  <button class="langBtn" data-lang="fr" onclick="setLang('fr')">🇫🇷</button>
-  <button class="langBtn" data-lang="es" onclick="setLang('es')">🇪🇸</button>
-  <button class="langBtn" data-lang="de" onclick="setLang('de')">🇩🇪</button>
+    <button class="langBtn active" data-lang="it" onclick="setLang('it')"><img src="https://flagcdn.com/w40/it.png" alt="IT"></button>
+  <button class="langBtn" data-lang="en" onclick="setLang('en')"><img src="https://flagcdn.com/w40/gb.png" alt="EN"></button>
+  <button class="langBtn" data-lang="fr" onclick="setLang('fr')"><img src="https://flagcdn.com/w40/fr.png" alt="FR"></button>
+  <button class="langBtn" data-lang="es" onclick="setLang('es')"><img src="https://flagcdn.com/w40/es.png" alt="ES"></button>
+  <button class="langBtn" data-lang="de" onclick="setLang('de')"><img src="https://flagcdn.com/w40/de.png" alt="DE"></button>
 </nav>
 
 <!-- HERO -->
