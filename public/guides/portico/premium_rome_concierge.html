@@ -841,11 +841,11 @@ function buildChips() {
 // ═══════════════════════════════════════════════════════
 // OTP / DOOR SYSTEM
 // ═══════════════════════════════════════════════════════
-let tokenExp=null,tokenJti=null,tokenTgt=null,tokenCid=null,tokenDay=null;
+let tokenExp=null,tokenJti=null,tokenTgt=null,tokenCid=null,tokenDay=null,tokenCt=null;
 if (urlToken) {
   try {
     const p = JSON.parse(atob(urlToken.split('.')[1].replace(/-/g,'+').replace(/_/g,'/')));
-    tokenExp=p.exp||null;tokenJti=p.jti||null;tokenTgt=p.tgt||null;tokenCid=p.cid||null;tokenDay=p.day||null;
+    tokenExp=p.exp||null;tokenJti=p.jti||null;tokenTgt=p.tgt||null;tokenCid=p.cid||null;tokenDay=p.day||null;tokenCt=p.ct||null;
   } catch {}
 }
 function tokenValid(){ return tokenExp && Date.now()<tokenExp; }
@@ -973,10 +973,28 @@ function applyPhase(){
   if(keys){
     keys.classList.toggle('locked',phase<3);
     if(phase===3){
+      // Keys expire 2.5h after check-in
+      const _ct=tokenCt||'13:00';
+      const [_ctH,_ctM]=_ct.split(':').map(Number);
+      const _expMin=_ctH*60+_ctM+150;
+      let _keysExpired=false;
+      try{
+        const _s=new Date().toLocaleString('en-US',{timeZone:'Europe/Rome',hour:'2-digit',minute:'2-digit',hour12:false});
+        const [_nH,_nM]=_s.split(':').map(Number);
+        const _today=new Date().toLocaleDateString('en-CA',{timeZone:'Europe/Rome'});
+        _keysExpired=(tokenDay&&tokenDay<_today)||(_nH*60+_nM>=_expMin);
+      }catch{}
       const icon=keys.querySelector('.cardIcon');
-      if(icon)icon.textContent='✅';
-      const checkinUrl=`${SERVER_URL}/checkin/portico/?d=${tokenDay||''}`;
-      keys.onclick=()=>{ window.location.href=checkinUrl; };
+      if(_keysExpired){
+        if(icon)icon.textContent='🔒';
+        keys.classList.add('locked');
+        const _expMsg={en:'Keys expired. Your physical keys are in the apartment.',it:'Chiavi scadute. Le chiavi fisiche si trovano in appartamento.',fr:'Clés expirées. Les clés physiques se trouvent dans l'appartement.',de:'Schlüssel abgelaufen. Die physischen Schlüssel befinden sich in der Wohnung.',es:'Llaves caducadas. Las llaves físicas están en el apartamento.'};
+        keys.onclick=()=>{alert(_expMsg[lang]||_expMsg.en);};
+      }else{
+        if(icon)icon.textContent='✅';
+        const checkinUrl=`${SERVER_URL}/checkin/portico/?d=${tokenDay||''}`;
+        keys.onclick=()=>{ window.location.href=checkinUrl; };
+      }
     }
   }
   const heroBox=document.getElementById('heroAddrBox');
