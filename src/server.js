@@ -995,7 +995,7 @@ app.get("/checkin/:apt/:rawDate(\\d[^/.]*)", (req, res) => {
   res.redirect(302, url);
 });
 
-app.get("/checkin/:apt/", (req, res) => {
+app.get("/checkin/:apt/", async (req, res) => {
   const apt = req.params.apt.toLowerCase(), today = tzToday();
   const raw = (req.query.d || "").toString();
   let day = normalizeCheckinDate(raw);
@@ -1004,8 +1004,17 @@ app.get("/checkin/:apt/", (req, res) => {
     else return res.status(410).send("Link scaduto.");
   }
   if (day !== today) return res.status(410).send("Link scaduto.");
-  if (day !== today) return res.status(410).send("Questo link Ã¨ valido solo nel giorno di check-in.");
-  const { token } = newTokenFor(`checkin-${apt}`, { windowMin: CHECKIN_WINDOW_MIN, max: 200, day });
+  // Look up conversationId from session cookie so OTP can be sent via Hostaway
+  let cid = null;
+  try {
+    const session = verifyGuardCookie(parseCookies(req)['guide_sess']);
+    if (session?.reservationId) cid = await getConversationId(session.reservationId);
+  } catch (e) { console.error('❌ /checkin/?d getConversationId:', e.message); }
+  // Build checkin token with cid
+  const _now = Date.now(), _jti = b64url(crypto.randomBytes(9));
+  const _tp = { tgt: `checkin-${apt}`, exp: _now + CHECKIN_WINDOW_MIN * 60 * 1000,
+    max: 200, used: 0, jti: _jti, iat: _now, ver: TOKEN_VERSION, day, cid };
+  const token = makeToken(_tp);
   const url = `${req.protocol}://${req.get("host")}/checkin/${apt}/index.html?t=${token}`;
   res.redirect(302, url);
 });
