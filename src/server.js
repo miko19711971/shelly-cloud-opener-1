@@ -2887,6 +2887,17 @@ function normalizeLang(lang) {
   return lang.slice(0, 2).toLowerCase();
 }
 
+// Dedup cache: evita doppia risposta se Hostaway fa retry del webhook
+const _webhookSeen = new Map();
+function _webhookDedup(id) {
+  if (!id) return false;
+  const now = Date.now();
+  if (_webhookSeen.has(id)) { if (now - _webhookSeen.get(id) < 5 * 60 * 1000) return true; }
+  _webhookSeen.set(id, now);
+  if (_webhookSeen.size > 500) { for (const [k, t] of _webhookSeen) { if (now - t > 10 * 60 * 1000) _webhookSeen.delete(k); } }
+  return false;
+}
+
 app.post("/hostaway-incoming", async (req, res) => {
   console.log("\n" + "=".repeat(60));
   console.log("ð© HOSTAWAY WEBHOOK RECEIVED");
@@ -2896,6 +2907,14 @@ app.post("/hostaway-incoming", async (req, res) => {
 
   try {
     const payload = req.body;
+
+// Dedup: ignora webhook duplicato (Hostaway retry)
+const _whMsgId = payload?.id || payload?.messageId;
+if (_webhookDedup(_whMsgId)) {
+  console.log("🔁 Webhook duplicato ignorato:", _whMsgId);
+  return res.json({ ok: true, silent: true, reason: "duplicate" });
+}
+
 
 // ✅ IGNORA messaggi in uscita (evita loop e __INTERNAL_AI__ in chat)
  // ✅ IGNORA SOLO i messaggi OUTGOING (evita loop), NON quelli incoming
