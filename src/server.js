@@ -1091,7 +1091,7 @@ button{width:100%;padding:14px;background:linear-gradient(135deg,#e2c07a,#c89a48
 ${error ? `<div class="err">${t.err}</div>` : ''}
 <form method="POST" action="/guides/${apt}/recover">
   <input type="hidden" name="lang" value="${lang}">
-  <input type="email" name="email" placeholder="email@example.com" required autocomplete="email">
+  <input type="text" name="email" placeholder="email@example.com" required autocomplete="email" inputmode="email">
   <button type="submit">${t.btn}</button>
 </form>
 
