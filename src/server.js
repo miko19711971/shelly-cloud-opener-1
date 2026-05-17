@@ -884,7 +884,7 @@ app.get('/stay/:apt', async (req, res) => {
   const lang         = String(req.query.lang || 'en').slice(0, 2).toLowerCase();
 
   if (!VALID_APARTMENTS.includes(apt)) return res.status(404).send('Not found');
-  if (!reservationId) return res.status(400).send('Missing reservation ID (r=)');
+  if (!reservationId) return res.status(400).type('html').send(`<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>NiceFlat Rome</title><style>body{margin:0;background:#120d09;color:#f5ead8;font-family:system-ui,sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh;padding:24px;box-sizing:border-box}.box{max-width:400px;text-align:center}.logo{font-size:11px;font-weight:700;letter-spacing:3px;color:#d6b06d;text-transform:uppercase;margin-bottom:16px}.title{font-size:24px;font-weight:800;margin-bottom:12px}.sub{font-size:14px;color:#b7a894;line-height:1.6;margin-bottom:28px}.btn{display:inline-block;background:linear-gradient(135deg,#e2c07a,#c89a48);color:#120d09;padding:14px 28px;border-radius:14px;font-weight:800;text-decoration:none;font-size:15px}</style></head><body><div class="box"><div class="logo">NiceFlat Rome</div><div class="title">Link scaduto</div><div class="sub">Il tuo link di accesso non è più valido.<br>Contatta il tuo host per ricevere il nuovo link personale.</div><a class="btn" href="https://wa.me/393355245756">💬 Contatta l'host su WhatsApp</a></div></body></html>`);
 
   // Fetch & validate reservation
   // Strategy:
