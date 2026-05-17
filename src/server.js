@@ -989,70 +989,136 @@ app.get('/stay/:apt', async (req, res) => {
   return res.redirect(302, `/guides/${apt}/premium_rome_concierge.html?t=${guideToken}&lang=${safeLang}`);
 });
 
-// ── Old guide-link retrocompatibility redirect ───────────────────────────
-// Guests who submitted online check-in BEFORE May 16 2026 received:
-//   /guides/{apt}/premium_rome_concierge.html?t={JWT}&lang={l}
-// Those links now fail because requireGuideSession blocks without a session cookie.
-// This handler intercepts them and redirects to the new /stay/ flow.
+// ── Old guide-link recovery ───────────────────────────────────────────────
+// Guests who received the old bare link (no token, no r=) are shown an email
+// form. We look up their reservation in Hostaway and redirect to /stay/.
+// Guests with a valid JWT token in the URL are redirected immediately.
+
+function recoveryFormHtml(apt, lang, error) {
+  const msgs = {
+    en: { title: 'Access your guide', sub: 'Enter the email address you used for your booking.', btn: 'Continue', err: 'No active reservation found for this email. Please check and try again or contact your host.' },
+    it: { title: 'Accedi alla tua guida', sub: "Inserisci l'email usata per la prenotazione.", btn: 'Continua', err: 'Nessuna prenotazione attiva trovata per questa email. Controlla e riprova oppure contatta l\'host.' },
+    fr: { title: 'Accédez à votre guide', sub: 'Entrez l\'email utilisé pour votre réservation.', btn: 'Continuer', err: 'Aucune réservation active trouvée. Vérifiez et réessayez ou contactez votre hôte.' },
+    de: { title: 'Auf Ihren Guide zugreifen', sub: 'Geben Sie die E-Mail-Adresse Ihrer Buchung ein.', btn: 'Weiter', err: 'Keine aktive Reservierung gefunden. Bitte prüfen Sie die Adresse oder kontaktieren Sie Ihren Gastgeber.' },
+    es: { title: 'Accede a tu guía', sub: 'Introduce el email con el que reservaste.', btn: 'Continuar', err: 'No se encontró reserva activa. Comprueba el email o contacta con tu anfitrión.' },
+  };
+  const t = msgs[lang] || msgs.en;
+  return `<!doctype html><html lang="${lang}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>NiceFlat Rome</title>
+<style>*{box-sizing:border-box}body{margin:0;background:#120d09;color:#f5ead8;font-family:system-ui,sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh;padding:24px}.box{width:100%;max-width:380px;text-align:center}.logo{font-size:10px;font-weight:700;letter-spacing:3px;color:#d6b06d;text-transform:uppercase;margin-bottom:20px}.title{font-size:22px;font-weight:800;margin-bottom:10px}.sub{font-size:14px;color:#b7a894;line-height:1.6;margin-bottom:24px}input[type=email]{width:100%;padding:14px 16px;background:rgba(255,255,255,.07);border:1px solid rgba(214,176,109,.3);border-radius:12px;color:#f5ead8;font-size:16px;margin-bottom:14px;outline:none}input[type=email]:focus{border-color:#d6b06d}button{width:100%;padding:14px;background:linear-gradient(135deg,#e2c07a,#c89a48);color:#120d09;border:none;border-radius:14px;font-weight:800;font-size:15px;cursor:pointer}.err{color:#fca5a5;font-size:13px;margin-bottom:16px;padding:12px;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.25);border-radius:10px}</style></head>
+<body><div class="box">
+<div class="logo">NiceFlat · Boutique Rome Concierge</div>
+<div class="title">${t.title}</div>
+<div class="sub">${t.sub}</div>
+${error ? `<div class="err">${t.err}</div>` : ''}
+<form method="POST" action="/guides/${apt}/recover">
+  <input type="hidden" name="lang" value="${lang}">
+  <input type="email" name="email" placeholder="email@example.com" required autocomplete="email">
+  <button type="submit">${t.btn}</button>
+</form>
+</div></body></html>`;
+}
+
 app.get('/guides/:apt/premium_rome_concierge.html', async (req, res, next) => {
   const apt = String(req.params.apt || '').toLowerCase();
   if (!VALID_APARTMENTS.includes(apt)) return next();
 
-  // Skip if a valid session cookie already exists — let requireGuideSession handle it
+  // Valid session → proceed to requireGuideSession
   const cookies = parseCookies(req);
   const session = verifyGuardCookie(cookies['guide_sess']);
   if (session && Date.now() <= session.exp && session.apartment === apt) return next();
 
-  // Only intercept requests that carry an old-format JWT token
-  const urlToken = String(req.query.t || '');
-  if (!urlToken) return next();
-
-  const parsed = parseGuideToken(urlToken);
-  if (!parsed.ok) return next();
-
-  const p = parsed.payload;
-  // Old tokens: tgt='guide-{apt}', cid=conversationId, day=checkinDate
-  if (!p.cid || p.tgt !== `guide-${apt}`) return next();
-
-  const day = p.day || '';
-  // Date range: 2026-05-17 to 2027-12-31
-  if (!day || day < '2026-05-17' || day > '2027-12-31') return next();
-
-  const lang = String(req.query.lang || 'en').slice(0, 2).toLowerCase();
+  const lang = String(req.query.lang || req.query.l || 'en').slice(0, 2).toLowerCase();
   const safeLang = ['en','it','fr','de','es'].includes(lang) ? lang : 'en';
 
+  // Case A: old JWT token present → resolve via conversationId and redirect
+  const urlToken = String(req.query.t || '');
+  if (urlToken) {
+    const parsed = parseGuideToken(urlToken);
+    if (parsed.ok && parsed.payload.cid && parsed.payload.tgt === `guide-${apt}`) {
+      const p = parsed.payload;
+      const day = p.day || '';
+      if (day >= '2026-05-17' && day <= '2027-12-31') {
+        try {
+          const convResp = await axios.get(
+            `https://api.hostaway.com/v1/conversations/${p.cid}`,
+            { headers: { Authorization: `Bearer ${HOSTAWAY_TOKEN}` }, timeout: 10000 }
+          );
+          const reservationId = convResp.data?.result?.reservationId;
+          if (reservationId) {
+            const resResp = await axios.get(
+              `https://api.hostaway.com/v1/reservations/${reservationId}`,
+              { headers: { Authorization: `Bearer ${HOSTAWAY_TOKEN}` }, timeout: 10000 }
+            );
+            const reservation = resResp.data?.result;
+            if (reservation && reservation.status !== 'cancelled') {
+              const co = reservation.departureDate || reservation.checkOutDate || reservation.checkoutDate;
+              const expMs = co && isYYYYMMDD(co) ? checkoutExpiryMs(co) : null;
+              if (!expMs || Date.now() <= expMs) {
+                console.log(`↩️ JWT old-link → /stay: ${apt} | res:${reservationId}`);
+                return res.redirect(302, `/stay/${apt}?r=${reservationId}&lang=${safeLang}`);
+              }
+            }
+          }
+        } catch (e) { console.error('❌ old JWT lookup:', e.message); }
+      }
+    }
+  }
+
+  // Case B: no token → show email recovery form
+  return res.type('html').send(recoveryFormHtml(apt, safeLang, false));
+});
+
+// POST /guides/:apt/recover — email lookup → redirect to /stay/
+app.use(express.urlencoded({ extended: false }));
+app.post('/guides/:apt/recover', async (req, res) => {
+  const apt = String(req.params.apt || '').toLowerCase();
+  if (!VALID_APARTMENTS.includes(apt)) return res.status(404).send('Not found');
+
+  const email = String(req.body?.email || '').trim().toLowerCase();
+  const lang = String(req.body?.lang || 'en').slice(0, 2).toLowerCase();
+  const safeLang = ['en','it','fr','de','es'].includes(lang) ? lang : 'en';
+  const today = tzToday();
+
+  if (!email || !email.includes('@')) return res.type('html').send(recoveryFormHtml(apt, safeLang, true));
+
   try {
-    // Step 1: resolve reservationId from conversationId
-    const convResp = await axios.get(
-      `https://api.hostaway.com/v1/conversations/${p.cid}`,
+    // Search Hostaway reservations by guest email
+    const listingId = Object.entries(APT_LISTING_MAP).find(([,v]) => v === apt)?.[0];
+    const params = new URLSearchParams({ limit: '10', guestEmail: email });
+    if (listingId) params.set('listingMapId', listingId);
+
+    const r = await axios.get(
+      `https://api.hostaway.com/v1/reservations?${params}`,
       { headers: { Authorization: `Bearer ${HOSTAWAY_TOKEN}` }, timeout: 10000 }
     );
-    const reservationId = convResp.data?.result?.reservationId;
-    if (!reservationId) { console.warn(`↩️ old-link: no reservationId for cid=${p.cid}`); return next(); }
+    const results = r.data?.result || [];
 
-    // Step 2: verify reservation is active and not expired
-    const resResp = await axios.get(
-      `https://api.hostaway.com/v1/reservations/${reservationId}`,
-      { headers: { Authorization: `Bearer ${HOSTAWAY_TOKEN}` }, timeout: 10000 }
-    );
-    const reservation = resResp.data?.result;
-    if (!reservation) return next();
-    if (reservation.status === 'cancelled') return next();
+    // Find first active reservation with check-in >= today and not expired
+    const match = results.find(res => {
+      if (res.status === 'cancelled') return false;
+      const arrivalDate = res.arrivalDate || res.checkInDate || '';
+      const departureDate = res.departureDate || res.checkOutDate || res.checkoutDate || '';
+      if (arrivalDate && arrivalDate > '2027-12-31') return false;
+      if (departureDate && isYYYYMMDD(departureDate)) {
+        const expMs = checkoutExpiryMs(departureDate);
+        if (expMs && Date.now() > expMs) return false; // stay ended
+      }
+      // Must be a current or future stay
+      return !departureDate || departureDate >= today;
+    });
 
-    const checkoutDate = reservation.departureDate || reservation.checkOutDate || reservation.checkoutDate || null;
-    if (checkoutDate && isYYYYMMDD(checkoutDate)) {
-      const expMs = checkoutExpiryMs(checkoutDate);
-      if (expMs && Date.now() > expMs) return next(); // stay already ended
+    if (!match) {
+      console.warn(`↩️ recover: no match for email=${email} apt=${apt}`);
+      return res.type('html').send(recoveryFormHtml(apt, safeLang, true));
     }
 
-    // The presence of a valid old guide JWT is itself proof of check-in submission
-    // (sendPhase2GuideMessage was triggered exclusively by the check-in webhook)
-    console.log(`↩️ Old guide link → /stay: ${apt} | res:${reservationId} | cid:${p.cid}`);
+    const reservationId = match.id || match.reservationId;
+    console.log(`↩️ Email recovery → /stay: ${apt} | res:${reservationId} | email:${email}`);
     return res.redirect(302, `/stay/${apt}?r=${reservationId}&lang=${safeLang}`);
 
   } catch (e) {
-    console.error('❌ Old guide link lookup error:', e.message);
-    return next(); // fall through — requireGuideSession will handle it
+    console.error('❌ /guides/recover error:', e.message);
+    return res.type('html').send(recoveryFormHtml(apt, safeLang, true));
   }
 });
 
