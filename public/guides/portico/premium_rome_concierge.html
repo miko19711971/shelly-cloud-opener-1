@@ -1031,7 +1031,7 @@ async function sendRomeAI(prefill){
     });
     const json=await res.json();
     if(!json.ok||!json.reply) throw new Error();
-    spin.innerHTML=json.reply.replace(/\n/g,'<br>');
+    spin.innerHTML=(function renderMd(t){return t.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>').replace(/^[\*\-]\s+(.+)$/gm,'<div style="margin:3px 0 3px 10px">• $1</div>').replace(/\|/g,' <span style="color:var(--muted)">|</span> ').replace(/\n/g,'<br>');})(json.reply);
     romeAiHistory.push({role:'user',parts:[{text}]});
     romeAiHistory.push({role:'model',parts:[{text:json.reply}]});
   }catch{spin.innerHTML='⚠️ '+A().phone;}
