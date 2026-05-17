@@ -989,6 +989,73 @@ app.get('/stay/:apt', async (req, res) => {
   return res.redirect(302, `/guides/${apt}/premium_rome_concierge.html?t=${guideToken}&lang=${safeLang}`);
 });
 
+// ── Old guide-link retrocompatibility redirect ───────────────────────────
+// Guests who submitted online check-in BEFORE May 16 2026 received:
+//   /guides/{apt}/premium_rome_concierge.html?t={JWT}&lang={l}
+// Those links now fail because requireGuideSession blocks without a session cookie.
+// This handler intercepts them and redirects to the new /stay/ flow.
+app.get('/guides/:apt/premium_rome_concierge.html', async (req, res, next) => {
+  const apt = String(req.params.apt || '').toLowerCase();
+  if (!VALID_APARTMENTS.includes(apt)) return next();
+
+  // Skip if a valid session cookie already exists — let requireGuideSession handle it
+  const cookies = parseCookies(req);
+  const session = verifyGuardCookie(cookies['guide_sess']);
+  if (session && Date.now() <= session.exp && session.apartment === apt) return next();
+
+  // Only intercept requests that carry an old-format JWT token
+  const urlToken = String(req.query.t || '');
+  if (!urlToken) return next();
+
+  const parsed = parseGuideToken(urlToken);
+  if (!parsed.ok) return next();
+
+  const p = parsed.payload;
+  // Old tokens: tgt='guide-{apt}', cid=conversationId, day=checkinDate
+  if (!p.cid || p.tgt !== `guide-${apt}`) return next();
+
+  const day = p.day || '';
+  // Date range: 2026-05-17 to 2027-12-31
+  if (!day || day < '2026-05-17' || day > '2027-12-31') return next();
+
+  const lang = String(req.query.lang || 'en').slice(0, 2).toLowerCase();
+  const safeLang = ['en','it','fr','de','es'].includes(lang) ? lang : 'en';
+
+  try {
+    // Step 1: resolve reservationId from conversationId
+    const convResp = await axios.get(
+      `https://api.hostaway.com/v1/conversations/${p.cid}`,
+      { headers: { Authorization: `Bearer ${HOSTAWAY_TOKEN}` }, timeout: 10000 }
+    );
+    const reservationId = convResp.data?.result?.reservationId;
+    if (!reservationId) { console.warn(`↩️ old-link: no reservationId for cid=${p.cid}`); return next(); }
+
+    // Step 2: verify reservation is active and not expired
+    const resResp = await axios.get(
+      `https://api.hostaway.com/v1/reservations/${reservationId}`,
+      { headers: { Authorization: `Bearer ${HOSTAWAY_TOKEN}` }, timeout: 10000 }
+    );
+    const reservation = resResp.data?.result;
+    if (!reservation) return next();
+    if (reservation.status === 'cancelled') return next();
+
+    const checkoutDate = reservation.departureDate || reservation.checkOutDate || reservation.checkoutDate || null;
+    if (checkoutDate && isYYYYMMDD(checkoutDate)) {
+      const expMs = checkoutExpiryMs(checkoutDate);
+      if (expMs && Date.now() > expMs) return next(); // stay already ended
+    }
+
+    // The presence of a valid old guide JWT is itself proof of check-in submission
+    // (sendPhase2GuideMessage was triggered exclusively by the check-in webhook)
+    console.log(`↩️ Old guide link → /stay: ${apt} | res:${reservationId} | cid:${p.cid}`);
+    return res.redirect(302, `/stay/${apt}?r=${reservationId}&lang=${safeLang}`);
+
+  } catch (e) {
+    console.error('❌ Old guide link lookup error:', e.message);
+    return next(); // fall through — requireGuideSession will handle it
+  }
+});
+
 // ── Protected guide HTML (session required) ──────────────────────────────
 app.get('/guides/:apt/premium_rome_concierge.html', requireGuideSession, (req, res) => {
   const apt = String(req.params.apt || '').toLowerCase();
