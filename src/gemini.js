@@ -62,7 +62,7 @@ export async function askGeminiGuide({ message, systemPrompt, history = [] }) {
     });
     const chat = model.startChat({
       history: history.length > 0 ? history : undefined,
-      generationConfig: { temperature: 0.7, maxOutputTokens: 512 }
+      generationConfig: { temperature: 0.7, maxOutputTokens: 1500 }
     });
     const result = await chat.sendMessage(message);
     const text = result?.response?.text?.();
