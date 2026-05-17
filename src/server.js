@@ -996,15 +996,92 @@ app.get('/stay/:apt', async (req, res) => {
 
 function recoveryFormHtml(apt, lang, error) {
   const msgs = {
-    en: { title: 'Access your guide', sub: 'Enter the email address you used for your booking.', btn: 'Continue', err: 'No active reservation found for this email. Please check and try again or contact your host.' },
-    it: { title: 'Accedi alla tua guida', sub: "Inserisci l'email usata per la prenotazione.", btn: 'Continua', err: 'Nessuna prenotazione attiva trovata per questa email. Controlla e riprova oppure contatta l\'host.' },
-    fr: { title: 'Accédez à votre guide', sub: 'Entrez l\'email utilisé pour votre réservation.', btn: 'Continuer', err: 'Aucune réservation active trouvée. Vérifiez et réessayez ou contactez votre hôte.' },
-    de: { title: 'Auf Ihren Guide zugreifen', sub: 'Geben Sie die E-Mail-Adresse Ihrer Buchung ein.', btn: 'Weiter', err: 'Keine aktive Reservierung gefunden. Bitte prüfen Sie die Adresse oder kontaktieren Sie Ihren Gastgeber.' },
-    es: { title: 'Accede a tu guía', sub: 'Introduce el email con el que reservaste.', btn: 'Continuar', err: 'No se encontró reserva activa. Comprueba el email o contacta con tu anfitrión.' },
+    en: {
+      title: 'Access your guide', sub: 'Enter the email address you used for your booking.', btn: 'Continue',
+      err: 'No active reservation found for this email. Please check and try again or contact your host.',
+      installBtn: 'Add to Home Screen',
+      iosTitle: 'Install the guide on your phone',
+      iosStep1: 'Tap the',
+      iosStep2: 'Share button at the bottom of your browser',
+      iosStep3: 'Then tap',
+      iosStep4: '"Add to Home Screen"',
+      iosStep5: 'The guide will appear as an app on your home screen.',
+    },
+    it: {
+      title: 'Accedi alla tua guida', sub: "Inserisci l'email usata per la prenotazione.", btn: 'Continua',
+      err: "Nessuna prenotazione attiva trovata per questa email. Controlla e riprova oppure contatta l'host.",
+      installBtn: 'Aggiungi alla schermata Home',
+      iosTitle: 'Installa la guida sul tuo telefono',
+      iosStep1: 'Tocca il',
+      iosStep2: 'tasto Condividi in basso nel browser',
+      iosStep3: 'Poi tocca',
+      iosStep4: '"Aggiungi a schermata Home"',
+      iosStep5: 'La guida apparirà come un\'app sulla tua schermata home.',
+    },
+    fr: {
+      title: 'Accédez à votre guide', sub: "Entrez l'email utilisé pour votre réservation.", btn: 'Continuer',
+      err: "Aucune réservation active trouvée. Vérifiez et réessayez ou contactez votre hôte.",
+      installBtn: "Ajouter à l'écran d'accueil",
+      iosTitle: "Installez le guide sur votre téléphone",
+      iosStep1: 'Appuyez sur le',
+      iosStep2: 'bouton Partager en bas du navigateur',
+      iosStep3: 'Puis appuyez sur',
+      iosStep4: '"Sur l\'écran d\'accueil"',
+      iosStep5: "Le guide apparaîtra comme une app sur votre écran d'accueil.",
+    },
+    de: {
+      title: 'Auf Ihren Guide zugreifen', sub: 'Geben Sie die E-Mail-Adresse Ihrer Buchung ein.', btn: 'Weiter',
+      err: 'Keine aktive Reservierung gefunden. Bitte prüfen Sie die Adresse oder kontaktieren Sie Ihren Gastgeber.',
+      installBtn: 'Zum Home-Bildschirm hinzufügen',
+      iosTitle: 'Guide auf Ihrem Telefon installieren',
+      iosStep1: 'Tippen Sie auf das',
+      iosStep2: 'Teilen-Symbol unten im Browser',
+      iosStep3: 'Dann auf',
+      iosStep4: '"Zum Home-Bildschirm"',
+      iosStep5: 'Der Guide erscheint als App auf Ihrem Home-Bildschirm.',
+    },
+    es: {
+      title: 'Accede a tu guía', sub: 'Introduce el email con el que reservaste.', btn: 'Continuar',
+      err: 'No se encontró reserva activa. Comprueba el email o contacta con tu anfitrión.',
+      installBtn: 'Añadir a pantalla de inicio',
+      iosTitle: 'Instala la guía en tu teléfono',
+      iosStep1: 'Toca el',
+      iosStep2: 'botón Compartir en la parte inferior del navegador',
+      iosStep3: 'Luego toca',
+      iosStep4: '"Añadir a pantalla de inicio"',
+      iosStep5: 'La guía aparecerá como una app en tu pantalla de inicio.',
+    },
   };
   const t = msgs[lang] || msgs.en;
-  return `<!doctype html><html lang="${lang}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>NiceFlat Rome</title>
-<style>*{box-sizing:border-box}body{margin:0;background:#120d09;color:#f5ead8;font-family:system-ui,sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh;padding:24px}.box{width:100%;max-width:380px;text-align:center}.logo{font-size:10px;font-weight:700;letter-spacing:3px;color:#d6b06d;text-transform:uppercase;margin-bottom:20px}.title{font-size:22px;font-weight:800;margin-bottom:10px}.sub{font-size:14px;color:#b7a894;line-height:1.6;margin-bottom:24px}input[type=email]{width:100%;padding:14px 16px;background:rgba(255,255,255,.07);border:1px solid rgba(214,176,109,.3);border-radius:12px;color:#f5ead8;font-size:16px;margin-bottom:14px;outline:none}input[type=email]:focus{border-color:#d6b06d}button{width:100%;padding:14px;background:linear-gradient(135deg,#e2c07a,#c89a48);color:#120d09;border:none;border-radius:14px;font-weight:800;font-size:15px;cursor:pointer}.err{color:#fca5a5;font-size:13px;margin-bottom:16px;padding:12px;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.25);border-radius:10px}</style></head>
+  return `<!doctype html><html lang="${lang}"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#120d09">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Rome Concierge">
+<link rel="apple-touch-icon" href="/guides/icons/icon-192.png">
+<link rel="manifest" href="/guides/${apt}/manifest.webmanifest">
+<title>NiceFlat Rome</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#120d09;color:#f5ead8;font-family:system-ui,sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh;padding:24px}
+.box{width:100%;max-width:380px;text-align:center}
+.logo{font-size:10px;font-weight:700;letter-spacing:3px;color:#d6b06d;text-transform:uppercase;margin-bottom:20px}
+.title{font-size:22px;font-weight:800;margin-bottom:10px}
+.sub{font-size:14px;color:#b7a894;line-height:1.6;margin-bottom:24px}
+input[type=email]{width:100%;padding:14px 16px;background:rgba(255,255,255,.07);border:1px solid rgba(214,176,109,.3);border-radius:12px;color:#f5ead8;font-size:16px;margin-bottom:14px;outline:none}
+input[type=email]:focus{border-color:#d6b06d}
+button{width:100%;padding:14px;background:linear-gradient(135deg,#e2c07a,#c89a48);color:#120d09;border:none;border-radius:14px;font-weight:800;font-size:15px;cursor:pointer}
+.err{color:#fca5a5;font-size:13px;margin-bottom:16px;padding:12px;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.25);border-radius:10px}
+#pwa-android{display:none;margin-top:20px}
+#pwa-android button{background:rgba(214,176,109,.12);color:#d6b06d;border:1px solid rgba(214,176,109,.4);font-weight:700;font-size:14px;padding:12px}
+#pwa-ios{display:none;margin-top:20px;background:rgba(214,176,109,.07);border:1px solid rgba(214,176,109,.2);border-radius:14px;padding:16px;text-align:left}
+#pwa-ios .ios-title{font-size:13px;font-weight:700;color:#d6b06d;letter-spacing:.5px;margin-bottom:10px;text-transform:uppercase}
+#pwa-ios .ios-step{font-size:13px;color:#b7a894;line-height:1.7;display:flex;align-items:flex-start;gap:8px;margin-bottom:4px}
+#pwa-ios .ios-step .num{color:#d6b06d;font-weight:800;min-width:16px}
+.share-icon{display:inline-block;width:18px;height:18px;vertical-align:middle;margin:0 3px;background:rgba(214,176,109,.2);border-radius:4px;padding:2px}
+</style>
+</head>
 <body><div class="box">
 <div class="logo">NiceFlat · Boutique Rome Concierge</div>
 <div class="title">${t.title}</div>
@@ -1015,7 +1092,46 @@ ${error ? `<div class="err">${t.err}</div>` : ''}
   <input type="email" name="email" placeholder="email@example.com" required autocomplete="email">
   <button type="submit">${t.btn}</button>
 </form>
-</div></body></html>`;
+
+<div id="pwa-android">
+  <button id="pwa-android-btn" type="button">📲 ${t.installBtn}</button>
+</div>
+
+<div id="pwa-ios">
+  <div class="ios-title">📲 ${t.iosTitle}</div>
+  <div class="ios-step"><span class="num">1</span><span>${t.iosStep1} <svg class="share-icon" viewBox="0 0 24 24" fill="none" stroke="#d6b06d" stroke-width="2.5"><path d="M8 10l4-4 4 4M12 6v11M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2"/></svg> ${t.iosStep2}</span></div>
+  <div class="ios-step"><span class="num">2</span><span>${t.iosStep3} <strong style="color:#f5ead8">${t.iosStep4}</strong></span></div>
+  <div class="ios-step"><span class="num">3</span><span>${t.iosStep5}</span></div>
+</div>
+
+</div>
+<script>
+(function(){
+  var isIos=/iphone|ipad|ipod/i.test(navigator.userAgent||'');
+  var isInStandalone=('standalone' in navigator&&navigator.standalone)||window.matchMedia('(display-mode: standalone)').matches;
+  if(isInStandalone) return; // already installed
+
+  if(isIos){
+    document.getElementById('pwa-ios').style.display='block';
+    return;
+  }
+
+  // Android / Chrome: intercept beforeinstallprompt
+  var deferredPrompt=null;
+  window.addEventListener('beforeinstallprompt',function(e){
+    e.preventDefault();
+    deferredPrompt=e;
+    document.getElementById('pwa-android').style.display='block';
+  });
+
+  document.getElementById('pwa-android-btn').addEventListener('click',function(){
+    if(!deferredPrompt) return;
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.then(function(){deferredPrompt=null;document.getElementById('pwa-android').style.display='none';});
+  });
+})();
+</script>
+</body></html>`;
 }
 
 app.get('/guides/:apt/premium_rome_concierge.html', async (req, res, next) => {
