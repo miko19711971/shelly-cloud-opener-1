@@ -2574,13 +2574,41 @@ p{line-height:1.6;white-space:pre-line}
 app.use(express.static(PUBLIC_DIR));
 
 
+const GUIDE_AI_EXTRA = `
+
+ROME RESTAURANT DATABASE — use this data when guests ask about food:
+
+KOSHER:
+- Ba'Ghetto | Via del Portico d'Ottavia 2 | +39 06 6889 2868 | Mon–Thu 12:30–15 & 19–23, Fri 12:30–15, Sun 12:30–15 & 19–23 | €35–55 | Roman-Jewish classics: carciofi alla giudia, fiori di zucca, baccalà
+- Nonna Betta | Via del Portico d'Ottavia 16 | +39 06 6880 6263 | Mon–Thu & Sun 12–15 & 19–23 | €25–45 | Traditional kosher, Roman Jewish recipes since 1989
+- Zi Fenizia | Via Santa Maria del Pianto 64 | +39 06 689 6976 | Mon–Fri 9–20, Sat 9–16 | €10–20 | Kosher bakery and street food, supplì and pizza al taglio
+- Il Giardino Romano | Via del Portico d'Ottavia 18 | +39 06 6813 4590 | Tue–Sun 12–15 & 19–23 | €30–50 | Kosher meat restaurant
+
+INDIAN:
+- Maharajah | Via dei Serpenti 124, Monti | +39 06 474 7144 | Daily 12–15 & 19–23 | €20–35 | One of Rome's best Indian, excellent thali and tandoori
+- Guru | Via della Croce 81, Spanish Steps area | +39 06 678 4554 | Daily 12–15 & 19–23 | €25–40 | North Indian cuisine, popular with locals
+- Himalaya's Kashmir | Via Principe Amedeo 26, near Termini | +39 06 446 1539 | Daily 12–15 & 19–23 | €15–30 | Nepalese and Indian, great value
+
+VEGETARIAN/VEGAN:
+- Ops! | Via Ferruccio 1 | +39 06 4547 6235 | Tue–Sun 12:30–15 & 19:30–23 | €20–35 | Creative vegetarian, great natural wines
+- Il Canestro | Via Luca della Robbia 47, Testaccio | +39 06 574 1374 | Mon–Sat 12–15 & 19–22:30 | €15–25 | Organic vegetarian restaurant
+- Rifugio Romano | Via della Cordonata 6 | daily | €10–20 | Vegan street food near Piazza Venezia
+
+PIZZA (best in Rome):
+- Seu Pizza Illuminati | Via Angelo Bargoni 10, Trastevere | +39 06 588 2428 | Wed–Mon 19–23 | €12–20 | Best contemporary pizza in Rome
+- Pizzarium | Via della Meloria 43, Prati | +39 06 3974 5416 | Mon–Sat 10–22 | €5–15 | Bonci's legendary pizza al taglio
+- Da Remo | Piazza Santa Maria Liberatrice 44, Testaccio | +39 06 574 6270 | Mon–Sat 19–23 | €10–18 | Roman-style thin crust, queues outside are normal
+
+ALWAYS format your answer: Name | Address | Phone | Hours | Price | Description. Minimum 3 places per answer. Never give generic answers without specific names and addresses.`;
+
 app.post("/api/ai/guide", cors(), async (req, res) => {
   try {
     const { message, systemPrompt, history } = req.body || {};
     if (!message) return res.status(400).json({ ok: false, error: "missing message" });
+    const enrichedPrompt = (systemPrompt || "You are a helpful Rome apartment concierge. Answer in the same language the user writes in.") + GUIDE_AI_EXTRA;
     const reply = await askGeminiGuide({
       message,
-      systemPrompt: systemPrompt || "You are a helpful Rome apartment concierge. Answer in the same language the user writes in.",
+      systemPrompt: enrichedPrompt,
       history: Array.isArray(history) ? history : []
     });
     res.json({ ok: true, reply: reply || null });
