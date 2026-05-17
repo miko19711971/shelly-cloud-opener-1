@@ -696,9 +696,11 @@ function requireGuideSession(req, res, next) {
   if (!session || Date.now() > session.exp || session.apartment !== apt) {
     return res.redirect(302, `/stay/${apt}`);
   }
-  // Re-register in memory on server restart
-  if (!GUIDE_DEVICES.has(session.reservationId)) GUIDE_DEVICES.set(session.reservationId, new Set());
-  GUIDE_DEVICES.get(session.reservationId).add(session.deviceId);
+  // Operator sessions bypass device limit
+  if (!session.operator) {
+    if (!GUIDE_DEVICES.has(session.reservationId)) GUIDE_DEVICES.set(session.reservationId, new Set());
+    GUIDE_DEVICES.get(session.reservationId).add(session.deviceId);
+  }
   req.guideSession = session;
   next();
 }
@@ -1184,6 +1186,59 @@ app.get('/guides/:apt/premium_rome_concierge.html', async (req, res, next) => {
   return res.type('html').send(recoveryFormHtml(apt, safeLang, false));
 });
 
+
+// ── Operator backdoor ─────────────────────────────────────────────────────
+const OPERATOR_CODE = '6793844';
+
+function signOperatorCookie() {
+  const data = Buffer.from(JSON.stringify({ operator: true, exp: Date.now() + 4 * 60 * 60 * 1000 })).toString('base64url');
+  const sig  = crypto.createHmac('sha256', SESSION_SECRET).update(data).digest('base64url');
+  return `${data}.${sig}`;
+}
+
+function verifyOperatorCookie(value) {
+  try {
+    if (!value || typeof value !== 'string') return null;
+    const dot  = value.lastIndexOf('.');
+    if (dot < 0) return null;
+    const data = value.slice(0, dot);
+    const sig  = value.slice(dot + 1);
+    const exp  = crypto.createHmac('sha256', SESSION_SECRET).update(data).digest('base64url');
+    if (sig.length !== exp.length) return null;
+    if (!crypto.timingSafeEqual(Buffer.from(sig), Buffer.from(exp))) return null;
+    const p = JSON.parse(Buffer.from(data, 'base64url').toString());
+    if (!p.operator || Date.now() > p.exp) return null;
+    return p;
+  } catch { return null; }
+}
+
+function makeOperatorToken(apt, opPhase) {
+  const now = Date.now();
+  return makeToken({ tgt: `guide-${apt}`, op_phase: opPhase, ver: TOKEN_VERSION, iat: now, exp: now + 4 * 60 * 60 * 1000 });
+}
+
+const OPERATOR_APTS = ['trastevere','portico','arenula','scala','leonina'];
+const OPERATOR_APT_LABELS = { trastevere:'Trastevere', portico:"Portico d'Ottavia", arenula:'Arenula', scala:'Scala', leonina:'Leonina' };
+const OPERATOR_PHASE_LABELS = ['📋 After Booking', '✅ After Check-in', '🗝 Check-in Day'];
+
+function operatorPanelHtml() {
+  const rows = OPERATOR_APTS.map(apt => {
+    const btns = [1,2,3].map(ph => {
+      return `<a href="/operator-guide?apt=${apt}&phase=${ph}" style="display:inline-block;padding:10px 18px;background:rgba(214,176,109,${ph===3?'.22':'.08'});border:1px solid rgba(214,176,109,${ph===3?'.6':'.25'});border-radius:10px;color:${ph===3?'#f2d58a':'#b7a894'};font-size:13px;font-weight:700;text-decoration:none;margin:4px">${OPERATOR_PHASE_LABELS[ph-1]}</a>`;
+    }).join('');
+    return `<div style="padding:16px 0;border-bottom:1px solid rgba(214,176,109,.12)"><div style="font-size:16px;font-weight:800;color:#f5ead8;margin-bottom:10px">${OPERATOR_APT_LABELS[apt]}</div>${btns}</div>`;
+  }).join('');
+  return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Operator Panel</title>
+<style>*{box-sizing:border-box}body{margin:0;background:#120d09;color:#f5ead8;font-family:system-ui,sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh;padding:24px}.box{width:100%;max-width:460px}.logo{font-size:10px;font-weight:700;letter-spacing:3px;color:#d6b06d;text-transform:uppercase;margin-bottom:8px}.title{font-size:20px;font-weight:800;margin-bottom:4px}.sub{font-size:13px;color:#b7a894;margin-bottom:24px}</style>
+</head><body><div class="box">
+<div class="logo">NiceFlat · Operator Panel</div>
+<div class="title">Select apartment & phase</div>
+<div class="sub">Session expires in 4 hours</div>
+${rows}
+</div></body></html>`;
+}
+// ── End Operator backdoor ─────────────────────────────────────────────────
+
 // POST /guides/:apt/recover — email lookup → redirect to /stay/
 app.use(express.urlencoded({ extended: false }));
 app.post('/guides/:apt/recover', async (req, res) => {
@@ -1194,6 +1249,13 @@ app.post('/guides/:apt/recover', async (req, res) => {
   const lang = String(req.body?.lang || 'en').slice(0, 2).toLowerCase();
   const safeLang = ['en','it','fr','de','es'].includes(lang) ? lang : 'en';
   const today = tzToday();
+
+  // Operator backdoor
+  if (email === OPERATOR_CODE) {
+    console.log('🔑 Operator access granted:', apt);
+    res.cookie('op_sess', signOperatorCookie(), { httpOnly: true, sameSite: 'lax', maxAge: 4 * 60 * 60 * 1000, path: '/' });
+    return res.redirect(302, '/operator-panel');
+  }
 
   if (!email || !email.includes('@')) return res.type('html').send(recoveryFormHtml(apt, safeLang, true));
 
@@ -1540,6 +1602,11 @@ app.get("/checkin/:apt/phase", (req, res) => {
 
   const validTargets = [`guide-${apt}`, `checkin-${apt}`];
   if (!validTargets.includes(p.tgt)) return res.json({ phase: 1 });
+
+  // Operator token: return requested phase directly
+  if (typeof p.op_phase === 'number' && p.op_phase >= 1 && p.op_phase <= 3) {
+    return res.json({ phase: p.op_phase });
+  }
 
   const today = tzToday();
   const day = p.day || null;
@@ -3670,6 +3737,37 @@ app.post("/arrival-time", async (req, res) => {
 
 
 const PORT = process.env.PORT || 10000;
+// ── Operator panel routes ─────────────────────────────────────────────────
+app.get('/operator-panel', (req, res) => {
+  const cookies = parseCookies(req);
+  if (!verifyOperatorCookie(cookies['op_sess'])) {
+    return res.redirect(302, '/guides/portico/premium_rome_concierge.html');
+  }
+  return res.type('html').send(operatorPanelHtml());
+});
+
+app.get('/operator-guide', (req, res) => {
+  const cookies = parseCookies(req);
+  if (!verifyOperatorCookie(cookies['op_sess'])) {
+    return res.redirect(302, '/guides/portico/premium_rome_concierge.html');
+  }
+  const apt = String(req.query.apt || '').toLowerCase();
+  const phase = parseInt(req.query.phase) || 3;
+  if (!OPERATOR_APTS.includes(apt) || phase < 1 || phase > 3) {
+    return res.redirect(302, '/operator-panel');
+  }
+  // Issue guide session (operator bypass — no device limit)
+  const now = Date.now();
+  const sessionExp = now + 4 * 60 * 60 * 1000;
+  const guideSess = signGuardCookie({ reservationId: 'OPERATOR', deviceId: 'operator', apartment: apt, exp: sessionExp, operator: true });
+  res.cookie('guide_sess', guideSess, { httpOnly: true, sameSite: 'lax', maxAge: 4 * 60 * 60 * 1000, path: '/' });
+  // Issue operator JWT for phase endpoint
+  const opToken = makeOperatorToken(apt, phase);
+  return res.redirect(302, `/guides/${apt}/premium_rome_concierge.html?t=${encodeURIComponent(opToken)}&op=1`);
+});
+// ── End Operator panel routes ─────────────────────────────────────────────
+
+
 app.listen(PORT, () => {
   console.log("Server running on", PORT);
 }); 
