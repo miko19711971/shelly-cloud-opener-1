@@ -950,7 +950,7 @@ app.get('/stay/:apt', async (req, res) => {
       if (listingId) {
         const today = tzToday();
         const r = await axios.get(
-          `https://api.hostaway.com/v1/reservations?listingMapId=${listingId}&departureDate=${today}&limit=5&sortOrder=arrivalDate`,
+          `https://api.hostaway.com/v1/reservations?listingMapId=${listingId}&limit=10&sortOrder=arrivalDate`,
           { headers: { Authorization: `Bearer ${HOSTAWAY_TOKEN}` }, timeout: 10000 });
         const candidates = (r.data?.result || []).filter(res =>
           res.status !== 'cancelled' && (res.departureDate || res.checkOutDate || '') >= today
