@@ -920,11 +920,14 @@ app.get('/stay/:apt', async (req, res) => {
     }
   }
 
-  // Fallback: search by channelReservationId
+  // Fallback: search by channelReservationId filtered by apartment listingMapId
   if (!reservation) {
     try {
+      const listingId = Object.entries(APT_LISTING_MAP).find(([, v]) => v === apt)?.[0];
+      const params = new URLSearchParams({ channelReservationId: reservationId, limit: '1' });
+      if (listingId) params.set('listingMapId', listingId);
       const r = await axios.get(
-        `https://api.hostaway.com/v1/reservations?channelReservationId=${encodeURIComponent(reservationId)}&limit=1`,
+        `https://api.hostaway.com/v1/reservations?${params}`,
         { headers: { Authorization: `Bearer ${HOSTAWAY_TOKEN}` }, timeout: 10000 });
       reservation = r.data?.result?.[0];
     } catch (e) {
