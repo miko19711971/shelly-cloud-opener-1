@@ -915,7 +915,7 @@ app.get('/stay/:apt', async (req, res) => {
       if (r.data?.result) {
         const candidate = r.data.result;
         const candidateApt = APT_LISTING_MAP[candidate.listingMapId];
-        if (!candidateApt || candidateApt === apt) { reservation = candidate; break; }
+        if (candidateApt === apt) { reservation = candidate; break; }
         console.warn(`⚠️ /stay direct ID ${id} → apt mismatch (${candidateApt} ≠ ${apt}), trying channelReservationId`);
       }
     } catch (e) {
@@ -936,7 +936,7 @@ app.get('/stay/:apt', async (req, res) => {
       // Discard if apartment doesn't match (API may ignore listingMapId filter)
       if (reservation) {
         const resApt = APT_LISTING_MAP[reservation.listingMapId];
-        if (resApt && resApt !== apt) { reservation = null; }
+        if (resApt !== apt) { reservation = null; }
       }
     } catch (e) {
       console.error('❌ /stay channel lookup error:', e.message);
@@ -948,7 +948,7 @@ if (!reservation) return res.status(502).send('Unable to verify reservation. Ple
 
   // Apartment must match reservation
   const expectedApt = APT_LISTING_MAP[reservation.listingMapId];
-  if (expectedApt && expectedApt !== apt) {
+  if (expectedApt !== apt) {
     console.warn(`⚠️ /stay apartment mismatch: expected ${expectedApt}, got ${apt}`);
     return res.status(403).send('This link is not valid for this apartment');
   }
