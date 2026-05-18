@@ -909,7 +909,12 @@ app.get('/stay/:apt', async (req, res) => {
     try {
       const r = await axios.get(`https://api.hostaway.com/v1/reservations/${id}`,
         { headers: { Authorization: `Bearer ${HOSTAWAY_TOKEN}` }, timeout: 10000 });
-      if (r.data?.result) { reservation = r.data.result; break; }
+      if (r.data?.result) {
+        const candidate = r.data.result;
+        const candidateApt = APT_LISTING_MAP[candidate.listingMapId];
+        if (!candidateApt || candidateApt === apt) { reservation = candidate; break; }
+        console.warn(`⚠️ /stay direct ID ${id} → apt mismatch (${candidateApt} ≠ ${apt}), trying channelReservationId`);
+      }
     } catch (e) {
       console.error(`❌ /stay direct fetch (${id}) error:`, e.message);
     }
