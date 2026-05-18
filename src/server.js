@@ -895,14 +895,17 @@ app.get('/stay/:apt', async (req, res) => {
   //   3. Fallback: list search by channelReservationId
   let reservation;
 
-  // Build list of candidate IDs to try as direct lookup
+  // Build list of candidate IDs to try as direct lookup.
+  // Only short numeric IDs (≤8 digits) are Hostaway internal IDs.
+  // Long numeric IDs (9+ digits) are channel IDs (Booking.com, Airbnb) and must
+  // NOT be used for direct lookup — they can collide with other reservations.
   const candidateIds = [];
-  if (/^\d+$/.test(reservationId)) {
+  if (/^\d+$/.test(reservationId) && reservationId.length <= 8) {
     candidateIds.push(reservationId);
-  } else {
+  } else if (!/^\d+$/.test(reservationId)) {
     // Compound format: take first numeric segment (e.g. "74831" from "74831-194163-2000-...")
     const firstSegment = reservationId.split('-')[0];
-    if (/^\d+$/.test(firstSegment)) candidateIds.push(firstSegment);
+    if (/^\d+$/.test(firstSegment) && firstSegment.length <= 8) candidateIds.push(firstSegment);
   }
 
   for (const id of candidateIds) {
