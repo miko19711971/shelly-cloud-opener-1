@@ -105,12 +105,12 @@ a{color:var(--gold)}
 .sectionEyebrow{font-size:10px;letter-spacing:.32em;text-transform:uppercase;color:var(--gold);margin-bottom:5px}
 .sectionTitle{font-size:22px;font-weight:700;color:var(--cream)}
 .sectionAptRow{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-bottom:0}
-#weatherWidget{display:flex;align-items:center;gap:10px;background:rgba(214,176,109,.07);border:1px solid rgba(214,176,109,.18);border-radius:12px;padding:8px 14px;cursor:pointer;text-decoration:none;flex-shrink:0}
+#weatherWidget{display:flex;align-items:center;gap:12px;background:rgba(214,176,109,.09);border:1px solid rgba(214,176,109,.28);border-radius:14px;padding:11px 18px;cursor:pointer;text-decoration:none;flex-shrink:0}
 #weatherWidget:active{opacity:.75}
-#wTime{font-size:15px;font-weight:800;color:#f5ead8;font-variant-numeric:tabular-nums;min-width:42px}
-#wTemp{font-size:15px;font-weight:700;color:#d6b06d}
-#wIcon{font-size:18px;line-height:1}
-#wArrow{font-size:11px;color:#b7a894;margin-left:2px;opacity:.7}
+#wTime{font-size:18px;font-weight:800;color:#f5ead8;font-variant-numeric:tabular-nums;min-width:46px}
+#wTemp{font-size:18px;font-weight:700;color:#d6b06d}
+#wIcon{font-size:22px;line-height:1}
+#wArrow{font-size:12px;color:#b7a894;margin-left:2px;opacity:.8}
 
 /* ── PHASE LOCK ── */
 .phaseLock{
@@ -1157,10 +1157,10 @@ function updateClock(){
 }
 async function fetchWeather(){
   try{
-    const r=await fetch('https://api.open-meteo.com/v1/forecast?latitude=41.9028&longitude=12.4964&current=temperature_2m,weathercode&timezone=Europe/Rome');
+    const r=await fetch('https://api.open-meteo.com/v1/forecast?latitude=41.9028&longitude=12.4964&current=temperature_2m,weather_code&timezone=Europe/Rome');
     const j=await r.json();
     const temp=Math.round(j?.current?.temperature_2m);
-    const code=j?.current?.weathercode;
+    const code=j?.current?.weather_code??j?.current?.weathercode;
     const icons={0:'☀️',1:'🌤',2:'⛅',3:'☁️',45:'🌫',48:'🌫',51:'🌦',53:'🌦',55:'🌧',61:'🌧',63:'🌧',65:'🌧',71:'🌨',73:'🌨',75:'🌨',80:'🌦',81:'🌧',82:'🌧',95:'⛈',96:'⛈',99:'⛈'};
     const icon=icons[code]||'🌡';
     const tEl=document.getElementById('wTemp');
