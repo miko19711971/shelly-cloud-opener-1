@@ -933,8 +933,37 @@ app.get('/stay/:apt', async (req, res) => {
         `https://api.hostaway.com/v1/reservations?${params}`,
         { headers: { Authorization: `Bearer ${HOSTAWAY_TOKEN}` }, timeout: 10000 });
       reservation = r.data?.result?.[0];
+      // Discard if apartment doesn't match (API may ignore listingMapId filter)
+      if (reservation) {
+        const resApt = APT_LISTING_MAP[reservation.listingMapId];
+        if (resApt && resApt !== apt) { reservation = null; }
+      }
     } catch (e) {
       console.error('❌ /stay channel lookup error:', e.message);
+    }
+  }
+
+  // Last resort: find the most recent active/upcoming reservation for this apartment
+  if (!reservation) {
+    try {
+      const listingId = Object.entries(APT_LISTING_MAP).find(([, v]) => v === apt)?.[0];
+      if (listingId) {
+        const today = tzToday();
+        const r = await axios.get(
+          `https://api.hostaway.com/v1/reservations?listingMapId=${listingId}&departureDate=${today}&limit=5&sortOrder=arrivalDate`,
+          { headers: { Authorization: `Bearer ${HOSTAWAY_TOKEN}` }, timeout: 10000 });
+        const candidates = (r.data?.result || []).filter(res =>
+          res.status !== 'cancelled' && (res.departureDate || res.checkOutDate || '') >= today
+        );
+        // Accept only if reservationId matches one of the known IDs for this reservation
+        reservation = candidates.find(res =>
+          String(res.id) === reservationId ||
+          String(res.channelReservationId) === reservationId ||
+          String(res.reservationId) === reservationId
+        ) || null;
+      }
+    } catch (e) {
+      console.error('❌ /stay listing fallback error:', e.message);
     }
   }
 
