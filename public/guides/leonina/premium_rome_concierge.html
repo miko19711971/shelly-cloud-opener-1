@@ -96,6 +96,13 @@ a{color:var(--gold)}
   color:var(--gold);margin-bottom:7px;
 }
 .sectionTitle{font-size:22px;font-weight:700;color:var(--cream);margin-bottom:16px;}
+.sectionAptRow{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-bottom:0}
+#weatherWidget{display:flex;align-items:center;gap:10px;background:rgba(214,176,109,.07);border:1px solid rgba(214,176,109,.18);border-radius:12px;padding:8px 14px;cursor:pointer;text-decoration:none;flex-shrink:0}
+#weatherWidget:active{opacity:.75}
+#wTime{font-size:15px;font-weight:800;color:#f5ead8;font-variant-numeric:tabular-nums;min-width:42px}
+#wTemp{font-size:15px;font-weight:700;color:#d6b06d}
+#wIcon{font-size:18px;line-height:1}
+#wArrow{font-size:11px;color:#b7a894;margin-left:2px;opacity:.7}
 .phaseLock{
   margin:0 16px;background:var(--card);
   border:1px solid var(--line);border-radius:22px;
@@ -267,8 +274,18 @@ footer{padding:16px 16px 0;text-align:center;}
 
 <!-- SECTION: YOUR STAY -->
 <div class="section">
-  <div class="sectionHead" id="sectionAptHead"></div>
-  <div class="sectionTitle" id="sectionAptTitle"></div>
+  <div class="sectionAptRow">
+    <div>
+      <div class="sectionHead" id="sectionAptHead"></div>
+      <div class="sectionTitle" id="sectionAptTitle"></div>
+    </div>
+    <a id="weatherWidget" href="#" target="_blank" rel="noopener" onclick="openWeather(event)">
+      <span id="wIcon">🌤</span>
+      <span id="wTime">--:--</span>
+      <span id="wTemp">--°</span>
+      <span id="wArrow">↗</span>
+    </a>
+  </div>
 </div>
 
 <div id="phaseLock" class="phaseLock" style="display:none">
@@ -1014,6 +1031,48 @@ function addRomeBubble(html,role){
   const d=document.createElement('div');d.className=role==='user'?'bubble-user':'bubble-bot';
   d.innerHTML=html;wrap.appendChild(d);wrap.scrollTop=wrap.scrollHeight;return d;
 }
+
+
+// ── Weather & Clock widget ────────────────────────────────────────────────
+const WEATHER_FORECAST_URLS = {
+  it: 'https://www.meteoblue.com/it/tempo/settimana/roma_italia_3169070',
+  en: 'https://www.meteoblue.com/en/weather/week/rome_italy_3169070',
+  fr: 'https://www.meteoblue.com/fr/meteo/semaine/rome_italie_3169070',
+  de: 'https://www.meteoblue.com/de/wetter/woche/rom_italien_3169070',
+  es: 'https://www.meteoblue.com/es/tiempo/semana/roma_italia_3169070',
+};
+function openWeather(e){
+  e.preventDefault();
+  const url = WEATHER_FORECAST_URLS[lang] || WEATHER_FORECAST_URLS.en;
+  window.open(url,'_blank','noopener');
+}
+function padZ(n){return String(n).padStart(2,'0');}
+function updateClock(){
+  try{
+    const s=new Date().toLocaleTimeString('it-IT',{timeZone:'Europe/Rome',hour:'2-digit',minute:'2-digit',hour12:false});
+    const el=document.getElementById('wTime');
+    if(el)el.textContent=s;
+  }catch(e){}
+}
+async function fetchWeather(){
+  try{
+    const r=await fetch('https://api.open-meteo.com/v1/forecast?latitude=41.9028&longitude=12.4964&current=temperature_2m,weathercode&timezone=Europe/Rome');
+    const j=await r.json();
+    const temp=Math.round(j?.current?.temperature_2m);
+    const code=j?.current?.weathercode;
+    const icons={0:'☀️',1:'🌤',2:'⛅',3:'☁️',45:'🌫',48:'🌫',51:'🌦',53:'🌦',55:'🌧',61:'🌧',63:'🌧',65:'🌧',71:'🌨',73:'🌨',75:'🌨',80:'🌦',81:'🌧',82:'🌧',95:'⛈',96:'⛈',99:'⛈'};
+    const icon=icons[code]||'🌡';
+    const tEl=document.getElementById('wTemp');
+    const iEl=document.getElementById('wIcon');
+    if(tEl)tEl.textContent=temp+'°';
+    if(iEl)iEl.textContent=icon;
+  }catch(e){}
+}
+updateClock();
+setInterval(updateClock,10000);
+fetchWeather();
+setInterval(fetchWeather,10*60*1000);
+// ── End Weather widget ────────────────────────────────────────────────────
 
 renderUI();
 </script>
