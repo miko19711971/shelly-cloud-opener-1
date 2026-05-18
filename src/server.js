@@ -923,8 +923,10 @@ app.get('/stay/:apt', async (req, res) => {
     }
   }
 
-  // Fallback: search by channelReservationId filtered by apartment listingMapId
-  if (!reservation) {
+  // Fallback: search by channelReservationId — only for channel IDs (9+ digits or non-numeric).
+  // Internal Hostaway IDs (≤8 digits) already went through direct lookup above; using them
+  // as channelReservationId causes Hostaway to ignore the filter and return a random reservation.
+  if (!reservation && candidateIds.length === 0) {
     try {
       const listingId = Object.entries(APT_LISTING_MAP).find(([, v]) => v === apt)?.[0];
       const params = new URLSearchParams({ channelReservationId: reservationId, limit: '1' });
