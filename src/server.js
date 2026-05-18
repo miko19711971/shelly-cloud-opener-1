@@ -955,12 +955,7 @@ app.get('/stay/:apt', async (req, res) => {
         const candidates = (r.data?.result || []).filter(res =>
           res.status !== 'cancelled' && (res.departureDate || res.checkOutDate || '') >= today
         );
-        // Accept only if reservationId matches one of the known IDs for this reservation
-        reservation = candidates.find(res =>
-          String(res.id) === reservationId ||
-          String(res.channelReservationId) === reservationId ||
-          String(res.reservationId) === reservationId
-        ) || null;
+        reservation = candidates[0] || null;
       }
     } catch (e) {
       console.error('❌ /stay listing fallback error:', e.message);
