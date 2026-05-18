@@ -953,7 +953,9 @@ app.get('/stay/:apt', async (req, res) => {
           `https://api.hostaway.com/v1/reservations?listingMapId=${listingId}&limit=10`,
           { headers: { Authorization: `Bearer ${HOSTAWAY_TOKEN}` }, timeout: 10000 });
         const candidates = (r.data?.result || []).filter(res =>
-          res.status !== 'cancelled' && (res.departureDate || res.checkOutDate || '') >= today
+          res.status !== 'cancelled' &&
+          APT_LISTING_MAP[res.listingMapId] === apt &&
+          (res.departureDate || res.checkOutDate || '') >= today
         );
         reservation = candidates[0] || null;
       }
