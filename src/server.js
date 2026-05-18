@@ -943,28 +943,7 @@ app.get('/stay/:apt', async (req, res) => {
     }
   }
 
-  // Last resort: find the most recent active/upcoming reservation for this apartment
-  if (!reservation) {
-    try {
-      const listingId = Object.entries(APT_LISTING_MAP).find(([, v]) => v === apt)?.[0];
-      if (listingId) {
-        const today = tzToday();
-        const r = await axios.get(
-          `https://api.hostaway.com/v1/reservations?listingMapId=${listingId}&limit=10`,
-          { headers: { Authorization: `Bearer ${HOSTAWAY_TOKEN}` }, timeout: 10000 });
-        const candidates = (r.data?.result || []).filter(res =>
-          res.status !== 'cancelled' &&
-          APT_LISTING_MAP[res.listingMapId] === apt &&
-          (res.departureDate || res.checkOutDate || '') >= today
-        );
-        reservation = candidates[0] || null;
-      }
-    } catch (e) {
-      console.error('❌ /stay listing fallback error:', e.message);
-    }
-  }
-
-  if (!reservation) return res.status(502).send('Unable to verify reservation. Please try again in a moment.');
+if (!reservation) return res.status(502).send('Unable to verify reservation. Please try again in a moment.');
   if (reservation.status === 'cancelled') return res.status(410).send('This reservation has been cancelled');
 
   // Apartment must match reservation
