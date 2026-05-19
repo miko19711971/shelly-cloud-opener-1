@@ -1452,8 +1452,8 @@ app.get("/checkin/:apt/", async (req, res) => {
 app.get("/checkin/:apt/index.html", (req, res) => {
   try {
     const apt = req.params.apt.toLowerCase(), t = String(req.query.t || "");
-    const parsed = parseToken(t);
-    if (!parsed.ok) return res.status(410).send("Questo link non Ã¨ piÃ¹ valido.");
+    const parsed = parseGuideToken(t);
+    if (!parsed.ok) return res.status(410).send("Questo link non è più valido.");
     const p = parsed.payload || {};
     if (typeof p.exp !== "number" || Date.now() > p.exp) return res.status(410).send("Questo link Ã¨ scaduto. Richiedi un nuovo link.");
     const { tgt, day } = p;
