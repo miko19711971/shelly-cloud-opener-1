@@ -963,7 +963,7 @@ function applyPhase(){
         keys.onclick=()=>{alert(_expMsg[lang]||_expMsg.en);};
       }else{
         if(icon)icon.textContent='✅';
-        keys.onclick=()=>{ openModal('keys'); };
+        keys.onclick=()=>{ window.location.href=`${SERVER_URL}/checkin/leonina/index.html?t=${encodeURIComponent(urlToken)}&lang=${lang}`; };
       }
     }
   }
@@ -972,7 +972,7 @@ function applyPhase(){
   setText('phasePill',(U().phaseBadge||[])[phase-1]||'');
 }
 
-function handleOpen(){if(phase<3){alert(U().keysPhase2);}else{openModal('keys');}}
+function handleOpen(){if(phase<3){alert(U().keysPhase2);}else{window.location.href=`${SERVER_URL}/checkin/leonina/index.html?t=${encodeURIComponent(urlToken)}&lang=${lang}`;}}
 
 /* ═══ AI CHATBOT ═══ */
 let romeAiHistory=[];
