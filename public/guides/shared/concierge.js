@@ -1,6 +1,13 @@
 (function () {
   const LANGS = ['it', 'en', 'fr', 'es', 'de'];
-  const FLAGS = { it: '🇮🇹', en: '🇬🇧', fr: '🇫🇷', es: '🇪🇸', de: '🇩🇪' };
+  const FLAG_URLS = {
+    it: 'https://flagcdn.com/w40/it.png',
+    en: 'https://flagcdn.com/w40/gb.png',
+    fr: 'https://flagcdn.com/w40/fr.png',
+    es: 'https://flagcdn.com/w40/es.png',
+    de: 'https://flagcdn.com/w40/de.png',
+  };
+  const FLAG_LABELS = { it: 'IT', en: 'EN', fr: 'FR', es: 'ES', de: 'DE' };
   let currentLang = 'it';
   let currentSection = 'home';
 
@@ -32,7 +39,9 @@
 
   function renderTopbar(data, activeLang) {
     const flags = LANGS.map(l =>
-      `<a class="flag${l === activeLang ? ' active' : ''}" href="#" data-lang="${l}" aria-label="${l}">${FLAGS[l]}</a>`
+      `<a class="flag${l === activeLang ? ' active' : ''}" href="#" data-lang="${l}" aria-label="${FLAG_LABELS[l]}" title="${FLAG_LABELS[l]}">
+        <img src="${FLAG_URLS[l]}" alt="${FLAG_LABELS[l]}" width="22" height="15" loading="lazy"/>
+      </a>`
     ).join('');
     return `<header class="topbar"><div class="brand">${esc(data.brand)}</div><div class="flags" aria-label="Language selector">${flags}</div></header>`;
   }
