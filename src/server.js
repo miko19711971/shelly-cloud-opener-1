@@ -1143,6 +1143,82 @@ app.get('/home/:apt/status', (req, res) => {
   return res.json({ ok: true });
 });
 
+// ── /tablet/:apt — fixed URL for in-apartment tablet ─────────────────────
+// Always-on tablet shows the Home Concierge guide when a stay is active,
+// or a standby screen otherwise. Auto-reloads every 10 minutes.
+const TABLET_CACHE = new Map(); // apt → { active, reservation, fetchedAt }
+const TABLET_CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+
+async function getTabletStatus(apt) {
+  const cached = TABLET_CACHE.get(apt);
+  if (cached && Date.now() - cached.fetchedAt < TABLET_CACHE_TTL) return cached;
+
+  try {
+    const listingId = Object.entries(APT_LISTING_MAP).find(([, v]) => v === apt)?.[0];
+    if (!listingId) { const r = { active: false, reservation: null, fetchedAt: Date.now() }; TABLET_CACHE.set(apt, r); return r; }
+
+    const today = tzToday();
+    const params = new URLSearchParams({ listingMapId: listingId, status: 'confirmed', limit: '10' });
+    const resp = await axios.get(`https://api.hostaway.com/v1/reservations?${params}`,
+      { headers: { Authorization: `Bearer ${HOSTAWAY_TOKEN}` }, timeout: 10000 });
+    const reservations = resp.data?.result || [];
+
+    let activeReservation = null;
+    for (const res of reservations) {
+      const ci = res.arrivalDate || res.checkInDate;
+      const co = res.departureDate || res.checkOutDate;
+      if (!ci || !co) continue;
+      if (today < ci) continue;                         // not checked in yet
+      const expMs = checkoutExpiryMs(co);
+      if (expMs && Date.now() > expMs) continue;        // checked out
+      activeReservation = res;
+      break;
+    }
+
+    const result = { active: !!activeReservation, reservation: activeReservation, fetchedAt: Date.now() };
+    TABLET_CACHE.set(apt, result);
+    console.log(`📱 TabletStatus ${apt}: ${result.active ? 'ACTIVE' : 'standby'}`);
+    return result;
+  } catch (e) {
+    console.error('❌ getTabletStatus error:', apt, e.message);
+    const r = { active: false, reservation: null, fetchedAt: Date.now() };
+    TABLET_CACHE.set(apt, r);
+    return r;
+  }
+}
+
+function tabletStandbyHtml(apt) {
+  return `<!doctype html><html lang="it"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>NiceFlat Rome</title><meta http-equiv="refresh" content="300"><style>*{margin:0;padding:0;box-sizing:border-box}html,body{height:100%;background:#0e0b08;display:flex;align-items:center;justify-content:center;font-family:Georgia,'Times New Roman',serif;color:#f5ead8;overflow:hidden}.wrap{text-align:center;padding:40px}.logo{font-size:11px;font-weight:700;letter-spacing:4px;color:#d6b06d;text-transform:uppercase;margin-bottom:40px}.title{font-size:52px;font-weight:400;letter-spacing:2px;margin-bottom:16px;opacity:.88}.sub{font-size:16px;color:#b7a894;letter-spacing:1px;line-height:1.8}.divider{width:60px;height:1px;background:#d6b06d;opacity:.4;margin:32px auto}.city{font-size:13px;letter-spacing:6px;color:#d6b06d;opacity:.6;text-transform:uppercase;margin-top:32px}</style></head><body><div class="wrap"><div class="logo">NiceFlat Rome</div><div class="title">Benvenuti a Roma</div><div class="divider"></div><div class="sub">La vostra guida personale<br>sarà disponibile al momento del check-in</div><div class="city">Roma · Italia</div></div></body></html>`;
+}
+
+app.get('/tablet/:apt', async (req, res) => {
+  const apt = String(req.params.apt || '').toLowerCase();
+  if (!VALID_APARTMENTS.includes(apt)) return res.status(404).send('Not found');
+
+  const status = await getTabletStatus(apt);
+
+  if (!status.active) {
+    return res.type('html').send(tabletStandbyHtml(apt));
+  }
+
+  const rv          = status.reservation;
+  const checkinDate = rv?.arrivalDate   || rv?.checkInDate   || tzToday();
+  const checkoutDate= rv?.departureDate || rv?.checkOutDate  || null;
+  const reservationId = String(rv?.id || '');
+  const rawLang     = (rv?.guestPreferredLocale || rv?.preferredLocale || 'it').slice(0, 2).toLowerCase();
+  const safeLang    = ['en', 'it', 'fr', 'de', 'es'].includes(rawLang) ? rawLang : 'it';
+
+  const now     = Date.now();
+  const jti     = b64url(crypto.randomBytes(9));
+  const tokenExp = now + 12 * 60 * 60 * 1000; // 12h — tablet reloads well before this
+  const tp = { tgt: `home-${apt}`, exp: tokenExp, jti, iat: now, ver: TOKEN_VERSION,
+    day: checkinDate, co: checkoutDate, rid: reservationId };
+  const homeToken = makeToken(tp);
+  const suffix    = HOME_APT_SUFFIX[apt] || apt;
+
+  return res.redirect(302, `/guides/Premium_Roman_Concierge_Home_${suffix}.html?t=${homeToken}&lang=${safeLang}&tablet=1`);
+});
+
 // ── Old guide-link recovery ───────────────────────────────────────────────
 // Guests who received the old bare link (no token, no r=) are shown an email
 // form. We look up their reservation in Hostaway and redirect to /stay/.
@@ -3169,6 +3245,16 @@ if (_webhookDedup(_whMsgId)) {
       GUEST_ARRIVAL_TIMES.delete(String(whResId));
       console.log(`🔄 ArrivalTime cache invalidated for res ${whResId} (will re-fetch)`);
     }
+  }
+  // Invalidate tablet cache for this apartment so next /tablet/:apt gets fresh data
+  const whListingId = payload?.listingMapId || payload?.data?.listingMapId;
+  if (whListingId) {
+    const whApt = APT_LISTING_MAP[whListingId];
+    if (whApt) { TABLET_CACHE.delete(whApt); console.log(`🔄 TabletCache invalidated for ${whApt}`); }
+  } else {
+    // No listing ID in payload — clear all tablet caches to be safe
+    TABLET_CACHE.clear();
+    console.log(`🔄 TabletCache cleared (no listingId in webhook payload)`);
   }
 }
 

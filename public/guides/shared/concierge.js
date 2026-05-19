@@ -60,12 +60,18 @@
     const apt = data.apartment;
     if (apt) {
       const token = urlParams.get('t');
+      const isTablet = urlParams.get('tablet') === '1';
       if (!token) { renderBlocked('invalid'); return; }
       fetch(`/home/${encodeURIComponent(apt)}/status?t=${encodeURIComponent(token)}`)
         .then(r => r.json())
         .then(result => {
-          if (result.ok) { render(); }
-          else { renderBlocked(result.reason, result.available_from); }
+          if (result.ok) {
+            render();
+            // Tablet mode: reload via /tablet/:apt every 10 minutes to refresh token + check stay
+            if (isTablet) {
+              setTimeout(() => { window.location.href = `/tablet/${encodeURIComponent(apt)}`; }, 10 * 60 * 1000);
+            }
+          } else { renderBlocked(result.reason, result.available_from); }
         })
         .catch(() => render());
     } else {
