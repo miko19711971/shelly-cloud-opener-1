@@ -45,7 +45,7 @@
         <img src="${flagSrc(l)}" alt="${FLAG_LABELS[l]}" width="22" height="15"/>
       </a>`
     ).join('');
-    return `<header class="topbar"><div class="brand">${esc(data.brand)}</div><div class="flags" aria-label="Language selector">${flags}</div></header>`;
+    return `<header class="topbar"><a class="brand" href="https://www.niceflatinrome.com" target="_blank" rel="noopener">${esc(data.brand)}</a><div class="flags" aria-label="Language selector">${flags}</div></header>`;
   }
 
   function renderHeroSvg(data) {
