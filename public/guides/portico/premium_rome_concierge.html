@@ -862,7 +862,7 @@ let tokenExp=null,tokenJti=null,tokenTgt=null,tokenCid=null,tokenDay=null,tokenC
 if (urlToken) {
   try {
     const p = JSON.parse(atob(urlToken.split('.')[1].replace(/-/g,'+').replace(/_/g,'/')));
-    tokenExp=p.exp||null;tokenJti=p.jti||null;tokenTgt=p.tgt||null;tokenCid=p.cid||null;tokenDay=p.day||null;tokenCt=p.ct||null;
+    tokenExp=p.exp||null;tokenJti=p.jti||null;tokenTgt=p.tgt||null;tokenCid=p.cid||null;tokenDay=p.day||null;tokenCt=p.ct||null;tokenOpPhase=p.op_phase??null;
   } catch {}
 }
 function tokenValid(){ return tokenExp && Date.now()<tokenExp; }
@@ -886,7 +886,8 @@ function buildKeysHTML(a){
   const email=`<div style="text-align:center;padding:18px 0"><div style="font-size:50px;margin-bottom:16px">📧</div><p style="font-weight:700;margin-bottom:14px;color:var(--cream)">${a.keys_msg}</p><p style="font-size:12px;color:var(--muted);margin-top:14px">${U().footerHelp} <a href="tel:${a.phone}" style="color:var(--gold)">${a.phone}</a></p></div>`;
   if(!urlToken) return email;
   if(!tokenValid()) return email+`<div style="margin-top:12px;padding:12px;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.25);border-radius:12px;font-size:13px;color:#fca5a5;text-align:center">⏱ ${lbl.expired} <a href="tel:${a.phone}" style="color:var(--gold)">${a.phone}</a></div>`;
-  if(!(tokenTgt&&tokenTgt.startsWith('checkin-'))) return email;
+  const _isValidTgt=tokenTgt&&(tokenTgt.startsWith('checkin-')||tokenTgt.startsWith('guide-'))||tokenOpPhase!=null;
+  if(!_isValidTgt) return email;
   if(!tokenCid||sessionValid()){
     let btns=`<button onclick="shellyOpen('building')" id="open-building-btn" style="width:100%;background:linear-gradient(135deg,var(--gold),#c49a52);color:#120d09;padding:14px;border-radius:14px;font-weight:800;font-size:15px;border:none;cursor:pointer;margin-top:12px;box-shadow:0 4px 16px rgba(214,176,109,.3)">${lbl.building}</button>`;
     if(HAS_DOOR) btns+=`<button onclick="shellyOpen('door')" id="open-door-btn" style="width:100%;background:#1d4ed8;color:#fff;padding:14px;border-radius:14px;font-weight:800;font-size:15px;border:none;cursor:pointer;margin-top:8px;box-shadow:0 4px 16px rgba(29,78,216,.3)">${lbl.door}</button>`;

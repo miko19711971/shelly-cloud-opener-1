@@ -940,11 +940,11 @@ function buildChips() {
 /* ═══════════════════════════════════════════════════════
    SHELLY OTP / DOOR
 ═══════════════════════════════════════════════════════ */
-let tokenExp=null,tokenJti=null,tokenTgt=null,tokenCid=null,tokenDay=null,tokenCt=null;
+let tokenExp=null,tokenJti=null,tokenTgt=null,tokenCid=null,tokenDay=null,tokenCt=null,tokenOpPhase=null;
 if (urlToken) {
   try {
     const p = JSON.parse(atob(urlToken.split('.')[1].replace(/-/g,'+').replace(/_/g,'/')));
-    tokenExp=p.exp||null; tokenJti=p.jti||null; tokenTgt=p.tgt||null; tokenCid=p.cid||null;tokenDay=p.day||null;
+    tokenExp=p.exp||null; tokenJti=p.jti||null; tokenTgt=p.tgt||null; tokenCid=p.cid||null;tokenDay=p.day||null;tokenCt=p.ct||null;tokenOpPhase=p.op_phase??null;
   } catch {}
 }
 function tokenValid(){ return tokenExp && Date.now()<tokenExp*1000; }
@@ -974,7 +974,8 @@ function buildKeysHTML(a){
 
   if(!urlToken) return emailBlock;
   if(!tokenValid()) return emailBlock+`<div style="margin-top:12px;padding:13px;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.25);border-radius:13px;font-size:13px;color:#fca5a5;text-align:center">⏱ ${lbl.expired} <a href="tel:${a.phone}" style="color:var(--gold)">${a.phone}</a></div>`;
-  if(!(tokenTgt&&tokenTgt.startsWith('checkin-'))) return emailBlock;
+  const _isValidTgt=tokenTgt&&(tokenTgt.startsWith('checkin-')||tokenTgt.startsWith('guide-'))||tokenOpPhase!=null;
+  if(!_isValidTgt) return emailBlock;
 
   if(!tokenCid||sessionValid()){
     let btns = `<button onclick="shellyOpen('building')" id="open-building-btn"
