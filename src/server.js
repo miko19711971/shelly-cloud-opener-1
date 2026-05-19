@@ -1196,6 +1196,10 @@ app.get('/tablet/:apt', async (req, res) => {
   const apt = String(req.params.apt || '').toLowerCase();
   if (!VALID_APARTMENTS.includes(apt)) return res.status(404).send('Not found');
 
+  if (req.query.preview === 'standby') {
+    return res.type('html').send(tabletStandbyHtml(apt));
+  }
+
   const status = await getTabletStatus(apt);
 
   if (!status.active) {
