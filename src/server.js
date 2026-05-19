@@ -1457,8 +1457,12 @@ app.get("/checkin/:apt/index.html", (req, res) => {
     const p = parsed.payload || {};
     if (typeof p.exp !== "number" || Date.now() > p.exp) return res.status(410).send("Questo link Ã¨ scaduto. Richiedi un nuovo link.");
     const { tgt, day } = p;
-    if (tgt !== `checkin-${apt}`) return res.status(410).send("Link non valido.");
-    if (!isYYYYMMDD(day) || day !== tzToday()) return res.status(410).send("Questo link Ã¨ valido solo nel giorno di check-in.");
+    const validTgts = [`checkin-${apt}`, `guide-${apt}`];
+    if (!validTgts.includes(tgt) && typeof p.op_phase !== "number") return res.status(410).send("Link non valido.");
+    // Operator tokens and guide tokens skip the day check
+    const isOperator = typeof p.op_phase === "number";
+    const isGuideToken = tgt === `guide-${apt}`;
+    if (!isOperator && !isGuideToken && (!isYYYYMMDD(day) || day !== tzToday())) return res.status(410).send("Questo link Ã¨ valido solo nel giorno di check-in.");
     const filePath = path.join(PUBLIC_DIR, "checkin", apt, "index.html");
     return res.sendFile(filePath, (err) => {
       if (err) {
