@@ -1144,8 +1144,7 @@ function applyPhase(){
         keys.onclick=()=>{alert(_expMsg[lang]||_expMsg.en);};
       }else{
         if(icon)icon.textContent='✅';
-        const checkinUrl=`${SERVER_URL}/checkin/scala/?d=${tokenDay||''}`;
-        keys.onclick=()=>{ window.location.href=checkinUrl; };
+        keys.onclick=()=>{ openModal('keys'); };
       }
     }
   }
