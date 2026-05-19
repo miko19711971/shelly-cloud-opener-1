@@ -657,6 +657,50 @@ function checkoutExpiryMs(checkoutDateStr) {
 const GUIDE_DEVICES = new Map();   // reservationId → Set<deviceId>
 const MAX_GUIDE_DEVICES = 2;
 const VALID_APARTMENTS = ['trastevere', 'portico', 'arenula', 'scala', 'leonina'];
+
+// ── Guest arrival time cache ─────────────────────────────────────────────────
+// Populated by webhook (reservation.updated / guestCheckin) and live Hostaway lookup.
+// Key: reservationId (string) → { time: "HH:MM", fetchedAt: Date.now() }
+const GUEST_ARRIVAL_TIMES = new Map();
+const ARRIVAL_CACHE_TTL_MS = 30 * 60 * 1000; // 30 minutes
+
+function parseArrivalTime(raw) {
+  if (!raw || typeof raw !== 'string') return null;
+  const cleaned = raw.replace(/[apm\s]/gi, '');
+  const parts = cleaned.split(':').map(n => parseInt(n, 10));
+  let h = parts[0], m = parts[1] || 0;
+  if (/pm/i.test(raw) && h !== 12) h += 12;
+  if (/am/i.test(raw) && h === 12) h = 0;
+  if (isNaN(h) || h < 0 || h > 23) return null;
+  return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
+}
+
+async function fetchAndCacheArrivalTime(reservationId) {
+  if (!reservationId || !HOSTAWAY_TOKEN) return null;
+  try {
+    const r = await axios.get(
+      `https://api.hostaway.com/v1/reservations/${reservationId}`,
+      { headers: { Authorization: `Bearer ${HOSTAWAY_TOKEN}` }, timeout: 8000 }
+    );
+    const raw = r.data?.result?.arrivalTime || r.data?.result?.checkInTime || null;
+    const parsed = parseArrivalTime(typeof raw === 'number' ? `${raw}:00` : raw);
+    if (parsed) {
+      GUEST_ARRIVAL_TIMES.set(String(reservationId), { time: parsed, fetchedAt: Date.now() });
+      console.log(`⏰ ArrivalTime cached for res ${reservationId}: ${parsed}`);
+    }
+    return parsed;
+  } catch (e) {
+    console.error('❌ fetchAndCacheArrivalTime error:', reservationId, e.message);
+    return null;
+  }
+}
+
+async function getArrivalTime(reservationId, fallback) {
+  const cached = GUEST_ARRIVAL_TIMES.get(String(reservationId));
+  if (cached && Date.now() - cached.fetchedAt < ARRIVAL_CACHE_TTL_MS) return cached.time;
+  const live = await fetchAndCacheArrivalTime(reservationId);
+  return live || fallback || '13:00';
+}
 const APT_LISTING_MAP  = { 194164: 'trastevere', 194165: 'portico', 194166: 'arenula', 194162: 'scala', 194163: 'leonina' };
 
 function parseCookies(req) {
@@ -1003,7 +1047,7 @@ if (!reservation) return res.status(502).send('Unable to verify reservation. Ple
     ? checkoutExpiryMs(checkoutDate) || (_now + 30 * 86400000)
     : _now + 30 * 86400000;
   const _tp = { tgt: `guide-${apt}`, exp: _expMs, jti: _jti, iat: _now, ver: TOKEN_VERSION,
-    day: checkinDate || tzToday(), ct: checkinTime, cid: null, co: checkoutDate || null };
+    day: checkinDate || tzToday(), ct: checkinTime, cid: null, co: checkoutDate || null, rid: reservationId || null };
   const guideToken = makeToken(_tp);
   const safeLang   = ['en','it','fr','de','es'].includes(lang) ? lang : 'en';
   return res.redirect(302, `/guides/${apt}/premium_rome_concierge.html?t=${guideToken}&lang=${safeLang}`);
@@ -1607,7 +1651,9 @@ app.post("/checkin/:apt/open-direct/apartment", async (req, res) => {
 // Returns { phase: 1|2|3 } based on token type and current time (Europe/Rome)
 // Guide tokens (tgt: guide-*) → phase 2 or 3 based on time
 // Checkin tokens (tgt: checkin-*) → phase 3 if today + time reached, else 2
-app.get("/checkin/:apt/phase", (req, res) => {
+// On check-in day: fetches live arrivalTime from Hostaway (cached 30 min) so
+// the unlock time always reflects what the guest entered in the online check-in form.
+app.get("/checkin/:apt/phase", async (req, res) => {
   const apt = String(req.params.apt || "").toLowerCase();
   const t = String(req.query.t || "");
   if (!t) return res.json({ phase: 1 });
@@ -1628,10 +1674,19 @@ app.get("/checkin/:apt/phase", (req, res) => {
 
   const today = tzToday();
   const day = p.day || null;
-  const checkinTime = p.ct || "13:00";
 
   if (!day || day > today) return res.json({ phase: 2 });  // no date or future check-in
-  if (day < today) return res.json({ phase: 3 });           // past check-in day → keys always unlocked
+  if (day < today) return res.json({ phase: 3 });          // past check-in day → keys always unlocked
+
+  // It's check-in day: get the most up-to-date arrival time.
+  // If the guest filled the Hostaway online check-in form, arrivalTime is updated there.
+  // We fetch it live (with 30-min cache) so the unlock time is always accurate.
+  let checkinTime = p.ct || '13:00';
+  if (p.rid) {
+    try {
+      checkinTime = await getArrivalTime(p.rid, checkinTime);
+    } catch (_) { /* fallback to token value */ }
+  }
 
   // Check if current Rome time >= checkin time
   const nowRome = new Date().toLocaleString("en-CA", { timeZone: "Europe/Rome", hour: "2-digit", minute: "2-digit", hour12: false });
@@ -3000,6 +3055,28 @@ if (_webhookDedup(_whMsgId)) {
   return res.json({ ok: true, silent: true, reason: "duplicate" });
 }
 
+// ── Intercept reservation updates to refresh arrivalTime cache ───────────────
+// Hostaway sends action=updated (or guestCheckin) when guest fills the online
+// check-in form and enters their arrival time.
+{
+  const whAction = payload?.action || payload?.event || payload?.type || '';
+  const isResUpdate = /updated|modified|checkin|pre.?check/i.test(String(whAction));
+  const whResId = payload?.reservationId || payload?.id;
+  if (isResUpdate && whResId) {
+    const rawTime = payload?.arrivalTime || payload?.data?.arrivalTime || null;
+    if (rawTime) {
+      const parsed = parseArrivalTime(typeof rawTime === 'number' ? `${rawTime}:00` : rawTime);
+      if (parsed) {
+        GUEST_ARRIVAL_TIMES.set(String(whResId), { time: parsed, fetchedAt: Date.now() });
+        console.log(`⏰ ArrivalTime updated via webhook for res ${whResId}: ${parsed}`);
+      }
+    } else {
+      // arrivalTime not in payload → invalidate cache so next phase-check fetches fresh data
+      GUEST_ARRIVAL_TIMES.delete(String(whResId));
+      console.log(`🔄 ArrivalTime cache invalidated for res ${whResId} (will re-fetch)`);
+    }
+  }
+}
 
 // ✅ IGNORA messaggi in uscita (evita loop e __INTERNAL_AI__ in chat)
  // ✅ IGNORA SOLO i messaggi OUTGOING (evita loop), NON quelli incoming
