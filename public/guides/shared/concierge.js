@@ -67,8 +67,9 @@
         .then(result => {
           if (result.ok) {
             render();
-            // Tablet mode: reload via /tablet/:apt every 10 minutes to refresh token + check stay
+            // Tablet mode: hide token from address bar, reload every 10 min
             if (isTablet) {
+              history.replaceState(null, '', `/tablet/${encodeURIComponent(apt)}`);
               setTimeout(() => { window.location.href = `/tablet/${encodeURIComponent(apt)}`; }, 10 * 60 * 1000);
             }
           } else { renderBlocked(result.reason, result.available_from); }
