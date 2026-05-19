@@ -1484,7 +1484,7 @@ function requireCheckinToken(req, res, next) {
   const p = parsed.payload || {};
   if (typeof p.exp !== "number" || Date.now() > p.exp) return res.status(410).json({ ok: false, error: "expired" });
   const { tgt, day } = p;
-  if (tgt !== `checkin-${apt}`) return res.status(410).json({ ok: false, error: "token_target_mismatch" });
+  if (tgt !== `checkin-${apt}` && tgt !== `guide-${apt}` && typeof p.op_phase !== "number") return res.status(410).json({ ok: false, error: "token_target_mismatch" });
   // Token valid for 24h via exp field - no midnight cutoff
   next();
 }
@@ -1536,7 +1536,7 @@ function requireVerifiedToken(req, res, next) {
   if (!parsedT.ok) return res.status(410).json({ ok: false, error: "bad_token" });
   const tp = parsedT.payload;
   if (typeof tp.exp !== "number" || Date.now() > tp.exp) return res.status(410).json({ ok: false, error: "expired" });
-  if (tp.tgt !== `checkin-${apt}`) return res.status(410).json({ ok: false, error: "token_target_mismatch" });
+  if (tp.tgt !== `checkin-${apt}` && tp.tgt !== `guide-${apt}` && typeof tp.op_phase !== "number") return res.status(410).json({ ok: false, error: "token_target_mismatch" });
   const st = String(req.query.st || "");
   if (!st) return res.status(401).json({ ok: false, error: "otp_required" });
   const parsedSt = parseToken(st);
@@ -1588,7 +1588,7 @@ app.post("/checkin/:apt/open-direct/building", async (req, res) => {
   if (!parsed.ok) return res.status(410).json({ ok: false, error: "bad_token" });
   const p = parsed.payload;
   if (typeof p.exp !== "number" || Date.now() > p.exp) return res.status(410).json({ ok: false, error: "expired" });
-  if (p.tgt !== `checkin-${apt}`) return res.status(410).json({ ok: false, error: "token_target_mismatch" });
+  if (p.tgt !== `checkin-${apt}` && p.tgt !== `guide-${apt}` && typeof p.op_phase !== "number") return res.status(410).json({ ok: false, error: "token_target_mismatch" });
   const map = {
     arenula: "arenula-building",
     leonina: "leonina-building",
@@ -1610,7 +1610,7 @@ app.post("/checkin/:apt/open-direct/door", async (req, res) => {
   if (!parsed.ok) return res.status(410).json({ ok: false, error: "bad_token" });
   const p = parsed.payload;
   if (typeof p.exp !== "number" || Date.now() > p.exp) return res.status(410).json({ ok: false, error: "expired" });
-  if (p.tgt !== `checkin-${apt}`) return res.status(410).json({ ok: false, error: "token_target_mismatch" });
+  if (p.tgt !== `checkin-${apt}` && p.tgt !== `guide-${apt}` && typeof p.op_phase !== "number") return res.status(410).json({ ok: false, error: "token_target_mismatch" });
   const map = {
     arenula: "arenula-door",
     leonina: "leonina-door",
@@ -1636,7 +1636,7 @@ app.post("/checkin/:apt/open-direct/apartment", async (req, res) => {
   if (!parsed.ok) return res.status(410).json({ ok: false, error: "bad_token" });
   const p = parsed.payload;
   if (typeof p.exp !== "number" || Date.now() > p.exp) return res.status(410).json({ ok: false, error: "expired" });
-  if (p.tgt !== `checkin-${apt}`) return res.status(410).json({ ok: false, error: "token_target_mismatch" });
+  if (p.tgt !== `checkin-${apt}` && p.tgt !== `guide-${apt}` && typeof p.op_phase !== "number") return res.status(410).json({ ok: false, error: "token_target_mismatch" });
   const map = {
     leonina: "leonina-door",
     scala: "via-della-scala-door",
