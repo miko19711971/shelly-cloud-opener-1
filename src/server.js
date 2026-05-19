@@ -1050,7 +1050,7 @@ if (!reservation) return res.status(502).send('Unable to verify reservation. Ple
     day: checkinDate || tzToday(), ct: checkinTime, cid: null, co: checkoutDate || null, rid: reservationId || null };
   const guideToken = makeToken(_tp);
   const safeLang   = ['en','it','fr','de','es'].includes(lang) ? lang : 'en';
-  return res.redirect(302, `/guides/${apt}/premium_rome_concierge.html?t=${guideToken}&lang=${safeLang}`);
+  return res.redirect(302, `/checkin/${apt}/index.html?t=${guideToken}&lang=${safeLang}`);
 });
 
 // ── Old guide-link recovery ───────────────────────────────────────────────
