@@ -1,16 +1,1192 @@
-<!DOCTYPE html>
-<html lang="it">
+<!doctype html>
+<html lang="en">
 <head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Viale Trastevere Premium Concierge</title>
-<link rel="stylesheet" href="../shared/concierge.css?v=4"/>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NiceFlat Rome Concierge — Viale Trastevere</title>
+<link rel="manifest" href="/guides/trastevere/manifest.webmanifest">
+<meta name="theme-color" content="#120d09">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Rome Concierge">
+<link rel="apple-touch-icon" href="/guides/icons/icon-192.png">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#120d09;--card:#211811;--card2:#2b2119;--gold:#d6b06d;--cream:#f5ead8;
+  --muted:#b7a894;--line:rgba(214,176,109,.22);--shadow:0 18px 45px rgba(0,0,0,.35);
+  --border:#2e2218;--sheet:#1a1208;
+}
+html,body{
+  background:radial-gradient(circle at top,rgba(214,176,109,.18),transparent 34%),
+             linear-gradient(180deg,#18100b 0%,#0e0a07 100%);
+  color:var(--cream);font-family:system-ui,-apple-system,sans-serif;
+  min-height:100vh;padding-bottom:90px;
+}
+button{cursor:pointer;border:none;background:none;font:inherit;color:inherit}
+button:active{transform:scale(.97)}
+a{color:var(--gold)}
+
+/* ── LANG BAR ── */
+.langBar{
+  display:flex;justify-content:center;gap:8px;padding:14px 0 8px;
+  position:sticky;top:0;z-index:20;
+  background:rgba(18,13,9,.92);backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--line);
+}
+.langBtn{
+  display:inline-flex;align-items:center;justify-content:center;
+  padding:4px 6px;border-radius:8px;border:none;background:none;cursor:pointer;
+  opacity:.35;transition:opacity .18s,transform .18s,box-shadow .18s;
+}
+.langBtn img{
+  width:28px;height:20px;border-radius:3px;display:block;
+  box-shadow:0 1px 4px rgba(0,0,0,.45);
+}
+.langBtn.active{opacity:1;transform:scale(1.18);}
+.langBtn.active img{box-shadow:0 0 0 2px rgba(214,176,109,.7),0 2px 8px rgba(0,0,0,.5);}
+.langBtn:hover{opacity:.75}
+
+/* ── HERO ── */
+.hero{padding:42px 20px 32px;text-align:center}
+.heroBadge{
+  display:inline-block;font-size:9px;letter-spacing:.45em;text-transform:uppercase;
+  color:var(--gold);background:rgba(214,176,109,.1);border:1px solid var(--line);
+  border-radius:999px;padding:5px 16px;margin-bottom:18px;
+}
+.heroTitle{
+  font-size:32px;font-weight:800;color:var(--cream);line-height:1.18;
+  margin-bottom:6px;letter-spacing:-.3px;
+}
+.heroApt{font-size:14px;color:var(--gold);font-weight:600;margin-bottom:6px;letter-spacing:.05em;}
+.heroSub{font-size:13px;color:var(--muted);line-height:1.65;max-width:300px;margin:0 auto 26px}
+.heroAddr{
+  background:rgba(214,176,109,.07);border:1px solid var(--line);
+  border-radius:22px;padding:16px 18px;display:flex;align-items:center;
+  justify-content:space-between;gap:12px;max-width:380px;margin:0 auto;
+  box-shadow:var(--shadow);
+}
+.heroAddrLeft{}
+.heroAddrLabel{font-size:9px;letter-spacing:.25em;text-transform:uppercase;color:var(--gold);margin-bottom:3px}
+.heroAddrText{font-size:13px;color:var(--cream);line-height:1.4;text-align:left}
+.openBtn{
+  background:linear-gradient(135deg,#e8c67a,var(--gold));color:#120d09;
+  font-weight:800;font-size:11px;padding:10px 16px;border-radius:13px;
+  white-space:nowrap;letter-spacing:.07em;flex-shrink:0;
+  box-shadow:0 4px 18px rgba(214,176,109,.3);transition:transform .15s,box-shadow .15s;
+}
+.openBtn:hover{transform:translateY(-1px);box-shadow:0 6px 22px rgba(214,176,109,.42);}
+.phasePill{
+  display:block;text-align:center;font-size:10px;letter-spacing:.15em;text-transform:uppercase;
+  color:var(--muted);background:rgba(255,255,255,.04);border:1px solid var(--border);
+  border-radius:999px;padding:5px 16px;width:fit-content;margin:12px auto 0;
+}
+
+/* ── SECTIONS ── */
+.section{padding:26px 18px 8px}
+.sectionEyebrow{font-size:10px;letter-spacing:.35em;text-transform:uppercase;color:var(--gold);margin-bottom:5px}
+.sectionTitle{font-size:22px;font-weight:700;color:var(--cream);margin-bottom:16px}
+.sectionAptRow{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-bottom:0}
+#weatherWidget{display:flex;align-items:center;gap:10px;background:rgba(214,176,109,.07);border:1px solid rgba(214,176,109,.18);border-radius:12px;padding:8px 14px;cursor:pointer;text-decoration:none;flex-shrink:0}
+#weatherWidget:active{opacity:.75}
+#wTime{font-size:15px;font-weight:800;color:#f5ead8;font-variant-numeric:tabular-nums;min-width:42px}
+#wTemp{font-size:15px;font-weight:700;color:#d6b06d}
+#wIcon{font-size:18px;line-height:1}
+#wArrow{font-size:11px;color:#b7a894;margin-left:2px;opacity:.7}
+.phaseLock{
+  margin:4px 16px 0;background:var(--card);border:1px solid var(--border);
+  border-radius:22px;padding:32px 24px;text-align:center;
+}
+.phaseLock .li{font-size:40px;margin-bottom:14px}
+.phaseLock p{font-size:13px;color:var(--muted);line-height:1.65}
+
+/* ── CARD GRID ── */
+.cardGrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:0 16px 8px}
+.card{
+  background:var(--card);border:1px solid var(--border);border-radius:20px;
+  padding:20px 16px;cursor:pointer;transition:border-color .2s,transform .2s,box-shadow .2s;text-align:left;
+}
+.card:hover{border-color:var(--line);transform:translateY(-2px);box-shadow:var(--shadow);}
+.card.locked{opacity:.28;pointer-events:none;filter:blur(1px)}
+.cardIcon{font-size:28px;margin-bottom:11px}
+.cardTitle{font-size:13px;font-weight:700;color:var(--cream);margin-bottom:4px}
+.cardSub{font-size:11px;color:var(--muted);line-height:1.45}
+.cardFull{grid-column:1/-1}
+
+/* ── DIVIDER ── */
+.divider{height:1px;background:var(--line);margin:28px 16px 0}
+
+/* ── ASSISTANT ── */
+.assistant{
+  background:linear-gradient(135deg,var(--card),#150f0a);
+  border:1px solid var(--line);border-radius:24px;
+  margin:24px 16px 0;padding:30px 24px;text-align:center;
+  box-shadow:var(--shadow);
+}
+.assistantBadge{
+  display:inline-block;font-size:9px;letter-spacing:.35em;text-transform:uppercase;
+  color:var(--gold);background:rgba(214,176,109,.1);border:1px solid var(--line);
+  border-radius:999px;padding:4px 14px;margin-bottom:14px;
+}
+.assistantTitle{font-size:20px;font-weight:800;color:var(--cream);margin-bottom:8px}
+.assistantDesc{font-size:13px;color:var(--muted);line-height:1.65;margin-bottom:20px}
+.bigbtn{
+  display:block;width:100%;
+  background:linear-gradient(135deg,#e8c67a,var(--gold));
+  color:#120d09;font-weight:800;font-size:12px;letter-spacing:.1em;
+  padding:14px;border-radius:15px;
+  box-shadow:0 6px 24px rgba(214,176,109,.28);transition:transform .15s;
+}
+.bigbtn:hover{transform:translateY(-1px);}
+
+/* ── FOOTER ── */
+footer{padding:20px 16px 0;text-align:center}
+.waFooter{
+  display:inline-flex;align-items:center;gap:8px;
+  background:rgba(37,211,102,.1);border:1px solid rgba(37,211,102,.28);
+  border-radius:15px;padding:13px 20px;font-size:12px;color:#4ade80;
+  font-weight:600;text-decoration:none;transition:background .2s;
+}
+.waFooter:hover{background:rgba(37,211,102,.18);}
+
+/* ── WHATSAPP FLOAT ── */
+.whatsappFloat{
+  position:fixed;bottom:24px;right:18px;width:54px;height:54px;
+  background:#25D166;border-radius:50%;display:flex;align-items:center;
+  justify-content:center;font-size:26px;z-index:100;
+  box-shadow:0 4px 22px rgba(37,211,102,.45);text-decoration:none;
+  transition:transform .2s,box-shadow .2s;
+}
+.whatsappFloat:hover{transform:scale(1.08);box-shadow:0 6px 28px rgba(37,211,102,.6);}
+
+/* ── MODAL / BOTTOM SHEET ── */
+.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:200;align-items:flex-end;justify-content:center}
+.modal.open{display:flex}
+.sheet{
+  background:var(--sheet);border-radius:26px 26px 0 0;
+  width:100%;max-width:500px;max-height:92vh;overflow-y:auto;
+  padding-bottom:env(safe-area-inset-bottom,16px);
+  box-shadow:0 -8px 40px rgba(0,0,0,.6);
+}
+.sheetHandle{width:36px;height:4px;background:var(--border);border-radius:2px;margin:13px auto 0}
+.sheetHeader{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 20px;border-bottom:1px solid var(--line);
+  position:sticky;top:0;background:var(--sheet);z-index:1;
+}
+.sheetHeader h3{font-size:15px;font-weight:700;color:var(--cream)}
+.closeBtn{
+  width:32px;height:32px;border-radius:50%;background:var(--card);
+  color:var(--muted);font-size:18px;display:flex;align-items:center;justify-content:center;
+  transition:background .15s;
+}
+.closeBtn:hover{background:var(--card2);}
+.sheetBody{padding:20px}
+.sheetBody h3{
+  color:var(--gold);font-size:11px;font-weight:700;letter-spacing:.15em;
+  text-transform:uppercase;margin-top:18px;margin-bottom:6px;
+}
+.sheetBody h3:first-child{margin-top:0}
+.sheetBody p{font-size:14px;color:var(--muted);line-height:1.7;margin-bottom:8px}
+.sheetBody a{color:var(--gold);text-decoration:underline}
+.sheetBody strong{color:var(--cream)}
+.sheetBody .warning{
+  background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.25);
+  border-radius:14px;padding:14px;margin:10px 0;font-size:13px;color:#fca5a5;line-height:1.65;
+}
+
+/* ── SPINNER ── */
+.spin{
+  display:inline-block;width:15px;height:15px;
+  border:2px solid rgba(255,255,255,.2);border-top-color:var(--gold);
+  border-radius:50%;animation:sp .7s linear infinite;
+}
+@keyframes sp{to{transform:rotate(360deg)}}
+
+/* ── CHAT BUBBLES ── */
+.bubble-user{
+  background:rgba(214,176,109,.15);border:1px solid rgba(214,176,109,.25);
+  border-radius:16px 16px 4px 16px;padding:10px 13px;font-size:13px;
+  align-self:flex-end;max-width:88%;color:var(--cream);
+}
+.bubble-bot{
+  background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);
+  border-radius:16px 16px 16px 4px;padding:10px 13px;font-size:13px;
+  max-width:88%;color:var(--muted);
+}
+.mini{
+  font-size:11px;background:rgba(214,176,109,.1);border:1px solid rgba(214,176,109,.2);
+  color:var(--gold);padding:6px 12px;border-radius:999px;white-space:nowrap;cursor:pointer;
+  transition:background .15s;
+}
+.mini:hover{background:rgba(214,176,109,.18);}
+.mini:active{transform:scale(.96)}
+
+/* ── GOLD ACCENT LINE ── */
+.goldLine{
+  width:48px;height:2px;background:linear-gradient(90deg,var(--gold),transparent);
+  margin:10px auto 22px;border-radius:1px;
+}
+</style>
 </head>
 <body>
-<div id="app"></div>
+
+<!-- LANGUAGE BAR -->
+<nav class="langBar">
+  <button class="langBtn active" data-lang="it" onclick="setLang('it')"><img src="https://flagcdn.com/w40/it.png" alt="IT"></button>
+  <button class="langBtn" data-lang="en" onclick="setLang('en')"><img src="https://flagcdn.com/w40/gb.png" alt="EN"></button>
+  <button class="langBtn" data-lang="fr" onclick="setLang('fr')"><img src="https://flagcdn.com/w40/fr.png" alt="FR"></button>
+  <button class="langBtn" data-lang="es" onclick="setLang('es')"><img src="https://flagcdn.com/w40/es.png" alt="ES"></button>
+  <button class="langBtn" data-lang="de" onclick="setLang('de')"><img src="https://flagcdn.com/w40/de.png" alt="DE"></button>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="heroBadge">BOUTIQUE ROME CONCIERGE</div>
+  <h1 class="heroTitle" id="heroTitle">Boutique Rome Concierge</h1>
+  <div class="heroApt">Viale Trastevere 108</div>
+  <p class="heroSub" id="heroSub">Ospitalità di lusso nel cuore di Trastevere.</p>
+  <div class="goldLine"></div>
+  <div class="heroAddr" id="heroAddrBox">
+    <div class="heroAddrLeft">
+      <div class="heroAddrLabel" id="aptLabel">Appartamento</div>
+      <div class="heroAddrText">Viale Trastevere 108 · Trastevere</div>
+    </div>
+    <button class="openBtn" onclick="handleOpen()">OPEN</button>
+  </div>
+</div>
+<div id="phasePill" class="phasePill"></div>
+
+<!-- SECTION: YOUR STAY -->
+<div class="section">
+  <div class="sectionAptRow">
+    <div>
+      <div class="sectionEyebrow" id="sectionAptHead"></div>
+      <div class="sectionTitle" id="sectionAptTitle"></div>
+    </div>
+    <a id="weatherWidget" href="#" target="_blank" rel="noopener" onclick="openWeather(event)">
+      <span id="wIcon">🌤</span>
+      <span id="wTime">--:--</span>
+      <span id="wTemp">--°</span>
+      <span id="wArrow">↗</span>
+    </a>
+  </div>
+</div>
+
+<div id="phaseLock" class="phaseLock" style="display:none">
+  <div class="li">🔒</div>
+  <p id="phase1Text"></p>
+</div>
+
+<div id="aptGrid" style="display:none">
+  <div class="cardGrid">
+    <div class="card" onclick="openModal('apt')">
+      <div class="cardIcon">📍</div>
+      <div class="cardTitle" id="aptCardTitle"></div>
+      <div class="cardSub" id="aptCardSub"></div>
+    </div>
+    <div class="card locked" id="keysCard" onclick="openModal('keys')">
+      <div class="cardIcon">🗝</div>
+      <div class="cardTitle" id="keysTitle"></div>
+      <div class="cardSub" id="keysSub"></div>
+    </div>
+    <div class="card" onclick="openModal('wifi')">
+      <div class="cardIcon">📶</div>
+      <div class="cardTitle" id="wifiTitle"></div>
+      <div class="cardSub" id="wifiSub"></div>
+    </div>
+    <div class="card" onclick="openModal('house')">
+      <div class="cardIcon">💬</div>
+      <div class="cardTitle" id="houseTitle"></div>
+      <div class="cardSub" id="houseSub"></div>
+    </div>
+    <div class="card cardFull" onclick="openModal('help')">
+      <div class="cardIcon">☎</div>
+      <div class="cardTitle" id="helpTitle"></div>
+      <div class="cardSub" id="helpSub"></div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- SECTION: EXPLORE ROME -->
+<div class="section">
+  <div class="sectionEyebrow" id="sectionRomeHead"></div>
+  <div class="sectionTitle" id="sectionRomeTitle"></div>
+</div>
+<div class="cardGrid">
+  <div class="card" onclick="openModal('eat')">
+    <div class="cardIcon">🍝</div>
+    <div class="cardTitle" id="eatTitle"></div>
+    <div class="cardSub" id="eatSub"></div>
+  </div>
+  <div class="card" onclick="openModal('tonight')">
+    <div class="cardIcon">🌙</div>
+    <div class="cardTitle" id="tonightTitle"></div>
+    <div class="cardSub" id="tonightSub"></div>
+  </div>
+  <div class="card" onclick="openModal('tickets')">
+    <div class="cardIcon">🎟</div>
+    <div class="cardTitle" id="tickTitle"></div>
+    <div class="cardSub" id="tickSub"></div>
+  </div>
+  <div class="card" onclick="openModal('transport')">
+    <div class="cardIcon">🚋</div>
+    <div class="cardTitle" id="transTitle"></div>
+    <div class="cardSub" id="transSub"></div>
+  </div>
+</div>
+
+<!-- AI ASSISTANT -->
+<div class="assistant">
+  <div class="assistantBadge">AI POWERED</div>
+  <div class="assistantTitle" id="assistantTitle"></div>
+  <p class="assistantDesc" id="assistantDesc"></p>
+  <button class="bigbtn" id="assistantBtn" onclick="openModal('chat')"></button>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <a href="https://wa.me/393355245756" class="waFooter" id="whatsappBtn" target="_blank"></a>
+</footer>
+
+<!-- WHATSAPP FLOAT -->
+<a href="https://wa.me/393355245756" class="whatsappFloat" target="_blank">💬</a>
+
+<!-- MODAL BOTTOM SHEET -->
+<div id="modalBg" class="modal" onclick="outsideClose(event)">
+  <div class="sheet" id="modalSheet">
+    <div class="sheetHandle"></div>
+    <div class="sheetHeader">
+      <h3 id="modalTitle"></h3>
+      <button class="closeBtn" onclick="closeModal()">×</button>
+    </div>
+    <div class="sheetBody" id="modalBody"></div>
+  </div>
+</div>
+
 <script>
-window.CONCIERGE = {"apartment": "trastevere", "brand": "Niceflatinrome.com", "heroTitle": "Viale Trastevere 108", "heroEmoji": "🍷", "heroColors": {"from": "#100a0a", "mid": "#381818"}, "langs": {"it": {"menuTitle": "Menu Concierge", "menuSub": "Tocca per esplorare", "footer": "Selezione curata per gli ospiti di Viale Trastevere 108 · Roma", "tiles": [{"icon": "🍽️", "title": "Fine Dining", "desc": "Ristoranti selezionati e cucina iconica di Trastevere.", "arrow": "Apri →", "section": "dining"}, {"icon": "☕", "title": "Colazione & Caffè", "desc": "Espresso, pasticceria e colazioni eleganti nei dintorni.", "arrow": "Apri →", "section": "breakfast"}, {"icon": "🍸", "title": "Drink & Rooftop", "desc": "Cocktail, aperitivo e atmosfera serale.", "arrow": "Apri →", "section": "drinks"}, {"icon": "🏛️", "title": "Da Vedere Vicino", "desc": "Luoghi culturali essenziali raggiungibili a piedi.", "arrow": "Apri →", "section": "mustvisit"}, {"icon": "🎭", "title": "Stasera a Roma", "desc": "Teatro, cocktail ed esperienze serali.", "arrow": "Apri →", "section": "tonight"}, {"icon": "🎟️", "title": "Esperienze Premium", "desc": "Cultura, passeggiate, cooking class e scoperte locali.", "arrow": "Apri →", "section": "experiences"}, {"icon": "🛎️", "title": "Servizi Utili", "desc": "Deposito bagagli, taxi e servizi pratici.", "arrow": "Apri →", "section": "services"}, {"icon": "🎁", "title": "Shopping & Regali", "desc": "Mercati, food shopping e scoperte romane premium.", "arrow": "Apri →", "section": "shopping"}, {"icon": "✨", "title": "Roma Nascosta", "desc": "Luoghi segreti, viste tranquille e scoperte inattese.", "arrow": "Apri →", "section": "hidden"}, {"icon": "👨‍👩‍👧", "title": "Famiglia & Bambini", "desc": "Attività semplici e piacevoli per famiglie e bambini.", "arrow": "Apri →", "section": "family"}, {"icon": "🎧", "title": "Relax Mode", "desc": "Musica, streaming e atmosfera serale rilassante.", "arrow": "Apri →", "section": "relax"}, {"icon": "❤️", "title": "Roma Romantica", "desc": "Tramonti, passeggiate e idee per coppie.", "arrow": "Apri →", "section": "romantic"}], "sections": {"dining": {"header": {"title": "Fine Dining", "back": "← Torna alla pagina principale"}, "cards": [{"tagline": "Cucina contemporanea", "name": "Osteria Fernanda", "desc": "Cucina romana contemporanea e creativa vicino a Porta Portese.", "address": "📍 Via Crescenzo del Monte 18/24, Roma", "buttons": [{"label": "Chiama", "href": "tel:+39065894333"}, {"label": "Mobile", "href": "tel:+393283847924"}, {"label": "Mappa", "href": "https://www.google.com/maps/search/?api=1&query=Osteria+Fernanda+Via+Crescenzo+del+Monte+18+Roma"}, {"label": "Sito", "href": "https://www.osteriafernanda.com/"}, {"label": "Email", "href": "mailto:osteriafernanda@libero.it"}]}, {"tagline": "Icona romana", "name": "Da Enzo al 29", "desc": "Una delle trattorie più amate di Trastevere per cucina romana classica.", "address": "📍 Via dei Vascellari 29, Roma", "buttons": [{"label": "Chiama", "href": "tel:+39065812260"}, {"label": "Mappa", "href": "https://www.google.com/maps/search/?api=1&query=Da+Enzo+al+29+Via+dei+Vascellari+29+Roma"}, {"label": "Sito", "href": "https://www.daenzoal29.com/"}]}, {"tagline": "Classico Trastevere", "name": "Tonnarello", "desc": "Pasta romana e piatti tradizionali nel cuore di Trastevere.", "address": "📍 Piazza San Calisto 10 / Via della Paglia 40, Roma", "buttons": [{"label": "Mappa", "href": "https://www.google.com/maps/search/?api=1&query=Tonnarello+Piazza+San+Calisto+10+Roma"}, {"label": "Sito", "href": "https://tonnarello.it/"}]}]}, "breakfast": {"header": {"title": "Colazione & Caffè", "back": "← Torna alla pagina principale"}, "cards": [{"tagline": "Pasticceria francese", "name": "Le Levain", "desc": "Boutique bakery per croissant, dolci e colazione elegante.", "address": "📍 Via Luigi Santini 22, Roma", "buttons": [{"label": "Chiama", "href": "tel:+390647523834"}, {"label": "Mappa", "href": "https://www.google.com/maps/search/?api=1&query=Le+Levain+Via+Luigi+Santini+22+Roma"}, {"label": "Sito", "href": "https://www.lelevainroma.com/"}]}, {"tagline": "Classico locale", "name": "Bar San Calisto", "desc": "Storico bar di Trastevere per caffè e atmosfera di quartiere.", "address": "📍 Piazza di San Calisto 3/5, Roma", "buttons": [{"label": "Chiama", "href": "tel:+390658358609"}, {"label": "Mappa", "href": "https://www.google.com/maps/search/?api=1&query=Bar+San+Calisto+Piazza+San+Calisto+Roma"}]}, {"tagline": "Brunch & Caffè", "name": "Baylon Café", "desc": "Colazione internazionale, brunch e atmosfera rilassata.", "address": "📍 Via di San Francesco a Ripa 151, Roma", "buttons": [{"label": "Chiama", "href": "tel:+39065816856"}, {"label": "Mappa", "href": "https://www.google.com/maps/search/?api=1&query=Baylon+Cafe+Via+di+San+Francesco+a+Ripa+151+Roma"}, {"label": "Sito", "href": "https://www.bayloncafe.com/"}]}]}, "drinks": {"header": {"title": "Drink & Rooftop", "back": "← Torna alla pagina principale"}, "cards": [{"tagline": "Cocktail iconico", "name": "Freni e Frizioni", "desc": "Uno degli indirizzi simbolo di Trastevere per aperitivo e cocktail.", "address": "📍 Via del Politeama 4, Roma", "buttons": [{"label": "Chiama", "href": "tel:+390645497499"}, {"label": "Mappa", "href": "https://www.google.com/maps/search/?api=1&query=Freni+e+Frizioni+Via+del+Politeama+4+Roma"}, {"label": "Sito", "href": "https://www.freniefrizioni.com/"}, {"label": "Email", "href": "mailto:info@freniefrizioni.com"}]}, {"tagline": "Birra artigianale", "name": "Ma Che Siete Venuti a Fà", "desc": "Pub cult della birra artigianale a Trastevere dal 2001.", "address": "📍 Via Benedetta 25, Roma", "buttons": [{"label": "Mappa", "href": "https://www.google.com/maps/search/?api=1&query=Ma+Che+Siete+Venuti+a+Fa+Via+Benedetta+25+Roma"}, {"label": "Sito", "href": "https://www.football-pub.com/"}]}, {"tagline": "Dopocena unico", "name": "Rivendita Libri Cioccolata e Vino", "desc": "Locale teatrale e giocoso per il dopocena in Vicolo del Cinque.", "address": "📍 Vicolo del Cinque 11A, Roma", "buttons": [{"label": "Mappa", "href": "https://www.google.com/maps/search/?api=1&query=Rivendita+Libri+Cioccolata+e+Vino+Vicolo+del+Cinque+11A+Roma"}]}]}, "mustvisit": {"header": {"title": "Da Vedere Vicino", "back": "← Torna alla pagina principale"}, "cards": [{"tagline": "Icona del quartiere", "name": "Santa Maria in Trastevere", "desc": "Una delle basiliche più antiche di Roma, famosa per i mosaici dorati.", "address": "📍 Piazza di Santa Maria in Trastevere, Roma", "buttons": [{"label": "Mappa", "href": "https://www.google.com/maps/search/?api=1&query=Basilica+Santa+Maria+in+Trastevere+Roma"}, {"label": "Info", "href": "https://www.turismoroma.it/en/places/basilica-santa-maria-trastevere"}]}, {"tagline": "Affreschi di Raffaello", "name": "Villa Farnesina", "desc": "Villa rinascimentale con affreschi di Raffaello, tappa culturale raffinata.", "address": "📍 Via della Lungara 230, Roma", "buttons": [{"label": "Chiama", "href": "tel:+390668027268"}, {"label": "Mappa", "href": "https://www.google.com/maps/search/?api=1&query=Villa+Farnesina+Roma"}, {"label": "Sito", "href": "https://www.villafarnesina.it/"}]}, {"tagline": "Vista panoramica", "name": "Gianicolo Terrace", "desc": "Uno dei panorami più belli di Roma, perfetto al tramonto.", "address": "📍 Passeggiata del Gianicolo, Roma", "buttons": [{"label": "Mappa", "href": "https://www.google.com/maps/search/?api=1&query=Terrazza+del+Gianicolo+Roma"}, {"label": "Info", "href": "https://www.turismoroma.it/en/places/gianicolo"}]}]}, "tonight": {"header": {"title": "Stasera a Roma", "back": "← Torna alla pagina principale"}, "cards": [{"tagline": "Cocktail iconico", "name": "Freni e Frizioni", "desc": "Uno degli indirizzi simbolo di Trastevere per aperitivo e cocktail.", "address": "📍 Via del Politeama 4, Roma", "buttons": [{"label": "Chiama", "href": "tel:+390645497499"}, {"label": "Mappa", "href": "https://www.google.com/maps/search/?api=1&query=Freni+e+Frizioni+Roma"}, {"label": "Sito", "href": "https://www.freniefrizioni.com/"}]}, {"tagline": "Teatro a Trastevere", "name": "Teatro Belli", "desc": "Piccolo teatro nel cuore di Trastevere.", "address": "📍 Piazza di Sant’Apollonia 11/A, Roma", "buttons": [{"label": "Chiama", "href": "tel:+39065894875"}, {"label": "Mappa", "href": "https://www.google.com/maps/search/?api=1&query=Teatro+Belli+Piazza+Sant%27Apollonia+11+Roma"}, {"label": "Sito", "href": "https://www.teatrobelli.it/"}]}, {"tagline": "Birra artigianale", "name": "Ma Che Siete Venuti a Fà", "desc": "Pub cult della birra artigianale a Trastevere dal 2001.", "address": "📍 Via Benedetta 25, Roma", "buttons": [{"label": "Mappa", "href": "https://www.google.com/maps/search/?api=1&query=Ma+Che+Siete+Venuti+a+Fa+Roma"}, {"label": "Sito", "href": "https://www.football-pub.com/"}]}]}, "experiences": {"header": {"title": "Esperienze Premium", "back": "← Torna alla pagina principale"}, "cards": [{"tagline": "Affreschi di Raffaello", "name": "Villa Farnesina Visit", "desc": "Villa rinascimentale con affreschi di Raffaello, tappa culturale raffinata.", "address": "📍 Via della Lungara 230, Roma", "buttons": [{"label": "Chiama", "href": "tel:+390668027268"}, {"label": "Mappa", "href": "https://www.google.com/maps/search/?api=1&query=Villa+Farnesina+Roma"}, {"label": "Sito", "href": "https://www.villafarnesina.it/"}]}, {"tagline": "Sapori del quartiere", "name": "Trastevere Food Walk", "desc": "Percorso libero: Santa Maria, San Calisto, trattorie locali e bar.", "address": "📍 Trastevere, Roma", "buttons": [{"label": "Mappa", "href": "https://www.google.com/maps/dir/?api=1&origin=Viale+Trastevere+108+Roma&destination=Piazza+di+Santa+Maria+in+Trastevere+Roma&travelmode=walking"}]}, {"tagline": "Cooking class", "name": "Pasta & Tiramisù Class", "desc": "Esperienza pratica di cucina romana: pasta fresca e tiramisù.", "address": "📍 Roma", "buttons": [{"label": "Prenota", "href": "https://romewithchef.com/cook/pasta-and-tiramisu-making-class/"}, {"label": "Mappa", "href": "https://www.google.com/maps/search/?api=1&query=Pasta+Tiramisu+Class+Rome"}]}]}, "services": {"header": {"title": "Servizi Utili", "back": "← Torna alla pagina principale"}, "cards": [{"tagline": "Dopo il checkout", "name": "Luggage Storage Trastevere", "desc": "Deposito bagagli self-service nel cuore di Trastevere.", "address": "📍 Piazza San Giovanni della Malva 16, Roma", "buttons": [{"label": "Chiama", "href": "tel:+393475512996"}, {"label": "Mappa", "href": "https://www.google.com/maps/search/?api=1&query=Luggage+Storage+Trastevere+Piazza+San+Giovanni+della+Malva+16+Roma"}, {"label": "Sito", "href": "https://www.safeyourluggage.com/LuggageStorageTrastevere"}, {"label": "Email", "href": "mailto:info@safeyourluggage.com"}]}, {"tagline": "Bagagli vicino", "name": "Radical Storage Viale Trastevere", "desc": "Deposito bagagli vicino a Viale Trastevere.", "address": "📍 Via Francesco Benaglia 13, Roma", "buttons": [{"label": "Chiama", "href": "tel:+390694806492"}, {"label": "Mappa", "href": "https://www.google.com/maps/search/?api=1&query=Radical+Storage+Via+Francesco+Benaglia+13+Roma"}, {"label": "Sito", "href": "https://radicalstorage.com/luggage-storage/rome/trastevere/luggage-storage-viale-trastevere"}]}, {"tagline": "Taxi ufficiale", "name": "Taxi Roma 060609", "desc": "Servizio ufficiale taxi di Roma.", "address": "📍 Servizio taxi Roma", "buttons": [{"label": "Chiama", "href": "tel:+39060609"}, {"label": "Info", "href": "https://www.comune.roma.it/web/it/scheda-servizi.page?contentId=INF47781"}, {"label": "Mappa", "href": "https://www.google.com/maps/search/?api=1&query=Taxi+Roma"}]}]}, "shopping": {"header": {"title": "Shopping & Regali", "back": "← Torna alla pagina principale"}, "cards": [{"tagline": "Mercato domenicale", "name": "Porta Portese Market", "desc": "Il famoso mercato delle pulci di Roma, vicinissimo a Viale Trastevere.", "address": "📍 Via Portuense / Porta Portese, Roma", "buttons": [{"label": "Mappa", "href": "https://www.google.com/maps/search/?api=1&query=Porta+Portese+Market+Roma"}, {"label": "Info", "href": "https://www.turismoroma.it/en/places/porta-portese-market"}]}, {"tagline": "Mercato gastronomico", "name": "Mercato Testaccio", "desc": "Mercato romano di qualità, ideale per pranzo e sapori locali.", "address": "📍 Via Beniamino Franklin, Roma", "buttons": [{"label": "Mappa", "href": "https://www.google.com/maps/search/?api=1&query=Mercato+Testaccio+Roma"}, {"label": "Sito", "href": "https://www.mercatoditestaccio.it/"}]}, {"tagline": "Department store luxury", "name": "Rinascente Tritone", "desc": "Moda, beauty, food hall e rooftop nel centro di Roma.", "address": "📍 Via del Tritone 61, Roma", "buttons": [{"label": "Sito", "href": "https://www.rinascente.it/en/store-roma-via-del-tritone"}, {"label": "Mappa", "href": "https://www.google.com/maps/search/?api=1&query=Rinascente+Via+del+Tritone+61+Roma"}]}]}, "hidden": {"header": {"title": "Roma Nascosta", "back": "← Torna alla pagina principale"}, "cards": [{"tagline": "Roma verde nascosta", "name": "Orto Botanico", "desc": "Un giardino botanico tranquillo dietro Trastevere e sotto il Gianicolo.", "address": "📍 Largo Cristina di Svezia 23A, Roma", "buttons": [{"label": "Chiama", "href": "tel:+390649917107"}, {"label": "Mappa", "href": "https://www.google.com/maps/search/?api=1&query=Orto+Botanico+Roma+Largo+Cristina+di+Svezia+23A"}, {"label": "Sito", "href": "https://web.uniroma1.it/ortobotanico/"}]}, {"tagline": "Basilica silenziosa", "name": "Santa Cecilia in Trastevere", "desc": "Una basilica bellissima e più tranquilla nell’anima antica di Trastevere.", "address": "📍 Piazza di Santa Cecilia 22, Roma", "buttons": [{"label": "Mappa", "href": "https://www.google.com/maps/search/?api=1&query=Santa+Cecilia+in+Trastevere+Roma"}, {"label": "Info", "href": "https://www.turismoroma.it/en/places/basilica-santa-cecilia-trastevere"}]}, {"tagline": "Segreto panoramico", "name": "Fontanone del Gianicolo", "desc": "Fontana scenografica e punto panoramico sopra Trastevere.", "address": "📍 Via Garibaldi, Roma", "buttons": [{"label": "Mappa", "href": "https://www.google.com/maps/search/?api=1&query=Fontanone+del+Gianicolo+Roma"}, {"label": "Info", "href": "https://www.turismoroma.it/en/places/fontanone-gianicolo"}]}]}, "family": {"header": {"title": "Famiglia & Bambini", "back": "← Torna alla pagina principale"}, "cards": [{"tagline": "Verde per famiglie", "name": "Orto Botanico", "desc": "Opzione tranquilla all’aperto per bambini e adulti.", "address": "📍 Largo Cristina di Svezia 23A, Roma", "buttons": [{"label": "Chiama", "href": "tel:+390649917107"}, {"label": "Mappa", "href": "https://www.google.com/maps/search/?api=1&query=Orto+Botanico+Roma"}, {"label": "Sito", "href": "https://web.uniroma1.it/ortobotanico/"}]}, {"tagline": "Museo dei bambini", "name": "Explora Children’s Museum", "desc": "Museo interattivo ideale per famiglie con bambini.", "address": "📍 Via Flaminia 82, Roma", "buttons": [{"label": "Sito", "href": "https://www.mdbr.it/"}, {"label": "Mappa", "href": "https://www.google.com/maps/search/?api=1&query=Explora+Museo+dei+Bambini+Roma"}]}, {"tagline": "Giornata in famiglia", "name": "Bioparco di Roma", "desc": "Lo zoo di Roma, opzione tranquilla all’aperto per famiglie.", "address": "📍 Villa Borghese, Roma", "buttons": [{"label": "Sito", "href": "https://www.bioparco.it/"}, {"label": "Mappa", "href": "https://www.google.com/maps/search/?api=1&query=Bioparco+di+Roma"}]}]}, "relax": {"header": {"title": "Relax Mode", "back": "← Torna alla pagina principale"}, "cards": [{"tagline": "Musica", "name": "Spotify Lounge", "desc": "Apri musica lounge rilassante per una serata in casa.", "address": "📍 Scorciatoia streaming", "buttons": [{"label": "Apri", "href": "https://open.spotify.com/search/italian%20lounge"}]}, {"tagline": "Streaming", "name": "Netflix", "desc": "Apri Netflix per una serata rilassante in appartamento.", "address": "📍 Scorciatoia streaming", "buttons": [{"label": "Apri", "href": "https://www.netflix.com/"}]}, {"tagline": "YouTube relax", "name": "Rome Ambience", "desc": "Video e suoni rilassanti di Roma come sottofondo.", "address": "📍 Scorciatoia streaming", "buttons": [{"label": "Apri", "href": "https://www.youtube.com/results?search_query=relaxing+trastevere+rome+ambience"}]}]}, "romantic": {"header": {"title": "Roma Romantica", "back": "← Torna alla pagina principale"}, "cards": [{"tagline": "Vista romantica", "name": "Gianicolo Sunset Walk", "desc": "Salita verso uno dei tramonti più belli di Roma.", "address": "📍 Da Viale Trastevere 108", "buttons": [{"label": "Mappa", "href": "https://www.google.com/maps/dir/?api=1&origin=Viale+Trastevere+108+Roma&destination=Terrazza+del+Gianicolo+Roma&travelmode=walking"}]}, {"tagline": "Passeggiata serale", "name": "Ponte Sisto Evening", "desc": "Percorso classico da Trastevere verso il Tevere e il centro storico.", "address": "📍 Ponte Sisto, Roma", "buttons": [{"label": "Mappa", "href": "https://www.google.com/maps/dir/?api=1&origin=Viale+Trastevere+108+Roma&destination=Ponte+Sisto+Roma&travelmode=walking"}]}, {"tagline": "Aperitivo di coppia", "name": "Freni e Frizioni", "desc": "Cocktail ed energia trasteverina per una serata romantica semplice.", "address": "📍 Via del Politeama 4, Roma", "buttons": [{"label": "Chiama", "href": "tel:+390645497499"}, {"label": "Sito", "href": "https://www.freniefrizioni.com/"}, {"label": "Mappa", "href": "https://www.google.com/maps/search/?api=1&query=Freni+e+Frizioni+Roma"}]}]}}, "quickActions": [{"label": "📍 Apri mappa", "href": "https://www.google.com/maps/search/?api=1&query=Via+del+Portico+d%27Ottavia+1D+Roma"}, {"label": "📞 Chiama host", "href": "tel:+393355245756"}, {"label": "🚕 Taxi", "href": "tel:+39060609"}, {"label": "🆘 Emergenza", "href": "tel:112"}]}, "en": {"menuTitle": "Concierge Menu", "menuSub": "Tap to explore", "footer": "Curated for guests staying at Viale Trastevere 108 · Rome", "tiles": [{"icon": "🍽️", "title": "Fine Dining", "desc": "Selected restaurants and iconic Trastevere dining.", "arrow": "Open →", "section": "dining"}, {"icon": "☕", "title": "Breakfast & Coffee", "desc": "Espresso, pastry and elegant morning stops nearby.", "arrow": "Open →", "section": "breakfast"}, {"icon": "🍸", "title": "Drinks & Rooftops", "desc": "Cocktails, aperitivo and evening atmosphere.", "arrow": "Open →", "section": "drinks"}, {"icon": "🏛️", "title": "Must Visit Nearby", "desc": "Essential cultural places within walking distance.", "arrow": "Open →", "section": "mustvisit"}, {"icon": "🎭", "title": "Tonight in Rome", "desc": "Theatre, cocktails and evening experiences.", "arrow": "Open →", "section": "tonight"}, {"icon": "🎟️", "title": "Premium Experiences", "desc": "Culture, walks, cooking classes and local discoveries.", "arrow": "Open →", "section": "experiences"}, {"icon": "🛎️", "title": "Useful Services", "desc": "Luggage, taxi and practical comfort help.", "arrow": "Open →", "section": "services"}, {"icon": "🎁", "title": "Shopping & Gifts", "desc": "Markets, food shopping and premium Roman finds.", "arrow": "Open →", "section": "shopping"}, {"icon": "✨", "title": "Hidden Rome", "desc": "Secret places, quiet views and unexpected discoveries.", "arrow": "Open →", "section": "hidden"}, {"icon": "👨‍👩‍👧", "title": "Family & Kids", "desc": "Soft, easy activities for families and children.", "arrow": "Open →", "section": "family"}, {"icon": "🎧", "title": "Relax Mode", "desc": "Music, streaming shortcuts and calm evening ambience.", "arrow": "Open →", "section": "relax"}, {"icon": "❤️", "title": "Romantic Rome", "desc": "Sunset walks, intimate moments and couple ideas.", "arrow": "Open →", "section": "romantic"}], "sections": {"dining": {"header": {"title": "Fine Dining", "back": "← Back to main page"}, "cards": [{"tagline": "Contemporary Dining", "name": "Osteria Fernanda", "desc": "Creative contemporary Roman dining near Porta Portese.", "address": "📍 Via Crescenzo del Monte 18/24, Rome", "buttons": [{"label": "Call", "href": "tel:+39065894333"}, {"label": "Mobile", "href": "tel:+393283847924"}, {"label": "Map", "href": "https://www.google.com/maps/search/?api=1&query=Osteria+Fernanda+Via+Crescenzo+del+Monte+18+Roma"}, {"label": "Website", "href": "https://www.osteriafernanda.com/"}, {"label": "Email", "href": "mailto:osteriafernanda@libero.it"}]}, {"tagline": "Roman Icon", "name": "Da Enzo al 29", "desc": "One of Trastevere’s most loved trattorie for classic Roman cuisine.", "address": "📍 Via dei Vascellari 29, Rome", "buttons": [{"label": "Call", "href": "tel:+39065812260"}, {"label": "Map", "href": "https://www.google.com/maps/search/?api=1&query=Da+Enzo+al+29+Via+dei+Vascellari+29+Roma"}, {"label": "Website", "href": "https://www.daenzoal29.com/"}]}, {"tagline": "Trastevere Classic", "name": "Tonnarello", "desc": "Popular Roman pasta and traditional dishes in the heart of Trastevere.", "address": "📍 Piazza San Calisto 10 / Via della Paglia 40, Rome", "buttons": [{"label": "Map", "href": "https://www.google.com/maps/search/?api=1&query=Tonnarello+Piazza+San+Calisto+10+Roma"}, {"label": "Website", "href": "https://tonnarello.it/"}]}]}, "breakfast": {"header": {"title": "Breakfast & Coffee", "back": "← Back to main page"}, "cards": [{"tagline": "French Bakery", "name": "Le Levain", "desc": "Boutique bakery for croissants, pastry and elegant breakfast.", "address": "📍 Via Luigi Santini 22, Rome", "buttons": [{"label": "Call", "href": "tel:+390647523834"}, {"label": "Map", "href": "https://www.google.com/maps/search/?api=1&query=Le+Levain+Via+Luigi+Santini+22+Roma"}, {"label": "Website", "href": "https://www.lelevainroma.com/"}]}, {"tagline": "Local Classic", "name": "Bar San Calisto", "desc": "An old-school Trastevere stop for coffee and neighborhood atmosphere.", "address": "📍 Piazza di San Calisto 3/5, Rome", "buttons": [{"label": "Call", "href": "tel:+390658358609"}, {"label": "Map", "href": "https://www.google.com/maps/search/?api=1&query=Bar+San+Calisto+Piazza+San+Calisto+Roma"}]}, {"tagline": "Brunch & Coffee", "name": "Baylon Café", "desc": "International breakfast, brunch and relaxed café atmosphere.", "address": "📍 Via di San Francesco a Ripa 151, Rome", "buttons": [{"label": "Call", "href": "tel:+39065816856"}, {"label": "Map", "href": "https://www.google.com/maps/search/?api=1&query=Baylon+Cafe+Via+di+San+Francesco+a+Ripa+151+Roma"}, {"label": "Website", "href": "https://www.bayloncafe.com/"}]}]}, "drinks": {"header": {"title": "Drinks & Rooftops", "back": "← Back to main page"}, "cards": [{"tagline": "Cocktail Landmark", "name": "Freni e Frizioni", "desc": "One of Trastevere’s signature aperitivo and cocktail addresses.", "address": "📍 Via del Politeama 4, Rome", "buttons": [{"label": "Call", "href": "tel:+390645497499"}, {"label": "Map", "href": "https://www.google.com/maps/search/?api=1&query=Freni+e+Frizioni+Via+del+Politeama+4+Roma"}, {"label": "Website", "href": "https://www.freniefrizioni.com/"}, {"label": "Email", "href": "mailto:info@freniefrizioni.com"}]}, {"tagline": "Craft Beer Icon", "name": "Ma Che Siete Venuti a Fà", "desc": "Legendary craft beer pub in Trastevere since 2001.", "address": "📍 Via Benedetta 25, Rome", "buttons": [{"label": "Map", "href": "https://www.google.com/maps/search/?api=1&query=Ma+Che+Siete+Venuti+a+Fa+Via+Benedetta+25+Roma"}, {"label": "Website", "href": "https://www.football-pub.com/"}]}, {"tagline": "Unique Night Stop", "name": "Rivendita Libri Cioccolata e Vino", "desc": "Playful, theatrical after-dinner bar in Vicolo del Cinque.", "address": "📍 Vicolo del Cinque 11A, Rome", "buttons": [{"label": "Map", "href": "https://www.google.com/maps/search/?api=1&query=Rivendita+Libri+Cioccolata+e+Vino+Vicolo+del+Cinque+11A+Roma"}]}]}, "mustvisit": {"header": {"title": "Must Visit Nearby", "back": "← Back to main page"}, "cards": [{"tagline": "Neighborhood Icon", "name": "Santa Maria in Trastevere", "desc": "One of Rome’s oldest basilicas, famous for golden mosaics.", "address": "📍 Piazza di Santa Maria in Trastevere, Rome", "buttons": [{"label": "Map", "href": "https://www.google.com/maps/search/?api=1&query=Basilica+Santa+Maria+in+Trastevere+Roma"}, {"label": "Info", "href": "https://www.turismoroma.it/en/places/basilica-santa-maria-trastevere"}]}, {"tagline": "Raphael Frescoes", "name": "Villa Farnesina", "desc": "A Renaissance villa with frescoes by Raphael, a refined cultural stop.", "address": "📍 Via della Lungara 230, Rome", "buttons": [{"label": "Call", "href": "tel:+390668027268"}, {"label": "Map", "href": "https://www.google.com/maps/search/?api=1&query=Villa+Farnesina+Roma"}, {"label": "Website", "href": "https://www.villafarnesina.it/"}]}, {"tagline": "Panoramic View", "name": "Gianicolo Terrace", "desc": "One of Rome’s most beautiful viewpoints, perfect at sunset.", "address": "📍 Passeggiata del Gianicolo, Rome", "buttons": [{"label": "Map", "href": "https://www.google.com/maps/search/?api=1&query=Terrazza+del+Gianicolo+Roma"}, {"label": "Info", "href": "https://www.turismoroma.it/en/places/gianicolo"}]}]}, "tonight": {"header": {"title": "Tonight in Rome", "back": "← Back to main page"}, "cards": [{"tagline": "Cocktail Landmark", "name": "Freni e Frizioni", "desc": "One of Trastevere’s signature aperitivo and cocktail addresses.", "address": "📍 Via del Politeama 4, Rome", "buttons": [{"label": "Call", "href": "tel:+390645497499"}, {"label": "Map", "href": "https://www.google.com/maps/search/?api=1&query=Freni+e+Frizioni+Roma"}, {"label": "Website", "href": "https://www.freniefrizioni.com/"}]}, {"tagline": "Theatre in Trastevere", "name": "Teatro Belli", "desc": "Small theatre venue in the heart of Trastevere.", "address": "📍 Piazza di Sant’Apollonia 11/A, Rome", "buttons": [{"label": "Call", "href": "tel:+39065894875"}, {"label": "Map", "href": "https://www.google.com/maps/search/?api=1&query=Teatro+Belli+Piazza+Sant%27Apollonia+11+Roma"}, {"label": "Website", "href": "https://www.teatrobelli.it/"}]}, {"tagline": "Craft Beer Icon", "name": "Ma Che Siete Venuti a Fà", "desc": "Legendary craft beer pub in Trastevere since 2001.", "address": "📍 Via Benedetta 25, Rome", "buttons": [{"label": "Map", "href": "https://www.google.com/maps/search/?api=1&query=Ma+Che+Siete+Venuti+a+Fa+Roma"}, {"label": "Website", "href": "https://www.football-pub.com/"}]}]}, "experiences": {"header": {"title": "Premium Experiences", "back": "← Back to main page"}, "cards": [{"tagline": "Raphael Frescoes", "name": "Villa Farnesina Visit", "desc": "A Renaissance villa with frescoes by Raphael, a refined cultural stop.", "address": "📍 Via della Lungara 230, Rome", "buttons": [{"label": "Call", "href": "tel:+390668027268"}, {"label": "Map", "href": "https://www.google.com/maps/search/?api=1&query=Villa+Farnesina+Roma"}, {"label": "Website", "href": "https://www.villafarnesina.it/"}]}, {"tagline": "Taste the District", "name": "Trastevere Food Walk", "desc": "Build your own walk: Santa Maria, San Calisto, local trattorie and bars.", "address": "📍 Trastevere, Rome", "buttons": [{"label": "Map", "href": "https://www.google.com/maps/dir/?api=1&origin=Viale+Trastevere+108+Roma&destination=Piazza+di+Santa+Maria+in+Trastevere+Roma&travelmode=walking"}]}, {"tagline": "Cooking Experience", "name": "Pasta & Tiramisù Class", "desc": "Hands-on Roman cooking class: fresh pasta and tiramisù.", "address": "📍 Rome", "buttons": [{"label": "Book", "href": "https://romewithchef.com/cook/pasta-and-tiramisu-making-class/"}, {"label": "Map", "href": "https://www.google.com/maps/search/?api=1&query=Pasta+Tiramisu+Class+Rome"}]}]}, "services": {"header": {"title": "Useful Services", "back": "← Back to main page"}, "cards": [{"tagline": "After Checkout", "name": "Luggage Storage Trastevere", "desc": "Self-service luggage storage in the heart of Trastevere.", "address": "📍 Piazza San Giovanni della Malva 16, Rome", "buttons": [{"label": "Call", "href": "tel:+393475512996"}, {"label": "Map", "href": "https://www.google.com/maps/search/?api=1&query=Luggage+Storage+Trastevere+Piazza+San+Giovanni+della+Malva+16+Roma"}, {"label": "Website", "href": "https://www.safeyourluggage.com/LuggageStorageTrastevere"}, {"label": "Email", "href": "mailto:info@safeyourluggage.com"}]}, {"tagline": "Luggage Nearby", "name": "Radical Storage Viale Trastevere", "desc": "Luggage storage option near Viale Trastevere.", "address": "📍 Via Francesco Benaglia 13, Rome", "buttons": [{"label": "Call", "href": "tel:+390694806492"}, {"label": "Map", "href": "https://www.google.com/maps/search/?api=1&query=Radical+Storage+Via+Francesco+Benaglia+13+Roma"}, {"label": "Website", "href": "https://radicalstorage.com/luggage-storage/rome/trastevere/luggage-storage-viale-trastevere"}]}, {"tagline": "Official Taxi", "name": "Taxi Roma 060609", "desc": "Official Rome taxi call service.", "address": "📍 Rome city taxi service", "buttons": [{"label": "Call", "href": "tel:+39060609"}, {"label": "Info", "href": "https://www.comune.roma.it/web/it/scheda-servizi.page?contentId=INF47781"}, {"label": "Map", "href": "https://www.google.com/maps/search/?api=1&query=Taxi+Roma"}]}]}, "shopping": {"header": {"title": "Shopping & Gifts", "back": "← Back to main page"}, "cards": [{"tagline": "Sunday Market", "name": "Porta Portese Market", "desc": "Rome’s famous flea market, very close to Viale Trastevere.", "address": "📍 Via Portuense / Porta Portese, Rome", "buttons": [{"label": "Map", "href": "https://www.google.com/maps/search/?api=1&query=Porta+Portese+Market+Roma"}, {"label": "Info", "href": "https://www.turismoroma.it/en/places/porta-portese-market"}]}, {"tagline": "Food Market", "name": "Mercato Testaccio", "desc": "A high-quality Roman food market, ideal for lunch and local flavors.", "address": "📍 Via Beniamino Franklin, Rome", "buttons": [{"label": "Map", "href": "https://www.google.com/maps/search/?api=1&query=Mercato+Testaccio+Roma"}, {"label": "Website", "href": "https://www.mercatoditestaccio.it/"}]}, {"tagline": "Luxury Department Store", "name": "Rinascente Tritone", "desc": "Fashion, beauty, food hall and rooftop in central Rome.", "address": "📍 Via del Tritone 61, Rome", "buttons": [{"label": "Website", "href": "https://www.rinascente.it/en/store-roma-via-del-tritone"}, {"label": "Map", "href": "https://www.google.com/maps/search/?api=1&query=Rinascente+Via+del+Tritone+61+Roma"}]}]}, "hidden": {"header": {"title": "Hidden Rome", "back": "← Back to main page"}, "cards": [{"tagline": "Hidden Green Rome", "name": "Orto Botanico", "desc": "A peaceful botanical garden behind Trastevere and below the Gianicolo.", "address": "📍 Largo Cristina di Svezia 23A, Rome", "buttons": [{"label": "Call", "href": "tel:+390649917107"}, {"label": "Map", "href": "https://www.google.com/maps/search/?api=1&query=Orto+Botanico+Roma+Largo+Cristina+di+Svezia+23A"}, {"label": "Website", "href": "https://web.uniroma1.it/ortobotanico/"}]}, {"tagline": "Quiet Basilica", "name": "Santa Cecilia in Trastevere", "desc": "A beautiful and calmer basilica in Trastevere’s older soul.", "address": "📍 Piazza di Santa Cecilia 22, Rome", "buttons": [{"label": "Map", "href": "https://www.google.com/maps/search/?api=1&query=Santa+Cecilia+in+Trastevere+Roma"}, {"label": "Info", "href": "https://www.turismoroma.it/en/places/basilica-santa-cecilia-trastevere"}]}, {"tagline": "Panoramic Secret", "name": "Fontanone del Gianicolo", "desc": "A dramatic fountain and viewpoint above Trastevere.", "address": "📍 Via Garibaldi, Rome", "buttons": [{"label": "Map", "href": "https://www.google.com/maps/search/?api=1&query=Fontanone+del+Gianicolo+Roma"}, {"label": "Info", "href": "https://www.turismoroma.it/en/places/fontanone-gianicolo"}]}]}, "family": {"header": {"title": "Family & Kids", "back": "← Back to main page"}, "cards": [{"tagline": "Family Green Stop", "name": "Orto Botanico", "desc": "A calm outdoor option for children and adults.", "address": "📍 Largo Cristina di Svezia 23A, Rome", "buttons": [{"label": "Call", "href": "tel:+390649917107"}, {"label": "Map", "href": "https://www.google.com/maps/search/?api=1&query=Orto+Botanico+Roma"}, {"label": "Website", "href": "https://web.uniroma1.it/ortobotanico/"}]}, {"tagline": "Children’s Museum", "name": "Explora Children’s Museum", "desc": "Interactive museum option for families with children.", "address": "📍 Via Flaminia 82, Rome", "buttons": [{"label": "Website", "href": "https://www.mdbr.it/"}, {"label": "Map", "href": "https://www.google.com/maps/search/?api=1&query=Explora+Museo+dei+Bambini+Roma"}]}, {"tagline": "Family Day", "name": "Bioparco di Roma", "desc": "Rome zoo, a calm outdoor option for families.", "address": "📍 Villa Borghese, Rome", "buttons": [{"label": "Website", "href": "https://www.bioparco.it/"}, {"label": "Map", "href": "https://www.google.com/maps/search/?api=1&query=Bioparco+di+Roma"}]}]}, "relax": {"header": {"title": "Relax Mode", "back": "← Back to main page"}, "cards": [{"tagline": "Music", "name": "Spotify Lounge", "desc": "Open relaxing lounge music for an easy evening at home.", "address": "📍 Streaming shortcut", "buttons": [{"label": "Open", "href": "https://open.spotify.com/search/italian%20lounge"}]}, {"tagline": "Streaming", "name": "Netflix", "desc": "Open Netflix for a relaxed night in the apartment.", "address": "📍 Streaming shortcut", "buttons": [{"label": "Open", "href": "https://www.netflix.com/"}]}, {"tagline": "YouTube Relax", "name": "Rome Ambience", "desc": "Soft Rome ambience videos and relaxing background sounds.", "address": "📍 Streaming shortcut", "buttons": [{"label": "Open", "href": "https://www.youtube.com/results?search_query=relaxing+trastevere+rome+ambience"}]}]}, "romantic": {"header": {"title": "Romantic Rome", "back": "← Back to main page"}, "cards": [{"tagline": "Romantic View", "name": "Gianicolo Sunset Walk", "desc": "Walk up to one of Rome’s most beautiful sunset panoramas.", "address": "📍 From Viale Trastevere 108", "buttons": [{"label": "Map", "href": "https://www.google.com/maps/dir/?api=1&origin=Viale+Trastevere+108+Roma&destination=Terrazza+del+Gianicolo+Roma&travelmode=walking"}]}, {"tagline": "Soft Night Walk", "name": "Ponte Sisto Evening", "desc": "A classic Trastevere evening route toward the river and historic center.", "address": "📍 Ponte Sisto, Rome", "buttons": [{"label": "Map", "href": "https://www.google.com/maps/dir/?api=1&origin=Viale+Trastevere+108+Roma&destination=Ponte+Sisto+Roma&travelmode=walking"}]}, {"tagline": "Couple Aperitivo", "name": "Freni e Frizioni", "desc": "Cocktails and lively Trastevere energy for an easy romantic evening.", "address": "📍 Via del Politeama 4, Rome", "buttons": [{"label": "Call", "href": "tel:+390645497499"}, {"label": "Website", "href": "https://www.freniefrizioni.com/"}, {"label": "Map", "href": "https://www.google.com/maps/search/?api=1&query=Freni+e+Frizioni+Roma"}]}]}}, "quickActions": [{"label": "📍 Open Map", "href": "https://www.google.com/maps/search/?api=1&query=Via+del+Portico+d%27Ottavia+1D+Roma"}, {"label": "📞 Call Host", "href": "tel:+393355245756"}, {"label": "🚕 Taxi", "href": "tel:+39060609"}, {"label": "🆘 Emergency", "href": "tel:112"}]}, "fr": {"menuTitle": "Menu Conciergerie", "menuSub": "Touchez pour explorer", "footer": "Sélection préparée pour les hôtes de Viale Trastevere 108 · Rome", "tiles": [{"icon": "🍽️", "title": "Fine Dining", "desc": "Restaurants sélectionnés et cuisine emblématique de Trastevere.", "arrow": "Ouvrir →", "section": "dining"}, {"icon": "☕", "title": "Petit-déjeuner & Café", "desc": "Espresso, pâtisseries et adresses élégantes pour le matin.", "arrow": "Ouvrir →", "section": "breakfast"}, {"icon": "🍸", "title": "Bars & Rooftops", "desc": "Cocktails, aperitivo et atmosphère du soir.", "arrow": "Ouvrir →", "section": "drinks"}, {"icon": "🏛️", "title": "À Voir Près d’Ici", "desc": "Sites culturels essentiels accessibles à pied.", "arrow": "Ouvrir →", "section": "mustvisit"}, {"icon": "🎭", "title": "Ce Soir à Rome", "desc": "Théâtre, cocktails et expériences du soir.", "arrow": "Ouvrir →", "section": "tonight"}, {"icon": "🎟️", "title": "Expériences Premium", "desc": "Culture, promenades, cours de cuisine et découvertes locales.", "arrow": "Ouvrir →", "section": "experiences"}, {"icon": "🛎️", "title": "Services Utiles", "desc": "Bagages, taxi et aides pratiques.", "arrow": "Ouvrir →", "section": "services"}, {"icon": "🎁", "title": "Shopping & Cadeaux", "desc": "Marchés, shopping gourmand et trouvailles romaines premium.", "arrow": "Ouvrir →", "section": "shopping"}, {"icon": "✨", "title": "Rome Cachée", "desc": "Lieux secrets, vues calmes et découvertes inattendues.", "arrow": "Ouvrir →", "section": "hidden"}, {"icon": "👨‍👩‍👧", "title": "Famille & Enfants", "desc": "Activités simples et agréables pour familles et enfants.", "arrow": "Ouvrir →", "section": "family"}, {"icon": "🎧", "title": "Mode Relax", "desc": "Musique, streaming et ambiance calme pour le soir.", "arrow": "Ouvrir →", "section": "relax"}, {"icon": "❤️", "title": "Rome Romantique", "desc": "Couchers de soleil, promenades et idées pour couples.", "arrow": "Ouvrir →", "section": "romantic"}], "sections": {"dining": {"header": {"title": "Fine Dining", "back": "← Retour à la page principale"}, "cards": [{"tagline": "Cuisine contemporaine", "name": "Osteria Fernanda", "desc": "Cuisine romaine contemporaine et créative près de Porta Portese.", "address": "📍 Via Crescenzo del Monte 18/24, Rome", "buttons": [{"label": "Appeler", "href": "tel:+39065894333"}, {"label": "Mobile", "href": "tel:+393283847924"}, {"label": "Carte", "href": "https://www.google.com/maps/search/?api=1&query=Osteria+Fernanda+Via+Crescenzo+del+Monte+18+Roma"}, {"label": "Site", "href": "https://www.osteriafernanda.com/"}, {"label": "Email", "href": "mailto:osteriafernanda@libero.it"}]}, {"tagline": "Icône romaine", "name": "Da Enzo al 29", "desc": "L’une des trattorie les plus aimées de Trastevere pour la cuisine romaine classique.", "address": "📍 Via dei Vascellari 29, Rome", "buttons": [{"label": "Appeler", "href": "tel:+39065812260"}, {"label": "Carte", "href": "https://www.google.com/maps/search/?api=1&query=Da+Enzo+al+29+Via+dei+Vascellari+29+Roma"}, {"label": "Site", "href": "https://www.daenzoal29.com/"}]}, {"tagline": "Trastevere Classic", "name": "Tonnarello", "desc": "Pâtes romaines et plats traditionnels au cœur de Trastevere.", "address": "📍 Piazza San Calisto 10 / Via della Paglia 40, Rome", "buttons": [{"label": "Carte", "href": "https://www.google.com/maps/search/?api=1&query=Tonnarello+Piazza+San+Calisto+10+Roma"}, {"label": "Site", "href": "https://tonnarello.it/"}]}]}, "breakfast": {"header": {"title": "Petit-déjeuner & Café", "back": "← Retour à la page principale"}, "cards": [{"tagline": "Boulangerie française", "name": "Le Levain", "desc": "Boulangerie boutique pour croissants, pâtisseries et petit-déjeuner élégant.", "address": "📍 Via Luigi Santini 22, Rome", "buttons": [{"label": "Appeler", "href": "tel:+390647523834"}, {"label": "Carte", "href": "https://www.google.com/maps/search/?api=1&query=Le+Levain+Via+Luigi+Santini+22+Roma"}, {"label": "Site", "href": "https://www.lelevainroma.com/"}]}, {"tagline": "Classique local", "name": "Bar San Calisto", "desc": "Bar historique de Trastevere pour café et atmosphère de quartier.", "address": "📍 Piazza di San Calisto 3/5, Rome", "buttons": [{"label": "Appeler", "href": "tel:+390658358609"}, {"label": "Carte", "href": "https://www.google.com/maps/search/?api=1&query=Bar+San+Calisto+Piazza+San+Calisto+Roma"}]}, {"tagline": "Brunch & Coffee", "name": "Baylon Café", "desc": "Petit-déjeuner international, brunch et ambiance détendue.", "address": "📍 Via di San Francesco a Ripa 151, Rome", "buttons": [{"label": "Appeler", "href": "tel:+39065816856"}, {"label": "Carte", "href": "https://www.google.com/maps/search/?api=1&query=Baylon+Cafe+Via+di+San+Francesco+a+Ripa+151+Roma"}, {"label": "Site", "href": "https://www.bayloncafe.com/"}]}]}, "drinks": {"header": {"title": "Bars & Rooftops", "back": "← Retour à la page principale"}, "cards": [{"tagline": "Adresse cocktail", "name": "Freni e Frizioni", "desc": "L’une des adresses signatures de Trastevere pour aperitivo et cocktails.", "address": "📍 Via del Politeama 4, Rome", "buttons": [{"label": "Appeler", "href": "tel:+390645497499"}, {"label": "Carte", "href": "https://www.google.com/maps/search/?api=1&query=Freni+e+Frizioni+Via+del+Politeama+4+Roma"}, {"label": "Site", "href": "https://www.freniefrizioni.com/"}, {"label": "Email", "href": "mailto:info@freniefrizioni.com"}]}, {"tagline": "Bière artisanale", "name": "Ma Che Siete Venuti a Fà", "desc": "Pub légendaire de bière artisanale à Trastevere depuis 2001.", "address": "📍 Via Benedetta 25, Rome", "buttons": [{"label": "Carte", "href": "https://www.google.com/maps/search/?api=1&query=Ma+Che+Siete+Venuti+a+Fa+Via+Benedetta+25+Roma"}, {"label": "Site", "href": "https://www.football-pub.com/"}]}, {"tagline": "Unique Night Stop", "name": "Rivendita Libri Cioccolata e Vino", "desc": "Bar théâtral et ludique pour l’après-dîner à Vicolo del Cinque.", "address": "📍 Vicolo del Cinque 11A, Rome", "buttons": [{"label": "Carte", "href": "https://www.google.com/maps/search/?api=1&query=Rivendita+Libri+Cioccolata+e+Vino+Vicolo+del+Cinque+11A+Roma"}]}]}, "mustvisit": {"header": {"title": "À Voir Près d’Ici", "back": "← Retour à la page principale"}, "cards": [{"tagline": "Icône du quartier", "name": "Santa Maria in Trastevere", "desc": "L’une des plus anciennes basiliques de Rome, célèbre pour ses mosaïques dorées.", "address": "📍 Piazza di Santa Maria in Trastevere, Rome", "buttons": [{"label": "Carte", "href": "https://www.google.com/maps/search/?api=1&query=Basilica+Santa+Maria+in+Trastevere+Roma"}, {"label": "Info", "href": "https://www.turismoroma.it/en/places/basilica-santa-maria-trastevere"}]}, {"tagline": "Raphael Frescoes", "name": "Villa Farnesina", "desc": "Villa Renaissance avec fresques de Raphaël, une visite culturelle raffinée.", "address": "📍 Via della Lungara 230, Rome", "buttons": [{"label": "Appeler", "href": "tel:+390668027268"}, {"label": "Carte", "href": "https://www.google.com/maps/search/?api=1&query=Villa+Farnesina+Roma"}, {"label": "Site", "href": "https://www.villafarnesina.it/"}]}, {"tagline": "Panoramic View", "name": "Gianicolo Terrace", "desc": "L’un des plus beaux points de vue de Rome, parfait au coucher du soleil.", "address": "📍 Passeggiata del Gianicolo, Rome", "buttons": [{"label": "Carte", "href": "https://www.google.com/maps/search/?api=1&query=Terrazza+del+Gianicolo+Roma"}, {"label": "Info", "href": "https://www.turismoroma.it/en/places/gianicolo"}]}]}, "tonight": {"header": {"title": "Ce Soir à Rome", "back": "← Retour à la page principale"}, "cards": [{"tagline": "Adresse cocktail", "name": "Freni e Frizioni", "desc": "L’une des adresses signatures de Trastevere pour aperitivo et cocktails.", "address": "📍 Via del Politeama 4, Rome", "buttons": [{"label": "Appeler", "href": "tel:+390645497499"}, {"label": "Carte", "href": "https://www.google.com/maps/search/?api=1&query=Freni+e+Frizioni+Roma"}, {"label": "Site", "href": "https://www.freniefrizioni.com/"}]}, {"tagline": "Theatre in Trastevere", "name": "Teatro Belli", "desc": "Petit théâtre au cœur de Trastevere.", "address": "📍 Piazza di Sant’Apollonia 11/A, Rome", "buttons": [{"label": "Appeler", "href": "tel:+39065894875"}, {"label": "Carte", "href": "https://www.google.com/maps/search/?api=1&query=Teatro+Belli+Piazza+Sant%27Apollonia+11+Roma"}, {"label": "Site", "href": "https://www.teatrobelli.it/"}]}, {"tagline": "Bière artisanale", "name": "Ma Che Siete Venuti a Fà", "desc": "Pub légendaire de bière artisanale à Trastevere depuis 2001.", "address": "📍 Via Benedetta 25, Rome", "buttons": [{"label": "Carte", "href": "https://www.google.com/maps/search/?api=1&query=Ma+Che+Siete+Venuti+a+Fa+Roma"}, {"label": "Site", "href": "https://www.football-pub.com/"}]}]}, "experiences": {"header": {"title": "Expériences Premium", "back": "← Retour à la page principale"}, "cards": [{"tagline": "Raphael Frescoes", "name": "Villa Farnesina Visit", "desc": "Villa Renaissance avec fresques de Raphaël, une visite culturelle raffinée.", "address": "📍 Via della Lungara 230, Rome", "buttons": [{"label": "Appeler", "href": "tel:+390668027268"}, {"label": "Carte", "href": "https://www.google.com/maps/search/?api=1&query=Villa+Farnesina+Roma"}, {"label": "Site", "href": "https://www.villafarnesina.it/"}]}, {"tagline": "Goûter le quartier", "name": "Trastevere Food Walk", "desc": "Promenade libre : Santa Maria, San Calisto, trattorie locales et bars.", "address": "📍 Trastevere, Rome", "buttons": [{"label": "Carte", "href": "https://www.google.com/maps/dir/?api=1&origin=Viale+Trastevere+108+Roma&destination=Piazza+di+Santa+Maria+in+Trastevere+Roma&travelmode=walking"}]}, {"tagline": "Cooking Experience", "name": "Pasta & Tiramisù Class", "desc": "Cours pratique de cuisine romaine : pâtes fraîches et tiramisù.", "address": "📍 Rome", "buttons": [{"label": "Réserver", "href": "https://romewithchef.com/cook/pasta-and-tiramisu-making-class/"}, {"label": "Carte", "href": "https://www.google.com/maps/search/?api=1&query=Pasta+Tiramisu+Class+Rome"}]}]}, "services": {"header": {"title": "Services Utiles", "back": "← Retour à la page principale"}, "cards": [{"tagline": "After Checkout", "name": "Luggage Storage Trastevere", "desc": "Consigne à bagages self-service au cœur de Trastevere.", "address": "📍 Piazza San Giovanni della Malva 16, Rome", "buttons": [{"label": "Appeler", "href": "tel:+393475512996"}, {"label": "Carte", "href": "https://www.google.com/maps/search/?api=1&query=Luggage+Storage+Trastevere+Piazza+San+Giovanni+della+Malva+16+Roma"}, {"label": "Site", "href": "https://www.safeyourluggage.com/LuggageStorageTrastevere"}, {"label": "Email", "href": "mailto:info@safeyourluggage.com"}]}, {"tagline": "Luggage Nearby", "name": "Radical Storage Viale Trastevere", "desc": "Option de consigne à bagages près de Viale Trastevere.", "address": "📍 Via Francesco Benaglia 13, Rome", "buttons": [{"label": "Appeler", "href": "tel:+390694806492"}, {"label": "Carte", "href": "https://www.google.com/maps/search/?api=1&query=Radical+Storage+Via+Francesco+Benaglia+13+Roma"}, {"label": "Site", "href": "https://radicalstorage.com/luggage-storage/rome/trastevere/luggage-storage-viale-trastevere"}]}, {"tagline": "Official Taxi", "name": "Taxi Roma 060609", "desc": "Service officiel de taxi de Rome.", "address": "📍 Servizio taxi Rome", "buttons": [{"label": "Appeler", "href": "tel:+39060609"}, {"label": "Info", "href": "https://www.comune.roma.it/web/it/scheda-servizi.page?contentId=INF47781"}, {"label": "Carte", "href": "https://www.google.com/maps/search/?api=1&query=Taxi+Roma"}]}]}, "shopping": {"header": {"title": "Shopping & Cadeaux", "back": "← Retour à la page principale"}, "cards": [{"tagline": "Sunday Market", "name": "Porta Portese Market", "desc": "Le célèbre marché aux puces de Rome, tout près de Viale Trastevere.", "address": "📍 Via Portuense / Porta Portese, Rome", "buttons": [{"label": "Carte", "href": "https://www.google.com/maps/search/?api=1&query=Porta+Portese+Market+Roma"}, {"label": "Info", "href": "https://www.turismoroma.it/en/places/porta-portese-market"}]}, {"tagline": "Food Market", "name": "Mercato Testaccio", "desc": "Marché romain de qualité, idéal pour déjeuner et saveurs locales.", "address": "📍 Via Beniamino Franklin, Rome", "buttons": [{"label": "Carte", "href": "https://www.google.com/maps/search/?api=1&query=Mercato+Testaccio+Roma"}, {"label": "Site", "href": "https://www.mercatoditestaccio.it/"}]}, {"tagline": "Luxury Department Store", "name": "Rinascente Tritone", "desc": "Mode, beauté, food hall et rooftop dans le centre de Rome.", "address": "📍 Via del Tritone 61, Rome", "buttons": [{"label": "Site", "href": "https://www.rinascente.it/en/store-roma-via-del-tritone"}, {"label": "Carte", "href": "https://www.google.com/maps/search/?api=1&query=Rinascente+Via+del+Tritone+61+Roma"}]}]}, "hidden": {"header": {"title": "Rome Cachée", "back": "← Retour à la page principale"}, "cards": [{"tagline": "Hidden Green Rome", "name": "Orto Botanico", "desc": "Jardin botanique paisible derrière Trastevere et sous le Gianicolo.", "address": "📍 Largo Cristina di Svezia 23A, Rome", "buttons": [{"label": "Appeler", "href": "tel:+390649917107"}, {"label": "Carte", "href": "https://www.google.com/maps/search/?api=1&query=Orto+Botanico+Roma+Largo+Cristina+di+Svezia+23A"}, {"label": "Site", "href": "https://web.uniroma1.it/ortobotanico/"}]}, {"tagline": "Quiet Basilica", "name": "Santa Cecilia in Trastevere", "desc": "Une belle basilique plus calme dans l’âme ancienne de Trastevere.", "address": "📍 Piazza di Santa Cecilia 22, Rome", "buttons": [{"label": "Carte", "href": "https://www.google.com/maps/search/?api=1&query=Santa+Cecilia+in+Trastevere+Roma"}, {"label": "Info", "href": "https://www.turismoroma.it/en/places/basilica-santa-cecilia-trastevere"}]}, {"tagline": "Panoramic Secret", "name": "Fontanone del Gianicolo", "desc": "Fontaine spectaculaire et point de vue au-dessus de Trastevere.", "address": "📍 Via Garibaldi, Rome", "buttons": [{"label": "Carte", "href": "https://www.google.com/maps/search/?api=1&query=Fontanone+del+Gianicolo+Roma"}, {"label": "Info", "href": "https://www.turismoroma.it/en/places/fontanone-gianicolo"}]}]}, "family": {"header": {"title": "Famille & Enfants", "back": "← Retour à la page principale"}, "cards": [{"tagline": "Family Green Stop", "name": "Orto Botanico", "desc": "Option extérieure calme pour enfants et adultes.", "address": "📍 Largo Cristina di Svezia 23A, Rome", "buttons": [{"label": "Appeler", "href": "tel:+390649917107"}, {"label": "Carte", "href": "https://www.google.com/maps/search/?api=1&query=Orto+Botanico+Roma"}, {"label": "Site", "href": "https://web.uniroma1.it/ortobotanico/"}]}, {"tagline": "Children’s Museum", "name": "Explora Children’s Museum", "desc": "Musée interactif idéal pour les familles avec enfants.", "address": "📍 Via Flaminia 82, Rome", "buttons": [{"label": "Site", "href": "https://www.mdbr.it/"}, {"label": "Carte", "href": "https://www.google.com/maps/search/?api=1&query=Explora+Museo+dei+Bambini+Roma"}]}, {"tagline": "Family Day", "name": "Bioparco di Roma", "desc": "Zoo de Rome, option extérieure calme pour les familles.", "address": "📍 Villa Borghese, Rome", "buttons": [{"label": "Site", "href": "https://www.bioparco.it/"}, {"label": "Carte", "href": "https://www.google.com/maps/search/?api=1&query=Bioparco+di+Roma"}]}]}, "relax": {"header": {"title": "Relax Mode", "back": "← Retour à la page principale"}, "cards": [{"tagline": "Music", "name": "Spotify Lounge", "desc": "Ouvrez une musique lounge relaxante pour une soirée à la maison.", "address": "📍 Scorciatoia streaming", "buttons": [{"label": "Ouvrir", "href": "https://open.spotify.com/search/italian%20lounge"}]}, {"tagline": "Streaming", "name": "Netflix", "desc": "Ouvrez Netflix pour une soirée détendue dans l’appartement.", "address": "📍 Scorciatoia streaming", "buttons": [{"label": "Ouvrir", "href": "https://www.netflix.com/"}]}, {"tagline": "YouTube Relax", "name": "Rome Ambience", "desc": "Vidéos et sons relaxants de Rome en arrière-plan.", "address": "📍 Scorciatoia streaming", "buttons": [{"label": "Ouvrir", "href": "https://www.youtube.com/results?search_query=relaxing+trastevere+rome+ambience"}]}]}, "romantic": {"header": {"title": "Rome Romantique", "back": "← Retour à la page principale"}, "cards": [{"tagline": "Romantic View", "name": "Gianicolo Sunset Walk", "desc": "Montez vers l’un des plus beaux couchers de soleil de Rome.", "address": "📍 Da Viale Trastevere 108", "buttons": [{"label": "Carte", "href": "https://www.google.com/maps/dir/?api=1&origin=Viale+Trastevere+108+Roma&destination=Terrazza+del+Gianicolo+Roma&travelmode=walking"}]}, {"tagline": "Soft Night Walk", "name": "Ponte Sisto Evening", "desc": "Promenade classique de Trastevere vers le Tibre et le centre historique.", "address": "📍 Ponte Sisto, Rome", "buttons": [{"label": "Carte", "href": "https://www.google.com/maps/dir/?api=1&origin=Viale+Trastevere+108+Roma&destination=Ponte+Sisto+Roma&travelmode=walking"}]}, {"tagline": "Couple Aperitivo", "name": "Freni e Frizioni", "desc": "Cocktails et énergie de Trastevere pour une soirée romantique simple.", "address": "📍 Via del Politeama 4, Rome", "buttons": [{"label": "Appeler", "href": "tel:+390645497499"}, {"label": "Site", "href": "https://www.freniefrizioni.com/"}, {"label": "Carte", "href": "https://www.google.com/maps/search/?api=1&query=Freni+e+Frizioni+Roma"}]}]}}, "quickActions": [{"label": "📍 Ouvrir la carte", "href": "https://www.google.com/maps/search/?api=1&query=Via+del+Portico+d%27Ottavia+1D+Roma"}, {"label": "📞 Appeler l’hôte", "href": "tel:+393355245756"}, {"label": "🚕 Taxi", "href": "tel:+39060609"}, {"label": "🆘 Urgence", "href": "tel:112"}]}, "es": {"menuTitle": "Menú Concierge", "menuSub": "Toca para explorar", "footer": "Selección curada para huéspedes en Viale Trastevere 108 · Roma", "tiles": [{"icon": "🍽️", "title": "Fine Dining", "desc": "Restaurantes seleccionados y cocina icónica de Trastevere.", "arrow": "Abrir →", "section": "dining"}, {"icon": "☕", "title": "Desayuno & Café", "desc": "Espresso, pastelería y paradas elegantes por la mañana.", "arrow": "Abrir →", "section": "breakfast"}, {"icon": "🍸", "title": "Copas & Rooftops", "desc": "Cócteles, aperitivo y ambiente nocturno.", "arrow": "Abrir →", "section": "drinks"}, {"icon": "🏛️", "title": "Imprescindibles Cerca", "desc": "Lugares culturales esenciales a pie.", "arrow": "Abrir →", "section": "mustvisit"}, {"icon": "🎭", "title": "Esta Noche en Roma", "desc": "Teatro, cócteles y experiencias nocturnas.", "arrow": "Abrir →", "section": "tonight"}, {"icon": "🎟️", "title": "Experiencias Premium", "desc": "Cultura, paseos, clases de cocina y descubrimientos locales.", "arrow": "Abrir →", "section": "experiences"}, {"icon": "🛎️", "title": "Servicios Útiles", "desc": "Equipaje, taxi y ayuda práctica.", "arrow": "Abrir →", "section": "services"}, {"icon": "🎁", "title": "Compras & Regalos", "desc": "Mercados, compras gourmet y hallazgos romanos premium.", "arrow": "Abrir →", "section": "shopping"}, {"icon": "✨", "title": "Roma Secreta", "desc": "Lugares secretos, vistas tranquilas y descubrimientos inesperados.", "arrow": "Abrir →", "section": "hidden"}, {"icon": "👨‍👩‍👧", "title": "Familia & Niños", "desc": "Actividades fáciles y agradables para familias y niños.", "arrow": "Abrir →", "section": "family"}, {"icon": "🎧", "title": "Modo Relax", "desc": "Música, streaming y ambiente tranquilo para la noche.", "arrow": "Abrir →", "section": "relax"}, {"icon": "❤️", "title": "Roma Romántica", "desc": "Atardeceres, paseos e ideas para parejas.", "arrow": "Abrir →", "section": "romantic"}], "sections": {"dining": {"header": {"title": "Fine Dining", "back": "← Volver a la página principal"}, "cards": [{"tagline": "Cocina contemporánea", "name": "Osteria Fernanda", "desc": "Cocina romana contemporánea y creativa cerca de Porta Portese.", "address": "📍 Via Crescenzo del Monte 18/24, Roma", "buttons": [{"label": "Llamar", "href": "tel:+39065894333"}, {"label": "Móvil", "href": "tel:+393283847924"}, {"label": "Mapa", "href": "https://www.google.com/maps/search/?api=1&query=Osteria+Fernanda+Via+Crescenzo+del+Monte+18+Roma"}, {"label": "Web", "href": "https://www.osteriafernanda.com/"}, {"label": "Email", "href": "mailto:osteriafernanda@libero.it"}]}, {"tagline": "Icono romano", "name": "Da Enzo al 29", "desc": "Una de las trattorie más queridas de Trastevere para cocina romana clásica.", "address": "📍 Via dei Vascellari 29, Roma", "buttons": [{"label": "Llamar", "href": "tel:+39065812260"}, {"label": "Mapa", "href": "https://www.google.com/maps/search/?api=1&query=Da+Enzo+al+29+Via+dei+Vascellari+29+Roma"}, {"label": "Web", "href": "https://www.daenzoal29.com/"}]}, {"tagline": "Trastevere Classic", "name": "Tonnarello", "desc": "Pasta romana y platos tradicionales en el corazón de Trastevere.", "address": "📍 Piazza San Calisto 10 / Via della Paglia 40, Roma", "buttons": [{"label": "Mapa", "href": "https://www.google.com/maps/search/?api=1&query=Tonnarello+Piazza+San+Calisto+10+Roma"}, {"label": "Web", "href": "https://tonnarello.it/"}]}]}, "breakfast": {"header": {"title": "Desayuno & Café", "back": "← Volver a la página principal"}, "cards": [{"tagline": "Pastelería francesa", "name": "Le Levain", "desc": "Bakery boutique para croissants, dulces y desayuno elegante.", "address": "📍 Via Luigi Santini 22, Roma", "buttons": [{"label": "Llamar", "href": "tel:+390647523834"}, {"label": "Mapa", "href": "https://www.google.com/maps/search/?api=1&query=Le+Levain+Via+Luigi+Santini+22+Roma"}, {"label": "Web", "href": "https://www.lelevainroma.com/"}]}, {"tagline": "Clásico local", "name": "Bar San Calisto", "desc": "Bar histórico de Trastevere para café y ambiente de barrio.", "address": "📍 Piazza di San Calisto 3/5, Roma", "buttons": [{"label": "Llamar", "href": "tel:+390658358609"}, {"label": "Mapa", "href": "https://www.google.com/maps/search/?api=1&query=Bar+San+Calisto+Piazza+San+Calisto+Roma"}]}, {"tagline": "Brunch & Coffee", "name": "Baylon Café", "desc": "Desayuno internacional, brunch y ambiente relajado.", "address": "📍 Via di San Francesco a Ripa 151, Roma", "buttons": [{"label": "Llamar", "href": "tel:+39065816856"}, {"label": "Mapa", "href": "https://www.google.com/maps/search/?api=1&query=Baylon+Cafe+Via+di+San+Francesco+a+Ripa+151+Roma"}, {"label": "Web", "href": "https://www.bayloncafe.com/"}]}]}, "drinks": {"header": {"title": "Copas & Rooftops", "back": "← Volver a la página principal"}, "cards": [{"tagline": "Cocktail landmark", "name": "Freni e Frizioni", "desc": "Una de las direcciones símbolo de Trastevere para aperitivo y cócteles.", "address": "📍 Via del Politeama 4, Roma", "buttons": [{"label": "Llamar", "href": "tel:+390645497499"}, {"label": "Mapa", "href": "https://www.google.com/maps/search/?api=1&query=Freni+e+Frizioni+Via+del+Politeama+4+Roma"}, {"label": "Web", "href": "https://www.freniefrizioni.com/"}, {"label": "Email", "href": "mailto:info@freniefrizioni.com"}]}, {"tagline": "Cerveza artesanal", "name": "Ma Che Siete Venuti a Fà", "desc": "Pub legendario de cerveza artesanal en Trastevere desde 2001.", "address": "📍 Via Benedetta 25, Roma", "buttons": [{"label": "Mapa", "href": "https://www.google.com/maps/search/?api=1&query=Ma+Che+Siete+Venuti+a+Fa+Via+Benedetta+25+Roma"}, {"label": "Web", "href": "https://www.football-pub.com/"}]}, {"tagline": "Unique Night Stop", "name": "Rivendita Libri Cioccolata e Vino", "desc": "Bar teatral y divertido para después de cenar en Vicolo del Cinque.", "address": "📍 Vicolo del Cinque 11A, Roma", "buttons": [{"label": "Mapa", "href": "https://www.google.com/maps/search/?api=1&query=Rivendita+Libri+Cioccolata+e+Vino+Vicolo+del+Cinque+11A+Roma"}]}]}, "mustvisit": {"header": {"title": "Imprescindibles Cerca", "back": "← Volver a la página principal"}, "cards": [{"tagline": "Icono del barrio", "name": "Santa Maria in Trastevere", "desc": "Una de las basílicas más antiguas de Roma, famosa por sus mosaicos dorados.", "address": "📍 Piazza di Santa Maria in Trastevere, Roma", "buttons": [{"label": "Mapa", "href": "https://www.google.com/maps/search/?api=1&query=Basilica+Santa+Maria+in+Trastevere+Roma"}, {"label": "Info", "href": "https://www.turismoroma.it/en/places/basilica-santa-maria-trastevere"}]}, {"tagline": "Raphael Frescoes", "name": "Villa Farnesina", "desc": "Villa renacentista con frescos de Rafael, una visita cultural refinada.", "address": "📍 Via della Lungara 230, Roma", "buttons": [{"label": "Llamar", "href": "tel:+390668027268"}, {"label": "Mapa", "href": "https://www.google.com/maps/search/?api=1&query=Villa+Farnesina+Roma"}, {"label": "Web", "href": "https://www.villafarnesina.it/"}]}, {"tagline": "Panoramic View", "name": "Gianicolo Terrace", "desc": "Uno de los miradores más bonitos de Roma, perfecto al atardecer.", "address": "📍 Passeggiata del Gianicolo, Roma", "buttons": [{"label": "Mapa", "href": "https://www.google.com/maps/search/?api=1&query=Terrazza+del+Gianicolo+Roma"}, {"label": "Info", "href": "https://www.turismoroma.it/en/places/gianicolo"}]}]}, "tonight": {"header": {"title": "Esta Noche en Roma", "back": "← Volver a la página principal"}, "cards": [{"tagline": "Cocktail landmark", "name": "Freni e Frizioni", "desc": "Una de las direcciones símbolo de Trastevere para aperitivo y cócteles.", "address": "📍 Via del Politeama 4, Roma", "buttons": [{"label": "Llamar", "href": "tel:+390645497499"}, {"label": "Mapa", "href": "https://www.google.com/maps/search/?api=1&query=Freni+e+Frizioni+Roma"}, {"label": "Web", "href": "https://www.freniefrizioni.com/"}]}, {"tagline": "Theatre in Trastevere", "name": "Teatro Belli", "desc": "Pequeño teatro en el corazón de Trastevere.", "address": "📍 Piazza di Sant’Apollonia 11/A, Roma", "buttons": [{"label": "Llamar", "href": "tel:+39065894875"}, {"label": "Mapa", "href": "https://www.google.com/maps/search/?api=1&query=Teatro+Belli+Piazza+Sant%27Apollonia+11+Roma"}, {"label": "Web", "href": "https://www.teatrobelli.it/"}]}, {"tagline": "Cerveza artesanal", "name": "Ma Che Siete Venuti a Fà", "desc": "Pub legendario de cerveza artesanal en Trastevere desde 2001.", "address": "📍 Via Benedetta 25, Roma", "buttons": [{"label": "Mapa", "href": "https://www.google.com/maps/search/?api=1&query=Ma+Che+Siete+Venuti+a+Fa+Roma"}, {"label": "Web", "href": "https://www.football-pub.com/"}]}]}, "experiences": {"header": {"title": "Experiencias Premium", "back": "← Volver a la página principal"}, "cards": [{"tagline": "Raphael Frescoes", "name": "Villa Farnesina Visit", "desc": "Villa renacentista con frescos de Rafael, una visita cultural refinada.", "address": "📍 Via della Lungara 230, Roma", "buttons": [{"label": "Llamar", "href": "tel:+390668027268"}, {"label": "Mapa", "href": "https://www.google.com/maps/search/?api=1&query=Villa+Farnesina+Roma"}, {"label": "Web", "href": "https://www.villafarnesina.it/"}]}, {"tagline": "Sabores del barrio", "name": "Trastevere Food Walk", "desc": "Paseo libre: Santa Maria, San Calisto, trattorie locales y bares.", "address": "📍 Trastevere, Roma", "buttons": [{"label": "Mapa", "href": "https://www.google.com/maps/dir/?api=1&origin=Viale+Trastevere+108+Roma&destination=Piazza+di+Santa+Maria+in+Trastevere+Roma&travelmode=walking"}]}, {"tagline": "Cooking Experience", "name": "Pasta & Tiramisù Class", "desc": "Clase práctica de cocina romana: pasta fresca y tiramisú.", "address": "📍 Roma", "buttons": [{"label": "Reservar", "href": "https://romewithchef.com/cook/pasta-and-tiramisu-making-class/"}, {"label": "Mapa", "href": "https://www.google.com/maps/search/?api=1&query=Pasta+Tiramisu+Class+Rome"}]}]}, "services": {"header": {"title": "Servicios Útiles", "back": "← Volver a la página principal"}, "cards": [{"tagline": "After Checkout", "name": "Luggage Storage Trastevere", "desc": "Consigna self-service en el corazón de Trastevere.", "address": "📍 Piazza San Giovanni della Malva 16, Roma", "buttons": [{"label": "Llamar", "href": "tel:+393475512996"}, {"label": "Mapa", "href": "https://www.google.com/maps/search/?api=1&query=Luggage+Storage+Trastevere+Piazza+San+Giovanni+della+Malva+16+Roma"}, {"label": "Web", "href": "https://www.safeyourluggage.com/LuggageStorageTrastevere"}, {"label": "Email", "href": "mailto:info@safeyourluggage.com"}]}, {"tagline": "Luggage Nearby", "name": "Radical Storage Viale Trastevere", "desc": "Opción de consigna cerca de Viale Trastevere.", "address": "📍 Via Francesco Benaglia 13, Roma", "buttons": [{"label": "Llamar", "href": "tel:+390694806492"}, {"label": "Mapa", "href": "https://www.google.com/maps/search/?api=1&query=Radical+Storage+Via+Francesco+Benaglia+13+Roma"}, {"label": "Web", "href": "https://radicalstorage.com/luggage-storage/rome/trastevere/luggage-storage-viale-trastevere"}]}, {"tagline": "Official Taxi", "name": "Taxi Roma 060609", "desc": "Servicio oficial de taxi de Roma.", "address": "📍 Servizio taxi Roma", "buttons": [{"label": "Llamar", "href": "tel:+39060609"}, {"label": "Info", "href": "https://www.comune.roma.it/web/it/scheda-servizi.page?contentId=INF47781"}, {"label": "Mapa", "href": "https://www.google.com/maps/search/?api=1&query=Taxi+Roma"}]}]}, "shopping": {"header": {"title": "Compras & Regalos", "back": "← Volver a la página principal"}, "cards": [{"tagline": "Sunday Market", "name": "Porta Portese Market", "desc": "El famoso mercadillo de Roma, muy cerca de Viale Trastevere.", "address": "📍 Via Portuense / Porta Portese, Roma", "buttons": [{"label": "Mapa", "href": "https://www.google.com/maps/search/?api=1&query=Porta+Portese+Market+Roma"}, {"label": "Info", "href": "https://www.turismoroma.it/en/places/porta-portese-market"}]}, {"tagline": "Food Market", "name": "Mercato Testaccio", "desc": "Mercado romano de calidad, ideal para almorzar y probar sabores locales.", "address": "📍 Via Beniamino Franklin, Roma", "buttons": [{"label": "Mapa", "href": "https://www.google.com/maps/search/?api=1&query=Mercato+Testaccio+Roma"}, {"label": "Web", "href": "https://www.mercatoditestaccio.it/"}]}, {"tagline": "Luxury Department Store", "name": "Rinascente Tritone", "desc": "Moda, belleza, food hall y rooftop en el centro de Roma.", "address": "📍 Via del Tritone 61, Roma", "buttons": [{"label": "Web", "href": "https://www.rinascente.it/en/store-roma-via-del-tritone"}, {"label": "Mapa", "href": "https://www.google.com/maps/search/?api=1&query=Rinascente+Via+del+Tritone+61+Roma"}]}]}, "hidden": {"header": {"title": "Roma Secreta", "back": "← Volver a la página principal"}, "cards": [{"tagline": "Hidden Green Rome", "name": "Orto Botanico", "desc": "Jardín botánico tranquilo detrás de Trastevere y bajo el Gianicolo.", "address": "📍 Largo Cristina di Svezia 23A, Roma", "buttons": [{"label": "Llamar", "href": "tel:+390649917107"}, {"label": "Mapa", "href": "https://www.google.com/maps/search/?api=1&query=Orto+Botanico+Roma+Largo+Cristina+di+Svezia+23A"}, {"label": "Web", "href": "https://web.uniroma1.it/ortobotanico/"}]}, {"tagline": "Quiet Basilica", "name": "Santa Cecilia in Trastevere", "desc": "Una hermosa basílica más tranquila en el alma antigua de Trastevere.", "address": "📍 Piazza di Santa Cecilia 22, Roma", "buttons": [{"label": "Mapa", "href": "https://www.google.com/maps/search/?api=1&query=Santa+Cecilia+in+Trastevere+Roma"}, {"label": "Info", "href": "https://www.turismoroma.it/en/places/basilica-santa-cecilia-trastevere"}]}, {"tagline": "Panoramic Secret", "name": "Fontanone del Gianicolo", "desc": "Fuente escénica y mirador sobre Trastevere.", "address": "📍 Via Garibaldi, Roma", "buttons": [{"label": "Mapa", "href": "https://www.google.com/maps/search/?api=1&query=Fontanone+del+Gianicolo+Roma"}, {"label": "Info", "href": "https://www.turismoroma.it/en/places/fontanone-gianicolo"}]}]}, "family": {"header": {"title": "Familia & Niños", "back": "← Volver a la página principal"}, "cards": [{"tagline": "Family Green Stop", "name": "Orto Botanico", "desc": "Opción tranquila al aire libre para niños y adultos.", "address": "📍 Largo Cristina di Svezia 23A, Roma", "buttons": [{"label": "Llamar", "href": "tel:+390649917107"}, {"label": "Mapa", "href": "https://www.google.com/maps/search/?api=1&query=Orto+Botanico+Roma"}, {"label": "Web", "href": "https://web.uniroma1.it/ortobotanico/"}]}, {"tagline": "Children’s Museum", "name": "Explora Children’s Museum", "desc": "Museo interactivo ideal para familias con niños.", "address": "📍 Via Flaminia 82, Roma", "buttons": [{"label": "Web", "href": "https://www.mdbr.it/"}, {"label": "Mapa", "href": "https://www.google.com/maps/search/?api=1&query=Explora+Museo+dei+Bambini+Roma"}]}, {"tagline": "Family Day", "name": "Bioparco di Roma", "desc": "Zoo de Roma, opción tranquila al aire libre para familias.", "address": "📍 Villa Borghese, Roma", "buttons": [{"label": "Web", "href": "https://www.bioparco.it/"}, {"label": "Mapa", "href": "https://www.google.com/maps/search/?api=1&query=Bioparco+di+Roma"}]}]}, "relax": {"header": {"title": "Relax Mode", "back": "← Volver a la página principal"}, "cards": [{"tagline": "Music", "name": "Spotify Lounge", "desc": "Abre música lounge relajante para una noche en casa.", "address": "📍 Scorciatoia streaming", "buttons": [{"label": "Abrir", "href": "https://open.spotify.com/search/italian%20lounge"}]}, {"tagline": "Streaming", "name": "Netflix", "desc": "Abre Netflix para una noche tranquila en el apartamento.", "address": "📍 Scorciatoia streaming", "buttons": [{"label": "Abrir", "href": "https://www.netflix.com/"}]}, {"tagline": "YouTube Relax", "name": "Rome Ambience", "desc": "Vídeos y sonidos relajantes de Roma como fondo.", "address": "📍 Scorciatoia streaming", "buttons": [{"label": "Abrir", "href": "https://www.youtube.com/results?search_query=relaxing+trastevere+rome+ambience"}]}]}, "romantic": {"header": {"title": "Roma Romántica", "back": "← Volver a la página principal"}, "cards": [{"tagline": "Romantic View", "name": "Gianicolo Sunset Walk", "desc": "Subida hacia uno de los atardeceres más bonitos de Roma.", "address": "📍 Da Viale Trastevere 108", "buttons": [{"label": "Mapa", "href": "https://www.google.com/maps/dir/?api=1&origin=Viale+Trastevere+108+Roma&destination=Terrazza+del+Gianicolo+Roma&travelmode=walking"}]}, {"tagline": "Soft Night Walk", "name": "Ponte Sisto Evening", "desc": "Ruta clásica desde Trastevere hacia el Tíber y el centro histórico.", "address": "📍 Ponte Sisto, Roma", "buttons": [{"label": "Mapa", "href": "https://www.google.com/maps/dir/?api=1&origin=Viale+Trastevere+108+Roma&destination=Ponte+Sisto+Roma&travelmode=walking"}]}, {"tagline": "Couple Aperitivo", "name": "Freni e Frizioni", "desc": "Cócteles y energía de Trastevere para una noche romántica sencilla.", "address": "📍 Via del Politeama 4, Roma", "buttons": [{"label": "Llamar", "href": "tel:+390645497499"}, {"label": "Web", "href": "https://www.freniefrizioni.com/"}, {"label": "Mapa", "href": "https://www.google.com/maps/search/?api=1&query=Freni+e+Frizioni+Roma"}]}]}}, "quickActions": [{"label": "📍 Abrir mapa", "href": "https://www.google.com/maps/search/?api=1&query=Via+del+Portico+d%27Ottavia+1D+Roma"}, {"label": "📞 Llamar al anfitrión", "href": "tel:+393355245756"}, {"label": "🚕 Taxi", "href": "tel:+39060609"}, {"label": "🆘 Emergencia", "href": "tel:112"}]}, "de": {"menuTitle": "Concierge-Menü", "menuSub": "Tippen zum Erkunden", "footer": "Kuratierte Auswahl für Gäste in Viale Trastevere 108 · Rom", "tiles": [{"icon": "🍽️", "title": "Fine Dining", "desc": "Ausgewählte Restaurants und ikonische Küche in Trastevere.", "arrow": "Öffnen →", "section": "dining"}, {"icon": "☕", "title": "Frühstück & Kaffee", "desc": "Espresso, Gebäck und elegante Frühstücksorte in der Nähe.", "arrow": "Öffnen →", "section": "breakfast"}, {"icon": "🍸", "title": "Drinks & Rooftops", "desc": "Cocktails, Aperitivo und Abendatmosphäre.", "arrow": "Öffnen →", "section": "drinks"}, {"icon": "🏛️", "title": "Sehenswert in der Nähe", "desc": "Wichtige Kulturorte zu Fuß erreichbar.", "arrow": "Öffnen →", "section": "mustvisit"}, {"icon": "🎭", "title": "Heute Abend in Rom", "desc": "Theater, Cocktails und Abenderlebnisse.", "arrow": "Öffnen →", "section": "tonight"}, {"icon": "🎟️", "title": "Premium-Erlebnisse", "desc": "Kultur, Spaziergänge, Kochkurse und lokale Entdeckungen.", "arrow": "Öffnen →", "section": "experiences"}, {"icon": "🛎️", "title": "Nützliche Services", "desc": "Gepäck, Taxi und praktische Hilfe.", "arrow": "Öffnen →", "section": "services"}, {"icon": "🎁", "title": "Shopping & Geschenke", "desc": "Märkte, Feinkost und besondere römische Fundstücke.", "arrow": "Öffnen →", "section": "shopping"}, {"icon": "✨", "title": "Verstecktes Rom", "desc": "Geheime Orte, ruhige Ausblicke und unerwartete Entdeckungen.", "arrow": "Öffnen →", "section": "hidden"}, {"icon": "👨‍👩‍👧", "title": "Familie & Kinder", "desc": "Einfache und angenehme Aktivitäten für Familien und Kinder.", "arrow": "Öffnen →", "section": "family"}, {"icon": "🎧", "title": "Relax-Modus", "desc": "Musik, Streaming und ruhige Abendstimmung.", "arrow": "Öffnen →", "section": "relax"}, {"icon": "❤️", "title": "Romantisches Rom", "desc": "Sonnenuntergänge, Spaziergänge und Ideen für Paare.", "arrow": "Öffnen →", "section": "romantic"}], "sections": {"dining": {"header": {"title": "Fine Dining", "back": "← Zur Hauptseite"}, "cards": [{"tagline": "Zeitgenössische Küche", "name": "Osteria Fernanda", "desc": "Kreative moderne römische Küche nahe Porta Portese.", "address": "📍 Via Crescenzo del Monte 18/24, Roma", "buttons": [{"label": "Anrufen", "href": "tel:+39065894333"}, {"label": "Mobil", "href": "tel:+393283847924"}, {"label": "Karte", "href": "https://www.google.com/maps/search/?api=1&query=Osteria+Fernanda+Via+Crescenzo+del+Monte+18+Roma"}, {"label": "Website", "href": "https://www.osteriafernanda.com/"}, {"label": "Email", "href": "mailto:osteriafernanda@libero.it"}]}, {"tagline": "Römische Ikone", "name": "Da Enzo al 29", "desc": "Eine der beliebtesten Trattorien in Trastevere für klassische römische Küche.", "address": "📍 Via dei Vascellari 29, Roma", "buttons": [{"label": "Anrufen", "href": "tel:+39065812260"}, {"label": "Karte", "href": "https://www.google.com/maps/search/?api=1&query=Da+Enzo+al+29+Via+dei+Vascellari+29+Roma"}, {"label": "Website", "href": "https://www.daenzoal29.com/"}]}, {"tagline": "Trastevere Classic", "name": "Tonnarello", "desc": "Römische Pasta und traditionelle Gerichte im Herzen von Trastevere.", "address": "📍 Piazza San Calisto 10 / Via della Paglia 40, Roma", "buttons": [{"label": "Karte", "href": "https://www.google.com/maps/search/?api=1&query=Tonnarello+Piazza+San+Calisto+10+Roma"}, {"label": "Website", "href": "https://tonnarello.it/"}]}]}, "breakfast": {"header": {"title": "Frühstück & Kaffee", "back": "← Zur Hauptseite"}, "cards": [{"tagline": "Französische Bäckerei", "name": "Le Levain", "desc": "Boutique-Bäckerei für Croissants, Gebäck und elegantes Frühstück.", "address": "📍 Via Luigi Santini 22, Roma", "buttons": [{"label": "Anrufen", "href": "tel:+390647523834"}, {"label": "Karte", "href": "https://www.google.com/maps/search/?api=1&query=Le+Levain+Via+Luigi+Santini+22+Roma"}, {"label": "Website", "href": "https://www.lelevainroma.com/"}]}, {"tagline": "Lokaler Klassiker", "name": "Bar San Calisto", "desc": "Historische Bar in Trastevere für Kaffee und Viertelatmosphäre.", "address": "📍 Piazza di San Calisto 3/5, Roma", "buttons": [{"label": "Anrufen", "href": "tel:+390658358609"}, {"label": "Karte", "href": "https://www.google.com/maps/search/?api=1&query=Bar+San+Calisto+Piazza+San+Calisto+Roma"}]}, {"tagline": "Brunch & Coffee", "name": "Baylon Café", "desc": "Internationales Frühstück, Brunch und entspannte Café-Atmosphäre.", "address": "📍 Via di San Francesco a Ripa 151, Roma", "buttons": [{"label": "Anrufen", "href": "tel:+39065816856"}, {"label": "Karte", "href": "https://www.google.com/maps/search/?api=1&query=Baylon+Cafe+Via+di+San+Francesco+a+Ripa+151+Roma"}, {"label": "Website", "href": "https://www.bayloncafe.com/"}]}]}, "drinks": {"header": {"title": "Drinks & Rooftops", "back": "← Zur Hauptseite"}, "cards": [{"tagline": "Cocktail-Klassiker", "name": "Freni e Frizioni", "desc": "Eine der wichtigsten Adressen in Trastevere für Aperitivo und Cocktails.", "address": "📍 Via del Politeama 4, Roma", "buttons": [{"label": "Anrufen", "href": "tel:+390645497499"}, {"label": "Karte", "href": "https://www.google.com/maps/search/?api=1&query=Freni+e+Frizioni+Via+del+Politeama+4+Roma"}, {"label": "Website", "href": "https://www.freniefrizioni.com/"}, {"label": "Email", "href": "mailto:info@freniefrizioni.com"}]}, {"tagline": "Craft-Beer-Ikone", "name": "Ma Che Siete Venuti a Fà", "desc": "Legendärer Craft-Beer-Pub in Trastevere seit 2001.", "address": "📍 Via Benedetta 25, Roma", "buttons": [{"label": "Karte", "href": "https://www.google.com/maps/search/?api=1&query=Ma+Che+Siete+Venuti+a+Fa+Via+Benedetta+25+Roma"}, {"label": "Website", "href": "https://www.football-pub.com/"}]}, {"tagline": "Unique Night Stop", "name": "Rivendita Libri Cioccolata e Vino", "desc": "Verspielte, theatralische Bar für den Abend in Vicolo del Cinque.", "address": "📍 Vicolo del Cinque 11A, Roma", "buttons": [{"label": "Karte", "href": "https://www.google.com/maps/search/?api=1&query=Rivendita+Libri+Cioccolata+e+Vino+Vicolo+del+Cinque+11A+Roma"}]}]}, "mustvisit": {"header": {"title": "Sehenswert in der Nähe", "back": "← Zur Hauptseite"}, "cards": [{"tagline": "Ikone des Viertels", "name": "Santa Maria in Trastevere", "desc": "Eine der ältesten Basiliken Roms, berühmt für goldene Mosaike.", "address": "📍 Piazza di Santa Maria in Trastevere, Roma", "buttons": [{"label": "Karte", "href": "https://www.google.com/maps/search/?api=1&query=Basilica+Santa+Maria+in+Trastevere+Roma"}, {"label": "Info", "href": "https://www.turismoroma.it/en/places/basilica-santa-maria-trastevere"}]}, {"tagline": "Raphael Frescoes", "name": "Villa Farnesina", "desc": "Renaissancevilla mit Fresken von Raffael, ein feiner Kulturstopp.", "address": "📍 Via della Lungara 230, Roma", "buttons": [{"label": "Anrufen", "href": "tel:+390668027268"}, {"label": "Karte", "href": "https://www.google.com/maps/search/?api=1&query=Villa+Farnesina+Roma"}, {"label": "Website", "href": "https://www.villafarnesina.it/"}]}, {"tagline": "Panoramic View", "name": "Gianicolo Terrace", "desc": "Einer der schönsten Aussichtspunkte Roms, perfekt bei Sonnenuntergang.", "address": "📍 Passeggiata del Gianicolo, Roma", "buttons": [{"label": "Karte", "href": "https://www.google.com/maps/search/?api=1&query=Terrazza+del+Gianicolo+Roma"}, {"label": "Info", "href": "https://www.turismoroma.it/en/places/gianicolo"}]}]}, "tonight": {"header": {"title": "Heute Abend in Rom", "back": "← Zur Hauptseite"}, "cards": [{"tagline": "Cocktail-Klassiker", "name": "Freni e Frizioni", "desc": "Eine der wichtigsten Adressen in Trastevere für Aperitivo und Cocktails.", "address": "📍 Via del Politeama 4, Roma", "buttons": [{"label": "Anrufen", "href": "tel:+390645497499"}, {"label": "Karte", "href": "https://www.google.com/maps/search/?api=1&query=Freni+e+Frizioni+Roma"}, {"label": "Website", "href": "https://www.freniefrizioni.com/"}]}, {"tagline": "Theatre in Trastevere", "name": "Teatro Belli", "desc": "Kleines Theater im Herzen von Trastevere.", "address": "📍 Piazza di Sant’Apollonia 11/A, Roma", "buttons": [{"label": "Anrufen", "href": "tel:+39065894875"}, {"label": "Karte", "href": "https://www.google.com/maps/search/?api=1&query=Teatro+Belli+Piazza+Sant%27Apollonia+11+Roma"}, {"label": "Website", "href": "https://www.teatrobelli.it/"}]}, {"tagline": "Craft-Beer-Ikone", "name": "Ma Che Siete Venuti a Fà", "desc": "Legendärer Craft-Beer-Pub in Trastevere seit 2001.", "address": "📍 Via Benedetta 25, Roma", "buttons": [{"label": "Karte", "href": "https://www.google.com/maps/search/?api=1&query=Ma+Che+Siete+Venuti+a+Fa+Roma"}, {"label": "Website", "href": "https://www.football-pub.com/"}]}]}, "experiences": {"header": {"title": "Premium-Erlebnisse", "back": "← Zur Hauptseite"}, "cards": [{"tagline": "Raphael Frescoes", "name": "Villa Farnesina Visit", "desc": "Renaissancevilla mit Fresken von Raffael, ein feiner Kulturstopp.", "address": "📍 Via della Lungara 230, Roma", "buttons": [{"label": "Anrufen", "href": "tel:+390668027268"}, {"label": "Karte", "href": "https://www.google.com/maps/search/?api=1&query=Villa+Farnesina+Roma"}, {"label": "Website", "href": "https://www.villafarnesina.it/"}]}, {"tagline": "Geschmack des Viertels", "name": "Trastevere Food Walk", "desc": "Eigener Spaziergang: Santa Maria, San Calisto, lokale Trattorien und Bars.", "address": "📍 Trastevere, Roma", "buttons": [{"label": "Karte", "href": "https://www.google.com/maps/dir/?api=1&origin=Viale+Trastevere+108+Roma&destination=Piazza+di+Santa+Maria+in+Trastevere+Roma&travelmode=walking"}]}, {"tagline": "Cooking Experience", "name": "Pasta & Tiramisù Class", "desc": "Praktischer römischer Kochkurs: frische Pasta und Tiramisu.", "address": "📍 Roma", "buttons": [{"label": "Buchen", "href": "https://romewithchef.com/cook/pasta-and-tiramisu-making-class/"}, {"label": "Karte", "href": "https://www.google.com/maps/search/?api=1&query=Pasta+Tiramisu+Class+Rome"}]}]}, "services": {"header": {"title": "Nützliche Services", "back": "← Zur Hauptseite"}, "cards": [{"tagline": "After Checkout", "name": "Luggage Storage Trastevere", "desc": "Self-Service-Gepäckaufbewahrung im Herzen von Trastevere.", "address": "📍 Piazza San Giovanni della Malva 16, Roma", "buttons": [{"label": "Anrufen", "href": "tel:+393475512996"}, {"label": "Karte", "href": "https://www.google.com/maps/search/?api=1&query=Luggage+Storage+Trastevere+Piazza+San+Giovanni+della+Malva+16+Roma"}, {"label": "Website", "href": "https://www.safeyourluggage.com/LuggageStorageTrastevere"}, {"label": "Email", "href": "mailto:info@safeyourluggage.com"}]}, {"tagline": "Luggage Nearby", "name": "Radical Storage Viale Trastevere", "desc": "Gepäckaufbewahrung in der Nähe von Viale Trastevere.", "address": "📍 Via Francesco Benaglia 13, Roma", "buttons": [{"label": "Anrufen", "href": "tel:+390694806492"}, {"label": "Karte", "href": "https://www.google.com/maps/search/?api=1&query=Radical+Storage+Via+Francesco+Benaglia+13+Roma"}, {"label": "Website", "href": "https://radicalstorage.com/luggage-storage/rome/trastevere/luggage-storage-viale-trastevere"}]}, {"tagline": "Official Taxi", "name": "Taxi Roma 060609", "desc": "Offizieller Taxi-Service in Rom.", "address": "📍 Servizio taxi Roma", "buttons": [{"label": "Anrufen", "href": "tel:+39060609"}, {"label": "Info", "href": "https://www.comune.roma.it/web/it/scheda-servizi.page?contentId=INF47781"}, {"label": "Karte", "href": "https://www.google.com/maps/search/?api=1&query=Taxi+Roma"}]}]}, "shopping": {"header": {"title": "Shopping & Geschenke", "back": "← Zur Hauptseite"}, "cards": [{"tagline": "Sunday Market", "name": "Porta Portese Market", "desc": "Roms berühmter Flohmarkt, ganz in der Nähe von Viale Trastevere.", "address": "📍 Via Portuense / Porta Portese, Roma", "buttons": [{"label": "Karte", "href": "https://www.google.com/maps/search/?api=1&query=Porta+Portese+Market+Roma"}, {"label": "Info", "href": "https://www.turismoroma.it/en/places/porta-portese-market"}]}, {"tagline": "Food Market", "name": "Mercato Testaccio", "desc": "Hochwertiger römischer Markt, ideal für Mittagessen und lokale Aromen.", "address": "📍 Via Beniamino Franklin, Roma", "buttons": [{"label": "Karte", "href": "https://www.google.com/maps/search/?api=1&query=Mercato+Testaccio+Roma"}, {"label": "Website", "href": "https://www.mercatoditestaccio.it/"}]}, {"tagline": "Luxury Department Store", "name": "Rinascente Tritone", "desc": "Mode, Beauty, Food Hall und Rooftop im Zentrum von Rom.", "address": "📍 Via del Tritone 61, Roma", "buttons": [{"label": "Website", "href": "https://www.rinascente.it/en/store-roma-via-del-tritone"}, {"label": "Karte", "href": "https://www.google.com/maps/search/?api=1&query=Rinascente+Via+del+Tritone+61+Roma"}]}]}, "hidden": {"header": {"title": "Verstecktes Rom", "back": "← Zur Hauptseite"}, "cards": [{"tagline": "Hidden Green Rome", "name": "Orto Botanico", "desc": "Ruhiger botanischer Garten hinter Trastevere und unterhalb des Gianicolo.", "address": "📍 Largo Cristina di Svezia 23A, Roma", "buttons": [{"label": "Anrufen", "href": "tel:+390649917107"}, {"label": "Karte", "href": "https://www.google.com/maps/search/?api=1&query=Orto+Botanico+Roma+Largo+Cristina+di+Svezia+23A"}, {"label": "Website", "href": "https://web.uniroma1.it/ortobotanico/"}]}, {"tagline": "Quiet Basilica", "name": "Santa Cecilia in Trastevere", "desc": "Eine schöne und ruhigere Basilika in der alten Seele von Trastevere.", "address": "📍 Piazza di Santa Cecilia 22, Roma", "buttons": [{"label": "Karte", "href": "https://www.google.com/maps/search/?api=1&query=Santa+Cecilia+in+Trastevere+Roma"}, {"label": "Info", "href": "https://www.turismoroma.it/en/places/basilica-santa-cecilia-trastevere"}]}, {"tagline": "Panoramic Secret", "name": "Fontanone del Gianicolo", "desc": "Dramatischer Brunnen und Aussichtspunkt oberhalb von Trastevere.", "address": "📍 Via Garibaldi, Roma", "buttons": [{"label": "Karte", "href": "https://www.google.com/maps/search/?api=1&query=Fontanone+del+Gianicolo+Roma"}, {"label": "Info", "href": "https://www.turismoroma.it/en/places/fontanone-gianicolo"}]}]}, "family": {"header": {"title": "Familie & Kinder", "back": "← Zur Hauptseite"}, "cards": [{"tagline": "Family Green Stop", "name": "Orto Botanico", "desc": "Ruhige Outdoor-Option für Kinder und Erwachsene.", "address": "📍 Largo Cristina di Svezia 23A, Roma", "buttons": [{"label": "Anrufen", "href": "tel:+390649917107"}, {"label": "Karte", "href": "https://www.google.com/maps/search/?api=1&query=Orto+Botanico+Roma"}, {"label": "Website", "href": "https://web.uniroma1.it/ortobotanico/"}]}, {"tagline": "Children’s Museum", "name": "Explora Children’s Museum", "desc": "Interaktives Museum, ideal für Familien mit Kindern.", "address": "📍 Via Flaminia 82, Roma", "buttons": [{"label": "Website", "href": "https://www.mdbr.it/"}, {"label": "Karte", "href": "https://www.google.com/maps/search/?api=1&query=Explora+Museo+dei+Bambini+Roma"}]}, {"tagline": "Family Day", "name": "Bioparco di Roma", "desc": "Der Zoo von Rom, eine ruhige Outdoor-Option für Familien.", "address": "📍 Villa Borghese, Roma", "buttons": [{"label": "Website", "href": "https://www.bioparco.it/"}, {"label": "Karte", "href": "https://www.google.com/maps/search/?api=1&query=Bioparco+di+Roma"}]}]}, "relax": {"header": {"title": "Relax Mode", "back": "← Zur Hauptseite"}, "cards": [{"tagline": "Music", "name": "Spotify Lounge", "desc": "Entspannende Lounge-Musik für einen Abend zu Hause öffnen.", "address": "📍 Scorciatoia streaming", "buttons": [{"label": "Öffnen", "href": "https://open.spotify.com/search/italian%20lounge"}]}, {"tagline": "Streaming", "name": "Netflix", "desc": "Netflix für einen entspannten Abend in der Wohnung öffnen.", "address": "📍 Scorciatoia streaming", "buttons": [{"label": "Öffnen", "href": "https://www.netflix.com/"}]}, {"tagline": "YouTube Relax", "name": "Rome Ambience", "desc": "Entspannende Rom-Videos und Hintergrundgeräusche.", "address": "📍 Scorciatoia streaming", "buttons": [{"label": "Öffnen", "href": "https://www.youtube.com/results?search_query=relaxing+trastevere+rome+ambience"}]}]}, "romantic": {"header": {"title": "Romantisches Rom", "back": "← Zur Hauptseite"}, "cards": [{"tagline": "Romantic View", "name": "Gianicolo Sunset Walk", "desc": "Aufstieg zu einem der schönsten Sonnenuntergänge Roms.", "address": "📍 Da Viale Trastevere 108", "buttons": [{"label": "Karte", "href": "https://www.google.com/maps/dir/?api=1&origin=Viale+Trastevere+108+Roma&destination=Terrazza+del+Gianicolo+Roma&travelmode=walking"}]}, {"tagline": "Soft Night Walk", "name": "Ponte Sisto Evening", "desc": "Klassischer Spaziergang von Trastevere zum Tiber und ins historische Zentrum.", "address": "📍 Ponte Sisto, Roma", "buttons": [{"label": "Karte", "href": "https://www.google.com/maps/dir/?api=1&origin=Viale+Trastevere+108+Roma&destination=Ponte+Sisto+Roma&travelmode=walking"}]}, {"tagline": "Couple Aperitivo", "name": "Freni e Frizioni", "desc": "Cocktails und Trastevere-Energie für einen einfachen romantischen Abend.", "address": "📍 Via del Politeama 4, Roma", "buttons": [{"label": "Anrufen", "href": "tel:+390645497499"}, {"label": "Website", "href": "https://www.freniefrizioni.com/"}, {"label": "Karte", "href": "https://www.google.com/maps/search/?api=1&query=Freni+e+Frizioni+Roma"}]}]}}, "quickActions": [{"label": "📍 Karte öffnen", "href": "https://www.google.com/maps/search/?api=1&query=Via+del+Portico+d%27Ottavia+1D+Roma"}, {"label": "📞 Gastgeber anrufen", "href": "tel:+393355245756"}, {"label": "🚕 Taxi", "href": "tel:+39060609"}, {"label": "🆘 Notfall", "href": "tel:112"}]}}};
+const SERVER_URL = 'https://shelly-cloud-opener-1.onrender.com';
+const APT = 'trastevere';
+const HAS_DOOR = true;
+
+const urlP = new URLSearchParams(location.search);
+let phase = 1;
+const urlToken = urlP.get('t') || '';
+if (urlP.has('phase')) {
+  const cp = new URLSearchParams(urlP); cp.delete('phase');
+  const qs = cp.toString();
+  history.replaceState(null, '', location.pathname + (qs ? '?' + qs : ''));
+}
+async function loadPhase() {
+  if (!urlToken) { phase = 1; applyPhase(); schedulePhaseCheck(); return; }
+  try {
+    const r = await fetch(`${SERVER_URL}/checkin/trastevere/phase?t=${encodeURIComponent(urlToken)}`);
+    if (r.ok) { const j = await r.json(); phase = j.phase || 1; }
+  } catch(e) { phase = 1; }
+  localStorage.setItem('phase_trastevere', phase);
+  applyPhase(); schedulePhaseCheck();
+}
+function schedulePhaseCheck() {
+  if (phase < 3 && urlToken) setTimeout(loadPhase, 60000);
+}
+
+let lang = (urlP.get('lang') || localStorage.getItem('lang') || (navigator.language||'en').slice(0,2)).toLowerCase();
+
+const DATA = {
+en:{
+  ui:{
+    heroTitle:'Boutique Rome Concierge',heroSub:'Curated luxury hospitality in the heart of Trastevere.',aptLabel:'Apartment',
+    aptTitle:'Your Apartment 🏠',romeTitle:'Explore Rome 🌙',
+    keysTitle:'Digital Keys',keysSub:'Open building & apartment',
+    wifiTitle:'Wi‑Fi',wifiSub:'Network & password',
+    houseTitle:'House Guide',houseSub:'Instructions & tips',
+    helpTitle:'Need Help?',helpSub:'Concierge support',
+    eatTitle:'Eat & Drink',eatSub:'Restaurants, breakfast & aperitivo',
+    tonightTitle:'Tonight in Rome',tonightSub:'Bars, rooftops & evening ideas',
+    tickTitle:'Ticketing',tickSub:'Museums, tours & experiences',
+    transTitle:'Transport',transSub:'Tram, taxi & airports',
+    footerHelp:'Need help?',
+    phase1Text:'Complete your online check-in to unlock apartment info.',
+    phaseBadge:['📋 After Booking','✅ After Check-in','🗝 Check-in Day'],
+    keysPhase2:'Your digital keys will be available from 13:00 on check-in day.',
+    romeAiPlaceholder:'Gas stove, WiFi, restaurants, Gianicolo…',
+    romeChips:['Best restaurant in Trastevere','WiFi password','Checkout time','Romantic walk'],
+  },
+  apt:{
+    checkin_time:'13:00',checkout_time:'11:00',
+    wifi_note:'Near the TV there is a WHITE router. Turn it around to see the label with SSID and password.',
+    wifi_ssid:'See router label',wifi_password:'See router label',
+    water_note:'Tap water is safe and drinkable. Hot water is always available.',
+    ac_note:'Please turn OFF the air conditioning when you leave the apartment.',
+    bathroom:'Toilet paper, hand soap, bath mat, and hairdryer.',
+    towels:'Per guest: 1 large and 1 medium towel. Beds are prepared on arrival.',
+    bathroom_notice:'⚠️ IMPORTANT — bathroom between the bedrooms: use ONLY the toilet paper provided. Do NOT flush anything else or the system will clog and overflow. Unclogging fee: €100.',
+    bedrooms:'2 bedrooms + double sofa bed. Keys are on the table on arrival.',
+    gas:'Gas handle (left of the meter): DOWN = CLOSED • HORIZONTAL = OPEN. To cook: 1) choose burner, 2) push knob down and turn, 3) hold pressed a few seconds until flame is steady, 4) release.',
+    kitchen:'Fully equipped kitchen, ready to use.',
+    concierge:'Concierge: Massimo — desk hours 08:30–13:00 and 15:30–18:30.',
+    registration:'Please send your passports via WhatsApp to the host for mandatory guest registration.',
+    phone:'+39 335 524 5756',
+    pharmacy:'Pharmacy at Piazza Trilussa · Other options along Viale Trastevere',
+    hospital:'Ospedale Nuovo Regina Margherita — Via Emilio Morosini 30',
+    atm:'ATMs along Viale Trastevere (BNL, UniCredit, Intesa)',
+    sim:'Vodafone — Viale Trastevere 143 · TIM — Piazza San Cosimato 70',
+    laundry:'Self-service laundry — Viale Trastevere 150',
+    luggage:'Radical Storage — Piazza Mastai (~5 min walk)',
+    supermarkets:'Mini-market on Viale Trastevere near 108 · Fresh produce at Piazza San Cosimato (mornings)',
+    city_transport:'Tram 8 → Largo Argentina / Piazza Venezia. Tram 3 nearby. Bus H → Termini. Taxi: +39 06 3570 or FreeNow app.',
+    airports:'Fiumicino: Tram 8 → Trastevere Station → FL1 (~45 min). Ciampino: bus to Termini then Tram 8. Private: Welcome Pickups.',
+    taxi:'Radio Taxi: +39 06 3570 or FreeNow app.',
+    emergency:'EU emergency: 112 · Police: 113 · Ambulance: 118 · Fire: 115 · English doctor: +39 06 488 2371 · 24h vet: +39 06 660 681',
+    eat:'Da Enzo al 29 · Osteria der Belli · Tonnarello · Trattoria Da Teo · Spirito di Vino · Pianostrada · Trapizzino.',
+    drink:'Enoteca Ferrara · Freni e Frizioni · L\'Angolo Divino · Mimì e Cocò · La Prosciutteria Trastevere.',
+    shop:'Porta Portese Market (Sundays) · Artisanal bakeries & delis on Viale Trastevere · Via della Lungaretta boutiques.',
+    tonight:'Aperitivo at Freni e Frizioni or Enoteca Ferrara. Sunset at Gianicolo Hill. Evening walk: Piazza Trilussa → Santa Maria in Trastevere → alleys → Tiber waterfront → Campo de\' Fiori.',
+    visit:'Santa Maria in Trastevere · Santa Cecilia · Museo di Roma in Trastevere · Orto Botanico · Villa Farnesina · Piazza Trilussa · Ponte Sisto → Campo de\' Fiori.',
+    hidden_gems:'Fontana del Prigione · Piazza di Piscinula · Sant\'Egidio museum · Gianicolo at dawn.',
+    romantic_walk:'Viale Trastevere 108 → Piazza Santa Maria in Trastevere → Gianicolo Terrace (panoramic view) → Orto Botanico → Gelateria del Viale → Biscottificio Innocenti → return.',
+    checkout_note:'Turn off lights & AC, close windows, leave keys on the table, lock the front door.',
+    keys_msg:'Your digital keys have been sent to your email by Hostaway. Check your inbox — the arrival time you selected during online check-in determines the exact delivery time. Keys are never released before 13:00.',
+  },
+  drawers:{
+    address:`<p><strong>Viale Trastevere 108</strong><br>Trastevere, Rome<br><br><a href="https://maps.google.com/?q=Viale+Trastevere+108+Roma" target="_blank">Open in Google Maps →</a></p>`,
+    emergency:a=>`<p>${a.emergency}</p>`,
+    checkout:a=>`<p>Checkout time: <strong>${a.checkout_time}</strong></p><p>${a.checkout_note}</p>`,
+    keys:a=>buildKeysHTML(a),
+    wifi:a=>`<p>${a.wifi_note}</p><p>Network: <strong>${a.wifi_ssid}</strong><br>Password: <strong>${a.wifi_password}</strong></p>`,
+    house:a=>`<h3>Water</h3><p>${a.water_note}</p><h3>Air Conditioning</h3><p>${a.ac_note}</p><h3>Gas Stove 🔥</h3><p>${a.gas}</p><h3>Kitchen</h3><p>${a.kitchen}</p><h3>Bathroom</h3><p>${a.bathroom}</p><p>Towels: ${a.towels}</p><div class="warning">${a.bathroom_notice}</div><h3>Concierge</h3><p>${a.concierge}</p><h3>Registration</h3><p>${a.registration}</p><h3>Nearby Services</h3><p>Supermarkets: ${a.supermarkets}</p><p>Pharmacy: ${a.pharmacy}</p><p>ATMs: ${a.atm}</p><p>SIM cards: ${a.sim}</p><p>Laundry: ${a.laundry}</p><p>Luggage: ${a.luggage}</p>`,
+    help:a=>`<div style="text-align:center;padding:16px 0"><div style="font-size:48px;margin-bottom:16px">📞</div><p style="font-weight:700;margin-bottom:16px;color:var(--cream)">Your concierge is available for any need.</p><a href="tel:${a.phone}" style="display:block;background:linear-gradient(135deg,#e8c67a,var(--gold));color:#120d09;padding:14px;border-radius:16px;font-weight:800;text-decoration:none;text-align:center;font-size:15px">${a.phone}</a><p style="font-size:12px;color:var(--muted);margin-top:12px">${a.concierge}</p><div style="margin-top:16px"><a href="https://wa.me/393355245756" style="display:block;background:rgba(37,211,102,.12);border:1px solid rgba(37,211,102,.28);color:#4ade80;padding:13px;border-radius:14px;font-weight:600;text-decoration:none;text-align:center">💬 WhatsApp Michele</a></div></div>`,
+    eat:`<h3>Breakfast</h3><p><strong>Bar San Calisto</strong> — Piazza San Calisto 3 · historic Trastevere bar, great local vibe (~6 min)</p><p><strong>Suppli Roma</strong> — Via di San Francesco a Ripa 137 · fried supplì &amp; savoury breakfast (~5 min) · <a href="https://www.suppliroma.it" target="_blank">suppliroma.it</a></p><h3>Lunch</h3><p><strong>Da Enzo al 29</strong> — Via dei Vascellari 29 · authentic Roman trattoria, book ahead (~8 min) · <a href="tel:0658122260">06 581 2260</a></p><p><strong>Osteria der Belli</strong> — Piazza Sant'Apollonia 11 · classic Lazio cuisine at honest prices (~5 min)</p><h3>Dinner</h3><p><strong>Tonnarello</strong> — Via della Paglia 1 · Roman classics, street tables, very popular (~6 min) · <a href="https://www.tonnarello.it" target="_blank">tonnarello.it</a></p><p><strong>Trattoria Da Teo</strong> — Piazza dei Ponziani 7 · true Roman, tortelloni &amp; coda alla vaccinara (~8 min) · <a href="tel:0658183550">06 581 8355</a></p><p><strong>Pianostrada</strong> — Via delle Zoccolette 22 · creative cuisine, reservation only (~10 min) · <a href="https://www.pianostrada-laboratoriodicucina.it/" target="_blank">pianostrada.it</a></p><p><strong>Spirito di Vino</strong> — Via dei Genovesi 31 · historic cuisine in a 1300s cellar (~7 min)</p><h3>Aperitivo &amp; Cocktails</h3><p><strong>Freni e Frizioni</strong> — Via del Politeama 4 · Rome's most iconic aperitivo, opens 18:30 (~6 min)</p><p><strong>Enoteca Ferrara</strong> — Piazza Trilussa 41 · elegant wine bar, excellent selection (~7 min)</p><p><strong>La Prosciutteria Trastevere</strong> — Vicolo del Cinque 2 · charcuterie boards &amp; wine in a charming alley (~6 min)</p><p><strong>Bar San Calisto</strong> — Piazza San Calisto 3 · Roman-style aperitivo, budget-friendly (~6 min)</p><h3>Gelato</h3><p><strong>Fior di Luna</strong> — Via della Lungaretta 96 · artisan gelato, no artificial colours (~10 min) · <a href="https://www.fiordiluna.com" target="_blank">fiordiluna.com</a></p>`,
+    tonight:`<h3>Aperitivo (18:00–20:00)</h3><p><strong>Freni e Frizioni</strong> — Via del Politeama 4 · Rome's most iconic aperitivo spot, buffet included (~6 min)</p><p><strong>Piazza Trilussa</strong> · the fountain and surrounding bars, the go-to meeting point (~7 min)</p><p><strong>La Prosciutteria Trastevere</strong> — Vicolo del Cinque 2 · charcuterie boards &amp; wine (~6 min)</p><h3>Rooftops &amp; Views</h3><p><strong>Gianicolo</strong> · Rome's most beautiful panoramic terrace, 180° city view (~15 min uphill) · free access · unmissable at sunset</p><p><strong>Hotel San Francesco Rooftop</strong> — Via Jacopa de' Settesoli 7 · rooftop bar with view over Trastevere (~8 min) · book a table</p><h3>After Dinner</h3><p><strong>Ma Che Siete Venuti a Fà</strong> — Via Benedetta 25 · best craft beer bar in Trastevere (~8 min)</p><p><strong>Big Star</strong> — Vicolo del Cinque 61 · American cocktail bar, intimate atmosphere (~8 min)</p><p><strong>Mimì e Cocò</strong> — Via del Governo Vecchio 72 · quality cocktails (~20 min on foot)</p><h3>Evening Walk</h3><p>Viale Trastevere → Piazza Mastai → Piazza Trilussa → Santa Maria in Trastevere → alleys → return</p><h3>Romantic Evening 💑</h3><p>Sunset at Gianicolo (Tram 8 + 15 min uphill) → aperitivo at Freni e Frizioni → dinner at Spirito di Vino → Piazza Santa Maria in Trastevere by night</p>`,
+    tickets:`<p><strong>TicketOne</strong>:<br><a href="https://www.ticketone.it/en/" target="_blank">www.ticketone.it</a></p><p><strong>AS Roma</strong>:<br><a href="https://www.asroma.com/en/tickets" target="_blank">www.asroma.com/tickets</a></p><p><strong>SS Lazio</strong>:<br><a href="https://www.sslazio.it/en" target="_blank">www.sslazio.it</a></p><p><strong>Colosseum</strong>:<br><a href="https://colosseo.it/en" target="_blank">colosseo.it</a></p><p><strong>Vatican Museums</strong>:<br><a href="https://tickets.museivaticani.va/" target="_blank">tickets.museivaticani.va</a></p><p><strong>Galleria Borghese</strong>:<br><a href="https://galleriaborghese.cultura.gov.it/" target="_blank">galleriaborghese.cultura.gov.it</a></p><p><strong>MAXXI</strong>:<br><a href="https://www.maxxi.art/en/" target="_blank">maxxi.art</a></p>`,
+    transport:`<h3>Tram &amp; Bus</h3><p><strong>Tram 8</strong> — stop Belli (~1 min walk): → Largo Argentina · Campo de' Fiori · Piazza Venezia</p><p><strong>Tram 3</strong> — stop Belli (~1 min walk): → Colosseo · Villa Borghese · Termini</p><p><strong>Bus H</strong> — Viale Trastevere: → Termini (~25 min, direct)</p><p><strong>Bus 23</strong> — Lungotevere: → Prati · Vatican</p><h3>Fiumicino Airport (FCO)</h3><p>Tram 8 → Trastevere Station (2 stops, ~5 min) → FL1 → Fiumicino (~40 min) · total ~45 min · ~€8<br>Fixed taxi fare: €50–55 (night +€10)</p><h3>Ciampino Airport (CIA)</h3><p>Bus or Tram → Termini → Terravision/SIT bus (~50 min, ~€6) · <a href="https://www.terravision.eu" target="_blank">terravision.eu</a></p><h3>Taxi</h3><p>Radio Taxi Roma: <a href="tel:+390635700">+39 06 3570</a><br>Apps: FreeNow · itTaxi · Uber<br>Fixed fare Fiumicino: €50–55</p><h3>Private Transfer</h3><p>Welcome Pickups: <a href="https://www.welcomepickups.com" target="_blank">welcomepickups.com</a></p><h3>Luggage Storage</h3><p>Radical Storage — Piazza Mastai (~5 min walk): <a href="https://radicalstorage.com" target="_blank">radicalstorage.com</a> · from €5/day</p>`,
+  }
+},
+it:{
+  ui:{
+    heroTitle:'Boutique Rome Concierge',heroSub:'Ospitalità di lusso nel cuore di Trastevere.',aptLabel:'Appartamento',
+    aptTitle:'Il Tuo Appartamento 🏠',romeTitle:'Vivi Roma 🌙',
+    keysTitle:'Chiavi Digitali',keysSub:'Apri edificio e appartamento',
+    wifiTitle:'Wi‑Fi',wifiSub:'Rete e password',
+    houseTitle:'Guida Casa',houseSub:'Istruzioni e consigli',
+    helpTitle:'Hai Bisogno?',helpSub:'Supporto concierge',
+    eatTitle:'Mangiare & Bere',eatSub:'Ristoranti, colazione & aperitivo',
+    tonightTitle:'Stasera a Roma',tonightSub:'Bar, rooftop & idee serali',
+    tickTitle:'Biglietteria',tickSub:'Musei, tour ed esperienze',
+    transTitle:'Trasporti',transSub:'Tram, taxi e aeroporti',
+    footerHelp:'Hai bisogno di aiuto?',
+    phase1Text:"Completa il check-in online per sbloccare le informazioni sull'appartamento.",
+    phaseBadge:['📋 Dopo la Prenotazione','✅ Dopo il Check-in','🗝 Giorno del Check-in'],
+    keysPhase2:'Le tue chiavi digitali saranno disponibili dalle 13:00 il giorno del check-in.',
+    romeAiPlaceholder:'Gas, WiFi, ristoranti, Gianicolo…',
+    romeChips:['Miglior ristorante a Trastevere','Password WiFi','Orario checkout','Passeggiata romantica'],
+  },
+  apt:{
+    checkin_time:'13:00',checkout_time:'11:00',
+    wifi_note:"Vicino alla TV c'è un router BIANCO. Giralo per leggere l'etichetta con SSID e password.",
+    wifi_ssid:'Vedi etichetta router',wifi_password:'Vedi etichetta router',
+    water_note:"L'acqua del rubinetto è potabile. L'acqua calda è sempre disponibile.",
+    ac_note:"Spegni l'aria condizionata quando esci dall'appartamento.",
+    bathroom:'Carta igienica, sapone per le mani, tappetino e asciugacapelli.',
+    towels:"Per ogni ospite: asciugamano grande e medio. Letti pronti all'arrivo.",
+    bathroom_notice:'⚠️ IMPORTANTE — bagno tra le camere: usare SOLO la carta igienica fornita. NON gettare altro nel WC: si intasa e tracima. Sblocco €100.',
+    bedrooms:"2 camere da letto + divano letto matrimoniale. Le chiavi sono sul tavolo all'arrivo.",
+    gas:"Manopola gas (a sinistra del contatore): IN BASSO = CHIUSO • ORIZZONTALE = APERTO. Per cucinare: 1) scegli il fuoco, 2) premi e gira la manopola, 3) tieni premuto qualche secondo finché la fiamma è stabile, 4) rilascia.",
+    kitchen:"Cucina completa e pronta all'uso.",
+    concierge:'Portineria: Massimo — orari 08:30–13:00 e 15:30–18:30.',
+    registration:'Per la registrazione obbligatoria invia i passaporti via WhatsApp all\'host.',
+    phone:'+39 335 524 5756',
+    pharmacy:'Farmacia a Piazza Trilussa · Altre lungo Viale Trastevere',
+    hospital:'Ospedale Nuovo Regina Margherita — Via Emilio Morosini 30',
+    atm:'Bancomat lungo Viale Trastevere (BNL, UniCredit, Intesa)',
+    sim:'Vodafone — Viale Trastevere 143 · TIM — Piazza San Cosimato 70',
+    laundry:'Lavanderia self service — Viale Trastevere 150',
+    luggage:'Radical Storage — Piazza Mastai (~5 min a piedi)',
+    supermarkets:'Mini-market su Viale Trastevere vicino al 108 · Prodotti freschi a Piazza San Cosimato (mattina)',
+    city_transport:'Tram 8 → Largo Argentina / Piazza Venezia. Tram 3 vicino. Bus H → Termini. Taxi: +39 06 3570 o app FreeNow.',
+    airports:'Fiumicino: Tram 8 → Stazione Trastevere → FL1 (~45 min). Ciampino: bus per Termini poi Tram 8. Privato: Welcome Pickups.',
+    taxi:'Radio Taxi: +39 06 3570 o app FreeNow.',
+    emergency:'Emergenze UE: 112 · Polizia: 113 · Ambulanza: 118 · Vigili: 115 · Medico inglese: +39 06 488 2371 · Vet 24h: +39 06 660 681',
+    eat:'Da Enzo al 29 · Osteria der Belli · Tonnarello · Trattoria Da Teo · Spirito di Vino · Pianostrada · Trapizzino.',
+    drink:'Enoteca Ferrara · Freni e Frizioni · L\'Angolo Divino · Mimì e Cocò · La Prosciutteria Trastevere.',
+    shop:'Mercato di Porta Portese (domenica) · Forni e gastronomie artigianali su Viale Trastevere · Boutique in Via della Lungaretta.',
+    tonight:'Aperitivo da Freni e Frizioni o Enoteca Ferrara. Tramonto al Gianicolo. Passeggiata serale: Piazza Trilussa → Santa Maria in Trastevere → vicoli → Lungotevere → Campo de\' Fiori.',
+    visit:'Santa Maria in Trastevere · Santa Cecilia · Museo di Roma in Trastevere · Orto Botanico · Villa Farnesina · Piazza Trilussa · Ponte Sisto → Campo de\' Fiori.',
+    hidden_gems:'Fontana del Prigione · Piazza di Piscinula · Museo di Sant\'Egidio · Gianicolo all\'alba.',
+    romantic_walk:'Viale Trastevere 108 → Piazza Santa Maria in Trastevere → Terrazza del Gianicolo → Orto Botanico → Gelateria del Viale → Biscottificio Innocenti → rientro.',
+    checkout_note:'Spegni luci e AC, chiudi le finestre, lascia le chiavi sul tavolo, chiudi a chiave la porta.',
+    keys_msg:"Le tue chiavi digitali sono state inviate via email da Hostaway. Controlla la casella — l'orario di arrivo che hai indicato nel check-in online determina l'orario di consegna. Le chiavi non vengono rilasciate prima delle 13:00.",
+  },
+  drawers:{
+    address:`<p><strong>Viale Trastevere 108</strong><br>Trastevere, Roma<br><br><a href="https://maps.google.com/?q=Viale+Trastevere+108+Roma" target="_blank">Apri in Google Maps →</a></p>`,
+    emergency:a=>`<p>${a.emergency}</p>`,
+    checkout:a=>`<p>Orario checkout: <strong>${a.checkout_time}</strong></p><p>${a.checkout_note}</p>`,
+    keys:a=>buildKeysHTML(a),
+    wifi:a=>`<p>${a.wifi_note}</p><p>Rete: <strong>${a.wifi_ssid}</strong><br>Password: <strong>${a.wifi_password}</strong></p>`,
+    house:a=>`<h3>Acqua</h3><p>${a.water_note}</p><h3>Aria Condizionata</h3><p>${a.ac_note}</p><h3>Gas 🔥</h3><p>${a.gas}</p><h3>Cucina</h3><p>${a.kitchen}</p><h3>Bagno</h3><p>${a.bathroom}</p><p>Asciugamani: ${a.towels}</p><div class="warning">${a.bathroom_notice}</div><h3>Portineria</h3><p>${a.concierge}</p><h3>Registrazione</h3><p>${a.registration}</p><h3>Servizi Vicini</h3><p>Supermercati: ${a.supermarkets}</p><p>Farmacia: ${a.pharmacy}</p><p>Bancomat: ${a.atm}</p><p>SIM: ${a.sim}</p><p>Lavanderia: ${a.laundry}</p><p>Deposito bagagli: ${a.luggage}</p>`,
+    help:a=>`<div style="text-align:center;padding:16px 0"><div style="font-size:48px;margin-bottom:16px">📞</div><p style="font-weight:700;margin-bottom:16px;color:var(--cream)">Il tuo concierge è disponibile per qualsiasi necessità.</p><a href="tel:${a.phone}" style="display:block;background:linear-gradient(135deg,#e8c67a,var(--gold));color:#120d09;padding:14px;border-radius:16px;font-weight:800;text-decoration:none;text-align:center;font-size:15px">${a.phone}</a><p style="font-size:12px;color:var(--muted);margin-top:12px">${a.concierge}</p><div style="margin-top:16px"><a href="https://wa.me/393355245756" style="display:block;background:rgba(37,211,102,.12);border:1px solid rgba(37,211,102,.28);color:#4ade80;padding:13px;border-radius:14px;font-weight:600;text-decoration:none;text-align:center">💬 WhatsApp Michele</a></div></div>`,
+    eat:`<h3>Colazione</h3><p><strong>Bar San Calisto</strong> — Piazza San Calisto 3 · il bar storico di Trastevere, frequentato dai romani (~6 min)</p><p><strong>Suppli Roma</strong> — Via di San Francesco a Ripa 137 · supplì fritti al momento, colazione salata o pranzo veloce (~5 min) · <a href="https://www.suppliroma.it" target="_blank">suppliroma.it</a></p><h3>Pranzo</h3><p><strong>Da Enzo al 29</strong> — Via dei Vascellari 29 · trattoria romana autentica, prenotare sempre (~8 min) · <a href="tel:0658122260">06 581 2260</a></p><p><strong>Osteria der Belli</strong> — Piazza Sant'Apollonia 11 · cucina laziale classica a prezzi onesti (~5 min)</p><h3>Cena</h3><p><strong>Tonnarello</strong> — Via della Paglia 1 · cucina romana classica, tavoli in strada, molto frequentato (~6 min) · <a href="https://www.tonnarello.it" target="_blank">tonnarello.it</a></p><p><strong>Trattoria Da Teo</strong> — Piazza dei Ponziani 7 · romano vero, tortelloni e coda alla vaccinara (~8 min) · <a href="tel:0658183550">06 581 8355</a></p><p><strong>Pianostrada</strong> — Via delle Zoccolette 22 · cucina creativa, solo prenotazione (~10 min) · <a href="https://www.pianostrada-laboratoriodicucina.it/" target="_blank">pianostrada.it</a></p><p><strong>Spirito di Vino</strong> — Via dei Genovesi 31 · cucina storica in cantina del 1300 (~7 min)</p><h3>Aperitivo &amp; Cocktail</h3><p><strong>Freni e Frizioni</strong> — Via del Politeama 4 · l'aperitivo più famoso di Roma, apre 18:30 (~6 min)</p><p><strong>Enoteca Ferrara</strong> — Piazza Trilussa 41 · wine bar elegante con ottima selezione (~7 min)</p><p><strong>La Prosciutteria Trastevere</strong> — Vicolo del Cinque 2 · taglieri e vino in un vicolo caratteristico (~6 min)</p><p><strong>Bar San Calisto</strong> — Piazza San Calisto 3 · aperitivo alla romana, economico (~6 min)</p><h3>Gelato</h3><p><strong>Fior di Luna</strong> — Via della Lungaretta 96 · gelato artigianale, no coloranti (~10 min) · <a href="https://www.fiordiluna.com" target="_blank">fiordiluna.com</a></p>`,
+    tonight:`<h3>Aperitivo (18:00–20:00)</h3><p><strong>Freni e Frizioni</strong> — Via del Politeama 4 · il posto più iconico per l'aperitivo a Roma, buffet incluso (~6 min)</p><p><strong>Piazza Trilussa</strong> · la fontana e i bar intorno, punto di ritrovo per eccellenza (~7 min)</p><p><strong>La Prosciutteria Trastevere</strong> — Vicolo del Cinque 2 · taglieri di salumi e vino (~6 min)</p><h3>Rooftop &amp; Panorami</h3><p><strong>Gianicolo</strong> · la terrazza panoramica più bella di Roma, vista 180° sulla città (~15 min a piedi su) · tramonto imperdibile · accesso gratuito</p><p><strong>Hotel San Francesco Rooftop</strong> — Via Jacopa de' Settesoli 7 · rooftop bar con vista su Trastevere (~8 min) · prenotare un tavolo</p><h3>Dopo Cena</h3><p><strong>Ma Che Siete Venuti a Fà</strong> — Via Benedetta 25 · miglior birreria artigianale di Trastevere (~8 min)</p><p><strong>Big Star</strong> — Vicolo del Cinque 61 · cocktail bar americano, atmosfera raccolta (~8 min)</p><p><strong>Mimì e Cocò</strong> — Via del Governo Vecchio 72 · cocktail di qualità (~20 min a piedi)</p><h3>Passeggiata Serale</h3><p>Viale Trastevere → Piazza Mastai → Piazza Trilussa → Santa Maria in Trastevere → vicoli → rientro</p><h3>Serata Romantica 💑</h3><p>Tramonto al Gianicolo (Tram 8 + salita ~15 min) → aperitivo a Freni e Frizioni → cena da Spirito di Vino → Piazza Santa Maria in Trastevere illuminata di notte</p>`,
+    tickets:`<p><strong>TicketOne</strong>:<br><a href="https://www.ticketone.it/en/" target="_blank">www.ticketone.it</a></p><p><strong>Colosseo</strong>:<br><a href="https://colosseo.it/en" target="_blank">colosseo.it</a></p><p><strong>Musei Vaticani</strong>:<br><a href="https://tickets.museivaticani.va/" target="_blank">tickets.museivaticani.va</a></p><p><strong>Galleria Borghese</strong>:<br><a href="https://galleriaborghese.cultura.gov.it/" target="_blank">galleriaborghese.cultura.gov.it</a></p><p><strong>MAXXI</strong>:<br><a href="https://www.maxxi.art/en/" target="_blank">maxxi.art</a></p><p><strong>AS Roma</strong>:<br><a href="https://www.asroma.com/en/tickets" target="_blank">asroma.com/tickets</a></p>`,
+    transport:`<h3>Tram &amp; Bus</h3><p><strong>Tram 8</strong> — fermata Belli (~1 min a piedi): → Largo Argentina · Campo de' Fiori · Piazza Venezia</p><p><strong>Tram 3</strong> — fermata Belli (~1 min a piedi): → Colosseo · Villa Borghese · Termini</p><p><strong>Bus H</strong> — Viale Trastevere: → Termini (~25 min, diretto)</p><p><strong>Bus 23</strong> — Lungotevere: → Prati · Vaticano</p><h3>Fiumicino (FCO)</h3><p>Tram 8 → Stazione Trastevere (2 fermate, ~5 min) → FL1 → Fiumicino (~40 min) · totale ~45 min · ~€8<br>Tariffa fissa taxi: €50–55 (notturno +€10)</p><h3>Ciampino (CIA)</h3><p>Bus o Tram → Termini → Terravision/SIT bus (~50 min, ~€6) · <a href="https://www.terravision.eu" target="_blank">terravision.eu</a></p><h3>Taxi</h3><p>Radio Taxi Roma: <a href="tel:+390635700">+39 06 3570</a><br>App: FreeNow · itTaxi · Uber<br>Tariffa fissa Fiumicino: €50–55</p><h3>Transfer Privato</h3><p>Welcome Pickups: <a href="https://www.welcomepickups.com" target="_blank">welcomepickups.com</a></p><h3>Deposito Bagagli</h3><p>Radical Storage — Piazza Mastai (~5 min a piedi): <a href="https://radicalstorage.com" target="_blank">radicalstorage.com</a> · da €5/giorno</p>`,
+  }
+},
+fr:{
+  ui:{
+    heroTitle:'Boutique Rome Concierge',heroSub:"Hospitalité de luxe au cœur de Trastevere.",aptLabel:'Appartement',
+    aptTitle:'Votre Appartement 🏠',romeTitle:'Explorer Rome 🌙',
+    keysTitle:'Clés Numériques',keysSub:"Ouvrir l'immeuble et l'appartement",
+    wifiTitle:'Wi‑Fi',wifiSub:'Réseau et mot de passe',
+    houseTitle:'Guide Logement',houseSub:'Instructions et conseils',
+    helpTitle:"Besoin d'aide?",helpSub:'Support concierge',
+    eatTitle:'Manger & Boire',eatSub:'Restaurants, petit-déj & apéritif',
+    tonightTitle:'Ce soir à Rome',tonightSub:'Bars, rooftops & idées soirée',
+    tickTitle:'Billetterie',tickSub:'Musées, visites & expériences',
+    transTitle:'Transport',transSub:'Tram, taxi & aéroports',
+    footerHelp:"Besoin d'aide?",
+    phase1Text:'Complétez votre check-in en ligne pour débloquer les informations.',
+    phaseBadge:["📋 Après Réservation","✅ Après Check-in","🗝 Jour d'Arrivée"],
+    keysPhase2:"Vos clés seront disponibles à partir de 13h00 le jour d'arrivée.",
+    romeAiPlaceholder:'Gaz, WiFi, restaurants, Gianicolo…',
+    romeChips:['Meilleur restaurant Trastevere','Mot de passe WiFi','Heure de départ','Promenade romantique'],
+  },
+  apt:{
+    checkin_time:'13:00',checkout_time:'11:00',
+    wifi_note:"Près de la télévision il y a un routeur BLANC. Retournez-le pour voir le SSID et le mot de passe.",
+    wifi_ssid:'Voir étiquette routeur',wifi_password:'Voir étiquette routeur',
+    water_note:"L'eau du robinet est potable. Eau chaude toujours disponible.",
+    ac_note:"Éteignez la climatisation en quittant l'appartement.",
+    bathroom:'Papier toilette, savon, tapis, sèche-cheveux.',
+    towels:'Par personne: 1 grande et 1 moyenne serviette.',
+    bathroom_notice:"⚠️ IMPORTANT — salle de bain entre les chambres: utilisez UNIQUEMENT le papier toilette fourni. Ne jetez RIEN d'autre dans les WC. Débouchage: 100€.",
+    bedrooms:"2 chambres + canapé-lit double. Les clés sont sur la table à l'arrivée.",
+    gas:"Robinet gaz (gauche du compteur): BAS = FERMÉ • HORIZONTAL = OUVERT. Pour cuisiner: 1) choisir brûleur, 2) appuyer et tourner, 3) maintenir quelques secondes jusqu'à flamme stable, 4) relâcher.",
+    kitchen:"Cuisine équipée prête à l'emploi.",
+    concierge:'Concierge: Massimo — 08:30–13:00 et 15:30–18:30.',
+    registration:"Envoyez vos passeports par WhatsApp à l'hôte pour l'enregistrement obligatoire.",
+    phone:'+39 335 524 5756',
+    pharmacy:'Pharmacie à Piazza Trilussa · Autres le long de Viale Trastevere',
+    hospital:'Ospedale Nuovo Regina Margherita — Via Emilio Morosini 30',
+    atm:'Distributeurs le long de Viale Trastevere (BNL, UniCredit, Intesa)',
+    sim:'Vodafone — Viale Trastevere 143 · TIM — Piazza San Cosimato 70',
+    laundry:'Laverie — Viale Trastevere 150',
+    luggage:'Radical Storage — Piazza Mastai (~5 min)',
+    supermarkets:'Mini-marché Viale Trastevere près du 108 · Produits frais Piazza San Cosimato (matin)',
+    city_transport:'Tram 8 → Largo Argentina/Piazza Venezia. Tram 3 proche. Bus H → Termini. Taxi: +39 06 3570 ou FreeNow.',
+    airports:'Fiumicino: Tram 8 → Trastevere puis FL1 (~45 min). Ciampino: bus → Termini puis Tram 8. Privé: Welcome Pickups.',
+    taxi:'Radio Taxi: +39 06 3570 ou FreeNow.',
+    emergency:'Urgences: 112 · Police: 113 · Ambulance: 118 · Pompiers: 115',
+    eat:'Da Enzo al 29 · Osteria der Belli · Tonnarello · Da Teo · Spirito di Vino · Pianostrada · Trapizzino.',
+    drink:"Enoteca Ferrara · Freni e Frizioni · L'Angolo Divino · La Prosciutteria.",
+    shop:'Porta Portese (dim.) · Boulangeries artisanales Viale Trastevere · Via della Lungaretta.',
+    tonight:"Apéritif chez Freni e Frizioni. Coucher de soleil au Gianicolo. Promenade: Piazza Trilussa → Santa Maria → ruelles → Campo de' Fiori.",
+    visit:'Santa Maria in Trastevere · Santa Cecilia · Orto Botanico · Villa Farnesina · Ponte Sisto.',
+    hidden_gems:"Fontana del Prigione · Piazza di Piscinula · Gianicolo à l'aube.",
+    romantic_walk:'Viale Trastevere 108 → Piazza Santa Maria → Gianicolo → Orto Botanico → Gelateria del Viale → Biscottificio Innocenti → retour.',
+    checkout_note:'Éteignez lumières & clim, fermez fenêtres, laissez clés sur table, verrouillez la porte.',
+    keys_msg:'Vos clés ont été envoyées par Hostaway. Jamais avant 13h00.',
+  },
+  drawers:{
+    address:`<p><strong>Viale Trastevere 108</strong><br>Trastevere, Rome<br><br><a href="https://maps.google.com/?q=Viale+Trastevere+108+Roma" target="_blank">Ouvrir dans Google Maps →</a></p>`,
+    emergency:a=>`<p>${a.emergency}</p>`,
+    checkout:a=>`<p>Heure de départ: <strong>${a.checkout_time}</strong></p><p>${a.checkout_note}</p>`,
+    keys:a=>buildKeysHTML(a),
+    wifi:a=>`<p>${a.wifi_note}</p><p>Réseau: <strong>${a.wifi_ssid}</strong><br>Mot de passe: <strong>${a.wifi_password}</strong></p>`,
+    house:a=>`<h3>Eau</h3><p>${a.water_note}</p><h3>Climatisation</h3><p>${a.ac_note}</p><h3>Gaz 🔥</h3><p>${a.gas}</p><h3>Cuisine</h3><p>${a.kitchen}</p><h3>Salle de bain</h3><p>${a.bathroom}</p><p>Serviettes: ${a.towels}</p><div class="warning">${a.bathroom_notice}</div><h3>Concierge</h3><p>${a.concierge}</p><h3>Enregistrement</h3><p>${a.registration}</p><h3>Services proches</h3><p>Supermarchés: ${a.supermarkets}</p><p>Pharmacie: ${a.pharmacy}</p><p>Distributeurs: ${a.atm}</p><p>Laverie: ${a.laundry}</p>`,
+    help:a=>`<div style="text-align:center;padding:16px 0"><div style="font-size:48px;margin-bottom:16px">📞</div><p style="font-weight:700;margin-bottom:16px;color:var(--cream)">Votre concierge est disponible.</p><a href="tel:${a.phone}" style="display:block;background:linear-gradient(135deg,#e8c67a,var(--gold));color:#120d09;padding:14px;border-radius:16px;font-weight:800;text-decoration:none;text-align:center;font-size:15px">${a.phone}</a><p style="font-size:12px;color:var(--muted);margin-top:12px">${a.concierge}</p><div style="margin-top:16px"><a href="https://wa.me/393355245756" style="display:block;background:rgba(37,211,102,.12);border:1px solid rgba(37,211,102,.28);color:#4ade80;padding:13px;border-radius:14px;font-weight:600;text-decoration:none;text-align:center">💬 WhatsApp Michele</a></div></div>`,
+    eat:`<h3>Petit-déjeuner</h3><p><strong>Bar San Calisto</strong> — Piazza San Calisto 3 · le bar historique de Trastevere, ambiance locale authentique (~6 min)</p><p><strong>Suppli Roma</strong> — Via di San Francesco a Ripa 137 · suppli frits à la minute, petit-déj salé ou déjeuner rapide (~5 min) · <a href="https://www.suppliroma.it" target="_blank">suppliroma.it</a></p><h3>Déjeuner</h3><p><strong>Da Enzo al 29</strong> — Via dei Vascellari 29 · trattoria romaine authentique, réserver à l'avance (~8 min) · <a href="tel:0658122260">06 581 2260</a></p><p><strong>Osteria der Belli</strong> — Piazza Sant'Apollonia 11 · cuisine du Latium classique à prix honnêtes (~5 min)</p><h3>Dîner</h3><p><strong>Tonnarello</strong> — Via della Paglia 1 · cuisine romaine classique, tables en terrasse, très fréquenté (~6 min) · <a href="https://www.tonnarello.it" target="_blank">tonnarello.it</a></p><p><strong>Trattoria Da Teo</strong> — Piazza dei Ponziani 7 · vrai romain, tortelloni &amp; coda alla vaccinara (~8 min) · <a href="tel:0658183550">06 581 8355</a></p><p><strong>Pianostrada</strong> — Via delle Zoccolette 22 · cuisine créative, sur réservation uniquement (~10 min) · <a href="https://www.pianostrada-laboratoriodicucina.it/" target="_blank">pianostrada.it</a></p><p><strong>Spirito di Vino</strong> — Via dei Genovesi 31 · cuisine historique dans une cave du XIVe siècle (~7 min)</p><h3>Apéritif &amp; Cocktails</h3><p><strong>Freni e Frizioni</strong> — Via del Politeama 4 · l'apéritif le plus iconique de Rome, ouvre à 18h30 (~6 min)</p><p><strong>Enoteca Ferrara</strong> — Piazza Trilussa 41 · bar à vins élégant, excellente sélection (~7 min)</p><p><strong>La Prosciutteria Trastevere</strong> — Vicolo del Cinque 2 · planches de charcuterie &amp; vin dans une ruelle pittoresque (~6 min)</p><p><strong>Bar San Calisto</strong> — Piazza San Calisto 3 · apéritif à la romaine, prix doux (~6 min)</p><h3>Gelato</h3><p><strong>Fior di Luna</strong> — Via della Lungaretta 96 · glace artisanale, sans colorants (~10 min) · <a href="https://www.fiordiluna.com" target="_blank">fiordiluna.com</a></p>`,
+    tonight:`<h3>Apéritif (18h00–20h00)</h3><p><strong>Freni e Frizioni</strong> — Via del Politeama 4 · l'endroit le plus iconique pour l'apéritif à Rome, buffet inclus (~6 min)</p><p><strong>Piazza Trilussa</strong> · la fontaine et les bars alentour, point de rendez-vous par excellence (~7 min)</p><p><strong>La Prosciutteria Trastevere</strong> — Vicolo del Cinque 2 · planches de charcuterie &amp; vin (~6 min)</p><h3>Rooftops &amp; Panoramas</h3><p><strong>Gianicolo</strong> · la plus belle terrasse panoramique de Rome, vue à 180° sur la ville (~15 min à pied) · coucher de soleil incontournable · accès gratuit</p><p><strong>Hotel San Francesco Rooftop</strong> — Via Jacopa de' Settesoli 7 · rooftop bar avec vue sur Trastevere (~8 min) · réserver une table</p><h3>Après Dîner</h3><p><strong>Ma Che Siete Venuti a Fà</strong> — Via Benedetta 25 · meilleur bar à bières artisanales de Trastevere (~8 min)</p><p><strong>Big Star</strong> — Vicolo del Cinque 61 · bar à cocktails américain, ambiance intime (~8 min)</p><p><strong>Mimì e Cocò</strong> — Via del Governo Vecchio 72 · cocktails de qualité (~20 min à pied)</p><h3>Promenade du soir</h3><p>Viale Trastevere → Piazza Mastai → Piazza Trilussa → Santa Maria in Trastevere → ruelles → retour</p><h3>Soirée Romantique 💑</h3><p>Coucher de soleil au Gianicolo (Tram 8 + 15 min à pied) → apéritif à Freni e Frizioni → dîner à Spirito di Vino → Piazza Santa Maria in Trastevere illuminée de nuit</p>`,
+    tickets:`<p><strong>TicketOne</strong>:<br><a href="https://www.ticketone.it/en/" target="_blank">www.ticketone.it</a></p><p><strong>Colisée</strong>:<br><a href="https://colosseo.it/en" target="_blank">colosseo.it</a></p><p><strong>Musées du Vatican</strong>:<br><a href="https://tickets.museivaticani.va/" target="_blank">tickets.museivaticani.va</a></p><p><strong>Galerie Borghèse</strong>:<br><a href="https://galleriaborghese.cultura.gov.it/" target="_blank">galleriaborghese.cultura.gov.it</a></p><p><strong>MAXXI</strong>:<br><a href="https://www.maxxi.art/en/" target="_blank">maxxi.art</a></p>`,
+    transport:`<h3>Tram &amp; Bus</h3><p><strong>Tram 8</strong> — arrêt Belli (~1 min à pied): → Largo Argentina · Campo de' Fiori · Piazza Venezia</p><p><strong>Tram 3</strong> — arrêt Belli (~1 min à pied): → Colisée · Villa Borghèse · Termini</p><p><strong>Bus H</strong> — Viale Trastevere: → Termini (~25 min, direct)</p><p><strong>Bus 23</strong> — Lungotevere: → Prati · Vatican</p><h3>Aéroport Fiumicino (FCO)</h3><p>Tram 8 → Gare Trastevere (2 arrêts, ~5 min) → FL1 → Fiumicino (~40 min) · total ~45 min · ~8€<br>Tarif taxi fixe: 50–55€ (nuit +10€)</p><h3>Aéroport Ciampino (CIA)</h3><p>Bus ou Tram → Termini → Terravision/SIT bus (~50 min, ~6€) · <a href="https://www.terravision.eu" target="_blank">terravision.eu</a></p><h3>Taxi</h3><p>Radio Taxi Roma: <a href="tel:+390635700">+39 06 3570</a><br>Apps: FreeNow · itTaxi · Uber<br>Tarif fixe Fiumicino: 50–55€</p><h3>Transfert Privé</h3><p>Welcome Pickups: <a href="https://www.welcomepickups.com" target="_blank">welcomepickups.com</a></p><h3>Consigne Bagages</h3><p>Radical Storage — Piazza Mastai (~5 min à pied): <a href="https://radicalstorage.com" target="_blank">radicalstorage.com</a> · à partir de 5€/jour</p>`,
+  }
+},
+de:{
+  ui:{
+    heroTitle:'Boutique Rome Concierge',heroSub:'Kuratierter Luxus im Herzen von Trastevere.',aptLabel:'Apartment',
+    aptTitle:'Ihr Apartment 🏠',romeTitle:'Rom Entdecken 🌙',
+    keysTitle:'Digitale Schlüssel',keysSub:'Gebäude & Apartment öffnen',
+    wifiTitle:'WLAN',wifiSub:'Netzwerk & Passwort',
+    houseTitle:'Hausführer',houseSub:'Anweisungen und Tipps',
+    helpTitle:'Hilfe benötigt?',helpSub:'Concierge-Support',
+    eatTitle:'Essen & Trinken',eatSub:'Restaurants, Frühstück & Aperitif',
+    tonightTitle:'Heute Abend in Rom',tonightSub:'Bars, Rooftops & Abendideen',
+    tickTitle:'Tickets',tickSub:'Museen, Touren & Erlebnisse',
+    transTitle:'Transport',transSub:'Straßenbahn, Taxi & Flughäfen',
+    footerHelp:'Hilfe benötigt?',
+    phase1Text:'Online-Check-in ausfüllen um Apartment-Informationen freizuschalten.',
+    phaseBadge:['📋 Nach Buchung','✅ Nach Check-in','🗝 Check-in-Tag'],
+    keysPhase2:'Schlüssel ab 13:00 Uhr am Check-in-Tag verfügbar.',
+    romeAiPlaceholder:'Gas, WLAN, Restaurants, Gianicolo…',
+    romeChips:['Bestes Restaurant Trastevere','WLAN-Passwort','Checkout-Zeit','Romantischer Spaziergang'],
+  },
+  apt:{
+    checkin_time:'13:00',checkout_time:'11:00',
+    wifi_note:'Neben dem Fernseher ein WEISSER Router. Drehen um SSID und Passwort zu sehen.',
+    wifi_ssid:'Siehe Router-Etikett',wifi_password:'Siehe Router-Etikett',
+    water_note:'Leitungswasser trinkbar. Warmwasser immer verfügbar.',
+    ac_note:'Klimaanlage beim Verlassen ausschalten.',
+    bathroom:'Toilettenpapier, Handseife, Badematte, Föhn.',
+    towels:'Pro Gast: 1 großes und 1 mittleres Handtuch.',
+    bathroom_notice:'⚠️ WICHTIG — Bad zwischen den Schlafzimmern: NUR bereitgestelltes Toilettenpapier verwenden. Nichts anderes spülen. Entstopfung: 100€.',
+    bedrooms:'2 Schlafzimmer + Doppelschlafsofa. Schlüssel bei Ankunft auf dem Tisch.',
+    gas:'Gashahn (links vom Zähler): UNTEN = GESCHLOSSEN • WAAGERECHT = OFFEN. Zum Kochen: 1) Brenner wählen, 2) drücken und drehen, 3) halten bis Flamme stabil, 4) loslassen.',
+    kitchen:'Voll ausgestattete Küche.',
+    concierge:'Hausmeister: Massimo — 08:30–13:00 und 15:30–18:30.',
+    registration:'Reisepässe per WhatsApp an den Gastgeber für die Pflichtmeldung senden.',
+    phone:'+39 335 524 5756',
+    pharmacy:'Apotheke Piazza Trilussa · Weitere entlang Viale Trastevere',
+    hospital:'Ospedale Nuovo Regina Margherita — Via Emilio Morosini 30',
+    atm:'Geldautomaten Viale Trastevere (BNL, UniCredit, Intesa)',
+    sim:'Vodafone — Viale Trastevere 143 · TIM — Piazza San Cosimato 70',
+    laundry:'Waschsalon — Viale Trastevere 150',
+    luggage:'Radical Storage — Piazza Mastai (~5 Min.)',
+    supermarkets:'Mini-Markt Viale Trastevere nahe 108 · Frische Produkte Piazza San Cosimato',
+    city_transport:'Straßenbahn 8 → Largo Argentina/Piazza Venezia. Straßenbahn 3 in der Nähe. Bus H → Termini. Taxi: +39 06 3570 oder FreeNow.',
+    airports:'Fiumicino: Str.8 → Trastevere dann FL1 (~45 Min.). Ciampino: Bus → Termini dann Str.8. Privat: Welcome Pickups.',
+    taxi:'Radio Taxi: +39 06 3570 oder FreeNow.',
+    emergency:'Notruf: 112 · Polizei: 113 · Rettung: 118 · Feuerwehr: 115',
+    eat:'Da Enzo al 29 · Osteria der Belli · Tonnarello · Da Teo · Spirito di Vino · Pianostrada · Trapizzino.',
+    drink:"Enoteca Ferrara · Freni e Frizioni · L'Angolo Divino · La Prosciutteria.",
+    shop:'Porta Portese (Sonntag) · Bäckereien Viale Trastevere · Via della Lungaretta.',
+    tonight:"Aperitif bei Freni e Frizioni. Sonnenuntergang am Gianicolo. Abendspaziergang: Piazza Trilussa → Santa Maria → Gassen → Campo de' Fiori.",
+    visit:'Santa Maria in Trastevere · Santa Cecilia · Orto Botanico · Villa Farnesina · Ponte Sisto.',
+    hidden_gems:'Fontana del Prigione · Piazza di Piscinula · Gianicolo in der Morgendämmerung.',
+    romantic_walk:'Viale Trastevere 108 → Piazza Santa Maria → Gianicolo → Orto Botanico → Gelateria del Viale → Biscottificio Innocenti → zurück.',
+    checkout_note:'Lichter & Klimaanlage aus, Fenster schließen, Schlüssel auf Tisch, Tür abschließen.',
+    keys_msg:'Schlüssel wurden per E-Mail von Hostaway gesendet. Nie vor 13:00 Uhr.',
+  },
+  drawers:{
+    address:`<p><strong>Viale Trastevere 108</strong><br>Trastevere, Rom<br><br><a href="https://maps.google.com/?q=Viale+Trastevere+108+Roma" target="_blank">In Google Maps öffnen →</a></p>`,
+    emergency:a=>`<p>${a.emergency}</p>`,
+    checkout:a=>`<p>Check-out: <strong>${a.checkout_time}</strong></p><p>${a.checkout_note}</p>`,
+    keys:a=>buildKeysHTML(a),
+    wifi:a=>`<p>${a.wifi_note}</p><p>Netzwerk: <strong>${a.wifi_ssid}</strong><br>Passwort: <strong>${a.wifi_password}</strong></p>`,
+    house:a=>`<h3>Wasser</h3><p>${a.water_note}</p><h3>Klimaanlage</h3><p>${a.ac_note}</p><h3>Gas 🔥</h3><p>${a.gas}</p><h3>Küche</h3><p>${a.kitchen}</p><h3>Badezimmer</h3><p>${a.bathroom}</p><p>Handtücher: ${a.towels}</p><div class="warning">${a.bathroom_notice}</div><h3>Hausmeister</h3><p>${a.concierge}</p><h3>Meldepflicht</h3><p>${a.registration}</p><h3>Nahegelegene Dienste</h3><p>Supermärkte: ${a.supermarkets}</p><p>Apotheke: ${a.pharmacy}</p><p>Geldautomaten: ${a.atm}</p><p>Wäscherei: ${a.laundry}</p>`,
+    help:a=>`<div style="text-align:center;padding:16px 0"><div style="font-size:48px;margin-bottom:16px">📞</div><p style="font-weight:700;margin-bottom:16px;color:var(--cream)">Ihr Concierge steht zur Verfügung.</p><a href="tel:${a.phone}" style="display:block;background:linear-gradient(135deg,#e8c67a,var(--gold));color:#120d09;padding:14px;border-radius:16px;font-weight:800;text-decoration:none;text-align:center;font-size:15px">${a.phone}</a><p style="font-size:12px;color:var(--muted);margin-top:12px">${a.concierge}</p><div style="margin-top:16px"><a href="https://wa.me/393355245756" style="display:block;background:rgba(37,211,102,.12);border:1px solid rgba(37,211,102,.28);color:#4ade80;padding:13px;border-radius:14px;font-weight:600;text-decoration:none;text-align:center">💬 WhatsApp Michele</a></div></div>`,
+    eat:`<h3>Frühstück</h3><p><strong>Bar San Calisto</strong> — Piazza San Calisto 3 · historische Bar in Trastevere, beliebt bei Römern (~6 min)</p><p><strong>Suppli Roma</strong> — Via di San Francesco a Ripa 137 · frisch frittierte Suppli, herzhaftes Frühstück oder schnelles Mittagessen (~5 min) · <a href="https://www.suppliroma.it" target="_blank">suppliroma.it</a></p><h3>Mittagessen</h3><p><strong>Da Enzo al 29</strong> — Via dei Vascellari 29 · authentische römische Trattoria, immer reservieren (~8 min) · <a href="tel:0658122260">06 581 2260</a></p><p><strong>Osteria der Belli</strong> — Piazza Sant'Apollonia 11 · klassische Lazio-Küche zu fairen Preisen (~5 min)</p><h3>Abendessen</h3><p><strong>Tonnarello</strong> — Via della Paglia 1 · römische Küche, Tische auf der Straße, sehr beliebt (~6 min) · <a href="https://www.tonnarello.it" target="_blank">tonnarello.it</a></p><p><strong>Trattoria Da Teo</strong> — Piazza dei Ponziani 7 · echtes Römer-Essen, Tortelloni &amp; Coda alla Vaccinara (~8 min) · <a href="tel:0658183550">06 581 8355</a></p><p><strong>Pianostrada</strong> — Via delle Zoccolette 22 · kreative Küche, nur mit Reservierung (~10 min) · <a href="https://www.pianostrada-laboratoriodicucina.it/" target="_blank">pianostrada.it</a></p><p><strong>Spirito di Vino</strong> — Via dei Genovesi 31 · historische Küche in einem Gewölbekeller aus dem 14. Jh. (~7 min)</p><h3>Aperitif &amp; Cocktails</h3><p><strong>Freni e Frizioni</strong> — Via del Politeama 4 · Roms ikonischste Aperitif-Bar, öffnet 18:30 (~6 min)</p><p><strong>Enoteca Ferrara</strong> — Piazza Trilussa 41 · elegante Weinbar mit hervorragender Auswahl (~7 min)</p><p><strong>La Prosciutteria Trastevere</strong> — Vicolo del Cinque 2 · Wurstplatten &amp; Wein in einem malerischen Gässchen (~6 min)</p><p><strong>Bar San Calisto</strong> — Piazza San Calisto 3 · Aperitif auf Römisch, günstig (~6 min)</p><h3>Gelato</h3><p><strong>Fior di Luna</strong> — Via della Lungaretta 96 · handwerkliches Eis, ohne Farbstoffe (~10 min) · <a href="https://www.fiordiluna.com" target="_blank">fiordiluna.com</a></p>`,
+    tonight:`<h3>Aperitif (18:00–20:00)</h3><p><strong>Freni e Frizioni</strong> — Via del Politeama 4 · Roms ikonischste Aperitif-Bar, Büfett inklusive (~6 min)</p><p><strong>Piazza Trilussa</strong> · der Brunnen und die umliegenden Bars, Treffpunkt schlechthin (~7 min)</p><p><strong>La Prosciutteria Trastevere</strong> — Vicolo del Cinque 2 · Wurstplatten &amp; Wein (~6 min)</p><h3>Rooftops &amp; Aussichten</h3><p><strong>Gianicolo</strong> · Roms schönste Panoramaterrasse, 180°-Blick über die Stadt (~15 min bergauf) · Sonnenuntergang unbedingt empfohlen · freier Eintritt</p><p><strong>Hotel San Francesco Rooftop</strong> — Via Jacopa de' Settesoli 7 · Rooftop-Bar mit Blick über Trastevere (~8 min) · Tisch reservieren</p><h3>Nach dem Abendessen</h3><p><strong>Ma Che Siete Venuti a Fà</strong> — Via Benedetta 25 · beste Craft-Beer-Bar in Trastevere (~8 min)</p><p><strong>Big Star</strong> — Vicolo del Cinque 61 · amerikanische Cocktailbar, gemütliche Atmosphäre (~8 min)</p><p><strong>Mimì e Cocò</strong> — Via del Governo Vecchio 72 · qualitätsvolle Cocktails (~20 min zu Fuß)</p><h3>Abendspaziergang</h3><p>Viale Trastevere → Piazza Mastai → Piazza Trilussa → Santa Maria in Trastevere → Gässchen → zurück</p><h3>Romantischer Abend 💑</h3><p>Sonnenuntergang am Gianicolo (Tram 8 + ~15 min bergauf) → Aperitif bei Freni e Frizioni → Abendessen bei Spirito di Vino → Piazza Santa Maria in Trastevere bei Nacht</p>`,
+    tickets:`<p><strong>TicketOne</strong>:<br><a href="https://www.ticketone.it/en/" target="_blank">www.ticketone.it</a></p><p><strong>Kolosseum</strong>:<br><a href="https://colosseo.it/en" target="_blank">colosseo.it</a></p><p><strong>Vatikanische Museen</strong>:<br><a href="https://tickets.museivaticani.va/" target="_blank">tickets.museivaticani.va</a></p><p><strong>Galleria Borghese</strong>:<br><a href="https://galleriaborghese.cultura.gov.it/" target="_blank">galleriaborghese.cultura.gov.it</a></p><p><strong>MAXXI</strong>:<br><a href="https://www.maxxi.art/en/" target="_blank">maxxi.art</a></p>`,
+    transport:`<h3>Straßenbahn &amp; Bus</h3><p><strong>Tram 8</strong> — Haltestelle Belli (~1 min zu Fuß): → Largo Argentina · Campo de' Fiori · Piazza Venezia</p><p><strong>Tram 3</strong> — Haltestelle Belli (~1 min zu Fuß): → Kolosseum · Villa Borghese · Termini</p><p><strong>Bus H</strong> — Viale Trastevere: → Termini (~25 min, direkt)</p><p><strong>Bus 23</strong> — Lungotevere: → Prati · Vatikan</p><h3>Flughafen Fiumicino (FCO)</h3><p>Tram 8 → Bahnhof Trastevere (2 Stationen, ~5 min) → FL1 → Fiumicino (~40 min) · gesamt ~45 min · ~8€<br>Fester Taxitarif: 50–55€ (Nacht +10€)</p><h3>Flughafen Ciampino (CIA)</h3><p>Bus oder Tram → Termini → Terravision/SIT Bus (~50 min, ~6€) · <a href="https://www.terravision.eu" target="_blank">terravision.eu</a></p><h3>Taxi</h3><p>Radio Taxi Roma: <a href="tel:+390635700">+39 06 3570</a><br>Apps: FreeNow · itTaxi · Uber<br>Festpreis Fiumicino: 50–55€</p><h3>Privattransfer</h3><p>Welcome Pickups: <a href="https://www.welcomepickups.com" target="_blank">welcomepickups.com</a></p><h3>Gepäckaufbewahrung</h3><p>Radical Storage — Piazza Mastai (~5 min zu Fuß): <a href="https://radicalstorage.com" target="_blank">radicalstorage.com</a> · ab 5€/Tag</p>`,
+  }
+},
+es:{
+  ui:{
+    heroTitle:'Boutique Rome Concierge',heroSub:'Hospitalidad de lujo en el corazón de Trastevere.',aptLabel:'Apartamento',
+    aptTitle:'Tu Apartamento 🏠',romeTitle:'Explora Roma 🌙',
+    keysTitle:'Llaves Digitales',keysSub:'Abrir edificio y apartamento',
+    wifiTitle:'Wi‑Fi',wifiSub:'Red y contraseña',
+    houseTitle:'Guía del Piso',houseSub:'Instrucciones y consejos',
+    helpTitle:'¿Necesitas ayuda?',helpSub:'Soporte del conserje',
+    eatTitle:'Comer & Beber',eatSub:'Restaurantes, desayuno & aperitivo',
+    tonightTitle:'Esta noche en Roma',tonightSub:'Bares, rooftops & ideas de noche',
+    tickTitle:'Entradas',tickSub:'Museos, tours y experiencias',
+    transTitle:'Transporte',transSub:'Tranvía, taxi y aeropuertos',
+    footerHelp:'¿Necesitas ayuda?',
+    phase1Text:'Completa el check-in online para desbloquear la información del apartamento.',
+    phaseBadge:['📋 Tras Reserva','✅ Tras Check-in','🗝 Día del Check-in'],
+    keysPhase2:'Llaves disponibles desde las 13:00 el día del check-in.',
+    romeAiPlaceholder:'Gas, WiFi, restaurantes, Gianicolo…',
+    romeChips:['Mejor restaurante Trastevere','Contraseña WiFi','Hora de salida','Paseo romántico'],
+  },
+  apt:{
+    checkin_time:'13:00',checkout_time:'11:00',
+    wifi_note:'Cerca del televisor hay un router BLANCO. Gíralo para ver el SSID y la contraseña.',
+    wifi_ssid:'Ver etiqueta del router',wifi_password:'Ver etiqueta del router',
+    water_note:'El agua del grifo es potable. Agua caliente siempre disponible.',
+    ac_note:'Apaga el aire acondicionado al salir del apartamento.',
+    bathroom:'Papel higiénico, jabón, alfombrilla, secador.',
+    towels:'Por huésped: 1 toalla grande y 1 mediana.',
+    bathroom_notice:'⚠️ IMPORTANTE — baño entre los dormitorios: usa SOLO el papel higiénico provisto. NO tires nada más o se atascará. Desatasco: 100€.',
+    bedrooms:'2 dormitorios + sofá cama doble. Las llaves están sobre la mesa a la llegada.',
+    gas:'Llave del gas (izquierda del contador): ABAJO = CERRADO • HORIZONTAL = ABIERTO. Para cocinar: 1) elegir quemador, 2) presionar y girar, 3) mantener hasta llama estable, 4) soltar.',
+    kitchen:'Cocina completa lista para usar.',
+    concierge:'Conserjería: Massimo — 08:30–13:00 y 15:30–18:30.',
+    registration:'Envía los pasaportes por WhatsApp al anfitrión para el registro obligatorio.',
+    phone:'+39 335 524 5756',
+    pharmacy:'Farmacia Piazza Trilussa · Otras a lo largo de Viale Trastevere',
+    hospital:'Ospedale Nuovo Regina Margherita — Via Emilio Morosini 30',
+    atm:'Cajeros a lo largo de Viale Trastevere (BNL, UniCredit, Intesa)',
+    sim:'Vodafone — Viale Trastevere 143 · TIM — Piazza San Cosimato 70',
+    laundry:'Lavandería — Viale Trastevere 150',
+    luggage:'Radical Storage — Piazza Mastai (~5 min)',
+    supermarkets:'Minimarket Viale Trastevere cerca del 108 · Frescos Piazza San Cosimato (mañanas)',
+    city_transport:'Tranvía 8 → Largo Argentina/Piazza Venezia. Tranvía 3 cercano. Bus H → Termini. Taxi: +39 06 3570 o FreeNow.',
+    airports:'Fiumicino: Tranvía 8 → Trastevere luego FL1 (~45 min). Ciampino: bus → Termini luego Tranvía 8. Privado: Welcome Pickups.',
+    taxi:'Radio Taxi: +39 06 3570 o FreeNow.',
+    emergency:'Emergencias: 112 · Policía: 113 · Ambulancia: 118 · Bomberos: 115',
+    eat:'Da Enzo al 29 · Osteria der Belli · Tonnarello · Da Teo · Spirito di Vino · Pianostrada · Trapizzino.',
+    drink:"Enoteca Ferrara · Freni e Frizioni · L'Angolo Divino · La Prosciutteria.",
+    shop:'Porta Portese (domingos) · Panaderías Viale Trastevere · Via della Lungaretta.',
+    tonight:"Aperitivo en Freni e Frizioni. Atardecer en el Gianicolo. Paseo: Piazza Trilussa → Santa Maria → callejuelas → Campo de' Fiori.",
+    visit:'Santa Maria in Trastevere · Santa Cecilia · Orto Botanico · Villa Farnesina · Ponte Sisto.',
+    hidden_gems:'Fontana del Prigione · Piazza di Piscinula · Gianicolo al amanecer.',
+    romantic_walk:'Viale Trastevere 108 → Piazza Santa Maria → Gianicolo → Orto Botanico → Gelateria del Viale → Biscottificio Innocenti → regreso.',
+    checkout_note:'Apaga luces y AC, cierra ventanas, deja las llaves en la mesa, cierra con llave.',
+    keys_msg:'Tus llaves han sido enviadas por Hostaway. Nunca antes de las 13:00.',
+  },
+  drawers:{
+    address:`<p><strong>Viale Trastevere 108</strong><br>Trastevere, Roma<br><br><a href="https://maps.google.com/?q=Viale+Trastevere+108+Roma" target="_blank">Abrir en Google Maps →</a></p>`,
+    emergency:a=>`<p>${a.emergency}</p>`,
+    checkout:a=>`<p>Hora de salida: <strong>${a.checkout_time}</strong></p><p>${a.checkout_note}</p>`,
+    keys:a=>buildKeysHTML(a),
+    wifi:a=>`<p>${a.wifi_note}</p><p>Red: <strong>${a.wifi_ssid}</strong><br>Contraseña: <strong>${a.wifi_password}</strong></p>`,
+    house:a=>`<h3>Agua</h3><p>${a.water_note}</p><h3>Aire Acondicionado</h3><p>${a.ac_note}</p><h3>Gas 🔥</h3><p>${a.gas}</p><h3>Cocina</h3><p>${a.kitchen}</p><h3>Baño</h3><p>${a.bathroom}</p><p>Toallas: ${a.towels}</p><div class="warning">${a.bathroom_notice}</div><h3>Conserjería</h3><p>${a.concierge}</p><h3>Registro</h3><p>${a.registration}</p><h3>Servicios cercanos</h3><p>Supermercados: ${a.supermarkets}</p><p>Farmacia: ${a.pharmacy}</p><p>Cajeros: ${a.atm}</p><p>Lavandería: ${a.laundry}</p>`,
+    help:a=>`<div style="text-align:center;padding:16px 0"><div style="font-size:48px;margin-bottom:16px">📞</div><p style="font-weight:700;margin-bottom:16px;color:var(--cream)">Tu conserje está disponible.</p><a href="tel:${a.phone}" style="display:block;background:linear-gradient(135deg,#e8c67a,var(--gold));color:#120d09;padding:14px;border-radius:16px;font-weight:800;text-decoration:none;text-align:center;font-size:15px">${a.phone}</a><p style="font-size:12px;color:var(--muted);margin-top:12px">${a.concierge}</p><div style="margin-top:16px"><a href="https://wa.me/393355245756" style="display:block;background:rgba(37,211,102,.12);border:1px solid rgba(37,211,102,.28);color:#4ade80;padding:13px;border-radius:14px;font-weight:600;text-decoration:none;text-align:center">💬 WhatsApp Michele</a></div></div>`,
+    eat:a=>`<h3>Restaurantes</h3><p>${a.eat}</p><h3>Bares</h3><p>${a.drink}</p><h3>Compras</h3><p>${a.shop}</p>`,
+    tonight:a=>`<p>${a.tonight}</p><h3>Qué Visitar</h3><p>${a.visit}</p><h3>Rincones escondidos</h3><p>${a.hidden_gems}</p><h3>Paseo Romántico 💑</h3><p>${a.romantic_walk}</p>`,
+    tickets:`<p><strong>TicketOne</strong>:<br><a href="https://www.ticketone.it/en/" target="_blank">www.ticketone.it</a></p><p><strong>Coliseo</strong>:<br><a href="https://colosseo.it/en" target="_blank">colosseo.it</a></p><p><strong>Museos Vaticanos</strong>:<br><a href="https://tickets.museivaticani.va/" target="_blank">tickets.museivaticani.va</a></p><p><strong>Galería Borghese</strong>:<br><a href="https://galleriaborghese.cultura.gov.it/" target="_blank">galleriaborghese.cultura.gov.it</a></p><p><strong>MAXXI</strong>:<br><a href="https://www.maxxi.art/en/" target="_blank">maxxi.art</a></p>`,
+    transport:a=>`<h3>Ciudad</h3><p>${a.city_transport}</p><h3>Aeropuertos</h3><p>${a.airports}</p><h3>Taxi</h3><p>${a.taxi}</p><h3>Consigna de equipaje</h3><p>${a.luggage}</p>`,
+  }
+}
+};
+
+if (!DATA[lang]) lang = 'it';
+const u0 = new URL(location.href);
+u0.searchParams.set('lang', lang);
+history.replaceState(null,'',u0);
+localStorage.setItem('lang', lang);
+
+const U = () => DATA[lang].ui;
+const A = () => DATA[lang].apt;
+const D = () => DATA[lang].drawers;
+
+const EXTRA = {
+  it:{sectionApt:'🏠 Il tuo soggiorno',sectionRome:'🍷 Vivi Roma',aptCardTitle:'Appartamento',aptCardSub:'Indirizzo, checkout, emergenza',assistantTitle:'Il tuo Concierge a Roma',assistantDesc:"Domande sull'appartamento o su Roma? Il tuo assistente AI è qui.",assistantBtn:'APRI IL CONCIERGE AI',whatsappBtn:'💬 Hai bisogno di aiuto? Scrivimi su WhatsApp'},
+  en:{sectionApt:'🏠 Your Stay',sectionRome:'🍷 Explore Rome',aptCardTitle:'Apartment',aptCardSub:'Address, checkout, emergency',assistantTitle:'Your Rome Concierge',assistantDesc:'Questions about the apartment or Rome? Your AI assistant is here.',assistantBtn:'OPEN AI CONCIERGE',whatsappBtn:'💬 Need help? Message me on WhatsApp'},
+  fr:{sectionApt:'🏠 Votre Séjour',sectionRome:'🍷 Explorer Rome',aptCardTitle:'Appartement',aptCardSub:'Adresse, départ, urgences',assistantTitle:'Votre Concierge à Rome',assistantDesc:"Questions sur l'appartement ou Rome? Votre assistant IA est là.",assistantBtn:'OUVRIR LE CONCIERGE IA',whatsappBtn:"💬 Besoin d'aide? Écrivez-moi sur WhatsApp"},
+  de:{sectionApt:'🏠 Ihr Aufenthalt',sectionRome:'🍷 Rom Entdecken',aptCardTitle:'Apartment',aptCardSub:'Adresse, Checkout, Notfall',assistantTitle:'Ihr Concierge in Rom',assistantDesc:'Fragen zur Wohnung oder zu Rom? Ihr KI-Assistent hilft gern.',assistantBtn:'KI-CONCIERGE ÖFFNEN',whatsappBtn:'💬 Hilfe? WhatsApp schreiben'},
+  es:{sectionApt:'🏠 Tu Estancia',sectionRome:'🍷 Explorar Roma',aptCardTitle:'Apartamento',aptCardSub:'Dirección, salida, emergencias',assistantTitle:'Tu Concierge en Roma',assistantDesc:'¿Preguntas sobre el apartamento o Roma? Tu asistente IA está aquí.',assistantBtn:'ABRIR CONCIERGE IA',whatsappBtn:'💬 ¿Necesitas ayuda? WhatsApp'},
+};
+
+const MODAL_TITLES = {
+  apt:     {en:'🏠 Apartment',it:'🏠 Appartamento',fr:'🏠 Appartement',de:'🏠 Apartment',es:'🏠 Apartamento'},
+  keys:    {en:'🗝 Digital Keys',it:'🗝 Chiavi Digitali',fr:'🗝 Clés Numériques',de:'🗝 Digitale Schlüssel',es:'🗝 Llaves Digitales'},
+  wifi:    {en:'📶 Wi‑Fi',it:'📶 Wi‑Fi',fr:'📶 Wi‑Fi',de:'📶 WLAN',es:'📶 Wi‑Fi'},
+  house:   {en:'🏠 House Guide',it:'🏠 Guida Casa',fr:'🏠 Guide Logement',de:'🏠 Hausführer',es:'🏠 Guía del Piso'},
+  help:    {en:'☎ Need Help?',it:'☎ Hai Bisogno?',fr:"☎ Besoin d'aide?",de:'☎ Hilfe?',es:'☎ ¿Ayuda?'},
+  eat:     {en:'🍝 Eat & Drink',it:'🍝 Mangiare & Bere',fr:'🍝 Manger & Boire',de:'🍝 Essen & Trinken',es:'🍝 Comer & Beber'},
+  tonight: {en:'🌙 Tonight in Rome',it:'🌙 Stasera a Roma',fr:'🌙 Ce soir à Rome',de:'🌙 Heute Abend in Rom',es:'🌙 Esta noche en Roma'},
+  tickets: {en:'🎟 Ticketing',it:'🎟 Biglietteria',fr:'🎟 Billetterie',de:'🎟 Tickets',es:'🎟 Entradas'},
+  transport:{en:'🚋 Transport',it:'🚋 Trasporti',fr:'🚋 Transport',de:'🚋 Transport',es:'🚋 Transporte'},
+  chat:    {en:'💬 AI Concierge',it:'💬 Concierge AI',fr:'💬 Concierge IA',de:'💬 KI-Concierge',es:'💬 Conserje IA'},
+};
+
+function openModal(key) {
+  const bg = document.getElementById('modalBg');
+  const titleEl = document.getElementById('modalTitle');
+  const body = document.getElementById('modalBody');
+  titleEl.textContent = (MODAL_TITLES[key]||{})[lang] || key;
+  if (key === 'chat') {
+    body.innerHTML = buildAssistantUI();
+    bg.classList.add('open');
+    const inp = document.getElementById('romeAiInput');
+    if (inp) {
+      inp.placeholder = U().romeAiPlaceholder;
+      inp.addEventListener('keydown', e => { if(e.key==='Enter') sendRomeAI(); });
+    }
+    buildChips();
+    return;
+  }
+  if (key === 'apt') {
+    body.innerHTML = buildAptContent();
+    bg.classList.add('open');
+    return;
+  }
+  const d = D()[key];
+  if (!d) return;
+  body.innerHTML = typeof d === 'function' ? d(A()) : d;
+  bg.classList.add('open');
+}
+function closeModal() { document.getElementById('modalBg').classList.remove('open'); }
+function outsideClose(e) { if (e.target === document.getElementById('modalBg')) closeModal(); }
+
+function buildAptContent() {
+  const a = A(); const d = D();
+  const addr = typeof d.address==='function' ? d.address(a) : d.address;
+  const co = typeof d.checkout==='function' ? d.checkout(a) : d.checkout;
+  const em = typeof d.emergency==='function' ? d.emergency(a) : d.emergency;
+  const L = {en:{a:'📍 Address',c:'⏰ Checkout',e:'🚨 Emergency'},it:{a:'📍 Indirizzo',c:'⏰ Checkout',e:'🚨 Emergenza'},fr:{a:'📍 Adresse',c:'⏰ Départ',e:'🚨 Urgence'},de:{a:'📍 Adresse',c:'⏰ Checkout',e:'🚨 Notfall'},es:{a:'📍 Dirección',c:'⏰ Salida',e:'🚨 Emergencia'}}[lang]||{a:'📍 Address',c:'⏰ Checkout',e:'🚨 Emergency'};
+  return `<h3>${L.a}</h3>${addr}<h3>${L.c}</h3>${co}<h3>${L.e}</h3>${em}`;
+}
+
+function buildAssistantUI() {
+  return `<div id="romeAiChatVisible" style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px;max-height:45vh;overflow-y:auto"></div><div id="romeChips" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px"></div><div style="display:flex;gap:8px"><input id="romeAiInput" type="text" style="flex:1;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:13px;padding:11px 14px;font-size:14px;color:var(--cream);outline:none;min-width:0" placeholder=""><button onclick="sendRomeAI()" style="background:linear-gradient(135deg,#e8c67a,var(--gold));color:#120d09;font-weight:800;padding:11px 18px;border-radius:13px;font-size:17px;flex-shrink:0;cursor:pointer;border:none">→</button></div>`;
+}
+
+function buildChips() {
+  const el = document.getElementById('romeChips'); if (!el) return;
+  el.innerHTML = '';
+  U().romeChips.forEach(c => {
+    const b = document.createElement('button');
+    b.className = 'mini'; b.textContent = c;
+    b.onclick = () => sendRomeAI(c);
+    el.appendChild(b);
+  });
+}
+
+// ── OTP / SHELLY DOOR OPENING ──
+let tokenExp=null,tokenJti=null,tokenTgt=null,tokenCid=null,tokenDay=null,tokenCt=null;
+if (urlToken) {
+  try {
+    const p = JSON.parse(atob(urlToken.split('.')[1].replace(/-/g,'+').replace(/_/g,'/')));
+    tokenExp=p.exp||null;tokenJti=p.jti||null;tokenTgt=p.tgt||null;tokenCid=p.cid||null;tokenDay=p.day||null;tokenCt=p.ct||null;
+  } catch {}
+}
+function tokenValid(){ return tokenExp && Date.now()<tokenExp*1000; }
+let sessionToken = sessionStorage.getItem('st_trastevere')||'';
+function sessionValid(){
+  if(!sessionToken) return false;
+  try{ const p=JSON.parse(atob(sessionToken.split('.')[1].replace(/-/g,'+').replace(/_/g,'/'))); return p.exp&&Date.now()<p.exp*1000; }catch{return false;}
+}
+let otpSent=false;
+
+const DOOR_LABELS={
+  en:{building:'🚪 Open Building Door',door:'🗖 Open Apartment Door',send:'Send verification code',codePlaceholder:'6-digit code',verify:'Verify',verifying:'Verifying…',wrongCode:'Wrong code, try again.',sending:'Sending…',codeSent:'Code sent to your registered contact. Enter it below:',expired:'Access expired (24h). Contact:',opening:'Opening…',opened:'Opened!',verifyTitle:'Verify your identity to unlock door access',confirmBuilding:'Open the building door only when you are standing in front of the entrance.',confirmDoor:'Open the apartment door only when you are in front of it.'},
+  it:{building:'🚪 Apri Portone',door:'🗖 Apri Porta Appartamento',send:'Invia codice di verifica',codePlaceholder:'Codice a 6 cifre',verify:'Verifica',verifying:'Verifica…',wrongCode:'Codice errato, riprova.',sending:'Invio…',codeSent:'Codice inviato al tuo contatto. Inseriscilo:',expired:'Accesso scaduto (24h). Chiama:',opening:'Apertura…',opened:'Aperto!',verifyTitle:"Verifica la tua identità per sbloccare l'accesso",confirmBuilding:"Apri il portone solo quando sei davanti all'edificio.",confirmDoor:"Apri la porta solo quando sei davanti all'appartamento."},
+  fr:{building:'🚪 Ouvrir Portail',door:'🗖 Ouvrir Appartement',send:'Envoyer le code',codePlaceholder:'Code 6 chiffres',verify:'Vérifier',verifying:'Vérification…',wrongCode:'Code incorrect.',sending:'Envoi…',codeSent:'Code envoyé. Entrez-le:',expired:'Accès expiré (24h). Contactez:',opening:'Ouverture…',opened:'Ouvert!',verifyTitle:"Vérifiez votre identité pour débloquer l'accès",confirmBuilding:"Ouvrez le portail uniquement devant l'entrée.",confirmDoor:"Ouvrez la porte uniquement devant l'appartement."},
+  de:{building:'🚪 Gebäude öffnen',door:'🗖 Wohnung öffnen',send:'Zugangscode senden',codePlaceholder:'6-stelliger Code',verify:'Bestätigen',verifying:'Bestätige…',wrongCode:'Falscher Code.',sending:'Sende…',codeSent:'Code gesendet. Bitte eingeben:',expired:'Zugang abgelaufen (24h). Kontakt:',opening:'Öffne…',opened:'Geöffnet!',verifyTitle:'Identität bestätigen um Zugang freizuschalten',confirmBuilding:'Bitte nur öffnen wenn Sie davor stehen.',confirmDoor:'Bitte nur öffnen wenn Sie davor stehen.'},
+  es:{building:'🚪 Abrir Portal',door:'🗖 Abrir Apartamento',send:'Enviar código',codePlaceholder:'Código 6 dígitos',verify:'Verificar',verifying:'Verificando…',wrongCode:'Código incorrecto.',sending:'Enviando…',codeSent:'Código enviado. Intróducelo:',expired:'Acceso expirado (24h). Contacta:',opening:'Abriendo…',opened:'Abierto!',verifyTitle:'Verifica tu identidad para desbloquear el acceso',confirmBuilding:'Abre el portal solo cuando estés frente al edificio.',confirmDoor:'Abre la puerta solo cuando estés frente al apartamento.'},
+};
+
+function buildKeysHTML(a){
+  const lbl=DOOR_LABELS[lang]||DOOR_LABELS.en;
+  const email=`<div style="text-align:center;padding:16px 0"><div style="font-size:48px;margin-bottom:16px">📧</div><p style="font-weight:700;margin-bottom:12px;color:var(--cream)">${a.keys_msg}</p><p style="font-size:12px;color:var(--muted);margin-top:14px">${U().footerHelp} <a href="tel:${a.phone}" style="color:var(--gold)">${a.phone}</a></p></div>`;
+  if(!urlToken) return email;
+  if(!tokenValid()) return email+`<div style="margin-top:12px;padding:13px;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.25);border-radius:14px;font-size:13px;color:#fca5a5;text-align:center">⏱ ${lbl.expired} <a href="tel:${a.phone}" style="color:var(--gold)">${a.phone}</a></div>`;
+  if(!(tokenTgt&&tokenTgt.startsWith('checkin-'))) return email;
+  if(!tokenCid||sessionValid()){
+    let btns=`<button onclick="shellyOpen('building')" id="open-building-btn" style="width:100%;background:linear-gradient(135deg,#e8c67a,var(--gold));color:#120d09;padding:14px;border-radius:16px;font-weight:800;font-size:15px;border:none;cursor:pointer;margin-top:12px">${lbl.building}</button>`;
+    if(HAS_DOOR) btns+=`<button onclick="shellyOpen('door')" id="open-door-btn" style="width:100%;background:#1d4ed8;color:#fff;padding:14px;border-radius:16px;font-weight:800;font-size:15px;border:none;cursor:pointer;margin-top:10px">${lbl.door}</button>`;
+    return email+btns;
+  }
+  const otp=otpSent
+    ?`<div style="margin-top:16px"><p style="font-size:13px;color:var(--muted);margin-bottom:8px">${lbl.codeSent}</p><input id="otp-input" type="tel" inputmode="numeric" maxlength="6" placeholder="${lbl.codePlaceholder}" style="width:100%;padding:13px;background:rgba(255,255,255,.07);border:1px solid var(--border);border-radius:13px;font-size:22px;text-align:center;letter-spacing:8px;margin-bottom:8px;color:var(--cream)"><button onclick="verifyOtp()" id="verify-btn" style="width:100%;background:linear-gradient(135deg,#e8c67a,var(--gold));color:#120d09;padding:14px;border-radius:16px;font-weight:800;font-size:15px;border:none;cursor:pointer">${lbl.verify}</button><p id="otp-error" style="font-size:12px;color:#fca5a5;margin-top:8px;text-align:center"></p></div>`
+    :`<div style="margin-top:16px;padding:16px;background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:18px;text-align:center"><p style="font-size:13px;color:var(--muted);margin-bottom:13px">🔐 ${lbl.verifyTitle}</p><button onclick="requestOtp()" id="send-otp-btn" style="width:100%;background:linear-gradient(135deg,#e8c67a,var(--gold));color:#120d09;padding:14px;border-radius:16px;font-weight:800;font-size:15px;border:none;cursor:pointer">${lbl.send}</button><p id="send-otp-error" style="font-size:12px;color:#fca5a5;margin-top:8px;text-align:center"></p></div>`;
+  return email+otp;
+}
+
+async function requestOtp(){
+  const btn=document.getElementById('send-otp-btn'),errEl=document.getElementById('send-otp-error'),lbl=DOOR_LABELS[lang]||DOOR_LABELS.en;
+  if(btn){btn.disabled=true;btn.textContent=lbl.sending;}
+  if(errEl) errEl.textContent='';
+  const fail={en:'Unable to send code. Please call:',it:'Impossibile inviare il codice. Chiama:',fr:"Impossible d'envoyer le code. Appelez:",de:'Fehler beim Senden. Rufen Sie an:',es:'Error al enviar. Llame:'};
+  try{
+    const r=await fetch(`${SERVER_URL}/checkin/trastevere/send-otp?t=${urlToken}&lang=${lang}`,{method:'POST'});
+    const j=await r.json();
+    if(j.ok){otpSent=true;openModal('keys');}
+    else{if(btn){btn.disabled=false;btn.textContent=lbl.send;}if(errEl)errEl.textContent=(fail[lang]||fail.en)+' '+A().phone;}
+  }catch{if(btn){btn.disabled=false;btn.textContent=lbl.send;}if(errEl)errEl.textContent='Network error. Call: '+A().phone;}
+}
+
+async function verifyOtp(){
+  const input=document.getElementById('otp-input'),btn=document.getElementById('verify-btn'),errEl=document.getElementById('otp-error');
+  if(!input||!btn) return;
+  const code=input.value.trim(); if(code.length<4) return;
+  btn.disabled=true;btn.textContent=(DOOR_LABELS[lang]||DOOR_LABELS.en).verifying;
+  try{
+    const r=await fetch(`${SERVER_URL}/checkin/trastevere/verify-otp?t=${urlToken}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({code})});
+    const j=await r.json();
+    if(j.ok&&j.st){sessionToken=j.st;sessionStorage.setItem('st_trastevere',j.st);otpSent=false;openModal('keys');}
+    else{if(errEl)errEl.textContent=(DOOR_LABELS[lang]||DOOR_LABELS.en).wrongCode;btn.disabled=false;btn.textContent=(DOOR_LABELS[lang]||DOOR_LABELS.en).verify;}
+  }catch{btn.disabled=false;}
+}
+
+async function shellyOpen(type){
+  const lbl=DOOR_LABELS[lang]||DOOR_LABELS.en;
+  if(!confirm(type==='building'?lbl.confirmBuilding:lbl.confirmDoor)) return;
+  const btn=document.getElementById(`open-${type}-btn`); if(!btn) return;
+  const orig=btn.textContent; btn.disabled=true;btn.textContent=lbl.opening;
+  try{
+    const ep=tokenCid
+      ?`${SERVER_URL}/checkin/trastevere/open/${type}?t=${urlToken}&st=${sessionToken}`
+      :`${SERVER_URL}/checkin/trastevere/open-direct/${type}?t=${urlToken}`;
+    const r=await fetch(ep,{method:'POST'});const j=await r.json();
+    if(j.ok){
+      btn.textContent=lbl.opened;btn.style.background='#22c55e';btn.style.color='#fff';
+      setTimeout(()=>{
+        btn.textContent=orig;
+        btn.style.background=type==='building'?'linear-gradient(135deg,#e8c67a,var(--gold))':'#1d4ed8';
+        btn.style.color=type==='building'?'#120d09':'#fff';
+        btn.disabled=false;
+      },4000);
+    }
+    else if(['otp_required','bad_session_token','session_expired'].includes(j.error)){
+      sessionToken='';sessionStorage.removeItem('st_trastevere');btn.disabled=false;btn.textContent=orig;openModal('keys');
+    }
+    else{btn.textContent='✗';btn.disabled=false;setTimeout(()=>{btn.textContent=orig;},3000);}
+  }catch{btn.textContent='✗';btn.disabled=false;setTimeout(()=>{btn.textContent=orig;},3000);}
+}
+
+// ── RENDER ──
+function setLang(l){
+  lang=l;localStorage.setItem('lang',l);
+  const u=new URL(location.href);u.searchParams.set('lang',l);history.replaceState(null,'',u);
+  romeAiHistory=[];closeModal();renderUI();
+}
+
+function setText(id,txt){const el=document.getElementById(id);if(el)el.textContent=txt;}
+
+function renderUI(){
+  const ui=U(),ex=EXTRA[lang]||EXTRA.it;
+  setText('heroTitle',ui.heroTitle);
+  setText('heroSub',ui.heroSub);
+  setText('aptLabel',ui.aptLabel);
+  setText('phasePill',(ui.phaseBadge||[])[phase-1]||'');
+  setText('phase1Text',ui.phase1Text);
+  setText('sectionAptHead',ex.sectionApt);
+  setText('sectionAptTitle',ui.aptTitle);
+  setText('aptCardTitle',ex.aptCardTitle);
+  setText('aptCardSub',ex.aptCardSub);
+  setText('keysTitle',ui.keysTitle);setText('keysSub',ui.keysSub);
+  setText('wifiTitle',ui.wifiTitle);setText('wifiSub',ui.wifiSub);
+  setText('houseTitle',ui.houseTitle);setText('houseSub',ui.houseSub);
+  setText('helpTitle',ui.helpTitle);setText('helpSub',ui.helpSub);
+  setText('sectionRomeHead',ex.sectionRome);
+  setText('sectionRomeTitle',ui.romeTitle);
+  setText('eatTitle',ui.eatTitle);setText('eatSub',ui.eatSub);
+  setText('tonightTitle',ui.tonightTitle);setText('tonightSub',ui.tonightSub);
+  setText('tickTitle',ui.tickTitle);setText('tickSub',ui.tickSub);
+  setText('transTitle',ui.transTitle);setText('transSub',ui.transSub);
+  setText('assistantTitle',ex.assistantTitle);
+  setText('assistantDesc',ex.assistantDesc);
+  setText('assistantBtn',ex.assistantBtn);
+  const wa=document.getElementById('whatsappBtn');if(wa)wa.textContent=ex.whatsappBtn;
+  document.querySelectorAll('.langBtn').forEach(b=>b.classList.toggle('active',b.dataset.lang===lang));
+  loadPhase();
+}
+
+function applyPhase(){
+  const lock=document.getElementById('phaseLock'),grid=document.getElementById('aptGrid'),keys=document.getElementById('keysCard');
+  if(lock)lock.style.display=phase===1?'block':'none';
+  if(grid)grid.style.display=phase<2?'none':'block';
+  if(keys){
+    keys.classList.toggle('locked',phase<3);
+    if(phase===3){
+      // Keys expire 2.5h after check-in
+      const _ct=tokenCt||'13:00';
+      const [_ctH,_ctM]=_ct.split(':').map(Number);
+      const _expMin=_ctH*60+_ctM+150;
+      let _keysExpired=false;
+      try{
+        const _s=new Date().toLocaleString('en-US',{timeZone:'Europe/Rome',hour:'2-digit',minute:'2-digit',hour12:false});
+        const [_nH,_nM]=_s.split(':').map(Number);
+        const _today=new Date().toLocaleDateString('en-CA',{timeZone:'Europe/Rome'});
+        _keysExpired=(tokenDay&&tokenDay<_today)||(_nH*60+_nM>=_expMin);
+      }catch{}
+      const icon=keys.querySelector('.cardIcon');
+      if(_keysExpired){
+        if(icon)icon.textContent='🔒';
+        keys.classList.add('locked');
+        const _expMsg={en:'Keys expired. Your physical keys are in the apartment.',it:'Chiavi scadute. Le chiavi fisiche si trovano in appartamento.',fr:"Clés expirées. Les clés physiques se trouvent dans l'appartement.",de:'Schlüssel abgelaufen. Die physischen Schlüssel befinden sich in der Wohnung.',es:'Llaves caducadas. Las llaves físicas están en el apartamento.'};
+        keys.onclick=()=>{alert(_expMsg[lang]||_expMsg.en);};
+      }else{
+        if(icon)icon.textContent='✅';
+        const checkinUrl=`${SERVER_URL}/checkin/trastevere/?d=${tokenDay||''}`;
+        keys.onclick=()=>{ window.location.href=checkinUrl; };
+      }
+    }
+  }
+  const heroBox=document.getElementById('heroAddrBox');
+  if(heroBox)heroBox.style.display=phase===3?'none':'';
+  setText('phasePill',(U().phaseBadge||[])[phase-1]||'');
+}
+
+function handleOpen(){
+  if(phase<3){alert(U().keysPhase2);}else{openModal('keys');}
+}
+
+// ── GEMINI AI ──
+let romeAiHistory=[];
+
+function buildRomeSystemPrompt(){
+  const a=A();
+  return `You are the concierge for Viale Trastevere 108, Rome (NiceFlatInRome), located on the main boulevard of Trastevere — one of Rome's most vibrant neighborhoods, known for its restaurants, nightlife, Santa Maria in Trastevere, Porta Portese Sunday market, and the beautiful Gianicolo hill. Always respond in ${{en:'English',it:'Italian',fr:'French',de:'German',es:'Spanish'}[lang]||'Italian'}, regardless of what language the user types. Be warm, detailed and genuinely helpful. For ANY question about restaurants, bars, food, services or attractions: always give at least 3 specific recommendations using EXACTLY this format for each one — Name | Address | Phone or website | Hours | Price range | Short description. Use your full knowledge of Rome. Example: Ba'Ghetto | Via del Portico d'Ottavia 2 | +39 06 6889 2868 | Mon-Thu 12-15 & 19-23 | €30-50 | Kosher Roman-Jewish cuisine, excellent carciofi alla giudia. Always follow this format. Never give vague or generic answers.\n\nThis is a larger apartment: ${a.bedrooms} | Host: Michele, WhatsApp: https://wa.me/393355245756 | Concierge: ${a.concierge} | Registration: ${a.registration}\n\nApartment info: Check-in from ${a.checkin_time} | Check-out by ${a.checkout_time} | Wi-Fi: ${a.wifi_note} | SSID: ${a.wifi_ssid} | Password: ${a.wifi_password} | Phone: ${a.phone} | Water: ${a.water_note} | AC: ${a.ac_note} | Gas stove: ${a.gas} | Bathroom warning: ${a.bathroom_notice} | Pharmacy: ${a.pharmacy} | Hospital: ${a.hospital} | Transport: ${a.city_transport} | Airports: ${a.airports} | Taxi: ${a.taxi} | Emergency: ${a.emergency} | Checkout: ${a.checkout_note} | Keys: ${a.keys_msg} | Restaurants: ${a.eat} | Bars: ${a.drink} | Tonight: ${a.tonight} | Visit: ${a.visit}`;
+}
+
+async function sendRomeAI(prefill){
+  const input=document.getElementById('romeAiInput');
+  const text=prefill||(input?input.value.trim():'');
+  if(!text) return;
+  if(input) input.value='';
+  addRomeBubble(text,'user');
+  const spin=addRomeBubble('<div class="spin"></div>','bot');
+  try{
+    const res=await fetch(`${SERVER_URL}/api/ai/guide`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:text,systemPrompt:buildRomeSystemPrompt(),history:romeAiHistory})});
+    const json=await res.json();
+    if(!json.ok||!json.reply) throw new Error();
+    spin.innerHTML=(function renderMd(t){
+      var lines=t.split('\n'),html='',inList=false;
+      for(var i=0;i<lines.length;i++){
+        var l=lines[i].trim();
+        if(!l){if(inList){html+='</div>';inList=false;}html+='<div style="height:6px"></div>';continue;}
+        var isBullet=/^[\*\-]\s+/.test(l);
+        var hasBold=/\*\*/.test(l);
+        if(isBullet&&hasBold){
+          if(inList){html+='</div>';inList=false;}
+          var content=l.replace(/^[\*\-]\s+/,'');
+          var parts=content.split('|').map(function(p){return p.trim();});
+          var name=parts[0].replace(/\*\*/g,'');
+          var details=parts.slice(1).filter(Boolean);
+          html+='<div style="background:rgba(214,176,109,.07);border:1px solid rgba(214,176,109,.18);border-radius:12px;padding:12px 14px;margin:8px 0">';
+          html+='<div style="font-weight:700;color:#d6b06d;font-size:14px;margin-bottom:5px">'+name+'</div>';
+          for(var j=0;j<details.length;j++){
+            html+='<div style="font-size:12px;color:#b7a894;line-height:1.6;padding:1px 0">'+details[j]+'</div>';
+          }
+          html+='</div>';
+        } else if(isBullet){
+          if(!inList){html+='<div style="margin:6px 0">';inList=true;}
+          html+='<div style="padding:2px 0 2px 10px;font-size:13px">• '+l.replace(/^[\*\-]\s+/,'').replace(/\*\*(.+?)\*\*/g,'<strong style="color:#d6b06d">$1</strong>')+'</div>';
+        } else {
+          if(inList){html+='</div>';inList=false;}
+          html+='<div style="margin:3px 0;font-size:13px">'+l.replace(/\*\*(.+?)\*\*/g,'<strong style="color:#d6b06d">$1</strong>')+'</div>';
+        }
+      }
+      if(inList)html+='</div>';
+      return html;
+    })(json.reply);
+    romeAiHistory.push({role:'user',parts:[{text}]});
+    romeAiHistory.push({role:'model',parts:[{text:json.reply}]});
+  }catch{spin.innerHTML='⚠️ '+A().phone;}
+}
+
+function addRomeBubble(html,role){
+  const wrap=document.getElementById('romeAiChatVisible');
+  if(!wrap) return {innerHTML:''};
+  const d=document.createElement('div');
+  d.className=role==='user'?'bubble-user':'bubble-bot';
+  d.innerHTML=html;
+  wrap.appendChild(d);
+  wrap.scrollTop=wrap.scrollHeight;
+  return d;
+}
+
+
+// ── Weather & Clock widget ────────────────────────────────────────────────
+const WEATHER_FORECAST_URLS = {
+  it: 'https://www.meteoblue.com/it/tempo/settimana/roma_italia_3169070',
+  en: 'https://www.meteoblue.com/en/weather/week/rome_italy_3169070',
+  fr: 'https://www.meteoblue.com/fr/meteo/semaine/rome_italie_3169070',
+  de: 'https://www.meteoblue.com/de/wetter/woche/rom_italien_3169070',
+  es: 'https://www.meteoblue.com/es/tiempo/semana/roma_italia_3169070',
+};
+function openWeather(e){
+  e.preventDefault();
+  const url = WEATHER_FORECAST_URLS[lang] || WEATHER_FORECAST_URLS.en;
+  window.open(url,'_blank','noopener');
+}
+function padZ(n){return String(n).padStart(2,'0');}
+function updateClock(){
+  try{
+    const s=new Date().toLocaleTimeString('it-IT',{timeZone:'Europe/Rome',hour:'2-digit',minute:'2-digit',hour12:false});
+    const el=document.getElementById('wTime');
+    if(el)el.textContent=s;
+  }catch(e){}
+}
+async function fetchWeather(){
+  try{
+    const r=await fetch('https://api.open-meteo.com/v1/forecast?latitude=41.9028&longitude=12.4964&current=temperature_2m,weathercode&timezone=Europe/Rome');
+    const j=await r.json();
+    const temp=Math.round(j?.current?.temperature_2m);
+    const code=j?.current?.weathercode;
+    const icons={0:'☀️',1:'🌤',2:'⛅',3:'☁️',45:'🌫',48:'🌫',51:'🌦',53:'🌦',55:'🌧',61:'🌧',63:'🌧',65:'🌧',71:'🌨',73:'🌨',75:'🌨',80:'🌦',81:'🌧',82:'🌧',95:'⛈',96:'⛈',99:'⛈'};
+    const icon=icons[code]||'🌡';
+    const tEl=document.getElementById('wTemp');
+    const iEl=document.getElementById('wIcon');
+    if(tEl)tEl.textContent=temp+'°';
+    if(iEl)iEl.textContent=icon;
+  }catch(e){}
+}
+updateClock();
+setInterval(updateClock,10000);
+fetchWeather();
+setInterval(fetchWeather,10*60*1000);
+// ── End Weather widget ────────────────────────────────────────────────────
+
+renderUI();
 </script>
-<script src="../shared/concierge.js?v=4"></script>
+<!-- PWA Full-Screen Install -->
+<div id="pwaScreen" style="display:none;position:fixed;inset:0;z-index:99999;background:#120d09;flex-direction:column;align-items:center;justify-content:center;padding:40px 24px;text-align:center;overflow-y:auto">
+  <img src="/guides/icons/icon-192.png" style="width:100px;height:100px;border-radius:24px;margin-bottom:22px;box-shadow:0 8px 40px rgba(0,0,0,0.6)">
+  <div style="font-size:11px;font-weight:700;letter-spacing:3px;color:#d6b06d;text-transform:uppercase;margin-bottom:6px">NiceFlat</div>
+  <div style="font-size:28px;font-weight:800;color:#f5ead8;margin-bottom:10px;line-height:1.2">Rome Concierge</div>
+  <div style="font-size:15px;color:#b7a894;margin-bottom:36px;line-height:1.6;max-width:300px">Your apartment guide &amp; self check-in.<br>Install the app to get started.</div>
+
+  <!-- iOS instructions -->
+  <div id="pwaIOS" style="display:none;width:100%;max-width:360px">
+    <div style="background:rgba(214,176,109,0.07);border:1px solid rgba(214,176,109,0.2);border-radius:22px;padding:28px 22px;margin-bottom:28px">
+      <div style="display:flex;align-items:center;gap:16px;margin-bottom:22px">
+        <div style="background:rgba(214,176,109,0.18);border-radius:14px;min-width:48px;height:48px;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;color:#d6b06d">1</div>
+        <div style="text-align:left">
+          <div style="color:#f5ead8;font-size:15px;font-weight:700">Tap the Share button</div>
+          <div style="color:#b7a894;font-size:13px;margin-top:3px">The <span style="color:#d6b06d;font-size:16px">⬆</span> icon at the bottom of Safari</div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:16px;margin-bottom:22px">
+        <div style="background:rgba(214,176,109,0.18);border-radius:14px;min-width:48px;height:48px;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;color:#d6b06d">2</div>
+        <div style="text-align:left">
+          <div style="color:#f5ead8;font-size:15px;font-weight:700">Tap "Add to Home Screen"</div>
+          <div style="color:#b7a894;font-size:13px;margin-top:3px">Scroll the menu and tap the <span style="color:#d6b06d">+</span> icon</div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:16px">
+        <div style="background:rgba(214,176,109,0.18);border-radius:14px;min-width:48px;height:48px;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;color:#d6b06d">3</div>
+        <div style="text-align:left">
+          <div style="color:#f5ead8;font-size:15px;font-weight:700">Tap "Add"</div>
+          <div style="color:#b7a894;font-size:13px;margin-top:3px">The app will appear on your Home Screen</div>
+        </div>
+      </div>
+    </div>
+    <div style="animation:pwaBounce 1.3s ease-in-out infinite;color:#d6b06d;font-size:36px;line-height:1">↓</div>
+    <div style="color:#b7a894;font-size:12px;margin-top:6px">Share button is at the bottom of Safari</div>
+  </div>
+
+  <!-- Android install button -->
+  <div id="pwaAndroid" style="display:none;width:100%;max-width:360px">
+    <button id="pwaInstallBtn" style="width:100%;padding:20px;background:linear-gradient(135deg,#e8c67a,#c89a48);color:#120d09;font-weight:800;font-size:18px;border-radius:18px;border:none;cursor:pointer;letter-spacing:0.3px;box-shadow:0 6px 28px rgba(214,176,109,0.35)">
+      📲 &nbsp;Add to your phone
+    </button>
+    <div style="color:#b7a894;font-size:12px;margin-top:16px">Free · Works offline · No app store needed</div>
+  </div>
+</div>
+
+<style>
+@keyframes pwaBounce{0%,100%{transform:translateY(0)}50%{transform:translateY(10px)}}
+</style>
+
+<script>
+(function(){
+  var isIOS=/iphone|ipad|ipod/i.test(navigator.userAgent)&&!window.MSStream;
+  var isAndroid=/android/i.test(navigator.userAgent);
+  var isMobile=isIOS||isAndroid;
+  var isStandalone=window.matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;
+  if(isStandalone||!isMobile) return;
+  var scr=document.getElementById('pwaScreen');
+  scr.style.display='flex';
+  if(isIOS){
+    document.getElementById('pwaIOS').style.display='block';
+    return;
+  }
+  var deferredPrompt=null;
+  var androidDiv=document.getElementById('pwaAndroid');
+  window.addEventListener('beforeinstallprompt',function(e){
+    e.preventDefault();
+    deferredPrompt=e;
+    androidDiv.style.display='block';
+    document.getElementById('pwaInstallBtn').onclick=function(){
+      deferredPrompt.prompt();
+      deferredPrompt.userChoice.then(function(r){
+        deferredPrompt=null;
+        if(r.outcome==='accepted') scr.style.display='none';
+      });
+    };
+  });
+  window.addEventListener('appinstalled',function(){ scr.style.display='none'; });
+})();
+if('serviceWorker' in navigator){
+  window.addEventListener('load',function(){ navigator.serviceWorker.register('/sw.js'); });
+}
+</script>
 </body>
 </html>

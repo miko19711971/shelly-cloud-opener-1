@@ -1,16 +1,1163 @@
-<!DOCTYPE html>
-<html lang="it">
+<!doctype html>
+<html lang="en">
 <head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Via Leonina Premium Concierge</title>
-<link rel="stylesheet" href="../shared/concierge.css?v=4"/>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NiceFlat Rome Concierge — Via Leonina</title>
+<link rel="manifest" href="/guides/leonina/manifest.webmanifest">
+<meta name="theme-color" content="#120d09">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Rome Concierge">
+<link rel="apple-touch-icon" href="/guides/icons/icon-192.png">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#120d09;--card:#211811;--card2:#2b2119;--gold:#d6b06d;--cream:#f5ead8;
+  --muted:#b7a894;--line:rgba(214,176,109,.22);--shadow:0 18px 45px rgba(0,0,0,.35);
+  --border:rgba(214,176,109,.18);--sheet:#1a1208;
+}
+html,body{
+  background:radial-gradient(circle at top,rgba(214,176,109,.18),transparent 34%),
+             linear-gradient(180deg,#18100b 0%,#0e0a07 100%);
+  color:var(--cream);font-family:system-ui,-apple-system,sans-serif;
+  min-height:100vh;padding-bottom:90px;
+}
+button{cursor:pointer;border:none;background:none;font:inherit;color:inherit}
+button:active{transform:scale(.97)}
+a{color:var(--gold)}
+
+/* ── LANG BAR ── */
+.langBar{
+  display:flex;justify-content:center;gap:10px;
+  padding:14px 0 10px;position:sticky;top:0;z-index:20;
+  background:rgba(18,13,9,.92);backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--line);
+}
+.langBtn{
+  display:inline-flex;align-items:center;justify-content:center;
+  padding:4px 6px;border-radius:8px;border:none;background:none;cursor:pointer;
+  opacity:.35;transition:opacity .18s,transform .18s,box-shadow .18s;
+}
+.langBtn img{
+  width:28px;height:20px;border-radius:3px;display:block;
+  box-shadow:0 1px 4px rgba(0,0,0,.45);
+}
+.langBtn.active{opacity:1;transform:scale(1.18);}
+.langBtn.active img{box-shadow:0 0 0 2px rgba(214,176,109,.7),0 2px 8px rgba(0,0,0,.5);}
+.langBtn:hover{opacity:.75}
+.langBtn.active{
+  border-color:var(--gold);
+  background:rgba(214,176,109,.14);
+  transform:scale(1.1);
+  box-shadow:0 0 12px rgba(214,176,109,.28);
+}
+
+/* ── HERO ── */
+.hero{padding:40px 20px 30px;text-align:center;}
+.heroBadge{
+  font-size:9px;letter-spacing:.42em;text-transform:uppercase;
+  color:var(--gold);margin-bottom:16px;
+  display:inline-block;
+  border:1px solid var(--line);border-radius:999px;padding:5px 16px;
+}
+.heroTitle{font-size:32px;font-weight:700;color:var(--cream);line-height:1.2;margin-bottom:8px;}
+.heroSub{font-size:13px;color:var(--muted);line-height:1.65;max-width:300px;margin:0 auto 26px;}
+.heroAddr{
+  background:rgba(214,176,109,.06);
+  border:1px solid var(--line);
+  border-radius:22px;padding:16px 20px;
+  display:flex;align-items:center;justify-content:space-between;
+  gap:14px;max-width:380px;margin:0 auto;
+  box-shadow:var(--shadow);
+}
+.heroAddrLabel{font-size:9px;letter-spacing:.24em;text-transform:uppercase;color:var(--gold);margin-bottom:4px;}
+.heroAddrText{font-size:13px;color:var(--cream);line-height:1.45;text-align:left;}
+.openBtn{
+  background:linear-gradient(135deg,#e2c07a,var(--gold));
+  color:#120d09;font-weight:800;font-size:10px;
+  padding:9px 15px;border-radius:12px;white-space:nowrap;
+  letter-spacing:.08em;flex-shrink:0;
+  box-shadow:0 4px 14px rgba(214,176,109,.35);
+  transition:box-shadow .2s,transform .15s;
+}
+.openBtn:hover{box-shadow:0 6px 20px rgba(214,176,109,.5);}
+.phasePill{
+  display:block;text-align:center;font-size:10px;
+  letter-spacing:.14em;text-transform:uppercase;color:var(--muted);
+  background:rgba(255,255,255,.04);border:1px solid var(--line);
+  border-radius:999px;padding:5px 16px;width:fit-content;margin:12px auto 0;
+}
+
+/* ── SECTIONS ── */
+.section{padding:26px 18px 8px;}
+.sectionHead{
+  font-size:10px;letter-spacing:.32em;text-transform:uppercase;
+  color:var(--gold);margin-bottom:7px;
+}
+.sectionTitle{font-size:22px;font-weight:700;color:var(--cream);margin-bottom:16px;}
+.sectionAptRow{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-bottom:0}
+#weatherWidget{display:flex;align-items:center;gap:10px;background:rgba(214,176,109,.07);border:1px solid rgba(214,176,109,.18);border-radius:12px;padding:8px 14px;cursor:pointer;text-decoration:none;flex-shrink:0}
+#weatherWidget:active{opacity:.75}
+#wTime{font-size:15px;font-weight:800;color:#f5ead8;font-variant-numeric:tabular-nums;min-width:42px}
+#wTemp{font-size:15px;font-weight:700;color:#d6b06d}
+#wIcon{font-size:18px;line-height:1}
+#wArrow{font-size:11px;color:#b7a894;margin-left:2px;opacity:.7}
+.phaseLock{
+  margin:0 16px;background:var(--card);
+  border:1px solid var(--line);border-radius:22px;
+  padding:34px 24px;text-align:center;
+  box-shadow:var(--shadow);
+}
+.phaseLock .li{font-size:42px;margin-bottom:16px;}
+.phaseLock p{font-size:13px;color:var(--muted);line-height:1.65;}
+
+/* ── CARDS ── */
+.cardGrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.aptGrid{padding:0 16px 10px;}
+.romeGrid{padding:0 16px 10px;}
+.card{
+  background:var(--card);border:1px solid var(--line);
+  border-radius:20px;padding:20px 16px;cursor:pointer;
+  transition:border-color .2s,box-shadow .2s,transform .15s;
+  text-align:left;
+  box-shadow:0 4px 18px rgba(0,0,0,.22);
+}
+.card:hover{
+  border-color:rgba(214,176,109,.42);
+  box-shadow:0 8px 28px rgba(0,0,0,.35);
+  transform:translateY(-1px);
+}
+.card.locked{opacity:.28;pointer-events:none;filter:blur(1px);}
+.cardIcon{font-size:28px;margin-bottom:12px;}
+.cardTitle{font-size:13px;font-weight:600;color:var(--cream);margin-bottom:4px;}
+.cardSub{font-size:11px;color:var(--muted);line-height:1.45;}
+
+/* ── ASSISTANT ── */
+.assistant{
+  background:linear-gradient(135deg,var(--card2),var(--card));
+  border:1px solid var(--line);border-radius:24px;
+  margin:20px 16px;padding:30px 24px;text-align:center;
+  box-shadow:var(--shadow);
+  position:relative;overflow:hidden;
+}
+.assistant::before{
+  content:'';position:absolute;top:-40px;right:-40px;
+  width:160px;height:160px;
+  background:radial-gradient(circle,rgba(214,176,109,.12),transparent 70%);
+  pointer-events:none;
+}
+.assistantTitle{font-size:20px;font-weight:700;color:var(--cream);margin-bottom:8px;}
+.assistantDesc{font-size:13px;color:var(--muted);line-height:1.65;margin-bottom:20px;}
+.bigbtn{
+  display:block;width:100%;
+  background:linear-gradient(135deg,#e2c07a,var(--gold));
+  color:#120d09;font-weight:800;font-size:12px;
+  letter-spacing:.1em;padding:14px;border-radius:14px;
+  box-shadow:0 6px 20px rgba(214,176,109,.32);
+  transition:box-shadow .2s,transform .15s;
+}
+.bigbtn:hover{box-shadow:0 8px 28px rgba(214,176,109,.48);transform:translateY(-1px);}
+
+/* ── FOOTER ── */
+footer{padding:16px 16px 0;text-align:center;}
+.waFooter{
+  display:inline-block;
+  background:rgba(37,211,102,.08);
+  border:1px solid rgba(37,211,102,.3);
+  border-radius:14px;padding:12px 20px;
+  font-size:12px;color:#4ade80;font-weight:500;
+  text-decoration:none;
+  transition:background .2s;
+}
+.waFooter:hover{background:rgba(37,211,102,.15);}
+
+/* ── WHATSAPP FLOAT ── */
+.whatsappFloat{
+  position:fixed;bottom:22px;right:18px;
+  width:54px;height:54px;background:#25D166;
+  border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-size:26px;z-index:100;text-decoration:none;
+  box-shadow:0 4px 20px rgba(37,211,102,.42);
+  transition:transform .2s,box-shadow .2s;
+}
+.whatsappFloat:hover{transform:scale(1.08);box-shadow:0 6px 28px rgba(37,211,102,.55);}
+
+/* ── MODAL / SHEET ── */
+.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:200;align-items:flex-end;justify-content:center;}
+.modal.open{display:flex;}
+.sheet{
+  background:var(--sheet);border-radius:24px 24px 0 0;
+  width:100%;max-width:500px;max-height:90vh;
+  overflow-y:auto;padding-bottom:env(safe-area-inset-bottom,18px);
+  box-shadow:0 -12px 50px rgba(0,0,0,.5);
+}
+.sheetHandle{width:36px;height:4px;background:rgba(214,176,109,.25);border-radius:2px;margin:13px auto 0;}
+.sheetHeader{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:15px 20px;border-bottom:1px solid var(--line);
+  position:sticky;top:0;background:var(--sheet);z-index:1;
+}
+.sheetHeader h3{font-size:15px;font-weight:600;color:var(--cream);}
+.closeBtn{
+  width:32px;height:32px;border-radius:50%;
+  background:rgba(255,255,255,.07);color:var(--muted);
+  font-size:18px;display:flex;align-items:center;justify-content:center;
+  transition:background .15s;
+}
+.closeBtn:hover{background:rgba(255,255,255,.12);}
+.sheetBody{padding:20px;}
+.sheetBody h3{
+  color:var(--gold);font-size:11px;font-weight:700;
+  letter-spacing:.12em;text-transform:uppercase;
+  margin-top:18px;margin-bottom:6px;border-top:1px solid var(--line);padding-top:14px;
+}
+.sheetBody h3:first-child{margin-top:0;border-top:none;padding-top:0;}
+.sheetBody p{font-size:14px;color:var(--muted);line-height:1.7;margin-bottom:8px;}
+.sheetBody a{color:var(--gold);text-decoration:underline;}
+.sheetBody strong{color:var(--cream);}
+
+/* ── SPINNER ── */
+.spin{
+  display:inline-block;width:15px;height:15px;
+  border:2px solid rgba(255,255,255,.15);
+  border-top-color:var(--gold);border-radius:50%;
+  animation:sp .7s linear infinite;
+}
+@keyframes sp{to{transform:rotate(360deg)}}
+
+/* ── CHAT BUBBLES ── */
+.bubble-user{
+  background:rgba(214,176,109,.14);border:1px solid rgba(214,176,109,.24);
+  border-radius:16px 16px 4px 16px;padding:10px 13px;
+  font-size:13px;align-self:flex-end;max-width:90%;color:var(--cream);
+}
+.bubble-bot{
+  background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);
+  border-radius:16px 16px 16px 4px;padding:10px 13px;
+  font-size:13px;max-width:90%;color:var(--muted);
+}
+.mini{
+  font-size:11px;background:rgba(214,176,109,.09);
+  border:1px solid rgba(214,176,109,.2);color:var(--gold);
+  padding:5px 13px;border-radius:999px;white-space:nowrap;cursor:pointer;
+  transition:background .15s;
+}
+.mini:hover{background:rgba(214,176,109,.17);}
+</style>
 </head>
 <body>
-<div id="app"></div>
+
+<!-- LANG BAR -->
+<nav class="langBar">
+    <button class="langBtn active" data-lang="it" onclick="setLang('it')"><img src="https://flagcdn.com/w40/it.png" alt="IT"></button>
+  <button class="langBtn" data-lang="en" onclick="setLang('en')"><img src="https://flagcdn.com/w40/gb.png" alt="EN"></button>
+  <button class="langBtn" data-lang="fr" onclick="setLang('fr')"><img src="https://flagcdn.com/w40/fr.png" alt="FR"></button>
+  <button class="langBtn" data-lang="es" onclick="setLang('es')"><img src="https://flagcdn.com/w40/es.png" alt="ES"></button>
+  <button class="langBtn" data-lang="de" onclick="setLang('de')"><img src="https://flagcdn.com/w40/de.png" alt="DE"></button>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="heroBadge">BOUTIQUE ROME CONCIERGE</div>
+  <h1 class="heroTitle" id="heroTitle">Benvenuto a Roma ✨</h1>
+  <p class="heroSub" id="heroSub">Ospitalità di lusso nel cuore di Roma.</p>
+  <div class="heroAddr" id="heroAddrBox">
+    <div class="heroAddrText">
+      <div class="heroAddrLabel" id="aptLabel">Appartamento</div>
+      Via Leonina 71 · Monti District
+    </div>
+    <button class="openBtn" onclick="handleOpen()">APRI</button>
+  </div>
+</div>
+<div id="phasePill" class="phasePill"></div>
+
+<!-- SECTION: YOUR STAY -->
+<div class="section">
+  <div class="sectionAptRow">
+    <div>
+      <div class="sectionHead" id="sectionAptHead"></div>
+      <div class="sectionTitle" id="sectionAptTitle"></div>
+    </div>
+    <a id="weatherWidget" href="#" target="_blank" rel="noopener" onclick="openWeather(event)">
+      <span id="wIcon">🌤</span>
+      <span id="wTime">--:--</span>
+      <span id="wTemp">--°</span>
+      <span id="wArrow">↗</span>
+    </a>
+  </div>
+</div>
+
+<div id="phaseLock" class="phaseLock" style="display:none">
+  <div class="li">🔒</div>
+  <p id="phase1Text"></p>
+</div>
+
+<div id="aptGrid" class="aptGrid" style="display:none">
+  <div class="cardGrid">
+    <div class="card" onclick="openModal('apt')">
+      <div class="cardIcon">📍</div>
+      <div class="cardTitle" id="aptCardTitle"></div>
+      <div class="cardSub" id="aptCardSub"></div>
+    </div>
+    <div class="card locked" id="keysCard" onclick="openModal('keys')">
+      <div class="cardIcon">🗝</div>
+      <div class="cardTitle" id="keysTitle"></div>
+      <div class="cardSub" id="keysSub"></div>
+    </div>
+    <div class="card" onclick="openModal('wifi')">
+      <div class="cardIcon">📶</div>
+      <div class="cardTitle" id="wifiTitle"></div>
+      <div class="cardSub" id="wifiSub"></div>
+    </div>
+    <div class="card" onclick="openModal('house')">
+      <div class="cardIcon">💬</div>
+      <div class="cardTitle" id="houseTitle"></div>
+      <div class="cardSub" id="houseSub"></div>
+    </div>
+    <div class="card" onclick="openModal('help')" style="grid-column:1/-1">
+      <div class="cardIcon">☎</div>
+      <div class="cardTitle" id="helpTitle"></div>
+      <div class="cardSub" id="helpSub"></div>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION: EXPLORE ROME -->
+<div class="section">
+  <div class="sectionHead" id="sectionRomeHead"></div>
+  <div class="sectionTitle" id="sectionRomeTitle"></div>
+</div>
+<div class="romeGrid">
+  <div class="cardGrid">
+    <div class="card" onclick="openModal('eat')">
+      <div class="cardIcon">🍝</div>
+      <div class="cardTitle" id="eatTitle"></div>
+      <div class="cardSub" id="eatSub"></div>
+    </div>
+    <div class="card" onclick="openModal('tonight')">
+      <div class="cardIcon">🌙</div>
+      <div class="cardTitle" id="tonightTitle"></div>
+      <div class="cardSub" id="tonightSub"></div>
+    </div>
+    <div class="card" onclick="openModal('tickets')">
+      <div class="cardIcon">🎟</div>
+      <div class="cardTitle" id="tickTitle"></div>
+      <div class="cardSub" id="tickSub"></div>
+    </div>
+    <div class="card" onclick="openModal('transport')">
+      <div class="cardIcon">🚇</div>
+      <div class="cardTitle" id="transTitle"></div>
+      <div class="cardSub" id="transSub"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ASSISTANT -->
+<div class="assistant">
+  <div class="assistantTitle" id="assistantTitle"></div>
+  <p class="assistantDesc" id="assistantDesc"></p>
+  <button class="bigbtn" id="assistantBtn" onclick="openModal('chat')"></button>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <a href="https://wa.me/393355245756" class="waFooter" id="whatsappBtn" target="_blank"></a>
+</footer>
+
+<!-- WHATSAPP FLOAT -->
+<a href="https://wa.me/393355245756" class="whatsappFloat" target="_blank">💬</a>
+
+<!-- MODAL -->
+<div id="modalBg" class="modal" onclick="outsideClose(event)">
+  <div class="sheet" id="modalSheet">
+    <div class="sheetHandle"></div>
+    <div class="sheetHeader">
+      <h3 id="modalTitle"></h3>
+      <button class="closeBtn" onclick="closeModal()">×</button>
+    </div>
+    <div class="sheetBody" id="modalBody"></div>
+  </div>
+</div>
+
 <script>
-window.CONCIERGE = {"apartment": "leonina", "brand": "Niceflatinrome.com", "heroTitle": "Via Leonina 71", "heroEmoji": "🏛️", "heroColors": {"from": "#0a100a", "mid": "#2a3d1a"}, "langs": {"it": {"menuTitle": "Menu Concierge", "menuSub": "Tocca per esplorare", "footer": "Selezione curata per gli ospiti di Via Leonina 71 · Roma", "tiles": [{"icon": "🍽️", "title": "Fine Dining", "desc": "Ristoranti selezionati e cucina premium tra Monti e Colosseo.", "arrow": "Apri →", "section": "dining"}, {"icon": "☕", "title": "Colazione & Caffè", "desc": "Espresso, pasticceria e colazioni eleganti nei dintorni.", "arrow": "Apri →", "section": "breakfast"}, {"icon": "🍸", "title": "Drink & Rooftop", "desc": "Cocktail, rooftop e atmosfera serale vicino al Colosseo.", "arrow": "Apri →", "section": "drinks"}, {"icon": "🏛️", "title": "Da Vedere Vicino", "desc": "Luoghi culturali essenziali raggiungibili a piedi.", "arrow": "Apri →", "section": "mustvisit"}, {"icon": "🎭", "title": "Stasera a Roma", "desc": "Opera, jazz, cocktail ed esperienze serali.", "arrow": "Apri →", "section": "tonight"}, {"icon": "🎟️", "title": "Esperienze Premium", "desc": "Colosseo, Domus Aurea, cooking class e scoperte private.", "arrow": "Apri →", "section": "experiences"}, {"icon": "🛎️", "title": "Servizi Utili", "desc": "Deposito bagagli, farmacia, taxi e servizi pratici.", "arrow": "Apri →", "section": "services"}, {"icon": "🎁", "title": "Shopping & Regali", "desc": "Mercati, regali eleganti e scoperte culturali romane.", "arrow": "Apri →", "section": "shopping"}, {"icon": "✨", "title": "Roma Nascosta", "desc": "Luoghi segreti, viste tranquille e scoperte inattese.", "arrow": "Apri →", "section": "hidden"}, {"icon": "👨‍👩‍👧", "title": "Famiglia & Bambini", "desc": "Attività semplici e piacevoli per famiglie e bambini.", "arrow": "Apri →", "section": "family"}, {"icon": "🎧", "title": "Relax Mode", "desc": "Musica, streaming e atmosfera serale rilassante.", "arrow": "Apri →", "section": "relax"}, {"icon": "❤️", "title": "Roma Romantica", "desc": "Tramonti, passeggiate e idee per coppie.", "arrow": "Apri →", "section": "romantic"}], "sections": {"dining": {"header": {"title": "Fine Dining", "back": "← Torna alla pagina principale"}, "cards": [{"tagline": "Vista Michelin", "name": "Aroma", "desc": "Ristorante stellato su rooftop con vista diretta sul Colosseo.", "address": "📍 Via Labicana 125, Roma", "buttons": [{"label": "Chiama", "href": "tel:+390697615109"}, {"label": "Mappa", "href": "https://www.google.com/maps/search/?api=1&query=Aroma+Restaurant+Via+Labicana+125+Rome"}, {"label": "Sito", "href": "https://www.manfredihotels.com/en/aroma/"}, {"label": "Prenota", "href": "https://www.manfredihotels.com/en/aroma/"}]}, {"tagline": "Pesce elegante", "name": "Matermatuta", "desc": "Ristorante raffinato di pesce con atmosfera da galleria d’arte a Monti.", "address": "📍 Via Palermo 51, Roma", "buttons": [{"label": "Chiama", "href": "tel:+39064823962"}, {"label": "Mappa", "href": "https://www.google.com/maps/search/?api=1&query=Matermatuta+Via+Palermo+51+Roma"}, {"label": "Sito", "href": "https://www.matermatuta.eu/"}, {"label": "Email", "href": "mailto:info@matermatuta.eu"}]}, {"tagline": "Classico romano", "name": "La Taverna dei Fori Imperiali", "desc": "Cucina romana familiare vicino ai Fori Imperiali.", "address": "📍 Via della Madonna dei Monti 9, Roma", "buttons": [{"label": "Chiama", "href": "tel:+39066798643"}, {"label": "Mappa", "href": "https://www.google.com/maps/search/?api=1&query=La+Taverna+dei+Fori+Imperiali+Roma"}, {"label": "Sito", "href": "https://www.latavernadeiforiimperiali.com/"}]}]}, "breakfast": {"header": {"title": "Colazione & Caffè", "back": "← Torna alla pagina principale"}, "cards": [{"tagline": "Icona colazione", "name": "Bar La Licata", "desc": "Storico bar di Monti per colazione e pasticceria dal 1967.", "address": "📍 Via dei Serpenti 165 / Via Leonina 1A, Roma", "buttons": [{"label": "Chiama", "href": "tel:+39064884746"}, {"label": "WhatsApp", "href": "https://wa.me/393881508774"}, {"label": "Mappa", "href": "https://www.google.com/maps/search/?api=1&query=Bar+La+Licata+Via+dei+Serpenti+165+Roma"}, {"label": "Sito", "href": "https://www.barlalicata.it/en/"}]}, {"tagline": "Caffè locale", "name": "Er Baretto", "desc": "Caffè, dolci, brunch e pasti semplici nel cuore di Monti.", "address": "📍 Via del Boschetto 132, Roma", "buttons": [{"label": "Chiama", "href": "tel:+39064820444"}, {"label": "Mappa", "href": "https://www.google.com/maps/search/?api=1&query=Er+Baretto+Via+del+Boschetto+132+Roma"}, {"label": "Sito", "href": "https://www.artedelcaffe.com/backend/"}, {"label": "Email", "href": "mailto:info@artedelcaffe.com"}]}, {"tagline": "Mattina in piazza", "name": "La Bottega del Caffè", "desc": "Caffè classico affacciato su Piazza della Madonna dei Monti.", "address": "📍 Piazza della Madonna dei Monti 5, Roma", "buttons": [{"label": "Chiama", "href": "tel:+39064741578"}, {"label": "Mappa", "href": "https://www.google.com/maps/search/?api=1&query=La+Bottega+del+Caffe+Piazza+della+Madonna+dei+Monti+5+Roma"}]}]}, "drinks": {"header": {"title": "Drink & Rooftop", "back": "← Torna alla pagina principale"}, "cards": [{"tagline": "Cocktail Colosseo", "name": "The Court", "desc": "Cocktail bar di alto livello con vista scenografica sul Colosseo.", "address": "📍 Via Labicana 125, Roma", "buttons": [{"label": "Chiama", "href": "tel:+390669354581"}, {"label": "Mappa", "href": "https://www.google.com/maps/search/?api=1&query=The+Court+Rome+Via+Labicana+125"}, {"label": "Sito", "href": "https://www.manfredihotels.com/en/the-court/"}, {"label": "Email", "href": "mailto:info@thecourtrome.it"}]}, {"tagline": "Bar nascosto a Monti", "name": "Blackmarket Hall", "desc": "Mixology bar nascosto e spazio eventi dall’atmosfera intensa.", "address": "📍 Via de’ Ciancaleoni 31, Roma", "buttons": [{"label": "Chiama", "href": "tel:+393491995295"}, {"label": "Mappa", "href": "https://www.google.com/maps/search/?api=1&query=Blackmarket+Hall+Via+de+Ciancaleoni+31+Roma"}, {"label": "Sito", "href": "https://www.blackmarkethall.com/"}]}, {"tagline": "Enoteca storica", "name": "Ai Tre Scalini", "desc": "Bottiglieria storica a Monti, perfetta per vino e aperitivo.", "address": "📍 Via Panisperna 251, Roma", "buttons": [{"label": "Chiama", "href": "tel:+390648907495"}, {"label": "Mappa", "href": "https://www.google.com/maps/search/?api=1&query=Ai+Tre+Scalini+Via+Panisperna+251+Roma"}, {"label": "Sito", "href": "https://aitrescalini.org/"}]}]}, "mustvisit": {"header": {"title": "Da Vedere Vicino", "back": "← Torna alla pagina principale"}, "cards": [{"tagline": "Roma iconica", "name": "Colosseum & Roman Forum", "desc": "L’esperienza essenziale dell’antica Roma, a pochi passi da Monti.", "address": "📍 Colosseo / Foro Romano, Roma", "buttons": [{"label": "Biglietti", "href": "https://ticketing.colosseo.it/en/"}, {"label": "Mappa", "href": "https://www.google.com/maps/search/?api=1&query=Colosseum+Rome"}, {"label": "Info", "href": "https://colosseo.it/en/"}]}, {"tagline": "Mosè di Michelangelo", "name": "San Pietro in Vincoli", "desc": "Basilica tranquilla famosa per il Mosè di Michelangelo.", "address": "📍 Piazza di San Pietro in Vincoli 4/A, Roma", "buttons": [{"label": "Mappa", "href": "https://www.google.com/maps/search/?api=1&query=San+Pietro+in+Vincoli+Rome"}, {"label": "Info", "href": "https://www.lateranensi.org/sanpietroinvincoli/"}]}, {"tagline": "Nerone sotterraneo", "name": "Domus Aurea", "desc": "La Casa d’Oro di Nerone: archeologia sotterranea e tour immersivi.", "address": "📍 Via della Domus Aurea 1, Roma", "buttons": [{"label": "Biglietti", "href": "https://colosseo.it/en/tickets/domus-aurea/"}, {"label": "Mappa", "href": "https://www.google.com/maps/search/?api=1&query=Domus+Aurea+Rome"}, {"label": "Info", "href": "https://colosseo.it/en/area/the-domus-aurea/"}]}]}, "tonight": {"header": {"title": "Stasera a Roma", "back": "← Torna alla pagina principale"}, "cards": [{"tagline": "Opera & Balletto", "name": "Teatro dell’Opera", "desc": "Il principale teatro d’opera di Roma per opera, balletto e concerti.", "address": "📍 Piazza Beniamino Gigli 7, Roma", "buttons": [{"label": "Chiama", "href": "tel:+3906481601"}, {"label": "Mappa", "href": "https://www.google.com/maps/search/?api=1&query=Teatro+dell%27Opera+di+Roma"}, {"label": "Sito", "href": "https://www.operaroma.it/"}]}, {"tagline": "Serata live a Monti", "name": "Blackmarket Hall Events", "desc": "Cocktail, musica ed eventi intimi nel quartiere Monti.", "address": "📍 Via de’ Ciancaleoni 31, Roma", "buttons": [{"label": "Chiama", "href": "tel:+393491995295"}, {"label": "Mappa", "href": "https://www.google.com/maps/search/?api=1&query=Blackmarket+Hall+Roma"}, {"label": "Eventi", "href": "https://www.blackmarkethall.com/event/"}]}, {"tagline": "Vista luxury notturna", "name": "The Court", "desc": "Cocktail premium davanti al Colosseo per una serata memorabile.", "address": "📍 Via Labicana 125, Roma", "buttons": [{"label": "Chiama", "href": "tel:+390669354581"}, {"label": "Mappa", "href": "https://www.google.com/maps/search/?api=1&query=The+Court+Rome"}, {"label": "Sito", "href": "https://www.manfredihotels.com/en/the-court/"}]}]}, "experiences": {"header": {"title": "Esperienze Premium", "back": "← Torna alla pagina principale"}, "cards": [{"tagline": "Roma antica", "name": "Colosseum Official Tickets", "desc": "Portale ufficiale biglietti per Colosseo, Foro e Palatino.", "address": "📍 Parco Archeologico del Colosseo", "buttons": [{"label": "Biglietti", "href": "https://ticketing.colosseo.it/en/"}, {"label": "Mappa", "href": "https://www.google.com/maps/search/?api=1&query=Colosseum+Rome"}, {"label": "Info", "href": "https://colosseo.it/en/"}]}, {"tagline": "Archeologia premium", "name": "Domus Aurea Tour", "desc": "Esperienza sotterranea distintiva vicino all’appartamento.", "address": "📍 Domus Aurea, Roma", "buttons": [{"label": "Biglietti", "href": "https://colosseo.it/en/tickets/domus-aurea/"}, {"label": "Mappa", "href": "https://www.google.com/maps/search/?api=1&query=Domus+Aurea+Rome"}]}, {"tagline": "Cooking class", "name": "Pasta & Tiramisù Class", "desc": "Esperienza pratica di cucina romana: pasta fresca e tiramisù.", "address": "📍 Roma", "buttons": [{"label": "Prenota", "href": "https://romewithchef.com/cook/pasta-and-tiramisu-making-class/"}, {"label": "Mappa", "href": "https://www.google.com/maps/search/?api=1&query=Pasta+Tiramisu+Class+Rome"}]}]}, "services": {"header": {"title": "Servizi Utili", "back": "← Torna alla pagina principale"}, "cards": [{"tagline": "Dopo il checkout", "name": "Luggage Storage Monti", "desc": "Deposito bagagli sicuro nella zona Monti.", "address": "📍 Via del Boschetto, Roma", "buttons": [{"label": "Chiama", "href": "tel:+393475512996"}, {"label": "Mappa", "href": "https://www.google.com/maps/search/?api=1&query=Luggage+Storage+Monti+Via+del+Boschetto+Roma"}, {"label": "Sito", "href": "https://www.safeyourluggage.com/"}, {"label": "Email", "href": "mailto:info@safeyourluggage.com"}]}, {"tagline": "Salute essenziale", "name": "Farmavitae Monti", "desc": "Parafarmacia e prodotti utili per la salute in Via Cavour.", "address": "📍 Via Cavour 240, Roma", "buttons": [{"label": "Chiama", "href": "tel:+3906474630"}, {"label": "Mappa", "href": "https://www.google.com/maps/search/?api=1&query=Farmavitae+Via+Cavour+240+Roma"}, {"label": "Sito", "href": "https://www.farmavitae.it/"}, {"label": "Email", "href": "mailto:farmavitae@libero.it"}]}, {"tagline": "Taxi ufficiale", "name": "Taxi Roma 060609", "desc": "Servizio ufficiale taxi di Roma.", "address": "📍 Servizio taxi Roma", "buttons": [{"label": "Chiama", "href": "tel:+39060609"}, {"label": "Info", "href": "https://www.comune.roma.it/web/it/scheda-servizi.page?contentId=INF47781"}, {"label": "Mappa", "href": "https://www.google.com/maps/search/?api=1&query=Taxi+Roma"}]}]}, "shopping": {"header": {"title": "Shopping & Regali", "back": "← Torna alla pagina principale"}, "cards": [{"tagline": "Mercato urbano", "name": "Mercato Monti", "desc": "Designer indipendenti, vintage e stile romano contemporaneo.", "address": "📍 Via Leonina 46, Roma", "buttons": [{"label": "Mappa", "href": "https://www.google.com/maps/search/?api=1&query=Mercato+Monti+Via+Leonina+46+Roma"}, {"label": "Sito", "href": "https://www.mercatomonti.com/"}]}, {"tagline": "Department store luxury", "name": "Rinascente Tritone", "desc": "Moda, beauty, food hall e rooftop nel centro di Roma.", "address": "📍 Via del Tritone 61, Roma", "buttons": [{"label": "Sito", "href": "https://www.rinascente.it/en/store-roma-via-del-tritone"}, {"label": "Mappa", "href": "https://www.google.com/maps/search/?api=1&query=Rinascente+Via+del+Tritone+61+Roma"}]}, {"tagline": "Shopping culturale", "name": "Trajan’s Markets", "desc": "Antico complesso mercantile e Museo dei Fori Imperiali.", "address": "📍 Via IV Novembre 94, Roma", "buttons": [{"label": "Chiama", "href": "tel:+39060608"}, {"label": "Mappa", "href": "https://www.google.com/maps/search/?api=1&query=Mercati+di+Traiano+Roma"}, {"label": "Sito", "href": "https://mercatiditraiano.it/en"}, {"label": "Email", "href": "mailto:info@mercatiditraiano.it"}]}]}, "hidden": {"header": {"title": "Roma Nascosta", "back": "← Torna alla pagina principale"}, "cards": [{"tagline": "Tre strati di Roma", "name": "Basilica San Clemente", "desc": "Basilica, chiesa medievale e Roma sotterranea in un unico luogo.", "address": "📍 Via Labicana 95, Roma", "buttons": [{"label": "Prenota", "href": "https://www.basilicasanclemente.com/eng/booking/"}, {"label": "Mappa", "href": "https://www.google.com/maps/search/?api=1&query=Basilica+San+Clemente+Rome"}, {"label": "Sito", "href": "https://www.basilicasanclemente.com/eng/"}]}, {"tagline": "Palazzo nascosto di Nerone", "name": "Domus Aurea", "desc": "Sito sotterraneo straordinario vicino a Colosseo e Monti.", "address": "📍 Via della Domus Aurea 1, Roma", "buttons": [{"label": "Biglietti", "href": "https://colosseo.it/en/tickets/domus-aurea/"}, {"label": "Mappa", "href": "https://www.google.com/maps/search/?api=1&query=Domus+Aurea+Rome"}, {"label": "Info", "href": "https://colosseo.it/en/area/the-domus-aurea/"}]}, {"tagline": "Belvedere tranquillo", "name": "Villa Aldobrandini View", "desc": "Piccolo giardino rialzato con vista calma sui Fori Imperiali.", "address": "📍 Via Mazzarino, Roma", "buttons": [{"label": "Mappa", "href": "https://www.google.com/maps/search/?api=1&query=Villa+Aldobrandini+Rome"}, {"label": "Info", "href": "https://www.turismoroma.it/en/places/villa-aldobrandini"}]}]}, "family": {"header": {"title": "Famiglia & Bambini", "back": "← Torna alla pagina principale"}, "cards": [{"tagline": "Classico per famiglie", "name": "Colosseum Family Visit", "desc": "Il sito storico più memorabile per bambini e prime visite a Roma.", "address": "📍 Colosseo, Roma", "buttons": [{"label": "Biglietti", "href": "https://ticketing.colosseo.it/en/"}, {"label": "Mappa", "href": "https://www.google.com/maps/search/?api=1&query=Colosseum+Rome"}]}, {"tagline": "Museo dei bambini", "name": "Explora Children’s Museum", "desc": "Museo interattivo ideale per famiglie con bambini.", "address": "📍 Via Flaminia 82, Roma", "buttons": [{"label": "Sito", "href": "https://www.mdbr.it/"}, {"label": "Mappa", "href": "https://www.google.com/maps/search/?api=1&query=Explora+Museo+dei+Bambini+Roma"}]}, {"tagline": "Giornata in famiglia", "name": "Bioparco di Roma", "desc": "Lo zoo di Roma, opzione tranquilla all’aperto per famiglie.", "address": "📍 Villa Borghese, Roma", "buttons": [{"label": "Sito", "href": "https://www.bioparco.it/"}, {"label": "Mappa", "href": "https://www.google.com/maps/search/?api=1&query=Bioparco+di+Roma"}]}]}, "relax": {"header": {"title": "Relax Mode", "back": "← Torna alla pagina principale"}, "cards": [{"tagline": "Musica", "name": "Spotify Lounge", "desc": "Apri musica lounge rilassante per una serata in casa.", "address": "📍 Scorciatoia streaming", "buttons": [{"label": "Apri", "href": "https://open.spotify.com/search/italian%20lounge"}]}, {"tagline": "Streaming", "name": "Netflix", "desc": "Apri Netflix per una serata rilassante in appartamento.", "address": "📍 Scorciatoia streaming", "buttons": [{"label": "Apri", "href": "https://www.netflix.com/"}]}, {"tagline": "YouTube relax", "name": "Rome Ambience", "desc": "Video e suoni rilassanti di Roma come sottofondo.", "address": "📍 Scorciatoia streaming", "buttons": [{"label": "Apri", "href": "https://www.youtube.com/results?search_query=relaxing+rome+ambience"}]}]}, "romantic": {"header": {"title": "Roma Romantica", "back": "← Torna alla pagina principale"}, "cards": [{"tagline": "Percorso romantico", "name": "Colosseum Sunset Walk", "desc": "Via Leonina → Colosseo → punti panoramici dei Fori Romani.", "address": "📍 Dal tuo appartamento", "buttons": [{"label": "Mappa", "href": "https://www.google.com/maps/dir/?api=1&origin=Via+Leonina+71+Roma&destination=Colosseum+Rome&travelmode=walking"}]}, {"tagline": "Cocktail con vista", "name": "The Court", "desc": "Drink premium davanti al Colosseo: ideale per coppie.", "address": "📍 Via Labicana 125, Roma", "buttons": [{"label": "Chiama", "href": "tel:+390669354581"}, {"label": "Sito", "href": "https://www.manfredihotels.com/en/the-court/"}, {"label": "Mappa", "href": "https://www.google.com/maps/search/?api=1&query=The+Court+Rome"}]}, {"tagline": "Cena speciale", "name": "Aroma", "desc": "Cena stellata su rooftop con panorama sul Colosseo.", "address": "📍 Via Labicana 125, Roma", "buttons": [{"label": "Chiama", "href": "tel:+390697615109"}, {"label": "Sito", "href": "https://www.manfredihotels.com/en/aroma/"}, {"label": "Mappa", "href": "https://www.google.com/maps/search/?api=1&query=Aroma+Restaurant+Rome"}]}]}}, "quickActions": [{"label": "📍 Apri mappa", "href": "https://www.google.com/maps/search/?api=1&query=Via+del+Portico+d%27Ottavia+1D+Roma"}, {"label": "📞 Chiama host", "href": "tel:+393355245756"}, {"label": "🚕 Taxi", "href": "tel:+39060609"}, {"label": "🆘 Emergenza", "href": "tel:112"}]}, "en": {"menuTitle": "Concierge Menu", "menuSub": "Tap to explore", "footer": "Curated for guests staying at Via Leonina 71 · Rome", "tiles": [{"icon": "🍽️", "title": "Fine Dining", "desc": "Selected restaurants and premium dining around Monti and the Colosseum.", "arrow": "Open →", "section": "dining"}, {"icon": "☕", "title": "Breakfast & Coffee", "desc": "Espresso, pastry and elegant morning stops nearby.", "arrow": "Open →", "section": "breakfast"}, {"icon": "🍸", "title": "Drinks & Rooftops", "desc": "Cocktails, rooftops and evening atmosphere near the Colosseum.", "arrow": "Open →", "section": "drinks"}, {"icon": "🏛️", "title": "Must Visit Nearby", "desc": "Essential cultural places within walking distance.", "arrow": "Open →", "section": "mustvisit"}, {"icon": "🎭", "title": "Tonight in Rome", "desc": "Opera, jazz, cocktails and evening experiences.", "arrow": "Open →", "section": "tonight"}, {"icon": "🎟️", "title": "Premium Experiences", "desc": "Colosseum, Domus Aurea, cooking classes and private discoveries.", "arrow": "Open →", "section": "experiences"}, {"icon": "🛎️", "title": "Useful Services", "desc": "Luggage, pharmacy, taxi and practical comfort help.", "arrow": "Open →", "section": "services"}, {"icon": "🎁", "title": "Shopping & Gifts", "desc": "Markets, elegant gifts and cultural Roman finds.", "arrow": "Open →", "section": "shopping"}, {"icon": "✨", "title": "Hidden Rome", "desc": "Secret places, quiet views and unexpected discoveries.", "arrow": "Open →", "section": "hidden"}, {"icon": "👨‍👩‍👧", "title": "Family & Kids", "desc": "Soft, easy activities for families and children.", "arrow": "Open →", "section": "family"}, {"icon": "🎧", "title": "Relax Mode", "desc": "Music, streaming shortcuts and calm evening ambience.", "arrow": "Open →", "section": "relax"}, {"icon": "❤️", "title": "Romantic Rome", "desc": "Sunset walks, intimate moments and couple ideas.", "arrow": "Open →", "section": "romantic"}], "sections": {"dining": {"header": {"title": "Fine Dining", "back": "← Back to main page"}, "cards": [{"tagline": "Michelin View", "name": "Aroma", "desc": "Michelin-starred rooftop dining with a direct Colosseum view.", "address": "📍 Via Labicana 125, Rome", "buttons": [{"label": "Call", "href": "tel:+390697615109"}, {"label": "Map", "href": "https://www.google.com/maps/search/?api=1&query=Aroma+Restaurant+Via+Labicana+125+Rome"}, {"label": "Website", "href": "https://www.manfredihotels.com/en/aroma/"}, {"label": "Book", "href": "https://www.manfredihotels.com/en/aroma/"}]}, {"tagline": "Elegant Seafood", "name": "Matermatuta", "desc": "Refined seafood restaurant and art-gallery atmosphere in Monti.", "address": "📍 Via Palermo 51, Rome", "buttons": [{"label": "Call", "href": "tel:+39064823962"}, {"label": "Map", "href": "https://www.google.com/maps/search/?api=1&query=Matermatuta+Via+Palermo+51+Roma"}, {"label": "Website", "href": "https://www.matermatuta.eu/"}, {"label": "Email", "href": "mailto:info@matermatuta.eu"}]}, {"tagline": "Roman Classic", "name": "La Taverna dei Fori Imperiali", "desc": "Family-run Roman cuisine close to the Imperial Forums.", "address": "📍 Via della Madonna dei Monti 9, Rome", "buttons": [{"label": "Call", "href": "tel:+39066798643"}, {"label": "Map", "href": "https://www.google.com/maps/search/?api=1&query=La+Taverna+dei+Fori+Imperiali+Roma"}, {"label": "Website", "href": "https://www.latavernadeiforiimperiali.com/"}]}]}, "breakfast": {"header": {"title": "Breakfast & Coffee", "back": "← Back to main page"}, "cards": [{"tagline": "Breakfast Icon", "name": "Bar La Licata", "desc": "Historic Monti bar, pastry and breakfast since 1967.", "address": "📍 Via dei Serpenti 165 / Via Leonina 1A, Rome", "buttons": [{"label": "Call", "href": "tel:+39064884746"}, {"label": "WhatsApp", "href": "https://wa.me/393881508774"}, {"label": "Map", "href": "https://www.google.com/maps/search/?api=1&query=Bar+La+Licata+Via+dei+Serpenti+165+Roma"}, {"label": "Website", "href": "https://www.barlalicata.it/en/"}]}, {"tagline": "Local Coffee", "name": "Er Baretto", "desc": "Coffee, pastries, brunch and easy meals in the heart of Monti.", "address": "📍 Via del Boschetto 132, Rome", "buttons": [{"label": "Call", "href": "tel:+39064820444"}, {"label": "Map", "href": "https://www.google.com/maps/search/?api=1&query=Er+Baretto+Via+del+Boschetto+132+Roma"}, {"label": "Website", "href": "https://www.artedelcaffe.com/backend/"}, {"label": "Email", "href": "mailto:info@artedelcaffe.com"}]}, {"tagline": "Piazza Morning", "name": "La Bottega del Caffè", "desc": "Classic café facing Piazza della Madonna dei Monti.", "address": "📍 Piazza della Madonna dei Monti 5, Rome", "buttons": [{"label": "Call", "href": "tel:+39064741578"}, {"label": "Map", "href": "https://www.google.com/maps/search/?api=1&query=La+Bottega+del+Caffe+Piazza+della+Madonna+dei+Monti+5+Roma"}]}]}, "drinks": {"header": {"title": "Drinks & Rooftops", "back": "← Back to main page"}, "cards": [{"tagline": "Colosseum Cocktails", "name": "The Court", "desc": "High-end cocktail bar with a dramatic Colosseum view.", "address": "📍 Via Labicana 125, Rome", "buttons": [{"label": "Call", "href": "tel:+390669354581"}, {"label": "Map", "href": "https://www.google.com/maps/search/?api=1&query=The+Court+Rome+Via+Labicana+125"}, {"label": "Website", "href": "https://www.manfredihotels.com/en/the-court/"}, {"label": "Email", "href": "mailto:info@thecourtrome.it"}]}, {"tagline": "Hidden Monti Bar", "name": "Blackmarket Hall", "desc": "Atmospheric hidden mixology bar and event space in Monti.", "address": "📍 Via de’ Ciancaleoni 31, Rome", "buttons": [{"label": "Call", "href": "tel:+393491995295"}, {"label": "Map", "href": "https://www.google.com/maps/search/?api=1&query=Blackmarket+Hall+Via+de+Ciancaleoni+31+Roma"}, {"label": "Website", "href": "https://www.blackmarkethall.com/"}]}, {"tagline": "Historic Wine Bar", "name": "Ai Tre Scalini", "desc": "Historic bottiglieria in Monti, perfect for wine and aperitivo.", "address": "📍 Via Panisperna 251, Rome", "buttons": [{"label": "Call", "href": "tel:+390648907495"}, {"label": "Map", "href": "https://www.google.com/maps/search/?api=1&query=Ai+Tre+Scalini+Via+Panisperna+251+Roma"}, {"label": "Website", "href": "https://aitrescalini.org/"}]}]}, "mustvisit": {"header": {"title": "Must Visit Nearby", "back": "← Back to main page"}, "cards": [{"tagline": "Iconic Rome", "name": "Colosseum & Roman Forum", "desc": "The essential ancient Rome experience, a short walk from Monti.", "address": "📍 Colosseum / Roman Forum, Rome", "buttons": [{"label": "Tickets", "href": "https://ticketing.colosseo.it/en/"}, {"label": "Map", "href": "https://www.google.com/maps/search/?api=1&query=Colosseum+Rome"}, {"label": "Info", "href": "https://colosseo.it/en/"}]}, {"tagline": "Michelangelo’s Moses", "name": "San Pietro in Vincoli", "desc": "Quiet basilica famous for Michelangelo’s Moses.", "address": "📍 Piazza di San Pietro in Vincoli 4/A, Rome", "buttons": [{"label": "Map", "href": "https://www.google.com/maps/search/?api=1&query=San+Pietro+in+Vincoli+Rome"}, {"label": "Info", "href": "https://www.lateranensi.org/sanpietroinvincoli/"}]}, {"tagline": "Underground Nero", "name": "Domus Aurea", "desc": "Nero’s Golden House: underground archaeology and immersive tours.", "address": "📍 Via della Domus Aurea 1, Rome", "buttons": [{"label": "Tickets", "href": "https://colosseo.it/en/tickets/domus-aurea/"}, {"label": "Map", "href": "https://www.google.com/maps/search/?api=1&query=Domus+Aurea+Rome"}, {"label": "Info", "href": "https://colosseo.it/en/area/the-domus-aurea/"}]}]}, "tonight": {"header": {"title": "Tonight in Rome", "back": "← Back to main page"}, "cards": [{"tagline": "Opera & Ballet", "name": "Teatro dell’Opera", "desc": "Rome’s premier opera house for opera, ballet and concerts.", "address": "📍 Piazza Beniamino Gigli 7, Rome", "buttons": [{"label": "Call", "href": "tel:+3906481601"}, {"label": "Map", "href": "https://www.google.com/maps/search/?api=1&query=Teatro+dell%27Opera+di+Roma"}, {"label": "Website", "href": "https://www.operaroma.it/"}]}, {"tagline": "Live Monti Night", "name": "Blackmarket Hall Events", "desc": "Cocktails, music and intimate events in the Monti district.", "address": "📍 Via de’ Ciancaleoni 31, Rome", "buttons": [{"label": "Call", "href": "tel:+393491995295"}, {"label": "Map", "href": "https://www.google.com/maps/search/?api=1&query=Blackmarket+Hall+Roma"}, {"label": "Events", "href": "https://www.blackmarkethall.com/event/"}]}, {"tagline": "Luxury Night View", "name": "The Court", "desc": "Premium cocktails facing the Colosseum for a memorable evening.", "address": "📍 Via Labicana 125, Rome", "buttons": [{"label": "Call", "href": "tel:+390669354581"}, {"label": "Map", "href": "https://www.google.com/maps/search/?api=1&query=The+Court+Rome"}, {"label": "Website", "href": "https://www.manfredihotels.com/en/the-court/"}]}]}, "experiences": {"header": {"title": "Premium Experiences", "back": "← Back to main page"}, "cards": [{"tagline": "Ancient Rome", "name": "Colosseum Official Tickets", "desc": "Official ticket portal for Colosseum, Forum and Palatine.", "address": "📍 Colosseum Archaeological Park", "buttons": [{"label": "Tickets", "href": "https://ticketing.colosseo.it/en/"}, {"label": "Map", "href": "https://www.google.com/maps/search/?api=1&query=Colosseum+Rome"}, {"label": "Info", "href": "https://colosseo.it/en/"}]}, {"tagline": "Premium Archaeology", "name": "Domus Aurea Tour", "desc": "A distinctive underground experience near your apartment.", "address": "📍 Domus Aurea, Rome", "buttons": [{"label": "Tickets", "href": "https://colosseo.it/en/tickets/domus-aurea/"}, {"label": "Map", "href": "https://www.google.com/maps/search/?api=1&query=Domus+Aurea+Rome"}]}, {"tagline": "Cooking Experience", "name": "Pasta & Tiramisù Class", "desc": "Hands-on Roman cooking class: fresh pasta and tiramisù.", "address": "📍 Rome", "buttons": [{"label": "Book", "href": "https://romewithchef.com/cook/pasta-and-tiramisu-making-class/"}, {"label": "Map", "href": "https://www.google.com/maps/search/?api=1&query=Pasta+Tiramisu+Class+Rome"}]}]}, "services": {"header": {"title": "Useful Services", "back": "← Back to main page"}, "cards": [{"tagline": "After Checkout", "name": "Luggage Storage Monti", "desc": "Secure luggage storage option in the Monti area.", "address": "📍 Via del Boschetto, Rome", "buttons": [{"label": "Call", "href": "tel:+393475512996"}, {"label": "Map", "href": "https://www.google.com/maps/search/?api=1&query=Luggage+Storage+Monti+Via+del+Boschetto+Roma"}, {"label": "Website", "href": "https://www.safeyourluggage.com/"}, {"label": "Email", "href": "mailto:info@safeyourluggage.com"}]}, {"tagline": "Health Essentials", "name": "Farmavitae Monti", "desc": "Parapharmacy and useful health products in Via Cavour.", "address": "📍 Via Cavour 240, Rome", "buttons": [{"label": "Call", "href": "tel:+3906474630"}, {"label": "Map", "href": "https://www.google.com/maps/search/?api=1&query=Farmavitae+Via+Cavour+240+Roma"}, {"label": "Website", "href": "https://www.farmavitae.it/"}, {"label": "Email", "href": "mailto:farmavitae@libero.it"}]}, {"tagline": "Official Taxi", "name": "Taxi Roma 060609", "desc": "Official Rome taxi call service.", "address": "📍 Rome city taxi service", "buttons": [{"label": "Call", "href": "tel:+39060609"}, {"label": "Info", "href": "https://www.comune.roma.it/web/it/scheda-servizi.page?contentId=INF47781"}, {"label": "Map", "href": "https://www.google.com/maps/search/?api=1&query=Taxi+Roma"}]}]}, "shopping": {"header": {"title": "Shopping & Gifts", "back": "← Back to main page"}, "cards": [{"tagline": "Urban Market", "name": "Mercato Monti", "desc": "Independent designers, vintage finds and contemporary Roman style.", "address": "📍 Via Leonina 46, Rome", "buttons": [{"label": "Map", "href": "https://www.google.com/maps/search/?api=1&query=Mercato+Monti+Via+Leonina+46+Roma"}, {"label": "Website", "href": "https://www.mercatomonti.com/"}]}, {"tagline": "Luxury Department Store", "name": "Rinascente Tritone", "desc": "Fashion, beauty, food hall and rooftop in central Rome.", "address": "📍 Via del Tritone 61, Rome", "buttons": [{"label": "Website", "href": "https://www.rinascente.it/en/store-roma-via-del-tritone"}, {"label": "Map", "href": "https://www.google.com/maps/search/?api=1&query=Rinascente+Via+del+Tritone+61+Roma"}]}, {"tagline": "Cultural Shopping", "name": "Trajan’s Markets", "desc": "Ancient market complex and Museum of the Imperial Fora.", "address": "📍 Via IV Novembre 94, Rome", "buttons": [{"label": "Call", "href": "tel:+39060608"}, {"label": "Map", "href": "https://www.google.com/maps/search/?api=1&query=Mercati+di+Traiano+Roma"}, {"label": "Website", "href": "https://mercatiditraiano.it/en"}, {"label": "Email", "href": "mailto:info@mercatiditraiano.it"}]}]}, "hidden": {"header": {"title": "Hidden Rome", "back": "← Back to main page"}, "cards": [{"tagline": "Three Layers of Rome", "name": "Basilica San Clemente", "desc": "Basilica, medieval church and Roman underground in one place.", "address": "📍 Via Labicana 95, Rome", "buttons": [{"label": "Book", "href": "https://www.basilicasanclemente.com/eng/booking/"}, {"label": "Map", "href": "https://www.google.com/maps/search/?api=1&query=Basilica+San+Clemente+Rome"}, {"label": "Website", "href": "https://www.basilicasanclemente.com/eng/"}]}, {"tagline": "Nero’s Hidden Palace", "name": "Domus Aurea", "desc": "A remarkable underground site close to Colosseum and Monti.", "address": "📍 Via della Domus Aurea 1, Rome", "buttons": [{"label": "Tickets", "href": "https://colosseo.it/en/tickets/domus-aurea/"}, {"label": "Map", "href": "https://www.google.com/maps/search/?api=1&query=Domus+Aurea+Rome"}, {"label": "Info", "href": "https://colosseo.it/en/area/the-domus-aurea/"}]}, {"tagline": "Quiet Viewpoint", "name": "Villa Aldobrandini View", "desc": "A small elevated garden with a calm view above the Imperial Forums.", "address": "📍 Via Mazzarino, Rome", "buttons": [{"label": "Map", "href": "https://www.google.com/maps/search/?api=1&query=Villa+Aldobrandini+Rome"}, {"label": "Info", "href": "https://www.turismoroma.it/en/places/villa-aldobrandini"}]}]}, "family": {"header": {"title": "Family & Kids", "back": "← Back to main page"}, "cards": [{"tagline": "Classic Family Stop", "name": "Colosseum Family Visit", "desc": "The most memorable historic site for children and first-time visitors.", "address": "📍 Colosseum, Rome", "buttons": [{"label": "Tickets", "href": "https://ticketing.colosseo.it/en/"}, {"label": "Map", "href": "https://www.google.com/maps/search/?api=1&query=Colosseum+Rome"}]}, {"tagline": "Children’s Museum", "name": "Explora Children’s Museum", "desc": "Interactive museum option for families with children.", "address": "📍 Via Flaminia 82, Rome", "buttons": [{"label": "Website", "href": "https://www.mdbr.it/"}, {"label": "Map", "href": "https://www.google.com/maps/search/?api=1&query=Explora+Museo+dei+Bambini+Roma"}]}, {"tagline": "Family Day", "name": "Bioparco di Roma", "desc": "Rome zoo, a calm outdoor option for families.", "address": "📍 Villa Borghese, Rome", "buttons": [{"label": "Website", "href": "https://www.bioparco.it/"}, {"label": "Map", "href": "https://www.google.com/maps/search/?api=1&query=Bioparco+di+Roma"}]}]}, "relax": {"header": {"title": "Relax Mode", "back": "← Back to main page"}, "cards": [{"tagline": "Music", "name": "Spotify Lounge", "desc": "Open relaxing lounge music for an easy evening at home.", "address": "📍 Streaming shortcut", "buttons": [{"label": "Open", "href": "https://open.spotify.com/search/italian%20lounge"}]}, {"tagline": "Streaming", "name": "Netflix", "desc": "Open Netflix for a relaxed night in the apartment.", "address": "📍 Streaming shortcut", "buttons": [{"label": "Open", "href": "https://www.netflix.com/"}]}, {"tagline": "YouTube Relax", "name": "Rome Ambience", "desc": "Soft Rome ambience videos and relaxing background sounds.", "address": "📍 Streaming shortcut", "buttons": [{"label": "Open", "href": "https://www.youtube.com/results?search_query=relaxing+rome+ambience"}]}]}, "romantic": {"header": {"title": "Romantic Rome", "back": "← Back to main page"}, "cards": [{"tagline": "Romantic Route", "name": "Colosseum Sunset Walk", "desc": "Via Leonina → Colosseum → Roman Forum viewpoints.", "address": "📍 From your apartment", "buttons": [{"label": "Map", "href": "https://www.google.com/maps/dir/?api=1&origin=Via+Leonina+71+Roma&destination=Colosseum+Rome&travelmode=walking"}]}, {"tagline": "Cocktails with View", "name": "The Court", "desc": "Premium drinks facing the Colosseum: ideal for couples.", "address": "📍 Via Labicana 125, Rome", "buttons": [{"label": "Call", "href": "tel:+390669354581"}, {"label": "Website", "href": "https://www.manfredihotels.com/en/the-court/"}, {"label": "Map", "href": "https://www.google.com/maps/search/?api=1&query=The+Court+Rome"}]}, {"tagline": "Special Dinner", "name": "Aroma", "desc": "Michelin-starred rooftop dinner with a Colosseum panorama.", "address": "📍 Via Labicana 125, Rome", "buttons": [{"label": "Call", "href": "tel:+390697615109"}, {"label": "Website", "href": "https://www.manfredihotels.com/en/aroma/"}, {"label": "Map", "href": "https://www.google.com/maps/search/?api=1&query=Aroma+Restaurant+Rome"}]}]}}, "quickActions": [{"label": "📍 Open Map", "href": "https://www.google.com/maps/search/?api=1&query=Via+del+Portico+d%27Ottavia+1D+Roma"}, {"label": "📞 Call Host", "href": "tel:+393355245756"}, {"label": "🚕 Taxi", "href": "tel:+39060609"}, {"label": "🆘 Emergency", "href": "tel:112"}]}, "fr": {"menuTitle": "Menu Conciergerie", "menuSub": "Touchez pour explorer", "footer": "Sélection préparée pour les hôtes de Via Leonina 71 · Rome", "tiles": [{"icon": "🍽️", "title": "Fine Dining", "desc": "Restaurants sélectionnés et dining premium autour de Monti et du Colisée.", "arrow": "Ouvrir →", "section": "dining"}, {"icon": "☕", "title": "Petit-déjeuner & Café", "desc": "Espresso, pâtisseries et adresses élégantes pour le matin.", "arrow": "Ouvrir →", "section": "breakfast"}, {"icon": "🍸", "title": "Bars & Rooftops", "desc": "Cocktails, rooftops et atmosphère du soir près du Colisée.", "arrow": "Ouvrir →", "section": "drinks"}, {"icon": "🏛️", "title": "À Voir Près d’Ici", "desc": "Sites culturels essentiels accessibles à pied.", "arrow": "Ouvrir →", "section": "mustvisit"}, {"icon": "🎭", "title": "Ce Soir à Rome", "desc": "Opéra, jazz, cocktails et expériences du soir.", "arrow": "Ouvrir →", "section": "tonight"}, {"icon": "🎟️", "title": "Expériences Premium", "desc": "Colisée, Domus Aurea, cours de cuisine et découvertes privées.", "arrow": "Ouvrir →", "section": "experiences"}, {"icon": "🛎️", "title": "Services Utiles", "desc": "Bagages, pharmacie, taxi et aides pratiques.", "arrow": "Ouvrir →", "section": "services"}, {"icon": "🎁", "title": "Shopping & Cadeaux", "desc": "Marchés, cadeaux élégants et trouvailles culturelles romaines.", "arrow": "Ouvrir →", "section": "shopping"}, {"icon": "✨", "title": "Rome Cachée", "desc": "Lieux secrets, vues calmes et découvertes inattendues.", "arrow": "Ouvrir →", "section": "hidden"}, {"icon": "👨‍👩‍👧", "title": "Famille & Enfants", "desc": "Activités simples et agréables pour familles et enfants.", "arrow": "Ouvrir →", "section": "family"}, {"icon": "🎧", "title": "Mode Relax", "desc": "Musique, streaming et ambiance calme pour le soir.", "arrow": "Ouvrir →", "section": "relax"}, {"icon": "❤️", "title": "Rome Romantique", "desc": "Couchers de soleil, promenades et idées pour couples.", "arrow": "Ouvrir →", "section": "romantic"}], "sections": {"dining": {"header": {"title": "Fine Dining", "back": "← Retour à la page principale"}, "cards": [{"tagline": "Vue Michelin", "name": "Aroma", "desc": "Restaurant étoilé sur rooftop avec vue directe sur le Colisée.", "address": "📍 Via Labicana 125, Rome", "buttons": [{"label": "Appeler", "href": "tel:+390697615109"}, {"label": "Carte", "href": "https://www.google.com/maps/search/?api=1&query=Aroma+Restaurant+Via+Labicana+125+Rome"}, {"label": "Site", "href": "https://www.manfredihotels.com/en/aroma/"}, {"label": "Réserver", "href": "https://www.manfredihotels.com/en/aroma/"}]}, {"tagline": "Poisson élégant", "name": "Matermatuta", "desc": "Restaurant de poisson raffiné avec atmosphère de galerie d’art à Monti.", "address": "📍 Via Palermo 51, Rome", "buttons": [{"label": "Appeler", "href": "tel:+39064823962"}, {"label": "Carte", "href": "https://www.google.com/maps/search/?api=1&query=Matermatuta+Via+Palermo+51+Roma"}, {"label": "Site", "href": "https://www.matermatuta.eu/"}, {"label": "Email", "href": "mailto:info@matermatuta.eu"}]}, {"tagline": "Classique romain", "name": "La Taverna dei Fori Imperiali", "desc": "Cuisine romaine familiale près des Forums impériaux.", "address": "📍 Via della Madonna dei Monti 9, Rome", "buttons": [{"label": "Appeler", "href": "tel:+39066798643"}, {"label": "Carte", "href": "https://www.google.com/maps/search/?api=1&query=La+Taverna+dei+Fori+Imperiali+Roma"}, {"label": "Site", "href": "https://www.latavernadeiforiimperiali.com/"}]}]}, "breakfast": {"header": {"title": "Petit-déjeuner & Café", "back": "← Retour à la page principale"}, "cards": [{"tagline": "Icône du petit-déjeuner", "name": "Bar La Licata", "desc": "Bar historique de Monti, pâtisseries et petit-déjeuner depuis 1967.", "address": "📍 Via dei Serpenti 165 / Via Leonina 1A, Rome", "buttons": [{"label": "Appeler", "href": "tel:+39064884746"}, {"label": "WhatsApp", "href": "https://wa.me/393881508774"}, {"label": "Carte", "href": "https://www.google.com/maps/search/?api=1&query=Bar+La+Licata+Via+dei+Serpenti+165+Roma"}, {"label": "Site", "href": "https://www.barlalicata.it/en/"}]}, {"tagline": "Café local", "name": "Er Baretto", "desc": "Café, pâtisseries, brunch et repas simples au cœur de Monti.", "address": "📍 Via del Boschetto 132, Rome", "buttons": [{"label": "Appeler", "href": "tel:+39064820444"}, {"label": "Carte", "href": "https://www.google.com/maps/search/?api=1&query=Er+Baretto+Via+del+Boschetto+132+Roma"}, {"label": "Site", "href": "https://www.artedelcaffe.com/backend/"}, {"label": "Email", "href": "mailto:info@artedelcaffe.com"}]}, {"tagline": "Matin en piazza", "name": "La Bottega del Caffè", "desc": "Café classique face à Piazza della Madonna dei Monti.", "address": "📍 Piazza della Madonna dei Monti 5, Rome", "buttons": [{"label": "Appeler", "href": "tel:+39064741578"}, {"label": "Carte", "href": "https://www.google.com/maps/search/?api=1&query=La+Bottega+del+Caffe+Piazza+della+Madonna+dei+Monti+5+Roma"}]}]}, "drinks": {"header": {"title": "Bars & Rooftops", "back": "← Retour à la page principale"}, "cards": [{"tagline": "Cocktails Colisée", "name": "The Court", "desc": "Bar à cocktails haut de gamme avec vue spectaculaire sur le Colisée.", "address": "📍 Via Labicana 125, Rome", "buttons": [{"label": "Appeler", "href": "tel:+390669354581"}, {"label": "Carte", "href": "https://www.google.com/maps/search/?api=1&query=The+Court+Rome+Via+Labicana+125"}, {"label": "Site", "href": "https://www.manfredihotels.com/en/the-court/"}, {"label": "Email", "href": "mailto:info@thecourtrome.it"}]}, {"tagline": "Bar caché à Monti", "name": "Blackmarket Hall", "desc": "Bar de mixologie caché et espace événements à l’ambiance intense.", "address": "📍 Via de’ Ciancaleoni 31, Rome", "buttons": [{"label": "Appeler", "href": "tel:+393491995295"}, {"label": "Carte", "href": "https://www.google.com/maps/search/?api=1&query=Blackmarket+Hall+Via+de+Ciancaleoni+31+Roma"}, {"label": "Site", "href": "https://www.blackmarkethall.com/"}]}, {"tagline": "Bar à vin historique", "name": "Ai Tre Scalini", "desc": "Bottiglieria historique à Monti, parfaite pour vin et aperitivo.", "address": "📍 Via Panisperna 251, Rome", "buttons": [{"label": "Appeler", "href": "tel:+390648907495"}, {"label": "Carte", "href": "https://www.google.com/maps/search/?api=1&query=Ai+Tre+Scalini+Via+Panisperna+251+Roma"}, {"label": "Site", "href": "https://aitrescalini.org/"}]}]}, "mustvisit": {"header": {"title": "À Voir Près d’Ici", "back": "← Retour à la page principale"}, "cards": [{"tagline": "Rome iconique", "name": "Colosseum & Roman Forum", "desc": "L’expérience essentielle de la Rome antique, à quelques pas de Monti.", "address": "📍 Colisée / Forum romain, Rome", "buttons": [{"label": "Billets", "href": "https://ticketing.colosseo.it/en/"}, {"label": "Carte", "href": "https://www.google.com/maps/search/?api=1&query=Colosseum+Rome"}, {"label": "Info", "href": "https://colosseo.it/en/"}]}, {"tagline": "Moïse de Michel-Ange", "name": "San Pietro in Vincoli", "desc": "Basilique calme célèbre pour le Moïse de Michel-Ange.", "address": "📍 Piazza di San Pietro in Vincoli 4/A, Rome", "buttons": [{"label": "Carte", "href": "https://www.google.com/maps/search/?api=1&query=San+Pietro+in+Vincoli+Rome"}, {"label": "Info", "href": "https://www.lateranensi.org/sanpietroinvincoli/"}]}, {"tagline": "Néron souterrain", "name": "Domus Aurea", "desc": "La Maison Dorée de Néron : archéologie souterraine et visites immersives.", "address": "📍 Via della Domus Aurea 1, Rome", "buttons": [{"label": "Billets", "href": "https://colosseo.it/en/tickets/domus-aurea/"}, {"label": "Carte", "href": "https://www.google.com/maps/search/?api=1&query=Domus+Aurea+Rome"}, {"label": "Info", "href": "https://colosseo.it/en/area/the-domus-aurea/"}]}]}, "tonight": {"header": {"title": "Ce Soir à Rome", "back": "← Retour à la page principale"}, "cards": [{"tagline": "Opéra & Ballet", "name": "Teatro dell’Opera", "desc": "Le principal opéra de Rome pour opéra, ballet et concerts.", "address": "📍 Piazza Beniamino Gigli 7, Rome", "buttons": [{"label": "Appeler", "href": "tel:+3906481601"}, {"label": "Carte", "href": "https://www.google.com/maps/search/?api=1&query=Teatro+dell%27Opera+di+Roma"}, {"label": "Site", "href": "https://www.operaroma.it/"}]}, {"tagline": "Soirée live à Monti", "name": "Blackmarket Hall Events", "desc": "Cocktails, musique et événements intimes dans le quartier Monti.", "address": "📍 Via de’ Ciancaleoni 31, Rome", "buttons": [{"label": "Appeler", "href": "tel:+393491995295"}, {"label": "Carte", "href": "https://www.google.com/maps/search/?api=1&query=Blackmarket+Hall+Roma"}, {"label": "Événements", "href": "https://www.blackmarkethall.com/event/"}]}, {"tagline": "Vue nocturne luxury", "name": "The Court", "desc": "Cocktails premium face au Colisée pour une soirée mémorable.", "address": "📍 Via Labicana 125, Rome", "buttons": [{"label": "Appeler", "href": "tel:+390669354581"}, {"label": "Carte", "href": "https://www.google.com/maps/search/?api=1&query=The+Court+Rome"}, {"label": "Site", "href": "https://www.manfredihotels.com/en/the-court/"}]}]}, "experiences": {"header": {"title": "Expériences Premium", "back": "← Retour à la page principale"}, "cards": [{"tagline": "Rome antique", "name": "Colosseum Official Tickets", "desc": "Portail officiel de billets pour Colisée, Forum et Palatin.", "address": "📍 Parc archéologique du Colisée", "buttons": [{"label": "Billets", "href": "https://ticketing.colosseo.it/en/"}, {"label": "Carte", "href": "https://www.google.com/maps/search/?api=1&query=Colosseum+Rome"}, {"label": "Info", "href": "https://colosseo.it/en/"}]}, {"tagline": "Archéologie premium", "name": "Domus Aurea Tour", "desc": "Expérience souterraine distinctive près de l’appartement.", "address": "📍 Domus Aurea, Rome", "buttons": [{"label": "Billets", "href": "https://colosseo.it/en/tickets/domus-aurea/"}, {"label": "Carte", "href": "https://www.google.com/maps/search/?api=1&query=Domus+Aurea+Rome"}]}, {"tagline": "Cours de cuisine", "name": "Pasta & Tiramisù Class", "desc": "Cours pratique de cuisine romaine : pâtes fraîches et tiramisù.", "address": "📍 Rome", "buttons": [{"label": "Réserver", "href": "https://romewithchef.com/cook/pasta-and-tiramisu-making-class/"}, {"label": "Carte", "href": "https://www.google.com/maps/search/?api=1&query=Pasta+Tiramisu+Class+Rome"}]}]}, "services": {"header": {"title": "Services Utiles", "back": "← Retour à la page principale"}, "cards": [{"tagline": "Après le checkout", "name": "Luggage Storage Monti", "desc": "Consigne à bagages sécurisée dans le quartier Monti.", "address": "📍 Via del Boschetto, Rome", "buttons": [{"label": "Appeler", "href": "tel:+393475512996"}, {"label": "Carte", "href": "https://www.google.com/maps/search/?api=1&query=Luggage+Storage+Monti+Via+del+Boschetto+Roma"}, {"label": "Site", "href": "https://www.safeyourluggage.com/"}, {"label": "Email", "href": "mailto:info@safeyourluggage.com"}]}, {"tagline": "Santé essentielle", "name": "Farmavitae Monti", "desc": "Parapharmacie et produits utiles de santé Via Cavour.", "address": "📍 Via Cavour 240, Rome", "buttons": [{"label": "Appeler", "href": "tel:+3906474630"}, {"label": "Carte", "href": "https://www.google.com/maps/search/?api=1&query=Farmavitae+Via+Cavour+240+Roma"}, {"label": "Site", "href": "https://www.farmavitae.it/"}, {"label": "Email", "href": "mailto:farmavitae@libero.it"}]}, {"tagline": "Taxi officiel", "name": "Taxi Roma 060609", "desc": "Service officiel de taxi de Rome.", "address": "📍 Service taxi de Rome", "buttons": [{"label": "Appeler", "href": "tel:+39060609"}, {"label": "Info", "href": "https://www.comune.roma.it/web/it/scheda-servizi.page?contentId=INF47781"}, {"label": "Carte", "href": "https://www.google.com/maps/search/?api=1&query=Taxi+Roma"}]}]}, "shopping": {"header": {"title": "Shopping & Cadeaux", "back": "← Retour à la page principale"}, "cards": [{"tagline": "Marché urbain", "name": "Mercato Monti", "desc": "Créateurs indépendants, vintage et style romain contemporain.", "address": "📍 Via Leonina 46, Rome", "buttons": [{"label": "Carte", "href": "https://www.google.com/maps/search/?api=1&query=Mercato+Monti+Via+Leonina+46+Roma"}, {"label": "Site", "href": "https://www.mercatomonti.com/"}]}, {"tagline": "Grand magasin luxury", "name": "Rinascente Tritone", "desc": "Mode, beauté, food hall et rooftop dans le centre de Rome.", "address": "📍 Via del Tritone 61, Rome", "buttons": [{"label": "Site", "href": "https://www.rinascente.it/en/store-roma-via-del-tritone"}, {"label": "Carte", "href": "https://www.google.com/maps/search/?api=1&query=Rinascente+Via+del+Tritone+61+Roma"}]}, {"tagline": "Shopping culturel", "name": "Trajan’s Markets", "desc": "Complexe de marché antique et musée des Forums impériaux.", "address": "📍 Via IV Novembre 94, Rome", "buttons": [{"label": "Appeler", "href": "tel:+39060608"}, {"label": "Carte", "href": "https://www.google.com/maps/search/?api=1&query=Mercati+di+Traiano+Roma"}, {"label": "Site", "href": "https://mercatiditraiano.it/en"}, {"label": "Email", "href": "mailto:info@mercatiditraiano.it"}]}]}, "hidden": {"header": {"title": "Rome Cachée", "back": "← Retour à la page principale"}, "cards": [{"tagline": "Trois couches de Rome", "name": "Basilica San Clemente", "desc": "Basilique, église médiévale et Rome souterraine en un seul lieu.", "address": "📍 Via Labicana 95, Rome", "buttons": [{"label": "Réserver", "href": "https://www.basilicasanclemente.com/eng/booking/"}, {"label": "Carte", "href": "https://www.google.com/maps/search/?api=1&query=Basilica+San+Clemente+Rome"}, {"label": "Site", "href": "https://www.basilicasanclemente.com/eng/"}]}, {"tagline": "Palais caché de Néron", "name": "Domus Aurea", "desc": "Site souterrain remarquable près du Colisée et de Monti.", "address": "📍 Via della Domus Aurea 1, Rome", "buttons": [{"label": "Billets", "href": "https://colosseo.it/en/tickets/domus-aurea/"}, {"label": "Carte", "href": "https://www.google.com/maps/search/?api=1&query=Domus+Aurea+Rome"}, {"label": "Info", "href": "https://colosseo.it/en/area/the-domus-aurea/"}]}, {"tagline": "Point de vue calme", "name": "Villa Aldobrandini View", "desc": "Petit jardin surélevé avec vue calme sur les Forums impériaux.", "address": "📍 Via Mazzarino, Rome", "buttons": [{"label": "Carte", "href": "https://www.google.com/maps/search/?api=1&query=Villa+Aldobrandini+Rome"}, {"label": "Info", "href": "https://www.turismoroma.it/en/places/villa-aldobrandini"}]}]}, "family": {"header": {"title": "Famille & Enfants", "back": "← Retour à la page principale"}, "cards": [{"tagline": "Classique famille", "name": "Colosseum Family Visit", "desc": "Le site historique le plus mémorable pour enfants et premières visites.", "address": "📍 Colisée, Rome", "buttons": [{"label": "Billets", "href": "https://ticketing.colosseo.it/en/"}, {"label": "Carte", "href": "https://www.google.com/maps/search/?api=1&query=Colosseum+Rome"}]}, {"tagline": "Musée des enfants", "name": "Explora Children’s Museum", "desc": "Musée interactif idéal pour les familles avec enfants.", "address": "📍 Via Flaminia 82, Rome", "buttons": [{"label": "Site", "href": "https://www.mdbr.it/"}, {"label": "Carte", "href": "https://www.google.com/maps/search/?api=1&query=Explora+Museo+dei+Bambini+Roma"}]}, {"tagline": "Journée famille", "name": "Bioparco di Roma", "desc": "Zoo de Rome, option extérieure calme pour les familles.", "address": "📍 Villa Borghese, Rome", "buttons": [{"label": "Site", "href": "https://www.bioparco.it/"}, {"label": "Carte", "href": "https://www.google.com/maps/search/?api=1&query=Bioparco+di+Roma"}]}]}, "relax": {"header": {"title": "Mode Relax", "back": "← Retour à la page principale"}, "cards": [{"tagline": "Musique", "name": "Spotify Lounge", "desc": "Ouvrez une musique lounge relaxante pour une soirée à la maison.", "address": "📍 Raccourci streaming", "buttons": [{"label": "Ouvrir", "href": "https://open.spotify.com/search/italian%20lounge"}]}, {"tagline": "Streaming", "name": "Netflix", "desc": "Ouvrez Netflix pour une soirée détendue dans l’appartement.", "address": "📍 Raccourci streaming", "buttons": [{"label": "Ouvrir", "href": "https://www.netflix.com/"}]}, {"tagline": "YouTube Relax", "name": "Rome Ambience", "desc": "Vidéos et sons relaxants de Rome en arrière-plan.", "address": "📍 Raccourci streaming", "buttons": [{"label": "Ouvrir", "href": "https://www.youtube.com/results?search_query=relaxing+rome+ambience"}]}]}, "romantic": {"header": {"title": "Rome Romantique", "back": "← Retour à la page principale"}, "cards": [{"tagline": "Parcours romantique", "name": "Colosseum Sunset Walk", "desc": "Via Leonina → Colisée → points de vue des Forums romains.", "address": "📍 Depuis votre appartement", "buttons": [{"label": "Carte", "href": "https://www.google.com/maps/dir/?api=1&origin=Via+Leonina+71+Roma&destination=Colosseum+Rome&travelmode=walking"}]}, {"tagline": "Cocktails avec vue", "name": "The Court", "desc": "Drinks premium face au Colisée : idéal pour couples.", "address": "📍 Via Labicana 125, Rome", "buttons": [{"label": "Appeler", "href": "tel:+390669354581"}, {"label": "Site", "href": "https://www.manfredihotels.com/en/the-court/"}, {"label": "Carte", "href": "https://www.google.com/maps/search/?api=1&query=The+Court+Rome"}]}, {"tagline": "Dîner spécial", "name": "Aroma", "desc": "Dîner étoilé sur rooftop avec panorama sur le Colisée.", "address": "📍 Via Labicana 125, Rome", "buttons": [{"label": "Appeler", "href": "tel:+390697615109"}, {"label": "Site", "href": "https://www.manfredihotels.com/en/aroma/"}, {"label": "Carte", "href": "https://www.google.com/maps/search/?api=1&query=Aroma+Restaurant+Rome"}]}]}}, "quickActions": [{"label": "📍 Ouvrir la carte", "href": "https://www.google.com/maps/search/?api=1&query=Via+del+Portico+d%27Ottavia+1D+Roma"}, {"label": "📞 Appeler l’hôte", "href": "tel:+393355245756"}, {"label": "🚕 Taxi", "href": "tel:+39060609"}, {"label": "🆘 Urgence", "href": "tel:112"}]}, "es": {"menuTitle": "Menú Concierge", "menuSub": "Toca para explorar", "footer": "Selección curada para huéspedes en Via Leonina 71 · Roma", "tiles": [{"icon": "🍽️", "title": "Fine Dining", "desc": "Restaurantes seleccionados y dining premium entre Monti y el Coliseo.", "arrow": "Abrir →", "section": "dining"}, {"icon": "☕", "title": "Desayuno & Café", "desc": "Espresso, pastelería y paradas elegantes por la mañana.", "arrow": "Abrir →", "section": "breakfast"}, {"icon": "🍸", "title": "Copas & Rooftops", "desc": "Cócteles, rooftops y ambiente nocturno cerca del Coliseo.", "arrow": "Abrir →", "section": "drinks"}, {"icon": "🏛️", "title": "Imprescindibles Cerca", "desc": "Lugares culturales esenciales a pie.", "arrow": "Abrir →", "section": "mustvisit"}, {"icon": "🎭", "title": "Esta Noche en Roma", "desc": "Ópera, jazz, cócteles y experiencias nocturnas.", "arrow": "Abrir →", "section": "tonight"}, {"icon": "🎟️", "title": "Experiencias Premium", "desc": "Coliseo, Domus Aurea, clases de cocina y descubrimientos privados.", "arrow": "Abrir →", "section": "experiences"}, {"icon": "🛎️", "title": "Servicios Útiles", "desc": "Equipaje, farmacia, taxi y ayuda práctica.", "arrow": "Abrir →", "section": "services"}, {"icon": "🎁", "title": "Compras & Regalos", "desc": "Mercados, regalos elegantes y hallazgos culturales romanos.", "arrow": "Abrir →", "section": "shopping"}, {"icon": "✨", "title": "Roma Secreta", "desc": "Lugares secretos, vistas tranquilas y descubrimientos inesperados.", "arrow": "Abrir →", "section": "hidden"}, {"icon": "👨‍👩‍👧", "title": "Familia & Niños", "desc": "Actividades fáciles y agradables para familias y niños.", "arrow": "Abrir →", "section": "family"}, {"icon": "🎧", "title": "Modo Relax", "desc": "Música, streaming y ambiente tranquilo para la noche.", "arrow": "Abrir →", "section": "relax"}, {"icon": "❤️", "title": "Roma Romántica", "desc": "Atardeceres, paseos e ideas para parejas.", "arrow": "Abrir →", "section": "romantic"}], "sections": {"dining": {"header": {"title": "Fine Dining", "back": "← Volver a la página principal"}, "cards": [{"tagline": "Vista Michelin", "name": "Aroma", "desc": "Restaurante con estrella Michelin en rooftop con vista directa al Coliseo.", "address": "📍 Via Labicana 125, Roma", "buttons": [{"label": "Llamar", "href": "tel:+390697615109"}, {"label": "Mapa", "href": "https://www.google.com/maps/search/?api=1&query=Aroma+Restaurant+Via+Labicana+125+Rome"}, {"label": "Web", "href": "https://www.manfredihotels.com/en/aroma/"}, {"label": "Reservar", "href": "https://www.manfredihotels.com/en/aroma/"}]}, {"tagline": "Marisco elegante", "name": "Matermatuta", "desc": "Restaurante refinado de pescado con ambiente de galería de arte en Monti.", "address": "📍 Via Palermo 51, Roma", "buttons": [{"label": "Llamar", "href": "tel:+39064823962"}, {"label": "Mapa", "href": "https://www.google.com/maps/search/?api=1&query=Matermatuta+Via+Palermo+51+Roma"}, {"label": "Web", "href": "https://www.matermatuta.eu/"}, {"label": "Email", "href": "mailto:info@matermatuta.eu"}]}, {"tagline": "Clásico romano", "name": "La Taverna dei Fori Imperiali", "desc": "Cocina romana familiar cerca de los Foros Imperiales.", "address": "📍 Via della Madonna dei Monti 9, Roma", "buttons": [{"label": "Llamar", "href": "tel:+39066798643"}, {"label": "Mapa", "href": "https://www.google.com/maps/search/?api=1&query=La+Taverna+dei+Fori+Imperiali+Roma"}, {"label": "Web", "href": "https://www.latavernadeiforiimperiali.com/"}]}]}, "breakfast": {"header": {"title": "Desayuno & Café", "back": "← Volver a la página principal"}, "cards": [{"tagline": "Icono de desayuno", "name": "Bar La Licata", "desc": "Bar histórico de Monti, pastelería y desayuno desde 1967.", "address": "📍 Via dei Serpenti 165 / Via Leonina 1A, Roma", "buttons": [{"label": "Llamar", "href": "tel:+39064884746"}, {"label": "WhatsApp", "href": "https://wa.me/393881508774"}, {"label": "Mapa", "href": "https://www.google.com/maps/search/?api=1&query=Bar+La+Licata+Via+dei+Serpenti+165+Roma"}, {"label": "Web", "href": "https://www.barlalicata.it/en/"}]}, {"tagline": "Café local", "name": "Er Baretto", "desc": "Café, dulces, brunch y comidas sencillas en el corazón de Monti.", "address": "📍 Via del Boschetto 132, Roma", "buttons": [{"label": "Llamar", "href": "tel:+39064820444"}, {"label": "Mapa", "href": "https://www.google.com/maps/search/?api=1&query=Er+Baretto+Via+del+Boschetto+132+Roma"}, {"label": "Web", "href": "https://www.artedelcaffe.com/backend/"}, {"label": "Email", "href": "mailto:info@artedelcaffe.com"}]}, {"tagline": "Mañana en piazza", "name": "La Bottega del Caffè", "desc": "Café clásico frente a Piazza della Madonna dei Monti.", "address": "📍 Piazza della Madonna dei Monti 5, Roma", "buttons": [{"label": "Llamar", "href": "tel:+39064741578"}, {"label": "Mapa", "href": "https://www.google.com/maps/search/?api=1&query=La+Bottega+del+Caffe+Piazza+della+Madonna+dei+Monti+5+Roma"}]}]}, "drinks": {"header": {"title": "Copas & Rooftops", "back": "← Volver a la página principal"}, "cards": [{"tagline": "Cócteles Coliseo", "name": "The Court", "desc": "Cocktail bar de alto nivel con vista dramática al Coliseo.", "address": "📍 Via Labicana 125, Roma", "buttons": [{"label": "Llamar", "href": "tel:+390669354581"}, {"label": "Mapa", "href": "https://www.google.com/maps/search/?api=1&query=The+Court+Rome+Via+Labicana+125"}, {"label": "Web", "href": "https://www.manfredihotels.com/en/the-court/"}, {"label": "Email", "href": "mailto:info@thecourtrome.it"}]}, {"tagline": "Bar escondido en Monti", "name": "Blackmarket Hall", "desc": "Bar de mixología escondido y espacio de eventos con atmósfera intensa.", "address": "📍 Via de’ Ciancaleoni 31, Roma", "buttons": [{"label": "Llamar", "href": "tel:+393491995295"}, {"label": "Mapa", "href": "https://www.google.com/maps/search/?api=1&query=Blackmarket+Hall+Via+de+Ciancaleoni+31+Roma"}, {"label": "Web", "href": "https://www.blackmarkethall.com/"}]}, {"tagline": "Bar de vinos histórico", "name": "Ai Tre Scalini", "desc": "Bottiglieria histórica en Monti, perfecta para vino y aperitivo.", "address": "📍 Via Panisperna 251, Roma", "buttons": [{"label": "Llamar", "href": "tel:+390648907495"}, {"label": "Mapa", "href": "https://www.google.com/maps/search/?api=1&query=Ai+Tre+Scalini+Via+Panisperna+251+Roma"}, {"label": "Web", "href": "https://aitrescalini.org/"}]}]}, "mustvisit": {"header": {"title": "Imprescindibles Cerca", "back": "← Volver a la página principal"}, "cards": [{"tagline": "Roma icónica", "name": "Colosseum & Roman Forum", "desc": "La experiencia esencial de la Roma antigua, a pocos pasos de Monti.", "address": "📍 Coliseo / Foro Romano, Roma", "buttons": [{"label": "Entradas", "href": "https://ticketing.colosseo.it/en/"}, {"label": "Mapa", "href": "https://www.google.com/maps/search/?api=1&query=Colosseum+Rome"}, {"label": "Info", "href": "https://colosseo.it/en/"}]}, {"tagline": "Moisés de Miguel Ángel", "name": "San Pietro in Vincoli", "desc": "Basílica tranquila famosa por el Moisés de Miguel Ángel.", "address": "📍 Piazza di San Pietro in Vincoli 4/A, Roma", "buttons": [{"label": "Mapa", "href": "https://www.google.com/maps/search/?api=1&query=San+Pietro+in+Vincoli+Rome"}, {"label": "Info", "href": "https://www.lateranensi.org/sanpietroinvincoli/"}]}, {"tagline": "Nerón subterráneo", "name": "Domus Aurea", "desc": "La Casa Dorada de Nerón: arqueología subterránea y tours inmersivos.", "address": "📍 Via della Domus Aurea 1, Roma", "buttons": [{"label": "Entradas", "href": "https://colosseo.it/en/tickets/domus-aurea/"}, {"label": "Mapa", "href": "https://www.google.com/maps/search/?api=1&query=Domus+Aurea+Rome"}, {"label": "Info", "href": "https://colosseo.it/en/area/the-domus-aurea/"}]}]}, "tonight": {"header": {"title": "Esta Noche en Roma", "back": "← Volver a la página principal"}, "cards": [{"tagline": "Ópera & Ballet", "name": "Teatro dell’Opera", "desc": "El principal teatro de ópera de Roma para ópera, ballet y conciertos.", "address": "📍 Piazza Beniamino Gigli 7, Roma", "buttons": [{"label": "Llamar", "href": "tel:+3906481601"}, {"label": "Mapa", "href": "https://www.google.com/maps/search/?api=1&query=Teatro+dell%27Opera+di+Roma"}, {"label": "Web", "href": "https://www.operaroma.it/"}]}, {"tagline": "Noche live en Monti", "name": "Blackmarket Hall Events", "desc": "Cócteles, música y eventos íntimos en el barrio Monti.", "address": "📍 Via de’ Ciancaleoni 31, Roma", "buttons": [{"label": "Llamar", "href": "tel:+393491995295"}, {"label": "Mapa", "href": "https://www.google.com/maps/search/?api=1&query=Blackmarket+Hall+Roma"}, {"label": "Eventos", "href": "https://www.blackmarkethall.com/event/"}]}, {"tagline": "Vista nocturna luxury", "name": "The Court", "desc": "Cócteles premium frente al Coliseo para una noche memorable.", "address": "📍 Via Labicana 125, Roma", "buttons": [{"label": "Llamar", "href": "tel:+390669354581"}, {"label": "Mapa", "href": "https://www.google.com/maps/search/?api=1&query=The+Court+Rome"}, {"label": "Web", "href": "https://www.manfredihotels.com/en/the-court/"}]}]}, "experiences": {"header": {"title": "Experiencias Premium", "back": "← Volver a la página principal"}, "cards": [{"tagline": "Roma antigua", "name": "Colosseum Official Tickets", "desc": "Portal oficial de entradas para Coliseo, Foro y Palatino.", "address": "📍 Parque Arqueológico del Coliseo", "buttons": [{"label": "Entradas", "href": "https://ticketing.colosseo.it/en/"}, {"label": "Mapa", "href": "https://www.google.com/maps/search/?api=1&query=Colosseum+Rome"}, {"label": "Info", "href": "https://colosseo.it/en/"}]}, {"tagline": "Arqueología premium", "name": "Domus Aurea Tour", "desc": "Experiencia subterránea distintiva cerca del apartamento.", "address": "📍 Domus Aurea, Roma", "buttons": [{"label": "Entradas", "href": "https://colosseo.it/en/tickets/domus-aurea/"}, {"label": "Mapa", "href": "https://www.google.com/maps/search/?api=1&query=Domus+Aurea+Rome"}]}, {"tagline": "Clase de cocina", "name": "Pasta & Tiramisù Class", "desc": "Clase práctica de cocina romana: pasta fresca y tiramisú.", "address": "📍 Roma", "buttons": [{"label": "Reservar", "href": "https://romewithchef.com/cook/pasta-and-tiramisu-making-class/"}, {"label": "Mapa", "href": "https://www.google.com/maps/search/?api=1&query=Pasta+Tiramisu+Class+Rome"}]}]}, "services": {"header": {"title": "Servicios Útiles", "back": "← Volver a la página principal"}, "cards": [{"tagline": "Después del checkout", "name": "Luggage Storage Monti", "desc": "Consigna segura en la zona de Monti.", "address": "📍 Via del Boschetto, Roma", "buttons": [{"label": "Llamar", "href": "tel:+393475512996"}, {"label": "Mapa", "href": "https://www.google.com/maps/search/?api=1&query=Luggage+Storage+Monti+Via+del+Boschetto+Roma"}, {"label": "Web", "href": "https://www.safeyourluggage.com/"}, {"label": "Email", "href": "mailto:info@safeyourluggage.com"}]}, {"tagline": "Salud esencial", "name": "Farmavitae Monti", "desc": "Parafarmacia y productos útiles de salud en Via Cavour.", "address": "📍 Via Cavour 240, Roma", "buttons": [{"label": "Llamar", "href": "tel:+3906474630"}, {"label": "Mapa", "href": "https://www.google.com/maps/search/?api=1&query=Farmavitae+Via+Cavour+240+Roma"}, {"label": "Web", "href": "https://www.farmavitae.it/"}, {"label": "Email", "href": "mailto:farmavitae@libero.it"}]}, {"tagline": "Taxi oficial", "name": "Taxi Roma 060609", "desc": "Servicio oficial de taxi de Roma.", "address": "📍 Servicio taxi Roma", "buttons": [{"label": "Llamar", "href": "tel:+39060609"}, {"label": "Info", "href": "https://www.comune.roma.it/web/it/scheda-servizi.page?contentId=INF47781"}, {"label": "Mapa", "href": "https://www.google.com/maps/search/?api=1&query=Taxi+Roma"}]}]}, "shopping": {"header": {"title": "Compras & Regalos", "back": "← Volver a la página principal"}, "cards": [{"tagline": "Mercado urbano", "name": "Mercato Monti", "desc": "Diseñadores independientes, vintage y estilo romano contemporáneo.", "address": "📍 Via Leonina 46, Roma", "buttons": [{"label": "Mapa", "href": "https://www.google.com/maps/search/?api=1&query=Mercato+Monti+Via+Leonina+46+Roma"}, {"label": "Web", "href": "https://www.mercatomonti.com/"}]}, {"tagline": "Department store luxury", "name": "Rinascente Tritone", "desc": "Moda, belleza, food hall y rooftop en el centro de Roma.", "address": "📍 Via del Tritone 61, Roma", "buttons": [{"label": "Web", "href": "https://www.rinascente.it/en/store-roma-via-del-tritone"}, {"label": "Mapa", "href": "https://www.google.com/maps/search/?api=1&query=Rinascente+Via+del+Tritone+61+Roma"}]}, {"tagline": "Shopping cultural", "name": "Trajan’s Markets", "desc": "Antiguo complejo comercial y Museo de los Foros Imperiales.", "address": "📍 Via IV Novembre 94, Roma", "buttons": [{"label": "Llamar", "href": "tel:+39060608"}, {"label": "Mapa", "href": "https://www.google.com/maps/search/?api=1&query=Mercati+di+Traiano+Roma"}, {"label": "Web", "href": "https://mercatiditraiano.it/en"}, {"label": "Email", "href": "mailto:info@mercatiditraiano.it"}]}]}, "hidden": {"header": {"title": "Roma Secreta", "back": "← Volver a la página principal"}, "cards": [{"tagline": "Tres capas de Roma", "name": "Basilica San Clemente", "desc": "Basílica, iglesia medieval y Roma subterránea en un solo lugar.", "address": "📍 Via Labicana 95, Roma", "buttons": [{"label": "Reservar", "href": "https://www.basilicasanclemente.com/eng/booking/"}, {"label": "Mapa", "href": "https://www.google.com/maps/search/?api=1&query=Basilica+San+Clemente+Rome"}, {"label": "Web", "href": "https://www.basilicasanclemente.com/eng/"}]}, {"tagline": "Palacio oculto de Nerón", "name": "Domus Aurea", "desc": "Sitio subterráneo notable cerca del Coliseo y Monti.", "address": "📍 Via della Domus Aurea 1, Roma", "buttons": [{"label": "Entradas", "href": "https://colosseo.it/en/tickets/domus-aurea/"}, {"label": "Mapa", "href": "https://www.google.com/maps/search/?api=1&query=Domus+Aurea+Rome"}, {"label": "Info", "href": "https://colosseo.it/en/area/the-domus-aurea/"}]}, {"tagline": "Mirador tranquilo", "name": "Villa Aldobrandini View", "desc": "Pequeño jardín elevado con vista tranquila sobre los Foros Imperiales.", "address": "📍 Via Mazzarino, Roma", "buttons": [{"label": "Mapa", "href": "https://www.google.com/maps/search/?api=1&query=Villa+Aldobrandini+Rome"}, {"label": "Info", "href": "https://www.turismoroma.it/en/places/villa-aldobrandini"}]}]}, "family": {"header": {"title": "Familia & Niños", "back": "← Volver a la página principal"}, "cards": [{"tagline": "Clásico para familias", "name": "Colosseum Family Visit", "desc": "El sitio histórico más memorable para niños y primeras visitas.", "address": "📍 Coliseo, Roma", "buttons": [{"label": "Entradas", "href": "https://ticketing.colosseo.it/en/"}, {"label": "Mapa", "href": "https://www.google.com/maps/search/?api=1&query=Colosseum+Rome"}]}, {"tagline": "Museo infantil", "name": "Explora Children’s Museum", "desc": "Museo interactivo ideal para familias con niños.", "address": "📍 Via Flaminia 82, Roma", "buttons": [{"label": "Web", "href": "https://www.mdbr.it/"}, {"label": "Mapa", "href": "https://www.google.com/maps/search/?api=1&query=Explora+Museo+dei+Bambini+Roma"}]}, {"tagline": "Día en familia", "name": "Bioparco di Roma", "desc": "Zoo de Roma, opción tranquila al aire libre para familias.", "address": "📍 Villa Borghese, Roma", "buttons": [{"label": "Web", "href": "https://www.bioparco.it/"}, {"label": "Mapa", "href": "https://www.google.com/maps/search/?api=1&query=Bioparco+di+Roma"}]}]}, "relax": {"header": {"title": "Modo Relax", "back": "← Volver a la página principal"}, "cards": [{"tagline": "Música", "name": "Spotify Lounge", "desc": "Abre música lounge relajante para una noche en casa.", "address": "📍 Atajo streaming", "buttons": [{"label": "Abrir", "href": "https://open.spotify.com/search/italian%20lounge"}]}, {"tagline": "Streaming", "name": "Netflix", "desc": "Abre Netflix para una noche tranquila en el apartamento.", "address": "📍 Atajo streaming", "buttons": [{"label": "Abrir", "href": "https://www.netflix.com/"}]}, {"tagline": "YouTube Relax", "name": "Rome Ambience", "desc": "Vídeos y sonidos relajantes de Roma como fondo.", "address": "📍 Atajo streaming", "buttons": [{"label": "Abrir", "href": "https://www.youtube.com/results?search_query=relaxing+rome+ambience"}]}]}, "romantic": {"header": {"title": "Roma Romántica", "back": "← Volver a la página principal"}, "cards": [{"tagline": "Ruta romántica", "name": "Colosseum Sunset Walk", "desc": "Via Leonina → Coliseo → miradores de los Foros Romanos.", "address": "📍 Desde tu apartamento", "buttons": [{"label": "Mapa", "href": "https://www.google.com/maps/dir/?api=1&origin=Via+Leonina+71+Roma&destination=Colosseum+Rome&travelmode=walking"}]}, {"tagline": "Cócteles con vista", "name": "The Court", "desc": "Bebidas premium frente al Coliseo: ideal para parejas.", "address": "📍 Via Labicana 125, Roma", "buttons": [{"label": "Llamar", "href": "tel:+390669354581"}, {"label": "Web", "href": "https://www.manfredihotels.com/en/the-court/"}, {"label": "Mapa", "href": "https://www.google.com/maps/search/?api=1&query=The+Court+Rome"}]}, {"tagline": "Cena especial", "name": "Aroma", "desc": "Cena con estrella en rooftop con panorama del Coliseo.", "address": "📍 Via Labicana 125, Roma", "buttons": [{"label": "Llamar", "href": "tel:+390697615109"}, {"label": "Web", "href": "https://www.manfredihotels.com/en/aroma/"}, {"label": "Mapa", "href": "https://www.google.com/maps/search/?api=1&query=Aroma+Restaurant+Rome"}]}]}}, "quickActions": [{"label": "📍 Abrir mapa", "href": "https://www.google.com/maps/search/?api=1&query=Via+del+Portico+d%27Ottavia+1D+Roma"}, {"label": "📞 Llamar al anfitrión", "href": "tel:+393355245756"}, {"label": "🚕 Taxi", "href": "tel:+39060609"}, {"label": "🆘 Emergencia", "href": "tel:112"}]}, "de": {"menuTitle": "Concierge-Menü", "menuSub": "Tippen zum Erkunden", "footer": "Kuratierte Auswahl für Gäste in Via Leonina 71 · Rom", "tiles": [{"icon": "🍽️", "title": "Fine Dining", "desc": "Ausgewählte Restaurants und Premium-Dining rund um Monti und das Kolosseum.", "arrow": "Öffnen →", "section": "dining"}, {"icon": "☕", "title": "Frühstück & Kaffee", "desc": "Espresso, Gebäck und elegante Frühstücksorte in der Nähe.", "arrow": "Öffnen →", "section": "breakfast"}, {"icon": "🍸", "title": "Drinks & Rooftops", "desc": "Cocktails, Rooftops und Abendatmosphäre nahe dem Kolosseum.", "arrow": "Öffnen →", "section": "drinks"}, {"icon": "🏛️", "title": "Sehenswert in der Nähe", "desc": "Wichtige Kulturorte zu Fuß erreichbar.", "arrow": "Öffnen →", "section": "mustvisit"}, {"icon": "🎭", "title": "Heute Abend in Rom", "desc": "Oper, Jazz, Cocktails und Abenderlebnisse.", "arrow": "Öffnen →", "section": "tonight"}, {"icon": "🎟️", "title": "Premium-Erlebnisse", "desc": "Kolosseum, Domus Aurea, Kochkurse und private Entdeckungen.", "arrow": "Öffnen →", "section": "experiences"}, {"icon": "🛎️", "title": "Nützliche Services", "desc": "Gepäck, Apotheke, Taxi und praktische Hilfe.", "arrow": "Öffnen →", "section": "services"}, {"icon": "🎁", "title": "Shopping & Geschenke", "desc": "Märkte, elegante Geschenke und kulturelle römische Fundstücke.", "arrow": "Öffnen →", "section": "shopping"}, {"icon": "✨", "title": "Verstecktes Rom", "desc": "Geheime Orte, ruhige Ausblicke und unerwartete Entdeckungen.", "arrow": "Öffnen →", "section": "hidden"}, {"icon": "👨‍👩‍👧", "title": "Familie & Kinder", "desc": "Einfache und angenehme Aktivitäten für Familien und Kinder.", "arrow": "Öffnen →", "section": "family"}, {"icon": "🎧", "title": "Relax-Modus", "desc": "Musik, Streaming und ruhige Abendstimmung.", "arrow": "Öffnen →", "section": "relax"}, {"icon": "❤️", "title": "Romantisches Rom", "desc": "Sonnenuntergänge, Spaziergänge und Ideen für Paare.", "arrow": "Öffnen →", "section": "romantic"}], "sections": {"dining": {"header": {"title": "Fine Dining", "back": "← Zur Hauptseite"}, "cards": [{"tagline": "Michelin-Blick", "name": "Aroma", "desc": "Michelin-Sternerestaurant auf dem Rooftop mit direktem Blick auf das Kolosseum.", "address": "📍 Via Labicana 125, Rom", "buttons": [{"label": "Anrufen", "href": "tel:+390697615109"}, {"label": "Karte", "href": "https://www.google.com/maps/search/?api=1&query=Aroma+Restaurant+Via+Labicana+125+Rome"}, {"label": "Website", "href": "https://www.manfredihotels.com/en/aroma/"}, {"label": "Buchen", "href": "https://www.manfredihotels.com/en/aroma/"}]}, {"tagline": "Eleganter Fisch", "name": "Matermatuta", "desc": "Raffiniertes Fischrestaurant mit Kunstgalerie-Atmosphäre in Monti.", "address": "📍 Via Palermo 51, Rom", "buttons": [{"label": "Anrufen", "href": "tel:+39064823962"}, {"label": "Karte", "href": "https://www.google.com/maps/search/?api=1&query=Matermatuta+Via+Palermo+51+Roma"}, {"label": "Website", "href": "https://www.matermatuta.eu/"}, {"label": "Email", "href": "mailto:info@matermatuta.eu"}]}, {"tagline": "Römischer Klassiker", "name": "La Taverna dei Fori Imperiali", "desc": "Familiengeführte römische Küche nahe den Kaiserforen.", "address": "📍 Via della Madonna dei Monti 9, Rom", "buttons": [{"label": "Anrufen", "href": "tel:+39066798643"}, {"label": "Karte", "href": "https://www.google.com/maps/search/?api=1&query=La+Taverna+dei+Fori+Imperiali+Roma"}, {"label": "Website", "href": "https://www.latavernadeiforiimperiali.com/"}]}]}, "breakfast": {"header": {"title": "Frühstück & Kaffee", "back": "← Zur Hauptseite"}, "cards": [{"tagline": "Frühstücksikone", "name": "Bar La Licata", "desc": "Historische Bar in Monti, Gebäck und Frühstück seit 1967.", "address": "📍 Via dei Serpenti 165 / Via Leonina 1A, Rom", "buttons": [{"label": "Anrufen", "href": "tel:+39064884746"}, {"label": "WhatsApp", "href": "https://wa.me/393881508774"}, {"label": "Karte", "href": "https://www.google.com/maps/search/?api=1&query=Bar+La+Licata+Via+dei+Serpenti+165+Roma"}, {"label": "Website", "href": "https://www.barlalicata.it/en/"}]}, {"tagline": "Lokaler Kaffee", "name": "Er Baretto", "desc": "Kaffee, Gebäck, Brunch und einfache Mahlzeiten im Herzen von Monti.", "address": "📍 Via del Boschetto 132, Rom", "buttons": [{"label": "Anrufen", "href": "tel:+39064820444"}, {"label": "Karte", "href": "https://www.google.com/maps/search/?api=1&query=Er+Baretto+Via+del+Boschetto+132+Roma"}, {"label": "Website", "href": "https://www.artedelcaffe.com/backend/"}, {"label": "Email", "href": "mailto:info@artedelcaffe.com"}]}, {"tagline": "Morgen auf der Piazza", "name": "La Bottega del Caffè", "desc": "Klassisches Café an der Piazza della Madonna dei Monti.", "address": "📍 Piazza della Madonna dei Monti 5, Rom", "buttons": [{"label": "Anrufen", "href": "tel:+39064741578"}, {"label": "Karte", "href": "https://www.google.com/maps/search/?api=1&query=La+Bottega+del+Caffe+Piazza+della+Madonna+dei+Monti+5+Roma"}]}]}, "drinks": {"header": {"title": "Drinks & Rooftops", "back": "← Zur Hauptseite"}, "cards": [{"tagline": "Cocktails am Kolosseum", "name": "The Court", "desc": "Hochwertige Cocktailbar mit dramatischem Blick auf das Kolosseum.", "address": "📍 Via Labicana 125, Rom", "buttons": [{"label": "Anrufen", "href": "tel:+390669354581"}, {"label": "Karte", "href": "https://www.google.com/maps/search/?api=1&query=The+Court+Rome+Via+Labicana+125"}, {"label": "Website", "href": "https://www.manfredihotels.com/en/the-court/"}, {"label": "Email", "href": "mailto:info@thecourtrome.it"}]}, {"tagline": "Versteckte Bar in Monti", "name": "Blackmarket Hall", "desc": "Atmosphärische versteckte Mixology-Bar und Eventlocation in Monti.", "address": "📍 Via de’ Ciancaleoni 31, Rom", "buttons": [{"label": "Anrufen", "href": "tel:+393491995295"}, {"label": "Karte", "href": "https://www.google.com/maps/search/?api=1&query=Blackmarket+Hall+Via+de+Ciancaleoni+31+Roma"}, {"label": "Website", "href": "https://www.blackmarkethall.com/"}]}, {"tagline": "Historische Weinbar", "name": "Ai Tre Scalini", "desc": "Historische Bottiglieria in Monti, perfekt für Wein und Aperitivo.", "address": "📍 Via Panisperna 251, Rom", "buttons": [{"label": "Anrufen", "href": "tel:+390648907495"}, {"label": "Karte", "href": "https://www.google.com/maps/search/?api=1&query=Ai+Tre+Scalini+Via+Panisperna+251+Roma"}, {"label": "Website", "href": "https://aitrescalini.org/"}]}]}, "mustvisit": {"header": {"title": "Sehenswert in der Nähe", "back": "← Zur Hauptseite"}, "cards": [{"tagline": "Ikonisches Rom", "name": "Colosseum & Roman Forum", "desc": "Das wichtigste Erlebnis des antiken Rom, nur ein kurzer Spaziergang von Monti.", "address": "📍 Kolosseum / Forum Romanum, Rom", "buttons": [{"label": "Tickets", "href": "https://ticketing.colosseo.it/en/"}, {"label": "Karte", "href": "https://www.google.com/maps/search/?api=1&query=Colosseum+Rome"}, {"label": "Info", "href": "https://colosseo.it/en/"}]}, {"tagline": "Michelangelos Moses", "name": "San Pietro in Vincoli", "desc": "Ruhige Basilika, berühmt für Michelangelos Moses.", "address": "📍 Piazza di San Pietro in Vincoli 4/A, Rom", "buttons": [{"label": "Karte", "href": "https://www.google.com/maps/search/?api=1&query=San+Pietro+in+Vincoli+Rome"}, {"label": "Info", "href": "https://www.lateranensi.org/sanpietroinvincoli/"}]}, {"tagline": "Nero unterirdisch", "name": "Domus Aurea", "desc": "Neros Goldenes Haus: unterirdische Archäologie und immersive Touren.", "address": "📍 Via della Domus Aurea 1, Rom", "buttons": [{"label": "Tickets", "href": "https://colosseo.it/en/tickets/domus-aurea/"}, {"label": "Karte", "href": "https://www.google.com/maps/search/?api=1&query=Domus+Aurea+Rome"}, {"label": "Info", "href": "https://colosseo.it/en/area/the-domus-aurea/"}]}]}, "tonight": {"header": {"title": "Heute Abend in Rom", "back": "← Zur Hauptseite"}, "cards": [{"tagline": "Oper & Ballett", "name": "Teatro dell’Opera", "desc": "Roms führendes Opernhaus für Oper, Ballett und Konzerte.", "address": "📍 Piazza Beniamino Gigli 7, Rom", "buttons": [{"label": "Anrufen", "href": "tel:+3906481601"}, {"label": "Karte", "href": "https://www.google.com/maps/search/?api=1&query=Teatro+dell%27Opera+di+Roma"}, {"label": "Website", "href": "https://www.operaroma.it/"}]}, {"tagline": "Live-Abend in Monti", "name": "Blackmarket Hall Events", "desc": "Cocktails, Musik und intime Events im Monti-Viertel.", "address": "📍 Via de’ Ciancaleoni 31, Rom", "buttons": [{"label": "Anrufen", "href": "tel:+393491995295"}, {"label": "Karte", "href": "https://www.google.com/maps/search/?api=1&query=Blackmarket+Hall+Roma"}, {"label": "Events", "href": "https://www.blackmarkethall.com/event/"}]}, {"tagline": "Luxuriöser Nachtblick", "name": "The Court", "desc": "Premium-Cocktails mit Blick auf das Kolosseum für einen besonderen Abend.", "address": "📍 Via Labicana 125, Rom", "buttons": [{"label": "Anrufen", "href": "tel:+390669354581"}, {"label": "Karte", "href": "https://www.google.com/maps/search/?api=1&query=The+Court+Rome"}, {"label": "Website", "href": "https://www.manfredihotels.com/en/the-court/"}]}]}, "experiences": {"header": {"title": "Premium-Erlebnisse", "back": "← Zur Hauptseite"}, "cards": [{"tagline": "Antikes Rom", "name": "Colosseum Official Tickets", "desc": "Offizielles Ticketportal für Kolosseum, Forum und Palatin.", "address": "📍 Archäologischer Park des Kolosseums", "buttons": [{"label": "Tickets", "href": "https://ticketing.colosseo.it/en/"}, {"label": "Karte", "href": "https://www.google.com/maps/search/?api=1&query=Colosseum+Rome"}, {"label": "Info", "href": "https://colosseo.it/en/"}]}, {"tagline": "Premium-Archäologie", "name": "Domus Aurea Tour", "desc": "Ein besonderes unterirdisches Erlebnis nahe der Wohnung.", "address": "📍 Domus Aurea, Rom", "buttons": [{"label": "Tickets", "href": "https://colosseo.it/en/tickets/domus-aurea/"}, {"label": "Karte", "href": "https://www.google.com/maps/search/?api=1&query=Domus+Aurea+Rome"}]}, {"tagline": "Kochkurs", "name": "Pasta & Tiramisù Class", "desc": "Praktischer römischer Kochkurs: frische Pasta und Tiramisu.", "address": "📍 Rom", "buttons": [{"label": "Buchen", "href": "https://romewithchef.com/cook/pasta-and-tiramisu-making-class/"}, {"label": "Karte", "href": "https://www.google.com/maps/search/?api=1&query=Pasta+Tiramisu+Class+Rome"}]}]}, "services": {"header": {"title": "Nützliche Services", "back": "← Zur Hauptseite"}, "cards": [{"tagline": "Nach dem Checkout", "name": "Luggage Storage Monti", "desc": "Sichere Gepäckaufbewahrung in der Monti-Gegend.", "address": "📍 Via del Boschetto, Rom", "buttons": [{"label": "Anrufen", "href": "tel:+393475512996"}, {"label": "Karte", "href": "https://www.google.com/maps/search/?api=1&query=Luggage+Storage+Monti+Via+del+Boschetto+Roma"}, {"label": "Website", "href": "https://www.safeyourluggage.com/"}, {"label": "Email", "href": "mailto:info@safeyourluggage.com"}]}, {"tagline": "Gesundheit & Essentials", "name": "Farmavitae Monti", "desc": "Parapharmazie und nützliche Gesundheitsprodukte in Via Cavour.", "address": "📍 Via Cavour 240, Rom", "buttons": [{"label": "Anrufen", "href": "tel:+3906474630"}, {"label": "Karte", "href": "https://www.google.com/maps/search/?api=1&query=Farmavitae+Via+Cavour+240+Roma"}, {"label": "Website", "href": "https://www.farmavitae.it/"}, {"label": "Email", "href": "mailto:farmavitae@libero.it"}]}, {"tagline": "Offizielles Taxi", "name": "Taxi Roma 060609", "desc": "Offizieller Taxi-Service in Rom.", "address": "📍 Taxi-Service Rom", "buttons": [{"label": "Anrufen", "href": "tel:+39060609"}, {"label": "Info", "href": "https://www.comune.roma.it/web/it/scheda-servizi.page?contentId=INF47781"}, {"label": "Karte", "href": "https://www.google.com/maps/search/?api=1&query=Taxi+Roma"}]}]}, "shopping": {"header": {"title": "Shopping & Geschenke", "back": "← Zur Hauptseite"}, "cards": [{"tagline": "Urbaner Markt", "name": "Mercato Monti", "desc": "Unabhängige Designer, Vintage-Funde und zeitgenössischer römischer Stil.", "address": "📍 Via Leonina 46, Rom", "buttons": [{"label": "Karte", "href": "https://www.google.com/maps/search/?api=1&query=Mercato+Monti+Via+Leonina+46+Roma"}, {"label": "Website", "href": "https://www.mercatomonti.com/"}]}, {"tagline": "Luxus-Kaufhaus", "name": "Rinascente Tritone", "desc": "Mode, Beauty, Food Hall und Rooftop im Zentrum von Rom.", "address": "📍 Via del Tritone 61, Rom", "buttons": [{"label": "Website", "href": "https://www.rinascente.it/en/store-roma-via-del-tritone"}, {"label": "Karte", "href": "https://www.google.com/maps/search/?api=1&query=Rinascente+Via+del+Tritone+61+Roma"}]}, {"tagline": "Kulturelles Shopping", "name": "Trajan’s Markets", "desc": "Antiker Marktkomplex und Museum der Kaiserforen.", "address": "📍 Via IV Novembre 94, Rom", "buttons": [{"label": "Anrufen", "href": "tel:+39060608"}, {"label": "Karte", "href": "https://www.google.com/maps/search/?api=1&query=Mercati+di+Traiano+Roma"}, {"label": "Website", "href": "https://mercatiditraiano.it/en"}, {"label": "Email", "href": "mailto:info@mercatiditraiano.it"}]}]}, "hidden": {"header": {"title": "Verstecktes Rom", "back": "← Zur Hauptseite"}, "cards": [{"tagline": "Drei Schichten Roms", "name": "Basilica San Clemente", "desc": "Basilika, mittelalterliche Kirche und unterirdisches Rom an einem Ort.", "address": "📍 Via Labicana 95, Rom", "buttons": [{"label": "Buchen", "href": "https://www.basilicasanclemente.com/eng/booking/"}, {"label": "Karte", "href": "https://www.google.com/maps/search/?api=1&query=Basilica+San+Clemente+Rome"}, {"label": "Website", "href": "https://www.basilicasanclemente.com/eng/"}]}, {"tagline": "Neros versteckter Palast", "name": "Domus Aurea", "desc": "Bemerkenswerte unterirdische Stätte nahe Kolosseum und Monti.", "address": "📍 Via della Domus Aurea 1, Rom", "buttons": [{"label": "Tickets", "href": "https://colosseo.it/en/tickets/domus-aurea/"}, {"label": "Karte", "href": "https://www.google.com/maps/search/?api=1&query=Domus+Aurea+Rome"}, {"label": "Info", "href": "https://colosseo.it/en/area/the-domus-aurea/"}]}, {"tagline": "Ruhiger Aussichtspunkt", "name": "Villa Aldobrandini View", "desc": "Kleiner erhöhter Garten mit ruhigem Blick über die Kaiserforen.", "address": "📍 Via Mazzarino, Rom", "buttons": [{"label": "Karte", "href": "https://www.google.com/maps/search/?api=1&query=Villa+Aldobrandini+Rome"}, {"label": "Info", "href": "https://www.turismoroma.it/en/places/villa-aldobrandini"}]}]}, "family": {"header": {"title": "Familie & Kinder", "back": "← Zur Hauptseite"}, "cards": [{"tagline": "Familienklassiker", "name": "Colosseum Family Visit", "desc": "Die eindrucksvollste historische Stätte für Kinder und Erstbesucher.", "address": "📍 Kolosseum, Rom", "buttons": [{"label": "Tickets", "href": "https://ticketing.colosseo.it/en/"}, {"label": "Karte", "href": "https://www.google.com/maps/search/?api=1&query=Colosseum+Rome"}]}, {"tagline": "Kindermuseum", "name": "Explora Children’s Museum", "desc": "Interaktives Museum, ideal für Familien mit Kindern.", "address": "📍 Via Flaminia 82, Rom", "buttons": [{"label": "Website", "href": "https://www.mdbr.it/"}, {"label": "Karte", "href": "https://www.google.com/maps/search/?api=1&query=Explora+Museo+dei+Bambini+Roma"}]}, {"tagline": "Familientag", "name": "Bioparco di Roma", "desc": "Der Zoo von Rom, eine ruhige Outdoor-Option für Familien.", "address": "📍 Villa Borghese, Rom", "buttons": [{"label": "Website", "href": "https://www.bioparco.it/"}, {"label": "Karte", "href": "https://www.google.com/maps/search/?api=1&query=Bioparco+di+Roma"}]}]}, "relax": {"header": {"title": "Relax-Modus", "back": "← Zur Hauptseite"}, "cards": [{"tagline": "Musik", "name": "Spotify Lounge", "desc": "Entspannende Lounge-Musik für einen Abend zu Hause öffnen.", "address": "📍 Streaming-Abkürzung", "buttons": [{"label": "Öffnen", "href": "https://open.spotify.com/search/italian%20lounge"}]}, {"tagline": "Streaming", "name": "Netflix", "desc": "Netflix für einen entspannten Abend in der Wohnung öffnen.", "address": "📍 Streaming-Abkürzung", "buttons": [{"label": "Öffnen", "href": "https://www.netflix.com/"}]}, {"tagline": "YouTube Relax", "name": "Rome Ambience", "desc": "Entspannende Rom-Videos und Hintergrundgeräusche.", "address": "📍 Streaming-Abkürzung", "buttons": [{"label": "Öffnen", "href": "https://www.youtube.com/results?search_query=relaxing+rome+ambience"}]}]}, "romantic": {"header": {"title": "Romantisches Rom", "back": "← Zur Hauptseite"}, "cards": [{"tagline": "Romantische Route", "name": "Colosseum Sunset Walk", "desc": "Via Leonina → Kolosseum → Aussichtspunkte der römischen Foren.", "address": "📍 Von Ihrer Wohnung", "buttons": [{"label": "Karte", "href": "https://www.google.com/maps/dir/?api=1&origin=Via+Leonina+71+Roma&destination=Colosseum+Rome&travelmode=walking"}]}, {"tagline": "Cocktails mit Aussicht", "name": "The Court", "desc": "Premium-Drinks mit Blick auf das Kolosseum: ideal für Paare.", "address": "📍 Via Labicana 125, Rom", "buttons": [{"label": "Anrufen", "href": "tel:+390669354581"}, {"label": "Website", "href": "https://www.manfredihotels.com/en/the-court/"}, {"label": "Karte", "href": "https://www.google.com/maps/search/?api=1&query=The+Court+Rome"}]}, {"tagline": "Besonderes Dinner", "name": "Aroma", "desc": "Michelin-Dinner auf dem Rooftop mit Kolosseum-Panorama.", "address": "📍 Via Labicana 125, Rom", "buttons": [{"label": "Anrufen", "href": "tel:+390697615109"}, {"label": "Website", "href": "https://www.manfredihotels.com/en/aroma/"}, {"label": "Karte", "href": "https://www.google.com/maps/search/?api=1&query=Aroma+Restaurant+Rome"}]}]}}, "quickActions": [{"label": "📍 Karte öffnen", "href": "https://www.google.com/maps/search/?api=1&query=Via+del+Portico+d%27Ottavia+1D+Roma"}, {"label": "📞 Gastgeber anrufen", "href": "tel:+393355245756"}, {"label": "🚕 Taxi", "href": "tel:+39060609"}, {"label": "🆘 Notfall", "href": "tel:112"}]}}};
+const SERVER_URL = 'https://shelly-cloud-opener-1.onrender.com';
+const APT = 'leonina';
+const HAS_DOOR = true;
+
+const urlP = new URLSearchParams(location.search);
+let phase = 1;
+const urlToken = urlP.get('t') || '';
+if (urlP.has('phase')) {
+  const cp = new URLSearchParams(urlP); cp.delete('phase');
+  const qs = cp.toString();
+  history.replaceState(null, '', location.pathname + (qs ? '?' + qs : ''));
+}
+async function loadPhase() {
+  if (!urlToken) { phase = 1; applyPhase(); schedulePhaseCheck(); return; }
+  try {
+    const r = await fetch(`${SERVER_URL}/checkin/leonina/phase?t=${encodeURIComponent(urlToken)}`);
+    if (r.ok) { const j = await r.json(); phase = j.phase || 1; }
+  } catch(e) { phase = 1; }
+  localStorage.setItem('phase_leonina', phase);
+  applyPhase(); schedulePhaseCheck();
+}
+function schedulePhaseCheck() {
+  if (phase < 3 && urlToken) setTimeout(loadPhase, 60000);
+}
+
+let lang = (urlP.get('lang') || localStorage.getItem('lang') || (navigator.language||'it').slice(0,2)).toLowerCase();
+
+/* ═══════════════════════════════════════════════
+   DATA — all 5 languages
+═══════════════════════════════════════════════ */
+const DATA = {
+en:{
+  ui:{
+    heroTitle:'Welcome to Rome ✨',heroSub:'Curated luxury hospitality in the heart of Rome.',aptLabel:'Apartment',
+    aptTitle:'Your Stay 🏠',romeTitle:'Explore Rome 🍷',
+    keysTitle:'Digital Keys',keysSub:'Open building & apartment',
+    wifiTitle:'Wi‑Fi',wifiSub:'Network & password',
+    houseTitle:'House Guide',houseSub:'Instructions & tips',
+    helpTitle:'Need Help?',helpSub:'Concierge support',
+    eatTitle:'Eat & Drink',eatSub:'Restaurants, breakfast & aperitivo',
+    tonightTitle:'Tonight in Rome',tonightSub:'Bars, rooftops & evening ideas',
+    tickTitle:'Ticketing',tickSub:'Museums, tours & experiences',
+    transTitle:'Transport',transSub:'Metro, taxi & airports',
+    footerHelp:'Need help?',
+    phase1Text:'Complete your online check-in to unlock apartment info.',
+    phaseBadge:['📋 After Booking','✅ After Check-in','🗝 Check-in Day'],
+    keysPhase2:'Your digital keys will be available from 13:00 on check-in day.',
+    romeAiPlaceholder:'Pizza, WiFi, checkout, hidden gems…',
+    romeChips:['Best pizza in Monti','WiFi password','Checkout time','Hidden gems'],
+  },
+  apt:{
+    checkin_time:'13:00',checkout_time:'11:00',
+    wifi_note:'The router is on the table. Turn it to see the SSID and password on the label.',
+    wifi_ssid:'See router label',wifi_password:'See router label',
+    water_note:'Tap water is safe and drinkable. Hot water is always available. Important: do NOT touch the switch on the left side of the bathroom mirror — it controls the hot water system.',
+    ac_note:'Air conditioning is available. Please turn it OFF when you leave the apartment.',
+    bathroom:'Hairdryer, bath mat, toilet paper, and hand soap.',
+    towels:'Per guest: 1 large, 1 medium, and 1 small towel. Beds are prepared on arrival.',
+    kitchen:'Fully equipped kitchen. Electric hot plate: always turn it OFF after use and never leave pots unattended.',
+    terrace:'If you open the terrace umbrella, TIE it to the railing. Always close it before leaving.',
+    plants:'You can water the plants once a day if you like, except cacti.',
+    lighting:'Kitchen lights: switch on the right of the stairs (facing the kitchen). Terrace lights: switch inside on the right before exiting.',
+    front_door:'Use the long key with the square end. Pull the door toward you and turn counter-clockwise.',
+    building_code:'Building door code (alternative to the round key): 7171 followed by the key symbol.',
+    intercom:'16',phone:'+39 335 524 5756',
+    pharmacy:'Farmacia Cavour — Via Cavour 84 · Pharmacy at Via Panisperna 40',
+    hospital:'Policlinico Umberto I or Fatebenefratelli Hospital, Tiber Island',
+    atm:'BNL — Via Cavour 84 · UniCredit — Piazza della Suburra 5',
+    sim:'Iliad — Via Cavour 196 · TIM and Vodafone on Via Nazionale',
+    laundry:'Wash and Dry self-service laundry — Via Cavour 194',
+    luggage:'Radical Storage — Termini or Largo Argentina · <a href="https://radicalstorage.com" target="_blank">radicalstorage.com</a> · from €5/day',
+    city_transport:'<strong>Metro B</strong> — Cavour stop (~5 min walk): → Colosseum (1 stop) · Termini (1 stop) · EUR<br><strong>Bus 75, 84</strong> — Via Cavour: → Termini · Trastevere · Ostiense<br><strong>Bus 117</strong> (electric) — Monti/Fori area: shuttle to historic centre',
+    airports:'<strong>Fiumicino (FCO):</strong> Metro B Cavour → Termini → Leonardo Express (~32 min, €14) or FL1 (~40 min, €8) · <a href="https://www.trenitalia.com" target="_blank">trenitalia.com</a><br><strong>Ciampino (CIA):</strong> Metro B → Termini → Terravision/SIT bus (~50 min, ~€6) · <a href="https://www.terravision.eu" target="_blank">terravision.eu</a><br><strong>Private transfer:</strong> Welcome Pickups · <a href="https://www.welcomepickups.com" target="_blank">welcomepickups.com</a>',
+    taxi:'Radio Taxi Roma: +39 06 3570 · Apps: FreeNow · itTaxi · Uber · Fixed fare to Fiumicino: €50–55',
+    emergency:'EU emergency: 112 · Police: 113 · Ambulance: 118 · Fire: 115 · English doctor: +39 06 488 2371 · 24h vet: +39 06 660 681',
+    eat:'<strong>Breakfast</strong><br>Caffè Propaganda — Via Claudia 15, design café near the Colosseum (~8 min) · <a href="https://caffepropaganda.it" target="_blank">caffepropaganda.it</a><br>Tram Depot — Via Marmorata 13, historic pastries and coffee (~15 min)<br><br><strong>Lunch</strong><br>Il Bocconcino — Via Ostilia 23, authentic Monti trattoria (~5 min) · Tel. 06 7707 9175<br>Alle Carrette — Vicolo delle Carrette 14, excellent thin-crust Roman pizza (~5 min)<br><br><strong>Dinner</strong><br>Osteria della Suburra — Via della Suburra 57, Roman cuisine & carafe wine (~4 min)<br>Ai Tre Scalini — Via Panisperna 251, wine bar & kitchen, Monti icon (~3 min)<br>Urbana 47 — Via Urbana 47, modern Italian cuisine (~4 min) · <a href="https://www.urbana47.it" target="_blank">urbana47.it</a><br><br><strong>Aperitivo & Cocktails</strong><br>Ai Tre Scalini — Via Panisperna 251: street tables, the soul of Monti (~3 min)<br>Gatsby Café — Via Cimarra 38: creative cocktails, art-déco atmosphere (~4 min)<br>Piazza della Madonna dei Monti: open-air aperitivo with the locals (~2 min)<br><br><strong>Gelato</strong><br>Fatamorgana — Via dei Serpenti 55: artisan gelato, unique flavours (~3 min) · <a href="https://www.fatamorgana.it" target="_blank">fatamorgana.it</a>',
+    drink:'Ai Tre Scalini · Gatsby Café · Piazza della Madonna dei Monti · Fatamorgana gelato',
+    tonight:'Aperitivo in Piazza della Madonna dei Monti (Thu–Sun, all locals, ~2 min). Cocktails at Gatsby Café (~4 min). Evening stroll: Via Leonina → Piazza della Madonna dei Monti → Fori di Traiano → illuminated Colosseum → back home.',
+    visit:"Piazza Madonna dei Monti · Santa Maria ai Monti · San Pietro in Vincoli (Michelangelo's Moses) · Colle Oppio Park & Domus Aurea · Trajan's Markets & Imperial Forums · Colosseum (10 min walk).",
+    hidden_gems:'Underground of San Martino ai Monti (guided tours) · Santa Prassede & Chapel of San Zenone · Borgia Staircase · Ancient Suburra · Roman houses under Santa Pudenziana.',
+    checkout_note:'Switch off all lights & AC, close all windows, leave keys on the table, gently close the front door.',
+    keys_msg:'Your digital keys have been sent to your email by Hostaway. Check your inbox — the arrival time you selected during online check-in determines the exact delivery time. Keys are never released before 13:00.',
+  },
+  drawers:{
+    address:`<p><strong>Via Leonina 71</strong><br>Monti District, Rome<br><br><a href="https://maps.google.com/?q=Via+Leonina+71+Roma" target="_blank">Open in Google Maps →</a></p>`,
+    emergency:a=>`<p>${a.emergency}</p>`,
+    checkout:a=>`<p>Checkout time: <strong>${a.checkout_time}</strong></p><p>${a.checkout_note}</p>`,
+    keys:a=>buildKeysHTML(a),
+    wifi:a=>`<p>${a.wifi_note}</p><p>Network: <strong>${a.wifi_ssid}</strong><br>Password: <strong>${a.wifi_password}</strong></p>`,
+    house:a=>`<h3>Water</h3><p>${a.water_note}</p><h3>Air Conditioning</h3><p>${a.ac_note}</p><h3>Kitchen</h3><p>${a.kitchen}</p><h3>Terrace</h3><p>${a.terrace}</p><p>${a.plants}</p><p>${a.lighting}</p><h3>Bathroom</h3><p>${a.bathroom}</p><p>${a.towels}</p><h3>Building Access</h3><p>${a.front_door}</p><p>Code: <strong>${a.building_code}</strong></p><p>Intercom: <strong>${a.intercom}</strong></p>`,
+    help:a=>`<div style="text-align:center;padding:18px 0"><div style="font-size:50px;margin-bottom:16px">📞</div><p style="font-weight:600;margin-bottom:16px;color:var(--cream)">Your concierge is available for any need.</p><a href="tel:${a.phone}" style="display:block;background:linear-gradient(135deg,#e2c07a,var(--gold));color:#120d09;padding:14px;border-radius:14px;font-weight:800;text-decoration:none;text-align:center">${a.phone}</a><p style="font-size:12px;color:var(--muted);margin-top:12px">Intercom: <strong style="color:var(--cream)">${a.intercom}</strong></p></div>`,
+    eat:a=>`<p>${a.eat}</p>`,
+    tonight:a=>`<h3>Aperitivo (18:00–20:00)</h3><p>${a.tonight}</p><h3>Rooftops & Panoramas</h3><p>Caffè Capitolino — Piazza del Campidoglio 4: rooftop with Colosseum & Forum views (free terrace entry, ~10 min) · <a href="https://www.museicapitolini.org" target="_blank">museicapitolini.org</a><br>Terrazza del Vittoriano — free panoramic view over the Forums (~12 min)<br>Illuminated Colosseum at night: a unique spectacle, evening stroll at the Forums (~8 min)</p><h3>Romantic Evening</h3><p>Sunset aperitivo at Piazza della Madonna dei Monti → dinner at Urbana 47 → night walk at the Imperial Forums → gelato at Fatamorgana</p><h3>What to Visit</h3><p>${a.visit}</p><h3>Hidden Gems</h3><p>${a.hidden_gems}</p>`,
+    tickets:`<p><strong>TicketOne</strong>:<br><a href="https://www.ticketone.it/en/" target="_blank">www.ticketone.it</a></p><p><strong>AS Roma</strong>:<br><a href="https://www.asroma.com/en/tickets" target="_blank">www.asroma.com/tickets</a></p><p><strong>SS Lazio</strong>:<br><a href="https://www.sslazio.it/en" target="_blank">www.sslazio.it</a></p><p><strong>Colosseum</strong>:<br><a href="https://colosseo.it/en" target="_blank">colosseo.it</a></p><p><strong>Vatican Museums</strong>:<br><a href="https://tickets.museivaticani.va/" target="_blank">tickets.museivaticani.va</a></p><p><strong>Galleria Borghese</strong>:<br><a href="https://galleriaborghese.cultura.gov.it/" target="_blank">galleriaborghese.cultura.gov.it</a></p><p><strong>MAXXI</strong>:<br><a href="https://www.maxxi.art/en/" target="_blank">maxxi.art</a></p>`,
+    transport:a=>`<h3>Metro & Bus</h3><p>${a.city_transport}</p><h3>Airports</h3><p>${a.airports}</p><h3>Taxi</h3><p>${a.taxi}</p><h3>Luggage Storage</h3><p>${a.luggage}</p>`,
+  }
+},
+it:{
+  ui:{
+    heroTitle:'Benvenuto a Roma ✨',heroSub:'Ospitalità di lusso nel cuore di Roma.',aptLabel:'Appartamento',
+    aptTitle:'Il Tuo Soggiorno 🏠',romeTitle:'Vivi Roma 🍷',
+    keysTitle:'Chiavi Digitali',keysSub:'Apri edificio e appartamento',
+    wifiTitle:'Wi‑Fi',wifiSub:'Rete e password',
+    houseTitle:'Guida Casa',houseSub:'Istruzioni e consigli',
+    helpTitle:'Hai Bisogno?',helpSub:'Supporto concierge',
+    eatTitle:'Mangiare & Bere',eatSub:'Ristoranti, colazione & aperitivo',
+    tonightTitle:'Stasera a Roma',tonightSub:'Bar, rooftop & idee serali',
+    tickTitle:'Biglietteria',tickSub:'Musei, tour ed esperienze',
+    transTitle:'Trasporti',transSub:'Metro, taxi e aeroporti',
+    footerHelp:'Hai bisogno di aiuto?',
+    phase1Text:"Completa il check-in online per sbloccare le informazioni sull'appartamento.",
+    phaseBadge:['📋 Dopo la Prenotazione','✅ Dopo il Check-in','🗝 Giorno del Check-in'],
+    keysPhase2:'Le tue chiavi digitali saranno disponibili dalle 13:00 il giorno del check-in.',
+    romeAiPlaceholder:'Pizza, WiFi, checkout, posti nascosti…',
+    romeChips:['Migliore pizza al Monti','Password WiFi','Orario checkout','Posti nascosti'],
+  },
+  apt:{
+    checkin_time:'13:00',checkout_time:'11:00',
+    wifi_note:"Il router è sul tavolo. Giralo per leggere SSID e password sull'etichetta.",
+    wifi_ssid:'Vedi etichetta router',wifi_password:'Vedi etichetta router',
+    water_note:"L'acqua del rubinetto è potabile. L'acqua calda è sempre disponibile. Importante: non toccare l'interruttore a sinistra dello specchio del bagno — comanda l'impianto dell'acqua calda.",
+    ac_note:"Aria condizionata presente. Spegnila sempre quando esci dall'appartamento.",
+    bathroom:'Asciugacapelli, tappetino, carta igienica e sapone per le mani.',
+    towels:"Per ogni ospite: asciugamano grande, medio e piccolo. Letti pronti all'arrivo.",
+    kitchen:"Cucina completamente attrezzata. Piastra elettrica: spegnerla sempre dopo l'uso e non lasciare mai pentole incustodite.",
+    terrace:"Se apri l'ombrellone del terrazzo, legalo alla ringhiera. Chiudilo sempre prima di uscire.",
+    plants:'Se vuoi puoi bagnare le piante una volta al giorno, esclusi i cactus.',
+    lighting:"Luci cucina: interruttore a destra delle scale guardando la cucina. Luci terrazzo: interruttore interno a destra prima dell'uscita.",
+    front_door:'Usa la chiave lunga con punta quadrata. Tira il portone verso di te e gira in senso antiorario.',
+    building_code:'Codice portone (alternativa alla chiave tonda): 7171 seguito dal simbolo della chiave.',
+    intercom:'16',phone:'+39 335 524 5756',
+    pharmacy:'Farmacia Cavour — Via Cavour 84 · Farmacia Via Panisperna 40',
+    hospital:'Policlinico Umberto I o Ospedale Fatebenefratelli, Isola Tiberina',
+    atm:'BNL — Via Cavour 84 · UniCredit — Piazza della Suburra 5',
+    sim:'Iliad — Via Cavour 196 · TIM e Vodafone in Via Nazionale',
+    laundry:'Lavanderia self service Wash and Dry — Via Cavour 194',
+    luggage:'Radical Storage — Termini o Largo Argentina · <a href="https://radicalstorage.com" target="_blank">radicalstorage.com</a> · da €5/giorno',
+    city_transport:'<strong>Metro B</strong> — fermata Cavour (~5 min a piedi): → Colosseo (1 fermata) · Termini (1 fermata) · EUR<br><strong>Bus 75, 84</strong> — Via Cavour: → Termini · Trastevere · Ostiense<br><strong>Bus 117</strong> (elettrico) — zona Monti/Fori: collegamento navetta centro storico',
+    airports:'<strong>Fiumicino (FCO):</strong> Metro B Cavour → Termini → Leonardo Express (~32 min, €14) oppure FL1 (~40 min, €8) · <a href="https://www.trenitalia.com" target="_blank">trenitalia.com</a><br><strong>Ciampino (CIA):</strong> Metro B → Termini → Terravision/SIT bus (~50 min, ~€6) · <a href="https://www.terravision.eu" target="_blank">terravision.eu</a><br><strong>Transfer privato:</strong> Welcome Pickups · <a href="https://www.welcomepickups.com" target="_blank">welcomepickups.com</a>',
+    taxi:'Radio Taxi Roma: +39 06 3570 · App: FreeNow · itTaxi · Uber · Tariffa fissa Fiumicino: €50–55',
+    emergency:'Emergenze UE: 112 · Polizia: 113 · Ambulanza: 118 · Vigili: 115 · Medico inglese: +39 06 488 2371 · Vet 24h: +39 06 660 681',
+    eat:'<strong>Colazione</strong><br>Caffè Propaganda — Via Claudia 15, colazione di design vicino al Colosseo (~8 min) · <a href="https://caffepropaganda.it" target="_blank">caffepropaganda.it</a><br>Tram Depot — Via Marmorata 13, cornetti e caffè storici (~15 min)<br><br><strong>Pranzo</strong><br>Il Bocconcino — Via Ostilia 23, trattoria monticiana autentica (~5 min) · Tel. 06 7707 9175<br>Alle Carrette — Vicolo delle Carrette 14, pizza romana sottile eccellente (~5 min)<br><br><strong>Cena</strong><br>Osteria della Suburra — Via della Suburra 57, cucina romana, vino sfuso (~4 min)<br>Ai Tre Scalini — Via Panisperna 251, wine bar e cucina, must del quartiere Monti (~3 min)<br>Urbana 47 — Via Urbana 47, cucina moderna italiana (~4 min) · <a href="https://www.urbana47.it" target="_blank">urbana47.it</a><br><br><strong>Aperitivo & Cocktail</strong><br>Ai Tre Scalini — Via Panisperna 251: il bar simbolo di Monti, tavoli in strada (~3 min)<br>Gatsby Café — Via Cimarra 38: cocktail creativi, atmosfera art déco (~4 min)<br>Piazza della Madonna dei Monti: aperitivo "en plein air" con i romani (~2 min)<br><br><strong>Gelato</strong><br>Fatamorgana — Via dei Serpenti 55: gelato artigianale con gusti unici (~3 min) · <a href="https://www.fatamorgana.it" target="_blank">fatamorgana.it</a>',
+    drink:'Ai Tre Scalini · Gatsby Café · Piazza della Madonna dei Monti · Fatamorgana gelato',
+    tonight:"Aperitivo in Piazza della Madonna dei Monti (giov–dom, tutti i romani, ~2 min). Cocktail al Gatsby Café (~4 min). Passeggiata serale: Via Leonina → Piazza della Madonna dei Monti → Fori di Traiano → Colosseo illuminato → rientro.",
+    visit:"Piazza Madonna dei Monti · Santa Maria ai Monti · San Pietro in Vincoli (Mosè di Michelangelo) · Parco del Colle Oppio e Domus Aurea · Mercati di Traiano e Fori Imperiali · Colosseo (10 min a piedi).",
+    hidden_gems:'Sotterranei di San Martino ai Monti (visite guidate) · Santa Prassede e Cappella di San Zenone · Scalinata dei Borgia · Antica Suburra · Case romane sotto Santa Pudenziana.',
+    checkout_note:'Spegni luci e AC, chiudi le finestre, lascia le chiavi sul tavolo, chiudi delicatamente la porta.',
+    keys_msg:"Le tue chiavi digitali sono state inviate via email da Hostaway. Controlla la casella — l'orario di arrivo che hai indicato nel modulo online determina l'orario esatto di consegna. Le chiavi non vengono rilasciate prima delle 13:00.",
+  },
+  drawers:{
+    address:`<p><strong>Via Leonina 71</strong><br>Quartiere Monti, Roma<br><br><a href="https://maps.google.com/?q=Via+Leonina+71+Roma" target="_blank">Apri in Google Maps →</a></p>`,
+    emergency:a=>`<p>${a.emergency}</p>`,
+    checkout:a=>`<p>Orario checkout: <strong>${a.checkout_time}</strong></p><p>${a.checkout_note}</p>`,
+    keys:a=>buildKeysHTML(a),
+    wifi:a=>`<p>${a.wifi_note}</p><p>Rete: <strong>${a.wifi_ssid}</strong><br>Password: <strong>${a.wifi_password}</strong></p>`,
+    house:a=>`<h3>Acqua</h3><p>${a.water_note}</p><h3>Aria Condizionata</h3><p>${a.ac_note}</p><h3>Cucina</h3><p>${a.kitchen}</p><h3>Terrazzo</h3><p>${a.terrace}</p><p>${a.plants}</p><p>${a.lighting}</p><h3>Bagno</h3><p>${a.bathroom}</p><p>${a.towels}</p><h3>Accesso Edificio</h3><p>${a.front_door}</p><p>Codice: <strong>${a.building_code}</strong></p><p>Citofono: <strong>${a.intercom}</strong></p>`,
+    help:a=>`<div style="text-align:center;padding:18px 0"><div style="font-size:50px;margin-bottom:16px">📞</div><p style="font-weight:600;margin-bottom:16px;color:var(--cream)">Il tuo concierge è disponibile per qualsiasi necessità.</p><a href="tel:${a.phone}" style="display:block;background:linear-gradient(135deg,#e2c07a,var(--gold));color:#120d09;padding:14px;border-radius:14px;font-weight:800;text-decoration:none;text-align:center">${a.phone}</a><p style="font-size:12px;color:var(--muted);margin-top:12px">Citofono: <strong style="color:var(--cream)">${a.intercom}</strong></p></div>`,
+    eat:a=>`<p>${a.eat}</p>`,
+    tonight:a=>`<h3>Aperitivo (18:00–20:00)</h3><p>${a.tonight}</p><h3>Rooftop & Panorami</h3><p>Caffè Capitolino — Piazza del Campidoglio 4: rooftop con vista Colosseo e Fori (ingresso gratuito al terrazzo, ~10 min) · <a href="https://www.museicapitolini.org" target="_blank">museicapitolini.org</a><br>Terrazza del Vittoriano — Vista panoramica gratuita sui Fori (~12 min)<br>Colosseo illuminato di notte: spettacolo unico, passeggiata serale ai Fori (~8 min)</p><h3>Serata Romantica</h3><p>Aperitivo al tramonto su Piazza della Madonna dei Monti → cena a Urbana 47 → passeggiata notturna ai Fori Imperiali → gelato da Fatamorgana</p><h3>Cosa Visitare</h3><p>${a.visit}</p><h3>Posti Nascosti</h3><p>${a.hidden_gems}</p>`,
+    tickets:`<p><strong>TicketOne</strong>:<br><a href="https://www.ticketone.it/en/" target="_blank">www.ticketone.it</a></p><p><strong>AS Roma</strong>:<br><a href="https://www.asroma.com/en/tickets" target="_blank">www.asroma.com/tickets</a></p><p><strong>SS Lazio</strong>:<br><a href="https://www.sslazio.it/en" target="_blank">www.sslazio.it</a></p><p><strong>Colosseo</strong>:<br><a href="https://colosseo.it/en" target="_blank">colosseo.it</a></p><p><strong>Musei Vaticani</strong>:<br><a href="https://tickets.museivaticani.va/" target="_blank">tickets.museivaticani.va</a></p><p><strong>Galleria Borghese</strong>:<br><a href="https://galleriaborghese.cultura.gov.it/" target="_blank">galleriaborghese.cultura.gov.it</a></p><p><strong>MAXXI</strong>:<br><a href="https://www.maxxi.art/en/" target="_blank">maxxi.art</a></p>`,
+    transport:a=>`<h3>Metro & Bus</h3><p>${a.city_transport}</p><h3>Aeroporti</h3><p>${a.airports}</p><h3>Taxi</h3><p>${a.taxi}</p><h3>Deposito Bagagli</h3><p>${a.luggage}</p>`,
+  }
+},
+fr:{
+  ui:{
+    heroTitle:'Bienvenue à Rome ✨',heroSub:'Hospitalité de luxe au cœur de Rome.',aptLabel:'Appartement',
+    aptTitle:'Votre Séjour 🏠',romeTitle:'Vivre Rome 🍷',
+    keysTitle:'Clés Numériques',keysSub:"Ouvrir l'immeuble et l'appartement",
+    wifiTitle:'Wi‑Fi',wifiSub:'Réseau et mot de passe',
+    houseTitle:'Guide Logement',houseSub:'Instructions et conseils',
+    helpTitle:"Besoin d'aide?",helpSub:'Support concierge',
+    eatTitle:'Manger & Boire',eatSub:'Restaurants, petit-déj & apéritif',
+    tonightTitle:'Ce soir à Rome',tonightSub:'Bars, rooftops & idées soirée',
+    tickTitle:'Billetterie',tickSub:'Musées, visites & expériences',
+    transTitle:'Transport',transSub:'Métro, taxi & aéroports',
+    footerHelp:"Besoin d'aide?",
+    phase1Text:'Complétez votre check-in en ligne pour débloquer les informations.',
+    phaseBadge:["📋 Après Réservation","✅ Après Check-in","🗝 Jour d'Arrivée"],
+    keysPhase2:"Vos clés seront disponibles à partir de 13h00 le jour d'arrivée.",
+    romeAiPlaceholder:'Pizza, WiFi, départ, lieux cachés…',
+    romeChips:['Meilleure pizza Monti','Mot de passe WiFi','Heure de départ','Trésors cachés'],
+  },
+  apt:{
+    checkin_time:'13:00',checkout_time:'11:00',
+    wifi_note:"Le routeur est sur la table. Tournez-le pour lire le SSID et le mot de passe.",
+    wifi_ssid:'Voir étiquette routeur',wifi_password:'Voir étiquette routeur',
+    water_note:"L'eau du robinet est potable. Eau chaude toujours disponible. Important: ne touchez pas l'interrupteur à gauche du miroir du bain.",
+    ac_note:'Climatisation disponible. Éteignez-la en sortant.',
+    bathroom:'Sèche-cheveux, tapis, papier toilette, savon.',
+    towels:'Par personne: 1 grande, 1 moyenne, 1 petite serviette.',
+    kitchen:"Cuisine équipée. Plaque électrique: éteindre après usage.",
+    terrace:'Si vous ouvrez le parasol, attachez-le à la rambarde. Fermez-le avant de partir.',
+    plants:'Vous pouvez arroser les plantes une fois par jour sauf les cactus.',
+    lighting:'Lumières cuisine: interrupteur à droite des escaliers. Lumières terrasse: interrupteur intérieur à droite.',
+    front_door:"Utilisez la longue clé à bout carré. Tirez la porte vers vous, tournez antihoraire.",
+    building_code:'Code portail: 7171 suivi du symbole clé.',
+    intercom:'16',phone:'+39 335 524 5756',
+    pharmacy:'Farmacia Cavour — Via Cavour 84',
+    hospital:'Policlinico Umberto I ou Fatebenefratelli, Île Tibérine',
+    atm:'BNL — Via Cavour 84 · UniCredit — Piazza della Suburra 5',
+    sim:'Iliad — Via Cavour 196 · TIM et Vodafone Via Nazionale',
+    laundry:'Laverie Wash and Dry — Via Cavour 194',
+    luggage:'Radical Storage — Termini ou Largo Argentina · <a href="https://radicalstorage.com" target="_blank">radicalstorage.com</a> · dès 5€/jour',
+    city_transport:'<strong>Métro B</strong> — arrêt Cavour (~5 min à pied) : → Colisée (1 arrêt) · Termini (1 arrêt) · EUR<br><strong>Bus 75, 84</strong> — Via Cavour : → Termini · Trastevere · Ostiense<br><strong>Bus 117</strong> (électrique) — Monti/Fori : navette centre historique',
+    airports:'<strong>Fiumicino (FCO) :</strong> Métro B Cavour → Termini → Leonardo Express (~32 min, 14€) ou FL1 (~40 min, 8€) · <a href="https://www.trenitalia.com" target="_blank">trenitalia.com</a><br><strong>Ciampino (CIA) :</strong> Métro B → Termini → bus Terravision/SIT (~50 min, ~6€) · <a href="https://www.terravision.eu" target="_blank">terravision.eu</a><br><strong>Transfert privé :</strong> Welcome Pickups · <a href="https://www.welcomepickups.com" target="_blank">welcomepickups.com</a>',
+    taxi:'Radio Taxi Roma : +39 06 3570 · Apps : FreeNow · itTaxi · Uber · Tarif fixe Fiumicino : 50–55€',
+    emergency:'Urgences: 112 · Police: 113 · Ambulance: 118 · Pompiers: 115',
+    eat:'<strong>Petit-déjeuner</strong><br>Caffè Propaganda — Via Claudia 15, café design près du Colisée (~8 min) · <a href="https://caffepropaganda.it" target="_blank">caffepropaganda.it</a><br>Tram Depot — Via Marmorata 13, cornetti et café historiques (~15 min)<br><br><strong>Déjeuner</strong><br>Il Bocconcino — Via Ostilia 23, trattoria monticienne authentique (~5 min) · Tél. 06 7707 9175<br>Alle Carrette — Vicolo delle Carrette 14, excellente pizza romaine fine (~5 min)<br><br><strong>Dîner</strong><br>Osteria della Suburra — Via della Suburra 57, cuisine romaine, vin en carafe (~4 min)<br>Ai Tre Scalini — Via Panisperna 251, bar à vins & cuisine, incontournable de Monti (~3 min)<br>Urbana 47 — Via Urbana 47, cuisine italienne moderne (~4 min) · <a href="https://www.urbana47.it" target="_blank">urbana47.it</a><br><br><strong>Apéritif & Cocktails</strong><br>Ai Tre Scalini — Via Panisperna 251: tables en terrasse, cœur de Monti (~3 min)<br>Gatsby Café — Via Cimarra 38: cocktails créatifs, ambiance art déco (~4 min)<br>Piazza della Madonna dei Monti: apéritif en plein air avec les Romains (~2 min)<br><br><strong>Gelato</strong><br>Fatamorgana — Via dei Serpenti 55: glaces artisanales aux saveurs uniques (~3 min) · <a href="https://www.fatamorgana.it" target="_blank">fatamorgana.it</a>',
+    drink:'Ai Tre Scalini · Gatsby Café · Piazza della Madonna dei Monti · Fatamorgana',
+    tonight:"Apéritif Piazza della Madonna dei Monti (jeu–dim, tous les Romains, ~2 min). Cocktails au Gatsby Café (~4 min). Promenade: Via Leonina → Piazza della Madonna dei Monti → Fori di Traiano → Colisée illuminé → retour.",
+    visit:"Piazza Madonna dei Monti · San Pietro in Vincoli (Moïse) · Domus Aurea · Forums Impériaux · Colisée (10 min).",
+    hidden_gems:'Souterrains San Martino ai Monti · Santa Prassede · Escalier des Borgia · Ancienne Suburra.',
+    checkout_note:'Éteignez lumières & clim, fermez fenêtres, laissez clés sur table.',
+    keys_msg:"Vos clés numériques ont été envoyées par email par Hostaway. Jamais avant 13h00.",
+  },
+  drawers:{
+    address:`<p><strong>Via Leonina 71</strong><br>Quartier Monti, Rome<br><br><a href="https://maps.google.com/?q=Via+Leonina+71+Roma" target="_blank">Ouvrir dans Google Maps →</a></p>`,
+    emergency:a=>`<p>${a.emergency}</p>`,
+    checkout:a=>`<p>Heure de départ: <strong>${a.checkout_time}</strong></p><p>${a.checkout_note}</p>`,
+    keys:a=>buildKeysHTML(a),
+    wifi:a=>`<p>${a.wifi_note}</p><p>Réseau: <strong>${a.wifi_ssid}</strong><br>Mot de passe: <strong>${a.wifi_password}</strong></p>`,
+    house:a=>`<h3>Eau</h3><p>${a.water_note}</p><h3>Climatisation</h3><p>${a.ac_note}</p><h3>Cuisine</h3><p>${a.kitchen}</p><h3>Terrasse</h3><p>${a.terrace}</p><p>${a.lighting}</p><h3>Salle de bain</h3><p>${a.bathroom}</p><h3>Accès</h3><p>${a.front_door}</p><p>Code: <strong>${a.building_code}</strong> · Interphone: <strong>${a.intercom}</strong></p>`,
+    help:a=>`<div style="text-align:center;padding:18px 0"><div style="font-size:50px;margin-bottom:16px">📞</div><p style="font-weight:600;margin-bottom:16px;color:var(--cream)">Votre concierge est disponible.</p><a href="tel:${a.phone}" style="display:block;background:linear-gradient(135deg,#e2c07a,var(--gold));color:#120d09;padding:14px;border-radius:14px;font-weight:800;text-decoration:none;text-align:center">${a.phone}</a></div>`,
+    eat:a=>`<p>${a.eat}</p>`,
+    tonight:a=>`<h3>Apéritif (18h–20h)</h3><p>${a.tonight}</p><h3>Rooftops & Panoramas</h3><p>Caffè Capitolino — Piazza del Campidoglio 4 : vue sur le Colisée & les Forums (terrasse gratuite, ~10 min) · <a href="https://www.museicapitolini.org" target="_blank">museicapitolini.org</a><br>Terrazza del Vittoriano — panorama gratuit sur les Forums (~12 min)<br>Colisée illuminé la nuit : spectacle unique, balade du soir (~8 min)</p><h3>Soirée Romantique</h3><p>Apéritif au coucher du soleil Piazza della Madonna dei Monti → dîner à Urbana 47 → promenade nocturne aux Forums Impériaux → glace chez Fatamorgana</p><h3>À voir</h3><p>${a.visit}</p><h3>Trésors cachés</h3><p>${a.hidden_gems}</p>`,
+    tickets:`<p><strong>TicketOne</strong>:<br><a href="https://www.ticketone.it/en/" target="_blank">www.ticketone.it</a></p><p><strong>Colisée</strong>:<br><a href="https://colosseo.it/en" target="_blank">colosseo.it</a></p><p><strong>Musées du Vatican</strong>:<br><a href="https://tickets.museivaticani.va/" target="_blank">tickets.museivaticani.va</a></p><p><strong>Galerie Borghèse</strong>:<br><a href="https://galleriaborghese.cultura.gov.it/" target="_blank">galleriaborghese.cultura.gov.it</a></p><p><strong>MAXXI</strong>:<br><a href="https://www.maxxi.art/en/" target="_blank">maxxi.art</a></p>`,
+    transport:a=>`<h3>Métro & Bus</h3><p>${a.city_transport}</p><h3>Aéroports</h3><p>${a.airports}</p><h3>Taxi</h3><p>${a.taxi}</p><h3>Consigne Bagages</h3><p>${a.luggage}</p>`,
+  }
+},
+de:{
+  ui:{
+    heroTitle:'Willkommen in Rom ✨',heroSub:'Kuratierter Luxus im Herzen Roms.',aptLabel:'Apartment',
+    aptTitle:'Ihr Aufenthalt 🏠',romeTitle:'Rom Entdecken 🍷',
+    keysTitle:'Digitale Schlüssel',keysSub:'Gebäude & Apartment öffnen',
+    wifiTitle:'WLAN',wifiSub:'Netzwerk & Passwort',
+    houseTitle:'Hausführer',houseSub:'Anweisungen und Tipps',
+    helpTitle:'Hilfe benötigt?',helpSub:'Concierge-Support',
+    eatTitle:'Essen & Trinken',eatSub:'Restaurants, Frühstück & Aperitif',
+    tonightTitle:'Heute Abend in Rom',tonightSub:'Bars, Rooftops & Abendideen',
+    tickTitle:'Tickets',tickSub:'Museen, Touren & Erlebnisse',
+    transTitle:'Transport',transSub:'U-Bahn, Taxi & Flughäfen',
+    footerHelp:'Hilfe benötigt?',
+    phase1Text:'Online-Check-in ausfüllen um Apartment-Informationen freizuschalten.',
+    phaseBadge:['📋 Nach Buchung','✅ Nach Check-in','🗝 Check-in-Tag'],
+    keysPhase2:'Schlüssel ab 13:00 Uhr am Check-in-Tag verfügbar.',
+    romeAiPlaceholder:'Pizza, WLAN, Checkout, Geheimtipps…',
+    romeChips:['Beste Pizza Monti','WLAN-Passwort','Checkout-Zeit','Geheimtipps'],
+  },
+  apt:{
+    checkin_time:'13:00',checkout_time:'11:00',
+    wifi_note:'Der Router steht auf dem Tisch. Drehen Sie ihn um, um SSID und Passwort zu lesen.',
+    wifi_ssid:'Siehe Router-Etikett',wifi_password:'Siehe Router-Etikett',
+    water_note:'Leitungswasser ist trinkbar. Warmwasser immer verfügbar. Wichtig: Schalter links am Badspiegel nicht berühren.',
+    ac_note:'Klimaanlage vorhanden. Beim Verlassen ausschalten.',
+    bathroom:'Föhn, Badematte, Toilettenpapier, Handseife.',
+    towels:'Pro Gast: 1 großes, 1 mittleres, 1 kleines Handtuch.',
+    kitchen:'Voll ausgestattete Küche. Elektrische Kochplatte nach Gebrauch ausschalten.',
+    terrace:'Terrassenschirm beim Öffnen am Geländer befestigen. Vor dem Verlassen schließen.',
+    plants:'Pflanzen täglich gießen wenn gewünscht, außer Kakteen.',
+    lighting:'Küchenlicht: Schalter rechts an der Treppe. Terrassenlicht: Schalter innen rechts vor dem Ausgang.',
+    front_door:'Langen Schlüssel mit quadratischem Ende verwenden. Tür zu sich ziehen, gegen den Uhrzeigersinn drehen.',
+    building_code:'Haustürcode: 7171 + Schlüsselsymbol.',
+    intercom:'16',phone:'+39 335 524 5756',
+    pharmacy:'Farmacia Cavour — Via Cavour 84',
+    hospital:'Policlinico Umberto I oder Fatebenefratelli',
+    atm:'BNL — Via Cavour 84 · UniCredit — Piazza della Suburra 5',
+    sim:'Iliad — Via Cavour 196 · TIM und Vodafone Via Nazionale',
+    laundry:'Wash and Dry — Via Cavour 194',
+    luggage:'Radical Storage — Termini und Largo Argentina',
+    city_transport:'Metro B Haltestelle Cavour (~5 Min.). Busse 75, 117 und 84 Via Cavour. Monti ideal zum Laufen.',
+    airports:'Fiumicino: Metro B → Termini → Leonardo Express. Ciampino: Bus → Termini.',
+    taxi:'Radio Taxi: +39 06 3570 oder FreeNow-App.',
+    emergency:'Notruf: 112 · Polizei: 113 · Rettung: 118 · Feuerwehr: 115',
+    eat:'La Carbonara · Ai Tre Scalini · Fafiuche Wine Bar · Al42 Monti · Broccoletti · Cuoco e Camicia.',
+    drink:'VinoRoma · La Bottega del Caffè · Spritzeria Monti · Blackmarket Hall.',
+    tonight:"Aperitif Piazza Madonna dei Monti. Vintage-Shopping Mercato Monti. Sonnenuntergang von der Terrasse. Spaziergang Via Urbana und Via dei Serpenti.",
+    visit:"Piazza Madonna dei Monti · San Pietro in Vincoli (Moses) · Domus Aurea · Kaiserforen · Kolosseum (10 Min.).",
+    hidden_gems:'Untergrund San Martino ai Monti · Santa Prassede · Borgia-Treppe · Antike Suburra.',
+    checkout_note:'Lichter & Klimaanlage ausschalten, Fenster schließen, Schlüssel auf dem Tisch.',
+    keys_msg:'Ihre digitalen Schlüssel wurden per E-Mail von Hostaway gesendet. Nie vor 13:00 Uhr.',
+  },
+  drawers:{
+    address:`<p><strong>Via Leonina 71</strong><br>Viertel Monti, Rom<br><br><a href="https://maps.google.com/?q=Via+Leonina+71+Roma" target="_blank">In Google Maps öffnen →</a></p>`,
+    emergency:a=>`<p>${a.emergency}</p>`,
+    checkout:a=>`<p>Check-out-Zeit: <strong>${a.checkout_time}</strong></p><p>${a.checkout_note}</p>`,
+    keys:a=>buildKeysHTML(a),
+    wifi:a=>`<p>${a.wifi_note}</p><p>Netzwerk: <strong>${a.wifi_ssid}</strong><br>Passwort: <strong>${a.wifi_password}</strong></p>`,
+    house:a=>`<h3>Wasser</h3><p>${a.water_note}</p><h3>Klimaanlage</h3><p>${a.ac_note}</p><h3>Küche</h3><p>${a.kitchen}</p><h3>Terrasse</h3><p>${a.terrace}</p><p>${a.lighting}</p><h3>Badezimmer</h3><p>${a.bathroom}</p><h3>Zugang</h3><p>${a.front_door}</p><p>Code: <strong>${a.building_code}</strong> · Sprechanlage: <strong>${a.intercom}</strong></p>`,
+    help:a=>`<div style="text-align:center;padding:18px 0"><div style="font-size:50px;margin-bottom:16px">📞</div><p style="font-weight:600;margin-bottom:16px;color:var(--cream)">Ihr Concierge steht zur Verfügung.</p><a href="tel:${a.phone}" style="display:block;background:linear-gradient(135deg,#e2c07a,var(--gold));color:#120d09;padding:14px;border-radius:14px;font-weight:800;text-decoration:none;text-align:center">${a.phone}</a></div>`,
+    eat:a=>`<h3>Restaurants</h3><p>${a.eat}</p><h3>Bars</h3><p>${a.drink}</p>`,
+    tonight:a=>`<p>${a.tonight}</p><h3>Sehenswürdigkeiten</h3><p>${a.visit}</p><h3>Geheimtipps</h3><p>${a.hidden_gems}</p>`,
+    tickets:`<p><strong>TicketOne</strong>:<br><a href="https://www.ticketone.it/en/" target="_blank">www.ticketone.it</a></p><p><strong>Kolosseum</strong>:<br><a href="https://colosseo.it/en" target="_blank">colosseo.it</a></p><p><strong>Vatikanische Museen</strong>:<br><a href="https://tickets.museivaticani.va/" target="_blank">tickets.museivaticani.va</a></p><p><strong>Galleria Borghese</strong>:<br><a href="https://galleriaborghese.cultura.gov.it/" target="_blank">galleriaborghese.cultura.gov.it</a></p><p><strong>MAXXI</strong>:<br><a href="https://www.maxxi.art/en/" target="_blank">maxxi.art</a></p>`,
+    transport:a=>`<h3>Stadt</h3><p>${a.city_transport}</p><h3>Flughäfen</h3><p>${a.airports}</p><h3>Taxi</h3><p>${a.taxi}</p>`,
+  }
+},
+es:{
+  ui:{
+    heroTitle:'Bienvenido a Roma ✨',heroSub:'Hospitalidad de lujo en el corazón de Roma.',aptLabel:'Apartamento',
+    aptTitle:'Tu Estancia 🏠',romeTitle:'Vivir Roma 🍷',
+    keysTitle:'Llaves Digitales',keysSub:'Abrir edificio y apartamento',
+    wifiTitle:'Wi‑Fi',wifiSub:'Red y contraseña',
+    houseTitle:'Guía del Piso',houseSub:'Instrucciones y consejos',
+    helpTitle:'¿Necesitas ayuda?',helpSub:'Soporte del conserje',
+    eatTitle:'Comer & Beber',eatSub:'Restaurantes, desayuno & aperitivo',
+    tonightTitle:'Esta noche en Roma',tonightSub:'Bares, rooftops & ideas de noche',
+    tickTitle:'Entradas',tickSub:'Museos, tours y experiencias',
+    transTitle:'Transporte',transSub:'Metro, taxi y aeropuertos',
+    footerHelp:'¿Necesitas ayuda?',
+    phase1Text:'Completa el check-in online para desbloquear la información del apartamento.',
+    phaseBadge:['📋 Tras Reserva','✅ Tras Check-in','🗝 Día del Check-in'],
+    keysPhase2:'Llaves disponibles desde las 13:00 el día del check-in.',
+    romeAiPlaceholder:'Pizza, WiFi, salida, rincones escondidos…',
+    romeChips:['Mejor pizza Monti','Contraseña WiFi','Hora de salida','Rincones escondidos'],
+  },
+  apt:{
+    checkin_time:'13:00',checkout_time:'11:00',
+    wifi_note:'El router está sobre la mesa. Gíralo para leer el SSID y la contraseña.',
+    wifi_ssid:'Ver etiqueta del router',wifi_password:'Ver etiqueta del router',
+    water_note:'El agua del grifo es potable. Agua caliente siempre disponible. Importante: no toques el interruptor a la izquierda del espejo del baño.',
+    ac_note:'Hay aire acondicionado. Apágalo al salir del apartamento.',
+    bathroom:'Secador, alfombrilla, papel higiénico, jabón.',
+    towels:'Por huésped: 1 toalla grande, 1 mediana, 1 pequeña.',
+    kitchen:'Cocina equipada. Placa eléctrica: apagarla después de usarla.',
+    terrace:'Si abres la sombrilla, átala a la barandilla. Ciérrala antes de salir.',
+    plants:'Puedes regar las plantas una vez al día excepto los cactus.',
+    lighting:'Luces cocina: interruptor a la derecha de las escaleras. Luces terraza: interruptor interior a la derecha.',
+    front_door:'Usa la llave larga con punta cuadrada. Tira de la puerta y gira en sentido antihorario.',
+    building_code:'Código del portal: 7171 seguido del símbolo de llave.',
+    intercom:'16',phone:'+39 335 524 5756',
+    pharmacy:'Farmacia Cavour — Via Cavour 84',
+    hospital:'Policlinico Umberto I o Fatebenefratelli, Isla Tiberina',
+    atm:'BNL — Via Cavour 84 · UniCredit — Piazza della Suburra 5',
+    sim:'Iliad — Via Cavour 196 · TIM y Vodafone Via Nazionale',
+    laundry:'Lavandería Wash and Dry — Via Cavour 194',
+    luggage:'Radical Storage — Termini y Largo Argentina',
+    city_transport:'Metro B parada Cavour (~5 min). Autobuses 75, 117 y 84 Via Cavour. Monti es perfecto para caminar.',
+    airports:'Fiumicino: Metro B → Termini → Leonardo Express. Ciampino: bus → Termini.',
+    taxi:'Radio Taxi: +39 06 3570 o app FreeNow.',
+    emergency:'Emergencias: 112 · Policía: 113 · Ambulancia: 118 · Bomberos: 115',
+    eat:'La Carbonara · Ai Tre Scalini · Fafiuche Wine Bar · Al42 Monti · Broccoletti · Cuoco e Camicia.',
+    drink:'VinoRoma · La Bottega del Caffè · Spritzeria Monti · Blackmarket Hall.',
+    tonight:"Aperitivo Piazza Madonna dei Monti. Vintage Mercato Monti. Atardecer desde la terraza. Paseo Via Urbana y Via dei Serpenti.",
+    visit:"Piazza Madonna dei Monti · San Pietro in Vincoli (Moisés) · Domus Aurea · Foros Imperiales · Coliseo (10 min).",
+    hidden_gems:'Subterráneos San Martino ai Monti · Santa Prassede · Escalinata de los Borgia · Antigua Suburra.',
+    checkout_note:'Apaga luces y AC, cierra ventanas, deja las llaves en la mesa.',
+    keys_msg:'Tus llaves digitales han sido enviadas por email por Hostaway. Nunca antes de las 13:00.',
+  },
+  drawers:{
+    address:`<p><strong>Via Leonina 71</strong><br>Barrio Monti, Roma<br><br><a href="https://maps.google.com/?q=Via+Leonina+71+Roma" target="_blank">Abrir en Google Maps →</a></p>`,
+    emergency:a=>`<p>${a.emergency}</p>`,
+    checkout:a=>`<p>Hora de salida: <strong>${a.checkout_time}</strong></p><p>${a.checkout_note}</p>`,
+    keys:a=>buildKeysHTML(a),
+    wifi:a=>`<p>${a.wifi_note}</p><p>Red: <strong>${a.wifi_ssid}</strong><br>Contraseña: <strong>${a.wifi_password}</strong></p>`,
+    house:a=>`<h3>Agua</h3><p>${a.water_note}</p><h3>Aire Acondicionado</h3><p>${a.ac_note}</p><h3>Cocina</h3><p>${a.kitchen}</p><h3>Terraza</h3><p>${a.terrace}</p><p>${a.lighting}</p><h3>Baño</h3><p>${a.bathroom}</p><h3>Acceso</h3><p>${a.front_door}</p><p>Código: <strong>${a.building_code}</strong> · Portero: <strong>${a.intercom}</strong></p>`,
+    help:a=>`<div style="text-align:center;padding:18px 0"><div style="font-size:50px;margin-bottom:16px">📞</div><p style="font-weight:600;margin-bottom:16px;color:var(--cream)">Tu conserje está disponible.</p><a href="tel:${a.phone}" style="display:block;background:linear-gradient(135deg,#e2c07a,var(--gold));color:#120d09;padding:14px;border-radius:14px;font-weight:800;text-decoration:none;text-align:center">${a.phone}</a></div>`,
+    eat:a=>`<h3>Restaurantes</h3><p>${a.eat}</p><h3>Bares</h3><p>${a.drink}</p>`,
+    tonight:a=>`<p>${a.tonight}</p><h3>Qué Visitar</h3><p>${a.visit}</p><h3>Rincones escondidos</h3><p>${a.hidden_gems}</p>`,
+    tickets:`<p><strong>TicketOne</strong>:<br><a href="https://www.ticketone.it/en/" target="_blank">www.ticketone.it</a></p><p><strong>Coliseo</strong>:<br><a href="https://colosseo.it/en" target="_blank">colosseo.it</a></p><p><strong>Museos Vaticanos</strong>:<br><a href="https://tickets.museivaticani.va/" target="_blank">tickets.museivaticani.va</a></p><p><strong>Galería Borghese</strong>:<br><a href="https://galleriaborghese.cultura.gov.it/" target="_blank">galleriaborghese.cultura.gov.it</a></p><p><strong>MAXXI</strong>:<br><a href="https://www.maxxi.art/en/" target="_blank">maxxi.art</a></p>`,
+    transport:a=>`<h3>Ciudad</h3><p>${a.city_transport}</p><h3>Aeropuertos</h3><p>${a.airports}</p><h3>Taxi</h3><p>${a.taxi}</p>`,
+  }
+}
+};
+
+if (!DATA[lang]) lang = 'it';
+const u0 = new URL(location.href);
+u0.searchParams.set('lang', lang);
+history.replaceState(null,'',u0);
+localStorage.setItem('lang', lang);
+
+const U = () => DATA[lang].ui;
+const A = () => DATA[lang].apt;
+const D = () => DATA[lang].drawers;
+
+const EXTRA = {
+  it:{sectionApt:'🏠 Il tuo soggiorno',sectionRome:'🍷 Vivi Roma',aptCardTitle:'Appartamento',aptCardSub:'Indirizzo, checkout, emergenza',assistantTitle:'Il tuo Concierge a Roma',assistantDesc:"Domande sull'appartamento o su Roma? Sono qui.",assistantBtn:'APRI IL CONCIERGE AI',whatsappBtn:'💬 Hai bisogno di aiuto? Scrivimi su WhatsApp'},
+  en:{sectionApt:'🏠 Your Stay',sectionRome:'🍷 Explore Rome',aptCardTitle:'Apartment',aptCardSub:'Address, checkout, emergency',assistantTitle:'Your Rome Concierge',assistantDesc:'Questions about the apartment or Rome? I\'m here.',assistantBtn:'OPEN AI CONCIERGE',whatsappBtn:'💬 Need help? Message me on WhatsApp'},
+  fr:{sectionApt:'🏠 Votre Séjour',sectionRome:'🍷 Vivre Rome',aptCardTitle:'Appartement',aptCardSub:'Adresse, départ, urgences',assistantTitle:'Votre Concierge à Rome',assistantDesc:"Questions sur l'appartement ou Rome? Je suis là.",assistantBtn:'OUVRIR LE CONCIERGE IA',whatsappBtn:"💬 Besoin d'aide? Écrivez-moi sur WhatsApp"},
+  de:{sectionApt:'🏠 Ihr Aufenthalt',sectionRome:'🍷 Rom Entdecken',aptCardTitle:'Apartment',aptCardSub:'Adresse, Checkout, Notfall',assistantTitle:'Ihr Concierge in Rom',assistantDesc:'Fragen zur Wohnung oder zu Rom? Ich bin für Sie da.',assistantBtn:'KI-CONCIERGE ÖFFNEN',whatsappBtn:'💬 Hilfe? WhatsApp schreiben'},
+  es:{sectionApt:'🏠 Tu Estancia',sectionRome:'🍷 Vivir Roma',aptCardTitle:'Apartamento',aptCardSub:'Dirección, salida, emergencias',assistantTitle:'Tu Concierge en Roma',assistantDesc:'¿Preguntas sobre el apartamento o Roma? Estoy aquí.',assistantBtn:'ABRIR CONCIERGE IA',whatsappBtn:'💬 ¿Necesitas ayuda? WhatsApp'},
+};
+
+const MODAL_TITLES = {
+  apt:    {en:'🏠 Apartment',it:'🏠 Appartamento',fr:'🏠 Appartement',de:'🏠 Apartment',es:'🏠 Apartamento'},
+  keys:   {en:'🗝 Digital Keys',it:'🗝 Chiavi Digitali',fr:'🗝 Clés Numériques',de:'🗝 Digitale Schlüssel',es:'🗝 Llaves Digitales'},
+  wifi:   {en:'📶 Wi‑Fi',it:'📶 Wi‑Fi',fr:'📶 Wi‑Fi',de:'📶 WLAN',es:'📶 Wi‑Fi'},
+  house:  {en:'🏠 House Guide',it:'🏠 Guida Casa',fr:'🏠 Guide Logement',de:'🏠 Hausführer',es:'🏠 Guía del Piso'},
+  help:   {en:'☎ Need Help?',it:'☎ Hai Bisogno?',fr:"☎ Besoin d'aide?",de:'☎ Hilfe?',es:'☎ ¿Ayuda?'},
+  eat:    {en:'🍝 Eat & Drink',it:'🍝 Mangiare & Bere',fr:'🍝 Manger & Boire',de:'🍝 Essen & Trinken',es:'🍝 Comer & Beber'},
+  tonight:{en:'🌙 Tonight in Rome',it:'🌙 Stasera a Roma',fr:'🌙 Ce soir à Rome',de:'🌙 Heute Abend in Rom',es:'🌙 Esta noche en Roma'},
+  tickets:{en:'🎟 Ticketing',it:'🎟 Biglietteria',fr:'🎟 Billetterie',de:'🎟 Tickets',es:'🎟 Entradas'},
+  transport:{en:'🚇 Transport',it:'🚇 Trasporti',fr:'🚇 Transport',de:'🚇 Transport',es:'🚇 Transporte'},
+  chat:   {en:'💬 AI Concierge',it:'💬 Concierge AI',fr:'💬 Concierge IA',de:'💬 KI-Concierge',es:'💬 Conserje IA'},
+};
+
+/* ═══ MODAL LOGIC ═══ */
+function openModal(key){
+  const bg=document.getElementById('modalBg'),titleEl=document.getElementById('modalTitle'),body=document.getElementById('modalBody');
+  titleEl.textContent=(MODAL_TITLES[key]||{})[lang]||key;
+  if(key==='chat'){
+    body.innerHTML=buildAssistantUI();
+    bg.classList.add('open');
+    const inp=document.getElementById('romeAiInput');
+    if(inp){inp.placeholder=U().romeAiPlaceholder;inp.addEventListener('keydown',e=>{if(e.key==='Enter')sendRomeAI();});}
+    buildChips();
+    return;
+  }
+  if(key==='apt'){body.innerHTML=buildAptContent();bg.classList.add('open');return;}
+  const d=D()[key];if(!d)return;
+  body.innerHTML=typeof d==='function'?d(A()):d;
+  bg.classList.add('open');
+}
+function closeModal(){document.getElementById('modalBg').classList.remove('open');}
+function outsideClose(e){if(e.target===document.getElementById('modalBg'))closeModal();}
+
+function buildAptContent(){
+  const a=A(),d=D();
+  const addr=typeof d.address==='function'?d.address(a):d.address;
+  const co=typeof d.checkout==='function'?d.checkout(a):d.checkout;
+  const em=typeof d.emergency==='function'?d.emergency(a):d.emergency;
+  const L={en:{a:'📍 Address',c:'⏰ Checkout',e:'🚨 Emergency'},it:{a:'📍 Indirizzo',c:'⏰ Checkout',e:'🚨 Emergenza'},fr:{a:'📍 Adresse',c:'⏰ Départ',e:'🚨 Urgence'},de:{a:'📍 Adresse',c:'⏰ Checkout',e:'🚨 Notfall'},es:{a:'📍 Dirección',c:'⏰ Salida',e:'🚨 Emergencia'}}[lang]||{a:'📍 Address',c:'⏰ Checkout',e:'🚨 Emergency'};
+  return `<h3>${L.a}</h3>${addr}<h3>${L.c}</h3>${co}<h3>${L.e}</h3>${em}`;
+}
+
+function buildAssistantUI(){
+  return `<div id="romeAiChatVisible" style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px;max-height:45vh;overflow-y:auto"></div><div id="romeChips" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px"></div><div style="display:flex;gap:8px"><input id="romeAiInput" type="text" style="flex:1;background:rgba(255,255,255,.07);border:1px solid rgba(214,176,109,.2);border-radius:12px;padding:11px 14px;font-size:14px;color:var(--cream);outline:none;min-width:0" placeholder=""><button onclick="sendRomeAI()" style="background:linear-gradient(135deg,#e2c07a,var(--gold));color:#120d09;font-weight:800;padding:11px 18px;border-radius:12px;font-size:17px;flex-shrink:0;cursor:pointer;border:none">→</button></div>`;
+}
+function buildChips(){
+  const el=document.getElementById('romeChips');if(!el)return;
+  el.innerHTML='';
+  U().romeChips.forEach(c=>{const b=document.createElement('button');b.className='mini';b.textContent=c;b.onclick=()=>sendRomeAI(c);el.appendChild(b);});
+}
+
+/* ═══ SHELLY OTP ═══ */
+let tokenExp=null,tokenJti=null,tokenTgt=null,tokenCid=null,tokenDay=null,tokenCt=null;
+if(urlToken){
+  try{
+    const p=JSON.parse(atob(urlToken.split('.')[1].replace(/-/g,'+').replace(/_/g,'/')));
+    tokenExp=p.exp||null;tokenJti=p.jti||null;tokenTgt=p.tgt||null;tokenCid=p.cid||null;tokenDay=p.day||null;tokenCt=p.ct||null;
+  }catch{}
+}
+function tokenValid(){return tokenExp&&Date.now()<tokenExp*1000;}
+let sessionToken=sessionStorage.getItem('st_leonina')||'';
+function sessionValid(){
+  if(!sessionToken)return false;
+  try{const p=JSON.parse(atob(sessionToken.split('.')[1].replace(/-/g,'+').replace(/_/g,'/')));return p.exp&&Date.now()<p.exp*1000;}
+  catch{return false;}
+}
+let otpSent=false;
+
+const DOOR_LABELS={
+  en:{building:'🚪 Open Building Door',door:'🗖 Open Apartment Door',send:'Send verification code',codePlaceholder:'6-digit code',verify:'Verify',verifying:'Verifying…',wrongCode:'Wrong code, try again.',sending:'Sending…',codeSent:'Code sent to your registered contact. Enter it below:',expired:'Access expired (24h). Contact:',opening:'Opening…',opened:'Opened!',verifyTitle:'Verify your identity to unlock door access',confirmBuilding:'Open the building door only when you are standing in front of the entrance.',confirmDoor:'Open the apartment door only when you are in front of it.'},
+  it:{building:'🚪 Apri Portone',door:'🗖 Apri Porta Appartamento',send:'Invia codice di verifica',codePlaceholder:'Codice a 6 cifre',verify:'Verifica',verifying:'Verifica…',wrongCode:'Codice errato, riprova.',sending:'Invio…',codeSent:'Codice inviato al tuo contatto. Inseriscilo:',expired:'Accesso scaduto (24h). Chiama:',opening:'Apertura…',opened:'Aperto!',verifyTitle:"Verifica la tua identità per sbloccare l'accesso",confirmBuilding:"Apri il portone solo quando sei davanti all'edificio.",confirmDoor:"Apri la porta solo quando sei davanti all'appartamento."},
+  fr:{building:'🚪 Ouvrir Portail',door:'🗖 Ouvrir Appartement',send:'Envoyer le code',codePlaceholder:'Code 6 chiffres',verify:'Vérifier',verifying:'Vérification…',wrongCode:'Code incorrect.',sending:'Envoi…',codeSent:'Code envoyé. Entrez-le:',expired:'Accès expiré (24h). Contactez:',opening:'Ouverture…',opened:'Ouvert!',verifyTitle:"Vérifiez votre identité pour débloquer l'accès",confirmBuilding:"Ouvrez le portail uniquement devant l'entrée.",confirmDoor:"Ouvrez la porte uniquement devant l'appartement."},
+  de:{building:'🚪 Gebäude öffnen',door:'🗖 Wohnung öffnen',send:'Zugangscode senden',codePlaceholder:'6-stelliger Code',verify:'Bestätigen',verifying:'Bestätige…',wrongCode:'Falscher Code.',sending:'Sende…',codeSent:'Code gesendet. Bitte eingeben:',expired:'Zugang abgelaufen (24h). Kontakt:',opening:'Öffne…',opened:'Geöffnet!',verifyTitle:'Identität bestätigen um Zugang freizuschalten',confirmBuilding:'Bitte nur öffnen wenn Sie davor stehen.',confirmDoor:'Bitte nur öffnen wenn Sie davor stehen.'},
+  es:{building:'🚪 Abrir Portal',door:'🗖 Abrir Apartamento',send:'Enviar código',codePlaceholder:'Código 6 dígitos',verify:'Verificar',verifying:'Verificando…',wrongCode:'Código incorrecto.',sending:'Enviando…',codeSent:'Código enviado. Intróducelo:',expired:'Acceso expirado (24h). Contacta:',opening:'Abriendo…',opened:'Abierto!',verifyTitle:'Verifica tu identidad para desbloquear el acceso',confirmBuilding:'Abre el portal solo cuando estés frente al edificio.',confirmDoor:'Abre la puerta solo cuando estés frente al apartamento.'},
+};
+
+function buildKeysHTML(a){
+  const lbl=DOOR_LABELS[lang]||DOOR_LABELS.en;
+  const email=`<div style="text-align:center;padding:18px 0"><div style="font-size:50px;margin-bottom:16px">📧</div><p style="font-weight:600;margin-bottom:14px;color:var(--cream)">${a.keys_msg}</p><p style="font-size:12px;color:var(--muted);margin-top:16px">${U().footerHelp} <a href="tel:${a.phone}" style="color:var(--gold)">${a.phone}</a></p></div>`;
+  if(!urlToken)return email;
+  if(!tokenValid())return email+`<div style="margin-top:14px;padding:13px;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.28);border-radius:13px;font-size:13px;color:#fca5a5;text-align:center">⏱ ${lbl.expired} <a href="tel:${a.phone}" style="color:var(--gold)">${a.phone}</a></div>`;
+  if(!(tokenTgt&&tokenTgt.startsWith('checkin-')))return email;
+  if(!tokenCid||sessionValid()){
+    let btns=`<button onclick="shellyOpen('building')" id="open-building-btn" style="width:100%;background:linear-gradient(135deg,#e2c07a,var(--gold));color:#120d09;padding:14px;border-radius:14px;font-weight:800;font-size:15px;border:none;cursor:pointer;margin-top:14px;box-shadow:0 4px 16px rgba(214,176,109,.32)">${lbl.building}</button>`;
+    if(HAS_DOOR)btns+=`<button onclick="shellyOpen('door')" id="open-door-btn" style="width:100%;background:#1d4ed8;color:#fff;padding:14px;border-radius:14px;font-weight:800;font-size:15px;border:none;cursor:pointer;margin-top:10px">${lbl.door}</button>`;
+    return email+btns;
+  }
+  const otp=otpSent
+    ?`<div style="margin-top:18px"><p style="font-size:13px;color:var(--muted);margin-bottom:10px">${lbl.codeSent}</p><input id="otp-input" type="tel" inputmode="numeric" maxlength="6" placeholder="${lbl.codePlaceholder}" style="width:100%;padding:13px;background:rgba(255,255,255,.07);border:1px solid var(--line);border-radius:12px;font-size:22px;text-align:center;letter-spacing:10px;margin-bottom:10px;color:var(--cream)"><button onclick="verifyOtp()" id="verify-btn" style="width:100%;background:linear-gradient(135deg,#e2c07a,var(--gold));color:#120d09;padding:14px;border-radius:14px;font-weight:800;font-size:15px;border:none;cursor:pointer">${lbl.verify}</button><p id="otp-error" style="font-size:12px;color:#fca5a5;margin-top:8px;text-align:center"></p></div>`
+    :`<div style="margin-top:18px;padding:16px;background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:16px;text-align:center"><p style="font-size:13px;color:var(--muted);margin-bottom:14px">🔐 ${lbl.verifyTitle}</p><button onclick="requestOtp()" id="send-otp-btn" style="width:100%;background:linear-gradient(135deg,#e2c07a,var(--gold));color:#120d09;padding:14px;border-radius:14px;font-weight:800;font-size:15px;border:none;cursor:pointer">${lbl.send}</button><p id="send-otp-error" style="font-size:12px;color:#fca5a5;margin-top:8px;text-align:center"></p></div>`;
+  return email+otp;
+}
+
+async function requestOtp(){
+  const btn=document.getElementById('send-otp-btn'),errEl=document.getElementById('send-otp-error'),lbl=DOOR_LABELS[lang]||DOOR_LABELS.en;
+  if(btn){btn.disabled=true;btn.textContent=lbl.sending;}if(errEl)errEl.textContent='';
+  const fail={en:'Unable to send code. Please call:',it:'Impossibile inviare il codice. Chiama:',fr:"Impossible d'envoyer le code. Appelez:",de:'Fehler beim Senden. Rufen Sie an:',es:'Error al enviar. Llame:'};
+  try{
+    const r=await fetch(`${SERVER_URL}/checkin/leonina/send-otp?t=${urlToken}&lang=${lang}`,{method:'POST'});
+    const j=await r.json();
+    if(j.ok){otpSent=true;openModal('keys');}
+    else{if(btn){btn.disabled=false;btn.textContent=lbl.send;}if(errEl)errEl.textContent=(fail[lang]||fail.en)+' '+A().phone;}
+  }catch{if(btn){btn.disabled=false;btn.textContent=lbl.send;}if(errEl)errEl.textContent='Network error. Call: '+A().phone;}
+}
+
+async function verifyOtp(){
+  const input=document.getElementById('otp-input'),btn=document.getElementById('verify-btn'),errEl=document.getElementById('otp-error');
+  if(!input||!btn)return;const code=input.value.trim();if(code.length<4)return;
+  btn.disabled=true;btn.textContent=(DOOR_LABELS[lang]||DOOR_LABELS.en).verifying;
+  try{
+    const r=await fetch(`${SERVER_URL}/checkin/leonina/verify-otp?t=${urlToken}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({code})});
+    const j=await r.json();
+    if(j.ok&&j.st){sessionToken=j.st;sessionStorage.setItem('st_leonina',j.st);otpSent=false;openModal('keys');}
+    else{if(errEl)errEl.textContent=(DOOR_LABELS[lang]||DOOR_LABELS.en).wrongCode;btn.disabled=false;btn.textContent=(DOOR_LABELS[lang]||DOOR_LABELS.en).verify;}
+  }catch{btn.disabled=false;}
+}
+
+async function shellyOpen(type){
+  const lbl=DOOR_LABELS[lang]||DOOR_LABELS.en;
+  if(!confirm(type==='building'?lbl.confirmBuilding:lbl.confirmDoor))return;
+  const btn=document.getElementById(`open-${type}-btn`);if(!btn)return;
+  const orig=btn.textContent;btn.disabled=true;btn.textContent=lbl.opening;
+  try{
+    const ep=tokenCid
+      ?`${SERVER_URL}/checkin/leonina/open/${type}?t=${urlToken}&st=${sessionToken}`
+      :`${SERVER_URL}/checkin/leonina/open-direct/${type}?t=${urlToken}`;
+    const r=await fetch(ep,{method:'POST'});const j=await r.json();
+    if(j.ok){
+      btn.textContent=lbl.opened;btn.style.background='#22c55e';btn.style.color='#fff';
+      setTimeout(()=>{
+        btn.textContent=orig;
+        btn.style.background=type==='building'?'linear-gradient(135deg,#e2c07a,var(--gold))':'#1d4ed8';
+        btn.style.color=type==='building'?'#120d09':'#fff';
+        btn.disabled=false;
+      },4000);
+    }else if(['otp_required','bad_session_token','session_expired'].includes(j.error)){
+      sessionToken='';sessionStorage.removeItem('st_leonina');btn.disabled=false;btn.textContent=orig;openModal('keys');
+    }else{btn.textContent='✗';btn.disabled=false;setTimeout(()=>{btn.textContent=orig;},3000);}
+  }catch{btn.textContent='✗';btn.disabled=false;setTimeout(()=>{btn.textContent=orig;},3000);}
+}
+
+/* ═══ LANG / RENDER ═══ */
+function setLang(l){
+  lang=l;localStorage.setItem('lang',l);
+  const u=new URL(location.href);u.searchParams.set('lang',l);history.replaceState(null,'',u);
+  romeAiHistory=[];closeModal();renderUI();
+}
+function setText(id,txt){const el=document.getElementById(id);if(el)el.textContent=txt;}
+
+function renderUI(){
+  const ui=U(),ex=EXTRA[lang]||EXTRA.it;
+  setText('heroTitle',ui.heroTitle);setText('heroSub',ui.heroSub);setText('aptLabel',ui.aptLabel);
+  setText('phasePill',(ui.phaseBadge||[])[phase-1]||'');
+  setText('phase1Text',ui.phase1Text);
+  setText('sectionAptHead',ex.sectionApt);setText('sectionAptTitle',ui.aptTitle);
+  setText('aptCardTitle',ex.aptCardTitle);setText('aptCardSub',ex.aptCardSub);
+  setText('keysTitle',ui.keysTitle);setText('keysSub',ui.keysSub);
+  setText('wifiTitle',ui.wifiTitle);setText('wifiSub',ui.wifiSub);
+  setText('houseTitle',ui.houseTitle);setText('houseSub',ui.houseSub);
+  setText('helpTitle',ui.helpTitle);setText('helpSub',ui.helpSub);
+  setText('sectionRomeHead',ex.sectionRome);setText('sectionRomeTitle',ui.romeTitle);
+  setText('eatTitle',ui.eatTitle);setText('eatSub',ui.eatSub);
+  setText('tonightTitle',ui.tonightTitle);setText('tonightSub',ui.tonightSub);
+  setText('tickTitle',ui.tickTitle);setText('tickSub',ui.tickSub);
+  setText('transTitle',ui.transTitle);setText('transSub',ui.transSub);
+  setText('assistantTitle',ex.assistantTitle);setText('assistantDesc',ex.assistantDesc);setText('assistantBtn',ex.assistantBtn);
+  const wa=document.getElementById('whatsappBtn');if(wa)wa.textContent=ex.whatsappBtn;
+  // update OPEN button label
+  const openBtnEl=document.querySelector('.openBtn');
+  if(openBtnEl){const openLbls={it:'APRI',en:'OPEN',fr:'OUVRIR',de:'ÖFFNEN',es:'ABRIR'};openBtnEl.textContent=openLbls[lang]||'OPEN';}
+  document.querySelectorAll('.langBtn').forEach(b=>b.classList.toggle('active',b.dataset.lang===lang));
+  loadPhase();
+}
+
+function applyPhase(){
+  const lock=document.getElementById('phaseLock'),grid=document.getElementById('aptGrid'),keys=document.getElementById('keysCard');
+  if(lock)lock.style.display=phase===1?'block':'none';
+  if(grid)grid.style.display=phase<2?'none':'block';
+  if(keys){
+    keys.classList.toggle('locked',phase<3);
+    if(phase===3){
+      // Keys expire 2.5h after check-in
+      const _ct=tokenCt||'13:00';
+      const [_ctH,_ctM]=_ct.split(':').map(Number);
+      const _expMin=_ctH*60+_ctM+150;
+      let _keysExpired=false;
+      try{
+        const _s=new Date().toLocaleString('en-US',{timeZone:'Europe/Rome',hour:'2-digit',minute:'2-digit',hour12:false});
+        const [_nH,_nM]=_s.split(':').map(Number);
+        const _today=new Date().toLocaleDateString('en-CA',{timeZone:'Europe/Rome'});
+        _keysExpired=(tokenDay&&tokenDay<_today)||(_nH*60+_nM>=_expMin);
+      }catch{}
+      const icon=keys.querySelector('.cardIcon');
+      if(_keysExpired){
+        if(icon)icon.textContent='🔒';
+        keys.classList.add('locked');
+        const _expMsg={en:'Keys expired. Your physical keys are in the apartment.',it:'Chiavi scadute. Le chiavi fisiche si trovano in appartamento.',fr:"Clés expirées. Les clés physiques se trouvent dans l'appartement.",de:'Schlüssel abgelaufen. Die physischen Schlüssel befinden sich in der Wohnung.',es:'Llaves caducadas. Las llaves físicas están en el apartamento.'};
+        keys.onclick=()=>{alert(_expMsg[lang]||_expMsg.en);};
+      }else{
+        if(icon)icon.textContent='✅';
+        const checkinUrl=`${SERVER_URL}/checkin/leonina/?d=${tokenDay||''}`;
+        keys.onclick=()=>{ window.location.href=checkinUrl; };
+      }
+    }
+  }
+  const heroBox=document.getElementById('heroAddrBox');
+  if(heroBox)heroBox.style.display=phase===3?'none':'';
+  setText('phasePill',(U().phaseBadge||[])[phase-1]||'');
+}
+
+function handleOpen(){if(phase<3){alert(U().keysPhase2);}else{openModal('keys');}}
+
+/* ═══ AI CHATBOT ═══ */
+let romeAiHistory=[];
+
+function buildRomeSystemPrompt(){
+  const a=A();
+  return `You are the concierge for Via Leonina 71, Rome (NiceFlatInRome), located in the Monti district — steps from the Colosseum, Imperial Forums, Domus Aurea and San Pietro in Vincoli. Host: Michele, WhatsApp: +39 335 524 5756. Always respond in ${{en:'English',it:'Italian',fr:'French',de:'German',es:'Spanish'}[lang]||'Italian'}, regardless of what language the user types. Be warm, detailed and genuinely helpful. For ANY question about restaurants, bars, food, services or attractions: always give at least 3 specific recommendations using EXACTLY this format for each one — Name | Address | Phone or website | Hours | Price range | Short description. Use your full knowledge of Rome. Example: Ba'Ghetto | Via del Portico d'Ottavia 2 | +39 06 6889 2868 | Mon-Thu 12-15 & 19-23 | €30-50 | Kosher Roman-Jewish cuisine, excellent carciofi alla giudia. Always follow this format. Never give vague or generic answers.\n\nApartment info: Check-in from ${a.checkin_time} | Check-out by ${a.checkout_time} | Wi-Fi: ${a.wifi_note} | SSID: ${a.wifi_ssid} | Password: ${a.wifi_password} | Intercom: ${a.intercom} | Building code: ${a.building_code} | Front door: ${a.front_door} | Phone: ${a.phone} | Water: ${a.water_note} | AC: ${a.ac_note} | Kitchen: ${a.kitchen} | Terrace: ${a.terrace} | Bathroom: ${a.bathroom} | Pharmacy: ${a.pharmacy} | Transport: ${a.city_transport} | Airports: ${a.airports} | Taxi: ${a.taxi} | Emergency: ${a.emergency} | Checkout: ${a.checkout_note} | Keys: ${a.keys_msg}`;
+}
+
+async function sendRomeAI(prefill){
+  const input=document.getElementById('romeAiInput');
+  const text=prefill||(input?input.value.trim():'');if(!text)return;
+  if(input)input.value='';
+  addRomeBubble(text,'user');
+  const spin=addRomeBubble('<div class="spin"></div>','bot');
+  try{
+    const res=await fetch(`${SERVER_URL}/api/ai/guide`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:text,systemPrompt:buildRomeSystemPrompt(),history:romeAiHistory})});
+    const json=await res.json();if(!json.ok||!json.reply)throw new Error();
+    spin.innerHTML=(function renderMd(t){
+      var lines=t.split('\n'),html='',inList=false;
+      for(var i=0;i<lines.length;i++){
+        var l=lines[i].trim();
+        if(!l){if(inList){html+='</div>';inList=false;}html+='<div style="height:6px"></div>';continue;}
+        var isBullet=/^[\*\-]\s+/.test(l);
+        var hasBold=/\*\*/.test(l);
+        if(isBullet&&hasBold){
+          if(inList){html+='</div>';inList=false;}
+          var content=l.replace(/^[\*\-]\s+/,'');
+          var parts=content.split('|').map(function(p){return p.trim();});
+          var name=parts[0].replace(/\*\*/g,'');
+          var details=parts.slice(1).filter(Boolean);
+          html+='<div style="background:rgba(214,176,109,.07);border:1px solid rgba(214,176,109,.18);border-radius:12px;padding:12px 14px;margin:8px 0">';
+          html+='<div style="font-weight:700;color:#d6b06d;font-size:14px;margin-bottom:5px">'+name+'</div>';
+          for(var j=0;j<details.length;j++){
+            html+='<div style="font-size:12px;color:#b7a894;line-height:1.6;padding:1px 0">'+details[j]+'</div>';
+          }
+          html+='</div>';
+        } else if(isBullet){
+          if(!inList){html+='<div style="margin:6px 0">';inList=true;}
+          html+='<div style="padding:2px 0 2px 10px;font-size:13px">• '+l.replace(/^[\*\-]\s+/,'').replace(/\*\*(.+?)\*\*/g,'<strong style="color:#d6b06d">$1</strong>')+'</div>';
+        } else {
+          if(inList){html+='</div>';inList=false;}
+          html+='<div style="margin:3px 0;font-size:13px">'+l.replace(/\*\*(.+?)\*\*/g,'<strong style="color:#d6b06d">$1</strong>')+'</div>';
+        }
+      }
+      if(inList)html+='</div>';
+      return html;
+    })(json.reply);
+    romeAiHistory.push({role:'user',parts:[{text}]});
+    romeAiHistory.push({role:'model',parts:[{text:json.reply}]});
+  }catch{spin.innerHTML='⚠️ '+A().phone;}
+}
+
+function addRomeBubble(html,role){
+  const wrap=document.getElementById('romeAiChatVisible');if(!wrap)return{innerHTML:''};
+  const d=document.createElement('div');d.className=role==='user'?'bubble-user':'bubble-bot';
+  d.innerHTML=html;wrap.appendChild(d);wrap.scrollTop=wrap.scrollHeight;return d;
+}
+
+
+// ── Weather & Clock widget ────────────────────────────────────────────────
+const WEATHER_FORECAST_URLS = {
+  it: 'https://www.meteoblue.com/it/tempo/settimana/roma_italia_3169070',
+  en: 'https://www.meteoblue.com/en/weather/week/rome_italy_3169070',
+  fr: 'https://www.meteoblue.com/fr/meteo/semaine/rome_italie_3169070',
+  de: 'https://www.meteoblue.com/de/wetter/woche/rom_italien_3169070',
+  es: 'https://www.meteoblue.com/es/tiempo/semana/roma_italia_3169070',
+};
+function openWeather(e){
+  e.preventDefault();
+  const url = WEATHER_FORECAST_URLS[lang] || WEATHER_FORECAST_URLS.en;
+  window.open(url,'_blank','noopener');
+}
+function padZ(n){return String(n).padStart(2,'0');}
+function updateClock(){
+  try{
+    const s=new Date().toLocaleTimeString('it-IT',{timeZone:'Europe/Rome',hour:'2-digit',minute:'2-digit',hour12:false});
+    const el=document.getElementById('wTime');
+    if(el)el.textContent=s;
+  }catch(e){}
+}
+async function fetchWeather(){
+  try{
+    const r=await fetch('https://api.open-meteo.com/v1/forecast?latitude=41.9028&longitude=12.4964&current=temperature_2m,weathercode&timezone=Europe/Rome');
+    const j=await r.json();
+    const temp=Math.round(j?.current?.temperature_2m);
+    const code=j?.current?.weathercode;
+    const icons={0:'☀️',1:'🌤',2:'⛅',3:'☁️',45:'🌫',48:'🌫',51:'🌦',53:'🌦',55:'🌧',61:'🌧',63:'🌧',65:'🌧',71:'🌨',73:'🌨',75:'🌨',80:'🌦',81:'🌧',82:'🌧',95:'⛈',96:'⛈',99:'⛈'};
+    const icon=icons[code]||'🌡';
+    const tEl=document.getElementById('wTemp');
+    const iEl=document.getElementById('wIcon');
+    if(tEl)tEl.textContent=temp+'°';
+    if(iEl)iEl.textContent=icon;
+  }catch(e){}
+}
+updateClock();
+setInterval(updateClock,10000);
+fetchWeather();
+setInterval(fetchWeather,10*60*1000);
+// ── End Weather widget ────────────────────────────────────────────────────
+
+renderUI();
 </script>
-<script src="../shared/concierge.js?v=4"></script>
+
+<!-- PWA Full-Screen Install -->
+<div id="pwaScreen" style="display:none;position:fixed;inset:0;z-index:99999;background:#120d09;flex-direction:column;align-items:center;justify-content:center;padding:40px 24px;text-align:center;overflow-y:auto">
+  <img src="/guides/icons/icon-192.png" style="width:100px;height:100px;border-radius:24px;margin-bottom:22px;box-shadow:0 8px 40px rgba(0,0,0,0.6)">
+  <div style="font-size:11px;font-weight:700;letter-spacing:3px;color:#d6b06d;text-transform:uppercase;margin-bottom:6px">NiceFlat</div>
+  <div style="font-size:28px;font-weight:800;color:#f5ead8;margin-bottom:10px;line-height:1.2">Rome Concierge</div>
+  <div style="font-size:15px;color:#b7a894;margin-bottom:36px;line-height:1.6;max-width:300px">Your apartment guide &amp; self check-in.<br>Install the app to get started.</div>
+
+  <!-- iOS instructions -->
+  <div id="pwaIOS" style="display:none;width:100%;max-width:360px">
+    <div style="background:rgba(214,176,109,0.07);border:1px solid rgba(214,176,109,0.2);border-radius:22px;padding:28px 22px;margin-bottom:28px">
+      <div style="display:flex;align-items:center;gap:16px;margin-bottom:22px">
+        <div style="background:rgba(214,176,109,0.18);border-radius:14px;min-width:48px;height:48px;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;color:#d6b06d">1</div>
+        <div style="text-align:left">
+          <div style="color:#f5ead8;font-size:15px;font-weight:700">Tap the Share button</div>
+          <div style="color:#b7a894;font-size:13px;margin-top:3px">The <span style="color:#d6b06d;font-size:16px">⬆</span> icon at the bottom of Safari</div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:16px;margin-bottom:22px">
+        <div style="background:rgba(214,176,109,0.18);border-radius:14px;min-width:48px;height:48px;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;color:#d6b06d">2</div>
+        <div style="text-align:left">
+          <div style="color:#f5ead8;font-size:15px;font-weight:700">Tap "Add to Home Screen"</div>
+          <div style="color:#b7a894;font-size:13px;margin-top:3px">Scroll the menu and tap the <span style="color:#d6b06d">+</span> icon</div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:16px">
+        <div style="background:rgba(214,176,109,0.18);border-radius:14px;min-width:48px;height:48px;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;color:#d6b06d">3</div>
+        <div style="text-align:left">
+          <div style="color:#f5ead8;font-size:15px;font-weight:700">Tap "Add"</div>
+          <div style="color:#b7a894;font-size:13px;margin-top:3px">The app will appear on your Home Screen</div>
+        </div>
+      </div>
+    </div>
+    <div style="animation:pwaBounce 1.3s ease-in-out infinite;color:#d6b06d;font-size:36px;line-height:1">↓</div>
+    <div style="color:#b7a894;font-size:12px;margin-top:6px">Share button is at the bottom of Safari</div>
+  </div>
+
+  <!-- Android install button -->
+  <div id="pwaAndroid" style="display:none;width:100%;max-width:360px">
+    <button id="pwaInstallBtn" style="width:100%;padding:20px;background:linear-gradient(135deg,#e8c67a,#c89a48);color:#120d09;font-weight:800;font-size:18px;border-radius:18px;border:none;cursor:pointer;letter-spacing:0.3px;box-shadow:0 6px 28px rgba(214,176,109,0.35)">
+      📲 &nbsp;Add to your phone
+    </button>
+    <div style="color:#b7a894;font-size:12px;margin-top:16px">Free · Works offline · No app store needed</div>
+  </div>
+</div>
+
+<style>
+@keyframes pwaBounce{0%,100%{transform:translateY(0)}50%{transform:translateY(10px)}}
+</style>
+
+<script>
+(function(){
+  var isIOS=/iphone|ipad|ipod/i.test(navigator.userAgent)&&!window.MSStream;
+  var isAndroid=/android/i.test(navigator.userAgent);
+  var isMobile=isIOS||isAndroid;
+  var isStandalone=window.matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;
+  if(isStandalone||!isMobile) return;
+  var scr=document.getElementById('pwaScreen');
+  scr.style.display='flex';
+  if(isIOS){
+    document.getElementById('pwaIOS').style.display='block';
+    return;
+  }
+  var deferredPrompt=null;
+  var androidDiv=document.getElementById('pwaAndroid');
+  window.addEventListener('beforeinstallprompt',function(e){
+    e.preventDefault();
+    deferredPrompt=e;
+    androidDiv.style.display='block';
+    document.getElementById('pwaInstallBtn').onclick=function(){
+      deferredPrompt.prompt();
+      deferredPrompt.userChoice.then(function(r){
+        deferredPrompt=null;
+        if(r.outcome==='accepted') scr.style.display='none';
+      });
+    };
+  });
+  window.addEventListener('appinstalled',function(){ scr.style.display='none'; });
+})();
+if('serviceWorker' in navigator){
+  window.addEventListener('load',function(){ navigator.serviceWorker.register('/sw.js'); });
+}
+</script>
 </body>
 </html>
