@@ -3858,7 +3858,7 @@ app.get('/operator-guide', (req, res) => {
   res.cookie('guide_sess', guideSess, { httpOnly: true, sameSite: 'lax', maxAge: 4 * 60 * 60 * 1000, path: '/' });
   // Issue operator JWT for phase endpoint
   const opToken = makeOperatorToken(apt, phase);
-  return res.redirect(302, `/guides/${apt}/premium_rome_concierge.html?t=${encodeURIComponent(opToken)}&op=1`);
+  return res.redirect(302, `/checkin/${apt}/index.html?t=${encodeURIComponent(opToken)}&op=1`);
 });
 // ── End Operator panel routes ─────────────────────────────────────────────
 
