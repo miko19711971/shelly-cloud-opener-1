@@ -1165,6 +1165,7 @@ async function getTabletStatus(apt) {
 
     let activeReservation = null;
     for (const res of reservations) {
+      if (APT_LISTING_MAP[res.listingMapId] !== apt) continue; // wrong apartment — API may ignore filter
       const ci = res.arrivalDate || res.checkInDate;
       const co = res.departureDate || res.checkOutDate;
       if (!ci || !co) continue;
