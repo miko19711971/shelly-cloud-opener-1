@@ -1,13 +1,15 @@
 (function () {
   const LANGS = ['it', 'en', 'fr', 'es', 'de'];
-  const FLAG_URLS = {
-    it: 'https://flagcdn.com/w40/it.png',
-    en: 'https://flagcdn.com/w40/gb.png',
-    fr: 'https://flagcdn.com/w40/fr.png',
-    es: 'https://flagcdn.com/w40/es.png',
-    de: 'https://flagcdn.com/w40/de.png',
-  };
   const FLAG_LABELS = { it: 'IT', en: 'EN', fr: 'FR', es: 'ES', de: 'DE' };
+  // Inline SVG flags — no external dependency
+  const FLAG_SVGS = {
+    it: `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 3 2'><rect width='1' height='2' fill='%23009246'/><rect x='1' width='1' height='2' fill='%23fff'/><rect x='2' width='1' height='2' fill='%23CE2B37'/></svg>`,
+    en: `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 30'><rect width='60' height='30' fill='%23012169'/><path d='M0,0 L60,30 M60,0 L0,30' stroke='%23fff' stroke-width='6'/><path d='M0,0 L60,30 M60,0 L0,30' stroke='%23C8102E' stroke-width='4'/><path d='M30,0 V30 M0,15 H60' stroke='%23fff' stroke-width='10'/><path d='M30,0 V30 M0,15 H60' stroke='%23C8102E' stroke-width='6'/></svg>`,
+    fr: `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 3 2'><rect width='1' height='2' fill='%230055A4'/><rect x='1' width='1' height='2' fill='%23fff'/><rect x='2' width='1' height='2' fill='%23EF4135'/></svg>`,
+    es: `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 3 2'><rect width='3' height='2' fill='%23c60b1e'/><rect y='0.5' width='3' height='1' fill='%23ffc400'/></svg>`,
+    de: `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 5 3'><rect width='5' height='3' fill='%23000'/><rect y='1' width='5' height='2' fill='%23D00'/><rect y='2' width='5' height='1' fill='%23FFCE00'/></svg>`,
+  };
+  function flagSrc(l) { return `data:image/svg+xml,${FLAG_SVGS[l]}`; }
   let currentLang = 'it';
   let currentSection = 'home';
 
@@ -40,7 +42,7 @@
   function renderTopbar(data, activeLang) {
     const flags = LANGS.map(l =>
       `<a class="flag${l === activeLang ? ' active' : ''}" href="#" data-lang="${l}" aria-label="${FLAG_LABELS[l]}" title="${FLAG_LABELS[l]}">
-        <img src="${FLAG_URLS[l]}" alt="${FLAG_LABELS[l]}" width="22" height="15" loading="lazy"/>
+        <img src="${flagSrc(l)}" alt="${FLAG_LABELS[l]}" width="22" height="15"/>
       </a>`
     ).join('');
     return `<header class="topbar"><div class="brand">${esc(data.brand)}</div><div class="flags" aria-label="Language selector">${flags}</div></header>`;
@@ -49,34 +51,39 @@
   function renderHeroSvg(data) {
     const apt = data.apartment;
     const name = data.heroTitle;
-    const emoji = data.heroEmoji;
     const c = data.heroColors;
-    return `<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 900 600" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    return `<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
       <defs>
         <linearGradient id="hg-${apt}" x1="0" y1="0" x2="1" y2="1">
           <stop offset="0%" stop-color="${c.from}"/>
-          <stop offset="55%" stop-color="${c.mid}"/>
+          <stop offset="50%" stop-color="${c.mid}"/>
           <stop offset="100%" stop-color="#090604"/>
         </linearGradient>
-        <radialGradient id="hr-${apt}" cx="70%" cy="20%" r="65%">
-          <stop offset="0%" stop-color="#c9a45c" stop-opacity="0.55"/>
-          <stop offset="55%" stop-color="#c9a45c" stop-opacity="0.12"/>
+        <radialGradient id="hr-${apt}" cx="72%" cy="18%" r="64%">
+          <stop offset="0%" stop-color="#c9a45c" stop-opacity="0.40"/>
+          <stop offset="56%" stop-color="#c9a45c" stop-opacity="0.11"/>
           <stop offset="100%" stop-color="#c9a45c" stop-opacity="0"/>
         </radialGradient>
       </defs>
-      <rect width="900" height="600" fill="url(#hg-${apt})"/>
-      <rect width="900" height="600" fill="url(#hr-${apt})"/>
-      <circle cx="735" cy="120" r="132" fill="#c9a45c" opacity=".10"/>
-      <circle cx="120" cy="480" r="190" fill="#ffffff" opacity=".035"/>
-      <path d="M60 470 C220 360,330 530,480 430 S720 300,840 385" fill="none" stroke="#c9a45c" stroke-width="2" opacity=".24"/>
-      <path d="M70 120 H830" stroke="#c9a45c" stroke-width="1" opacity=".20"/>
-      <path d="M70 480 H830" stroke="#c9a45c" stroke-width="1" opacity=".16"/>
-      <g transform="translate(70 82)">
-        <rect x="0" y="0" width="760" height="436" rx="36" fill="#000000" opacity=".18" stroke="#c9a45c" stroke-opacity=".32"/>
-        <text x="380" y="170" text-anchor="middle" font-size="94" font-family="Apple Color Emoji,Segoe UI Emoji,Noto Color Emoji,sans-serif">${emoji}</text>
-        <text x="380" y="270" text-anchor="middle" fill="#fff6e8" font-size="54" font-family="Georgia,Times New Roman,serif">${name}</text>
-        <text x="380" y="324" text-anchor="middle" fill="#c9a45c" font-size="24" font-weight="700" letter-spacing="3" font-family="Arial,Helvetica,sans-serif">Roma Home Concierge</text>
+      <rect width="1600" height="900" fill="url(#hg-${apt})"/>
+      <rect width="1600" height="900" fill="url(#hr-${apt})"/>
+      <circle cx="1270" cy="170" r="245" fill="#f2d58a" opacity=".09"/>
+      <circle cx="240" cy="720" r="310" fill="#ffffff" opacity=".032"/>
+      <path d="M120 675 C360 505,555 755,820 610 S1210 430,1490 560" fill="none" stroke="#c9a45c" stroke-width="3" opacity=".24"/>
+      <path d="M120 210 H1480" stroke="#c9a45c" stroke-width="1.5" opacity=".19"/>
+      <path d="M120 735 H1480" stroke="#c9a45c" stroke-width="1.5" opacity=".15"/>
+      <rect x="115" y="95" width="1370" height="710" rx="58" fill="#000000" opacity=".13" stroke="#c9a45c" stroke-opacity=".32"/>
+      <g transform="translate(735,255)" fill="#eee7dc" opacity=".72">
+        <path d="M65 0 L0 28 H130 Z"/>
+        <rect x="13" y="39" width="14" height="72" rx="3"/>
+        <rect x="41" y="39" width="14" height="72" rx="3"/>
+        <rect x="75" y="39" width="14" height="72" rx="3"/>
+        <rect x="103" y="39" width="14" height="72" rx="3"/>
+        <rect x="-4" y="116" width="138" height="11" rx="3"/>
+        <rect x="-14" y="134" width="158" height="9" rx="3"/>
       </g>
+      <text x="800" y="505" text-anchor="middle" font-family="Georgia,Times New Roman,serif" font-size="104" font-weight="500" fill="#eee7dc" opacity=".72" letter-spacing="1">${esc(name)}</text>
+      <text x="800" y="607" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="34" font-weight="800" fill="#ddbe77" opacity=".72" letter-spacing="10">ROMA HOME CONCIERGE</text>
     </svg>`;
   }
 
