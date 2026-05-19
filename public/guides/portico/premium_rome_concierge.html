@@ -999,7 +999,7 @@ function applyPhase(){
         const _s=new Date().toLocaleString('en-US',{timeZone:'Europe/Rome',hour:'2-digit',minute:'2-digit',hour12:false});
         const [_nH,_nM]=_s.split(':').map(Number);
         const _today=new Date().toLocaleDateString('en-CA',{timeZone:'Europe/Rome'});
-        _keysExpired=(tokenDay&&tokenDay<_today)||(_nH*60+_nM>=_expMin);
+        _keysExpired=tokenDay&&((tokenDay<_today)||(_nH*60+_nM>=_expMin));
       }catch{}
       const icon=keys.querySelector('.cardIcon');
       if(_keysExpired){
@@ -1009,8 +1009,7 @@ function applyPhase(){
         keys.onclick=()=>{alert(_expMsg[lang]||_expMsg.en);};
       }else{
         if(icon)icon.textContent='✅';
-        const checkinUrl=`${SERVER_URL}/checkin/portico/?d=${tokenDay||''}`;
-        keys.onclick=()=>{ window.location.href=checkinUrl; };
+        keys.onclick=()=>{ openModal('keys'); };
       }
     }
   }
