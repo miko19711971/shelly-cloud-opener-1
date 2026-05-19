@@ -1,6 +1,39 @@
 (function () {
   const LANGS = ['it', 'en', 'fr', 'es', 'de'];
   const FLAG_LABELS = { it: 'IT', en: 'EN', fr: 'FR', es: 'ES', de: 'DE' };
+
+  const BLOCKED_MSGS = {
+    not_yet: {
+      it: 'La guida sarà disponibile dal giorno del tuo check-in.',
+      en: 'The guide will be available from your check-in day.',
+      fr: "Le guide sera disponible à partir de votre jour d'arrivée.",
+      es: 'La guía estará disponible a partir de tu día de llegada.',
+      de: 'Der Leitfaden ist ab Ihrem Check-in-Tag verfügbar.',
+    },
+    expired: {
+      it: 'La guida non è più disponibile. Grazie per aver soggiornato da noi!',
+      en: 'The guide is no longer available. Thank you for staying with us!',
+      fr: "Le guide n'est plus disponible. Merci de votre séjour!",
+      es: '¡La guía ya no está disponible. Gracias por su estancia!',
+      de: 'Der Leitfaden ist nicht mehr verfügbar. Danke für Ihren Aufenthalt!',
+    },
+    invalid: {
+      it: 'Accesso non autorizzato. Contatta il tuo host.',
+      en: 'Unauthorized access. Please contact your host.',
+      fr: 'Accès non autorisé. Veuillez contacter votre hôte.',
+      es: 'Acceso no autorizado. Contacta a tu anfitrión.',
+      de: 'Nicht autorisierter Zugriff. Bitte kontaktieren Sie Ihren Gastgeber.',
+    },
+  };
+
+  function renderBlocked(reason, availableFrom) {
+    const data = window.CONCIERGE;
+    const msgs = BLOCKED_MSGS[reason] || BLOCKED_MSGS.invalid;
+    const msg = msgs[currentLang] || msgs.en;
+    const icon = reason === 'expired' ? '🏠' : reason === 'not_yet' ? '🔒' : '🔐';
+    const app = document.getElementById('app');
+    app.innerHTML = `<div style="min-height:100vh;background:#120d09;display:flex;align-items:center;justify-content:center;padding:24px;box-sizing:border-box"><div style="max-width:380px;text-align:center"><div style="font-size:11px;font-weight:700;letter-spacing:3px;color:#d6b06d;text-transform:uppercase;margin-bottom:20px">${esc(data.brand||'NiceFlat Rome')}</div><div style="font-size:52px;margin-bottom:16px">${icon}</div><div style="font-size:16px;color:#f5ead8;line-height:1.6;margin-bottom:${availableFrom?'12px':'28px'}">${esc(msg)}</div>${availableFrom?`<div style="font-size:13px;color:#b7a894;margin-bottom:28px">📅 ${esc(availableFrom)}</div>`:''}<a href="https://wa.me/393355245756" style="display:inline-block;background:linear-gradient(135deg,#e2c07a,#c89a48);color:#120d09;padding:14px 28px;border-radius:14px;font-weight:800;text-decoration:none;font-size:14px">💬 Contatta l'host</a></div></div>`;
+  }
   // Inline SVG flags — no external dependency
   const FLAG_SVGS = {
     it: `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 3 2'><rect width='1' height='2' fill='%23009246'/><rect x='1' width='1' height='2' fill='%23fff'/><rect x='2' width='1' height='2' fill='%23CE2B37'/></svg>`,
@@ -15,12 +48,29 @@
 
   function init() {
     const data = window.CONCIERGE;
+    const urlParams = new URLSearchParams(window.location.search);
+    const urlLang = urlParams.get('lang');
     const stored = localStorage.getItem('concierge-lang');
     const browserLang = (navigator.language || '').slice(0, 2);
-    currentLang = stored && data.langs[stored] ? stored
+    currentLang = (urlLang && data.langs[urlLang]) ? urlLang
+                : (stored && data.langs[stored]) ? stored
                 : data.langs[browserLang] ? browserLang
                 : 'it';
-    render();
+
+    const apt = data.apartment;
+    if (apt) {
+      const token = urlParams.get('t');
+      if (!token) { renderBlocked('invalid'); return; }
+      fetch(`/home/${encodeURIComponent(apt)}/status?t=${encodeURIComponent(token)}`)
+        .then(r => r.json())
+        .then(result => {
+          if (result.ok) { render(); }
+          else { renderBlocked(result.reason, result.available_from); }
+        })
+        .catch(() => render());
+    } else {
+      render();
+    }
   }
 
   function setLang(lang) {

@@ -221,13 +221,14 @@ const PENDING_PHASE3 = new Map();
 
 async function sendPhase2GuideMessage({ conversationId, apartment, lang = "en", reservationId = null, checkoutDate = null }) {
   // Send personalised /stay link — device registration + session happen server-side on first open
-  const guideUrl = `https://shelly-cloud-opener-1.onrender.com/stay/${apartment}?r=${reservationId}&lang=${lang}`;
+  const guideUrl     = `https://shelly-cloud-opener-1.onrender.com/stay/${apartment}?r=${reservationId}&lang=${lang}`;
+  const homeGuideUrl = `https://shelly-cloud-opener-1.onrender.com/stay-home/${apartment}?r=${reservationId}&lang=${lang}`;
   const textMap = {
-    en: `✅ Your online check-in is confirmed!\nYour personal guest guide is now ready — apartment info, Wi-Fi and everything you need:\n${guideUrl}`,
-    it: `✅ Il tuo check-in online è confermato!\nLa tua guida personale è ora disponibile — info appartamento, Wi-Fi e tutto quello che ti serve:\n${guideUrl}`,
-    fr: `✅ Votre check-in en ligne est confirmé!\nVotre guide personnel est maintenant disponible — infos appartement, Wi-Fi et tout ce dont vous avez besoin:\n${guideUrl}`,
-    de: `✅ Ihr Online-Check-in ist bestätigt!\nIhr persönlicher Guide ist jetzt verfügbar — Wohnungsinfos, WLAN und alles was Sie brauchen:\n${guideUrl}`,
-    es: `✅ ¡Tu check-in online está confirmado!\nTu guía personal ya está disponible — info del apartamento, Wi-Fi y todo lo que necesitas:\n${guideUrl}`,
+    en: `✅ Your online check-in is confirmed!\nYour personal guest guide is now ready — apartment info, Wi-Fi and everything you need:\n${guideUrl}\n\n🗺 Rome Concierge — restaurants, experiences and local tips:\n${homeGuideUrl}`,
+    it: `✅ Il tuo check-in online è confermato!\nLa tua guida personale è ora disponibile — info appartamento, Wi-Fi e tutto quello che ti serve:\n${guideUrl}\n\n🗺 Roma Concierge — ristoranti, esperienze e consigli locali:\n${homeGuideUrl}`,
+    fr: `✅ Votre check-in en ligne est confirmé!\nVotre guide personnel est maintenant disponible — infos appartement, Wi-Fi et tout ce dont vous avez besoin:\n${guideUrl}\n\n🗺 Rome Concierge — restaurants, expériences et conseils locaux:\n${homeGuideUrl}`,
+    de: `✅ Ihr Online-Check-in ist bestätigt!\nIhr persönlicher Guide ist jetzt verfügbar — Wohnungsinfos, WLAN und alles was Sie brauchen:\n${guideUrl}\n\n🗺 Rom Concierge — Restaurants, Erlebnisse und lokale Tipps:\n${homeGuideUrl}`,
+    es: `✅ ¡Tu check-in online está confirmado!\nTu guía personal ya está disponible — info del apartamento, Wi-Fi y todo lo que necesitas:\n${guideUrl}\n\n🗺 Roma Concierge — restaurantes, experiencias y consejos locales:\n${homeGuideUrl}`,
   };
   const message = textMap[lang] || textMap.en;
   await sendHostawayMessage({ conversationId, message });
@@ -1051,6 +1052,95 @@ if (!reservation) return res.status(502).send('Unable to verify reservation. Ple
   const guideToken = makeToken(_tp);
   const safeLang   = ['en','it','fr','de','es'].includes(lang) ? lang : 'en';
   return res.redirect(302, `/guides/${apt}/premium_rome_concierge.html?t=${guideToken}&lang=${safeLang}`);
+});
+
+// ── /stay-home/:apt — Home concierge guide entry point ────────────────────
+const HOME_APT_SUFFIX = { arenula: 'Arenula', leonina: 'Leonina', portico: 'Portico', scala: 'Scala', trastevere: 'Trastevere' };
+
+app.get('/stay-home/:apt', async (req, res) => {
+  const apt          = String(req.params.apt || '').toLowerCase();
+  const reservationId = String(req.query.r || '');
+  const lang         = String(req.query.lang || 'en').slice(0, 2).toLowerCase();
+
+  if (!VALID_APARTMENTS.includes(apt)) return res.status(404).send('Not found');
+  if (!reservationId) return res.status(400).send('Missing reservation ID');
+
+  let reservation;
+  const candidateIds = [];
+  if (/^\d+$/.test(reservationId) && reservationId.length <= 8) {
+    candidateIds.push(reservationId);
+  } else if (!/^\d+$/.test(reservationId)) {
+    const firstSegment = reservationId.split('-')[0];
+    if (/^\d+$/.test(firstSegment) && firstSegment.length <= 8) candidateIds.push(firstSegment);
+  }
+  for (const id of candidateIds) {
+    try {
+      const r = await axios.get(`https://api.hostaway.com/v1/reservations/${id}`,
+        { headers: { Authorization: `Bearer ${HOSTAWAY_TOKEN}` }, timeout: 10000 });
+      if (r.data?.result && APT_LISTING_MAP[r.data.result.listingMapId] === apt) {
+        reservation = r.data.result; break;
+      }
+    } catch (e) { console.error(`❌ /stay-home direct fetch error:`, e.message); }
+  }
+  if (!reservation && candidateIds.length === 0) {
+    try {
+      const listingId = Object.entries(APT_LISTING_MAP).find(([, v]) => v === apt)?.[0];
+      const params = new URLSearchParams({ channelReservationId: reservationId, limit: '1' });
+      if (listingId) params.set('listingMapId', listingId);
+      const r = await axios.get(`https://api.hostaway.com/v1/reservations?${params}`,
+        { headers: { Authorization: `Bearer ${HOSTAWAY_TOKEN}` }, timeout: 10000 });
+      reservation = r.data?.result?.[0];
+      if (reservation && APT_LISTING_MAP[reservation.listingMapId] !== apt) reservation = null;
+    } catch (e) { console.error('❌ /stay-home channel lookup error:', e.message); }
+  }
+
+  if (!reservation) return res.status(502).send('Unable to verify reservation. Please try again.');
+  if (reservation.status === 'cancelled') return res.status(410).send('Reservation cancelled');
+
+  const checkoutDate = reservation.departureDate || reservation.checkOutDate || reservation.checkoutDate || null;
+  const checkinDate  = reservation.arrivalDate   || reservation.checkInDate  || null;
+
+  if (checkoutDate && isYYYYMMDD(checkoutDate)) {
+    const expMs = checkoutExpiryMs(checkoutDate);
+    if (expMs && Date.now() > expMs) return res.status(410).send('Your stay has ended. Thank you for choosing NiceFlat!');
+  }
+
+  const now = Date.now();
+  const jti = b64url(crypto.randomBytes(9));
+  const expMs = (checkoutDate && isYYYYMMDD(checkoutDate))
+    ? checkoutExpiryMs(checkoutDate) || (now + 30 * 86400000)
+    : now + 30 * 86400000;
+  const tp = { tgt: `home-${apt}`, exp: expMs, jti, iat: now, ver: TOKEN_VERSION,
+    day: checkinDate || tzToday(), co: checkoutDate || null, rid: reservationId };
+  const homeToken = makeToken(tp);
+  const safeLang = ['en', 'it', 'fr', 'de', 'es'].includes(lang) ? lang : 'en';
+  const suffix = HOME_APT_SUFFIX[apt] || apt;
+  return res.redirect(302, `/guides/Premium_Roman_Concierge_Home_${suffix}.html?t=${homeToken}&lang=${safeLang}`);
+});
+
+// ── /home/:apt/status — validate home concierge guide token ──────────────
+app.get('/home/:apt/status', (req, res) => {
+  const apt = String(req.params.apt || '').toLowerCase();
+  const t   = String(req.query.t || '');
+  if (!VALID_APARTMENTS.includes(apt)) return res.json({ ok: false, reason: 'invalid' });
+  if (!t) return res.json({ ok: false, reason: 'no_token' });
+
+  const parsed = parseGuideToken(t);
+  if (!parsed.ok) return res.json({ ok: false, reason: 'invalid' });
+
+  const p = parsed.payload;
+  if (p.tgt !== `home-${apt}`) return res.json({ ok: false, reason: 'invalid' });
+
+  const today = tzToday();
+  if (p.day && today < p.day) return res.json({ ok: false, reason: 'not_yet', available_from: p.day });
+
+  if (p.co && isYYYYMMDD(p.co)) {
+    const expMs = checkoutExpiryMs(p.co);
+    if (expMs && Date.now() > expMs) return res.json({ ok: false, reason: 'expired' });
+  }
+  if (typeof p.exp === 'number' && Date.now() > p.exp) return res.json({ ok: false, reason: 'expired' });
+
+  return res.json({ ok: true });
 });
 
 // ── Old guide-link recovery ───────────────────────────────────────────────
