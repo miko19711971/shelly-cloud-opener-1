@@ -30,8 +30,8 @@ a{color:var(--gold)}
 /* ── Lang Bar ─────────────────────────────────────────── */
 .langBar{
   display:flex;justify-content:center;gap:8px;padding:14px 0 8px;
-  position:sticky;top:0;z-index:50;
-  background:rgba(18,13,9,.88);backdrop-filter:blur(12px);
+  position:sticky;top:0;z-index:20;
+  background:rgba(18,13,9,.92);backdrop-filter:blur(12px);
   border-bottom:1px solid var(--line);
 }
 .langBtn{
@@ -47,56 +47,35 @@ a{color:var(--gold)}
 .langBtn.active img{box-shadow:0 0 0 2px rgba(214,176,109,.7),0 2px 8px rgba(0,0,0,.5);}
 .langBtn:hover{opacity:.75}
 
-/* ── Hero ─────────────────────────────────────────────── */
-.hero{
-  padding:42px 22px 32px;text-align:center;
-  position:relative;
-}
-.hero::after{
-  content:'';position:absolute;bottom:0;left:50%;transform:translateX(-50%);
-  width:60%;height:1px;background:var(--line);
-}
+/* ── HERO ── */
+.hero{padding:42px 20px 32px;text-align:center}
 .heroBadge{
-  display:inline-block;font-size:9.5px;letter-spacing:.45em;text-transform:uppercase;
+  display:inline-block;font-size:9px;letter-spacing:.45em;text-transform:uppercase;
   color:var(--gold);background:rgba(214,176,109,.1);border:1px solid var(--line);
   border-radius:999px;padding:5px 16px;margin-bottom:18px;
 }
 .heroTitle{
   font-size:32px;font-weight:800;color:var(--cream);line-height:1.18;
-  margin-bottom:9px;letter-spacing:-.01em;
+  margin-bottom:6px;letter-spacing:-.3px;
 }
-.heroName{
-  font-size:14px;color:var(--gold);font-weight:600;letter-spacing:.06em;
-  margin-bottom:5px;text-transform:uppercase;
-}
-.heroSub{
-  font-size:13px;color:var(--muted);line-height:1.65;
-  max-width:290px;margin:0 auto 26px;
-}
-
-/* address pill */
+.heroApt{font-size:14px;color:var(--gold);font-weight:600;margin-bottom:6px;letter-spacing:.05em;}
+.heroSub{font-size:13px;color:var(--muted);line-height:1.65;max-width:300px;margin:0 auto 26px}
 .heroAddr{
   background:rgba(214,176,109,.07);border:1px solid var(--line);
-  border-radius:22px;padding:15px 18px;
-  display:flex;align-items:center;justify-content:space-between;
-  gap:12px;max-width:370px;margin:0 auto;
+  border-radius:22px;padding:16px 18px;display:flex;align-items:center;
+  justify-content:space-between;gap:12px;max-width:380px;margin:0 auto;
   box-shadow:var(--shadow);
 }
-.heroAddrInner{text-align:left}
-.heroAddrLabel{
-  font-size:9px;letter-spacing:.28em;text-transform:uppercase;
-  color:var(--gold);margin-bottom:4px;
-}
-.heroAddrText{font-size:13px;color:var(--cream);line-height:1.45;font-weight:500}
+.heroAddrLeft{}
+.heroAddrLabel{font-size:9px;letter-spacing:.25em;text-transform:uppercase;color:var(--gold);margin-bottom:3px}
+.heroAddrText{font-size:13px;color:var(--cream);line-height:1.4;text-align:left}
 .openBtn{
-  background:linear-gradient(135deg,#e0be82,var(--gold));
-  color:#120d09;font-weight:800;font-size:10.5px;
-  padding:10px 16px;border-radius:13px;
-  white-space:nowrap;letter-spacing:.08em;
-  flex-shrink:0;box-shadow:0 4px 18px rgba(214,176,109,.28);
-  transition:box-shadow .2s,transform .15s;
+  background:linear-gradient(135deg,#e8c67a,var(--gold));color:#120d09;
+  font-weight:800;font-size:11px;padding:10px 16px;border-radius:13px;
+  white-space:nowrap;letter-spacing:.07em;flex-shrink:0;
+  box-shadow:0 4px 18px rgba(214,176,109,.3);transition:transform .15s,box-shadow .15s;
 }
-.openBtn:hover{box-shadow:0 6px 26px rgba(214,176,109,.42);}
+.openBtn:hover{transform:translateY(-1px);box-shadow:0 6px 22px rgba(214,176,109,.42);}
 .phasePill{
   display:block;text-align:center;font-size:10px;letter-spacing:.14em;
   text-transform:uppercase;color:var(--muted);
@@ -303,15 +282,16 @@ footer{padding:18px 18px 0;text-align:center}
 <!-- HERO -->
 <div class="hero">
   <div class="heroBadge">BOUTIQUE ROME CONCIERGE</div>
-  <div class="heroName">Via della Scala 17</div>
-  <h1 class="heroTitle" id="heroTitle">Welcome to Rome ✨</h1>
-  <p class="heroSub" id="heroSub">Curated luxury hospitality in the heart of Rome.</p>
+  <h1 class="heroTitle" id="heroTitle">Boutique Rome Concierge</h1>
+  <div class="heroApt">Via della Scala 17</div>
+  <p class="heroSub" id="heroSub">Ospitalità di lusso nel cuore di Roma.</p>
+  <div class="goldLine"></div>
   <div class="heroAddr" id="heroAddrBox">
-    <div class="heroAddrInner">
-      <div class="heroAddrLabel" id="aptLabel">Apartment</div>
+    <div class="heroAddrLeft">
+      <div class="heroAddrLabel" id="aptLabel">Appartamento</div>
       <div class="heroAddrText">Via della Scala 17 · Trastevere</div>
     </div>
-    <button class="openBtn" onclick="handleOpen()">OPEN ✦</button>
+    <button class="openBtn" onclick="handleOpen()">OPEN</button>
   </div>
 </div>
 <div id="phasePill" class="phasePill"></div>
