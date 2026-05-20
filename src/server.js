@@ -4050,6 +4050,33 @@ app.post("/arrival-time", async (req, res) => {
 
 
 const PORT = process.env.PORT || 10000;
+// ── Dynamic manifest — embeds token in start_url so iOS home screen keeps it ──
+const MANIFEST_APT_NAMES = { arenula:'Via Arenula', portico:"Portico d'Ottavia", leonina:'Via Leonina', scala:'Via della Scala', trastevere:'Viale Trastevere' };
+app.get('/guides/:apt/manifest', (req, res) => {
+  const apt = String(req.params.apt || '').toLowerCase();
+  if (!['arenula','portico','leonina','scala','trastevere'].includes(apt)) return res.status(404).end();
+  const t = String(req.query.t || '');
+  const startUrl = t
+    ? `/guides/${apt}/premium_rome_concierge.html?t=${encodeURIComponent(t)}`
+    : `/guides/${apt}/premium_rome_concierge.html`;
+  res.setHeader('Content-Type', 'application/manifest+json');
+  res.json({
+    id: `/guides/${apt}/`,
+    name: `NiceFlat — ${MANIFEST_APT_NAMES[apt] || apt}`,
+    short_name: 'Rome Concierge',
+    description: 'Your premium concierge guide for your NiceFlat apartment in Rome',
+    start_url: startUrl,
+    scope: '/',
+    display: 'standalone',
+    background_color: '#120d09',
+    theme_color: '#120d09',
+    icons: [
+      { src: '/guides/icons/icon-192.png', sizes: '192x192', type: 'image/png', purpose: 'any maskable' },
+      { src: '/guides/icons/icon-512.png', sizes: '512x512', type: 'image/png', purpose: 'any maskable' }
+    ]
+  });
+});
+
 // ── Operator login (direct, no guest token needed) ───────────────────────
 app.get('/op', (req, res) => {
   res.type('html').send(`<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Operator</title><style>*{box-sizing:border-box;margin:0;padding:0}body{background:#120d09;display:flex;align-items:center;justify-content:center;min-height:100vh;font-family:system-ui,sans-serif}form{background:#1a1208;border:1px solid rgba(214,176,109,.2);border-radius:16px;padding:32px 24px;width:90%;max-width:340px;text-align:center}h2{color:#d6b06d;font-size:18px;margin-bottom:20px;letter-spacing:.05em}input{width:100%;padding:12px 14px;background:#211811;border:1px solid rgba(214,176,109,.25);border-radius:10px;color:#f5ead8;font-size:16px;margin-bottom:14px;outline:none}button{width:100%;padding:13px;background:linear-gradient(135deg,#c9a55a,#e8cb87);border:none;border-radius:10px;color:#1a0e05;font-weight:800;font-size:15px;cursor:pointer}</style></head><body><form method="POST" action="/op"><h2>🔑 Operator Access</h2><input type="password" name="code" placeholder="Access code" autocomplete="off" autofocus><button type="submit">ENTER</button></form></body></html>`);
