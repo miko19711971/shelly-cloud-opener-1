@@ -469,12 +469,17 @@ async function loadPhase() {
   // Instant pre-calculation from JWT token — works offline, no server wait
   try {
     const _pp=JSON.parse(atob(urlToken.split('.')[1].replace(/-/g,'+').replace(/_/g,'/')));
-    if(_pp.exp&&Date.now()<_pp.exp*1000&&_pp.day){
-      const _td=new Date().toLocaleDateString('en-CA',{timeZone:'Europe/Rome'});
+    if(typeof _pp.op_phase==='number'){
+      phase=_pp.op_phase; applyPhase(); // operator token: use phase directly
+    } else if(_pp.day){
+      const _td=new Intl.DateTimeFormat('en-CA',{timeZone:'Europe/Rome'}).format(new Date());
       if(_pp.day<_td){phase=3;}
       else if(_pp.day===_td){
-        const _nr=new Date().toLocaleString('en-CA',{timeZone:'Europe/Rome',hour:'2-digit',minute:'2-digit',hour12:false});
-        phase=_nr>=(_pp.ct||'13:00')?3:2;
+        const _pts=new Intl.DateTimeFormat('en-CA',{timeZone:'Europe/Rome',hour:'2-digit',minute:'2-digit',hour12:false}).formatToParts(new Date());
+        const _h=parseInt((_pts.find(x=>x.type==='hour')||{value:'0'}).value);
+        const _m=parseInt((_pts.find(x=>x.type==='minute')||{value:'0'}).value);
+        const [_ch,_cm]=(_pp.ct||'13:00').split(':').map(Number);
+        phase=(_h*60+_m)>=(_ch*60+_cm)?3:2;
       }else{phase=2;}
       applyPhase();
     }
