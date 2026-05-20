@@ -93,7 +93,9 @@ a{color:var(--gold)}
   color:var(--gold);margin-bottom:7px;
 }
 .sectionTitle{font-size:22px;font-weight:700;color:var(--cream);margin-bottom:16px;}
-.sectionAptRow{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-bottom:0}
+.sectionAptRow{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:nowrap;margin-bottom:0}
+.sectionAptRow>div{flex:1;min-width:0;overflow:hidden}
+.sectionAptRow .sectionTitle{font-size:18px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 #weatherWidget{display:flex;align-items:center;gap:10px;background:rgba(214,176,109,.07);border:1px solid rgba(214,176,109,.18);border-radius:12px;padding:8px 14px;cursor:pointer;text-decoration:none;flex-shrink:0}
 #weatherWidget:active{opacity:.75}
 #wTime{font-size:15px;font-weight:800;color:#f5ead8;font-variant-numeric:tabular-nums;min-width:42px}
@@ -394,9 +396,21 @@ if (urlP.has('phase')) {
 async function loadPhase() {
   if (!urlToken) { phase = 1; applyPhase(); schedulePhaseCheck(); return; }
   try {
+    const _pp=JSON.parse(atob(urlToken.split('.')[1].replace(/-/g,'+').replace(/_/g,'/')));
+    if(_pp.exp&&Date.now()<_pp.exp*1000&&_pp.day){
+      const _td=new Date().toLocaleDateString('en-CA',{timeZone:'Europe/Rome'});
+      if(_pp.day<_td){phase=3;}
+      else if(_pp.day===_td){
+        const _nr=new Date().toLocaleString('en-CA',{timeZone:'Europe/Rome',hour:'2-digit',minute:'2-digit',hour12:false});
+        phase=_nr>=(_pp.ct||'13:00')?3:2;
+      }else{phase=2;}
+      applyPhase();
+    }
+  }catch{}
+  try {
     const r = await fetch(`${SERVER_URL}/checkin/leonina/phase?t=${encodeURIComponent(urlToken)}`);
     if (r.ok) { const j = await r.json(); phase = j.phase || 1; }
-  } catch(e) { phase = 1; }
+  } catch(e) {}
   localStorage.setItem('phase_leonina', phase);
   applyPhase(); schedulePhaseCheck();
 }
