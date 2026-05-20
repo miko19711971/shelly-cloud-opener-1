@@ -4050,6 +4050,17 @@ app.post("/arrival-time", async (req, res) => {
 
 
 const PORT = process.env.PORT || 10000;
+// ── Operator login (direct, no guest token needed) ───────────────────────
+app.get('/op', (req, res) => {
+  res.type('html').send(`<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Operator</title><style>*{box-sizing:border-box;margin:0;padding:0}body{background:#120d09;display:flex;align-items:center;justify-content:center;min-height:100vh;font-family:system-ui,sans-serif}form{background:#1a1208;border:1px solid rgba(214,176,109,.2);border-radius:16px;padding:32px 24px;width:90%;max-width:340px;text-align:center}h2{color:#d6b06d;font-size:18px;margin-bottom:20px;letter-spacing:.05em}input{width:100%;padding:12px 14px;background:#211811;border:1px solid rgba(214,176,109,.25);border-radius:10px;color:#f5ead8;font-size:16px;margin-bottom:14px;outline:none}button{width:100%;padding:13px;background:linear-gradient(135deg,#c9a55a,#e8cb87);border:none;border-radius:10px;color:#1a0e05;font-weight:800;font-size:15px;cursor:pointer}</style></head><body><form method="POST" action="/op"><h2>🔑 Operator Access</h2><input type="password" name="code" placeholder="Access code" autocomplete="off" autofocus><button type="submit">ENTER</button></form></body></html>`);
+});
+app.post('/op', express.urlencoded({ extended: false }), (req, res) => {
+  const code = String(req.body?.code || '').trim();
+  if (code !== OPERATOR_CODE) return res.redirect(302, '/op');
+  res.cookie('op_sess', signOperatorCookie(), { httpOnly: true, sameSite: 'lax', maxAge: 4 * 60 * 60 * 1000, path: '/' });
+  return res.redirect(302, '/operator-panel');
+});
+
 // ── Operator panel routes ─────────────────────────────────────────────────
 app.get('/operator-panel', (req, res) => {
   const cookies = parseCookies(req);
