@@ -326,13 +326,23 @@ footer{padding:18px 18px 0;text-align:center}
     <button class="openBtn" onclick="handleOpen()">OPEN</button>
   </div>
 </div>
-<div class="phaseStatus"><span class="phasePill" id="phasePill"></span></div>
-<div id="phaseLock" class="phaseLock" style="display:none">
-  <div class="lockIcon">🔒</div>
-  <p id="phase1Text"></p>
+<!-- SECTION: YOUR STAY -->
+<div class="section">
+  <div class="sectionAptRow">
+    <div>
+      <div class="sectionHead" id="sectionAptHead"></div>
+      <div class="sectionTitle" id="sectionAptTitle"></div>
+    </div>
+    <a id="weatherWidget" href="#" target="_blank" rel="noopener" onclick="openWeather(event)">
+      <span id="wIcon">🌤</span>
+      <span id="wTime">--:--</span>
+      <span id="wTemp">--°</span>
+      <span id="wArrow">↗</span>
+    </a>
+  </div>
 </div>
 
-<div id="aptGrid" style="display:none">
+<div id="aptGrid">
   <div class="cardGrid">
     <div class="card" onclick="openModal('apt')">
       <div class="cardArrow">›</div>
@@ -1012,9 +1022,7 @@ function renderUI(){
 }
 
 function applyPhase(){
-  const lock=document.getElementById('phaseLock'),grid=document.getElementById('aptGrid'),keys=document.getElementById('keysCard');
-  if(lock)lock.style.display=phase===1?'block':'none';
-  if(grid)grid.style.display=phase<2?'none':'block';
+  const keys=document.getElementById('keysCard');
   if(keys){
     keys.classList.toggle('locked',phase<3);
     if(phase===3){
@@ -1043,7 +1051,6 @@ function applyPhase(){
   }
   const heroBox=document.getElementById('heroAddrBox');
   if(heroBox)heroBox.style.display=phase===3?'none':'';
-  setText('phasePill',(U().phaseBadge||[])[phase-1]||'');
 }
 
 function handleOpen(){

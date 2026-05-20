@@ -302,8 +302,6 @@ footer{padding:18px 18px 0;text-align:center}
     <button class="openBtn" onclick="handleOpen()">OPEN</button>
   </div>
 </div>
-<div id="phasePill" class="phasePill"></div>
-
 <!-- SECTION: YOUR STAY -->
 <div class="section">
   <div class="sectionAptRow">
@@ -320,12 +318,7 @@ footer{padding:18px 18px 0;text-align:center}
   </div>
 </div>
 
-<div id="phaseLock" class="phaseLock" style="display:none">
-  <div class="lockIcon">🔒</div>
-  <p id="phase1Text"></p>
-</div>
-
-<div id="aptGrid" class="aptGrid" style="display:none">
+<div id="aptGrid" class="aptGrid">
   <div class="cardGrid">
     <div class="card" onclick="openModal('apt')">
       <span class="cardIcon">📍</span>
@@ -1107,9 +1100,7 @@ function renderUI(){
 }
 
 function applyPhase(){
-  const lock=document.getElementById('phaseLock'),grid=document.getElementById('aptGrid'),keys=document.getElementById('keysCard');
-  if(lock)lock.style.display=phase===1?'block':'none';
-  if(grid)grid.style.display=phase<2?'none':'block';
+  const keys=document.getElementById('keysCard');
   if(keys){
     keys.classList.toggle('locked',phase<3);
     if(phase===3){
@@ -1138,7 +1129,6 @@ function applyPhase(){
   }
   const heroBox=document.getElementById('heroAddrBox');
   if(heroBox)heroBox.style.display=phase===3?'none':'';
-  setText('phasePill',(U().phaseBadge||[])[phase-1]||'');
 }
 
 function handleOpen(){
