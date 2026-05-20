@@ -77,9 +77,10 @@ a{color:var(--gold)}
 }
 .openBtn:hover{transform:translateY(-1px);box-shadow:0 6px 22px rgba(214,176,109,.42);}
 .phasePill{
-  display:block;text-align:center;font-size:10px;letter-spacing:.15em;text-transform:uppercase;
-  color:var(--muted);background:rgba(255,255,255,.04);border:1px solid var(--border);
-  border-radius:999px;padding:5px 16px;width:fit-content;margin:12px auto 0;
+  display:block;text-align:center;font-size:11px;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--gold);background:rgba(214,176,109,.08);border:1px solid rgba(214,176,109,.25);
+  border-radius:999px;padding:7px 22px;width:fit-content;margin:20px auto 10px;
+  box-shadow:0 0 18px rgba(214,176,109,.1);
 }
 
 /* ── SECTIONS ── */
@@ -94,11 +95,14 @@ a{color:var(--gold)}
 #wIcon{font-size:18px;line-height:1}
 #wArrow{font-size:11px;color:#b7a894;margin-left:2px;opacity:.7}
 .phaseLock{
-  margin:4px 16px 0;background:var(--card);border:1px solid var(--border);
-  border-radius:22px;padding:32px 24px;text-align:center;
+  margin:0 16px 20px;
+  background:linear-gradient(135deg,rgba(214,176,109,.07) 0%,rgba(214,176,109,.02) 100%);
+  border:1px solid rgba(214,176,109,.2);
+  border-radius:24px;padding:30px 24px 34px;text-align:center;
+  box-shadow:0 4px 28px rgba(0,0,0,.18),inset 0 1px 0 rgba(214,176,109,.08);
 }
-.phaseLock .li{font-size:40px;margin-bottom:14px}
-.phaseLock p{font-size:13px;color:var(--muted);line-height:1.65}
+.phaseLock .li,.phaseLock .lockIcon{font-size:28px;margin-bottom:14px;opacity:.65;display:block}
+.phaseLock p{font-size:14px;color:var(--cream);opacity:.75;line-height:1.75;letter-spacing:.01em}
 
 /* ── CARD GRID ── */
 .cardGrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:0 16px 8px}

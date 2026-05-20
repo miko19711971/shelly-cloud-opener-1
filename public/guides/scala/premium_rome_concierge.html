@@ -77,10 +77,11 @@ a{color:var(--gold)}
 }
 .openBtn:hover{transform:translateY(-1px);box-shadow:0 6px 22px rgba(214,176,109,.42);}
 .phasePill{
-  display:block;text-align:center;font-size:10px;letter-spacing:.14em;
-  text-transform:uppercase;color:var(--muted);
-  background:rgba(255,255,255,.04);border:1px solid var(--border);
-  border-radius:999px;padding:5px 16px;
+  display:block;text-align:center;font-size:11px;letter-spacing:.22em;
+  text-transform:uppercase;color:var(--gold);
+  background:rgba(214,176,109,.08);border:1px solid rgba(214,176,109,.25);
+  border-radius:999px;padding:7px 22px;
+  box-shadow:0 0 18px rgba(214,176,109,.1);
   width:fit-content;margin:14px auto 0;
 }
 
@@ -101,12 +102,14 @@ a{color:var(--gold)}
 
 /* phase lock */
 .phaseLock{
-  margin:0 18px;background:var(--card);
-  border:1px solid var(--border);border-radius:var(--radius);
-  padding:36px 24px;text-align:center;
+  margin:0 16px 20px;
+  background:linear-gradient(135deg,rgba(214,176,109,.07) 0%,rgba(214,176,109,.02) 100%);
+  border:1px solid rgba(214,176,109,.2);
+  border-radius:24px;padding:30px 24px 34px;text-align:center;
+  box-shadow:0 4px 28px rgba(0,0,0,.18),inset 0 1px 0 rgba(214,176,109,.08);
 }
-.phaseLock .lockIcon{font-size:40px;margin-bottom:16px}
-.phaseLock p{font-size:13px;color:var(--muted);line-height:1.65}
+.phaseLock .lockIcon,.phaseLock .li{font-size:28px;margin-bottom:14px;opacity:.65;display:block}
+.phaseLock p{font-size:14px;color:var(--cream);opacity:.75;line-height:1.75;letter-spacing:.01em}
 
 /* ── Card Grid ────────────────────────────────────────── */
 .cardGrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
