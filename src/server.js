@@ -1027,9 +1027,24 @@ if (!reservation) return res.status(502).send('Unable to verify reservation. Ple
       console.warn(`⚠️ /stay max devices reached: res:${reservationId} count:${devices.size}`);
       return res.status(403).type('html').send(blockedPage());
     }
+    const isFirstOpen = devices.size === 0;
     deviceId = crypto.randomBytes(16).toString('hex');
     devices.add(deviceId);
     console.log(`📱 Device registered: ${apt} | res:${reservationId} | total:${devices.size}`);
+
+    // Notifica interna all'host solo alla prima apertura assoluta della guida
+    if (isFirstOpen) {
+      const guestName = reservation.guestName || reservation.guestFirstName || 'Ospite';
+      const checkinFmt = checkinDate || '?';
+      const now = new Date().toLocaleString('it-IT', { timeZone: 'Europe/Rome', dateStyle: 'short', timeStyle: 'short' });
+      getConversationId(reservationId).then(cid => {
+        if (!cid) return;
+        sendHostawayInternalNote({
+          conversationId: cid,
+          message: `✅ ${guestName} ha aperto la guida (${apt}) — check-in: ${checkinFmt} — ${now}`
+        });
+      }).catch(e => console.error('❌ Notifica prima apertura guida:', e.message));
+    }
   }
 
   // Session cookie (expires at checkout + 1h grace)
@@ -3737,6 +3752,24 @@ async function sendHostawayMessage({ conversationId, message }) {
     console.log("📨 Messaggio inviato a HostAway");
   } catch (err) {
     console.error("❌ Errore invio HostAway:", err.message);
+  }
+}
+
+// Nota interna visibile solo all'host (sendToGuest: false)
+async function sendHostawayInternalNote({ conversationId, message }) {
+  if (!HOSTAWAY_TOKEN || !conversationId) return;
+  try {
+    await axios.post(
+      `https://api.hostaway.com/v1/conversations/${conversationId}/messages`,
+      { body: message, isFromHost: 1, sendToGuest: false },
+      {
+        headers: { Authorization: `Bearer ${HOSTAWAY_TOKEN}`, "Content-Type": "application/json" },
+        timeout: 10000
+      }
+    );
+    console.log("🔔 Nota interna inviata a HostAway:", conversationId);
+  } catch (err) {
+    console.error("❌ Errore nota interna HostAway:", err.message);
   }
 }
 // ========================================================================
