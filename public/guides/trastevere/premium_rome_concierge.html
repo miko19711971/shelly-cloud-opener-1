@@ -377,15 +377,17 @@ const HAS_DOOR = true;
 const urlP = new URLSearchParams(location.search);
 let phase = 1;
 const urlToken = urlP.get('t') || '';
+if (urlToken) localStorage.setItem('token_trastevere', urlToken);
+const effectiveToken = urlToken || localStorage.getItem('token_trastevere') || '';
 if (urlP.has('phase')) {
   const cp = new URLSearchParams(urlP); cp.delete('phase');
   const qs = cp.toString();
   history.replaceState(null, '', location.pathname + (qs ? '?' + qs : ''));
 }
 async function loadPhase() {
-  if (!urlToken) { phase = 1; applyPhase(); schedulePhaseCheck(); return; }
+  if (!effectiveToken) { phase = 1; applyPhase(); schedulePhaseCheck(); return; }
   try {
-    const _pp=JSON.parse(atob(urlToken.split('.')[1].replace(/-/g,'+').replace(/_/g,'/')));
+    const _pp=JSON.parse(atob(effectiveToken.split('.')[1].replace(/-/g,'+').replace(/_/g,'/')));
     if(typeof _pp.op_phase==='number'){
       phase=_pp.op_phase; applyPhase();
     } else if(_pp.day){
@@ -402,7 +404,7 @@ async function loadPhase() {
     }
   }catch{}
   try {
-    const r = await fetch(`${SERVER_URL}/checkin/trastevere/phase?t=${encodeURIComponent(urlToken)}`);
+    const r = await fetch(`${SERVER_URL}/checkin/trastevere/phase?t=${encodeURIComponent(effectiveToken)}`);
     if (r.ok) { const j = await r.json(); phase = j.phase || 1; }
   } catch(e) {}
   localStorage.setItem('phase_trastevere', phase);

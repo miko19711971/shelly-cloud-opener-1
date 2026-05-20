@@ -459,16 +459,18 @@ const HAS_DOOR = false;
 const urlP = new URLSearchParams(location.search);
 let phase = 1;
 const urlToken = urlP.get('t') || '';
+if (urlToken) localStorage.setItem('token_arenula', urlToken);
+const effectiveToken = urlToken || localStorage.getItem('token_arenula') || '';
 if (urlP.has('phase')) {
   const cp = new URLSearchParams(urlP); cp.delete('phase');
   const qs = cp.toString();
   history.replaceState(null, '', location.pathname + (qs ? '?' + qs : ''));
 }
 async function loadPhase() {
-  if (!urlToken) { phase = 1; applyPhase(); schedulePhaseCheck(); return; }
+  if (!effectiveToken) { phase = 1; applyPhase(); schedulePhaseCheck(); return; }
   // Instant pre-calculation from JWT token — works offline, no server wait
   try {
-    const _pp=JSON.parse(atob(urlToken.split('.')[1].replace(/-/g,'+').replace(/_/g,'/')));
+    const _pp=JSON.parse(atob(effectiveToken.split('.')[1].replace(/-/g,'+').replace(/_/g,'/')));
     if(typeof _pp.op_phase==='number'){
       phase=_pp.op_phase; applyPhase(); // operator token: use phase directly
     } else if(_pp.day){
@@ -486,7 +488,7 @@ async function loadPhase() {
   }catch{}
   // Server fetch for accuracy (live arrival time from Hostaway check-in form)
   try {
-    const r = await fetch(`${SERVER_URL}/checkin/arenula/phase?t=${encodeURIComponent(urlToken)}`);
+    const r = await fetch(`${SERVER_URL}/checkin/arenula/phase?t=${encodeURIComponent(effectiveToken)}`);
     if (r.ok) { const j = await r.json(); phase = j.phase || 1; }
   } catch(e) {}
   localStorage.setItem('phase_arenula', phase);
