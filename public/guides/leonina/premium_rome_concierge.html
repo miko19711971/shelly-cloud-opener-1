@@ -172,6 +172,8 @@ footer{padding:16px 16px 0;text-align:center;}
   transition:background .2s;
 }
 .waFooter:hover{background:rgba(37,211,102,.15);}
+.insiderBtn{display:inline-flex;align-items:center;gap:8px;background:rgba(201,164,92,.1);border:1px solid rgba(201,164,92,.28);border-radius:14px;padding:12px 20px;font-size:12px;color:#d6b06d;font-weight:600;text-decoration:none;transition:background .2s,border-color .2s}
+.insiderBtn:hover{background:rgba(201,164,92,.18);border-color:rgba(201,164,92,.5)}
 
 /* ── WHATSAPP FLOAT ── */
 .whatsappFloat{
@@ -364,6 +366,7 @@ footer{padding:16px 16px 0;text-align:center;}
 <!-- FOOTER -->
 <footer>
   <a href="https://wa.me/393355245756" class="waFooter" id="whatsappBtn" target="_blank"></a>
+  <a href="#" class="insiderBtn" id="insiderBtn" target="_blank">✦ NiceFlat Insider</a>
 </footer>
 
 <!-- WHATSAPP FLOAT -->
@@ -835,11 +838,11 @@ function buildChips(){
 }
 
 /* ═══ SHELLY OTP ═══ */
-let tokenExp=null,tokenJti=null,tokenTgt=null,tokenCid=null,tokenDay=null,tokenCt=null;
+let tokenExp=null,tokenJti=null,tokenTgt=null,tokenCid=null,tokenDay=null,tokenCt=null,tokenRid=null;
 if(urlToken){
   try{
     const p=JSON.parse(atob(urlToken.split('.')[1].replace(/-/g,'+').replace(/_/g,'/')));
-    tokenExp=p.exp||null;tokenJti=p.jti||null;tokenTgt=p.tgt||null;tokenCid=p.cid||null;tokenDay=p.day||null;tokenCt=p.ct||null;tokenOpPhase=p.op_phase??null;
+    tokenExp=p.exp||null;tokenJti=p.jti||null;tokenTgt=p.tgt||null;tokenCid=p.cid||null;tokenDay=p.day||null;tokenCt=p.ct||null;tokenOpPhase=p.op_phase??null;tokenRid=p.rid||null;
   }catch{}
 }
 function tokenValid(){return tokenExp&&Date.now()<tokenExp;}
@@ -951,6 +954,7 @@ function renderUI(){
   setText('transTitle',ui.transTitle);setText('transSub',ui.transSub);
   setText('assistantTitle',ex.assistantTitle);setText('assistantDesc',ex.assistantDesc);setText('assistantBtn',ex.assistantBtn);
   const wa=document.getElementById('whatsappBtn');if(wa)wa.textContent=ex.whatsappBtn;
+  const ins=document.getElementById('insiderBtn');if(ins){if(tokenRid)ins.href=`/stay-home/leonina?r=${encodeURIComponent(tokenRid)}`;else ins.style.display='none';}
   // update OPEN button label
   const openBtnEl=document.querySelector('.openBtn');
   if(openBtnEl){const openLbls={it:'APRI',en:'OPEN',fr:'OUVRIR',de:'ÖFFNEN',es:'ABRIR'};openBtnEl.textContent=openLbls[lang]||'OPEN';}
