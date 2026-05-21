@@ -1249,57 +1249,92 @@ function recoveryFormHtml(apt, lang, error) {
     en: {
       title: 'Access your guide', sub: 'Enter the email address you used for your booking.', btn: 'Continue',
       err: 'No active reservation found for this email. Please check and try again or contact your host.',
-      installBtn: 'Add to Home Screen',
+      warnT: '⚠️  iPhone: you must use Safari',
+      warnN: 'If you are using Chrome or another browser, please open this page in Safari first — otherwise the install will not work.',
       iosTitle: 'Install the guide on your phone',
-      iosStep1: 'Tap the',
-      iosStep2: 'Share button at the bottom of your browser',
-      iosStep3: 'Then tap',
-      iosStep4: '"Add to Home Screen"',
-      iosStep5: 'The guide will appear as an app on your home screen.',
+      s1t: 'Step 1 — Find the Share button',
+      s1d: 'Look at the bottom bar of the screen. Tap the icon that looks like a square with an arrow pointing upward  [ ⬆ ]',
+      s2t: 'Step 2 — Tap "Add to Home Screen"',
+      s2d: 'A menu will open. Scroll down and look for "Add to Home Screen" (it has a small square icon with a +). Tap it.',
+      s3t: 'Step 3 — Tap "Add"',
+      s3d: 'A small window appears. Tap the "Add" button in the top right corner. Done! The app icon will appear on your home screen.',
+      andBtn: '📲  Install the App',
+      andNote: 'Free · Works offline · No App Store needed',
+      fbT: "Don't see the install button?",
+      fbS: 'Tap the three dots ⋮ at the top right of Chrome, then tap "Add to Home Screen" or "Install App".',
+      skip: 'Continue without installing →',
     },
     it: {
       title: 'Accedi alla tua guida', sub: "Inserisci l'email usata per la prenotazione.", btn: 'Continua',
       err: "Nessuna prenotazione attiva trovata per questa email. Controlla e riprova oppure contatta l'host.",
-      installBtn: 'Aggiungi alla schermata Home',
+      warnT: '⚠️  iPhone: devi usare Safari',
+      warnN: "Se stai usando Chrome o un altro browser, apri prima questa pagina in Safari — altrimenti l'installazione non funzionerà.",
       iosTitle: 'Installa la guida sul tuo telefono',
-      iosStep1: 'Tocca il',
-      iosStep2: 'tasto Condividi in basso nel browser',
-      iosStep3: 'Poi tocca',
-      iosStep4: '"Aggiungi a schermata Home"',
-      iosStep5: 'La guida apparirà come un\'app sulla tua schermata home.',
+      s1t: 'Passo 1 — Trova il pulsante Condividi',
+      s1d: "Guarda la barra in fondo allo schermo. Tocca l'icona che sembra un quadrato con una freccia verso l'alto  [ ⬆ ]",
+      s2t: 'Passo 2 — Tocca "Aggiungi a schermata Home"',
+      s2d: 'Si aprirà un menu. Scorri verso il basso e cerca "Aggiungi a schermata Home" (ha una piccola icona quadrata con un +). Toccala.',
+      s3t: 'Passo 3 — Tocca "Aggiungi"',
+      s3d: "Appare una piccola finestra. Tocca il pulsante \"Aggiungi\" in alto a destra. Fatto! L'icona dell'app apparirà nella schermata Home.",
+      andBtn: '📲  Installa la Guida',
+      andNote: 'Gratis · Funziona offline · Senza App Store',
+      fbT: 'Non vedi il pulsante di installazione?',
+      fbS: 'Tocca i tre puntini ⋮ in alto a destra in Chrome, poi tocca "Aggiungi a schermata Home" o "Installa app".',
+      skip: 'Continua senza installare →',
     },
     fr: {
       title: 'Accédez à votre guide', sub: "Entrez l'email utilisé pour votre réservation.", btn: 'Continuer',
       err: "Aucune réservation active trouvée. Vérifiez et réessayez ou contactez votre hôte.",
-      installBtn: "Ajouter à l'écran d'accueil",
-      iosTitle: "Installez le guide sur votre téléphone",
-      iosStep1: 'Appuyez sur le',
-      iosStep2: 'bouton Partager en bas du navigateur',
-      iosStep3: 'Puis appuyez sur',
-      iosStep4: '"Sur l\'écran d\'accueil"',
-      iosStep5: "Le guide apparaîtra comme une app sur votre écran d'accueil.",
+      warnT: '⚠️  iPhone : vous devez utiliser Safari',
+      warnN: "Si vous utilisez Chrome ou un autre navigateur, ouvrez d'abord cette page dans Safari — sinon l'installation ne fonctionnera pas.",
+      iosTitle: 'Installez le guide sur votre téléphone',
+      s1t: 'Étape 1 — Trouvez le bouton Partager',
+      s1d: "Regardez la barre en bas de l'écran. Appuyez sur l'icône qui ressemble à un carré avec une flèche vers le haut  [ ⬆ ]",
+      s2t: "Étape 2 — «Sur l'écran d'accueil»",
+      s2d: "Un menu s'ouvrira. Faites défiler vers le bas et cherchez «Sur l'écran d'accueil» (avec une petite icône carrée +). Appuyez dessus.",
+      s3t: 'Étape 3 — Appuyez sur «Ajouter»',
+      s3d: "Une petite fenêtre apparaît. Appuyez sur «Ajouter» en haut à droite. Voilà ! L'icône de l'app apparaîtra sur votre écran d'accueil.",
+      andBtn: "📲  Installer l'Application",
+      andNote: 'Gratuit · Fonctionne hors ligne · Sans App Store',
+      fbT: 'Vous ne voyez pas le bouton ?',
+      fbS: "Appuyez sur les trois points ⋮ en haut à droite de Chrome, puis sur «Ajouter à l'écran d'accueil».",
+      skip: 'Continuer sans installer →',
     },
     de: {
       title: 'Auf Ihren Guide zugreifen', sub: 'Geben Sie die E-Mail-Adresse Ihrer Buchung ein.', btn: 'Weiter',
       err: 'Keine aktive Reservierung gefunden. Bitte prüfen Sie die Adresse oder kontaktieren Sie Ihren Gastgeber.',
-      installBtn: 'Zum Home-Bildschirm hinzufügen',
+      warnT: '⚠️  iPhone: Sie müssen Safari verwenden',
+      warnN: 'Wenn Sie Chrome oder einen anderen Browser verwenden, öffnen Sie diese Seite bitte zuerst in Safari — sonst funktioniert die Installation nicht.',
       iosTitle: 'Guide auf Ihrem Telefon installieren',
-      iosStep1: 'Tippen Sie auf das',
-      iosStep2: 'Teilen-Symbol unten im Browser',
-      iosStep3: 'Dann auf',
-      iosStep4: '"Zum Home-Bildschirm"',
-      iosStep5: 'Der Guide erscheint als App auf Ihrem Home-Bildschirm.',
+      s1t: 'Schritt 1 — Finden Sie die Teilen-Schaltfläche',
+      s1d: 'Schauen Sie auf die untere Leiste des Bildschirms. Tippen Sie auf das Symbol, das wie ein Quadrat mit einem Pfeil nach oben aussieht  [ ⬆ ]',
+      s2t: 'Schritt 2 — «Zum Home-Bildschirm»',
+      s2d: 'Ein Menü öffnet sich. Scrollen Sie nach unten und suchen Sie «Zum Home-Bildschirm hinzufügen» (mit einem kleinen quadratischen + Symbol). Tippen Sie darauf.',
+      s3t: 'Schritt 3 — Tippen Sie auf «Hinzufügen»',
+      s3d: 'Ein kleines Fenster erscheint. Tippen Sie oben rechts auf «Hinzufügen». Fertig! Das App-Symbol erscheint auf Ihrem Startbildschirm.',
+      andBtn: '📲  App Installieren',
+      andNote: 'Kostenlos · Offline verfügbar · Kein App Store nötig',
+      fbT: 'Sehen Sie den Installations-Button nicht?',
+      fbS: 'Tippen Sie auf die drei Punkte ⋮ oben rechts in Chrome, dann auf «Zum Startbildschirm hinzufügen».',
+      skip: 'Ohne Installation fortfahren →',
     },
     es: {
       title: 'Accede a tu guía', sub: 'Introduce el email con el que reservaste.', btn: 'Continuar',
       err: 'No se encontró reserva activa. Comprueba el email o contacta con tu anfitrión.',
-      installBtn: 'Añadir a pantalla de inicio',
+      warnT: '⚠️  iPhone: debe usar Safari',
+      warnN: 'Si usa Chrome u otro navegador, abra primero esta página en Safari — de lo contrario la instalación no funcionará.',
       iosTitle: 'Instala la guía en tu teléfono',
-      iosStep1: 'Toca el',
-      iosStep2: 'botón Compartir en la parte inferior del navegador',
-      iosStep3: 'Luego toca',
-      iosStep4: '"Añadir a pantalla de inicio"',
-      iosStep5: 'La guía aparecerá como una app en tu pantalla de inicio.',
+      s1t: 'Paso 1 — Busque el botón Compartir',
+      s1d: 'Mire la barra inferior de la pantalla. Toque el icono que parece un cuadrado con una flecha apuntando hacia arriba  [ ⬆ ]',
+      s2t: 'Paso 2 — «Añadir a pantalla de inicio»',
+      s2d: 'Se abrirá un menú. Desplace hacia abajo y busque «Añadir a pantalla de inicio» (con un pequeño icono cuadrado +). Tóquelo.',
+      s3t: 'Paso 3 — Toque «Añadir»',
+      s3d: 'Aparecerá una pequeña ventana. Toque «Añadir» en la esquina superior derecha. ¡Listo! El icono de la app aparecerá en su pantalla de inicio.',
+      andBtn: '📲  Instalar la App',
+      andNote: 'Gratis · Funciona sin internet · Sin App Store',
+      fbT: '¿No ve el botón de instalación?',
+      fbS: 'Toque los tres puntos ⋮ arriba a la derecha en Chrome, luego toque «Añadir a la pantalla de inicio».',
+      skip: 'Continuar sin instalar →',
     },
   };
   const t = msgs[lang] || msgs.en;
@@ -1314,22 +1349,31 @@ function recoveryFormHtml(apt, lang, error) {
 <title>NiceFlat Rome</title>
 <style>
 *{box-sizing:border-box}
-body{margin:0;background:#120d09;color:#f5ead8;font-family:system-ui,sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh;padding:24px}
-.box{width:100%;max-width:380px;text-align:center}
+body{margin:0;background:#120d09;color:#f5ead8;font-family:system-ui,sans-serif;display:flex;align-items:flex-start;justify-content:center;min-height:100vh;padding:24px}
+.box{width:100%;max-width:380px;text-align:center;padding-top:16px}
 .logo{font-size:10px;font-weight:700;letter-spacing:3px;color:#d6b06d;text-transform:uppercase;margin-bottom:20px}
 .title{font-size:22px;font-weight:800;margin-bottom:10px}
 .sub{font-size:14px;color:#b7a894;line-height:1.6;margin-bottom:24px}
-input[type=email]{width:100%;padding:14px 16px;background:rgba(255,255,255,.07);border:1px solid rgba(214,176,109,.3);border-radius:12px;color:#f5ead8;font-size:16px;margin-bottom:14px;outline:none}
-input[type=email]:focus{border-color:#d6b06d}
-button{width:100%;padding:14px;background:linear-gradient(135deg,#e2c07a,#c89a48);color:#120d09;border:none;border-radius:14px;font-weight:800;font-size:15px;cursor:pointer}
+input[type=text]{width:100%;padding:14px 16px;background:rgba(255,255,255,.07);border:1px solid rgba(214,176,109,.3);border-radius:12px;color:#f5ead8;font-size:16px;margin-bottom:14px;outline:none}
+input[type=text]:focus{border-color:#d6b06d}
+.submit-btn{width:100%;padding:14px;background:linear-gradient(135deg,#e2c07a,#c89a48);color:#120d09;border:none;border-radius:14px;font-weight:800;font-size:15px;cursor:pointer}
 .err{color:#fca5a5;font-size:13px;margin-bottom:16px;padding:12px;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.25);border-radius:10px}
-#pwa-android{display:none;margin-top:20px}
-#pwa-android button{background:rgba(214,176,109,.12);color:#d6b06d;border:1px solid rgba(214,176,109,.4);font-weight:700;font-size:14px;padding:12px}
-#pwa-ios{display:none;margin-top:20px;background:rgba(214,176,109,.07);border:1px solid rgba(214,176,109,.2);border-radius:14px;padding:16px;text-align:left}
-#pwa-ios .ios-title{font-size:13px;font-weight:700;color:#d6b06d;letter-spacing:.5px;margin-bottom:10px;text-transform:uppercase}
-#pwa-ios .ios-step{font-size:13px;color:#b7a894;line-height:1.7;display:flex;align-items:flex-start;gap:8px;margin-bottom:4px}
-#pwa-ios .ios-step .num{color:#d6b06d;font-weight:800;min-width:16px}
-.share-icon{display:inline-block;width:18px;height:18px;vertical-align:middle;margin:0 3px;background:rgba(214,176,109,.2);border-radius:4px;padding:2px}
+.pwa-section{margin-top:24px;text-align:left}
+.pwa-warn{background:rgba(255,180,50,.12);border:1px solid rgba(255,180,50,.35);border-radius:14px;padding:14px 16px;margin-bottom:16px}
+.pwa-warn-t{color:#f5c842;font-size:14px;font-weight:800;margin-bottom:4px}
+.pwa-warn-n{color:#b7a894;font-size:13px;line-height:1.5}
+.pwa-steps{background:rgba(214,176,109,.07);border:1px solid rgba(214,176,109,.2);border-radius:16px;padding:18px 16px;margin-bottom:16px}
+.pwa-step{display:flex;align-items:flex-start;gap:14px;margin-bottom:16px}
+.pwa-step:last-child{margin-bottom:0}
+.pwa-num{background:rgba(214,176,109,.18);border-radius:12px;min-width:44px;height:44px;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;color:#d6b06d;flex-shrink:0}
+.pwa-st{color:#f5ead8;font-size:15px;font-weight:700;margin-bottom:4px}
+.pwa-sd{color:#b7a894;font-size:13px;line-height:1.5}
+.pwa-and-btn{width:100%;padding:16px;background:linear-gradient(135deg,#e8c67a,#c89a48);color:#120d09;border:none;border-radius:16px;font-weight:800;font-size:17px;cursor:pointer;margin-bottom:10px}
+.pwa-and-note{font-size:12px;color:#b7a894;text-align:center;margin-bottom:16px}
+.pwa-fb{display:none;background:rgba(214,176,109,.07);border:1px solid rgba(214,176,109,.2);border-radius:14px;padding:16px;margin-bottom:16px}
+.pwa-fb-t{color:#d6b06d;font-size:13px;font-weight:700;margin-bottom:6px}
+.pwa-fb-s{color:#b7a894;font-size:13px;line-height:1.6}
+.pwa-skip{background:none;border:none;color:#6b5e52;font-size:13px;text-decoration:underline;cursor:pointer;padding:6px;width:100%;text-align:center}
 </style>
 </head>
 <body><div class="box">
@@ -1340,45 +1384,59 @@ ${error ? `<div class="err">${t.err}</div>` : ''}
 <form method="POST" action="/guides/${apt}/recover">
   <input type="hidden" name="lang" value="${lang}">
   <input type="text" name="email" placeholder="email@example.com" required autocomplete="email" inputmode="email">
-  <button type="submit">${t.btn}</button>
+  <button type="submit" class="submit-btn">${t.btn}</button>
 </form>
 
-<div id="pwa-android">
-  <button id="pwa-android-btn" type="button">📲 ${t.installBtn}</button>
+<div id="pwa-ios" style="display:none" class="pwa-section">
+  <div class="pwa-warn">
+    <div class="pwa-warn-t">${t.warnT}</div>
+    <div class="pwa-warn-n">${t.warnN}</div>
+  </div>
+  <div class="pwa-steps">
+    <div class="pwa-step"><div class="pwa-num">1</div><div><div class="pwa-st">${t.s1t}</div><div class="pwa-sd">${t.s1d}</div></div></div>
+    <div class="pwa-step"><div class="pwa-num">2</div><div><div class="pwa-st">${t.s2t}</div><div class="pwa-sd">${t.s2d}</div></div></div>
+    <div class="pwa-step"><div class="pwa-num">3</div><div><div class="pwa-st">${t.s3t}</div><div class="pwa-sd">${t.s3d}</div></div></div>
+  </div>
+  <button class="pwa-skip" id="pwa-skip-ios">${t.skip}</button>
 </div>
 
-<div id="pwa-ios">
-  <div class="ios-title">📲 ${t.iosTitle}</div>
-  <div class="ios-step"><span class="num">1</span><span>${t.iosStep1} <svg class="share-icon" viewBox="0 0 24 24" fill="none" stroke="#d6b06d" stroke-width="2.5"><path d="M8 10l4-4 4 4M12 6v11M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2"/></svg> ${t.iosStep2}</span></div>
-  <div class="ios-step"><span class="num">2</span><span>${t.iosStep3} <strong style="color:#f5ead8">${t.iosStep4}</strong></span></div>
-  <div class="ios-step"><span class="num">3</span><span>${t.iosStep5}</span></div>
+<div id="pwa-android" style="display:none" class="pwa-section">
+  <button id="pwa-android-btn" class="pwa-and-btn">${t.andBtn}</button>
+  <div class="pwa-and-note">${t.andNote}</div>
+  <div id="pwa-android-fb" class="pwa-fb">
+    <div class="pwa-fb-t">${t.fbT}</div>
+    <div class="pwa-fb-s">${t.fbS}</div>
+  </div>
+  <button class="pwa-skip" id="pwa-skip-android">${t.skip}</button>
 </div>
 
 </div>
 <script>
 (function(){
-  var isIos=/iphone|ipad|ipod/i.test(navigator.userAgent||'');
-  var isInStandalone=('standalone' in navigator&&navigator.standalone)||window.matchMedia('(display-mode: standalone)').matches;
-  if(isInStandalone) return; // already installed
-
+  var isIos=/iphone|ipad|ipod/i.test(navigator.userAgent||'')&&!window.MSStream;
+  var isAndroid=/android/i.test(navigator.userAgent||'');
+  var isStandalone=('standalone' in navigator&&navigator.standalone)||window.matchMedia('(display-mode: standalone)').matches;
+  if(isStandalone||(!isIos&&!isAndroid)) return;
+  document.getElementById('pwa-skip-ios').onclick=function(){document.getElementById('pwa-ios').style.display='none';};
+  document.getElementById('pwa-skip-android').onclick=function(){document.getElementById('pwa-android').style.display='none';};
   if(isIos){
     document.getElementById('pwa-ios').style.display='block';
     return;
   }
-
-  // Android / Chrome: intercept beforeinstallprompt
   var deferredPrompt=null;
+  var androidDiv=document.getElementById('pwa-android');
+  var fallbackTimer=setTimeout(function(){
+    if(!deferredPrompt){androidDiv.style.display='block';document.getElementById('pwa-android-fb').style.display='block';document.getElementById('pwa-android-btn').style.display='none';}
+  },3000);
   window.addEventListener('beforeinstallprompt',function(e){
-    e.preventDefault();
-    deferredPrompt=e;
-    document.getElementById('pwa-android').style.display='block';
+    e.preventDefault();clearTimeout(fallbackTimer);
+    deferredPrompt=e;androidDiv.style.display='block';
+    document.getElementById('pwa-android-btn').onclick=function(){
+      deferredPrompt.prompt();
+      deferredPrompt.userChoice.then(function(){deferredPrompt=null;androidDiv.style.display='none';});
+    };
   });
-
-  document.getElementById('pwa-android-btn').addEventListener('click',function(){
-    if(!deferredPrompt) return;
-    deferredPrompt.prompt();
-    deferredPrompt.userChoice.then(function(){deferredPrompt=null;document.getElementById('pwa-android').style.display='none';});
-  });
+  window.addEventListener('appinstalled',function(){androidDiv.style.display='none';});
 })();
 </script>
 </body></html>`;
