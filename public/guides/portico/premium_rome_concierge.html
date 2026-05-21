@@ -1040,7 +1040,7 @@ function applyPhase(){
         const _today=new Date().toLocaleDateString('en-CA',{timeZone:'Europe/Rome'});
         _keysExpired=tokenDay&&((tokenDay<_today)||(_nH*60+_nM>=_expMin));
       }catch{}
-      const icon=keys.querySelector('.cardIcon');
+      const icon=keys.querySelector('.cardIconWrap');
       if(_keysExpired){
         if(icon)icon.textContent='🔒';
         keys.classList.add('locked');
