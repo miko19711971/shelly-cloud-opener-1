@@ -307,10 +307,15 @@ footer{padding:20px 16px 0;text-align:center}
       <div class="cardTitle" id="houseTitle"></div>
       <div class="cardSub" id="houseSub"></div>
     </div>
-    <div class="card cardFull" onclick="openModal('help')">
+    <div class="card" onclick="openModal('help')">
       <div class="cardIcon">☎</div>
       <div class="cardTitle" id="helpTitle"></div>
       <div class="cardSub" id="helpSub"></div>
+    </div>
+    <div class="card" id="insiderCard" style="cursor:pointer">
+      <div class="cardIcon">✦</div>
+      <div class="cardTitle">NiceFlat Insider</div>
+      <div class="cardSub" id="insiderSub"></div>
     </div>
   </div>
 </div>
@@ -355,7 +360,6 @@ footer{padding:20px 16px 0;text-align:center}
 <!-- FOOTER -->
 <footer>
   <a href="https://wa.me/393355245756" class="waFooter" id="whatsappBtn" target="_blank"></a>
-  <a href="#" class="insiderBtn" id="insiderBtn" target="_blank">✦ NiceFlat Insider</a>
 </footer>
 
 <!-- WHATSAPP FLOAT -->
@@ -981,7 +985,8 @@ function renderUI(){
   setText('assistantDesc',ex.assistantDesc);
   setText('assistantBtn',ex.assistantBtn);
   const wa=document.getElementById('whatsappBtn');if(wa)wa.textContent=ex.whatsappBtn;
-  const ins=document.getElementById('insiderBtn');if(ins){if(tokenRid)ins.href=`/stay-home/trastevere?r=${encodeURIComponent(tokenRid)}`;else ins.style.display='none';}
+  setText('insiderSub',({en:'City guide & tips',it:'Guida città & consigli',fr:'Guide ville & conseils',de:'Stadtführer & Tipps',es:'Guía ciudad & consejos'})[lang]||'City guide & tips');
+  const insCard=document.getElementById('insiderCard');if(insCard){if(tokenRid)insCard.onclick=()=>window.open(`/stay-home/trastevere?r=${encodeURIComponent(tokenRid)}`,'_blank');else insCard.style.display='none';}
   document.querySelectorAll('.langBtn').forEach(b=>b.classList.toggle('active',b.dataset.lang===lang));
   loadPhase();
 }
