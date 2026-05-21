@@ -1069,6 +1069,17 @@ if (!reservation) return res.status(502).send('Unable to verify reservation. Ple
   return res.redirect(302, `/guides/${apt}/premium_rome_concierge.html?t=${guideToken}&lang=${safeLang}`);
 });
 
+// ── DELETE /admin/guide-devices/:reservationId — reset device slots ───────
+app.delete('/admin/guide-devices/:reservationId', requireAdmin, (req, res) => {
+  const rid = String(req.params.reservationId || '').trim();
+  if (!rid) return res.status(400).json({ ok: false, error: 'missing reservationId' });
+  const existed = GUIDE_DEVICES.has(rid);
+  const count   = existed ? GUIDE_DEVICES.get(rid).size : 0;
+  GUIDE_DEVICES.delete(rid);
+  console.log(`🗑️ Admin reset guide devices: res:${rid} (was ${count} device${count !== 1 ? 's' : ''})`);
+  return res.json({ ok: true, reservationId: rid, devicesCleared: count, existed });
+});
+
 // ── /stay-home/:apt — Home concierge guide entry point ────────────────────
 const HOME_APT_SUFFIX = { arenula: 'Arenula', leonina: 'Leonina', portico: 'Portico', scala: 'Scala', trastevere: 'Trastevere' };
 
