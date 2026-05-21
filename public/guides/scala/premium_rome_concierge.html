@@ -950,7 +950,7 @@ if (urlToken) {
     tokenExp=p.exp||null; tokenJti=p.jti||null; tokenTgt=p.tgt||null; tokenCid=p.cid||null;tokenDay=p.day||null;tokenCt=p.ct||null;tokenOpPhase=p.op_phase??null;
   } catch {}
 }
-function tokenValid(){ return tokenExp && Date.now()<tokenExp*1000; }
+function tokenValid(){ return tokenExp && Date.now()<tokenExp; }
 
 let sessionToken = sessionStorage.getItem('st_scala')||'';
 function sessionValid(){
