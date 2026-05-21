@@ -1167,47 +1167,46 @@ setInterval(fetchWeather,10*60*1000);
 renderUI();
 </script>
 <!-- PWA Full-Screen Install -->
-<div id="pwaScreen" style="display:none;position:fixed;inset:0;z-index:99999;background:#120d09;flex-direction:column;align-items:center;justify-content:center;padding:40px 24px;text-align:center;overflow-y:auto">
-  <img src="/guides/icons/icon-192.png" style="width:100px;height:100px;border-radius:24px;margin-bottom:22px;box-shadow:0 8px 40px rgba(0,0,0,0.6)">
+<div id="pwaScreen" style="display:none;position:fixed;inset:0;z-index:99999;background:#120d09;flex-direction:column;align-items:center;justify-content:flex-start;padding:32px 20px 48px;text-align:center;overflow-y:auto">
+  <img src="/guides/icons/icon-192.png" style="width:90px;height:90px;border-radius:22px;margin-bottom:18px;box-shadow:0 8px 40px rgba(0,0,0,0.6)">
   <div style="font-size:11px;font-weight:700;letter-spacing:3px;color:#d6b06d;text-transform:uppercase;margin-bottom:6px">NiceFlat</div>
-  <div style="font-size:28px;font-weight:800;color:#f5ead8;margin-bottom:10px;line-height:1.2">Rome Concierge</div>
-  <div style="font-size:15px;color:#b7a894;margin-bottom:36px;line-height:1.6;max-width:300px">Your apartment guide &amp; self check-in.<br>Install the app to get started.</div>
+  <div style="font-size:26px;font-weight:800;color:#f5ead8;margin-bottom:8px;line-height:1.2">Rome Concierge</div>
+  <div id="pwaSubtitle" style="font-size:14px;color:#b7a894;margin-bottom:28px;line-height:1.6;max-width:300px"></div>
 
   <!-- iOS instructions -->
-  <div id="pwaIOS" style="display:none;width:100%;max-width:360px">
-    <div style="background:rgba(214,176,109,0.07);border:1px solid rgba(214,176,109,0.2);border-radius:22px;padding:28px 22px;margin-bottom:28px">
-      <div style="display:flex;align-items:center;gap:16px;margin-bottom:22px">
-        <div style="background:rgba(214,176,109,0.18);border-radius:14px;min-width:48px;height:48px;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;color:#d6b06d">1</div>
-        <div style="text-align:left">
-          <div style="color:#f5ead8;font-size:15px;font-weight:700">Tap the Share button</div>
-          <div style="color:#b7a894;font-size:13px;margin-top:3px">The <span style="color:#d6b06d;font-size:16px">⬆</span> icon at the bottom of Safari</div>
-        </div>
+  <div id="pwaIOS" style="display:none;width:100%;max-width:380px">
+    <div style="background:rgba(255,180,50,0.12);border:1px solid rgba(255,180,50,0.35);border-radius:16px;padding:14px 18px;margin-bottom:20px;text-align:left">
+      <div id="pwaIosWarnTitle" style="color:#f5c842;font-size:15px;font-weight:800;margin-bottom:5px"></div>
+      <div id="pwaIosWarnNote" style="color:#b7a894;font-size:13px;line-height:1.55"></div>
+    </div>
+    <div style="background:rgba(214,176,109,0.07);border:1px solid rgba(214,176,109,0.2);border-radius:22px;padding:24px 20px;margin-bottom:22px">
+      <div style="display:flex;align-items:flex-start;gap:16px;margin-bottom:22px">
+        <div style="background:rgba(214,176,109,0.18);border-radius:14px;min-width:50px;height:50px;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:800;color:#d6b06d;flex-shrink:0">1</div>
+        <div style="text-align:left"><div id="iosS1T" style="color:#f5ead8;font-size:16px;font-weight:700;margin-bottom:5px"></div><div id="iosS1D" style="color:#b7a894;font-size:14px;line-height:1.55"></div></div>
       </div>
-      <div style="display:flex;align-items:center;gap:16px;margin-bottom:22px">
-        <div style="background:rgba(214,176,109,0.18);border-radius:14px;min-width:48px;height:48px;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;color:#d6b06d">2</div>
-        <div style="text-align:left">
-          <div style="color:#f5ead8;font-size:15px;font-weight:700">Tap "Add to Home Screen"</div>
-          <div style="color:#b7a894;font-size:13px;margin-top:3px">Scroll the menu and tap the <span style="color:#d6b06d">+</span> icon</div>
-        </div>
+      <div style="display:flex;align-items:flex-start;gap:16px;margin-bottom:22px">
+        <div style="background:rgba(214,176,109,0.18);border-radius:14px;min-width:50px;height:50px;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:800;color:#d6b06d;flex-shrink:0">2</div>
+        <div style="text-align:left"><div id="iosS2T" style="color:#f5ead8;font-size:16px;font-weight:700;margin-bottom:5px"></div><div id="iosS2D" style="color:#b7a894;font-size:14px;line-height:1.55"></div></div>
       </div>
-      <div style="display:flex;align-items:center;gap:16px">
-        <div style="background:rgba(214,176,109,0.18);border-radius:14px;min-width:48px;height:48px;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;color:#d6b06d">3</div>
-        <div style="text-align:left">
-          <div style="color:#f5ead8;font-size:15px;font-weight:700">Tap "Add"</div>
-          <div style="color:#b7a894;font-size:13px;margin-top:3px">The app will appear on your Home Screen</div>
-        </div>
+      <div style="display:flex;align-items:flex-start;gap:16px">
+        <div style="background:rgba(214,176,109,0.18);border-radius:14px;min-width:50px;height:50px;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:800;color:#d6b06d;flex-shrink:0">3</div>
+        <div style="text-align:left"><div id="iosS3T" style="color:#f5ead8;font-size:16px;font-weight:700;margin-bottom:5px"></div><div id="iosS3D" style="color:#b7a894;font-size:14px;line-height:1.55"></div></div>
       </div>
     </div>
-    <div style="animation:pwaBounce 1.3s ease-in-out infinite;color:#d6b06d;font-size:36px;line-height:1">↓</div>
-    <div style="color:#b7a894;font-size:12px;margin-top:6px">Share button is at the bottom of Safari</div>
+    <div style="animation:pwaBounce 1.3s ease-in-out infinite;color:#d6b06d;font-size:38px;line-height:1;margin-bottom:8px">↓</div>
+    <div id="pwaShareHint" style="color:#b7a894;font-size:13px;margin-bottom:24px"></div>
+    <button id="pwaSkipIOS" style="background:none;border:none;color:#6b5e52;font-size:14px;text-decoration:underline;cursor:pointer;padding:8px"></button>
   </div>
 
-  <!-- Android install button -->
+  <!-- Android install -->
   <div id="pwaAndroid" style="display:none;width:100%;max-width:360px">
-    <button id="pwaInstallBtn" style="width:100%;padding:20px;background:linear-gradient(135deg,#e8c67a,#c89a48);color:#120d09;font-weight:800;font-size:18px;border-radius:18px;border:none;cursor:pointer;letter-spacing:0.3px;box-shadow:0 6px 28px rgba(214,176,109,0.35)">
-      📲 &nbsp;Add to your phone
-    </button>
-    <div style="color:#b7a894;font-size:12px;margin-top:16px">Free · Works offline · No app store needed</div>
+    <button id="pwaInstallBtn" style="display:block;width:100%;padding:20px;background:linear-gradient(135deg,#e8c67a,#c89a48);color:#120d09;font-weight:800;font-size:19px;border-radius:18px;border:none;cursor:pointer;box-shadow:0 6px 28px rgba(214,176,109,0.35);margin-bottom:12px"></button>
+    <div id="pwaAndroidNote" style="color:#b7a894;font-size:13px;margin-bottom:20px"></div>
+    <div id="pwaAndroidFb" style="display:none;background:rgba(214,176,109,0.07);border:1px solid rgba(214,176,109,0.2);border-radius:18px;padding:20px 18px;margin-bottom:20px;text-align:left">
+      <div id="pwaAndroidFbT" style="color:#d6b06d;font-size:14px;font-weight:700;margin-bottom:8px"></div>
+      <div id="pwaAndroidFbS" style="color:#b7a894;font-size:14px;line-height:1.6"></div>
+    </div>
+    <button id="pwaSkipAndroid" style="background:none;border:none;color:#6b5e52;font-size:14px;text-decoration:underline;cursor:pointer;padding:8px"></button>
   </div>
 </div>
 
@@ -1219,33 +1218,52 @@ renderUI();
 (function(){
   var isIOS=/iphone|ipad|ipod/i.test(navigator.userAgent)&&!window.MSStream;
   var isAndroid=/android/i.test(navigator.userAgent);
-  var isMobile=isIOS||isAndroid;
   var isStandalone=window.matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;
-  if(isStandalone||!isMobile) return;
+  if(isStandalone||(!isIOS&&!isAndroid)) return;
+  var T={
+    en:{sub:'Your apartment guide, always on your phone.',warnT:'⚠️  iPhone: you must use Safari',warnN:'If you are using Chrome or another browser, please open this page in Safari first — otherwise the install will not work.',s1t:'Step 1 — Find the Share button',s1d:'Look at the bottom bar of the screen. Tap the icon that looks like a square with an arrow pointing upward  [ ⬆ ]',s2t:'Step 2 — Tap "Add to Home Screen"',s2d:'A menu will open. Scroll down and look for "Add to Home Screen" (it has a small square icon with a +). Tap it.',s3t:'Step 3 — Tap "Add"',s3d:'A small window appears. Tap the "Add" button in the top right corner. Done! The app icon will appear on your home screen.',hint:'The Share ⬆ button is at the bottom of Safari',andBtn:'📲  Install the App',andNote:'Free · Works offline · No App Store needed',fbT:"Don't see the install button?",fbS:'Tap the three dots ⋮ at the top right of Chrome, then tap "Add to Home Screen" or "Install App".',skip:'Continue without installing →'},
+    it:{sub:'La guida del tuo appartamento, sempre sul telefono.',warnT:'⚠️  iPhone: devi usare Safari',warnN:"Se stai usando Chrome o un altro browser, apri prima questa pagina in Safari — altrimenti l'installazione non funzionerà.",s1t:'Passo 1 — Trova il pulsante Condividi',s1d:"Guarda la barra in fondo allo schermo. Tocca l'icona che sembra un quadrato con una freccia verso l'alto  [ ⬆ ]",s2t:'Passo 2 — Tocca "Aggiungi a schermata Home"',s2d:'Si aprirà un menu. Scorri verso il basso e cerca "Aggiungi a schermata Home" (ha una piccola icona quadrata con un +). Toccala.',s3t:'Passo 3 — Tocca "Aggiungi"',s3d:'Appare una piccola finestra. Tocca il pulsante "Aggiungi" in alto a destra. Fatto! L\'icona dell\'app apparirà nella schermata Home.',hint:'Il pulsante Condividi ⬆ si trova in basso in Safari',andBtn:'📲  Installa la Guida',andNote:'Gratis · Funziona offline · Senza App Store',fbT:'Non vedi il pulsante di installazione?',fbS:'Tocca i tre puntini ⋮ in alto a destra in Chrome, poi tocca "Aggiungi a schermata Home" o "Installa app".',skip:'Continua senza installare →'},
+    fr:{sub:"Votre guide d'appartement, toujours sur votre téléphone.",warnT:'⚠️  iPhone : vous devez utiliser Safari',warnN:"Si vous utilisez Chrome ou un autre navigateur, ouvrez d'abord cette page dans Safari — sinon l'installation ne fonctionnera pas.",s1t:'Étape 1 — Trouvez le bouton Partager',s1d:"Regardez la barre en bas de l'écran. Appuyez sur l'icône qui ressemble à un carré avec une flèche vers le haut  [ ⬆ ]",s2t:"Étape 2 — «Sur l'écran d'accueil»",s2d:"Un menu s'ouvrira. Faites défiler vers le bas et cherchez «Sur l'écran d'accueil» (avec une petite icône carrée +). Appuyez dessus.",s3t:'Étape 3 — Appuyez sur «Ajouter»',s3d:"Une petite fenêtre apparaît. Appuyez sur «Ajouter» en haut à droite. Voilà ! L'icône de l'app apparaîtra sur votre écran d'accueil.",hint:'Le bouton Partager ⬆ se trouve en bas de Safari',andBtn:"📲  Installer l'Application",andNote:'Gratuit · Fonctionne hors ligne · Sans App Store',fbT:'Vous ne voyez pas le bouton ?',fbS:"Appuyez sur les trois points ⋮ en haut à droite de Chrome, puis sur «Ajouter à l'écran d'accueil».",skip:'Continuer sans installer →'},
+    de:{sub:'Ihr Apartment-Leitfaden, immer auf Ihrem Telefon.',warnT:'⚠️  iPhone: Sie müssen Safari verwenden',warnN:'Wenn Sie Chrome oder einen anderen Browser verwenden, öffnen Sie diese Seite bitte zuerst in Safari — sonst funktioniert die Installation nicht.',s1t:'Schritt 1 — Finden Sie die Teilen-Schaltfläche',s1d:'Schauen Sie auf die untere Leiste des Bildschirms. Tippen Sie auf das Symbol, das wie ein Quadrat mit einem Pfeil nach oben aussieht  [ ⬆ ]',s2t:'Schritt 2 — «Zum Home-Bildschirm»',s2d:'Ein Menü öffnet sich. Scrollen Sie nach unten und suchen Sie «Zum Home-Bildschirm hinzufügen» (mit einem kleinen quadratischen + Symbol). Tippen Sie darauf.',s3t:'Schritt 3 — Tippen Sie auf «Hinzufügen»',s3d:'Ein kleines Fenster erscheint. Tippen Sie oben rechts auf «Hinzufügen». Fertig! Das App-Symbol erscheint auf Ihrem Startbildschirm.',hint:'Die Teilen-Schaltfläche ⬆ befindet sich unten in Safari',andBtn:'📲  App Installieren',andNote:'Kostenlos · Offline verfügbar · Kein App Store nötig',fbT:'Sehen Sie den Installations-Button nicht?',fbS:'Tippen Sie auf die drei Punkte ⋮ oben rechts in Chrome, dann auf «Zum Startbildschirm hinzufügen».',skip:'Ohne Installation fortfahren →'},
+    es:{sub:'Su guía del apartamento, siempre en su teléfono.',warnT:'⚠️  iPhone: debe usar Safari',warnN:'Si usa Chrome u otro navegador, abra primero esta página en Safari — de lo contrario la instalación no funcionará.',s1t:'Paso 1 — Busque el botón Compartir',s1d:'Mire la barra inferior de la pantalla. Toque el icono que parece un cuadrado con una flecha apuntando hacia arriba  [ ⬆ ]',s2t:'Paso 2 — «Añadir a pantalla de inicio»',s2d:'Se abrirá un menú. Desplace hacia abajo y busque «Añadir a pantalla de inicio» (con un pequeño icono cuadrado +). Tóquelo.',s3t:'Paso 3 — Toque «Añadir»',s3d:'Aparecerá una pequeña ventana. Toque «Añadir» en la esquina superior derecha. ¡Listo! El icono de la app aparecerá en su pantalla de inicio.',hint:'El botón Compartir ⬆ está en la parte inferior de Safari',andBtn:'📲  Instalar la App',andNote:'Gratis · Funciona sin internet · Sin App Store',fbT:'¿No ve el botón de instalación?',fbS:'Toque los tres puntos ⋮ arriba a la derecha en Chrome, luego toque «Añadir a la pantalla de inicio».',skip:'Continuar sin instalar →'}
+  };
+  var l=(typeof lang!=='undefined'&&T[lang])?lang:((navigator.language||'en').slice(0,2).toLowerCase());
+  var t=T[l]||T.en;
+  function $s(id,v){var e=document.getElementById(id);if(e)e.textContent=v;}
+  $s('pwaSubtitle',t.sub);
+  $s('pwaIosWarnTitle',t.warnT);$s('pwaIosWarnNote',t.warnN);
+  $s('iosS1T',t.s1t);$s('iosS1D',t.s1d);
+  $s('iosS2T',t.s2t);$s('iosS2D',t.s2d);
+  $s('iosS3T',t.s3t);$s('iosS3D',t.s3d);
+  $s('pwaShareHint',t.hint);
+  $s('pwaInstallBtn',t.andBtn);$s('pwaAndroidNote',t.andNote);
+  $s('pwaAndroidFbT',t.fbT);$s('pwaAndroidFbS',t.fbS);
+  $s('pwaSkipIOS',t.skip);$s('pwaSkipAndroid',t.skip);
   var scr=document.getElementById('pwaScreen');
   scr.style.display='flex';
+  document.getElementById('pwaSkipIOS').onclick=function(){scr.style.display='none';};
+  document.getElementById('pwaSkipAndroid').onclick=function(){scr.style.display='none';};
   if(isIOS){
     document.getElementById('pwaIOS').style.display='block';
     return;
   }
   var deferredPrompt=null;
   var androidDiv=document.getElementById('pwaAndroid');
+  var fallbackTimer=setTimeout(function(){
+    if(!deferredPrompt){androidDiv.style.display='block';document.getElementById('pwaAndroidFb').style.display='block';document.getElementById('pwaInstallBtn').style.display='none';}
+  },3000);
   window.addEventListener('beforeinstallprompt',function(e){
-    e.preventDefault();
-    deferredPrompt=e;
-    androidDiv.style.display='block';
+    e.preventDefault();clearTimeout(fallbackTimer);
+    deferredPrompt=e;androidDiv.style.display='block';
     document.getElementById('pwaInstallBtn').onclick=function(){
       deferredPrompt.prompt();
-      deferredPrompt.userChoice.then(function(r){
-        deferredPrompt=null;
-        if(r.outcome==='accepted') scr.style.display='none';
-      });
+      deferredPrompt.userChoice.then(function(r){deferredPrompt=null;if(r.outcome==='accepted')scr.style.display='none';});
     };
   });
-  window.addEventListener('appinstalled',function(){ scr.style.display='none'; });
+  window.addEventListener('appinstalled',function(){scr.style.display='none';});
 })();
 if('serviceWorker' in navigator){
-  window.addEventListener('load',function(){ navigator.serviceWorker.register('/sw.js'); });
+  window.addEventListener('load',function(){navigator.serviceWorker.register('/sw.js');});
 }
 </script>
 </body>
