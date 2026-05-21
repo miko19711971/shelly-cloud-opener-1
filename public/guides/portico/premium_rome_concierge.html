@@ -303,33 +303,33 @@ footer{padding:16px 16px 0;text-align:center}
 <div id="aptGrid" class="aptGrid">
   <div class="cardGrid">
     <div class="card wide" id="aptCard" onclick="openModal('apt')">
-      <div class="cardIcon">📍</div>
+      <div class="cardIconWrap">📍</div>
       <div class="cardTitle" id="aptCardTitle"></div>
       <div class="cardSub" id="aptCardSub"></div>
     </div>
 
     <div class="card locked" id="keysCard" onclick="openModal('keys')">
-      <div class="cardIcon">🗝</div>
+      <div class="cardIconWrap">🗝</div>
       <div class="cardTitle" id="keysTitle"></div>
       <div class="cardSub" id="keysSub"></div>
     </div>
     <div class="card" onclick="openModal('house')">
-      <div class="cardIcon">💬</div>
+      <div class="cardIconWrap">💬</div>
       <div class="cardTitle" id="houseTitle"></div>
       <div class="cardSub" id="houseSub"></div>
     </div>
     <div class="card" onclick="openModal('wifi')">
-      <div class="cardIcon">📶</div>
+      <div class="cardIconWrap">📶</div>
       <div class="cardTitle" id="wifiTitle"></div>
       <div class="cardSub" id="wifiSub"></div>
     </div>
     <div class="card" id="insiderCard" style="cursor:pointer">
-      <div class="cardIcon">✦</div>
+      <div class="cardIconWrap">✦</div>
       <div class="cardTitle">NiceFlat Insider</div>
       <div class="cardSub" id="insiderSub"></div>
     </div>
     <div class="card" onclick="openModal('help')">
-      <div class="cardIcon">☎</div>
+      <div class="cardIconWrap">☎</div>
       <div class="cardTitle" id="helpTitle"></div>
       <div class="cardSub" id="helpSub"></div>
     </div>
@@ -344,22 +344,22 @@ footer{padding:16px 16px 0;text-align:center}
 <div class="romeGrid">
   <div class="cardGrid">
     <div class="card" onclick="openModal('eat')">
-      <div class="cardIcon">🍝</div>
+      <div class="cardIconWrap">🍝</div>
       <div class="cardTitle" id="eatTitle"></div>
       <div class="cardSub" id="eatSub"></div>
     </div>
     <div class="card" onclick="openModal('tonight')">
-      <div class="cardIcon">🌙</div>
+      <div class="cardIconWrap">🌙</div>
       <div class="cardTitle" id="tonightTitle"></div>
       <div class="cardSub" id="tonightSub"></div>
     </div>
     <div class="card" onclick="openModal('tickets')">
-      <div class="cardIcon">🎟</div>
+      <div class="cardIconWrap">🎟</div>
       <div class="cardTitle" id="tickTitle"></div>
       <div class="cardSub" id="tickSub"></div>
     </div>
     <div class="card" onclick="openModal('transport')">
-      <div class="cardIcon">🚋</div>
+      <div class="cardIconWrap">🚋</div>
       <div class="cardTitle" id="transTitle"></div>
       <div class="cardSub" id="transSub"></div>
     </div>
@@ -1042,12 +1042,12 @@ function applyPhase(){
       }catch{}
       const icon=keys.querySelector('.cardIconWrap');
       if(_keysExpired){
-        if(icon)icon.textContent='🔒';
+        if(icon){icon.textContent='🔒';icon.style.background='';icon.style.borderColor='';}
         keys.classList.add('locked');
         const _expMsg={en:'Keys expired. Your physical keys are in the apartment.',it:'Chiavi scadute. Le chiavi fisiche si trovano in appartamento.',fr:"Clés expirées. Les clés physiques se trouvent dans l'appartement.",de:'Schlüssel abgelaufen. Die physischen Schlüssel befinden sich in der Wohnung.',es:'Llaves caducadas. Las llaves físicas están en el apartamento.'};
         keys.onclick=()=>{alert(_expMsg[lang]||_expMsg.en);};
       }else{
-        if(icon)icon.textContent='✅';
+        if(icon){icon.textContent='🗝';icon.style.background='rgba(34,197,94,0.18)';icon.style.borderColor='#22c55e';}
         keys.onclick=()=>{ window.location.href=`${SERVER_URL}/checkin/portico/index.html?t=${encodeURIComponent(urlToken)}&lang=${lang}`; };
       }
     }

@@ -169,7 +169,8 @@
 
   function renderCard(card, sectionKey, cardIndex) {
     const photos = CATEGORY_PHOTOS[sectionKey];
-    const photoStyle = photos ? ` style="background-image:url('${photos[cardIndex % photos.length]}')"` : '';
+    const photoUrl = card.photo || (photos ? photos[cardIndex % photos.length] : null);
+    const photoStyle = photoUrl ? ` style="background-image:url('${photoUrl}')"` : '';
     const buttons = (card.buttons || []).map((b, i) =>
       `<a class="btn${i === 0 ? ' primary' : ''}" href="${esc(b.href)}" rel="noopener" target="${b.href.startsWith('tel:') || b.href.startsWith('mailto:') ? '_self' : '_blank'}">${esc(b.label)}</a>`
     ).join('');
