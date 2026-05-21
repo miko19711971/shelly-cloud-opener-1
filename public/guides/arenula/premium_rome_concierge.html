@@ -358,6 +358,13 @@ footer{padding:18px 18px 0;text-align:center}
       <div class="cardTitle" id="aptCardTitle"></div>
       <div class="cardSub" id="aptCardSub"></div>
     </div>
+
+    <div class="card locked" id="keysCard" onclick="openModal('keys')">
+      <div class="cardArrow">›</div>
+      <div class="cardIconWrap">🗝</div>
+      <div class="cardTitle" id="keysTitle"></div>
+      <div class="cardSub" id="keysSub"></div>
+    </div>
     <div class="card" onclick="openModal('house')">
       <div class="cardArrow">›</div>
       <div class="cardIconWrap">💬</div>
@@ -380,12 +387,6 @@ footer{padding:18px 18px 0;text-align:center}
       <div class="cardIconWrap">☎</div>
       <div class="cardTitle" id="helpTitle"></div>
       <div class="cardSub" id="helpSub"></div>
-    </div>
-    <div class="card locked" id="keysCard" onclick="openModal('keys')" style="grid-column:1/-1">
-      <div class="cardArrow">›</div>
-      <div class="cardIconWrap">🗝</div>
-      <div class="cardTitle" id="keysTitle"></div>
-      <div class="cardSub" id="keysSub"></div>
     </div>
   </div>
 </div>
@@ -1062,8 +1063,8 @@ function renderUI(){
 function applyPhase(){
   const keys=document.getElementById('keysCard');
   const apt=document.getElementById('aptCard');
-  if(keys){ keys.style.display=phase>=3?'block':''; keys.style.gridColumn=phase>=3?'2':''; }
-  if(apt){ apt.classList.toggle('wide',phase<3); apt.style.gridColumn=phase>=3?'1':''; }
+  if(keys) keys.style.display=phase>=3?'block':'';
+  if(apt) apt.classList.toggle('wide',phase<3);
   if(keys){
     keys.classList.toggle('locked',phase<3);
     if(phase===3){
