@@ -986,7 +986,7 @@ function renderUI(){
   setText('assistantBtn',ex.assistantBtn);
   const wa=document.getElementById('whatsappBtn');if(wa)wa.textContent=ex.whatsappBtn;
   setText('insiderSub',({en:'City guide & tips',it:'Guida città & consigli',fr:'Guide ville & conseils',de:'Stadtführer & Tipps',es:'Guía ciudad & consejos'})[lang]||'City guide & tips');
-  const insCard=document.getElementById('insiderCard');if(insCard){if(tokenRid)insCard.onclick=()=>window.open(`/stay-home/trastevere?r=${encodeURIComponent(tokenRid)}`,'_blank');else insCard.style.display='none';}
+  const insCard=document.getElementById('insiderCard');if(insCard&&tokenRid)insCard.onclick=()=>window.open(`/stay-home/trastevere?r=${encodeURIComponent(tokenRid)}`,'_blank');
   document.querySelectorAll('.langBtn').forEach(b=>b.classList.toggle('active',b.dataset.lang===lang));
   loadPhase();
 }
