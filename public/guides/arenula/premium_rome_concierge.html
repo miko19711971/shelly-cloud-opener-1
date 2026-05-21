@@ -145,6 +145,7 @@ a{color:var(--gold)}
   box-shadow:0 8px 28px rgba(0,0,0,.3);
 }
 .card.locked{opacity:.28;pointer-events:none;filter:blur(1px)}
+#keysCard{display:none}
 .cardIconWrap{
   width:40px;height:40px;border-radius:11px;
   background:rgba(214,176,109,.14);
@@ -346,7 +347,7 @@ footer{padding:18px 18px 0;text-align:center}
 
 <div id="aptGrid">
   <div class="cardGrid">
-    <div class="card" id="aptCard" onclick="openModal('apt')">
+    <div class="card wide" id="aptCard" onclick="openModal('apt')">
       <div class="cardArrow">›</div>
       <div class="cardIconWrap">📍</div>
       <div class="cardTitle" id="aptCardTitle"></div>
@@ -1049,7 +1050,7 @@ function renderUI(){
 function applyPhase(){
   const keys=document.getElementById('keysCard');
   const apt=document.getElementById('aptCard');
-  if(keys) keys.style.display=phase>=3?'flex':'none';
+  if(keys) keys.style.display=phase>=3?'block':'';
   if(apt) apt.classList.toggle('wide',phase<3);
   if(keys){
     keys.classList.toggle('locked',phase<3);
