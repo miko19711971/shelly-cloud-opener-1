@@ -2,6 +2,14 @@
   const LANGS = ['it', 'en', 'fr', 'es', 'de'];
   const FLAG_LABELS = { it: 'IT', en: 'EN', fr: 'FR', es: 'ES', de: 'DE' };
 
+  const BACK_GUIDE_LABELS = {
+    it: 'Torna alla guida',
+    en: 'Back to guide',
+    fr: 'Retour au guide',
+    es: 'Volver a la guía',
+    de: 'Zurück zur Anleitung',
+  };
+
   const BLOCKED_MSGS = {
     not_yet: {
       it: 'La guida sarà disponibile dal giorno del tuo check-in.',
@@ -170,9 +178,13 @@
     const qa = (lang.quickActions || []).map(a =>
       `<a class="quick" href="${esc(a.href)}" rel="noopener" target="${a.href.startsWith('tel:') ? '_self' : '_blank'}">${esc(a.label)}</a>`
     ).join('');
+    const backLabel = BACK_GUIDE_LABELS[currentLang] || BACK_GUIDE_LABELS.en;
     return `<div class="screen active screen-home">
       <div class="page">
         ${renderTopbar(data, currentLang)}
+        <div class="back-guide-row">
+          <button class="back-guide-btn" onclick="if(window.opener){window.close();}else{history.back();}">← ${backLabel}</button>
+        </div>
         <div class="hero home-empty-hero">
           ${renderHeroSvg(data)}
         </div>
