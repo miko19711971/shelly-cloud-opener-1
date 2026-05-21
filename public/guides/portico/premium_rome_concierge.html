@@ -125,6 +125,7 @@ a{color:var(--gold)}
 .card:hover{border-color:rgba(214,176,109,.42);transform:translateY(-2px);box-shadow:var(--shadow)}
 .card:hover::before{opacity:1}
 .card.locked{opacity:.28;pointer-events:none;filter:blur(1px)}
+.wide{grid-column:1/-1}
 #keysCard{display:none}
 .cardIcon{font-size:28px;margin-bottom:11px}
 .cardTitle{font-size:13px;font-weight:700;color:var(--cream);margin-bottom:4px}
@@ -1013,7 +1014,7 @@ function renderUI(){
   setText('assistantTitle',ex.assistantTitle);setText('assistantDesc',ex.assistantDesc);setText('assistantBtn',ex.assistantBtn);
   const wa=document.getElementById('whatsappBtn');if(wa)wa.textContent=ex.whatsappBtn;
   setText('insiderSub',({en:'City guide & tips',it:'Guida città & consigli',fr:'Guide ville & conseils',de:'Stadtführer & Tipps',es:'Guía ciudad & consejos'})[lang]||'City guide & tips');
-  const insCard=document.getElementById('insiderCard');if(insCard&&tokenRid)insCard.onclick=()=>window.open(`/stay-home/portico?r=${encodeURIComponent(tokenRid)}`,'_blank');
+  const insCard=document.getElementById('insiderCard');if(insCard)insCard.onclick=()=>window.open(tokenRid?`/stay-home/portico?r=${encodeURIComponent(tokenRid)}`:`/stay-home/portico`,'_blank');
   document.querySelectorAll('.langBtn').forEach(b=>b.classList.toggle('active',b.dataset.lang===lang));
   loadPhase();
 }

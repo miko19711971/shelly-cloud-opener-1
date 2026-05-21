@@ -129,6 +129,7 @@ a{color:var(--gold)}
   transform:translateY(-1px);
 }
 .card.locked{opacity:.28;pointer-events:none;filter:blur(1px);}
+.wide{grid-column:1/-1}
 #keysCard{display:none}
 .cardIcon{font-size:28px;margin-bottom:12px;}
 .cardTitle{font-size:13px;font-weight:600;color:var(--cream);margin-bottom:4px;}
@@ -959,7 +960,7 @@ function renderUI(){
   setText('assistantTitle',ex.assistantTitle);setText('assistantDesc',ex.assistantDesc);setText('assistantBtn',ex.assistantBtn);
   const wa=document.getElementById('whatsappBtn');if(wa)wa.textContent=ex.whatsappBtn;
   setText('insiderSub',({en:'City guide & tips',it:'Guida città & consigli',fr:'Guide ville & conseils',de:'Stadtführer & Tipps',es:'Guía ciudad & consejos'})[lang]||'City guide & tips');
-  const insCard=document.getElementById('insiderCard');if(insCard&&tokenRid)insCard.onclick=()=>window.open(`/stay-home/leonina?r=${encodeURIComponent(tokenRid)}`,'_blank');
+  const insCard=document.getElementById('insiderCard');if(insCard)insCard.onclick=()=>window.open(tokenRid?`/stay-home/leonina?r=${encodeURIComponent(tokenRid)}`:`/stay-home/leonina`,'_blank');
   // update OPEN button label
   const openBtnEl=document.querySelector('.openBtn');
   if(openBtnEl){const openLbls={it:'APRI',en:'OPEN',fr:'OUVRIR',de:'ÖFFNEN',es:'ABRIR'};openBtnEl.textContent=openLbls[lang]||'OPEN';}
