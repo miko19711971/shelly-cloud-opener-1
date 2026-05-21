@@ -656,7 +656,7 @@ function checkoutExpiryMs(checkoutDateStr) {
 // GUIDE GUARD — device registry + session cookies (max 2 devices/reservation)
 // ========================================================================
 const GUIDE_DEVICES = new Map();   // reservationId → Set<deviceId>
-const MAX_GUIDE_DEVICES = 2;
+const MAX_GUIDE_DEVICES = 3;
 const VALID_APARTMENTS = ['trastevere', 'portico', 'arenula', 'scala', 'leonina'];
 
 // ── Guest arrival time cache ─────────────────────────────────────────────────
@@ -924,6 +924,47 @@ app.all("/api/open-now/:target", requireAdmin, (req, res) => {
   return res.redirect(302, `${LINK_PREFIX}/${targetKey}/${token}`);
 });
 
+// ── Email-verify token (secondary devices) ───────────────────────────────
+// Short-lived HMAC bucket token (valid ~10 min) — never exposes guest email.
+function _evBucket() { return Math.floor(Date.now() / (10 * 60 * 1000)); }
+function makeEmailVerifyToken(rid) { return hmac(`ev:${rid}:${_evBucket()}`); }
+function isValidEmailVerifyToken(ev, rid) {
+  if (!ev) return false;
+  const b = _evBucket();
+  return safeEqual(ev, hmac(`ev:${rid}:${b}`)) || safeEqual(ev, hmac(`ev:${rid}:${b - 1}`));
+}
+
+function renderEmailVerifyPage(apt, rid, lang, guestEmailHash, error) {
+  const T = {
+    it: { title: 'Conferma la tua identità', sub: "Inserisci l'email usata per la prenotazione.", btn: 'Conferma', err: 'Email non riconosciuta. Riprova.' },
+    en: { title: 'Confirm your identity',    sub: 'Enter the email address used when booking.', btn: 'Confirm', err: 'Email not recognized. Please try again.' },
+    fr: { title: 'Confirmez votre identité', sub: "Entrez l'email utilisé lors de la réservation.", btn: 'Confirmer', err: 'Email non reconnue. Réessayez.' },
+    es: { title: 'Confirma tu identidad',    sub: 'Introduce el correo electrónico usado al reservar.', btn: 'Confirmar', err: 'Email no reconocida. Inténtalo de nuevo.' },
+    de: { title: 'Identität bestätigen',     sub: 'Geben Sie die bei der Buchung verwendete E-Mail ein.', btn: 'Bestätigen', err: 'E-Mail nicht erkannt. Erneut versuchen.' },
+  };
+  const t = T[lang] || T.en;
+  const errHtml = error ? `<div style="color:#f08080;font-size:13px;margin-bottom:16px">${t.err}</div>` : '';
+  return `<!doctype html><html lang="${lang}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>NiceFlat Rome</title>
+<style>*{box-sizing:border-box}body{margin:0;background:#120d09;color:#f5ead8;font-family:system-ui,sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh;padding:24px}
+.box{max-width:380px;width:100%;text-align:center}.brand{font-size:11px;font-weight:700;letter-spacing:3px;color:#d6b06d;text-transform:uppercase;margin-bottom:24px}
+h2{font-size:22px;font-weight:800;margin:0 0 10px}p{font-size:14px;color:#b7a894;line-height:1.6;margin:0 0 20px}
+input[type=email]{width:100%;padding:14px 16px;border-radius:12px;border:1.5px solid #3a2e20;background:#1e1610;color:#f5ead8;font-size:15px;margin-bottom:16px;outline:none}
+input[type=email]:focus{border-color:#c9a45c}
+button{width:100%;padding:14px;border-radius:14px;border:none;background:linear-gradient(135deg,#e2c07a,#c89a48);color:#120d09;font-weight:800;font-size:15px;cursor:pointer}
+</style></head><body><div class="box">
+<div class="brand">NiceFlat Rome</div>
+<h2>${t.title}</h2><p>${t.sub}</p>
+${errHtml}
+<form method="POST" action="/stay/${apt}/verify-email">
+  <input type="hidden" name="r" value="${rid}">
+  <input type="hidden" name="lang" value="${lang}">
+  <input type="hidden" name="rt" value="${guestEmailHash}">
+  <input type="email" name="email" placeholder="email@example.com" required autocomplete="email">
+  <button type="submit">${t.btn}</button>
+</form>
+</div></body></html>`;
+}
+
 // ── /stay/:apt — personalised entry point sent by Hostaway ───────────────
 app.get('/stay/:apt', async (req, res) => {
   const apt          = String(req.params.apt || '').toLowerCase();
@@ -1023,6 +1064,17 @@ if (!reservation) return res.status(502).send('Unable to verify reservation. Ple
     // New device
     if (!GUIDE_DEVICES.has(reservationId)) GUIDE_DEVICES.set(reservationId, new Set());
     const devices = GUIDE_DEVICES.get(reservationId);
+
+    // Secondary device: require email verification before granting access
+    if (devices.size >= 1) {
+      const ev = String(req.query.ev || '');
+      if (!isValidEmailVerifyToken(ev, reservationId)) {
+        const guestEmail = (reservation.guestEmail || '').toLowerCase().trim();
+        const emailHash = hmac(`${reservationId}:${guestEmail}`);
+        return res.type('html').send(renderEmailVerifyPage(apt, reservationId, lang, emailHash, false));
+      }
+    }
+
     if (devices.size >= MAX_GUIDE_DEVICES) {
       console.warn(`⚠️ /stay max devices reached: res:${reservationId} count:${devices.size}`);
       return res.status(403).type('html').send(blockedPage());
@@ -1067,6 +1119,27 @@ if (!reservation) return res.status(502).send('Unable to verify reservation. Ple
   const guideToken = makeToken(_tp);
   const safeLang   = ['en','it','fr','de','es'].includes(lang) ? lang : 'en';
   return res.redirect(302, `/guides/${apt}/premium_rome_concierge.html?t=${guideToken}&lang=${safeLang}`);
+});
+
+// ── POST /stay/:apt/verify-email — confirm guest email for secondary device ─
+app.post('/stay/:apt/verify-email', (req, res) => {
+  const apt  = String(req.params.apt || '').toLowerCase();
+  const rid  = String(req.body.r   || '').trim();
+  const lang = String(req.body.lang || 'en').slice(0, 2).toLowerCase();
+  const rt   = String(req.body.rt  || '');   // signed hash of guest email
+  const submitted = (req.body.email || '').toLowerCase().trim();
+
+  if (!VALID_APARTMENTS.includes(apt) || !rid || !rt || !submitted) {
+    return res.status(400).send('Bad request');
+  }
+  const check = hmac(`${rid}:${submitted}`);
+  if (!safeEqual(check, rt)) {
+    // Wrong email — re-render page with error flag
+    return res.type('html').send(renderEmailVerifyPage(apt, rid, lang, rt, true));
+  }
+  const ev = makeEmailVerifyToken(rid);
+  const safeLang = ['en','it','fr','de','es'].includes(lang) ? lang : 'en';
+  return res.redirect(302, `/stay/${apt}?r=${encodeURIComponent(rid)}&ev=${encodeURIComponent(ev)}&lang=${safeLang}`);
 });
 
 // ── DELETE /admin/guide-devices/:reservationId — reset device slots ───────
