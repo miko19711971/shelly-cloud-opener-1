@@ -294,15 +294,15 @@ footer{padding:20px 16px 0;text-align:center}
       <div class="cardTitle" id="keysTitle"></div>
       <div class="cardSub" id="keysSub"></div>
     </div>
-    <div class="card" onclick="openModal('wifi')">
-      <div class="cardIcon">📶</div>
-      <div class="cardTitle" id="wifiTitle"></div>
-      <div class="cardSub" id="wifiSub"></div>
-    </div>
     <div class="card" onclick="openModal('house')">
       <div class="cardIcon">💬</div>
       <div class="cardTitle" id="houseTitle"></div>
       <div class="cardSub" id="houseSub"></div>
+    </div>
+    <div class="card" onclick="openModal('wifi')">
+      <div class="cardIcon">📶</div>
+      <div class="cardTitle" id="wifiTitle"></div>
+      <div class="cardSub" id="wifiSub"></div>
     </div>
     <div class="card cardFull" onclick="openModal('help')">
       <div class="cardIcon">☎</div>
@@ -1013,7 +1013,7 @@ function applyPhase(){
     }
   }
   const heroBox=document.getElementById('heroAddrBox');
-  if(heroBox)heroBox.style.display=phase===3?'none':'';
+  if(heroBox)heroBox.style.display='none';
 }
 
 function handleOpen(){
