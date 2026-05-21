@@ -59,7 +59,7 @@ a{color:var(--gold)}
   margin-bottom:6px;letter-spacing:-.3px;
 }
 .heroApt{font-size:14px;color:var(--gold);font-weight:600;margin-bottom:6px;letter-spacing:.05em;}
-.heroSub{font-size:13px;color:var(--muted);line-height:1.65;max-width:300px;margin:0 auto 26px}
+.heroSub{display:none}
 .heroAddr{
   background:rgba(214,176,109,.07);border:1px solid var(--line);
   border-radius:22px;padding:16px 18px;display:flex;align-items:center;
@@ -322,7 +322,7 @@ footer{padding:18px 18px 0;text-align:center}
 
 <div id="aptGrid" class="aptGrid">
   <div class="cardGrid">
-    <div class="card" onclick="openModal('apt')">
+    <div class="card" id="aptCard" onclick="openModal('apt')">
       <span class="cardIcon">📍</span>
       <div class="cardTitle" id="aptCardTitle"></div>
       <div class="cardSub" id="aptCardSub"></div>
@@ -1123,6 +1123,9 @@ function renderUI(){
 
 function applyPhase(){
   const keys=document.getElementById('keysCard');
+  const apt=document.getElementById('aptCard');
+  if(keys) keys.style.display=phase>=3?'flex':'none';
+  if(apt) apt.classList.toggle('wide',phase<3);
   if(keys){
     keys.classList.toggle('locked',phase<3);
     if(phase===3){
