@@ -1162,7 +1162,21 @@ app.get('/stay-home/:apt', async (req, res) => {
   const lang         = String(req.query.lang || 'en').slice(0, 2).toLowerCase();
 
   if (!VALID_APARTMENTS.includes(apt)) return res.status(404).send('Not found');
-  if (!reservationId) return res.status(400).send('Missing reservation ID');
+
+  // Operator bypass — no reservation needed
+  if (!reservationId) {
+    const cookies = parseCookies(req);
+    if (verifyOperatorCookie(cookies['op_sess'])) {
+      const now = Date.now();
+      const tp = { tgt: `home-${apt}`, exp: now + 4 * 60 * 60 * 1000,
+        jti: b64url(crypto.randomBytes(9)), iat: now, ver: TOKEN_VERSION, day: tzToday() };
+      const homeToken = makeToken(tp);
+      const safeLang = ['en','it','fr','de','es'].includes(lang) ? lang : 'en';
+      const suffix = HOME_APT_SUFFIX[apt] || apt;
+      return res.redirect(302, `/guides/Premium_Roman_Concierge_Home_${suffix}.html?t=${homeToken}&lang=${safeLang}`);
+    }
+    return res.status(400).send('Missing reservation ID');
+  }
 
   let reservation;
   const candidateIds = [];

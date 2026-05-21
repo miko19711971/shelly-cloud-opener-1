@@ -303,30 +303,30 @@ footer{padding:16px 16px 0;text-align:center;}
       <div class="cardTitle" id="aptCardTitle"></div>
       <div class="cardSub" id="aptCardSub"></div>
     </div>
-    <div class="card locked" id="keysCard" onclick="openModal('keys')">
-      <div class="cardIcon">🗝</div>
-      <div class="cardTitle" id="keysTitle"></div>
-      <div class="cardSub" id="keysSub"></div>
+    <div class="card" onclick="openModal('house')">
+      <div class="cardIcon">💬</div>
+      <div class="cardTitle" id="houseTitle"></div>
+      <div class="cardSub" id="houseSub"></div>
     </div>
     <div class="card" onclick="openModal('wifi')">
       <div class="cardIcon">📶</div>
       <div class="cardTitle" id="wifiTitle"></div>
       <div class="cardSub" id="wifiSub"></div>
     </div>
-    <div class="card" onclick="openModal('house')">
-      <div class="cardIcon">💬</div>
-      <div class="cardTitle" id="houseTitle"></div>
-      <div class="cardSub" id="houseSub"></div>
+    <div class="card" id="insiderCard" style="cursor:pointer">
+      <div class="cardIcon">✦</div>
+      <div class="cardTitle">NiceFlat Insider</div>
+      <div class="cardSub" id="insiderSub"></div>
     </div>
     <div class="card" onclick="openModal('help')">
       <div class="cardIcon">☎</div>
       <div class="cardTitle" id="helpTitle"></div>
       <div class="cardSub" id="helpSub"></div>
     </div>
-    <div class="card" id="insiderCard" style="cursor:pointer">
-      <div class="cardIcon">✦</div>
-      <div class="cardTitle">NiceFlat Insider</div>
-      <div class="cardSub" id="insiderSub"></div>
+    <div class="card locked" id="keysCard" onclick="openModal('keys')" style="grid-column:1/-1">
+      <div class="cardIcon">🗝</div>
+      <div class="cardTitle" id="keysTitle"></div>
+      <div class="cardSub" id="keysSub"></div>
     </div>
   </div>
 </div>
