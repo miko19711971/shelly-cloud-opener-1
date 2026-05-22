@@ -256,6 +256,7 @@ footer{padding:16px 16px 0;text-align:center;}
 
 #keysCard::before{display:none!important}
 #keysCard .cardArrow{display:none!important}
+.cardIconWrap{width:40px;height:40px;border-radius:11px;background:rgba(214,176,109,.14);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:11px}
 </style>
 </head>
 <body>
@@ -999,7 +1000,7 @@ function applyPhase(){
         const _expMsg={en:'Keys expired. Your physical keys are in the apartment.',it:'Chiavi scadute. Le chiavi fisiche si trovano in appartamento.',fr:"Clés expirées. Les clés physiques se trouvent dans l'appartement.",de:'Schlüssel abgelaufen. Die physischen Schlüssel befinden sich in der Wohnung.',es:'Llaves caducadas. Las llaves físicas están en el apartamento.'};
         keys.onclick=()=>{alert(_expMsg[lang]||_expMsg.en);};
       }else{
-        if(icon){icon.textContent='🔑';icon.style.background='rgba(34,197,94,0.18)';icon.style.borderColor='#22c55e';}
+        if(icon){icon.textContent='🔑';icon.style.background='';icon.style.borderColor='';}
         keys.onclick=()=>{ window.location.href=`${SERVER_URL}/checkin/leonina/index.html?t=${encodeURIComponent(urlToken)}&lang=${lang}`; };
       }
     }
