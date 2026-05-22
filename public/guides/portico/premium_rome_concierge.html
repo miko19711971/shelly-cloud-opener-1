@@ -255,6 +255,9 @@ footer{padding:16px 16px 0;text-align:center}
   height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);
   margin:8px 0;opacity:.3;
 }
+
+#keysCard::before{display:none!important}
+#keysCard .cardArrow{display:none!important}
 </style>
 </head>
 <body>
@@ -471,7 +474,7 @@ en:{
     transTitle:'Transport',transSub:'Tram, taxi & airports',
     footerHelp:'Need help?',
     phase1Text:'Your electronic keys will be unlocked on your check-in day.',
-    phaseBadge:['📋 After Booking','✅ After Check-in','🗝 Check-in Day'],
+    phaseBadge:['📋 After Booking','✅ After Check-in','🔑 Check-in Day'],
     keysPhase2:'Your digital keys will be available from 13:00 on check-in day.',
     romeAiPlaceholder:'Kosher food, WiFi, checkout, hidden gems…',
     romeChips:['Best restaurant near Ghetto','WiFi password','Checkout time','Hidden gems'],
@@ -1047,7 +1050,7 @@ function applyPhase(){
         const _expMsg={en:'Keys expired. Your physical keys are in the apartment.',it:'Chiavi scadute. Le chiavi fisiche si trovano in appartamento.',fr:"Clés expirées. Les clés physiques se trouvent dans l'appartement.",de:'Schlüssel abgelaufen. Die physischen Schlüssel befinden sich in der Wohnung.',es:'Llaves caducadas. Las llaves físicas están en el apartamento.'};
         keys.onclick=()=>{alert(_expMsg[lang]||_expMsg.en);};
       }else{
-        if(icon){icon.textContent='🗝';icon.style.background='rgba(34,197,94,0.18)';icon.style.borderColor='#22c55e';}
+        if(icon){icon.textContent='🔑';icon.style.background='rgba(34,197,94,0.18)';icon.style.borderColor='#22c55e';}
         keys.onclick=()=>{ window.location.href=`${SERVER_URL}/checkin/portico/index.html?t=${encodeURIComponent(urlToken)}&lang=${lang}`; };
       }
     }
