@@ -1088,7 +1088,7 @@ function applyPhase(){
         const _expMsg={en:'Keys expired. Your physical keys are in the apartment.',it:'Chiavi scadute. Le chiavi fisiche si trovano in appartamento.',fr:"Clés expirées. Les clés physiques se trouvent dans l'appartement.",de:'Schlüssel abgelaufen. Die physischen Schlüssel befinden sich in der Wohnung.',es:'Llaves caducadas. Las llaves físicas están en el apartamento.'};
         keys.onclick=()=>{alert(_expMsg[lang]||_expMsg.en);};
       }else{
-        if(icon){icon.textContent='🔑';icon.style.background='rgba(34,197,94,0.18)';icon.style.borderColor='#22c55e';}
+        if(icon){icon.textContent='🔑';icon.style.background='';icon.style.borderColor='';}
         keys.onclick=()=>{ window.location.href=`${SERVER_URL}/checkin/arenula/index.html?t=${encodeURIComponent(urlToken)}&lang=${lang}`; };
       }
     }
