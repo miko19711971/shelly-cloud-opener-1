@@ -242,6 +242,9 @@ footer{padding:20px 16px 0;text-align:center}
   width:48px;height:2px;background:linear-gradient(90deg,var(--gold),transparent);
   margin:10px auto 22px;border-radius:1px;
 }
+
+#keysCard::before{display:none!important}
+#keysCard .cardArrow{display:none!important}
 </style>
 </head>
 <body>
@@ -443,7 +446,7 @@ en:{
     transTitle:'Transport',transSub:'Tram, taxi & airports',
     footerHelp:'Need help?',
     phase1Text:'Your electronic keys will be unlocked on your check-in day.',
-    phaseBadge:['📋 After Booking','✅ After Check-in','🗝 Check-in Day'],
+    phaseBadge:['📋 After Booking','✅ After Check-in','🔑 Check-in Day'],
     keysPhase2:'Your digital keys will be available from 13:00 on check-in day.',
     romeAiPlaceholder:'Gas stove, WiFi, restaurants, Gianicolo…',
     romeChips:['Best restaurant in Trastevere','WiFi password','Checkout time','Romantic walk'],
@@ -1020,7 +1023,7 @@ function applyPhase(){
         const _expMsg={en:'Keys expired. Your physical keys are in the apartment.',it:'Chiavi scadute. Le chiavi fisiche si trovano in appartamento.',fr:"Clés expirées. Les clés physiques se trouvent dans l'appartement.",de:'Schlüssel abgelaufen. Die physischen Schlüssel befinden sich in der Wohnung.',es:'Llaves caducadas. Las llaves físicas están en el apartamento.'};
         keys.onclick=()=>{alert(_expMsg[lang]||_expMsg.en);};
       }else{
-        if(icon){icon.textContent='🗝';icon.style.background='rgba(34,197,94,0.18)';icon.style.borderColor='#22c55e';}
+        if(icon){icon.textContent='🔑';icon.style.background='rgba(34,197,94,0.18)';icon.style.borderColor='#22c55e';}
         keys.onclick=()=>{ window.location.href=`${SERVER_URL}/checkin/trastevere/index.html?t=${encodeURIComponent(urlToken)}&lang=${lang}`; };
       }
     }
