@@ -303,6 +303,9 @@ footer{padding:18px 18px 0;text-align:center}
   height:1px;background:var(--line);
   margin:6px 18px 0;border-radius:1px;
 }
+
+#keysCard::before{display:none!important}
+#keysCard .cardArrow{display:none!important}
 </style>
 </head>
 <body>
@@ -355,6 +358,12 @@ footer{padding:18px 18px 0;text-align:center}
       <div class="cardTitle" id="aptCardTitle"></div>
       <div class="cardSub" id="aptCardSub"></div>
     </div>
+
+    <div class="card locked" id="keysCard" onclick="openModal('keys')">
+      <div class="cardIconWrap">🗝</div>
+      <div class="cardTitle" id="keysTitle"></div>
+      <div class="cardSub" id="keysSub"></div>
+    </div>
     <div class="card" onclick="openModal('house')">
       <div class="cardArrow">›</div>
       <div class="cardIconWrap">💬</div>
@@ -377,12 +386,6 @@ footer{padding:18px 18px 0;text-align:center}
       <div class="cardIconWrap">☎</div>
       <div class="cardTitle" id="helpTitle"></div>
       <div class="cardSub" id="helpSub"></div>
-    </div>
-    <div class="card locked" id="keysCard" onclick="openModal('keys')" style="grid-column:1/-1">
-      <div class="cardArrow">›</div>
-      <div class="cardIconWrap">🗝</div>
-      <div class="cardTitle" id="keysTitle"></div>
-      <div class="cardSub" id="keysSub"></div>
     </div>
   </div>
 </div>
@@ -533,7 +536,7 @@ en:{
     transTitle:'Transport',transSub:'Tram, taxi & airports',
     footerHelp:'Need help?',
     phase1Text:'Your electronic keys will be unlocked on your check-in day.',
-    phaseBadge:['📋 After Booking','✅ After Check-in','🗝 Check-in Day'],
+    phaseBadge:['📋 After Booking','✅ After Check-in','🔑 Check-in Day'],
     keysPhase2:'Your digital keys will be available from 13:00 on check-in day.',
     romeAiPlaceholder:'Restaurants, WiFi, checkout, Campo de\' Fiori…',
     romeChips:['Best restaurant near Campo de\' Fiori','WiFi password','Checkout time','Hidden gems'],
@@ -1075,14 +1078,14 @@ function applyPhase(){
         const _today=new Date().toLocaleDateString('en-CA',{timeZone:'Europe/Rome'});
         _keysExpired=tokenDay&&((tokenDay<_today)||(_nH*60+_nM>=_expMin));
       }catch{}
-      const icon=keys.querySelector('.cardIcon');
+      const icon=keys.querySelector('.cardIconWrap');
       if(_keysExpired){
-        if(icon)icon.textContent='🔒';
+        if(icon){icon.textContent='🔒';icon.style.background='';icon.style.borderColor='';}
         keys.classList.add('locked');
         const _expMsg={en:'Keys expired. Your physical keys are in the apartment.',it:'Chiavi scadute. Le chiavi fisiche si trovano in appartamento.',fr:"Clés expirées. Les clés physiques se trouvent dans l'appartement.",de:'Schlüssel abgelaufen. Die physischen Schlüssel befinden sich in der Wohnung.',es:'Llaves caducadas. Las llaves físicas están en el apartamento.'};
         keys.onclick=()=>{alert(_expMsg[lang]||_expMsg.en);};
       }else{
-        if(icon)icon.textContent='✅';
+        if(icon){icon.textContent='🔑';icon.style.background='';icon.style.borderColor='';}
         keys.onclick=()=>{ window.location.href=`${SERVER_URL}/checkin/arenula/index.html?t=${encodeURIComponent(urlToken)}&lang=${lang}`; };
       }
     }

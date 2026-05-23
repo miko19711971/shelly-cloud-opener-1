@@ -516,18 +516,33 @@
 
     /* Category card image backgrounds */
     .place-img { background-size: cover; background-position: center; }
-    .cat-dining    { background: linear-gradient(135deg, #1b120c 0%, #4b2618 60%, #090604 100%); }
-    .cat-breakfast { background: linear-gradient(135deg, #1a1208 0%, #3d2a12 60%, #090604 100%); }
-    .cat-drinks    { background: linear-gradient(135deg, #0d0b18 0%, #2a1f3d 60%, #060408 100%); }
-    .cat-mustvisit { background: linear-gradient(135deg, #0f100a 0%, #2c3018 60%, #060604 100%); }
-    .cat-tonight   { background: linear-gradient(135deg, #0f0818 0%, #2d1a40 60%, #060408 100%); }
-    .cat-experiences { background: linear-gradient(135deg, #180f05 0%, #4a3010 60%, #090604 100%); }
-    .cat-services  { background: linear-gradient(135deg, #0a0c10 0%, #1c2230 60%, #050608 100%); }
-    .cat-shopping  { background: linear-gradient(135deg, #150e08 0%, #3b2514 60%, #060402 100%); }
-    .cat-hidden    { background: linear-gradient(135deg, #080c0e 0%, #1a2830 60%, #040608 100%); }
-    .cat-family    { background: linear-gradient(135deg, #0e1008 0%, #283018 60%, #040604 100%); }
-    .cat-relax     { background: linear-gradient(135deg, #080c14 0%, #162038 60%, #040408 100%); }
-    .cat-romantic  { background: linear-gradient(135deg, #180810 0%, #401826 60%, #080408 100%); }
+    .cat-dining    { background-image: url('https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=600&q=80&fit=crop'); }
+    .cat-breakfast { background-image: url('https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=600&q=80&fit=crop'); }
+    .cat-drinks    { background-image: url('https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?w=600&q=80&fit=crop'); }
+    .cat-mustvisit { background-image: url('https://images.unsplash.com/photo-1552832230-c0197dd311b5?w=600&q=80&fit=crop'); }
+    .cat-tonight   { background-image: url('https://images.unsplash.com/photo-1531572753322-ad063cecc140?w=600&q=80&fit=crop'); }
+    .cat-experiences { background-image: url('https://images.unsplash.com/photo-1603869311144-66b03d340b32?w=600&q=80&fit=crop'); }
+    .cat-services  { background-image: url('https://images.unsplash.com/photo-1566073771259-6a8506099945?w=600&q=80&fit=crop'); }
+    .cat-shopping  { background-image: url('https://images.unsplash.com/photo-1483985988355-763728e1935b?w=600&q=80&fit=crop'); }
+    .cat-hidden    { background-image: url('https://images.unsplash.com/photo-1523906834658-6e24ef2386f9?w=600&q=80&fit=crop'); }
+    .cat-family    { background-image: url('https://images.unsplash.com/photo-1609220136736-443140cffec6?w=600&q=80&fit=crop'); }
+    .cat-relax     { background-image: url('https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=600&q=80&fit=crop'); }
+    .cat-romantic  { background-image: url('https://images.unsplash.com/photo-1516483638261-f4dbaf036963?w=600&q=80&fit=crop'); }
+
+    /* Home tile background photos */
+    .tile { position: relative; }
+    .tile[data-nav="dining"]      { background: linear-gradient(145deg,rgba(0,0,0,.62),rgba(0,0,0,.42)), url('https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=500&q=75&fit=crop') center/cover; }
+    .tile[data-nav="breakfast"]   { background: linear-gradient(145deg,rgba(0,0,0,.62),rgba(0,0,0,.42)), url('https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=500&q=75&fit=crop') center/cover; }
+    .tile[data-nav="drinks"]      { background: linear-gradient(145deg,rgba(0,0,0,.62),rgba(0,0,0,.42)), url('https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?w=500&q=75&fit=crop') center/cover; }
+    .tile[data-nav="mustvisit"]   { background: linear-gradient(145deg,rgba(0,0,0,.62),rgba(0,0,0,.42)), url('https://images.unsplash.com/photo-1552832230-c0197dd311b5?w=500&q=75&fit=crop') center/cover; }
+    .tile[data-nav="tonight"]     { background: linear-gradient(145deg,rgba(0,0,0,.62),rgba(0,0,0,.42)), url('https://images.unsplash.com/photo-1531572753322-ad063cecc140?w=500&q=75&fit=crop') center/cover; }
+    .tile[data-nav="experiences"] { background: linear-gradient(145deg,rgba(0,0,0,.62),rgba(0,0,0,.42)), url('https://images.unsplash.com/photo-1603869311144-66b03d340b32?w=500&q=75&fit=crop') center/cover; }
+    .tile[data-nav="services"]    { background: linear-gradient(145deg,rgba(0,0,0,.62),rgba(0,0,0,.42)), url('https://images.unsplash.com/photo-1566073771259-6a8506099945?w=500&q=75&fit=crop') center/cover; }
+    .tile[data-nav="shopping"]    { background: linear-gradient(145deg,rgba(0,0,0,.62),rgba(0,0,0,.42)), url('https://images.unsplash.com/photo-1483985988355-763728e1935b?w=500&q=75&fit=crop') center/cover; }
+    .tile[data-nav="hidden"]      { background: linear-gradient(145deg,rgba(0,0,0,.62),rgba(0,0,0,.42)), url('https://images.unsplash.com/photo-1523906834658-6e24ef2386f9?w=500&q=75&fit=crop') center/cover; }
+    .tile[data-nav="family"]      { background: linear-gradient(145deg,rgba(0,0,0,.62),rgba(0,0,0,.42)), url('https://images.unsplash.com/photo-1609220136736-443140cffec6?w=500&q=75&fit=crop') center/cover; }
+    .tile[data-nav="relax"]       { background: linear-gradient(145deg,rgba(0,0,0,.62),rgba(0,0,0,.42)), url('https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=500&q=75&fit=crop') center/cover; }
+    .tile[data-nav="romantic"]    { background: linear-gradient(145deg,rgba(0,0,0,.62),rgba(0,0,0,.42)), url('https://images.unsplash.com/photo-1516483638261-f4dbaf036963?w=500&q=75&fit=crop') center/cover; }
 
     @media (max-width: 850px) {
       .menu-grid,
