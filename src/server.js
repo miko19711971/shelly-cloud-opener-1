@@ -672,6 +672,7 @@ function checkoutExpiryMs(checkoutDateStr) {
 // ========================================================================
 const GUIDE_DEVICES = new Map();   // reservationId → Set<deviceId>
 const MAX_GUIDE_DEVICES = 3;
+const GUIDE_PING_SENT = new Set(); // reservationId → già notificato (dedup in-memory)
 const VALID_APARTMENTS = ['trastevere', 'portico', 'arenula', 'scala', 'leonina'];
 
 // ── Guest arrival time cache ─────────────────────────────────────────────────
@@ -2096,6 +2097,36 @@ app.post("/checkin/:apt/open-direct/apartment", async (req, res) => {
   return res.json({ ok: true, opened: result });
 });
 
+
+// ── Guide ping — notifica host alla prima interazione dell'ospite con la guida ─
+// Chiamato dal JS della guida al primo click. Manda UNA nota interna HostAway
+// (deduplicata per reservationId) per confermare che la guida è aperta e usata.
+app.post("/api/guide-ping", async (req, res) => {
+  res.json({ ok: true }); // risponde subito, processamento in background
+  try {
+    const t = String(req.query.t || '');
+    if (!t) return;
+    const parsed = parseGuideToken(t);
+    if (!parsed.ok) return;
+    const p = parsed.payload;
+    const rid = p.rid ? String(p.rid) : null;
+    if (!rid) return;
+    if (GUIDE_PING_SENT.has(rid)) return; // già notificato per questa reservation
+    GUIDE_PING_SENT.add(rid);
+    // Estrai apartment dal tgt (es. "guide-portico" → "portico")
+    const apt = p.tgt ? String(p.tgt).replace(/^(guide|checkin)-/, '') : '?';
+    const cid = await getConversationId(rid);
+    if (!cid) { console.log(`⚠️ guide-ping: no conversationId for res ${rid}`); return; }
+    const now = new Date().toLocaleString('it-IT', { timeZone: 'Europe/Rome', dateStyle: 'short', timeStyle: 'short' });
+    await sendHostawayInternalNote({
+      conversationId: cid,
+      message: `📲 Ospite sta usando la guida digitale (${apt}) — ${now}`
+    });
+    console.log(`📲 Guide ping notificato: ${apt} | res:${rid} | conv:${cid}`);
+  } catch (e) {
+    console.error('❌ guide-ping error:', e.message);
+  }
+});
 
 // ── Dynamic phase endpoint ───────────────────────────────────────────────────
 // Returns { phase: 1|2|3 } based on token type and current time (Europe/Rome)
