@@ -1066,6 +1066,16 @@ if (!reservation) return res.status(502).send('Unable to verify reservation. Ple
     if (expMs && Date.now() > expMs) return res.status(410).send('Your stay has ended. Thank you for choosing NiceFlat!');
   }
 
+  // Determina lingua dalla reservation HostAway (priorità su URL param)
+  // In questo modo la guida è sempre nella lingua della prenotazione,
+  // indipendentemente dal link ricevuto.
+  const _resLangRaw = (reservation.guestLanguage || reservation.guestLocale || '').toLowerCase();
+  const _resLangMap = { spanish:'es', french:'fr', italian:'it', german:'de', english:'en',
+                        deutsch:'de', italiano:'it', 'français':'fr', 'español':'es',
+                        es:'es', fr:'fr', it:'it', de:'de', en:'en' };
+  const _resLangMapped = _resLangMap[_resLangRaw.split(',')[0].trim()] || _resLangRaw.slice(0, 2);
+  const finalLang = ['en','it','fr','de','es'].includes(_resLangMapped) ? _resLangMapped : lang;
+
   // Device registration
   const cookies         = parseCookies(req);
   const existingSession = verifyGuardCookie(cookies['guide_sess']);
@@ -1087,7 +1097,7 @@ if (!reservation) return res.status(502).send('Unable to verify reservation. Ple
       if (!isValidEmailVerifyToken(ev, reservationId)) {
         const guestEmail = (reservation.guestEmail || '').toLowerCase().trim();
         const emailHash = hmac(`${reservationId}:${guestEmail}`);
-        return res.type('html').send(renderEmailVerifyPage(apt, reservationId, lang, emailHash, false));
+        return res.type('html').send(renderEmailVerifyPage(apt, reservationId, finalLang, emailHash, false));
       }
     }
 
@@ -1179,8 +1189,7 @@ if (!reservation) return res.status(502).send('Unable to verify reservation. Ple
   const _tp = { tgt: `guide-${apt}`, exp: _expMs, jti: _jti, iat: _now, ver: TOKEN_VERSION,
     day: checkinDate || tzToday(), ct: checkinTime, cid: null, co: checkoutDate || null, rid: reservationId || null };
   const guideToken = makeToken(_tp);
-  const safeLang   = ['en','it','fr','de','es'].includes(lang) ? lang : 'en';
-  return res.redirect(302, `/guides/${apt}/premium_rome_concierge.html?t=${guideToken}&lang=${safeLang}`);
+  return res.redirect(302, `/guides/${apt}/premium_rome_concierge.html?t=${guideToken}&lang=${finalLang}`);
 });
 
 // ── POST /stay/:apt/verify-email — confirm guest email for secondary device ─
@@ -1280,6 +1289,14 @@ app.get('/stay-home/:apt', async (req, res) => {
     if (expMs && Date.now() > expMs) return res.status(410).send('Your stay has ended. Thank you for choosing NiceFlat!');
   }
 
+  // Lingua dalla reservation (priorità su URL param)
+  const _hlRaw = (reservation.guestLanguage || reservation.guestLocale || '').toLowerCase();
+  const _hlMap = { spanish:'es', french:'fr', italian:'it', german:'de', english:'en',
+                   deutsch:'de', italiano:'it', 'français':'fr', 'español':'es',
+                   es:'es', fr:'fr', it:'it', de:'de', en:'en' };
+  const _hlMapped = _hlMap[_hlRaw.split(',')[0].trim()] || _hlRaw.slice(0, 2);
+  const homeFinalLang = ['en','it','fr','de','es'].includes(_hlMapped) ? _hlMapped : lang;
+
   const now = Date.now();
   const jti = b64url(crypto.randomBytes(9));
   const expMs = (checkoutDate && isYYYYMMDD(checkoutDate))
@@ -1288,9 +1305,8 @@ app.get('/stay-home/:apt', async (req, res) => {
   const tp = { tgt: `home-${apt}`, exp: expMs, jti, iat: now, ver: TOKEN_VERSION,
     day: checkinDate || tzToday(), co: checkoutDate || null, rid: reservationId };
   const homeToken = makeToken(tp);
-  const safeLang = ['en', 'it', 'fr', 'de', 'es'].includes(lang) ? lang : 'en';
   const suffix = HOME_APT_SUFFIX[apt] || apt;
-  return res.redirect(302, `/guides/Premium_Roman_Concierge_Home_${suffix}.html?t=${homeToken}&lang=${safeLang}`);
+  return res.redirect(302, `/guides/Premium_Roman_Concierge_Home_${suffix}.html?t=${homeToken}&lang=${homeFinalLang}`);
 });
 
 // ── /home/:apt/status — validate home concierge guide token ──────────────
