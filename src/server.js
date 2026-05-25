@@ -4222,13 +4222,22 @@ app.post("/paypal-webhook", async (req, res) => {
 
   try {
      const data = req.body;
+
+// ── Skip conversationMessage webhooks: hanno body+conversationId ma NON sono booking events
+// (quelle vengono inviate anche a /hostaway-incoming e non vanno processate qui)
+if (data?.body !== undefined && data?.conversationId !== undefined) {
+  console.log("⏭️ ConversationMessage webhook → ignorato da booking-webhook (gestito da /hostaway-incoming)");
+  return;
+}
+
 // ✅ GESTISCI ENTRAMBE LE STRUTTURE
 const reservation = data?.reservation || data?.result || data?.data || data;
 
 
 console.log("🏠 HOSTAWAY BOOKING:", JSON.stringify(data, null, 2));
 
-const reservationId = reservation?.id || reservation?.reservationId || data?.reservationId;
+// Priorità: data.reservationId > reservation.reservationId > reservation.id (può essere ID messaggio)
+const reservationId = data?.reservationId || reservation?.reservationId || reservation?.id;
 const effectiveReservationId = reservationId;
 let conversationId = reservation?.conversationId || data?.conversationId;
 
