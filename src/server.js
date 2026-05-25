@@ -3526,6 +3526,48 @@ if (_webhookDedup(_whMsgId)) {
       console.log(`🔄 ArrivalTime cache invalidated for res ${whResId} (will re-fetch)`);
     }
   }
+  // ── Se l'evento è specificamente un checkin/pre-check, trigghera Phase 2+3 ──
+  const isCheckinEvent = /^(checkin|pre.?check|guestcheckin|reservation\.checkin|pre_checkin)$/i.test(String(whAction));
+  if (isCheckinEvent && whResId) {
+    console.log(`🔔 Checkin event detected (action=${whAction}) → triggering Phase 2+3 for res ${whResId}`);
+    (async () => {
+      try {
+        if (PENDING_PHASE3.has(`phase3-${whResId}`)) {
+          console.log(`⏭️ Phase 3 already pending for res ${whResId} — skipping duplicate Phase 2`);
+          return;
+        }
+        const resResp = await axios.get(`https://api.hostaway.com/v1/reservations/${whResId}`, { headers: { Authorization: `Bearer ${HOSTAWAY_TOKEN}` }, timeout: 10000 });
+        const resData = resResp.data?.result;
+        if (!resData) { console.log(`⚠️ No reservation data for res ${whResId}`); return; }
+        const apt = APT_LISTING_MAP[resData.listingMapId] || 'rome';
+        const arrivalTime = resData.arrivalTime || null;
+        const arrivalDate = resData.arrivalDate || resData.checkInDate || null;
+        const checkoutDate = resData.departureDate || resData.checkOutDate || null;
+        const langRaw = (resData.guestLanguage || resData.guestLocale || 'en').toLowerCase();
+        const langMap = { spanish:'es', french:'fr', italian:'it', german:'de', english:'en', deutsch:'de', italiano:'it' };
+        const guestLang = langMap[langRaw.split(',')[0].trim()] || langRaw.slice(0, 2) || 'en';
+        const safeLang = ['en','it','fr','de','es'].includes(guestLang) ? guestLang : 'en';
+        const cid = await getConversationId(whResId);
+        if (!cid) { console.log(`⚠️ No conversationId found for res ${whResId} — Phase 2 skipped`); return; }
+        await sendPhase2GuideMessage({ conversationId: cid, apartment: apt, lang: safeLang, reservationId: String(whResId), checkoutDate });
+        // Schedule Phase 3
+        let sendAt;
+        if (arrivalTime && arrivalDate) {
+          const parts = arrivalTime.replace(/[apm]/gi, '').trim().split(':').map(Number);
+          const h = parts[0] || 13; const m = parts[1] || 0;
+          const candidate = new Date(`${arrivalDate}T${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:00+02:00`);
+          candidate.setMinutes(candidate.getMinutes() + 2);
+          sendAt = candidate;
+        } else if (arrivalDate) { sendAt = new Date(`${arrivalDate}T13:02:00+02:00`);
+        } else { sendAt = new Date(Date.now() + 2 * 60 * 1000); }
+        if (arrivalDate) { const minTime = new Date(`${arrivalDate}T13:02:00+02:00`); if (sendAt < minTime) sendAt = minTime; }
+        if (sendAt <= new Date()) sendAt = new Date(Date.now() + 2 * 60 * 1000);
+        PENDING_PHASE3.set(`phase3-${whResId}`, { conversationId: cid, apartment: apt, lang: safeLang, sendAt, checkinDate: arrivalDate, sent: false });
+        savePhase3State();
+        console.log(`📅 Phase 2 sent + Phase 3 scheduled via checkin event: ${apt} | res:${whResId} | sendAt:${sendAt.toISOString()}`);
+      } catch (e) { console.error(`❌ Phase 2/3 via checkin event failed for res ${whResId}:`, e.message); }
+    })();
+  }
   // Invalidate tablet cache for this apartment so next /tablet/:apt gets fresh data
   const whListingId = payload?.listingMapId || payload?.data?.listingMapId;
   if (whListingId) {
@@ -3544,9 +3586,16 @@ const isIncoming = payload?.isIncoming;
 const sentUsingHostaway = payload?.sentUsingHostaway;
 const status = payload?.status;
 
- if (isIncoming === 0 || isIncoming === false || sentUsingHostaway === 1) {
+// ECCEZIONE: messaggi di sistema HostAway per form submission sono outgoing ma vanno processati
+const _msgBodyLower = (payload?.body || '').toLowerCase();
+const _isFormSubmission = _msgBodyLower.includes('submitted') && (_msgBodyLower.includes('check') || _msgBodyLower.includes('pre-check'));
+
+ if ((isIncoming === 0 || isIncoming === false || sentUsingHostaway === 1) && !_isFormSubmission) {
   console.log("🛑 Outgoing message -> ignored", { status, isIncoming, sentUsingHostaway });
   return res.json({ ok: true, silent: true });
+}
+if (_isFormSubmission && (isIncoming === 0 || isIncoming === false || sentUsingHostaway === 1)) {
+  console.log("✅ Form submission system message detected — bypassing outgoing filter");
 }
 
 
