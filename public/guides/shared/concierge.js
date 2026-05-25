@@ -156,13 +156,13 @@
     dining:      ['https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=600&q=80&fit=crop','https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=600&q=80&fit=crop','https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=600&q=80&fit=crop'],
     breakfast:   ['https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=600&q=80&fit=crop','https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=600&q=80&fit=crop','https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=600&q=80&fit=crop'],
     drinks:      ['https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?w=600&q=80&fit=crop','https://images.unsplash.com/photo-1549638441-b787d2e11f14?w=600&q=80&fit=crop','https://images.unsplash.com/photo-1519671482749-fd09be7ccebf?w=600&q=80&fit=crop'],
-    mustvisit:   ['https://images.unsplash.com/photo-1552832230-c0197dd311b5?w=600&q=80&fit=crop','https://images.unsplash.com/photo-1603869311144-66b03d340b32?w=600&q=80&fit=crop','https://images.unsplash.com/photo-1516483638261-f4dbaf036963?w=600&q=80&fit=crop'],
+    mustvisit:   ['https://images.unsplash.com/photo-1552832230-c0197dd311b5?w=600&q=80&fit=crop','https://images.unsplash.com/photo-1531572753322-ad063cecc140?w=600&q=80&fit=crop','https://images.unsplash.com/photo-1516483638261-f4dbaf036963?w=600&q=80&fit=crop'],
     tonight:     ['https://images.unsplash.com/photo-1531572753322-ad063cecc140?w=600&q=80&fit=crop','https://images.unsplash.com/photo-1549638441-b787d2e11f14?w=600&q=80&fit=crop','https://images.unsplash.com/photo-1519671482749-fd09be7ccebf?w=600&q=80&fit=crop'],
-    experiences: ['https://images.unsplash.com/photo-1603869311144-66b03d340b32?w=600&q=80&fit=crop','https://images.unsplash.com/photo-1552832230-c0197dd311b5?w=600&q=80&fit=crop','https://images.unsplash.com/photo-1531572753322-ad063cecc140?w=600&q=80&fit=crop'],
+    experiences: ['https://images.unsplash.com/photo-1516483638261-f4dbaf036963?w=600&q=80&fit=crop','https://images.unsplash.com/photo-1552832230-c0197dd311b5?w=600&q=80&fit=crop','https://images.unsplash.com/photo-1531572753322-ad063cecc140?w=600&q=80&fit=crop'],
     services:    ['https://images.unsplash.com/photo-1566073771259-6a8506099945?w=600&q=80&fit=crop','https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=600&q=80&fit=crop','https://images.unsplash.com/photo-1584132967334-10e028bd69f7?w=600&q=80&fit=crop'],
     shopping:    ['https://images.unsplash.com/photo-1483985988355-763728e1935b?w=600&q=80&fit=crop','https://images.unsplash.com/photo-1555529669-e69e7aa0ba9a?w=600&q=80&fit=crop','https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80&fit=crop'],
     hidden:      ['https://images.unsplash.com/photo-1523906834658-6e24ef2386f9?w=600&q=80&fit=crop','https://images.unsplash.com/photo-1498036882173-b41c28a8ba34?w=600&q=80&fit=crop','https://images.unsplash.com/photo-1605289982774-9a6fef564df8?w=600&q=80&fit=crop'],
-    family:      ['https://images.unsplash.com/photo-1609220136736-443140cffec6?w=600&q=80&fit=crop','https://images.unsplash.com/photo-1504701954957-2010ec3bcec1?w=600&q=80&fit=crop','https://images.unsplash.com/photo-1603869311144-66b03d340b32?w=600&q=80&fit=crop'],
+    family:      ['https://images.unsplash.com/photo-1609220136736-443140cffec6?w=600&q=80&fit=crop','https://images.unsplash.com/photo-1504701954957-2010ec3bcec1?w=600&q=80&fit=crop','https://images.unsplash.com/photo-1516483638261-f4dbaf036963?w=600&q=80&fit=crop'],
     relax:       ['https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=600&q=80&fit=crop','https://images.unsplash.com/photo-1515377905703-c4788e51af15?w=600&q=80&fit=crop','https://images.unsplash.com/photo-1519823551278-64ac92734fb1?w=600&q=80&fit=crop'],
     romantic:    ['https://images.unsplash.com/photo-1516483638261-f4dbaf036963?w=600&q=80&fit=crop','https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=600&q=80&fit=crop','https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=600&q=80&fit=crop'],
   };
@@ -170,7 +170,10 @@
   function renderCard(card, sectionKey, cardIndex) {
     const photos = CATEGORY_PHOTOS[sectionKey];
     const photoUrl = card.photo || (photos ? photos[cardIndex % photos.length] : null);
-    const photoStyle = photoUrl ? ` style="background-image:url('${photoUrl}')"` : '';
+    const photoPos = card.photoPosition || '';
+    const photoStyle = photoUrl
+      ? ` style="background-image:url('${photoUrl}')${photoPos ? ';background-position:' + photoPos : ''}"`
+      : '';
     const buttons = (card.buttons || []).map((b, i) =>
       `<a class="btn${i === 0 ? ' primary' : ''}" href="${esc(b.href)}" rel="noopener" target="${b.href.startsWith('tel:') || b.href.startsWith('mailto:') ? '_self' : '_blank'}">${esc(b.label)}</a>`
     ).join('');
