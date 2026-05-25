@@ -1728,6 +1728,33 @@ app.get('/guides/:apt/premium_rome_concierge.html', requireGuideSession, (req, r
   res.sendFile(path.join(PUBLIC_DIR, 'guides', apt, 'premium_rome_concierge.html'));
 });
 
+// ── Dynamic manifest — embeds token in start_url so iOS home screen keeps it ──
+const MANIFEST_APT_NAMES = { arenula:'Via Arenula', portico:"Portico d'Ottavia", leonina:'Via Leonina', scala:'Via della Scala', trastevere:'Viale Trastevere' };
+app.get('/guides/:apt/manifest', (req, res) => {
+  const apt = String(req.params.apt || '').toLowerCase();
+  if (!['arenula','portico','leonina','scala','trastevere'].includes(apt)) return res.status(404).end();
+  const t = String(req.query.t || '');
+  const startUrl = t
+    ? `/guides/${apt}/premium_rome_concierge.html?t=${encodeURIComponent(t)}`
+    : `/guides/${apt}/premium_rome_concierge.html`;
+  res.setHeader('Content-Type', 'application/manifest+json');
+  res.json({
+    id: `/guides/${apt}/`,
+    name: `NiceFlat — ${MANIFEST_APT_NAMES[apt] || apt}`,
+    short_name: 'Rome Concierge',
+    description: 'Your premium concierge guide for your NiceFlat apartment in Rome',
+    start_url: startUrl,
+    scope: '/',
+    display: 'standalone',
+    background_color: '#120d09',
+    theme_color: '#120d09',
+    icons: [
+      { src: '/guides/icons/icon-192.png', sizes: '192x192', type: 'image/png', purpose: 'any maskable' },
+      { src: '/guides/icons/icon-512.png', sizes: '512x512', type: 'image/png', purpose: 'any maskable' }
+    ]
+  });
+});
+
 // ── Static guide assets (icons, manifests — no session needed) ───────────
 app.use("/guides", express.static(path.join(PUBLIC_DIR, "guides"), { fallthrough: false }));
 app.use("/guest-assistant", express.static(path.join(PUBLIC_DIR, "guides"), { fallthrough: false }));
@@ -4222,32 +4249,6 @@ app.post("/arrival-time", async (req, res) => {
 
 
 const PORT = process.env.PORT || 10000;
-// ── Dynamic manifest — embeds token in start_url so iOS home screen keeps it ──
-const MANIFEST_APT_NAMES = { arenula:'Via Arenula', portico:"Portico d'Ottavia", leonina:'Via Leonina', scala:'Via della Scala', trastevere:'Viale Trastevere' };
-app.get('/guides/:apt/manifest', (req, res) => {
-  const apt = String(req.params.apt || '').toLowerCase();
-  if (!['arenula','portico','leonina','scala','trastevere'].includes(apt)) return res.status(404).end();
-  const t = String(req.query.t || '');
-  const startUrl = t
-    ? `/guides/${apt}/premium_rome_concierge.html?t=${encodeURIComponent(t)}`
-    : `/guides/${apt}/premium_rome_concierge.html`;
-  res.setHeader('Content-Type', 'application/manifest+json');
-  res.json({
-    id: `/guides/${apt}/`,
-    name: `NiceFlat — ${MANIFEST_APT_NAMES[apt] || apt}`,
-    short_name: 'Rome Concierge',
-    description: 'Your premium concierge guide for your NiceFlat apartment in Rome',
-    start_url: startUrl,
-    scope: '/',
-    display: 'standalone',
-    background_color: '#120d09',
-    theme_color: '#120d09',
-    icons: [
-      { src: '/guides/icons/icon-192.png', sizes: '192x192', type: 'image/png', purpose: 'any maskable' },
-      { src: '/guides/icons/icon-512.png', sizes: '512x512', type: 'image/png', purpose: 'any maskable' }
-    ]
-  });
-});
 
 // ── Operator login (direct, no guest token needed) ───────────────────────
 app.get('/op', (req, res) => {
