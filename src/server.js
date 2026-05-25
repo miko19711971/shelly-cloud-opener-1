@@ -1673,7 +1673,23 @@ app.post('/guides/:apt/recover', async (req, res) => {
       `https://api.hostaway.com/v1/reservations?${params}`,
       { headers: { Authorization: `Bearer ${HOSTAWAY_TOKEN}` }, timeout: 10000 }
     );
-    const results = r.data?.result || [];
+    let results = r.data?.result || [];
+
+    // Booking.com uses relay/masked emails so the guestEmail API filter returns nothing.
+    // Fallback: fetch all confirmed reservations for the listing and match email client-side.
+    if (results.length === 0 && listingId) {
+      console.log(`↩️ recover: guestEmail filter empty, trying client-side match for apt=${apt}`);
+      const fbParams = new URLSearchParams({ listingMapId: listingId, status: 'confirmed', limit: '20' });
+      const r2 = await axios.get(
+        `https://api.hostaway.com/v1/reservations?${fbParams}`,
+        { headers: { Authorization: `Bearer ${HOSTAWAY_TOKEN}` }, timeout: 10000 }
+      );
+      results = (r2.data?.result || []).filter(rv =>
+        (rv.guestEmail || '').toLowerCase() === email ||
+        (rv.guest?.email || '').toLowerCase() === email
+      );
+      console.log(`↩️ recover: client-side fallback found ${results.length} match(es) for email=${email} apt=${apt}`);
+    }
 
     // Find first active reservation with check-in >= today and not expired
     const match = results.find(res => {
