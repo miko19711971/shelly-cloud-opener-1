@@ -144,19 +144,9 @@ async function runSlotCron() {
 
       console.log("🔍 res:", res.id, checkInDate, res.arrivalTime, res.listingMapId);
 
-      let arrivalTime = res.arrivalTime || null;
-      if (!arrivalTime) {
-        try {
-          const resDetail = await axios.get(
-            `https://api.hostaway.com/v1/reservations/${res.id}`,
-            { headers: { Authorization: `Bearer ${process.env.HOSTAWAY_TOKEN}` }, timeout: 8000 }
-          );
-          arrivalTime = resDetail.data?.result?.arrivalTime || null;
-          console.log("🔎 arrivalTime dal dettaglio:", res.id, arrivalTime);
-        } catch (e) {
-          console.error("❌ Errore fetch dettaglio:", res.id, e.message);
-        }
-      }
+      // Usa cache GUEST_ARRIVAL_TIMES (popolata da webhook/first-open) con fallback API
+      const arrivalTime = await getArrivalTime(res.id, res.arrivalTime || null);
+      console.log("🔎 arrivalTime risolto:", res.id, arrivalTime);
 
       const slots = decideSlots(arrivalTime, checkInDate);
 
@@ -219,6 +209,30 @@ setInterval(runSlotCron, 60000);
 // Map<key, { conversationId, apartment, lang, sendAt: Date, sent: boolean }>
 const PENDING_PHASE3 = new Map();
 
+// ── Persistence: sopravvive ai deploy ────────────────────────────────────
+const PHASE3_PERSIST_FILE = path.join(path.dirname(fileURLToPath(import.meta.url)), 'phase3-pending.json');
+
+function savePhase3State() {
+  const data = [];
+  for (const [key, entry] of PENDING_PHASE3.entries()) {
+    data.push([key, { ...entry, sendAt: entry.sendAt instanceof Date ? entry.sendAt.toISOString() : entry.sendAt }]);
+  }
+  fs.writeFile(PHASE3_PERSIST_FILE, JSON.stringify(data, null, 2), 'utf8')
+    .catch(e => console.error('❌ Save phase3 state error:', e.message));
+}
+
+// Carica stato precedente all'avvio (non-blocking)
+fs.readFile(PHASE3_PERSIST_FILE, 'utf8').then(raw => {
+  const data = JSON.parse(raw);
+  let loaded = 0;
+  for (const [key, entry] of data) {
+    if (entry.sent) continue;
+    PENDING_PHASE3.set(key, { ...entry, sendAt: new Date(entry.sendAt) });
+    loaded++;
+  }
+  if (loaded > 0) console.log(`✅ Phase 3 state restored: ${loaded} pending entries`);
+}).catch(() => {}); // file non esiste al primo avvio — OK
+
 async function sendPhase2GuideMessage({ conversationId, apartment, lang = "en", reservationId = null, checkoutDate = null }) {
   // Send personalised /stay link — device registration + session happen server-side on first open
   const guideUrl     = `https://shelly-cloud-opener-1.onrender.com/stay/${apartment}?r=${reservationId}&lang=${lang}`;
@@ -268,6 +282,7 @@ async function runPhase3Cron() {
           checkinDate: entry.checkinDate || null,
         });
         entry.sent = true;
+        savePhase3State();
         console.log(`✅ Phase 3 inviato: ${key}`);
       } catch (e) {
         console.error(`❌ Errore phase 3 send: ${key}`, e.message);
@@ -1084,17 +1099,63 @@ if (!reservation) return res.status(502).send('Unable to verify reservation. Ple
     devices.add(deviceId);
     console.log(`📱 Device registered: ${apt} | res:${reservationId} | total:${devices.size}`);
 
-    // Notifica interna all'host solo alla prima apertura assoluta della guida
+    // Notifica interna all'host + auto-schedule Phase 3 alla prima apertura
     if (isFirstOpen) {
       const guestName = reservation.guestName || reservation.guestFirstName || 'Ospite';
       const checkinFmt = checkinDate || '?';
       const now = new Date().toLocaleString('it-IT', { timeZone: 'Europe/Rome', dateStyle: 'short', timeStyle: 'short' });
       getConversationId(reservationId).then(cid => {
         if (!cid) return;
+
+        // 1) Nota interna all'host
         sendHostawayInternalNote({
           conversationId: cid,
           message: `✅ ${guestName} ha aperto la guida (${apt}) — check-in: ${checkinFmt} — ${now}`
         });
+
+        // 2) Auto-schedule Phase 3 (chiavi digitali) se non già schedulata dal webhook
+        const phase3Key = `phase3-${reservationId}`;
+        if (!PENDING_PHASE3.has(phase3Key)) {
+          const langRaw = (reservation.guestLanguage || reservation.guestLocale || 'en').toLowerCase();
+          const langMap = { spanish:'es', french:'fr', italian:'it', german:'de', english:'en',
+                            deutsch:'de', italiano:'it', 'français':'fr', 'español':'es' };
+          const guestLang3 = langMap[langRaw.split(',')[0].trim()] || langRaw.slice(0, 2) || 'en';
+          const safeLang3  = ['en','it','fr','de','es'].includes(guestLang3) ? guestLang3 : 'en';
+
+          let sendAt;
+          if (checkinTime && checkinDate) {
+            const parts = checkinTime.replace(/[apm]/gi, '').trim().split(':').map(Number);
+            const h = parts[0] || 13;
+            const m = parts[1] || 0;
+            const candidate = new Date(`${checkinDate}T${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:00+02:00`);
+            candidate.setMinutes(candidate.getMinutes() + 2);
+            sendAt = candidate;
+          } else if (checkinDate) {
+            sendAt = new Date(`${checkinDate}T13:02:00+02:00`);
+          } else {
+            sendAt = new Date(Date.now() + 2 * 60 * 1000);
+          }
+
+          // Minimo: mai prima delle 13:02 del giorno di check-in
+          if (checkinDate) {
+            const minTime = new Date(`${checkinDate}T13:02:00+02:00`);
+            if (sendAt < minTime) sendAt = minTime;
+          }
+
+          // Se l'orario è già passato (es. ospite arriva tardi e apre subito) → manda tra 2 min
+          if (sendAt <= new Date()) sendAt = new Date(Date.now() + 2 * 60 * 1000);
+
+          PENDING_PHASE3.set(phase3Key, {
+            conversationId: cid,
+            apartment: apt,
+            lang: safeLang3,
+            sendAt,
+            checkinDate,
+            sent: false
+          });
+          savePhase3State();
+          console.log(`🗓 Phase 3 auto-scheduled (first open): ${apt} | res:${reservationId} | sendAt:${sendAt.toISOString()}`);
+        }
       }).catch(e => console.error('❌ Notifica prima apertura guida:', e.message));
     }
   }
@@ -3680,6 +3741,7 @@ const guestLang = (reservation?.guestLanguage || "en").slice(0, 2).toLowerCase()
         // Schedule phase 3 notification (keys unlock) at check-in time
         const phase3Key = `phase3-${effectiveReservationId}`;
         PENDING_PHASE3.set(phase3Key, { conversationId, apartment, lang: guestLang, sendAt, checkinDate: arrivalDate, sent: false });
+        savePhase3State();
         console.log(`Phase 3 scheduled: ${apartment} | sendAt: ${sendAt.toISOString()} | lang: ${guestLang}`);
       } catch (e) {
         console.error('Errore scheduling phase 3:', e.message);
