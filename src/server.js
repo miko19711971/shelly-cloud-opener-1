@@ -1096,8 +1096,13 @@ if (!reservation) return res.status(502).send('Unable to verify reservation. Ple
       const ev = String(req.query.ev || '');
       if (!isValidEmailVerifyToken(ev, reservationId)) {
         const guestEmail = (reservation.guestEmail || '').toLowerCase().trim();
-        const emailHash = hmac(`${reservationId}:${guestEmail}`);
-        return res.type('html').send(renderEmailVerifyPage(apt, reservationId, finalLang, emailHash, false));
+        // Booking.com usa email mascherate (@guest.booking.com): l'ospite non può conoscerla.
+        // In quel caso saltiamo la verifica email — MAX_GUIDE_DEVICES protegge comunque da abusi.
+        const isBookingComMasked = guestEmail.includes('@guest.booking.com') || guestEmail.includes('@booking.com');
+        if (!isBookingComMasked) {
+          const emailHash = hmac(`${reservationId}:${guestEmail}`);
+          return res.type('html').send(renderEmailVerifyPage(apt, reservationId, finalLang, emailHash, false));
+        }
       }
     }
 
@@ -1739,6 +1744,13 @@ app.post('/guides/:apt/recover', async (req, res) => {
     return res.redirect(302, '/operator-panel');
   }
 
+  // Accetta anche un numero di prenotazione diretto (es. 57412110)
+  if (/^\d{5,10}$/.test(email.replace(/\D/g, '')) && !email.includes('@')) {
+    const rid = email.replace(/\D/g, '');
+    console.log(`↩️ recover: reservation ID diretto: ${rid} apt=${apt}`);
+    return res.redirect(302, `/stay/${apt}?r=${rid}&lang=${safeLang}`);
+  }
+
   if (!email || !email.includes('@')) return res.type('html').send(recoveryFormHtml(apt, safeLang, true));
 
   try {
@@ -1767,6 +1779,30 @@ app.post('/guides/:apt/recover', async (req, res) => {
         (rv.guest?.email || '').toLowerCase() === email
       );
       console.log(`↩️ recover: client-side fallback found ${results.length} match(es) for email=${email} apt=${apt}`);
+    }
+
+    // Terzo tentativo: cerca per nome estratto dall'email (per ospiti Booking.com con email mascherata)
+    if (results.length === 0 && listingId) {
+      const nameParts = email.split('@')[0]
+        .replace(/[._+\-]/g, ' ')
+        .trim()
+        .split(/\s+/)
+        .filter(p => p.length > 2);
+      if (nameParts.length > 0) {
+        console.log(`↩️ recover: name-based match, parts=${JSON.stringify(nameParts)} apt=${apt}`);
+        const r3 = await axios.get(
+          `https://api.hostaway.com/v1/reservations?listingMapId=${listingId}&limit=20`,
+          { headers: { Authorization: `Bearer ${HOSTAWAY_TOKEN}` }, timeout: 10000 }
+        );
+        results = (r3.data?.result || []).filter(rv => {
+          if (rv.status === 'cancelled') return false;
+          const fn = (rv.guestFirstName || '').toLowerCase();
+          const ln = (rv.guestLastName || '').toLowerCase();
+          const full = (rv.guestName || '').toLowerCase();
+          return nameParts.every(p => fn.includes(p) || ln.includes(p) || full.includes(p));
+        });
+        console.log(`↩️ recover: name-based found ${results.length}`);
+      }
     }
 
     // Find first active reservation with check-in >= today and not expired
@@ -4352,43 +4388,54 @@ const listingMapId = reservation?.listingMapId || data?.listingMapId || reservat
       return;
     }
 
-    // Recupera conversationId se mancante
-    if (!conversationId && effectiveReservationId) {
+    // Risolvi l'ID Hostaway interno se il webhook ha passato un channel ID Booking.com (>8 cifre)
+    let hostawayRid = reservation?.id || effectiveReservationId;
+    if (/^\d{9,}$/.test(String(effectiveReservationId))) {
       try {
-        const convResp = await axios.get(
-          `https://api.hostaway.com/v1/conversations?reservationId=${effectiveReservationId}`,
-          {
-            headers: { Authorization: `Bearer ${HOSTAWAY_TOKEN}` },
-            timeout: 10000
-          }
+        const chResp = await axios.get(
+          `https://api.hostaway.com/v1/reservations?channelReservationId=${effectiveReservationId}${listingMapId ? '&listingMapId=' + listingMapId : ''}&limit=1`,
+          { headers: { Authorization: `Bearer ${HOSTAWAY_TOKEN}` }, timeout: 10000 }
         );
-        
-        conversationId = convResp.data?.result?.[0]?.id;
-        console.log("✅ ConversationId recuperato:", conversationId);
+        const chRes = chResp.data?.result?.[0];
+        if (chRes?.id) {
+          hostawayRid = chRes.id;
+          console.log(`🔄 Channel ID ${effectiveReservationId} → Hostaway ID ${hostawayRid}`);
+          if (!arrivalTime) arrivalTime = chRes.arrivalTime || (chRes.checkInTime ? `${chRes.checkInTime}:00` : null);
+        }
       } catch (e) {
-        console.error("❌ Impossibile recuperare conversationId:", e.message);
+        console.error("❌ Channel ID lookup:", e.message);
       }
     }
 
-    // ✅ Recupera arrivalTime se mancante
-    if (!arrivalTime && effectiveReservationId) {
+    // Recupera conversationId se mancante (retry: le nuove prenotazioni potrebbero non averla ancora)
+    if (!conversationId && hostawayRid) {
+      for (let attempt = 0; attempt < 3 && !conversationId; attempt++) {
+        if (attempt > 0) await new Promise(r => setTimeout(r, 3000 * attempt));
+        try {
+          const convResp = await axios.get(
+            `https://api.hostaway.com/v1/conversations?reservationId=${hostawayRid}`,
+            { headers: { Authorization: `Bearer ${HOSTAWAY_TOKEN}` }, timeout: 10000 }
+          );
+          conversationId = convResp.data?.result?.[0]?.id;
+          if (conversationId) console.log("✅ ConversationId recuperato:", conversationId);
+        } catch (e) {
+          console.error(`❌ Tentativo ${attempt + 1} conversationId: ${e.message}`);
+        }
+      }
+      if (!conversationId) console.warn("⚠️ ConversationId non trovato per:", hostawayRid);
+    }
+
+    // ✅ Recupera arrivalTime se ancora mancante
+    if (!arrivalTime && hostawayRid) {
       try {
         const resResp = await axios.get(
-          `https://api.hostaway.com/v1/reservations/${effectiveReservationId}`,
-          {
-            headers: { Authorization: `Bearer ${HOSTAWAY_TOKEN}` },
-            timeout: 10000
-          }
+          `https://api.hostaway.com/v1/reservations/${hostawayRid}`,
+          { headers: { Authorization: `Bearer ${HOSTAWAY_TOKEN}` }, timeout: 10000 }
         );
-        
         const resData = resResp.data?.result;
         arrivalTime = resData?.arrivalTime;
-        
-        if (!arrivalTime && resData?.checkInTime) {
-          arrivalTime = `${resData.checkInTime}:00`;
-        }
-        
-        console.log("✅ ArrivalTime recuperato:", arrivalTime);
+        if (!arrivalTime && resData?.checkInTime) arrivalTime = `${resData.checkInTime}:00`;
+        if (arrivalTime) console.log("✅ ArrivalTime recuperato:", arrivalTime);
       } catch (e) {
         console.error("❌ Errore recupero arrivalTime:", e.message);
       }
