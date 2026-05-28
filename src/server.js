@@ -671,7 +671,7 @@ function checkoutExpiryMs(checkoutDateStr) {
 // GUIDE GUARD — device registry + session cookies (max 2 devices/reservation)
 // ========================================================================
 const GUIDE_DEVICES = new Map();   // reservationId → Set<deviceId>
-const MAX_GUIDE_DEVICES = 3;
+const MAX_GUIDE_DEVICES = 2;
 const GUIDE_PING_SENT = new Set(); // reservationId → già notificato (dedup in-memory)
 const VALID_APARTMENTS = ['trastevere', 'portico', 'arenula', 'scala', 'leonina'];
 
@@ -766,19 +766,43 @@ function requireGuideSession(req, res, next) {
   next();
 }
 
-function blockedPage() {
-  return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+function blockedPage(apt, reservationId, lang = 'en', emailError = false) {
+  const L = {
+    en: { title: 'App already active', msg: 'This Concierge App is already active on the maximum number of allowed devices.', resetTitle: 'Reset with booking email', placeholder: 'Email used for booking', btn: 'Reset access', err: 'Email not recognized. Please try again.', contact: 'Contact Michele' },
+    it: { title: 'App già attiva', msg: "Quest'app è già attiva sul numero massimo di dispositivi consentiti.", resetTitle: "Reimposta con l'email di prenotazione", placeholder: 'Email usata per la prenotazione', btn: 'Reimposta accesso', err: 'Email non riconosciuta. Riprova.', contact: 'Contatta Michele' },
+    fr: { title: 'App déjà active', msg: "Cette application est déjà active sur le nombre maximum d'appareils autorisés.", resetTitle: 'Réinitialiser avec l\'email de réservation', placeholder: 'Email utilisé pour la réservation', btn: 'Réinitialiser l\'accès', err: 'Email non reconnu. Veuillez réessayer.', contact: 'Contacter Michele' },
+    de: { title: 'App bereits aktiv', msg: 'Diese App ist bereits auf der maximalen Anzahl erlaubter Geräte aktiv.', resetTitle: 'Mit Buchungs-E-Mail zurücksetzen', placeholder: 'Bei der Buchung verwendete E-Mail', btn: 'Zugang zurücksetzen', err: 'E-Mail nicht erkannt. Bitte erneut versuchen.', contact: 'Michele kontaktieren' },
+    es: { title: 'App ya activa', msg: 'Esta aplicación ya está activa en el número máximo de dispositivos permitidos.', resetTitle: 'Restablecer con el email de reserva', placeholder: 'Email usado para la reserva', btn: 'Restablecer acceso', err: 'Email no reconocido. Por favor, inténtelo de nuevo.', contact: 'Contactar a Michele' },
+  };
+  const t = L[lang] || L.en;
+  const hasReset = apt && reservationId;
+  return `<!doctype html><html lang="${lang}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>NiceFlat Rome Concierge</title>
 <style>*{box-sizing:border-box}body{margin:0;min-height:100vh;background:#120d09;display:flex;align-items:center;justify-content:center;font-family:system-ui,sans-serif;padding:24px}
 .card{max-width:380px;width:100%;text-align:center}.icon{font-size:52px;margin-bottom:20px}
 h1{color:#f5ead8;font-size:22px;font-weight:700;margin:0 0 12px}
 p{color:#b7a894;font-size:15px;line-height:1.6;margin:0 0 28px}
 a.btn{display:inline-block;background:linear-gradient(135deg,#e8c67a,#c89a48);color:#120d09;font-weight:700;font-size:15px;padding:14px 28px;border-radius:14px;text-decoration:none}
+hr{border:none;border-top:1px solid rgba(214,176,109,.18);margin:28px 0}
+.reset-title{color:#d6b06d;font-size:13px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;margin-bottom:14px}
+input[type=email]{width:100%;padding:13px 16px;background:rgba(255,255,255,.07);border:1px solid rgba(214,176,109,.3);border-radius:12px;color:#f5ead8;font-size:15px;margin-bottom:12px;outline:none}
+input[type=email]::placeholder{color:#7a6d5e}
+button{width:100%;padding:13px;background:linear-gradient(135deg,#e8c67a,#c89a48);color:#120d09;font-weight:700;font-size:15px;border:none;border-radius:14px;cursor:pointer}
+.err{color:#e07a5f;font-size:13px;margin-bottom:12px}
 </style></head><body><div class="card">
 <div class="icon">🔒</div>
-<h1>App already active</h1>
-<p>This Concierge App is already active on the maximum number of allowed devices.<br><br>Please contact Michele for assistance.</p>
-<a class="btn" href="https://wa.me/393478783030">Contact Michele</a>
+<h1>${t.title}</h1>
+<p>${t.msg}</p>
+<a class="btn" href="https://wa.me/393478783030">${t.contact}</a>
+${hasReset ? `<hr>
+<div class="reset-title">${t.resetTitle}</div>
+${emailError ? `<div class="err">${t.err}</div>` : ''}
+<form method="POST" action="/stay/${apt}/reset-session">
+  <input type="hidden" name="r" value="${reservationId}">
+  <input type="hidden" name="lang" value="${lang}">
+  <input type="email" name="email" placeholder="${t.placeholder}" required autocomplete="email">
+  <button type="submit">${t.btn}</button>
+</form>` : ''}
 </div></body></html>`;
 }
 // ── End Guide Guard ────────────────────────────────────────────────────────
@@ -1108,7 +1132,7 @@ if (!reservation) return res.status(502).send('Unable to verify reservation. Ple
 
     if (devices.size >= MAX_GUIDE_DEVICES) {
       console.warn(`⚠️ /stay max devices reached: res:${reservationId} count:${devices.size}`);
-      return res.status(403).type('html').send(blockedPage());
+      return res.status(403).type('html').send(blockedPage(apt, reservationId, finalLang));
     }
     const isFirstOpen = devices.size === 0;
     deviceId = crypto.randomBytes(16).toString('hex');
@@ -1216,6 +1240,41 @@ app.post('/stay/:apt/verify-email', (req, res) => {
   const ev = makeEmailVerifyToken(rid);
   const safeLang = ['en','it','fr','de','es'].includes(lang) ? lang : 'en';
   return res.redirect(302, `/stay/${apt}?r=${encodeURIComponent(rid)}&ev=${encodeURIComponent(ev)}&lang=${safeLang}`);
+});
+
+// ── POST /stay/:apt/reset-session — guest resets device slots via booking email ─
+app.post('/stay/:apt/reset-session', async (req, res) => {
+  const apt  = String(req.params.apt || '').toLowerCase();
+  const rid  = String(req.body?.r   || '').trim();
+  const lang = String(req.body?.lang || 'en').slice(0, 2).toLowerCase();
+  const safeLang = ['en','it','fr','de','es'].includes(lang) ? lang : 'en';
+  const email = String(req.body?.email || '').toLowerCase().trim();
+
+  if (!VALID_APARTMENTS.includes(apt) || !rid || !email || !email.includes('@')) {
+    return res.status(400).send('Bad request');
+  }
+
+  try {
+    const r = await axios.get(
+      `https://api.hostaway.com/v1/reservations/${rid}`,
+      { headers: { Authorization: `Bearer ${HOSTAWAY_TOKEN}` }, timeout: 10000 }
+    );
+    const reservation = r.data?.result;
+    if (!reservation || reservation.status === 'cancelled') {
+      return res.status(403).type('html').send(blockedPage(apt, rid, safeLang, true));
+    }
+    const guestEmail = (reservation.guestEmail || reservation.guest?.email || '').toLowerCase().trim();
+    if (!guestEmail || guestEmail !== email) {
+      console.warn(`⚠️ /reset-session email mismatch: apt=${apt} res=${rid}`);
+      return res.status(403).type('html').send(blockedPage(apt, rid, safeLang, true));
+    }
+    GUIDE_DEVICES.delete(rid);
+    console.log(`🔄 Device reset via email: ${apt} | res:${rid}`);
+    return res.redirect(302, `/stay/${apt}?r=${encodeURIComponent(rid)}&lang=${safeLang}`);
+  } catch (e) {
+    console.error('❌ /reset-session error:', e.message);
+    return res.status(502).type('html').send(blockedPage(apt, rid, safeLang, false));
+  }
 });
 
 // ── DELETE /admin/guide-devices/:reservationId — reset device slots ───────
