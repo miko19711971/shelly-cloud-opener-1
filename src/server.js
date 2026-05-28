@@ -1255,19 +1255,40 @@ app.post('/stay/:apt/reset-session', async (req, res) => {
   }
 
   try {
-    const r = await axios.get(
-      `https://api.hostaway.com/v1/reservations/${rid}`,
-      { headers: { Authorization: `Bearer ${HOSTAWAY_TOKEN}` }, timeout: 10000 }
-    );
-    const reservation = r.data?.result;
+    // Stessa logica lookup di /stay/: diretto solo per ID interni ≤8 cifre
+    let reservation = null;
+    const isShortId = /^\d+$/.test(rid) && rid.length <= 8;
+    if (isShortId) {
+      const r = await axios.get(
+        `https://api.hostaway.com/v1/reservations/${rid}`,
+        { headers: { Authorization: `Bearer ${HOSTAWAY_TOKEN}` }, timeout: 10000 }
+      );
+      reservation = r.data?.result || null;
+    } else {
+      const listingId = Object.entries(APT_LISTING_MAP).find(([, v]) => v === apt)?.[0];
+      const params = new URLSearchParams({ channelReservationId: rid, limit: '1' });
+      if (listingId) params.set('listingMapId', listingId);
+      const r = await axios.get(
+        `https://api.hostaway.com/v1/reservations?${params}`,
+        { headers: { Authorization: `Bearer ${HOSTAWAY_TOKEN}` }, timeout: 10000 }
+      );
+      reservation = r.data?.result?.[0] || null;
+    }
+
     if (!reservation || reservation.status === 'cancelled') {
       return res.status(403).type('html').send(blockedPage(apt, rid, safeLang, true));
     }
+
     const guestEmail = (reservation.guestEmail || reservation.guest?.email || '').toLowerCase().trim();
-    if (!guestEmail || guestEmail !== email) {
-      console.warn(`⚠️ /reset-session email mismatch: apt=${apt} res=${rid}`);
-      return res.status(403).type('html').send(blockedPage(apt, rid, safeLang, true));
+    const isBookingComMasked = guestEmail.includes('@guest.booking.com') || guestEmail.includes('@booking.com');
+
+    if (!isBookingComMasked) {
+      if (!guestEmail || guestEmail !== email) {
+        console.warn(`⚠️ /reset-session email mismatch: apt=${apt} res=${rid}`);
+        return res.status(403).type('html').send(blockedPage(apt, rid, safeLang, true));
+      }
     }
+
     GUIDE_DEVICES.delete(rid);
     console.log(`🔄 Device reset via email: ${apt} | res:${rid}`);
     return res.redirect(302, `/stay/${apt}?r=${encodeURIComponent(rid)}&lang=${safeLang}`);
