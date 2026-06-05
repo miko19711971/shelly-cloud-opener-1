@@ -4274,26 +4274,37 @@ app.post("/stripe-webhook", express.raw({ type: "application/json" }), async (re
   }
 
   // Eventi Stripe da gestire
-  if (event.type === "payment_intent.succeeded" || 
+  if (event.type === "payment_intent.succeeded" ||
       event.type === "charge.succeeded" ||
       event.type === "checkout.session.completed") {
-    
+
     const paymentData = event.data.object;
-    
+
+    // checkout.session usa amount_total; payment_intent/charge usano amount_received o amount
+    const amountRaw = paymentData.amount_total ?? paymentData.amount_received ?? paymentData.amount ?? 0;
+    const amountEur = amountRaw / 100;
+
+    // reservation_id messo nei metadata sia sulla session che sul payment_intent
+    const reservationId = paymentData.metadata?.reservation_id || "";
+
     console.log("📝 Tipo evento:", event.type);
-    console.log("💰 Importo:", paymentData.amount / 100, paymentData.currency?.toUpperCase());
-    
+    console.log("💰 Importo:", amountEur, (paymentData.currency || "eur").toUpperCase());
+    console.log("🔑 Reservation ID:", reservationId || "(non presente)");
+
     // Estrai dati pagamento
     const rowData = {
       source: "Stripe",
       timestamp: new Date().toISOString(),
       eventType: event.type,
       paymentId: paymentData.id,
-      amount: paymentData.amount / 100,
+      reservationId,
+      amount: amountEur,
       currency: (paymentData.currency || "eur").toUpperCase(),
       status: paymentData.status,
-      customerEmail: paymentData.receipt_email || paymentData.customer_email || "",
-      customerName: paymentData.billing_details?.name || "",
+      customerEmail: paymentData.receipt_email || paymentData.customer_email ||
+                     paymentData.customer_details?.email || "",
+      customerName: paymentData.billing_details?.name ||
+                    paymentData.customer_details?.name || "",
       description: paymentData.description || "",
       metadata: JSON.stringify(paymentData.metadata || {})
     };
@@ -4585,6 +4596,114 @@ app.get('/operator-guide', (req, res) => {
 });
 // ── End Operator panel routes ─────────────────────────────────────────────
 
+// ========================================================================
+// STRIPE PAYMENT LINK — GET /pay/stripe
+// ========================================================================
+// Chiamato dal GAS con: /pay/stripe?amount=37.34&res=12345
+// `amount` è già lordo (commissione Stripe inclusa) — calcolato dal GAS.
+// Crea una Checkout Session e redirige il cliente alla pagina di pagamento.
+
+app.get("/pay/stripe", async (req, res) => {
+  const amount       = parseFloat(req.query.amount);
+  const reservationId = String(req.query.res || "").trim();
+
+  if (!amount || amount < 1 || amount > 9999 || !reservationId) {
+    return res.status(400).send("Parametri non validi.");
+  }
+  if (!process.env.STRIPE_SECRET_KEY) {
+    console.error("❌ STRIPE_SECRET_KEY mancante");
+    return res.status(500).send("Configurazione server non completa.");
+  }
+
+  try {
+    const stripe      = (await import("stripe")).default(process.env.STRIPE_SECRET_KEY);
+    const amountCents = Math.round(amount * 100);
+    const baseUrl     = process.env.BASE_URL || `https://${req.hostname}`;
+
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ["card"],
+      mode: "payment",
+      line_items: [{
+        price_data: {
+          currency: "eur",
+          unit_amount: amountCents,
+          product_data: {
+            name: "Tassa di soggiorno - Roma",
+            description: `Prenotazione ${reservationId}`,
+          },
+        },
+        quantity: 1,
+      }],
+      // reservation_id su sessione E su payment_intent — il webhook GAS lo legge da entrambi
+      metadata: { reservation_id: reservationId },
+      payment_intent_data: { metadata: { reservation_id: reservationId } },
+      success_url: `${baseUrl}/pay/stripe/success?res=${encodeURIComponent(reservationId)}`,
+      cancel_url:  `${baseUrl}/pay/stripe/cancel?res=${encodeURIComponent(reservationId)}`,
+    });
+
+    console.log(`💳 Stripe session creata: ${session.id} | res:${reservationId} | EUR ${amount}`);
+    return res.redirect(303, session.url);
+  } catch (err) {
+    console.error("❌ Errore creazione Stripe session:", err.message);
+    return res.status(500).send("Errore nella creazione del pagamento. Riprova più tardi.");
+  }
+});
+
+app.get("/pay/stripe/success", (req, res) => {
+  res.type("html").send(`<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Pagamento ricevuto</title>
+  <style>
+    body{font-family:-apple-system,sans-serif;display:flex;align-items:center;
+         justify-content:center;min-height:100vh;margin:0;background:#f0fdf4}
+    .card{background:#fff;border-radius:16px;padding:40px 32px;text-align:center;
+          max-width:400px;box-shadow:0 4px 24px rgba(0,0,0,.08)}
+    .icon{font-size:56px;margin-bottom:16px}
+    h1{color:#16a34a;margin:0 0 12px;font-size:1.5rem}
+    p{color:#555;margin:0;line-height:1.6}
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="icon">✅</div>
+    <h1>Pagamento ricevuto!</h1>
+    <p>Grazie per aver pagato la tassa di soggiorno.<br>
+       Riceverai una conferma via email.</p>
+  </div>
+</body>
+</html>`);
+});
+
+app.get("/pay/stripe/cancel", (req, res) => {
+  res.type("html").send(`<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Pagamento annullato</title>
+  <style>
+    body{font-family:-apple-system,sans-serif;display:flex;align-items:center;
+         justify-content:center;min-height:100vh;margin:0;background:#fff7f7}
+    .card{background:#fff;border-radius:16px;padding:40px 32px;text-align:center;
+          max-width:400px;box-shadow:0 4px 24px rgba(0,0,0,.08)}
+    .icon{font-size:56px;margin-bottom:16px}
+    h1{color:#dc2626;margin:0 0 12px;font-size:1.5rem}
+    p{color:#555;margin:0;line-height:1.6}
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="icon">❌</div>
+    <h1>Pagamento annullato</h1>
+    <p>Il pagamento non è stato completato.<br>
+       Puoi riprovare usando il link ricevuto via email.</p>
+  </div>
+</body>
+</html>`);
+});
 
 app.listen(PORT, () => {
   console.log("Server running on", PORT);
