@@ -4616,7 +4616,8 @@ app.get("/pay/stripe", async (req, res) => {
   }
 
   try {
-    const stripe      = (await import("stripe")).default(process.env.STRIPE_SECRET_KEY);
+    const StripeLib   = (await import("stripe")).default;
+    const stripe      = new StripeLib(process.env.STRIPE_SECRET_KEY, { timeout: 15000 });
     const amountCents = Math.round(amount * 100);
     const baseUrl     = process.env.BASE_URL || `https://${req.hostname}`;
 
@@ -4644,7 +4645,7 @@ app.get("/pay/stripe", async (req, res) => {
     console.log(`💳 Stripe session creata: ${session.id} | res:${reservationId} | EUR ${amount}`);
     return res.redirect(303, session.url);
   } catch (err) {
-    console.error("❌ Errore creazione Stripe session:", err.message);
+    console.error("❌ Errore creazione Stripe session:", err.type, err.code, err.statusCode, err.message);
     return res.status(500).send("Errore nella creazione del pagamento. Riprova più tardi.");
   }
 });
