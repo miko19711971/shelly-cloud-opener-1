@@ -4616,36 +4616,40 @@ app.get("/pay/stripe", async (req, res) => {
   }
 
   try {
-    const StripeLib   = (await import("stripe")).default;
-    const stripe      = new StripeLib(process.env.STRIPE_SECRET_KEY, { timeout: 15000 });
     const amountCents = Math.round(amount * 100);
     const baseUrl     = process.env.BASE_URL || `https://${req.hostname}`;
 
-    const session = await stripe.checkout.sessions.create({
-      payment_method_types: ["card"],
-      mode: "payment",
-      line_items: [{
-        price_data: {
-          currency: "eur",
-          unit_amount: amountCents,
-          product_data: {
-            name: "Tassa di soggiorno - Roma",
-            description: `Prenotazione ${reservationId}`,
-          },
+    // Usa axios direttamente — evita problemi di connessione del Stripe SDK
+    const params = new URLSearchParams();
+    params.append("mode", "payment");
+    params.append("payment_method_types[]", "card");
+    params.append("line_items[0][price_data][currency]", "eur");
+    params.append("line_items[0][price_data][unit_amount]", String(amountCents));
+    params.append("line_items[0][price_data][product_data][name]", "Tassa di soggiorno - Roma");
+    params.append("line_items[0][price_data][product_data][description]", `Prenotazione ${reservationId}`);
+    params.append("line_items[0][quantity]", "1");
+    params.append("metadata[reservation_id]", reservationId);
+    params.append("payment_intent_data[metadata][reservation_id]", reservationId);
+    params.append("success_url", `${baseUrl}/pay/stripe/success?res=${encodeURIComponent(reservationId)}`);
+    params.append("cancel_url",  `${baseUrl}/pay/stripe/cancel?res=${encodeURIComponent(reservationId)}`);
+
+    const { data: session } = await axios.post(
+      "https://api.stripe.com/v1/checkout/sessions",
+      params.toString(),
+      {
+        headers: {
+          "Authorization": `Bearer ${process.env.STRIPE_SECRET_KEY}`,
+          "Content-Type": "application/x-www-form-urlencoded",
         },
-        quantity: 1,
-      }],
-      // reservation_id su sessione E su payment_intent — il webhook GAS lo legge da entrambi
-      metadata: { reservation_id: reservationId },
-      payment_intent_data: { metadata: { reservation_id: reservationId } },
-      success_url: `${baseUrl}/pay/stripe/success?res=${encodeURIComponent(reservationId)}`,
-      cancel_url:  `${baseUrl}/pay/stripe/cancel?res=${encodeURIComponent(reservationId)}`,
-    });
+        timeout: 15000,
+      }
+    );
 
     console.log(`💳 Stripe session creata: ${session.id} | res:${reservationId} | EUR ${amount}`);
     return res.redirect(303, session.url);
   } catch (err) {
-    console.error("❌ Errore creazione Stripe session:", err.type, err.code, err.statusCode, err.message);
+    const detail = err.response?.data?.error?.message || err.message;
+    console.error("❌ Errore creazione Stripe session:", detail);
     return res.status(500).send("Errore nella creazione del pagamento. Riprova più tardi.");
   }
 });
