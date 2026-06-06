@@ -4603,11 +4603,19 @@ app.get('/operator-guide', (req, res) => {
 // `amount` è già lordo (commissione Stripe inclusa) — calcolato dal GAS.
 // Crea una Checkout Session e redirige il cliente alla pagina di pagamento.
 
+// Calcola il lordo che il cliente deve pagare perché l'host riceva esattamente `tassa`.
+// Formula: lordo = ceil((tassa + 0.25) / (1 - 0.029) * 100) / 100
+// Worst-case carte non-EU (2.9% + €0.25). Per carte EU l'host riceve leggermente di più.
+function calcolaLordoStripe(tassa) {
+  return Math.ceil((tassa + 0.25) / (1 - 0.029) * 100) / 100;
+}
+
 app.get("/pay/stripe", async (req, res) => {
-  const amount       = parseFloat(req.query.amount);
+  // `amount` è la tassa NETTA dovuta (es. 36) — il server aggiunge la commissione Stripe
+  const tassa        = parseFloat(req.query.amount);
   const reservationId = String(req.query.res || "").trim();
 
-  if (!amount || amount < 1 || amount > 9999 || !reservationId) {
+  if (!tassa || tassa < 1 || tassa > 9999 || !reservationId) {
     return res.status(400).send("Parametri non validi.");
   }
   if (!process.env.STRIPE_SECRET_KEY) {
@@ -4615,8 +4623,10 @@ app.get("/pay/stripe", async (req, res) => {
     return res.status(500).send("Configurazione server non completa.");
   }
 
-  try {
-    const amountCents = Math.round(amount * 100);
+  // Importo lordo che il cliente paga (include commissione Stripe)
+  const amount      = calcolaLordoStripe(tassa);
+  const amountCents = Math.round(amount * 100);
+  console.log(`💶 Tassa netta: €${tassa} → lordo cliente: €${amount} (${amountCents} cents)`);
     const baseUrl     = process.env.BASE_URL || `https://${req.hostname}`;
 
     // Usa axios direttamente — evita problemi di connessione del Stripe SDK
