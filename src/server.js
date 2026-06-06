@@ -4610,13 +4610,43 @@ function calcolaLordoStripe(tassa) {
   return Math.ceil((tassa + 0.25) / (1 - 0.029) * 100) / 100;
 }
 
-app.get("/pay/stripe", async (req, res) => {
-  // `amount` è la tassa NETTA dovuta (es. 36) — il server aggiunge la commissione Stripe
-  const tassa        = parseFloat(req.query.amount);
-  const reservationId = String(req.query.res || "").trim();
+// Tariffa per appartamento (€/notte/persona), max 10 notti
+const CITY_TAX_RATES = {
+  arenula    : 5,
+  portico    : 5,
+  scala      : 5,
+  trastevere : 5,
+  leonina    : 6,
+};
+const CITY_TAX_MAX_NIGHTS = 10;
 
-  if (!tassa || tassa < 1 || tassa > 9999 || !reservationId) {
+app.get("/pay/stripe", async (req, res) => {
+  const reservationId = String(req.query.res || "").trim();
+  if (!reservationId) return res.status(400).send("Parametri non validi.");
+
+  let tassa;
+
+  if (req.query.listing) {
+    // Formato Hostaway: ?listing=arenula&guests=2&nights=3&res=...
+    const listing = String(req.query.listing).toLowerCase().trim();
+    const guests  = Math.max(1, parseInt(req.query.guests) || 1);
+    const nights  = Math.min(Math.max(1, parseInt(req.query.nights) || 1), CITY_TAX_MAX_NIGHTS);
+    const rate    = CITY_TAX_RATES[listing];
+    if (!rate) {
+      console.error(`❌ Listing sconosciuto: ${listing}`);
+      return res.status(400).send("Appartamento non riconosciuto.");
+    }
+    tassa = nights * guests * rate;
+    console.log(`🏠 ${listing} | ${nights} notti × ${guests} ospiti × €${rate} = €${tassa}`);
+  } else if (req.query.amount) {
+    // Formato GAS email: ?amount=36&res=...
+    tassa = parseFloat(req.query.amount);
+  } else {
     return res.status(400).send("Parametri non validi.");
+  }
+
+  if (!tassa || tassa < 1 || tassa > 9999) {
+    return res.status(400).send("Importo non valido.");
   }
   if (!process.env.STRIPE_SECRET_KEY) {
     console.error("❌ STRIPE_SECRET_KEY mancante");
