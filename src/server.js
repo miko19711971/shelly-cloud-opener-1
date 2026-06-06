@@ -4627,7 +4627,9 @@ app.get("/pay/stripe", async (req, res) => {
   const amount      = calcolaLordoStripe(tassa);
   const amountCents = Math.round(amount * 100);
   console.log(`💶 Tassa netta: €${tassa} → lordo cliente: €${amount} (${amountCents} cents)`);
-    const baseUrl     = process.env.BASE_URL || `https://${req.hostname}`;
+
+  try {
+    const baseUrl = process.env.BASE_URL || `https://${req.hostname}`;
 
     // Usa axios direttamente — evita problemi di connessione del Stripe SDK
     const params = new URLSearchParams();
