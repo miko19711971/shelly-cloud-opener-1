@@ -4627,17 +4627,24 @@ app.get("/pay/stripe", async (req, res) => {
   let tassa;
 
   if (req.query.listing) {
-    // Formato Hostaway: ?listing=arenula&guests=2&nights=3&res=...
+    // Formato Hostaway: ?listing=arenula&guests=2&nights=3&res=...&channel=vrbo (opzionale)
     const listing = String(req.query.listing).toLowerCase().trim();
-    const guests  = Math.max(1, parseInt(req.query.guests) || 1);
+    const channel = String(req.query.channel || "").toLowerCase().trim();
+    let   guests  = Math.max(1, parseInt(req.query.guests) || 1);
     const nights  = Math.min(Math.max(1, parseInt(req.query.nights) || 1), CITY_TAX_MAX_NIGHTS);
     const rate    = CITY_TAX_RATES[listing];
     if (!rate) {
       console.error(`❌ Listing sconosciuto: ${listing}`);
       return res.status(400).send("Appartamento non riconosciuto.");
     }
+    // Vrbo via iCal non passa il numero reale di ospiti: arriva sempre 1.
+    // Correzione: se canale Vrbo e ospiti = 1, imposta 2.
+    if (channel === "vrbo" && guests === 1) {
+      console.log(`🔧 Vrbo guest fix: 1 → 2 (res:${reservationId})`);
+      guests = 2;
+    }
     tassa = nights * guests * rate;
-    console.log(`🏠 ${listing} | ${nights} notti × ${guests} ospiti × €${rate} = €${tassa}`);
+    console.log(`🏠 ${listing} | ch:${channel || "n/a"} | ${nights} notti × ${guests} ospiti × €${rate} = €${tassa}`);
   } else if (req.query.amount) {
     // Formato GAS email: ?amount=36&res=...
     tassa = parseFloat(req.query.amount);
