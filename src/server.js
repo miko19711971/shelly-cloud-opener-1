@@ -1354,7 +1354,7 @@ app.get('/admin/fix-city-tax-once', async (req, res) => {
     return res.json({ ok: true, updated: results.length, results });
   } catch (err) {
     console.error('❌ fix-city-tax-once error:', err.message);
-    return res.json({ ok: false, error: err.message });
+    return res.json({ ok: false, error: err.message, serviceAccount: process.env.GOOGLE_CLIENT_EMAIL });
   }
 });
 
