@@ -1309,55 +1309,6 @@ app.delete('/admin/guide-devices/:reservationId', requireAdmin, (req, res) => {
   return res.json({ ok: true, reservationId: rid, devicesCleared: count, existed });
 });
 
-// ── GET /admin/fix-city-tax-once — TEMPORANEO: corregge 5 TASSA_IMPORTO sbagliati ──
-app.get('/admin/fix-city-tax-once', async (req, res) => {
-  const ONE_TIME_TOKEN = 'fix-ct-9k2m4p7r1x';
-  if (req.query.token !== ONE_TIME_TOKEN) return res.status(403).json({ ok: false, error: 'unauthorized' });
-
-  const FIXES = {
-    '60054762': { guest: 'Sarah Macdonald',   apt: 'Via Leonina',      old: '30,00', newVal: '36,00' },
-    '59587542': { guest: 'Matt Symonds',       apt: 'Via Leonina',      old: '30,00', newVal: '36,00' },
-    '59809165': { guest: 'Laurent GALY',       apt: 'Via Leonina',      old: '50,00', newVal: '60,00' },
-    '58151141': { guest: 'Gloria P Trueblood', apt: 'Via Leonina',      old: '40,00', newVal: '48,00' },
-    '55099056': { guest: 'Carol Gonsalvez',    apt: 'Viale Trastevere', old: '175,00', newVal: '210,00' },
-  };
-
-  try {
-    const { google } = await import('googleapis');
-    const SPREADSHEET_ID = '11Ga4BUVzR2x0i37QEUhu-KkfFCLpN2zUjmypoNp_Co0';
-    const auth = new google.auth.JWT(
-      process.env.GOOGLE_CLIENT_EMAIL,
-      null,
-      process.env.GOOGLE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
-      ['https://www.googleapis.com/auth/spreadsheets']
-    );
-    const sheets = google.sheets({ version: 'v4', auth });
-    const { data } = await sheets.spreadsheets.values.get({
-      spreadsheetId: SPREADSHEET_ID,
-      range: 'Foglio1!A:I',
-    });
-    const rows = data.values || [];
-    const results = [];
-    for (let i = 0; i < rows.length; i++) {
-      const resId = String(rows[i][0] || '').trim();
-      const fix = FIXES[resId];
-      if (!fix) continue;
-      await sheets.spreadsheets.values.update({
-        spreadsheetId: SPREADSHEET_ID,
-        range: `Foglio1!I${i + 1}`,
-        valueInputOption: 'USER_ENTERED',
-        requestBody: { values: [[fix.newVal]] },
-      });
-      results.push({ row: i + 1, resId, guest: fix.guest, old: fix.old, new: fix.newVal });
-    }
-    console.log('✅ fix-city-tax-once eseguito:', results);
-    return res.json({ ok: true, updated: results.length, results });
-  } catch (err) {
-    console.error('❌ fix-city-tax-once error:', err.message);
-    return res.json({ ok: false, error: err.message, serviceAccount: process.env.GOOGLE_CLIENT_EMAIL });
-  }
-});
-
 // ── /stay-home/:apt — Home concierge guide entry point ────────────────────
 const HOME_APT_SUFFIX = { arenula: 'Arenula', leonina: 'Leonina', portico: 'Portico', scala: 'Scala', trastevere: 'Trastevere' };
 
