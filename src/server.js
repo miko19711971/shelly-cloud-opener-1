@@ -4629,7 +4629,7 @@ const CITY_TAX_RATES = {
   portico    : 5,
   scala      : 5,
   trastevere : 5,
-  leonina    : 6,
+  leonina    : 5,
 };
 const CITY_TAX_MAX_NIGHTS = 10;
 
