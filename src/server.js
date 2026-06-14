@@ -4673,9 +4673,9 @@ app.get("/pay/stripe", async (req, res) => {
 
   // Seleziona la chiave Stripe in base all'appartamento:
   // Leonina usa un conto bancario separato → chiave Stripe dedicata
-  const stripeKey = (listing === "leonina")
+  const stripeKey = ((listing === "leonina")
     ? process.env.STRIPE_SECRET_KEY_LEONINA
-    : process.env.STRIPE_SECRET_KEY;
+    : process.env.STRIPE_SECRET_KEY || "").trim();
 
   if (!stripeKey) {
     console.error(`❌ STRIPE_SECRET_KEY${listing === "leonina" ? "_LEONINA" : ""} mancante`);
