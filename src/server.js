@@ -4160,13 +4160,26 @@ if (
 // 1) AGGIUNGI QUESTE VARIABILI AMBIENTE ALL'INIZIO (dopo le altre)
 const STRIPE_WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET;
 const PAYPAL_WEBHOOK_ID = process.env.PAYPAL_WEBHOOK_ID;
+const PAYPAL_WEBHOOK_ID_LEONINA = process.env.PAYPAL_WEBHOOK_ID_LEONINA;
 const GOOGLE_SHEETS_WEBHOOK_URL = process.env.GOOGLE_SHEETS_WEBHOOK_URL;
 
 if (!STRIPE_WEBHOOK_SECRET) {
   console.error("⚠️ Missing STRIPE_WEBHOOK_SECRET");
 }
+if (!process.env.STRIPE_SECRET_KEY_LEONINA) {
+  console.error("⚠️ Missing STRIPE_SECRET_KEY_LEONINA (Leonina apartment)");
+}
 if (!PAYPAL_WEBHOOK_ID) {
   console.error("⚠️ Missing PAYPAL_WEBHOOK_ID");
+}
+if (!PAYPAL_WEBHOOK_ID_LEONINA) {
+  console.error("⚠️ Missing PAYPAL_WEBHOOK_ID_LEONINA (Leonina apartment)");
+}
+if (!process.env.PAYPAL_CLIENT_ID || !process.env.PAYPAL_CLIENT_SECRET) {
+  console.error("⚠️ Missing PAYPAL_CLIENT_ID / PAYPAL_CLIENT_SECRET");
+}
+if (!process.env.PAYPAL_CLIENT_ID_LEONINA || !process.env.PAYPAL_CLIENT_SECRET_LEONINA) {
+  console.error("⚠️ Missing PAYPAL_CLIENT_ID_LEONINA / PAYPAL_CLIENT_SECRET_LEONINA");
 }
 if (!GOOGLE_SHEETS_WEBHOOK_URL) {
   console.error("⚠️ Missing GOOGLE_SHEETS_WEBHOOK_URL");
@@ -4625,10 +4638,11 @@ app.get("/pay/stripe", async (req, res) => {
   if (!reservationId) return res.status(400).send("Parametri non validi.");
 
   let tassa;
+  let listing = "";
 
   if (req.query.listing) {
     // Formato Hostaway: ?listing=arenula&guests=2&nights=3&res=...&channel=vrbo (opzionale)
-    const listing = String(req.query.listing).toLowerCase().trim();
+    listing = String(req.query.listing).toLowerCase().trim();
     const channel = String(req.query.channel || "").toLowerCase().trim();
     let   guests  = Math.max(1, parseInt(req.query.guests) || 1);
     const nights  = Math.min(Math.max(1, parseInt(req.query.nights) || 1), CITY_TAX_MAX_NIGHTS);
@@ -4646,8 +4660,9 @@ app.get("/pay/stripe", async (req, res) => {
     tassa = nights * guests * rate;
     console.log(`🏠 ${listing} | ch:${channel || "n/a"} | ${nights} notti × ${guests} ospiti × €${rate} = €${tassa}`);
   } else if (req.query.amount) {
-    // Formato GAS email: ?amount=36&res=...
+    // Formato GAS email: ?amount=36&res=...&listing=leonina (listing opzionale ma necessario per routing)
     tassa = parseFloat(req.query.amount);
+    listing = String(req.query.listing_hint || "").toLowerCase().trim();
   } else {
     return res.status(400).send("Parametri non validi.");
   }
@@ -4655,10 +4670,19 @@ app.get("/pay/stripe", async (req, res) => {
   if (!tassa || tassa < 1 || tassa > 9999) {
     return res.status(400).send("Importo non valido.");
   }
-  if (!process.env.STRIPE_SECRET_KEY) {
-    console.error("❌ STRIPE_SECRET_KEY mancante");
+
+  // Seleziona la chiave Stripe in base all'appartamento:
+  // Leonina usa un conto bancario separato → chiave Stripe dedicata
+  const stripeKey = (listing === "leonina")
+    ? process.env.STRIPE_SECRET_KEY_LEONINA
+    : process.env.STRIPE_SECRET_KEY;
+
+  if (!stripeKey) {
+    console.error(`❌ STRIPE_SECRET_KEY${listing === "leonina" ? "_LEONINA" : ""} mancante`);
     return res.status(500).send("Configurazione server non completa.");
   }
+
+  console.log(`🔑 Stripe account: ${listing === "leonina" ? "LEONINA (separato)" : "principale"}`);
 
   // Importo lordo che il cliente paga (include commissione Stripe)
   const amount      = calcolaLordoStripe(tassa);
@@ -4687,7 +4711,7 @@ app.get("/pay/stripe", async (req, res) => {
       params.toString(),
       {
         headers: {
-          "Authorization": `Bearer ${process.env.STRIPE_SECRET_KEY}`,
+          "Authorization": `Bearer ${stripeKey}`,
           "Content-Type": "application/x-www-form-urlencoded",
         },
         timeout: 15000,
@@ -4759,6 +4783,220 @@ app.get("/pay/stripe/cancel", (req, res) => {
 </html>`);
 });
 
+// ========================================================================
+// PAYPAL PAYMENT LINK — GET /pay/paypal
+// ========================================================================
+// Formato: /pay/paypal?listing=leonina&guests=2&nights=3&res=12345
+//      o:  /pay/paypal?amount=36&res=12345&listing_hint=leonina
+//
+// Leonina usa PAYPAL_CLIENT_ID_LEONINA + PAYPAL_CLIENT_SECRET_LEONINA
+// Gli altri appartamenti usano PAYPAL_CLIENT_ID + PAYPAL_CLIENT_SECRET
+
+async function getPaypalAccessToken(clientId, clientSecret) {
+  const creds = Buffer.from(`${clientId}:${clientSecret}`).toString("base64");
+  const { data } = await axios.post(
+    "https://api-m.paypal.com/v1/oauth2/token",
+    "grant_type=client_credentials",
+    {
+      headers: {
+        "Authorization": `Basic ${creds}`,
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      timeout: 10000,
+    }
+  );
+  return data.access_token;
+}
+
+app.get("/pay/paypal", async (req, res) => {
+  const reservationId = String(req.query.res || "").trim();
+  if (!reservationId) return res.status(400).send("Parametri non validi.");
+
+  let tassa;
+  let listing = "";
+
+  if (req.query.listing) {
+    listing = String(req.query.listing).toLowerCase().trim();
+    const channel = String(req.query.channel || "").toLowerCase().trim();
+    let   guests  = Math.max(1, parseInt(req.query.guests) || 1);
+    const nights  = Math.min(Math.max(1, parseInt(req.query.nights) || 1), CITY_TAX_MAX_NIGHTS);
+    const rate    = CITY_TAX_RATES[listing];
+    if (!rate) {
+      console.error(`❌ Listing sconosciuto: ${listing}`);
+      return res.status(400).send("Appartamento non riconosciuto.");
+    }
+    if (channel === "vrbo" && guests === 1) guests = 2;
+    tassa = nights * guests * rate;
+    console.log(`🏠 PayPal | ${listing} | ${nights} notti × ${guests} ospiti × €${rate} = €${tassa}`);
+  } else if (req.query.amount) {
+    tassa = parseFloat(req.query.amount);
+    listing = String(req.query.listing_hint || "").toLowerCase().trim();
+  } else {
+    return res.status(400).send("Parametri non validi.");
+  }
+
+  if (!tassa || tassa < 1 || tassa > 9999) {
+    return res.status(400).send("Importo non valido.");
+  }
+
+  // Seleziona credenziali PayPal in base all'appartamento
+  const isLeonina = listing === "leonina";
+  const clientId  = isLeonina ? process.env.PAYPAL_CLIENT_ID_LEONINA     : process.env.PAYPAL_CLIENT_ID;
+  const clientSec = isLeonina ? process.env.PAYPAL_CLIENT_SECRET_LEONINA : process.env.PAYPAL_CLIENT_SECRET;
+
+  if (!clientId || !clientSec) {
+    console.error(`❌ Credenziali PayPal ${isLeonina ? "LEONINA " : ""}mancanti`);
+    return res.status(500).send("Configurazione server non completa.");
+  }
+
+  console.log(`🔑 PayPal account: ${isLeonina ? "LEONINA (separato)" : "principale"}`);
+
+  try {
+    const baseUrl     = process.env.BASE_URL || `https://${req.hostname}`;
+    const accessToken = await getPaypalAccessToken(clientId, clientSec);
+
+    const { data: order } = await axios.post(
+      "https://api-m.paypal.com/v2/checkout/orders",
+      {
+        intent: "CAPTURE",
+        purchase_units: [{
+          amount: { currency_code: "EUR", value: tassa.toFixed(2) },
+          description: `Tassa di soggiorno Roma - Prenotazione ${reservationId}`,
+          custom_id: reservationId,
+        }],
+        application_context: {
+          brand_name: "NiceFlat Rome",
+          locale: "it-IT",
+          return_url: `${baseUrl}/pay/paypal/success?res=${encodeURIComponent(reservationId)}`,
+          cancel_url: `${baseUrl}/pay/paypal/cancel?res=${encodeURIComponent(reservationId)}`,
+        },
+      },
+      {
+        headers: {
+          "Authorization": `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+        },
+        timeout: 15000,
+      }
+    );
+
+    const approveLink = order.links.find(l => l.rel === "approve")?.href;
+    if (!approveLink) throw new Error("PayPal approval link non trovato");
+
+    console.log(`💙 PayPal order creato: ${order.id} | res:${reservationId} | EUR ${tassa}`);
+    return res.redirect(303, approveLink);
+  } catch (err) {
+    const detail = err.response?.data?.message || err.message;
+    console.error("❌ Errore creazione PayPal order:", detail);
+    return res.status(500).send("Errore nella creazione del pagamento. Riprova più tardi.");
+  }
+});
+
+app.get("/pay/paypal/success", (req, res) => {
+  res.type("html").send(`<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Pagamento ricevuto</title>
+  <style>
+    body{font-family:-apple-system,sans-serif;display:flex;align-items:center;
+         justify-content:center;min-height:100vh;margin:0;background:#f0fdf4}
+    .card{background:#fff;border-radius:16px;padding:40px 32px;text-align:center;
+          max-width:400px;box-shadow:0 4px 24px rgba(0,0,0,.08)}
+    .icon{font-size:56px;margin-bottom:16px}
+    h1{color:#16a34a;margin:0 0 12px;font-size:1.5rem}
+    p{color:#555;margin:0;line-height:1.6}
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="icon">✅</div>
+    <h1>Pagamento ricevuto!</h1>
+    <p>Grazie per aver pagato la tassa di soggiorno.<br>
+       Riceverai una conferma via email.</p>
+  </div>
+</body>
+</html>`);
+});
+
+app.get("/pay/paypal/cancel", (req, res) => {
+  res.type("html").send(`<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Pagamento annullato</title>
+  <style>
+    body{font-family:-apple-system,sans-serif;display:flex;align-items:center;
+         justify-content:center;min-height:100vh;margin:0;background:#fff7f7}
+    .card{background:#fff;border-radius:16px;padding:40px 32px;text-align:center;
+          max-width:400px;box-shadow:0 4px 24px rgba(0,0,0,.08)}
+    .icon{font-size:56px;margin-bottom:16px}
+    h1{color:#dc2626;margin:0 0 12px;font-size:1.5rem}
+    p{color:#555;margin:0;line-height:1.6}
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="icon">❌</div>
+    <h1>Pagamento annullato</h1>
+    <p>Il pagamento non è stato completato.<br>
+       Puoi riprovare usando il link ricevuto via email.</p>
+  </div>
+</body>
+</html>`);
+});
+
+// ========================================================================
+// PAYPAL WEBHOOK — LEONINA (account separato)
+// ========================================================================
+app.post("/paypal-webhook-leonina", async (req, res) => {
+  console.log("\n" + "=".repeat(60));
+  console.log("💙 PAYPAL WEBHOOK LEONINA RECEIVED");
+  console.log("=".repeat(60));
+
+  if (!PAYPAL_WEBHOOK_ID_LEONINA) {
+    console.error("❌ PAYPAL_WEBHOOK_ID_LEONINA non configurato");
+    return res.status(500).send("Configuration error");
+  }
+
+  try {
+    const event     = req.body;
+    const eventType = event.event_type;
+    console.log("📝 Tipo evento:", eventType);
+
+    if (eventType === "PAYMENT.CAPTURE.COMPLETED" ||
+        eventType === "CHECKOUT.ORDER.APPROVED"   ||
+        eventType === "PAYMENT.SALE.COMPLETED") {
+
+      const resource = event.resource;
+      const amount   = resource.amount || resource.purchase_units?.[0]?.amount;
+      const payer    = resource.payer  || resource.purchase_units?.[0]?.payee;
+
+      const rowData = {
+        source:        "PayPal-Leonina",
+        timestamp:     new Date().toISOString(),
+        eventType:     eventType,
+        paymentId:     resource.id,
+        status:        resource.status,
+        customerEmail: payer?.email_address || "",
+        customerName:  (payer?.name?.given_name || "") + " " + (payer?.name?.surname || ""),
+        description:   resource.description || "",
+        metadata:      JSON.stringify({ paypal_event_id: event.id }),
+      };
+
+      console.log("📊 Dati estratti:", rowData);
+      await writeToGoogleSheets(rowData);
+    }
+
+    res.json({ received: true });
+  } catch (err) {
+    console.error("❌ Errore PayPal webhook Leonina:", err.message);
+    return res.status(500).json({ ok: false, error: err.message });
+  }
+});
+
 app.listen(PORT, () => {
   console.log("Server running on", PORT);
-}); 
+});
