@@ -5014,6 +5014,152 @@ app.post("/paypal-webhook-leonina", async (req, res) => {
   }
 });
 
+// ════════════════════════════════════════════════════════════════════════════
+// DAILY 07:00 (Europe/Rome) — VIA LEONINA ARRIVALS REMINDER → Stella
+// Every morning emails today's check-ins for the Leonina listing ONLY.
+// No arrivals that day → no email is sent.
+// ════════════════════════════════════════════════════════════════════════════
+const LEONINA_LISTING_ID    = 194163;
+const LEONINA_REMINDER_TO    = "stella.bondi@gmail.com";
+const LEONINA_REMINDER_HOUR  = 7; // 07:00 Europe/Rome
+const CANCELLED_STATUSES = new Set(["cancelled","canceled","declined","expired","inquiry","inquirynotpossible","inquiry_timedout"]);
+let _leoninaReminderLastDate = null;
+
+// Self-contained mailer (nodemailer, lazy-loaded so a mail problem can never
+// crash the server at boot). Configure on Render with either:
+//   GMAIL_USER + GMAIL_APP_PASSWORD            (Gmail App Password)
+//   or SMTP_HOST + SMTP_PORT + SMTP_USER + SMTP_PASS
+let _mailTransporter = null;
+async function getMailTransporter() {
+  if (_mailTransporter) return _mailTransporter;
+  const user = process.env.GMAIL_USER || process.env.SMTP_USER;
+  const pass = process.env.GMAIL_APP_PASSWORD || process.env.SMTP_PASS;
+  if (!user || !pass) return null;
+  const nodemailer = (await import("nodemailer")).default;
+  _mailTransporter = nodemailer.createTransport(
+    process.env.SMTP_HOST
+      ? { host: process.env.SMTP_HOST, port: Number(process.env.SMTP_PORT || 587), secure: Number(process.env.SMTP_PORT) === 465, auth: { user, pass } }
+      : { service: "gmail", auth: { user, pass } }
+  );
+  return _mailTransporter;
+}
+async function sendReminderEmail({ to, subject, text, html }) {
+  const tx = await getMailTransporter();
+  if (!tx) throw new Error("SMTP non configurato: imposta GMAIL_USER + GMAIL_APP_PASSWORD (o SMTP_USER/SMTP_PASS) su Render");
+  const from = process.env.MAIL_FROM || process.env.GMAIL_USER || process.env.SMTP_USER;
+  await tx.sendMail({ from, to, subject, text, html });
+}
+
+function _romeHour() {
+  const s = new Date().toLocaleString("en-GB", { timeZone: "Europe/Rome", hour: "2-digit", minute: "2-digit", hour12: false });
+  return parseInt(s.split(":")[0], 10);
+}
+
+function _nightsBetween(ci, co) {
+  try {
+    const a = new Date(`${ci}T00:00:00`), b = new Date(`${co}T00:00:00`);
+    const n = Math.round((b - a) / 86400000);
+    return n > 0 ? n : null;
+  } catch { return null; }
+}
+
+function _esc(s) {
+  return String(s == null ? "" : s).replace(/[&<>]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]));
+}
+
+async function fetchLeoninaArrivalsToday(today) {
+  const params = new URLSearchParams({
+    listingMapId: String(LEONINA_LISTING_ID),
+    arrivalStartDate: today, arrivalEndDate: today, limit: "50"
+  });
+  const resp = await axios.get(`https://api.hostaway.com/v1/reservations?${params}`,
+    { headers: { Authorization: `Bearer ${HOSTAWAY_TOKEN}` }, timeout: 12000 });
+  const all = resp.data?.result || [];
+  // Hostaway sometimes ignores the listingMapId filter → re-filter client-side.
+  return all.filter(r =>
+    Number(r.listingMapId) === LEONINA_LISTING_ID &&
+    (r.arrivalDate || r.checkInDate) === today &&
+    !CANCELLED_STATUSES.has(String(r.status || "").toLowerCase())
+  );
+}
+
+function buildLeoninaReminderEmail(arrivals, today) {
+  const rows = arrivals.map(r => {
+    const ci = r.arrivalDate || r.checkInDate || "?";
+    const co = r.departureDate || r.checkOutDate || "?";
+    return {
+      name: r.guestName || [r.guestFirstName, r.guestLastName].filter(Boolean).join(" ") || "Ospite",
+      nights: r.nights || _nightsBetween(ci, co) || "?",
+      ci, co,
+      arr: resolveArrivalHHMM(r, "—"),
+      guests: r.numberOfGuests || ((Number(r.adults) || 0) + (Number(r.children) || 0)) || "?",
+      channel: r.channelName || r.source || "—",
+      rid: r.id,
+      phone: r.phone || r.guestPhone || "—",
+      email: r.guestEmail || "—"
+    };
+  });
+
+  const text = `Arrivi di oggi a Via Leonina — ${today}\n\n` + rows.map((g, i) =>
+    `${i + 1}) ${g.name}\n` +
+    `   Notti: ${g.nights}  |  Ospiti: ${g.guests}\n` +
+    `   Check-in: ${g.ci} (arrivo ${g.arr})  ->  Check-out: ${g.co}\n` +
+    `   Canale: ${g.channel}  |  Prenotazione: ${g.rid}\n` +
+    `   Telefono: ${g.phone}  |  Email: ${g.email}\n`
+  ).join("\n");
+
+  const cards = rows.map(g => `
+    <table role="presentation" width="100%" style="border-collapse:collapse;margin:0 0 14px;background:#fff;border:1px solid #e6e0d5;border-radius:10px;overflow:hidden">
+      <tr><td style="background:#1d1812;color:#f2d58a;padding:10px 14px;font-weight:700;font-size:15px">${_esc(g.name)}</td></tr>
+      <tr><td style="padding:12px 14px;font-size:14px;color:#222;line-height:1.6">
+        <b>Notti:</b> ${_esc(g.nights)} &nbsp;&nbsp; <b>Ospiti:</b> ${_esc(g.guests)}<br>
+        <b>Check-in:</b> ${_esc(g.ci)} (arrivo ${_esc(g.arr)}) &nbsp;&rarr;&nbsp; <b>Check-out:</b> ${_esc(g.co)}<br>
+        <b>Canale:</b> ${_esc(g.channel)} &nbsp;&nbsp; <b>Prenotazione:</b> ${_esc(g.rid)}<br>
+        <b>Telefono:</b> ${_esc(g.phone)} &nbsp;&nbsp; <b>Email:</b> ${_esc(g.email)}
+      </td></tr>
+    </table>`).join("");
+  const html = `<div style="font-family:system-ui,Segoe UI,Arial,sans-serif;max-width:560px;margin:0 auto">
+    <h2 style="font-size:17px;color:#1d1812;margin:0 0 4px">🛎️ Arrivi di oggi — Via Leonina</h2>
+    <p style="color:#7a6f5c;font-size:13px;margin:0 0 16px">${today} · ${rows.length} ${rows.length === 1 ? "ospite" : "ospiti"}</p>
+    ${cards}
+    <p style="color:#9a8f7c;font-size:12px;margin-top:18px">Promemoria automatico NiceFlat · solo Via Leonina · ore 07:00</p>
+  </div>`;
+
+  const subject = `🛎️ Arrivi Via Leonina — ${today} (${rows.length} ${rows.length === 1 ? "ospite" : "ospiti"})`;
+  return { subject, text, html };
+}
+
+async function runLeoninaArrivalsReminder(today) {
+  today = today || tzToday();
+  if (!HOSTAWAY_TOKEN) { console.error("❌ Leonina reminder: HOSTAWAY_TOKEN mancante"); return { sent: false, count: 0, reason: "no_token" }; }
+  const arrivals = await fetchLeoninaArrivalsToday(today);
+  if (!arrivals.length) {
+    console.log(`📭 Leonina reminder ${today}: nessun arrivo → email non inviata`);
+    return { sent: false, count: 0, reason: "no_arrivals" };
+  }
+  const { subject, text, html } = buildLeoninaReminderEmail(arrivals, today);
+  await sendReminderEmail({ to: LEONINA_REMINDER_TO, subject, text, html });
+  console.log(`📧 Leonina reminder ${today}: inviato a ${LEONINA_REMINDER_TO} (${arrivals.length} arrivo/i)`);
+  return { sent: true, count: arrivals.length, reservationIds: arrivals.map(a => a.id) };
+}
+
+// Fire once during the 07:00 Rome hour (in-memory guard, resets at restart)
+setInterval(async () => {
+  try {
+    const today = tzToday();
+    if (_romeHour() === LEONINA_REMINDER_HOUR && _leoninaReminderLastDate !== today) {
+      _leoninaReminderLastDate = today;
+      await runLeoninaArrivalsReminder(today);
+    }
+  } catch (e) { console.error("❌ Leonina reminder tick:", e.message); }
+}, 60000);
+
+// Manual trigger for testing: GET /admin/leonina-reminder/run  (header x-admin-secret)
+app.get("/admin/leonina-reminder/run", requireAdmin, async (req, res) => {
+  try { const r = await runLeoninaArrivalsReminder(tzToday()); res.json({ ok: true, ...r }); }
+  catch (e) { console.error("❌ Leonina reminder manual run:", e.message); res.status(500).json({ ok: false, error: e.message }); }
+});
+
 app.listen(PORT, () => {
   console.log("Server running on", PORT);
 });
