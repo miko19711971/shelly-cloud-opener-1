@@ -5156,8 +5156,11 @@ setInterval(async () => {
 
 // Manual trigger for testing: GET /admin/leonina-reminder/run  (header x-admin-secret)
 app.get("/admin/leonina-reminder/run", requireAdmin, async (req, res) => {
-  try { const r = await runLeoninaArrivalsReminder(tzToday()); res.json({ ok: true, ...r }); }
-  catch (e) { console.error("❌ Leonina reminder manual run:", e.message); res.status(500).json({ ok: false, error: e.message }); }
+  try {
+    const day = isYYYYMMDD(req.query.date) ? req.query.date : tzToday();
+    const r = await runLeoninaArrivalsReminder(day);
+    res.json({ ok: true, day, ...r });
+  } catch (e) { console.error("❌ Leonina reminder manual run:", e.message); res.status(500).json({ ok: false, error: e.message }); }
 });
 
 app.listen(PORT, () => {
