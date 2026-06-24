@@ -249,24 +249,28 @@ async function sendPhase2GuideMessage({ conversationId, apartment, lang = "en", 
   console.log(`📲 Phase 2 guide sent: ${apartment} | res:${reservationId} | lang:${lang}`);
 }
 
-async function sendPhase3GuideMessage({ conversationId, apartment, lang = "en", checkinDate = null }) {
+async function sendPhase3GuideMessage({ conversationId, apartment, lang = "en", checkinDate = null, reservationId = null }) {
   const _now = Date.now();
   const _jti = b64url(crypto.randomBytes(9));
-  const _tp = { tgt: `checkin-${apartment}`, exp: _now + 1440*60*1000, max: 200, used: 0, jti: _jti, iat: _now, ver: TOKEN_VERSION, day: checkinDate || tzToday(), cid: conversationId };
+  // Resolve the guest's real arrival time so the door link and the message text
+  // are tied to when they actually arrive (not a hardcoded 13:00).
+  let _ct = '13:00';
+  if (reservationId) { try { _ct = await getArrivalTime(reservationId, '13:00'); } catch (_) {} }
+  const _tp = { tgt: `checkin-${apartment}`, exp: _now + 1440*60*1000, max: 200, used: 0, jti: _jti, iat: _now, ver: TOKEN_VERSION, day: checkinDate || tzToday(), ct: _ct, rid: reservationId ? String(reservationId) : null, cid: conversationId };
   const t = makeToken(_tp);
   const guideUrl = `https://shelly-cloud-opener-1.onrender.com/checkin/${apartment}/index.html?t=${t}&lang=${lang}`;
 
   const textMap = {
-    en: `🗝 Your digital keys are now active!\nOpen your guide to access the building and apartment:\n${guideUrl}`,
-    it: `🗝 Le tue chiavi digitali sono ora attive!\nApri la guida per accedere al palazzo e all'appartamento:\n${guideUrl}`,
-    fr: `🗝 Vos clés numériques sont maintenant actives!\nOuvrez votre guide pour accéder à l'immeuble et à l'appartement:\n${guideUrl}`,
-    de: `🗝 Ihre digitalen Schlüssel sind jetzt aktiv!\nÖffnen Sie Ihren Guide für den Zugang zum Gebäude und zur Wohnung:\n${guideUrl}`,
-    es: `🗝 ¡Tus llaves digitales están ahora activas!\nAbre tu guía para acceder al edificio y al apartamento:\n${guideUrl}`,
+    en: `🗝 Your digital keys activate at your arrival time (today at ${_ct}).\nOpen the link and tap to open the building door and apartment:\n${guideUrl}`,
+    it: `🗝 Le tue chiavi digitali si attivano al tuo orario di arrivo (oggi alle ${_ct}).\nApri il link e tocca per aprire il portone e l'appartamento:\n${guideUrl}`,
+    fr: `🗝 Vos clés numériques s'activent à votre heure d'arrivée (aujourd'hui à ${_ct}).\nOuvrez le lien et appuyez pour ouvrir la porte de l'immeuble et l'appartement:\n${guideUrl}`,
+    de: `🗝 Ihre digitalen Schlüssel werden zu Ihrer Ankunftszeit aktiv (heute um ${_ct}).\nÖffnen Sie den Link und tippen Sie, um die Gebäudetür und die Wohnung zu öffnen:\n${guideUrl}`,
+    es: `🗝 Tus llaves digitales se activan a tu hora de llegada (hoy a las ${_ct}).\nAbre el enlace y toca para abrir la puerta del edificio y el apartamento:\n${guideUrl}`,
   };
 
   const message = textMap[lang] || textMap.en;
   await sendHostawayMessage({ conversationId, message });
-  console.log(`📲 Phase 3 guide sent: ${apartment} | lang:${lang}`);
+  console.log(`📲 Phase 3 guide sent: ${apartment} | res:${reservationId} | arr:${_ct} | lang:${lang}`);
 }
 
 async function runPhase3Cron() {
@@ -280,6 +284,7 @@ async function runPhase3Cron() {
           apartment: entry.apartment,
           lang: entry.lang,
           checkinDate: entry.checkinDate || null,
+          reservationId: entry.reservationId || null,
         });
         entry.sent = true;
         savePhase3State();
@@ -692,6 +697,17 @@ function parseArrivalTime(raw) {
   return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
 }
 
+// Resolve a reservation's real arrival time as "HH:MM".
+// Priority: guest-declared arrivalTime → reservation checkInTime → fallback (13:00).
+// This is the single source of truth so digital keys activate at the guest's
+// actual arrival hour (e.g. a 20:00 check-in) instead of a hardcoded 13:00.
+function resolveArrivalHHMM(reservationLike, fallback = '13:00') {
+  if (!reservationLike) return fallback;
+  const raw = reservationLike.arrivalTime
+    || (reservationLike.checkInTime != null ? String(reservationLike.checkInTime) : null);
+  return parseArrivalTime(raw) || fallback;
+}
+
 async function fetchAndCacheArrivalTime(reservationId) {
   if (!reservationId || !HOSTAWAY_TOKEN) return null;
   try {
@@ -1084,7 +1100,7 @@ if (!reservation) return res.status(502).send('Unable to verify reservation. Ple
   // Stay must not be expired (checkout at 11:00 Rome)
   const checkoutDate  = reservation.departureDate || reservation.checkOutDate || reservation.checkoutDate || null;
   const checkinDate   = reservation.arrivalDate   || reservation.checkInDate  || null;
-  const checkinTime   = reservation.arrivalTime   || '13:00';
+  const checkinTime   = resolveArrivalHHMM(reservation);
   if (checkoutDate && isYYYYMMDD(checkoutDate)) {
     const expMs = checkoutExpiryMs(checkoutDate);
     if (expMs && Date.now() > expMs) return res.status(410).send('Your stay has ended. Thank you for choosing NiceFlat!');
@@ -1191,6 +1207,7 @@ if (!reservation) return res.status(502).send('Unable to verify reservation. Ple
             lang: safeLang3,
             sendAt,
             checkinDate,
+            reservationId: String(reservationId),
             sent: false
           });
           savePhase3State();
@@ -3703,7 +3720,7 @@ if (_webhookDedup(_whMsgId)) {
         const resData = resResp.data?.result;
         if (!resData) { console.log(`⚠️ No reservation data for res ${whResId}`); return; }
         const apt = APT_LISTING_MAP[resData.listingMapId] || 'rome';
-        const arrivalTime = resData.arrivalTime || null;
+        const arrivalTime = resolveArrivalHHMM(resData, null);
         const arrivalDate = resData.arrivalDate || resData.checkInDate || null;
         const checkoutDate = resData.departureDate || resData.checkOutDate || null;
         const langRaw = (resData.guestLanguage || resData.guestLocale || 'en').toLowerCase();
@@ -3725,7 +3742,7 @@ if (_webhookDedup(_whMsgId)) {
         } else { sendAt = new Date(Date.now() + 2 * 60 * 1000); }
         if (arrivalDate) { const minTime = new Date(`${arrivalDate}T13:02:00+02:00`); if (sendAt < minTime) sendAt = minTime; }
         if (sendAt <= new Date()) sendAt = new Date(Date.now() + 2 * 60 * 1000);
-        PENDING_PHASE3.set(`phase3-${whResId}`, { conversationId: cid, apartment: apt, lang: safeLang, sendAt, checkinDate: arrivalDate, sent: false });
+        PENDING_PHASE3.set(`phase3-${whResId}`, { conversationId: cid, apartment: apt, lang: safeLang, sendAt, checkinDate: arrivalDate, reservationId: String(whResId), sent: false });
         savePhase3State();
         console.log(`📅 Phase 2 sent + Phase 3 scheduled via checkin event: ${apt} | res:${whResId} | sendAt:${sendAt.toISOString()}`);
       } catch (e) { console.error(`❌ Phase 2/3 via checkin event failed for res ${whResId}:`, e.message); }
@@ -3910,7 +3927,7 @@ const guestLang = (reservation?.guestLanguage || "en").slice(0, 2).toLowerCase()
           { headers: { Authorization: `Bearer ${HOSTAWAY_TOKEN}` }, timeout: 10000 }
         );
         const resData = resResp.data?.result;
-        const arrivalTime = resData?.arrivalTime || null;
+        const arrivalTime = resolveArrivalHHMM(resData, null);
         const arrivalDate = resData?.arrivalDate || resData?.checkInDate || null;
         const checkoutDate = resData?.departureDate || resData?.checkOutDate || resData?.checkoutDate || null;
         const langRaw = (resData?.guestLanguage || resData?.guestLocale || 'en').toLowerCase();
@@ -3952,7 +3969,7 @@ const guestLang = (reservation?.guestLanguage || "en").slice(0, 2).toLowerCase()
 
         // Schedule phase 3 notification (keys unlock) at check-in time
         const phase3Key = `phase3-${effectiveReservationId}`;
-        PENDING_PHASE3.set(phase3Key, { conversationId, apartment, lang: guestLang, sendAt, checkinDate: arrivalDate, sent: false });
+        PENDING_PHASE3.set(phase3Key, { conversationId, apartment, lang: guestLang, sendAt, checkinDate: arrivalDate, reservationId: String(effectiveReservationId), sent: false });
         savePhase3State();
         console.log(`Phase 3 scheduled: ${apartment} | sendAt: ${sendAt.toISOString()} | lang: ${guestLang}`);
       } catch (e) {
