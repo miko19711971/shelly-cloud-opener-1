@@ -4176,12 +4176,16 @@ if (
 
 // 1) AGGIUNGI QUESTE VARIABILI AMBIENTE ALL'INIZIO (dopo le altre)
 const STRIPE_WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET;
+const STRIPE_WEBHOOK_SECRET_LEONINA = process.env.STRIPE_WEBHOOK_SECRET_LEONINA;
 const PAYPAL_WEBHOOK_ID = process.env.PAYPAL_WEBHOOK_ID;
 const PAYPAL_WEBHOOK_ID_LEONINA = process.env.PAYPAL_WEBHOOK_ID_LEONINA;
 const GOOGLE_SHEETS_WEBHOOK_URL = process.env.GOOGLE_SHEETS_WEBHOOK_URL;
 
 if (!STRIPE_WEBHOOK_SECRET) {
   console.error("⚠️ Missing STRIPE_WEBHOOK_SECRET");
+}
+if (!STRIPE_WEBHOOK_SECRET_LEONINA) {
+  console.error("⚠️ Missing STRIPE_WEBHOOK_SECRET_LEONINA (conferme Leonina non verranno registrate)");
 }
 if (!process.env.STRIPE_SECRET_KEY_LEONINA) {
   console.error("⚠️ Missing STRIPE_SECRET_KEY_LEONINA (Leonina apartment)");
@@ -4291,16 +4295,27 @@ app.post("/stripe-webhook", express.raw({ type: "application/json" }), async (re
     return res.status(500).send("Configuration error");
   }
 
-  let event;
-  
-  try {
-    // Verifica firma Stripe
-    const stripe = (await import("stripe")).default(process.env.STRIPE_SECRET_KEY);
-    event = stripe.webhooks.constructEvent(req.body, sig, STRIPE_WEBHOOK_SECRET);
-    console.log("✅ Firma Stripe verificata");
-  } catch (err) {
-    console.error("❌ Errore verifica firma:", err.message);
-    return res.status(400).send(`Webhook Error: ${err.message}`);
+  let event = null;
+
+  // Ci sono due account Stripe (principale + Leonina), ognuno col PROPRIO signing
+  // secret. Proviamo entrambi: l'evento è valido se combacia con uno dei due.
+  const stripe  = (await import("stripe")).default(process.env.STRIPE_SECRET_KEY);
+  const secrets = [
+    { name: "principale", secret: STRIPE_WEBHOOK_SECRET },
+    { name: "leonina",    secret: STRIPE_WEBHOOK_SECRET_LEONINA },
+  ].filter(s => s.secret);
+
+  for (const { name, secret } of secrets) {
+    try {
+      event = stripe.webhooks.constructEvent(req.body, sig, secret);
+      console.log(`✅ Firma Stripe verificata (secret: ${name})`);
+      break;
+    } catch (_) { /* prova il prossimo secret */ }
+  }
+
+  if (!event) {
+    console.error("❌ Firma non valida con nessun secret configurato");
+    return res.status(400).send("Webhook Error: invalid signature");
   }
 
   // Eventi Stripe da gestire
@@ -4650,6 +4665,32 @@ const CITY_TAX_RATES = {
 };
 const CITY_TAX_MAX_NIGHTS = 10;
 
+// Ricava l'appartamento REALE da Hostaway a partire dal reservationId (interno o channel).
+// Serve a instradare il pagamento sul conto giusto in modo affidabile, a prescindere
+// da come è stato costruito il link (Hostaway, email GAS, canale OTA...).
+// Restituisce 'leonina' | 'trastevere' | ... oppure null se non risolvibile.
+async function resolveAptFromReservation(reservationId) {
+  if (!reservationId || !HOSTAWAY_TOKEN) return null;
+  const rid  = String(reservationId).trim();
+  const auth = { headers: { Authorization: `Bearer ${HOSTAWAY_TOKEN}` }, timeout: 10000 };
+  try {
+    // 1) ID interno Hostaway (fino a 8 cifre)
+    if (/^\d{1,8}$/.test(rid)) {
+      const r = await axios.get(`https://api.hostaway.com/v1/reservations/${rid}`, auth);
+      const lm = r.data?.result?.listingMapId;
+      if (lm && APT_LISTING_MAP[lm]) return APT_LISTING_MAP[lm];
+    }
+    // 2) channelReservationId (Booking/OTA: tipicamente >8 cifre o con trattini)
+    const r2  = await axios.get(
+      `https://api.hostaway.com/v1/reservations?channelReservationId=${encodeURIComponent(rid)}&limit=1`, auth);
+    const lm2 = r2.data?.result?.[0]?.listingMapId;
+    if (lm2 && APT_LISTING_MAP[lm2]) return APT_LISTING_MAP[lm2];
+  } catch (e) {
+    console.error(`❌ resolveAptFromReservation(${rid}):`, e.message);
+  }
+  return null;
+}
+
 app.get("/pay/stripe", async (req, res) => {
   const reservationId = String(req.query.res || "").trim();
   if (!reservationId) return res.status(400).send("Parametri non validi.");
@@ -4688,18 +4729,25 @@ app.get("/pay/stripe", async (req, res) => {
     return res.status(400).send("Importo non valido.");
   }
 
-  // Seleziona la chiave Stripe in base all'appartamento:
+  // Instradamento AFFIDABILE: l'appartamento che decide il conto viene dal
+  // reservationId via Hostaway, NON dal solo parametro dell'URL (che può mancare).
+  const routeApt = (await resolveAptFromReservation(reservationId)) || listing;
+  if (routeApt !== listing) {
+    console.log(`🧭 Routing corretto via Hostaway: URL="${listing || "n/d"}" → reale="${routeApt}" (res:${reservationId})`);
+  }
+
+  // Seleziona la chiave Stripe in base all'appartamento reale:
   // Leonina usa un conto bancario separato → chiave Stripe dedicata
-  const stripeKey = ((listing === "leonina")
+  const stripeKey = ((routeApt === "leonina")
     ? process.env.STRIPE_SECRET_KEY_LEONINA
     : process.env.STRIPE_SECRET_KEY || "").trim();
 
   if (!stripeKey) {
-    console.error(`❌ STRIPE_SECRET_KEY${listing === "leonina" ? "_LEONINA" : ""} mancante`);
+    console.error(`❌ STRIPE_SECRET_KEY${routeApt === "leonina" ? "_LEONINA" : ""} mancante`);
     return res.status(500).send("Configurazione server non completa.");
   }
 
-  console.log(`🔑 Stripe account: ${listing === "leonina" ? "LEONINA (separato)" : "principale"}`);
+  console.log(`🔑 Stripe account: ${routeApt === "leonina" ? "LEONINA (separato)" : "principale"}`);
 
   // Importo lordo che il cliente paga (include commissione Stripe)
   const amount      = calcolaLordoStripe(tassa);
@@ -4856,8 +4904,14 @@ app.get("/pay/paypal", async (req, res) => {
     return res.status(400).send("Importo non valido.");
   }
 
-  // Seleziona credenziali PayPal in base all'appartamento
-  const isLeonina = listing === "leonina";
+  // Instradamento AFFIDABILE via Hostaway (vedi /pay/stripe): non fidarsi del solo URL.
+  const routeApt = (await resolveAptFromReservation(reservationId)) || listing;
+  if (routeApt !== listing) {
+    console.log(`🧭 PayPal routing via Hostaway: URL="${listing || "n/d"}" → reale="${routeApt}" (res:${reservationId})`);
+  }
+
+  // Seleziona credenziali PayPal in base all'appartamento reale
+  const isLeonina = routeApt === "leonina";
   const clientId  = isLeonina ? process.env.PAYPAL_CLIENT_ID_LEONINA     : process.env.PAYPAL_CLIENT_ID;
   const clientSec = isLeonina ? process.env.PAYPAL_CLIENT_SECRET_LEONINA : process.env.PAYPAL_CLIENT_SECRET;
 
