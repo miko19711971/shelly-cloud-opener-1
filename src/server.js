@@ -519,7 +519,7 @@ const TARGETS = {
   "leonina-door": { name: "Leonina 71 â Apartment Door", ids: ["3494547a9395"] },
   "leonina-building": { name: "Via Leonina 71 â Building Door", ids: ["34945479fbbe"] },
   "via-della-scala-door": { name: "Via della Scala 17 â Apartment Door", ids: ["3494547a1075"] },
-  "via-della-scala-building": { name: "Via della Scala 17 â Building Door", ids: ["3494547745ee", "3494547745ee"] },
+  "via-della-scala-building": { name: "Via della Scala 17 â Building Door", ids: ["3494547745ee", "3494547745ee"], delayMs: 4000 },
   "portico-1d-door": { name: "Portico d'Ottavia 1D â Apartment Door", ids: ["2cbcbb2f8ae8"] },
   "portico-1d-building": { name: "Portico d'Ottavia 1D â Building Door", ids: ["2cbcbb30fb90"] },
   "viale-trastevere-door": { name: "Viale Trastevere 108 â Apartment Door", ids: ["34945479fa35"] },
@@ -965,7 +965,7 @@ app.post(`${LINK_PREFIX}/:target/:token/open`, async (req, res) => {
   if (p.day && isYYYYMMDD(p.day) && p.day !== tzToday()) return res.status(410).json({ ok: false, error: "wrong_day" });
   const max = Number(p.max || 0), u = getUsage(p);
   if (max > 0 && u.count >= max) return res.status(429).json({ ok: false, error: "max_opens_reached" });
-  const result = (targetDef.ids.length === 1) ? await openOne(targetDef.ids[0]) : await openSequence(targetDef.ids, 10000);
+  const result = (targetDef.ids.length === 1) ? await openOne(targetDef.ids[0]) : await openSequence(targetDef.ids, targetDef.delayMs || 10000);
   if (!result.ok) return res.status(502).json({ ok: false, error: "open_failed", details: result });
   const newCount = (max > 0) ? (u.count + 1) : u.count;
   OPEN_USAGE.set(usageKey(p), { count: newCount, exp: p.exp });
@@ -2154,7 +2154,7 @@ app.post("/checkin/:apt/open/building", requireVerifiedToken, async (req, res) =
   };
   const targetKey = map[apt], targetDef = TARGETS[targetKey];
   if (!targetDef) return res.status(404).json({ ok: false, error: "unknown_target" });
-  const result = (targetDef.ids.length === 1) ? await openOne(targetDef.ids[0]) : await openSequence(targetDef.ids, 10000);
+  const result = (targetDef.ids.length === 1) ? await openOne(targetDef.ids[0]) : await openSequence(targetDef.ids, targetDef.delayMs || 10000);
   if (!result.ok) return res.status(502).json({ ok: false, error: "open_failed", details: result });
   return res.json({ ok: true, opened: result });
 });
@@ -2170,7 +2170,7 @@ app.post("/checkin/:apt/open/door", requireVerifiedToken, async (req, res) => {
   };
   const targetKey = map[apt], targetDef = TARGETS[targetKey];
   if (!targetDef) return res.status(404).json({ ok: false, error: "unknown_target" });
-  const result = (targetDef.ids.length === 1) ? await openOne(targetDef.ids[0]) : await openSequence(targetDef.ids, 10000);
+  const result = (targetDef.ids.length === 1) ? await openOne(targetDef.ids[0]) : await openSequence(targetDef.ids, targetDef.delayMs || 10000);
   if (!result.ok) return res.status(502).json({ ok: false, error: "open_failed", details: result });
   return res.json({ ok: true, opened: result });
 });
@@ -2194,7 +2194,7 @@ app.post("/checkin/:apt/open-direct/building", async (req, res) => {
   };
   const targetKey = map[apt], targetDef = TARGETS[targetKey];
   if (!targetDef) return res.status(404).json({ ok: false, error: "unknown_target" });
-  const result = (targetDef.ids.length === 1) ? await openOne(targetDef.ids[0]) : await openSequence(targetDef.ids, 10000);
+  const result = (targetDef.ids.length === 1) ? await openOne(targetDef.ids[0]) : await openSequence(targetDef.ids, targetDef.delayMs || 10000);
   if (!result.ok) return res.status(502).json({ ok: false, error: "open_failed", details: result });
   return res.json({ ok: true, opened: result });
 });
@@ -2216,7 +2216,7 @@ app.post("/checkin/:apt/open-direct/door", async (req, res) => {
   };
   const targetKey = map[apt], targetDef = TARGETS[targetKey];
   if (!targetDef) return res.status(404).json({ ok: false, error: "unknown_target" });
-  const result = (targetDef.ids.length === 1) ? await openOne(targetDef.ids[0]) : await openSequence(targetDef.ids, 10000);
+  const result = (targetDef.ids.length === 1) ? await openOne(targetDef.ids[0]) : await openSequence(targetDef.ids, targetDef.delayMs || 10000);
   if (!result.ok) return res.status(502).json({ ok: false, error: "open_failed", details: result });
   return res.json({ ok: true, opened: result });
 });
@@ -2241,7 +2241,7 @@ app.post("/checkin/:apt/open-direct/apartment", async (req, res) => {
   };
   const targetKey = map[apt], targetDef = TARGETS[targetKey];
   if (!targetDef) return res.status(404).json({ ok: false, error: "unknown_target" });
-  const result = (targetDef.ids.length === 1) ? await openOne(targetDef.ids[0]) : await openSequence(targetDef.ids, 10000);
+  const result = (targetDef.ids.length === 1) ? await openOne(targetDef.ids[0]) : await openSequence(targetDef.ids, targetDef.delayMs || 10000);
   if (!result.ok) return res.status(502).json({ ok: false, error: "open_failed", details: result });
   return res.json({ ok: true, opened: result });
 });
