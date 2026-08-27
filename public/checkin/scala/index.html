@@ -542,7 +542,7 @@ footer {
         <h3 data-i18n="s2_t">Ring the first intercom</h3>
         <p data-i18n="s2_p">At the first intercom, ring the marked button. Then press the button below to open the first building gate.</p>
         <div class="button-row">
-          <button class="open-btn dark" id="btn_building_1" onclick="openWith('statusBuilding1','building');return false;" data-i18n="btn_building_1">Open Both Gates →</button>
+          <button class="open-btn dark" id="btn_building_1" onclick="openWith('statusBuilding1','building');return false;" data-i18n="btn_building_1">Open First Gate →</button>
         </div>
         <div class="status" id="statusBuilding1"></div>
       </div>
@@ -555,8 +555,12 @@ footer {
       </div>
       <div class="content">
         <div class="step-num">03</div>
-        <h3 data-i18n="s3_t">Walk through to the second gate</h3>
-        <p data-i18n="s3_p">The second gate opens by itself about 10 seconds after the first one — just walk through.</p>
+        <h3 data-i18n="s3_t">Ring the second intercom</h3>
+        <p data-i18n="s3_p">At the second gate, press “A/1” on the intercom. Then press the button below again to open the inner gate.</p>
+        <div class="button-row">
+          <button class="open-btn dark" id="btn_building_2" onclick="openWith('statusBuilding2','building');return false;" data-i18n="btn_building_2">Open Inner Gate →</button>
+        </div>
+        <div class="status" id="statusBuilding2"></div>
       </div>
     </article>
 
@@ -613,9 +617,6 @@ footer {
 <script>
 async function openWith(statusId, which){
   const s=document.getElementById(statusId);
-  const btn=document.getElementById(which === "building" ? "btn_building_1" : "btn_apartment");
-  const t18=T[document.documentElement.lang] || T.en;
-  let ticker=null;
   try{
     const params = new URLSearchParams(window.location.search);
     const t = params.get("t") || "";
@@ -625,13 +626,7 @@ async function openWith(statusId, which){
       return;
     }
 
-    // The building relay fires twice, 4s apart: first gate, then second gate.
-    // Lock the button and narrate the pause so nobody taps again mid-sequence.
-    if(btn) btn.disabled = true;
-    s.textContent = (which === "building" ? t18.openingGate1 : null) || "Opening…";
-    if(which === "building"){
-      ticker = setTimeout(function(){ s.textContent = t18.openingGate2 || "Opening…"; }, 1500);
-    }
+    s.textContent = "Opening…";
 
     const tries = (which === "building") ? ["building"] : ["apartment","door"];
 
@@ -646,7 +641,7 @@ async function openWith(statusId, which){
       const j = await r.json().catch(()=> ({}));
 
       if(r.ok && j.ok){
-        s.textContent = (which === "building" ? t18.openDone : null) || "Done.";
+        s.textContent = "Done.";
       } else {
         s.textContent = (j.error || j.message) ? String(j.error || j.message) : `Error (${r.status})`;
       }
@@ -657,9 +652,6 @@ async function openWith(statusId, which){
 
   }catch(e){
     s.textContent='Network error. Try again.';
-  }finally{
-    if(ticker) clearTimeout(ticker);
-    if(btn) btn.disabled = false;
   }
 }
 
@@ -668,13 +660,13 @@ const T = {
     docTitle:'Premium Check-in Guide — Via della Scala 17, unit A/1',
     eyebrow:'Private check-in guide',
     heroTitle:'Welcome to Via della Scala 17',
-    heroSubtitle:'Follow these steps in order: first intercom, one press opens both gates, then apartment A/1.',
+    heroSubtitle:'Follow these steps in order: first intercom, first gate, second intercom, second gate, then apartment A/1.',
     addr:'📍 Via della Scala 17, Rome • Unit A/1',
     beforeTitle:'Before you start',
     beforeText:'Keep this page open during arrival. Use each opening button only when you are physically in front of the correct gate or door.',
     routeTitle:'Your route',
-    route1:'Ring the first intercom and press the button once — both gates open.',
-    route2:'Walk through the second gate: it opens by itself after about 10 seconds.',
+    route1:'Ring the first intercom and open the building gate.',
+    route2:'Ring A/1 at the second intercom and open the inner gate.',
     route3:'Enter, turn left, and follow the courtyard.',
     route4:'Reach the green apartment door and use the padlock keys.',
     photo1:'Main entrance',
@@ -685,16 +677,16 @@ const T = {
     s1_t:'Find the building entrance',
     s1_p:'This is the main entrance of Via della Scala 17.',
     s2_t:'Ring the first intercom',
-    s2_p:'At the first intercom, ring the marked button. Then press the button below once: the first gate opens straight away and the second gate follows on its own about 10 seconds later.',
-    s3_t:'Walk through to the second gate',
-    s3_p:'There is no button to press here. The second gate opens by itself about 10 seconds after the first one — just walk through. If it stays closed, go back to step 2 and press the button again.',
+    s2_p:'At the first intercom, ring the marked button. Then press the button below to open the first building gate.',
+    s3_t:'Ring the second intercom',
+    s3_p:'At the second gate, press “A/1” on the intercom. Then press the button below again to open the inner gate.',
     s4_t:'Enter and turn left',
     s4_p:'After the second gate opens, enter and turn left. Follow the courtyard as shown in the photo.',
     s5_t:'This is your apartment door',
     s5_p:'You have reached the green door on the left. This is your apartment entrance.',
     s5_lock:'The keys are inside the padlock. Facing the green door on the left, you will see some bicycles. On the iron bar there is a padlock. The combination is 6793. Open the padlock, take the keys, close it again, and scramble the numbers.',
-    btn_building_1:'Open Both Gates →',
-    openingGate1:'Opening the first gate…', openingGate2:'First gate open — second gate in a moment…', openDone:'Both gates open. Go through.',
+    btn_building_1:'Open First Gate →',
+    btn_building_2:'Open Inner Gate →',
     btn_apartment:'Open Apartment Door →',
     help_h:'Need help?',
     help_p:'Call or WhatsApp Michele if you have any difficulty during arrival.',
@@ -706,13 +698,13 @@ const T = {
     docTitle:'Guida Check-in Premium — Via della Scala 17, interno A/1',
     eyebrow:'Guida check-in privata',
     heroTitle:'Benvenuto a Via della Scala 17',
-    heroSubtitle:'Segui questi passaggi in ordine: primo citofono, una sola pressione apre entrambi i portoni, poi appartamento A/1.',
+    heroSubtitle:'Segui questi passaggi in ordine: primo citofono, primo portone, secondo citofono, secondo portone, poi appartamento A/1.',
     addr:'📍 Via della Scala 17, Roma • Interno A/1',
     beforeTitle:'Prima di iniziare',
     beforeText:'Tieni questa pagina aperta durante l’arrivo. Usa ogni pulsante di apertura solo quando sei fisicamente davanti al cancello o alla porta corretta.',
     routeTitle:'Il percorso',
-    route1:'Suona al primo citofono e premi il pulsante una volta sola: si aprono entrambi i portoni.',
-    route2:'Attraversa il secondo portone: si apre da solo dopo circa 10 secondi.',
+    route1:'Suona al primo citofono e apri il primo portone.',
+    route2:'Suona A/1 al secondo citofono e apri il portone interno.',
     route3:'Entra, gira a sinistra e segui il cortile.',
     route4:'Raggiungi la porta verde e usa le chiavi nel lucchetto.',
     photo1:'Ingresso principale',
@@ -723,16 +715,16 @@ const T = {
     s1_t:'Individua l’ingresso del palazzo',
     s1_p:'Questo è l’ingresso principale di Via della Scala 17.',
     s2_t:'Suona al primo citofono',
-    s2_p:'Al primo citofono, premi il pulsante evidenziato. Poi premi una sola volta il pulsante qui sotto: il primo portone si apre subito e il secondo si apre da solo dopo circa 10 secondi.',
-    s3_t:'Prosegui verso il secondo portone',
-    s3_p:'Qui non c’è nessun pulsante da premere. Il secondo portone si apre da solo circa 10 secondi dopo il primo: prosegui e basta. Se resta chiuso, torna al passaggio 2 e premi di nuovo il pulsante.',
+    s2_p:'Al primo citofono, premi il pulsante evidenziato. Poi premi il pulsante qui sotto per aprire il primo portone.',
+    s3_t:'Suona al secondo citofono',
+    s3_p:'Al secondo portone, premi “A/1” sul citofono. Poi premi di nuovo il pulsante qui sotto per aprire il portone interno.',
     s4_t:'Entra e gira a sinistra',
     s4_p:'Dopo l’apertura del secondo portone, entra e gira a sinistra. Segui il cortile come mostrato nella foto.',
     s5_t:'Questa è la porta del tuo appartamento',
     s5_p:'Hai raggiunto la porta verde sulla sinistra. È l’ingresso del tuo appartamento.',
     s5_lock:'Le chiavi sono all’interno del lucchetto. Guardando la porta verde sulla sinistra, dove ci sono le biciclette c’è una barra di ferro con un lucchetto. La combinazione è 6793. Apri il lucchetto, prendi le chiavi, richiudilo e mischia i numeri.',
-    btn_building_1:'Apri Entrambi i Portoni →',
-    openingGate1:'Apertura del primo portone…', openingGate2:'Primo portone aperto — il secondo tra un attimo…', openDone:'Entrambi i portoni aperti. Prosegui.',
+    btn_building_1:'Apri Primo Portone →',
+    btn_building_2:'Apri Portone Interno →',
     btn_apartment:'Apri Appartamento →',
     help_h:'Serve aiuto?',
     help_p:'Chiama o scrivi su WhatsApp a Michele se hai difficoltà durante l’arrivo.',
@@ -744,13 +736,13 @@ const T = {
     docTitle:'Guide Check-in Premium — Via della Scala 17, unité A/1',
     eyebrow:'Guide privé de check-in',
     heroTitle:'Bienvenue à Via della Scala 17',
-    heroSubtitle:'Suivez ces étapes dans l’ordre : premier interphone, une seule pression ouvre les deux portails, puis appartement A/1.',
+    heroSubtitle:'Suivez ces étapes dans l’ordre : premier interphone, premier portail, second interphone, second portail, puis appartement A/1.',
     addr:'📍 Via della Scala 17, Rome • Unité A/1',
     beforeTitle:'Avant de commencer',
     beforeText:'Gardez cette page ouverte pendant votre arrivée. Utilisez chaque bouton uniquement lorsque vous êtes devant le bon portail ou la bonne porte.',
     routeTitle:'Votre parcours',
-    route1:'Sonnez au premier interphone et appuyez une seule fois : les deux portails s’ouvrent.',
-    route2:'Franchissez le second portail : il s’ouvre tout seul après environ 10 secondes.',
+    route1:'Sonnez au premier interphone et ouvrez le premier portail.',
+    route2:'Sonnez A/1 au second interphone et ouvrez le portail intérieur.',
     route3:'Entrez, tournez à gauche et suivez la cour.',
     route4:'Rejoignez la porte verte et utilisez les clés dans le cadenas.',
     photo1:'Entrée principale',
@@ -761,16 +753,16 @@ const T = {
     s1_t:'Trouver l’entrée de l’immeuble',
     s1_p:'Ceci est l’entrée principale de Via della Scala 17.',
     s2_t:'Sonnez au premier interphone',
-    s2_p:'Au premier interphone, appuyez sur le bouton indiqué. Puis appuyez une seule fois sur le bouton ci-dessous : le premier portail s’ouvre aussitôt et le second suit tout seul environ 10 secondes plus tard.',
-    s3_t:'Avancez vers le second portail',
-    s3_p:'Ici, aucun bouton à presser. Le second portail s’ouvre tout seul environ 10 secondes après le premier : avancez simplement. S’il reste fermé, revenez à l’étape 2 et appuyez de nouveau sur le bouton.',
+    s2_p:'Au premier interphone, appuyez sur le bouton indiqué. Puis appuyez sur le bouton ci-dessous pour ouvrir le premier portail.',
+    s3_t:'Sonnez au second interphone',
+    s3_p:'Au second portail, appuyez sur “A/1” à l’interphone. Puis appuyez à nouveau sur le bouton ci-dessous pour ouvrir le portail intérieur.',
     s4_t:'Entrez et tournez à gauche',
     s4_p:'Après l’ouverture du second portail, entrez et tournez à gauche. Suivez la cour comme indiqué sur la photo.',
     s5_t:'Voici la porte de votre appartement',
     s5_p:'Vous êtes arrivé à la porte verte sur la gauche. C’est l’entrée de votre appartement.',
     s5_lock:'Les clés sont à l’intérieur du cadenas. En face de la porte verte sur la gauche, vous verrez des vélos. Sur la barre en fer, il y a un cadenas. La combinaison est 6793. Ouvrez le cadenas, prenez les clés, refermez-le et mélangez les chiffres.',
-    btn_building_1:'Ouvrir les deux portails →',
-    openingGate1:'Ouverture du premier portail…', openingGate2:'Premier portail ouvert — le second dans un instant…', openDone:'Les deux portails sont ouverts. Avancez.',
+    btn_building_1:'Ouvrir le premier portail →',
+    btn_building_2:'Ouvrir le portail intérieur →',
     btn_apartment:'Ouvrir l’appartement →',
     help_h:'Besoin d’aide ?',
     help_p:'Appelez ou écrivez à Michele sur WhatsApp en cas de difficulté.',
@@ -782,13 +774,13 @@ const T = {
     docTitle:'Premium Check-in-Leitfaden — Via della Scala 17, Einheit A/1',
     eyebrow:'Private Check-in-Anleitung',
     heroTitle:'Willkommen in der Via della Scala 17',
-    heroSubtitle:'Folgen Sie diesen Schritten: erste Gegensprechanlage, ein einziger Tastendruck öffnet beide Tore, dann Wohnung A/1.',
+    heroSubtitle:'Folgen Sie diesen Schritten: erste Gegensprechanlage, erstes Tor, zweite Gegensprechanlage, inneres Tor, dann Wohnung A/1.',
     addr:'📍 Via della Scala 17, Rom • Einheit A/1',
     beforeTitle:'Bevor Sie beginnen',
     beforeText:'Lassen Sie diese Seite während der Ankunft geöffnet. Benutzen Sie jede Öffnungstaste nur, wenn Sie direkt vor dem richtigen Tor oder der richtigen Tür stehen.',
     routeTitle:'Ihr Weg',
-    route1:'Klingeln Sie an der ersten Gegensprechanlage und drücken Sie die Taste einmal — beide Tore öffnen sich.',
-    route2:'Gehen Sie durch das zweite Tor: Es öffnet sich nach etwa 10 Sekunden von selbst.',
+    route1:'Klingeln Sie an der ersten Gegensprechanlage und öffnen Sie das erste Tor.',
+    route2:'Klingeln Sie A/1 an der zweiten Gegensprechanlage und öffnen Sie das innere Tor.',
     route3:'Treten Sie ein, biegen Sie links ab und folgen Sie dem Hof.',
     route4:'Erreichen Sie die grüne Wohnungstür und benutzen Sie die Schlüssel im Vorhängeschloss.',
     photo1:'Haupteingang',
@@ -799,16 +791,16 @@ const T = {
     s1_t:'Gebäudeeingang finden',
     s1_p:'Dies ist der Haupteingang der Via della Scala 17.',
     s2_t:'An der ersten Gegensprechanlage klingeln',
-    s2_p:'Drücken Sie an der ersten Gegensprechanlage die markierte Taste. Drücken Sie dann unten die Taste ein einziges Mal: Das erste Tor öffnet sich sofort, das zweite folgt nach etwa 10 Sekunden von selbst.',
-    s3_t:'Weiter zum zweiten Tor',
-    s3_p:'Hier gibt es keine Taste zu drücken. Das zweite Tor öffnet sich etwa 10 Sekunden nach dem ersten von selbst — gehen Sie einfach hindurch. Bleibt es geschlossen, kehren Sie zu Schritt 2 zurück und drücken Sie die Taste erneut.',
+    s2_p:'Drücken Sie an der ersten Gegensprechanlage die markierte Taste. Drücken Sie dann unten die Taste, um das erste Tor zu öffnen.',
+    s3_t:'An der zweiten Gegensprechanlage klingeln',
+    s3_p:'Drücken Sie am zweiten Tor “A/1” an der Gegensprechanlage. Drücken Sie dann erneut unten die Taste, um das innere Tor zu öffnen.',
     s4_t:'Eintreten und links abbiegen',
     s4_p:'Nachdem das zweite Tor geöffnet ist, treten Sie ein und biegen Sie links ab. Folgen Sie dem Hof wie auf dem Foto gezeigt.',
     s5_t:'Das ist Ihre Wohnungstür',
     s5_p:'Sie sind bei der grünen Tür links angekommen. Das ist der Eingang Ihrer Wohnung.',
     s5_lock:'Die Schlüssel befinden sich im Vorhängeschloss. Wenn Sie der grünen Tür links gegenüberstehen, sehen Sie Fahrräder. An der Eisenstange hängt ein Vorhängeschloss. Die Kombination lautet 6793. Öffnen Sie das Schloss, nehmen Sie die Schlüssel, schließen Sie es wieder und verdrehen Sie die Zahlen.',
-    btn_building_1:'Beide Tore öffnen →',
-    openingGate1:'Erstes Tor wird geöffnet…', openingGate2:'Erstes Tor offen — das zweite gleich…', openDone:'Beide Tore sind offen. Gehen Sie hindurch.',
+    btn_building_1:'Erstes Tor öffnen →',
+    btn_building_2:'Inneres Tor öffnen →',
     btn_apartment:'Wohnung öffnen →',
     help_h:'Brauchen Sie Hilfe?',
     help_p:'Rufen Sie Michele an oder schreiben Sie ihm auf WhatsApp, wenn Sie Schwierigkeiten haben.',
@@ -820,13 +812,13 @@ const T = {
     docTitle:'Guía Premium de Check-in — Via della Scala 17, unidad A/1',
     eyebrow:'Guía privada de check-in',
     heroTitle:'Bienvenido a Via della Scala 17',
-    heroSubtitle:'Sigue estos pasos: primer portero, una sola pulsación abre los dos portones, y luego apartamento A/1.',
+    heroSubtitle:'Sigue estos pasos: primer portero, primer portón, segundo portero, portón interior y luego apartamento A/1.',
     addr:'📍 Via della Scala 17, Roma • Unidad A/1',
     beforeTitle:'Antes de empezar',
     beforeText:'Mantén esta página abierta durante la llegada. Usa cada botón solo cuando estés físicamente frente al portón o la puerta correcta.',
     routeTitle:'Tu recorrido',
-    route1:'Llama al primer portero y pulsa el botón una sola vez: se abren los dos portones.',
-    route2:'Cruza el segundo portón: se abre solo tras unos 10 segundos.',
+    route1:'Llama al primer portero y abre el primer portón.',
+    route2:'Llama a A/1 en el segundo portero y abre el portón interior.',
     route3:'Entra, gira a la izquierda y sigue el patio.',
     route4:'Llega a la puerta verde y usa las llaves del candado.',
     photo1:'Entrada principal',
@@ -837,16 +829,16 @@ const T = {
     s1_t:'Encontrar la entrada del edificio',
     s1_p:'Esta es la entrada principal de Via della Scala 17.',
     s2_t:'Llama al primer portero',
-    s2_p:'En el primer portero, pulsa el botón marcado. Luego pulsa una sola vez el botón de abajo: el primer portón se abre enseguida y el segundo se abre solo unos 10 segundos después.',
-    s3_t:'Avanza hacia el segundo portón',
-    s3_p:'Aquí no hay ningún botón que pulsar. El segundo portón se abre solo unos 10 segundos después del primero: simplemente cruza. Si sigue cerrado, vuelve al paso 2 y pulsa de nuevo el botón.',
+    s2_p:'En el primer portero, pulsa el botón marcado. Luego pulsa el botón de abajo para abrir el primer portón.',
+    s3_t:'Llama al segundo portero',
+    s3_p:'En el segundo portón, pulsa “A/1” en el portero. Luego pulsa de nuevo el botón de abajo para abrir el portón interior.',
     s4_t:'Entra y gira a la izquierda',
     s4_p:'Después de abrir el segundo portón, entra y gira a la izquierda. Sigue el patio como se muestra en la foto.',
     s5_t:'Esta es la puerta de tu apartamento',
     s5_p:'Has llegado a la puerta verde de la izquierda. Es la entrada de tu apartamento.',
     s5_lock:'Las llaves están dentro del candado. De frente a la puerta verde a la izquierda, verás unas bicicletas. En la barra de hierro hay un candado. La combinación es 6793. Abre el candado, toma las llaves, ciérralo de nuevo y mezcla los números.',
-    btn_building_1:'Abrir Ambos Portones →',
-    openingGate1:'Abriendo el primer portón…', openingGate2:'Primer portón abierto — el segundo enseguida…', openDone:'Los dos portones están abiertos. Pasa.',
+    btn_building_1:'Abrir Primer Portón →',
+    btn_building_2:'Abrir Portón Interior →',
     btn_apartment:'Abrir Apartamento →',
     help_h:'¿Necesitas ayuda?',
     help_p:'Llama o escribe a Michele por WhatsApp si tienes alguna dificultad.',
