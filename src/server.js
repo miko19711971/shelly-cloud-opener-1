@@ -559,8 +559,12 @@ async function openSequence(ids, delayMs = 10000) {
 // Avvisa il proprietario a ogni pressione di un pulsante, con l'esito reale.
 // Sostituisce le notifiche dell'app Shelly: quelle si sono perse e comunque
 // non segnalavano mai i tentativi falliti.
-// Disattivabile con OPEN_NOTIFY=0. Destinatario: OPEN_NOTIFY_TO.
-const OPEN_NOTIFY_ENABLED = String(process.env.OPEN_NOTIFY || "1") !== "0";
+// OPEN_NOTIFY: "0" = nessuna email; "all" (o "1") = ogni apertura;
+// assente o qualsiasi altro valore = SOLO i fallimenti (default).
+// Destinatario: OPEN_NOTIFY_TO.
+const OPEN_NOTIFY_MODE = String(process.env.OPEN_NOTIFY || "fail").trim().toLowerCase();
+const OPEN_NOTIFY_ENABLED = OPEN_NOTIFY_MODE !== "0";
+const OPEN_NOTIFY_ALL = (OPEN_NOTIFY_MODE === "all" || OPEN_NOTIFY_MODE === "1");
 const OPEN_NOTIFY_TO = process.env.OPEN_NOTIFY_TO || process.env.MAIL_FROM || process.env.GMAIL_USER || "mikbondi@gmail.com";
 
 function targetKeyOf(targetDef) {
@@ -572,7 +576,7 @@ async function openTargetAndNotify(targetDef, req) {
     ? await openOne(targetDef.ids[0])
     : await openSequence(targetDef.ids, 10000);
 
-  if (OPEN_NOTIFY_ENABLED) {
+  if (OPEN_NOTIFY_ENABLED && (OPEN_NOTIFY_ALL || !result.ok)) {
     const key     = targetKeyOf(targetDef);
     const label   = targetDef.name || key;
     const when    = new Date().toLocaleString("it-IT", { timeZone: "Europe/Rome", dateStyle: "short", timeStyle: "medium" });
