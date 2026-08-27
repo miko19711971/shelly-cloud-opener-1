@@ -555,6 +555,54 @@ async function openSequence(ids, delayMs = 10000) {
   return { ok: logs.every(l => l.ok), logs };
 }
 
+// --- Notifica di apertura ---------------------------------------------------
+// Avvisa il proprietario a ogni pressione di un pulsante, con l'esito reale.
+// Sostituisce le notifiche dell'app Shelly: quelle si sono perse e comunque
+// non segnalavano mai i tentativi falliti.
+// Disattivabile con OPEN_NOTIFY=0. Destinatario: OPEN_NOTIFY_TO.
+const OPEN_NOTIFY_ENABLED = String(process.env.OPEN_NOTIFY || "1") !== "0";
+const OPEN_NOTIFY_TO = process.env.OPEN_NOTIFY_TO || process.env.MAIL_FROM || process.env.GMAIL_USER || "mikbondi@gmail.com";
+
+function targetKeyOf(targetDef) {
+  return Object.keys(TARGETS).find(k => TARGETS[k] === targetDef) || "?";
+}
+
+async function openTargetAndNotify(targetDef, req) {
+  const result = (targetDef.ids.length === 1)
+    ? await openOne(targetDef.ids[0])
+    : await openSequence(targetDef.ids, 10000);
+
+  if (OPEN_NOTIFY_ENABLED) {
+    const key     = targetKeyOf(targetDef);
+    const label   = targetDef.name || key;
+    const when    = new Date().toLocaleString("it-IT", { timeZone: "Europe/Rome", dateStyle: "short", timeStyle: "medium" });
+    const steps   = result.logs || [];
+    const impulsi = steps.length || 1;
+    const falliti = steps.length ? steps.filter(l => !l.ok).length : (result.ok ? 0 : 1);
+    const esito   = result.ok ? "OK" : "FALLITA";
+    const via     = (req && req.originalUrl) ? String(req.originalUrl).split("?")[0] : "?";
+    const text = [
+      "Apertura " + esito,
+      "",
+      "Porta:    " + label,
+      "Target:   " + key,
+      "Quando:   " + when + " (Europe/Rome)",
+      "Impulsi:  " + impulsi + (falliti ? " (falliti: " + falliti + ")" : ""),
+      "Chiamata: " + via,
+      "",
+      'Attenzione: "OK" significa che il cloud Shelly ha accettato il comando,',
+      "non che la porta si sia aperta fisicamente.",
+      "",
+      JSON.stringify(result, null, 2)
+    ].join("\n");
+    // Fire-and-forget: un problema di posta non deve mai bloccare un'apertura.
+    sendReminderEmail({ to: OPEN_NOTIFY_TO, subject: "[" + esito + "] " + label, text })
+      .catch(function (e) { console.error("notifica apertura fallita:", e.message); });
+  }
+
+  return result;
+}
+
 function b64urlToBuf(s) {
   s = String(s || "").replace(/-/g, "+").replace(/_/g, "/");
   while (s.length % 4) s += "=";
@@ -965,7 +1013,7 @@ app.post(`${LINK_PREFIX}/:target/:token/open`, async (req, res) => {
   if (p.day && isYYYYMMDD(p.day) && p.day !== tzToday()) return res.status(410).json({ ok: false, error: "wrong_day" });
   const max = Number(p.max || 0), u = getUsage(p);
   if (max > 0 && u.count >= max) return res.status(429).json({ ok: false, error: "max_opens_reached" });
-  const result = (targetDef.ids.length === 1) ? await openOne(targetDef.ids[0]) : await openSequence(targetDef.ids, 10000);
+  const result = await openTargetAndNotify(targetDef, req);
   if (!result.ok) return res.status(502).json({ ok: false, error: "open_failed", details: result });
   const newCount = (max > 0) ? (u.count + 1) : u.count;
   OPEN_USAGE.set(usageKey(p), { count: newCount, exp: p.exp });
@@ -2154,7 +2202,7 @@ app.post("/checkin/:apt/open/building", requireVerifiedToken, async (req, res) =
   };
   const targetKey = map[apt], targetDef = TARGETS[targetKey];
   if (!targetDef) return res.status(404).json({ ok: false, error: "unknown_target" });
-  const result = (targetDef.ids.length === 1) ? await openOne(targetDef.ids[0]) : await openSequence(targetDef.ids, 10000);
+  const result = await openTargetAndNotify(targetDef, req);
   if (!result.ok) return res.status(502).json({ ok: false, error: "open_failed", details: result });
   return res.json({ ok: true, opened: result });
 });
@@ -2170,7 +2218,7 @@ app.post("/checkin/:apt/open/door", requireVerifiedToken, async (req, res) => {
   };
   const targetKey = map[apt], targetDef = TARGETS[targetKey];
   if (!targetDef) return res.status(404).json({ ok: false, error: "unknown_target" });
-  const result = (targetDef.ids.length === 1) ? await openOne(targetDef.ids[0]) : await openSequence(targetDef.ids, 10000);
+  const result = await openTargetAndNotify(targetDef, req);
   if (!result.ok) return res.status(502).json({ ok: false, error: "open_failed", details: result });
   return res.json({ ok: true, opened: result });
 });
@@ -2194,7 +2242,7 @@ app.post("/checkin/:apt/open-direct/building", async (req, res) => {
   };
   const targetKey = map[apt], targetDef = TARGETS[targetKey];
   if (!targetDef) return res.status(404).json({ ok: false, error: "unknown_target" });
-  const result = (targetDef.ids.length === 1) ? await openOne(targetDef.ids[0]) : await openSequence(targetDef.ids, 10000);
+  const result = await openTargetAndNotify(targetDef, req);
   if (!result.ok) return res.status(502).json({ ok: false, error: "open_failed", details: result });
   return res.json({ ok: true, opened: result });
 });
@@ -2216,7 +2264,7 @@ app.post("/checkin/:apt/open-direct/door", async (req, res) => {
   };
   const targetKey = map[apt], targetDef = TARGETS[targetKey];
   if (!targetDef) return res.status(404).json({ ok: false, error: "unknown_target" });
-  const result = (targetDef.ids.length === 1) ? await openOne(targetDef.ids[0]) : await openSequence(targetDef.ids, 10000);
+  const result = await openTargetAndNotify(targetDef, req);
   if (!result.ok) return res.status(502).json({ ok: false, error: "open_failed", details: result });
   return res.json({ ok: true, opened: result });
 });
@@ -2241,7 +2289,7 @@ app.post("/checkin/:apt/open-direct/apartment", async (req, res) => {
   };
   const targetKey = map[apt], targetDef = TARGETS[targetKey];
   if (!targetDef) return res.status(404).json({ ok: false, error: "unknown_target" });
-  const result = (targetDef.ids.length === 1) ? await openOne(targetDef.ids[0]) : await openSequence(targetDef.ids, 10000);
+  const result = await openTargetAndNotify(targetDef, req);
   if (!result.ok) return res.status(502).json({ ok: false, error: "open_failed", details: result });
   return res.json({ ok: true, opened: result });
 });
