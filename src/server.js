@@ -2050,7 +2050,14 @@ app.get("/checkin/:apt/res/:reservationId", async (req, res) => {
     const today = tzToday();
     if (day !== today) return res.status(410).send("Link scaduto.");
 
-    const { token } = newTokenFor(`checkin-${apt}`, { windowMin: CHECKIN_WINDOW_MIN, max: 200, day });
+    // Nel token finiscono anche rid e ct: servono a /checkin/:apt/phase per sapere
+    // da che ora i pulsanti di apertura devono lampeggiare (ora dichiarata dall ospite
+    // nel check-in online di Hostaway, non le 13:00 di default).
+    const _ct = resolveArrivalHHMM(reservation, "13:00");
+    const _now = Date.now(), _jti = b64url(crypto.randomBytes(9));
+    const _tp = { tgt: `checkin-${apt}`, exp: _now + CHECKIN_WINDOW_MIN * 60 * 1000, max: 200, used: 0,
+      jti: _jti, iat: _now, ver: TOKEN_VERSION, day, ct: _ct, rid: String(reservationId) };
+    const token = makeToken(_tp);
     const url = `${req.protocol}://${req.get("host")}/checkin/${apt}/index.html?t=${token}`;
     return res.redirect(302, url);
 

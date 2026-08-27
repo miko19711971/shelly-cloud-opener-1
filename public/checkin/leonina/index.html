@@ -503,7 +503,6 @@ footer {
     <div class="hero-copy">
       <div class="eyebrow" data-i18n="eyebrow">Private check-in guide</div>
       <h1 data-i18n="heroTitle">Welcome to Via Leonina 71</h1>
-      <p class="subtitle" data-i18n="heroSubtitle">Follow these simple steps in order to enter the building and open your apartment door.</p>
       <div class="address-card" id="addr">📍 Via Leonina 71, Rome • Entrance keypad: 16 or 7171 + 🔑</div>
     </div>
   </section>
@@ -512,16 +511,6 @@ footer {
     <div class="panel">
       <h2 data-i18n="beforeTitle">Before you start</h2>
       <p data-i18n="beforeText">Keep this page open during arrival. Use the opening buttons only when you are physically in front of the correct door.</p>
-    </div>
-
-    <div class="panel">
-      <h2 data-i18n="routeTitle">Your route</h2>
-      <div class="quick-list">
-        <div class="quick-item"><div class="quick-number">1</div><div data-i18n="route1">Open the building door.</div></div>
-        <div class="quick-item"><div class="quick-number">2</div><div data-i18n="route2">Walk to the end of the corridor.</div></div>
-        <div class="quick-item"><div class="quick-number">3</div><div data-i18n="route3">Take the elevator to the 4th floor.</div></div>
-        <div class="quick-item"><div class="quick-number">4</div><div data-i18n="route4">Open the green apartment door.</div></div>
-      </div>
     </div>
   </section>
 
@@ -851,5 +840,35 @@ document.querySelectorAll(".language button").forEach(btn => {
 })();
 </script>
 
+<style>
+/* Lampeggio lento dei pulsanti di apertura, dall'ora d'arrivo dichiarata dall'ospite */
+@keyframes ncSlowBlink { 0%,100% { opacity:1; box-shadow:0 0 0 0 rgba(0,0,0,0); } 50% { opacity:.55; box-shadow:0 0 0 7px rgba(0,0,0,.07); } }
+.open-btn.nc-blink { animation: ncSlowBlink 2.4s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) { .open-btn.nc-blink { animation: none; } }
+</style>
+<script>
+/* Chiede al server se e' gia' l'ora d'arrivo (fase 3). In caso affermativo fa
+   lampeggiare i pulsanti di apertura. L'orario e' quello che l'ospite dichiara
+   nel check-in online di Hostaway; il server lo rilegge con cache di 30 minuti.
+   Additivo: se qualcosa fallisce i pulsanti restano normali e funzionanti. */
+(function(){
+  var m = location.pathname.match(/\/checkin\/([^\/]+)\//);
+  var apt = m && m[1];
+  var t = new URLSearchParams(location.search).get('t') || '';
+  if (!apt || !t) return;
+  function setBlink(on){
+    var b = document.querySelectorAll('.open-btn');
+    for (var i = 0; i < b.length; i++) b[i].classList.toggle('nc-blink', on);
+  }
+  function check(){
+    fetch('/checkin/' + apt + '/phase?t=' + encodeURIComponent(t), { cache: 'no-store' })
+      .then(function(r){ return r.json(); })
+      .then(function(j){ setBlink(!!(j && j.phase === 3)); })
+      .catch(function(){});
+  }
+  check();
+  setInterval(check, 60000);
+})();
+</script>
 </body>
 </html>
