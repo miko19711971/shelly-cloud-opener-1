@@ -1,0 +1,3 @@
+# Nessuna dipendenza esterna: lo script usa solo la libreria standard di Python
+# (imaplib, email, json, urllib). Il file resta perche' Render vuole comunque
+# un comando di build.
