@@ -1824,7 +1824,14 @@ app.get('/guides/:apt/premium_rome_concierge.html', async (req, res, next) => {
 
 
 // ── Operator backdoor ─────────────────────────────────────────────────────
-const OPERATOR_CODE = '6793844';
+// Codice operatore: SOLO da variabile d'ambiente, mai nel codice. Questo
+// repository e' pubblico, e chi legge il sorgente aprirebbe i portoni di tutti
+// e cinque gli appartamenti. Se la variabile manca l'accesso operatore resta
+// chiuso: meglio non entrare che entrare con un valore che chiunque conosce.
+const OPERATOR_CODE = String(process.env.OPERATOR_CODE || '').trim();
+if (!OPERATOR_CODE) {
+  console.warn('⚠️  OPERATOR_CODE non impostato: accesso operatore disabilitato.');
+}
 
 function signOperatorCookie() {
   const data = Buffer.from(JSON.stringify({ operator: true, exp: Date.now() + 4 * 60 * 60 * 1000 })).toString('base64url');
@@ -1886,8 +1893,10 @@ app.post('/guides/:apt/recover', async (req, res) => {
   const safeLang = ['en','it','fr','de','es'].includes(lang) ? lang : 'en';
   const today = tzToday();
 
-  // Operator backdoor
-  if (email === OPERATOR_CODE) {
+  // Operator backdoor. Il controllo su OPERATOR_CODE non e' ridondante: senza,
+  // con la variabile d'ambiente assente il confronto diventa '' === '' e un
+  // campo email vuoto aprirebbe il pannello operatore a chiunque.
+  if (OPERATOR_CODE && email === OPERATOR_CODE) {
     console.log('🔑 Operator access granted:', apt);
     res.cookie('op_sess', signOperatorCookie(), { httpOnly: true, sameSite: 'lax', maxAge: 4 * 60 * 60 * 1000, path: '/' });
     return res.redirect(302, '/operator-panel');
@@ -4665,7 +4674,7 @@ app.get('/op', (req, res) => {
 });
 app.post('/op', express.urlencoded({ extended: false }), (req, res) => {
   const code = String(req.body?.code || '').trim();
-  if (code !== OPERATOR_CODE) return res.redirect(302, '/op');
+  if (!OPERATOR_CODE || code !== OPERATOR_CODE) return res.redirect(302, '/op');
   res.cookie('op_sess', signOperatorCookie(), { httpOnly: true, sameSite: 'lax', maxAge: 4 * 60 * 60 * 1000, path: '/' });
   return res.redirect(302, '/operator-panel');
 });
