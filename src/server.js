@@ -4258,17 +4258,31 @@ if (!STRIPE_WEBHOOK_SECRET_LEONINA) {
 if (!process.env.STRIPE_SECRET_KEY_LEONINA) {
   console.error("⚠️ Missing STRIPE_SECRET_KEY_LEONINA (Leonina apartment)");
 }
-if (!PAYPAL_WEBHOOK_ID) {
-  console.error("⚠️ Missing PAYPAL_WEBHOOK_ID");
-}
-if (!PAYPAL_WEBHOOK_ID_LEONINA) {
-  console.error("⚠️ Missing PAYPAL_WEBHOOK_ID_LEONINA (Leonina apartment)");
-}
-if (!process.env.PAYPAL_CLIENT_ID || !process.env.PAYPAL_CLIENT_SECRET) {
-  console.error("⚠️ Missing PAYPAL_CLIENT_ID / PAYPAL_CLIENT_SECRET");
-}
-if (!process.env.PAYPAL_CLIENT_ID_LEONINA || !process.env.PAYPAL_CLIENT_SECRET_LEONINA) {
-  console.error("⚠️ Missing PAYPAL_CLIENT_ID_LEONINA / PAYPAL_CLIENT_SECRET_LEONINA");
+// PayPal e' disattivato dal 2026: nessuna delle sue variabili e' impostata, ed
+// e' voluto. Avvisare di qualcosa che si e' spento apposta e' rumore, e il
+// rumore fa passare inosservati gli avvisi veri.
+//
+// Il codice PayPal resta tutto al suo posto (/pay/paypal, /paypal-webhook,
+// /paypal-webhook-leonina): per riattivarlo bastano le variabili d'ambiente,
+// non serve rimettere mano a niente.
+//
+// Gli avvisi tornano da soli il giorno della riattivazione: appena compare una
+// variabile PayPal il sistema si considera in uso, e da quel momento segnala
+// quelle che mancano - che e' il momento in cui servono davvero.
+const PAYPAL_VARS = [
+  ["PAYPAL_CLIENT_ID", process.env.PAYPAL_CLIENT_ID],
+  ["PAYPAL_CLIENT_SECRET", process.env.PAYPAL_CLIENT_SECRET],
+  ["PAYPAL_WEBHOOK_ID", PAYPAL_WEBHOOK_ID],
+  ["PAYPAL_CLIENT_ID_LEONINA", process.env.PAYPAL_CLIENT_ID_LEONINA],
+  ["PAYPAL_CLIENT_SECRET_LEONINA", process.env.PAYPAL_CLIENT_SECRET_LEONINA],
+  ["PAYPAL_WEBHOOK_ID_LEONINA", PAYPAL_WEBHOOK_ID_LEONINA],
+];
+const PAYPAL_IN_USO = PAYPAL_VARS.some(([, v]) => v);
+if (PAYPAL_IN_USO) {
+  const mancanti = PAYPAL_VARS.filter(([, v]) => !v).map(([k]) => k);
+  if (mancanti.length) {
+    console.error("⚠️ PayPal e' in uso ma mancano: " + mancanti.join(", "));
+  }
 }
 if (!GOOGLE_SHEETS_WEBHOOK_URL) {
   console.error("⚠️ Missing GOOGLE_SHEETS_WEBHOOK_URL");
