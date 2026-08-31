@@ -1,12 +1,32 @@
 # vrbo-block
 
-Blocco automatico anti-overbooking per le prenotazioni VRBO.
+Due lavori automatici sulle prenotazioni VRBO: il blocco anti-overbooking e la
+pratica di pagamento e documenti. Stanno nello stesso cron job perche' usano lo
+stesso token e le stesse credenziali, e un secondo servizio su Render costerebbe
+un servizio in piu' del piano.
+
+## Fase 1 - blocco anti-overbooking
 
 Quando arriva una prenotazione su VRBO, Hostaway la riceve tramite iCal con un
 ritardo di circa 30 minuti. In quella finestra l'appartamento risulta ancora
 libero su tutti gli altri canali e puo' essere prenotato una seconda volta.
 Questo servizio legge le email di conferma VRBO da Gmail e, se Hostaway non ha
 ancora la prenotazione, blocca subito quelle date sul calendario.
+
+## Fase 2 - pagato e documenti
+
+Marca la prenotazione come pagata, perche' le VRBO sono sempre incassate in
+anticipo fuori Hostaway, e chiede all'ospite i documenti nella conversazione
+Hostaway, come richiede la legge italiana.
+
+Questa fase parte **solo quando l'email dell'ospite e' presente**: l'iCal non la
+porta, la inserisce a mano il proprietario dopo che la prenotazione e' comparsa
+su Hostaway. Finche' manca, la prenotazione viene saltata a ogni giro.
+
+Le due fasi sono isolate una dall'altra: il blocco anti-overbooking gira per
+primo perche' e' quello critico, e un errore nella seconda fase non gli impedisce
+di fare il suo giro. Se una delle due fallisce il run risulta comunque fallito,
+cosi' il problema si vede nella lista dei run.
 
 **Questa cartella e' indipendente dal resto del repository.** Non condivide
 codice, dipendenze o configurazione con il servizio Node della radice
@@ -16,9 +36,11 @@ anche il servizio esistente, e non e' quello che vogliamo.
 
 ## Da dove viene
 
-Sostituisce `vrbo_email_block.py`, che girava sul PC di casa tramite Task
-Scheduler. Il PC resta spento circa 15 ore al giorno, quindi la protezione non
-esisteva proprio di notte, che e' quando arrivano le prenotazioni VRBO.
+Sostituisce due script che giravano sul PC di casa tramite Task Scheduler:
+`vrbo_email_block.py` (fase 1) e `vrbo_auto_passport.ps1` (fase 2). Il PC resta
+spento circa 15 ore al giorno, quindi la protezione non esisteva proprio di
+notte, che e' quando arrivano le prenotazioni VRBO, e la richiesta dei documenti
+poteva restare ferma fino al mattino dopo.
 
 ## Configurazione
 
@@ -54,11 +76,12 @@ convince, si toglie `DRY_RUN` (o si mette a `0`) e il servizio diventa operativo
 
 ## Dopo il passaggio
 
-Sul PC va disattivato il task `HostawayVrboEmailBlock`, altrimenti i due
-lavorano in parallelo sulle stesse date.
+Sul PC vanno disattivati i due task sostituiti, altrimenti lavorano in parallelo
+sulle stesse prenotazioni.
 
 ```
-Utilita di pianificazione > Libreria > HostawayVrboEmailBlock > Disattiva
+Utilita di pianificazione > Libreria > HostawayVrboEmailBlock     > Disattiva
+Utilita di pianificazione > Libreria > HostawayVrboAutoPassport   > Disattiva
 ```
 
 ## Nota tecnica: perche' non ci sono piu' i file di stato
@@ -90,3 +113,20 @@ Nel caso limite in cui il proprietario avesse bloccato a mano le stesse date di
 una prenotazione VRBO poi annullata, quelle date verrebbero riaperte. E' un caso
 molto improbabile, ma va conosciuto: in cambio si ottiene un servizio senza
 stato, che e' l'unico modo di girare su un cron job.
+
+## Nota tecnica: come fa la fase 2 a non mandare due volte lo stesso messaggio
+
+La versione sul PC teneva `vrbo_processed.json` con gli id gia' processati. Qui
+il registro e' la **conversazione Hostaway stessa**: prima di scrivere si leggono
+i messaggi della conversazione e si cerca la frase del messaggio documenti. Se
+c'e' gia', la prenotazione e' fatta e si salta. Il testo inviato e' identico a
+quello che mandava il PC, quindi anche le prenotazioni gia' processate prima del
+passaggio vengono riconosciute.
+
+Ogni dubbio porta a **non** mandare: se la conversazione non e' leggibile la
+prenotazione viene saltata e si ritenta al giro dopo. Meglio un messaggio in
+ritardo di cinque minuti che un messaggio doppio all'ospite.
+
+Il "marca pagato" e' idempotente per conto suo: legge `totalPaid` dal dettaglio
+della prenotazione e scrive solo se e' inferiore al totale. La lettura va fatta
+sul dettaglio e non sull'elenco, perche' l'elenco non restituisce `financeField`.

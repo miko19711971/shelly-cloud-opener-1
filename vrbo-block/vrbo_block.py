@@ -3,15 +3,28 @@
 """
 vrbo_block.py - Cron Job su Render
 
+Due lavori indipendenti sulle prenotazioni VRBO, nello stesso processo perche'
+usano lo stesso token e le stesse credenziali, e un secondo cron job costerebbe
+un servizio in piu' su Render.
+
+FASE 1 - blocco anti-overbooking (critica, gira per prima).
 Legge da Gmail le conferme di prenotazione VRBO e, se Hostaway non ha ancora la
 prenotazione, blocca subito quelle date sul calendario Hostaway. Serve a coprire
 i ~30 minuti che il sync iCal impiega ad arrivare: in quella finestra
 l'appartamento risulta ancora libero e puo' essere prenotato una seconda volta
 su un altro canale.
 
-Sostituisce vrbo_email_block.py, che girava sul PC di casa con il Task Scheduler
-e quindi era spento circa 15 ore al giorno - proprio le ore in cui arrivano le
-prenotazioni VRBO.
+FASE 2 - pagato e documenti.
+Marca la prenotazione come pagata (le VRBO sono sempre pagate in anticipo fuori
+Hostaway) e chiede all'ospite i documenti nella conversazione Hostaway. Parte
+solo quando l'utente ha inserito a mano l'email dell'ospite, che l'iCal non
+porta. Vedi la sezione "passaporti" piu' sotto per il dettaglio.
+
+Le due fasi sono isolate: un errore nell'una non impedisce all'altra di girare.
+
+Sostituisce vrbo_email_block.py e vrbo_auto_passport.ps1, che giravano sul PC di
+casa con il Task Scheduler e quindi erano spenti circa 15 ore al giorno - proprio
+le ore in cui arrivano le prenotazioni VRBO.
 
 DIFFERENZA IMPORTANTE rispetto alla versione PC: nessun file di stato. Su Render
 il disco si azzera a ogni esecuzione, quindi ogni decisione viene ricavata da
@@ -65,6 +78,13 @@ def hput_avail(lid, start, end, avail):
     rq = urllib.request.Request("https://api.hostaway.com/v1/listings/{}/calendar".format(lid),
                                 headers=HDR, data=body, method="PUT")
     return json.load(urllib.request.urlopen(rq, timeout=30)).get("status")
+
+
+def hsend(path, obj, metodo):
+    """POST o PUT con corpo JSON. Ritorna il JSON di risposta."""
+    rq = urllib.request.Request("https://api.hostaway.com/v1/" + path,
+                                headers=HDR, data=json.dumps(obj).encode(), method=metodo)
+    return json.load(urllib.request.urlopen(rq, timeout=30))
 
 
 def calendario(lid, start, end):
@@ -176,13 +196,154 @@ def leggi_email():
     return messaggi
 
 
-# ---------------------------------------------------------------- main
-def main():
-    if not TOKEN or not GMAIL_U or not GMAIL_PW:
-        log("CONFIGURAZIONE INCOMPLETA: mancano HOSTAWAY_TOKEN, GMAIL_USER o GMAIL_APP_PASSWORD")
-        sys.exit(1)
+# ---------------------------------------------------------------- passaporti
+# Seconda fase, ex vrbo_auto_passport.ps1 sul PC di casa. Marca la prenotazione
+# come pagata (le VRBO sono sempre pagate in anticipo, fuori Hostaway) e chiede
+# all'ospite i documenti nella conversazione Hostaway.
+#
+# Niente file di stato: il registro di cio' che e' gia' partito e' la
+# conversazione stessa. Se contiene gia' un messaggio con SENTINELLA la
+# prenotazione e' fatta e si salta. Ogni dubbio - errore di lettura, risposta
+# inattesa - porta a NON mandare: meglio un messaggio in ritardo che un
+# messaggio doppio all'ospite.
+CHANNEL_VRBO = 2010
+SENTINELLA   = "upload a photo of your passport"
+MESI_EN = [None, "January", "February", "March", "April", "May", "June",
+           "July", "August", "September", "October", "November", "December"]
 
-    log("===== VRBO Block - {} =====".format("DRY-RUN" if DRY_RUN else "LIVE"))
+
+def prenotazioni_vrbo():
+    """Prenotazioni del canale VRBO, con paginazione."""
+    out, offset = [], 0
+    while True:
+        lista = hget("reservations?channelId={}&limit=100&offset={}".format(
+            CHANNEL_VRBO, offset)).get("result") or []
+        for res in lista:
+            # La query filtra per canale: se torna altro la risposta non e'
+            # affidabile e non si tocca niente (stesso blocco del vecchio .ps1).
+            if res.get("channelName") != "vrboical":
+                raise RuntimeError("BLOCCO SICUREZZA: prenotazione non-vrboical id={} canale={}".format(
+                    res.get("id"), res.get("channelName")))
+            out.append(res)
+        if len(lista) < 100:
+            return out
+        offset += 100
+
+
+def conversazione(res_id):
+    """Id della conversazione della prenotazione; la crea se non esiste."""
+    esistenti = hget("conversations?reservationId={}".format(res_id)).get("result") or []
+    if esistenti:
+        return esistenti[0].get("id")
+    nuova = hsend("conversations", {"reservationId": int(res_id),
+                                    "type": "host-guest-email"}, "POST")
+    conv_id = (nuova.get("result") or {}).get("id")
+    log("  conversazione creata (id {})".format(conv_id))
+    return conv_id
+
+
+def documenti_gia_chiesti(conv_id):
+    messaggi = hget("conversations/{}/messages".format(conv_id)).get("result") or []
+    return any(SENTINELLA in (m.get("body") or "") for m in messaggi)
+
+
+def marca_pagata(res, tag):
+    """Scrive totalPaid = totalPrice, se non risulta gia' pagata."""
+    total = res.get("totalPrice") or 0
+    if total <= 0:
+        return
+    # L'elenco delle prenotazioni NON porta financeField: per sapere quanto
+    # risulta pagato serve il dettaglio. Senza questa lettura si riscriverebbe
+    # l'importo a ogni giro.
+    dettaglio = hget("reservations/{}".format(res["id"])).get("result") or {}
+    pagato = 0
+    for f in (dettaglio.get("financeField") or []):
+        if f.get("name") == "totalPaid":
+            pagato = f.get("value") or 0
+    if pagato >= total:
+        return
+    if DRY_RUN:
+        log("  [DRY] marcherei pagata EUR {}: {}".format(total, tag))
+        return
+    hsend("reservations/{}".format(res["id"]), {"financeField": [
+        {"type": "totals", "name": "totalPaid", "title": "Total paid",
+         "value": total, "units": 1, "isIncludedInTotalPrice": 0,
+         "isOverriddenByUser": 1, "isMandatory": 0, "isQuantitySelectable": 0},
+        {"type": "totals", "name": "totalPriceFromChannel", "title": "Total price from channel",
+         "value": total, "units": 1, "isIncludedInTotalPrice": 0,
+         "isOverriddenByUser": 0, "isMandatory": 0, "isQuantitySelectable": 0},
+    ]}, "PUT")
+    log("  MARCATA PAGATA EUR {}: {}".format(total, tag))
+
+
+def testo_documenti(nome, checkin, ospiti, portale):
+    d = datetime.date.fromisoformat(checkin)
+    quando = "{} {}".format(MESI_EN[d.month], d.day)
+    extra = ("\n\nSince you are travelling with {} guests, please also upload the second "
+             "guest's document using the Selfie button on the same page.".format(ospiti)) if (ospiti or 0) >= 2 else ""
+    return ("Hi {},\n\nWe look forward to welcoming you on {}!\n\n"
+            "As required by Italian law, we need to register the ID documents of all guests "
+            "before check-in. Please upload a photo of your passport or ID card using the "
+            "link below:\n\n{}{}\n\nSee you soon!\nMichele\nNiceFlat Rome").format(
+                nome, quando, portale, extra)
+
+
+def fase_passaporti():
+    oggi = datetime.date.today().isoformat()
+    tutte = prenotazioni_vrbo()
+    fatte = 0
+
+    for res in tutte:
+        rid = res.get("id")
+        email = (res.get("guestEmail") or "").strip()
+        tag = "{} | {} | {}..{}".format(rid, res.get("guestName"),
+                                        res.get("arrivalDate"), res.get("departureDate"))
+
+        if res.get("status") == "cancelled":
+            continue
+        if (res.get("departureDate") or "") < oggi:
+            continue
+        # Senza email non si va avanti: la mette a mano l'utente su Hostaway
+        # dopo che l'iCal ha creato la prenotazione. E' il passo che sblocca
+        # tutto il resto.
+        if not email:
+            continue
+
+        try:
+            conv_id = conversazione(rid)
+            if not conv_id:
+                log("  SALTO, nessuna conversazione: {}".format(tag))
+                continue
+            if documenti_gia_chiesti(conv_id):
+                continue
+        except Exception as e:
+            # Non si riesce a stabilire se il messaggio e' gia' partito:
+            # si salta, si ritenta al giro dopo. Mai mandare nel dubbio.
+            log("  SALTO, conversazione illeggibile ({}): {}".format(type(e).__name__, tag))
+            continue
+
+        try:
+            marca_pagata(res, tag)
+        except Exception as e:
+            log("  ERRORE marca pagata ({}): {}".format(e, tag))
+
+        testo = testo_documenti(res.get("guestName"), res.get("arrivalDate"),
+                                res.get("numberOfGuests"), res.get("guestPortalUrl"))
+        if DRY_RUN:
+            log("  [DRY] chiederei i documenti a {}: {}".format(email, tag))
+            continue
+        try:
+            hsend("conversations/{}/messages".format(conv_id), {"body": testo}, "POST")
+            log("  DOCUMENTI RICHIESTI a {}: {}".format(email, tag))
+            fatte += 1
+        except Exception as e:
+            log("  ERRORE invio messaggio ({}): {}".format(e, tag))
+
+    log("Passaporti: {} prenotazioni VRBO attive, {} messaggi inviati.".format(len(tutte), fatte))
+
+
+# ---------------------------------------------------------------- main
+def fase_blocco():
     messaggi = leggi_email()
 
     # Le cancellazioni servono a capire se una prenotazione confermata nella
@@ -254,12 +415,43 @@ def main():
             st = hput_avail(lid, start, end, 0)
             log("BLOCCO CREATO [{}]: {}".format(st, tag))
 
+
+def main():
+    """Due lavori distinti, isolati uno dall'altro.
+
+    Il blocco anti-overbooking viene per primo ed e' quello critico: se la
+    seconda fase esplode, il suo giro l'ha gia' fatto. Un errore in una fase
+    non impedisce all'altra di girare; il run risulta comunque fallito, cosi'
+    il problema si vede nella lista dei run e non passa inosservato.
+    """
+    if not TOKEN or not GMAIL_U or not GMAIL_PW:
+        log("CONFIGURAZIONE INCOMPLETA: mancano HOSTAWAY_TOKEN, GMAIL_USER o GMAIL_APP_PASSWORD")
+        return 1
+
+    log("===== VRBO Block - {} =====".format("DRY-RUN" if DRY_RUN else "LIVE"))
+    esito = 0
+
+    try:
+        fase_blocco()
+    except Exception as e:
+        log("ERRORE FASE BLOCCO -> {}: {}".format(type(e).__name__, e))
+        log("dettaglio: " + traceback.format_exc().replace(chr(10), " | "))
+        esito = 1
+
+    try:
+        fase_passaporti()
+    except Exception as e:
+        log("ERRORE FASE PASSAPORTI -> {}: {}".format(type(e).__name__, e))
+        log("dettaglio: " + traceback.format_exc().replace(chr(10), " | "))
+        esito = 1
+
     log("Fine.")
+    return esito
 
 
 if __name__ == "__main__":
     try:
-        main()
+        sys.exit(main())
     except SystemExit:
         raise
     except Exception as e:
