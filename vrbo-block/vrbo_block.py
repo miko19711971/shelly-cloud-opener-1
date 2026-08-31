@@ -339,7 +339,11 @@ def fase_passaporti():
         except Exception as e:
             log("  ERRORE invio messaggio ({}): {}".format(e, tag))
 
-    log("Passaporti: {} prenotazioni VRBO attive, {} messaggi inviati.".format(len(tutte), fatte))
+    # "esaminate" e non "attive": l'elenco che Hostaway restituisce per il canale
+    # contiene tutto lo storico, cancellate e soggiorni gia' passati compresi.
+    # Sono i filtri qui sopra a scartarli, uno per uno.
+    log("Passaporti: {} prenotazioni VRBO esaminate (tutto lo storico del canale), "
+        "{} messaggi inviati.".format(len(tutte), fatte))
 
 
 # ---------------------------------------------------------------- main
