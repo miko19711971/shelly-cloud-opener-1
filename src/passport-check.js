@@ -31,9 +31,177 @@ const CANCELLED = new Set([
   "inquiry", "inquirynotpossible", "inquiry_timedout", "inquirytimedout"
 ]);
 
-// Frase presente in ogni avviso: serve a non mandarlo due volte se il servizio
-// riparte (lo stato in memoria si azzera, la conversazione Hostaway no).
-export const PASSPORT_MARKER = "we must register an identity document for every guest";
+// ── Testo dell'avviso, nella lingua dell'ospite ─────────────────────────────
+// Coperte le 12 lingue che compaiono davvero nelle prenotazioni (~95%); per
+// tutte le altre si usa l'inglese. Ogni lingua porta un `marker`, una frase
+// contenuta nel suo testo: serve a riconoscere un avviso gia' inviato e a non
+// mandarlo due volte se il servizio riparte (lo stato in memoria si azzera, la
+// conversazione Hostaway no). Il conteggio e' sempre "ricevuti X su Y", cosi'
+// nessuna lingua deve accordare singolare e plurale.
+const TEXTS = {
+  en: {
+    marker: "we must register an identity document for every guest",
+    lines: (v) => [
+      `Hello ${v.name},`, ``,
+      `You are checking in tomorrow (${v.date}) and your online check-in is not complete yet.`, ``,
+      `As required by Italian law, we must register an identity document for every guest staying in the apartment, children of any age included: ${v.expected} in total. So far we have received ${v.docs} of ${v.expected}.`, ``,
+      `Please upload the missing documents here:`, v.portal, ``,
+      `For each guest use the "Upload" button or the "Selfie" button and send a clear photo of the front page of the passport or ID card.`, ``,
+      `Please note: the link to your digital guide — the one that carries the electronic keys to open the building door and the apartment — is sent automatically only once the online check-in is complete, with the document of every guest. Until then the keys cannot be issued and you will not be able to get into the apartment on the day of your arrival.`, ``,
+      `It only takes a minute. Thank you!`
+    ]
+  },
+  it: {
+    marker: "dobbiamo registrare un documento di identità per ogni ospite",
+    lines: (v) => [
+      `Ciao ${v.name},`, ``,
+      `Domani (${v.date}) è il giorno del tuo arrivo e il check-in online non è ancora completo.`, ``,
+      `Come richiede la legge italiana, dobbiamo registrare un documento di identità per ogni ospite che soggiorna nell'appartamento, minori di qualunque età compresi: ${v.expected} in totale. Finora ne abbiamo ricevuti ${v.docs} su ${v.expected}.`, ``,
+      `Carica qui i documenti mancanti:`, v.portal, ``,
+      `Per ogni ospite usa il pulsante "Upload" oppure il pulsante "Selfie" e invia una foto nitida della prima pagina del passaporto o della carta d'identità.`, ``,
+      `Attenzione: il link alla guida digitale — quello che contiene le chiavi elettroniche per aprire il portone e l'appartamento — viene inviato in automatico solo quando il check-in online è completo, con il documento di ogni ospite. Fino ad allora le chiavi non possono essere emesse e il giorno dell'arrivo non potrai entrare nell'appartamento.`, ``,
+      `Basta un minuto. Grazie!`
+    ]
+  },
+  es: {
+    marker: "debemos registrar un documento de identidad de cada huésped",
+    lines: (v) => [
+      `Hola ${v.name},`, ``,
+      `Mañana (${v.date}) es el día de tu llegada y tu check-in online todavía no está completo.`, ``,
+      `Como exige la ley italiana, debemos registrar un documento de identidad de cada huésped que se aloja en el apartamento, incluidos los menores de cualquier edad: ${v.expected} en total. Hasta ahora hemos recibido ${v.docs} de ${v.expected}.`, ``,
+      `Sube aquí los documentos que faltan:`, v.portal, ``,
+      `Para cada huésped usa el botón "Upload" o el botón "Selfie" y envía una foto nítida de la primera página del pasaporte o del documento de identidad.`, ``,
+      `Importante: el enlace a tu guía digital — el que contiene las llaves electrónicas para abrir el portal y el apartamento — se envía automáticamente solo cuando el check-in online está completo, con el documento de cada huésped. Hasta entonces las llaves no se pueden emitir y el día de tu llegada no podrás entrar en el apartamento.`, ``,
+      `Solo lleva un minuto. ¡Gracias!`
+    ]
+  },
+  fr: {
+    marker: "nous devons enregistrer une pièce d'identité pour chaque voyageur",
+    lines: (v) => [
+      `Bonjour ${v.name},`, ``,
+      `Vous arrivez demain (${v.date}) et votre check-in en ligne n'est pas encore complet.`, ``,
+      `Comme l'exige la loi italienne, nous devons enregistrer une pièce d'identité pour chaque voyageur séjournant dans l'appartement, enfants de tout âge compris : ${v.expected} au total. Nous en avons reçu ${v.docs} sur ${v.expected}.`, ``,
+      `Merci de téléverser ici les documents manquants :`, v.portal, ``,
+      `Pour chaque voyageur, utilisez le bouton "Upload" ou le bouton "Selfie" et envoyez une photo nette de la première page du passeport ou de la carte d'identité.`, ``,
+      `Important : le lien vers votre guide numérique — celui qui contient les clés électroniques pour ouvrir la porte de l'immeuble et l'appartement — est envoyé automatiquement uniquement lorsque le check-in en ligne est complet, avec le document de chaque voyageur. Jusque-là, les clés ne peuvent pas être délivrées et le jour de votre arrivée vous ne pourrez pas entrer dans l'appartement.`, ``,
+      `Cela ne prend qu'une minute. Merci !`
+    ]
+  },
+  de: {
+    marker: "müssen wir von jedem Gast ein Ausweisdokument erfassen",
+    lines: (v) => [
+      `Hallo ${v.name},`, ``,
+      `Sie reisen morgen an (${v.date}) und Ihr Online-Check-in ist noch nicht vollständig.`, ``,
+      `Wie es das italienische Gesetz verlangt, müssen wir von jedem Gast ein Ausweisdokument erfassen, der in der Wohnung übernachtet, Kinder jeden Alters eingeschlossen: insgesamt ${v.expected}. Bisher haben wir ${v.docs} von ${v.expected} erhalten.`, ``,
+      `Bitte laden Sie die fehlenden Dokumente hier hoch:`, v.portal, ``,
+      `Verwenden Sie für jeden Gast die Schaltfläche "Upload" oder "Selfie" und senden Sie ein scharfes Foto der ersten Seite des Reisepasses oder Personalausweises.`, ``,
+      `Wichtig: Der Link zu Ihrem digitalen Guide – der die elektronischen Schlüssel für die Haustür und die Wohnung enthält – wird automatisch erst dann verschickt, wenn der Online-Check-in mit dem Dokument jedes Gastes vollständig ist. Bis dahin können die Schlüssel nicht ausgestellt werden und Sie kommen am Anreisetag nicht in die Wohnung.`, ``,
+      `Es dauert nur eine Minute. Vielen Dank!`
+    ]
+  },
+  nl: {
+    marker: "moeten wij van elke gast een identiteitsbewijs registreren",
+    lines: (v) => [
+      `Hallo ${v.name},`, ``,
+      `U komt morgen aan (${v.date}) en uw online check-in is nog niet compleet.`, ``,
+      `Zoals de Italiaanse wet vereist, moeten wij van elke gast een identiteitsbewijs registreren die in het appartement verblijft, kinderen van elke leeftijd inbegrepen: ${v.expected} in totaal. Tot nu toe hebben wij er ${v.docs} van ${v.expected} ontvangen.`, ``,
+      `Upload de ontbrekende documenten hier:`, v.portal, ``,
+      `Gebruik voor elke gast de knop "Upload" of de knop "Selfie" en stuur een scherpe foto van de eerste pagina van het paspoort of de identiteitskaart.`, ``,
+      `Let op: de link naar uw digitale gids — die de elektronische sleutels bevat om de deur van het gebouw en het appartement te openen — wordt automatisch pas verstuurd wanneer de online check-in compleet is, met het document van elke gast. Tot dan kunnen de sleutels niet worden afgegeven en kunt u op de dag van aankomst het appartement niet in.`, ``,
+      `Het kost maar een minuut. Bedankt!`
+    ]
+  },
+  pl: {
+    marker: "musimy zarejestrować dokument tożsamości każdego gościa",
+    lines: (v) => [
+      `Dzień dobry, ${v.name},`, ``,
+      `Jutro (${v.date}) zaczyna się Państwa pobyt, a odprawa online nie została jeszcze ukończona.`, ``,
+      `Zgodnie z włoskim prawem musimy zarejestrować dokument tożsamości każdego gościa nocującego w apartamencie, w tym dzieci w każdym wieku: łącznie ${v.expected}. Do tej pory otrzymaliśmy ${v.docs} z ${v.expected}.`, ``,
+      `Prosimy o przesłanie brakujących dokumentów tutaj:`, v.portal, ``,
+      `Dla każdego gościa proszę użyć przycisku "Upload" lub przycisku "Selfie" i wysłać wyraźne zdjęcie pierwszej strony paszportu lub dowodu osobistego.`, ``,
+      `Uwaga: link do przewodnika cyfrowego — tego, który zawiera elektroniczne klucze do drzwi budynku i apartamentu — jest wysyłany automatycznie dopiero wtedy, gdy odprawa online jest kompletna, z dokumentem każdego gościa. Do tego czasu klucze nie mogą zostać wydane i w dniu przyjazdu nie będzie można wejść do apartamentu.`, ``,
+      `To zajmuje tylko chwilę. Dziękujemy!`
+    ]
+  },
+  ru: {
+    marker: "мы обязаны зарегистрировать документ, удостоверяющий личность каждого гостя",
+    lines: (v) => [
+      `Здравствуйте, ${v.name}!`, ``,
+      `Завтра (${v.date}) день вашего заезда, а онлайн-регистрация ещё не завершена.`, ``,
+      `По требованию итальянского законодательства мы обязаны зарегистрировать документ, удостоверяющий личность каждого гостя, проживающего в квартире, включая детей любого возраста: всего ${v.expected}. На данный момент получено ${v.docs} из ${v.expected}.`, ``,
+      `Загрузите недостающие документы здесь:`, v.portal, ``,
+      `Для каждого гостя используйте кнопку "Upload" или кнопку "Selfie" и отправьте чёткое фото первой страницы паспорта или удостоверения личности.`, ``,
+      `Обратите внимание: ссылка на цифровой гид — та, в которой находятся электронные ключи от подъезда и квартиры — отправляется автоматически только после завершения онлайн-регистрации с документом каждого гостя. До этого ключи не выдаются, и в день приезда вы не сможете попасть в квартиру.`, ``,
+      `Это займёт одну минуту. Спасибо!`
+    ]
+  },
+  he: {
+    marker: "עלינו לרשום מסמך זיהוי עבור כל אורח",
+    lines: (v) => [
+      `שלום ${v.name},`, ``,
+      `מחר (${v.date}) יום ההגעה שלך, והצ'ק-אין המקוון עדיין לא הושלם.`, ``,
+      `על פי החוק האיטלקי, עלינו לרשום מסמך זיהוי עבור כל אורח השוהה בדירה, כולל ילדים בכל גיל: ${v.expected} בסך הכול. עד כה קיבלנו ${v.docs} מתוך ${v.expected}.`, ``,
+      `נא להעלות כאן את המסמכים החסרים:`, v.portal, ``,
+      `עבור כל אורח יש להשתמש בכפתור "Upload" או בכפתור "Selfie" ולשלוח תמונה ברורה של העמוד הראשון בדרכון או בתעודת הזהות.`, ``,
+      `שימו לב: הקישור למדריך הדיגיטלי — זה שמכיל את המפתחות האלקטרוניים לפתיחת דלת הבניין והדירה — נשלח אוטומטית רק לאחר שהצ'ק-אין המקוון הושלם, עם מסמך של כל אורח. עד אז לא ניתן להנפיק את המפתחות ולא תוכלו להיכנס לדירה ביום ההגעה.`, ``,
+      `זה לוקח רק דקה. תודה!`
+    ]
+  },
+  el: {
+    marker: "πρέπει να καταχωρίσουμε ταυτότητα ή διαβατήριο για κάθε επισκέπτη",
+    lines: (v) => [
+      `Γεια σας ${v.name},`, ``,
+      `Αύριο (${v.date}) είναι η ημέρα άφιξής σας και το online check-in δεν έχει ολοκληρωθεί ακόμη.`, ``,
+      `Όπως απαιτεί η ιταλική νομοθεσία, πρέπει να καταχωρίσουμε ταυτότητα ή διαβατήριο για κάθε επισκέπτη που διαμένει στο διαμέρισμα, συμπεριλαμβανομένων των παιδιών κάθε ηλικίας: ${v.expected} συνολικά. Μέχρι τώρα έχουμε λάβει ${v.docs} από ${v.expected}.`, ``,
+      `Ανεβάστε εδώ τα έγγραφα που λείπουν:`, v.portal, ``,
+      `Για κάθε επισκέπτη χρησιμοποιήστε το κουμπί "Upload" ή το κουμπί "Selfie" και στείλτε μια καθαρή φωτογραφία της πρώτης σελίδας του διαβατηρίου ή της ταυτότητας.`, ``,
+      `Προσοχή: ο σύνδεσμος για τον ψηφιακό οδηγό — αυτός που περιέχει τα ηλεκτρονικά κλειδιά για την είσοδο της πολυκατοικίας και του διαμερίσματος — αποστέλλεται αυτόματα μόνο όταν ολοκληρωθεί το online check-in, με το έγγραφο κάθε επισκέπτη. Μέχρι τότε τα κλειδιά δεν μπορούν να εκδοθούν και την ημέρα της άφιξης δεν θα μπορέσετε να μπείτε στο διαμέρισμα.`, ``,
+      `Χρειάζεται μόνο ένα λεπτό. Ευχαριστούμε!`
+    ]
+  },
+  sv: {
+    marker: "måste vi registrera en identitetshandling för varje gäst",
+    lines: (v) => [
+      `Hej ${v.name},`, ``,
+      `I morgon (${v.date}) är din ankomstdag och din incheckning online är inte klar än.`, ``,
+      `Enligt italiensk lag måste vi registrera en identitetshandling för varje gäst som bor i lägenheten, barn i alla åldrar inkluderade: ${v.expected} totalt. Hittills har vi fått ${v.docs} av ${v.expected}.`, ``,
+      `Ladda upp de handlingar som saknas här:`, v.portal, ``,
+      `Använd knappen "Upload" eller knappen "Selfie" för varje gäst och skicka ett tydligt foto av passets eller ID-kortets första sida.`, ``,
+      `Observera: länken till din digitala guide — den som innehåller de elektroniska nycklarna till porten och lägenheten — skickas automatiskt först när incheckningen online är komplett, med handling för varje gäst. Fram till dess kan nycklarna inte utfärdas och du kommer inte in i lägenheten på ankomstdagen.`, ``,
+      `Det tar bara en minut. Tack!`
+    ]
+  },
+  pt: {
+    marker: "temos de registar um documento de identificação de cada hóspede",
+    lines: (v) => [
+      `Olá ${v.name},`, ``,
+      `Amanhã (${v.date}) é o dia da sua chegada e o check-in online ainda não está completo.`, ``,
+      `Como exige a lei italiana, temos de registar um documento de identificação de cada hóspede que fica no apartamento, incluindo crianças de qualquer idade: ${v.expected} no total. Até agora recebemos ${v.docs} de ${v.expected}.`, ``,
+      `Carregue aqui os documentos em falta:`, v.portal, ``,
+      `Para cada hóspede utilize o botão "Upload" ou o botão "Selfie" e envie uma foto nítida da primeira página do passaporte ou do cartão de identidade.`, ``,
+      `Atenção: o link para o seu guia digital — o que contém as chaves eletrónicas para abrir a porta do prédio e o apartamento — é enviado automaticamente apenas quando o check-in online estiver completo, com o documento de cada hóspede. Até lá as chaves não podem ser emitidas e no dia da chegada não conseguirá entrar no apartamento.`, ``,
+      `Demora apenas um minuto. Obrigado!`
+    ]
+  }
+};
+
+// Tutte le frasi-firma, in ogni lingua: un avviso gia' inviato va riconosciuto
+// anche se era partito in un'altra lingua.
+export const PASSPORT_MARKERS = Object.values(TEXTS).map(t => t.marker);
+
+// Stessa risoluzione della lingua usata dalle guide (Fase 2 e 3) in server.js.
+export function guestLang(r) {
+  const raw = String(r.guestLanguage || r.guestLocale || "en").toLowerCase();
+  const named = {
+    english: "en", italian: "it", italiano: "it", spanish: "es", espanol: "es",
+    french: "fr", francais: "fr", german: "de", deutsch: "de", dutch: "nl",
+    polish: "pl", russian: "ru", hebrew: "he", greek: "el", swedish: "sv",
+    portuguese: "pt"
+  };
+  const first = raw.split(",")[0].trim();
+  const code = named[first] || first.split(/[-_]/)[0];
+  return TEXTS[code] ? code : "en";
+}
 
 function authHeaders() {
   return {
@@ -139,7 +307,8 @@ export async function warningAlreadySent(conversationId, hours = 20) {
     );
     const cutoff = Date.now() - hours * 3600 * 1000;
     return (resp.data?.result || []).some(m => {
-      if (!String(m.body || "").includes(PASSPORT_MARKER)) return false;
+      const body = String(m.body || "");
+      if (!PASSPORT_MARKERS.some(mk => body.includes(mk))) return false;
       const ts = new Date(m.date || m.insertedOn || m.insertedAt || 0).getTime();
       return !ts || ts >= cutoff;
     });
@@ -148,34 +317,14 @@ export async function warningAlreadySent(conversationId, hours = 20) {
   }
 }
 
-export function buildGuestWarning(r, { docs, expected }) {
-  const name = r.guestFirstName || (r.guestName || "").split(" ")[0] || "there";
+export function buildGuestWarning(r, { docs, expected, lang }) {
+  const code = lang || guestLang(r);
+  const t = TEXTS[code] || TEXTS.en;
+  const name = r.guestFirstName || (r.guestName || "").split(" ")[0] || "";
   const portal = r.guestPortalUrl ||
     (r.guestAuthHash ? `https://guest-portal.hostaway.com/${r.id}/${r.guestAuthHash}` : "");
-  const missing = Math.max(expected - docs, 0);
-  const have = docs === 0
-    ? "So far we have not received any document."
-    : `So far we have received ${docs} document${docs === 1 ? "" : "s"} out of ${expected}.`;
-
-  return [
-    `Hello ${name},`,
-    ``,
-    `You are checking in tomorrow (${r.arrivalDate}) and your online check-in is not complete yet.`,
-    ``,
-    `As required by Italian law, ${PASSPORT_MARKER} staying in the apartment, children of any age included: ${expected} document${expected === 1 ? "" : "s"} in total. ${have}`,
-    ``,
-    `Please upload the missing ${missing === 1 ? "one" : `${missing} documents`} here:`,
-    portal,
-    ``,
-    `For each guest use the "Upload" button or the "Selfie" button and send a clear photo of the front page of the passport or ID card.`,
-    ``,
-    `Please note: the link to your digital guide — the one that carries the electronic keys to open the building door and the apartment — is sent automatically only once the online check-in is complete, with the document of every guest. Until then the keys cannot be issued and you will not be able to get into the apartment on the day of your arrival.`,
-    ``,
-    `It only takes a minute. Thank you!`,
-    ``,
-    `Michele`,
-    `NiceFlat Rome`
-  ].join("\n");
+  const body = t.lines({ name: name.trim(), date: r.arrivalDate, expected, docs, portal });
+  return [...body, ``, `Michele`, `NiceFlat Rome`].join("\n");
 }
 
 function esc(s) {
@@ -192,7 +341,7 @@ export function buildHostReport(day, rows) {
   if (missing.length) {
     lines.push("DOCUMENTI MANCANTI:");
     for (const x of missing) {
-      lines.push(`- ${x.guestName} (${x.reservationId}, apt ${x.listingMapId}, ${x.channelName}): ${x.docs}/${x.expected} — ${x.outcome === "already_warned" ? "avviso gia' inviato" : x.outcome === "would_warn" ? "avviso NON inviato (prova a secco)" : "avviso inviato"}`);
+      lines.push(`- ${x.guestName} (${x.reservationId}, apt ${x.listingMapId}, ${x.channelName}): ${x.docs}/${x.expected} — ${x.outcome === "already_warned" ? "avviso gia' inviato" : x.outcome === "would_warn" ? "avviso NON inviato (prova a secco)" : `avviso inviato in ${x.lang}`}`);
     }
     lines.push("");
   }
@@ -215,7 +364,7 @@ export function buildHostReport(day, rows) {
       return `<table role="presentation" width="100%" style="border-collapse:collapse;margin:0 0 10px;background:#fff;border:1px solid ${bad ? "#e0b4b4" : "#e6e0d5"};border-radius:10px;overflow:hidden">
         <tr><td style="background:${bad ? "#7d2a2a" : "#1d1812"};color:#f2d58a;padding:9px 13px;font-weight:700;font-size:14px">${bad ? "⚠️" : "✅"} ${esc(x.guestName)}</td></tr>
         <tr><td style="padding:10px 13px;font-size:13px;color:#222;line-height:1.6">
-          <b>Documenti:</b> ${esc(x.docs)}/${esc(x.expected)}${x.photos != null ? ` (foto totali: ${esc(x.photos)})` : ""}<br>
+          <b>Documenti:</b> ${esc(x.docs)}/${esc(x.expected)}${x.photos != null ? ` (foto totali: ${esc(x.photos)})` : ""} · <b>lingua:</b> ${esc(x.lang || "—")}<br>
           <b>Prenotazione:</b> ${esc(x.reservationId)} · apt ${esc(x.listingMapId)} · ${esc(x.channelName)}<br>
           <b>Esito:</b> ${esc(x.outcome)}${x.reason ? ` — ${esc(x.reason)}` : ""}
         </td></tr></table>`;
@@ -247,7 +396,7 @@ export async function runPassportCheck(deps, opts = {}) {
     const base = {
       reservationId: r.id, guestName: r.guestName || "Ospite",
       listingMapId: r.listingMapId, channelName: r.channelName || "—",
-      expected: expectedDocuments(r)
+      expected: expectedDocuments(r), lang: guestLang(r)
     };
 
     const active = await isArrivalFormActive(r);
@@ -285,14 +434,14 @@ export async function runPassportCheck(deps, opts = {}) {
     }
     if (dryRun) {
       rows.push({ ...row, outcome: "would_warn" });
-      log(`   ⚠️ ${r.id} ${base.guestName}: ${found.docs}/${base.expected} → avviso DA INVIARE (prova a secco)`);
+      log(`   ⚠️ ${r.id} ${base.guestName}: ${found.docs}/${base.expected} → avviso DA INVIARE in ${base.lang} (prova a secco)`);
       continue;
     }
 
-    const message = buildGuestWarning(r, { docs: found.docs, expected: base.expected });
+    const message = buildGuestWarning(r, { docs: found.docs, expected: base.expected, lang: base.lang });
     await deps.sendGuestMessage({ conversationId, message });
     rows.push({ ...row, outcome: "warned" });
-    log(`   📨 ${r.id} ${base.guestName}: ${found.docs}/${base.expected} → avviso inviato`);
+    log(`   📨 ${r.id} ${base.guestName}: ${found.docs}/${base.expected} → avviso inviato in ${base.lang}`);
   }
 
   // Riepilogo all'host solo se c'e' qualcosa da dire.
