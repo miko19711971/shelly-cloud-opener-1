@@ -2141,6 +2141,31 @@ app.get("/checkin/:apt/index.html", (req, res) => {
   }
 });
 
+app.get("/checkin/:apt/voice.html", (req, res) => {
+  try {
+    const apt = req.params.apt.toLowerCase(), t = String(req.query.t || "");
+    const parsed = parseGuideToken(t);
+    if (!parsed.ok) return res.status(410).send("Questo link non è più valido.");
+    const p = parsed.payload || {};
+    if (typeof p.exp !== "number" || Date.now() > p.exp) return res.status(410).send("Questo link è scaduto. Richiedi un nuovo link.");
+    const { tgt, day } = p;
+    const validTgts = [`checkin-${apt}`, `guide-${apt}`];
+    if (!validTgts.includes(tgt) && typeof p.op_phase !== "number") return res.status(410).send("Link non valido.");
+    const isOperator = typeof p.op_phase === "number";
+    const isGuideToken = tgt === `guide-${apt}`;
+    if (!isOperator && !isGuideToken && (!isYYYYMMDD(day) || day !== tzToday())) return res.status(410).send("Questo link è valido solo nel giorno di check-in.");
+    const filePath = path.join(PUBLIC_DIR, "checkin", apt, "voice.html");
+    return res.sendFile(filePath, (err) => {
+      if (err) {
+        if (!res.headersSent) return res.status(err.statusCode || 404).send("Voice guide not available.");
+      }
+    });
+  } catch (e) {
+    console.error("❌ /checkin/:apt/voice.html crashed:", e);
+    return res.status(500).send("Internal Server Error");
+  }
+});
+
 function requireCheckinToken(req, res, next) {
   const apt = String(req.params.apt || "").toLowerCase();
   const t = String(req.query.t || "");
