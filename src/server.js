@@ -11,6 +11,7 @@ import { detectLanguage } from "./language.js";
 import { ANSWERS } from "./answers.js";
 import { askGemini, askGeminiGuide } from "./gemini.js";
 import bibaRouter from "./biba-router.js";
+import { runPassportCheck } from "./passport-check.js";
  const SAFE_FALLBACK_REPLY =
   "Thank you for your message. We've received your request and we'll get back to you as soon as possible.";
 const app = express();
@@ -5297,6 +5298,59 @@ app.get("/admin/leonina-reminder/run", requireAdmin, async (req, res) => {
     const r = await runLeoninaArrivalsReminder(day);
     res.json({ ok: true, day, ...r });
   } catch (e) { console.error("❌ Leonina reminder manual run:", e.message); res.status(500).json({ ok: false, error: e.message }); }
+});
+
+// ════════════════════════════════════════════════════════════════════════════
+// DAILY 10:00 (Europe/Rome) — CONTROLLO PASSAPORTI DEL GIORNO PRIMA
+// Per ogni check-in di domani controlla che sull'arrival form ci sia un
+// documento per ogni ospite. Se ne mancano, all'ospite parte un avviso sulla
+// conversazione Hostaway (che glielo consegna via email) e all'host arriva il
+// riepilogo. Logica e lettura dei documenti in src/passport-check.js.
+// ════════════════════════════════════════════════════════════════════════════
+const PASSPORT_CHECK_HOUR = Number(process.env.PASSPORT_CHECK_HOUR || 10);
+let _passportCheckLastDate = null;
+
+function _romeTomorrow() {
+  const today = tzToday();                       // YYYY-MM-DD, Europe/Rome
+  const d = new Date(`${today}T12:00:00`);
+  d.setDate(d.getDate() + 1);
+  return d.toISOString().slice(0, 10);
+}
+
+async function runPassportCheckJob({ day, dryRun } = {}) {
+  return runPassportCheck({
+    getConversationId,
+    sendGuestMessage: sendHostawayMessage,
+    sendHostEmail: ({ subject, text, html }) => sendReminderEmail({
+      to: process.env.PASSPORT_ALERT_TO || process.env.GMAIL_USER || process.env.SMTP_USER,
+      subject, text, html
+    }),
+    log: console.log
+  }, { day: day || _romeTomorrow(), dryRun });
+}
+
+// Parte una volta sola dentro l'ora indicata (guardia in memoria, si azzera al restart)
+setInterval(async () => {
+  try {
+    const today = tzToday();
+    if (_romeHour() === PASSPORT_CHECK_HOUR && _passportCheckLastDate !== today) {
+      _passportCheckLastDate = today;
+      await runPassportCheckJob();
+    }
+  } catch (e) { console.error("❌ Controllo passaporti tick:", e.message); }
+}, 60000);
+
+// Lancio manuale: GET /admin/passport-check/run?date=YYYY-MM-DD&dry=1  (header x-admin-secret)
+app.get("/admin/passport-check/run", requireAdmin, async (req, res) => {
+  try {
+    const day = isYYYYMMDD(req.query.date) ? req.query.date : _romeTomorrow();
+    const dryRun = req.query.dry === "1" || req.query.dry === "true";
+    const r = await runPassportCheckJob({ day, dryRun });
+    res.json({ ok: true, ...r });
+  } catch (e) {
+    console.error("❌ Controllo passaporti manuale:", e.message);
+    res.status(500).json({ ok: false, error: e.message });
+  }
 });
 
 app.listen(PORT, () => {
