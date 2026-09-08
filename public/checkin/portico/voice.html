@@ -1,0 +1,357 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Check-in Assistant — Via del Portico d'Ottavia 1D</title>
+<style>
+:root{--bg:#2b211b;--paper:#efe3d1;--paper2:#d8c2a1;--ink:#241b15;--muted:#4f4036;--gold:#b8925a;--gold-dark:#8f6d3e;--brown:#3a2a20;--deep:#1f1a17;--line:rgba(184,146,90,.34);--shadow:0 28px 80px rgba(0,0,0,.28)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;color:var(--ink);background:radial-gradient(circle at top left,rgba(184,146,90,.25),transparent 28rem),radial-gradient(circle at bottom right,rgba(255,253,248,.10),transparent 30rem),linear-gradient(180deg,#2b211b 0%,#3a2a20 42%,#241b15 100%);min-height:100vh;min-height:100dvh;line-height:1.45;overflow-x:hidden}
+.app{width:min(520px,100%);margin:0 auto;min-height:100vh;min-height:100dvh;display:flex;flex-direction:column}
+.top-bar{display:flex;justify-content:space-between;align-items:center;padding:14px 18px 10px;color:rgba(255,255,255,.82)}
+.brand{letter-spacing:.14em;text-transform:uppercase;font-size:11px;font-weight:800}
+.lang-row{display:flex;gap:4px;flex-wrap:nowrap;flex-shrink:0}
+.lang-btn{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.28);color:white;border-radius:999px;padding:6px 10px;font-weight:800;font-size:11px;cursor:pointer;backdrop-filter:blur(14px);-webkit-tap-highlight-color:transparent}
+.lang-btn.active{background:white;color:var(--brown);border-color:white}
+.progress-bar{display:flex;gap:4px;padding:0 18px 12px}
+.progress-dot{flex:1;height:4px;border-radius:99px;background:rgba(255,255,255,.18);transition:background .4s}
+.progress-dot.done{background:var(--gold)}.progress-dot.active{background:white}
+.step-card{flex:1;display:flex;flex-direction:column;margin:0 12px 12px;border-radius:28px;overflow:hidden;background:linear-gradient(135deg,#efe3d1,#d8c2a1);border:1px solid var(--line);box-shadow:var(--shadow);animation:fadeIn .4s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.step-photo{position:relative;width:100%;aspect-ratio:4/3;background:#12100e;overflow:hidden;flex-shrink:0}
+.step-photo img{width:100%;height:100%;object-fit:cover;display:block;filter:saturate(.96) contrast(1.03) brightness(1.04)}
+.step-photo.contain img{object-fit:contain;background:#12100e}
+.step-badge{position:absolute;top:14px;left:14px;background:rgba(31,26,23,.72);color:white;padding:6px 14px;border-radius:999px;font-size:12px;font-weight:900;backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.18);letter-spacing:.06em}
+.step-body{flex:1;display:flex;flex-direction:column;padding:22px 20px 18px}
+.step-title{font-family:Georgia,"Times New Roman",serif;font-size:clamp(24px,5vw,32px);line-height:1.05;letter-spacing:-.03em;margin-bottom:10px}
+.step-desc{color:var(--muted);font-size:16px;margin-bottom:16px;flex:1}
+.step-note{border-left:4px solid var(--gold);background:rgba(58,42,32,.10);padding:12px 14px;border-radius:0 14px 14px 0;color:var(--brown);font-weight:800;font-size:15px;margin-bottom:16px}
+.btn-row{display:flex;gap:10px;margin-bottom:10px}
+.btn-yes,.btn-no,.btn-next,.btn-start{flex:1;border:0;border-radius:18px;padding:16px 10px;font-size:17px;font-weight:950;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:transform .12s;-webkit-tap-highlight-color:transparent}
+.btn-yes:active,.btn-no:active,.btn-next:active,.btn-start:active{transform:scale(.96)}
+.btn-yes{background:linear-gradient(135deg,var(--brown),var(--deep));color:white;box-shadow:0 12px 28px rgba(31,26,23,.22)}
+.btn-no{background:#f4eadb;color:var(--brown);border:1px solid var(--line)}
+.btn-next{background:linear-gradient(135deg,var(--brown),var(--deep));color:white;box-shadow:0 12px 28px rgba(31,26,23,.22)}
+.btn-start{background:linear-gradient(135deg,var(--gold),var(--gold-dark));color:white;box-shadow:0 14px 34px rgba(184,146,90,.3);font-size:19px;padding:20px;border-radius:22px}
+.open-btn{border:0;cursor:pointer;border-radius:18px;padding:16px 22px;min-height:58px;background:linear-gradient(135deg,#3a2a20,#1f1a17);color:white;font-size:16px;font-weight:950;box-shadow:0 18px 34px rgba(31,26,23,.25);display:flex;align-items:center;justify-content:center;gap:10px;width:100%;-webkit-tap-highlight-color:transparent;transition:transform .12s}
+.open-btn:active{transform:scale(.97)}
+.status{font-size:14px;color:var(--muted);font-weight:800;min-height:1.2em;text-align:center;margin-top:8px}
+@keyframes ncSlowBlink{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(0,0,0,0)}50%{opacity:.55;box-shadow:0 0 0 7px rgba(0,0,0,.07)}}
+.open-btn.nc-blink{animation:ncSlowBlink 2.4s ease-in-out infinite}
+@media(prefers-reduced-motion:reduce){.open-btn.nc-blink{animation:none}}
+.toolbar{display:flex;gap:6px;padding:6px 12px 14px;justify-content:center;flex-shrink:0}
+.toolbar button{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.22);color:rgba(255,255,255,.88);border-radius:16px;padding:10px 14px;font-size:13px;font-weight:800;cursor:pointer;backdrop-filter:blur(14px);-webkit-tap-highlight-color:transparent;transition:background .15s;white-space:nowrap}
+.toolbar button:active{background:rgba(255,255,255,.22)}
+.overlay{position:fixed;inset:0;z-index:100;background:rgba(31,26,23,.85);backdrop-filter:blur(12px);display:flex;align-items:flex-end;justify-content:center;animation:fadeIn .25s ease}
+.overlay-sheet{width:min(520px,100%);background:linear-gradient(135deg,#efe3d1,#d8c2a1);border-radius:28px 28px 0 0;padding:24px 20px 32px;max-height:80vh;overflow-y:auto}
+.overlay-title{font-family:Georgia,"Times New Roman",serif;font-size:24px;margin-bottom:16px;letter-spacing:-.02em}
+.problem-btn{display:block;width:100%;text-align:left;background:rgba(58,42,32,.08);border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:10px;font-size:16px;font-weight:700;color:var(--brown);cursor:pointer;-webkit-tap-highlight-color:transparent}
+.problem-btn:active{background:rgba(58,42,32,.16)}
+.close-overlay{margin-top:8px;width:100%;background:var(--brown);color:white;border:0;border-radius:16px;padding:16px;font-size:16px;font-weight:900;cursor:pointer}
+.welcome{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:28px 24px;color:white}
+.welcome-icon{font-size:48px;margin-bottom:18px}
+.welcome h1{font-family:Georgia,"Times New Roman",serif;font-size:clamp(28px,6vw,42px);line-height:1.05;letter-spacing:-.04em;margin-bottom:12px}
+.welcome .subtitle{font-size:17px;color:rgba(255,255,255,.82);max-width:380px;margin-bottom:32px}
+.welcome .addr-detail{display:inline-flex;gap:12px;padding:10px 16px;border-radius:14px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);font-weight:800;font-size:14px;margin-bottom:28px;backdrop-filter:blur(12px)}
+.final{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:28px 24px;color:white}
+.final-icon{font-size:56px;margin-bottom:18px}
+.final h2{font-family:Georgia,"Times New Roman",serif;font-size:clamp(28px,6vw,42px);line-height:1.05;letter-spacing:-.03em;margin-bottom:12px}
+.final p{font-size:16px;color:rgba(255,255,255,.78);max-width:380px}
+.hidden{display:none!important}
+.no-help{background:rgba(58,42,32,.08);border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:14px}
+.no-help p{color:var(--muted);font-size:15px;margin:0}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+  <div class="top-bar">
+    <div class="brand">niceflatinrome.com</div>
+    <div class="lang-row" id="langRow" aria-label="Language selector">
+      <button class="lang-btn" data-lang="en">EN</button>
+      <button class="lang-btn" data-lang="it">IT</button>
+      <button class="lang-btn" data-lang="fr">FR</button>
+      <button class="lang-btn" data-lang="de">DE</button>
+      <button class="lang-btn" data-lang="es">ES</button>
+    </div>
+  </div>
+  <div class="progress-bar" id="progressBar"></div>
+  <div id="content"></div>
+  <div class="toolbar" id="toolbar">
+    <button id="btnRepeat" onclick="repeatAudio()">&#x1f50a; <span data-t="repeat">Repeat</span></button>
+    <button id="btnProblem" onclick="showProblems()">&#x2753; <span data-t="problem">Problem</span></button>
+    <button onclick="window.open('tel:+393355245756')">&#x1f4de; Michele</button>
+  </div>
+</div>
+<div class="overlay hidden" id="overlay" onclick="if(event.target===this)closeOverlay()">
+  <div class="overlay-sheet" id="overlaySheet"></div>
+</div>
+
+<script>
+const I18N = {
+  en: {
+    start: "Start Check-in",
+    welcomeTitle: "Welcome to your\nRoman residence",
+    welcomeSub: "I'll guide you step by step to your apartment. Just look, listen and confirm.",
+    addrInfo: "3rd Floor",
+    yes: "Yes, continue", no: "No, help me",
+    next: "Continue", done: "Got it, continue",
+    repeat: "Repeat", problem: "Problem",
+
+    s1_badge: "STEP 1 OF 3",
+    s1_title: "Open the main entrance",
+    s1_desc: "When you are in front of the wooden building door, press the button below to unlock it.",
+    s1_voice: "You are at Via del Portico d'Ottavia 1 D. When you are in front of the wooden building door, press the button on your screen to unlock it.",
+    s1_problems: ["I can't find the entrance", "The door won't open", "I want to call Michele"],
+    btn_building: "Open Main Entrance",
+
+    s2_badge: "STEP 2 OF 3",
+    s2_title: "Reach the third floor",
+    s2_desc: "Turn on the hallway light if needed, then go up to the 3rd floor.",
+    s2_note: "Tip: follow the stairs carefully and keep this guide open.",
+    s2_voice: "Turn on the hallway light if needed. Then go up to the third floor. Are you on the third floor?",
+    s2_ask: "Are you on the 3rd floor?",
+    s2_no: "Go up the stairs to the third floor. Turn on the light if it is dark.",
+    s2_problems: ["I can't find the stairs", "I'm lost in the building", "I want to call Michele"],
+
+    s3_badge: "STEP 3 OF 3",
+    s3_title: "Open your apartment door",
+    s3_desc: "Press the button only once when you are certain you are in front of this exact door.",
+    s3_note: "Important: do not press this button from the street or from another floor.",
+    s3_voice: "You are almost there. This is your apartment door on the third floor. Press the button on your screen only when you are in front of this exact door.",
+    s3_problems: ["I can't find the door", "The button doesn't work", "I want to call Michele"],
+    btn_apartment: "Open Apartment Door",
+
+    finalTitle: "Welcome home!",
+    finalText: "You're in. Enjoy your stay in Rome! If you need anything, Michele is just a message away.",
+    finalVoice: "Welcome home! You're in. Enjoy your stay in Rome.",
+    problemTitle: "What's the problem?", problemClose: "Close",
+    opening: "Opening\u2026", opened: "Done.", netErr: "Network error. Try again.", errGeneric: "Error", missingToken: "Invalid link (missing token)."
+  },
+  it: {
+    start: "Inizia il Check-in",
+    welcomeTitle: "Benvenuto nella tua\nresidenza romana",
+    welcomeSub: "Ti guider\u00f2 passo passo fino al tuo appartamento. Guarda, ascolta e conferma.",
+    addrInfo: "3\u00b0 piano",
+    yes: "S\u00ec, continua", no: "No, aiutami",
+    next: "Continua", done: "Capito, continua",
+    repeat: "Ripeti", problem: "Problema",
+
+    s1_badge: "PASSO 1 DI 3",
+    s1_title: "Apri il portone principale",
+    s1_desc: "Quando sei davanti al portone in legno, premi il pulsante qui sotto per aprirlo.",
+    s1_voice: "Sei a Via del Portico d'Ottavia 1 D. Quando sei davanti al portone in legno, premi il pulsante sullo schermo per aprirlo.",
+    s1_problems: ["Non trovo l'ingresso", "Il portone non si apre", "Voglio chiamare Michele"],
+    btn_building: "Apri Portone",
+
+    s2_badge: "PASSO 2 DI 3",
+    s2_title: "Raggiungi il terzo piano",
+    s2_desc: "Accendi la luce delle scale se necessario, poi sali al 3\u00b0 piano.",
+    s2_note: "Suggerimento: sali con attenzione e tieni questa guida aperta.",
+    s2_voice: "Accendi la luce delle scale se necessario. Poi sali al terzo piano. Sei al terzo piano?",
+    s2_ask: "Sei al 3\u00b0 piano?",
+    s2_no: "Sali le scale fino al terzo piano. Accendi la luce se \u00e8 buio.",
+    s2_problems: ["Non trovo le scale", "Mi sono perso nel palazzo", "Voglio chiamare Michele"],
+
+    s3_badge: "PASSO 3 DI 3",
+    s3_title: "Apri la porta dell'appartamento",
+    s3_desc: "Premi il pulsante una sola volta quando sei sicuro di essere davanti a questa porta.",
+    s3_note: "Importante: non premere questo pulsante dalla strada o da un altro piano.",
+    s3_voice: "Ci sei quasi. Questa \u00e8 la porta del tuo appartamento al terzo piano. Premi il pulsante sullo schermo solo quando sei davanti a questa porta.",
+    s3_problems: ["Non trovo la porta", "Il pulsante non funziona", "Voglio chiamare Michele"],
+    btn_apartment: "Apri Appartamento",
+
+    finalTitle: "Benvenuto a casa!",
+    finalText: "Sei dentro. Goditi il soggiorno a Roma! Se hai bisogno, Michele \u00e8 a un messaggio di distanza.",
+    finalVoice: "Benvenuto a casa! Sei dentro. Goditi il soggiorno a Roma.",
+    problemTitle: "Qual \u00e8 il problema?", problemClose: "Chiudi",
+    opening: "Apertura\u2026", opened: "Fatto.", netErr: "Errore di rete. Riprova.", errGeneric: "Errore", missingToken: "Link non valido (token mancante)."
+  },
+  fr: {
+    start: "D\u00e9marrer le check-in",
+    welcomeTitle: "Bienvenue dans votre\nr\u00e9sidence romaine",
+    welcomeSub: "Je vais vous guider pas \u00e0 pas jusqu'\u00e0 votre appartement. Regardez, \u00e9coutez et confirmez.",
+    addrInfo: "3e \u00e9tage",
+    yes: "Oui, continuer", no: "Non, aidez-moi",
+    next: "Continuer", done: "Compris, continuer",
+    repeat: "R\u00e9p\u00e9ter", problem: "Probl\u00e8me",
+
+    s1_badge: "\u00c9TAPE 1 SUR 3",
+    s1_title: "Ouvrez l'entr\u00e9e principale",
+    s1_desc: "Lorsque vous \u00eates devant la porte en bois, appuyez sur le bouton ci-dessous pour l'ouvrir.",
+    s1_voice: "Vous \u00eates \u00e0 Via del Portico d'Ottavia 1 D. Lorsque vous \u00eates devant la porte en bois, appuyez sur le bouton sur votre \u00e9cran pour l'ouvrir.",
+    s1_problems: ["Je ne trouve pas l'entr\u00e9e", "La porte ne s'ouvre pas", "Je veux appeler Michele"],
+    btn_building: "Ouvrir l'entr\u00e9e",
+
+    s2_badge: "\u00c9TAPE 2 SUR 3",
+    s2_title: "Montez au troisi\u00e8me \u00e9tage",
+    s2_desc: "Allumez la lumi\u00e8re si n\u00e9cessaire, puis montez au 3e \u00e9tage.",
+    s2_note: "Conseil : montez prudemment et gardez ce guide ouvert.",
+    s2_voice: "Allumez la lumi\u00e8re si n\u00e9cessaire. Puis montez au troisi\u00e8me \u00e9tage. \u00cates-vous au troisi\u00e8me \u00e9tage?",
+    s2_ask: "\u00cates-vous au 3e \u00e9tage ?",
+    s2_no: "Montez les escaliers jusqu'au troisi\u00e8me \u00e9tage. Allumez la lumi\u00e8re s'il fait sombre.",
+    s2_problems: ["Je ne trouve pas les escaliers", "Je suis perdu dans l'immeuble", "Je veux appeler Michele"],
+
+    s3_badge: "\u00c9TAPE 3 SUR 3",
+    s3_title: "Ouvrez la porte de l'appartement",
+    s3_desc: "Appuyez une seule fois lorsque vous \u00eates certain d'\u00eatre devant cette porte.",
+    s3_note: "Important : n'appuyez pas depuis la rue ou depuis un autre \u00e9tage.",
+    s3_voice: "Vous y \u00eates presque. Voici la porte de votre appartement au troisi\u00e8me \u00e9tage. Appuyez sur le bouton seulement devant cette porte.",
+    s3_problems: ["Je ne trouve pas la porte", "Le bouton ne fonctionne pas", "Je veux appeler Michele"],
+    btn_apartment: "Ouvrir l'appartement",
+
+    finalTitle: "Bienvenue chez vous !",
+    finalText: "Vous \u00eates entr\u00e9. Profitez de votre s\u00e9jour \u00e0 Rome !",
+    finalVoice: "Bienvenue chez vous ! Profitez de votre s\u00e9jour \u00e0 Rome.",
+    problemTitle: "Quel est le probl\u00e8me ?", problemClose: "Fermer",
+    opening: "Ouverture\u2026", opened: "Fait.", netErr: "Erreur r\u00e9seau. R\u00e9essayez.", errGeneric: "Erreur", missingToken: "Lien invalide (token manquant)."
+  },
+  de: {
+    start: "Check-in starten",
+    welcomeTitle: "Willkommen in Ihrer\nr\u00f6mischen Residenz",
+    welcomeSub: "Ich f\u00fchre Sie Schritt f\u00fcr Schritt zu Ihrer Wohnung. Schauen, h\u00f6ren und best\u00e4tigen Sie.",
+    addrInfo: "3. Stock",
+    yes: "Ja, weiter", no: "Nein, hilf mir",
+    next: "Weiter", done: "Verstanden, weiter",
+    repeat: "Wiederholen", problem: "Problem",
+
+    s1_badge: "SCHRITT 1 VON 3",
+    s1_title: "Haupteingang \u00f6ffnen",
+    s1_desc: "Wenn Sie vor der Holzt\u00fcr stehen, dr\u00fccken Sie die Taste unten, um sie zu \u00f6ffnen.",
+    s1_voice: "Sie sind in Via del Portico d'Ottavia 1 D. Wenn Sie vor der Holzt\u00fcr stehen, dr\u00fccken Sie die Taste auf Ihrem Bildschirm.",
+    s1_problems: ["Ich finde den Eingang nicht", "Die T\u00fcr \u00f6ffnet sich nicht", "Ich m\u00f6chte Michele anrufen"],
+    btn_building: "Haupteingang \u00f6ffnen",
+
+    s2_badge: "SCHRITT 2 VON 3",
+    s2_title: "In den dritten Stock gehen",
+    s2_desc: "Schalten Sie bei Bedarf das Licht ein und gehen Sie dann in den 3. Stock.",
+    s2_note: "Tipp: Gehen Sie vorsichtig und lassen Sie diese Anleitung ge\u00f6ffnet.",
+    s2_voice: "Schalten Sie bei Bedarf das Licht ein. Dann gehen Sie in den dritten Stock. Sind Sie im dritten Stock?",
+    s2_ask: "Sind Sie im 3. Stock?",
+    s2_no: "Gehen Sie die Treppe hinauf in den dritten Stock. Schalten Sie das Licht ein, wenn es dunkel ist.",
+    s2_problems: ["Ich finde die Treppe nicht", "Ich habe mich verlaufen", "Ich m\u00f6chte Michele anrufen"],
+
+    s3_badge: "SCHRITT 3 VON 3",
+    s3_title: "Wohnungst\u00fcr \u00f6ffnen",
+    s3_desc: "Dr\u00fccken Sie die Taste nur einmal, wenn Sie sicher vor dieser T\u00fcr stehen.",
+    s3_note: "Wichtig: Dr\u00fccken Sie diese Taste nicht von der Stra\u00dfe oder einem anderen Stockwerk.",
+    s3_voice: "Sie sind fast da. Dies ist Ihre Wohnungst\u00fcr im dritten Stock. Dr\u00fccken Sie die Taste nur wenn Sie vor dieser T\u00fcr stehen.",
+    s3_problems: ["Ich finde die T\u00fcr nicht", "Die Taste funktioniert nicht", "Ich m\u00f6chte Michele anrufen"],
+    btn_apartment: "Wohnung \u00f6ffnen",
+
+    finalTitle: "Willkommen zu Hause!",
+    finalText: "Sie sind drin. Genie\u00dfen Sie Ihren Aufenthalt in Rom!",
+    finalVoice: "Willkommen zu Hause! Genie\u00dfen Sie Ihren Aufenthalt in Rom.",
+    problemTitle: "Was ist das Problem?", problemClose: "Schlie\u00dfen",
+    opening: "\u00d6ffnen\u2026", opened: "Fertig.", netErr: "Netzwerkfehler. Bitte erneut versuchen.", errGeneric: "Fehler", missingToken: "Ung\u00fcltiger Link (Token fehlt)."
+  },
+  es: {
+    start: "Iniciar Check-in",
+    welcomeTitle: "Bienvenido a tu\nresidencia romana",
+    welcomeSub: "Te guiar\u00e9 paso a paso hasta tu apartamento. Mira, escucha y confirma.",
+    addrInfo: "3er piso",
+    yes: "S\u00ed, continuar", no: "No, ay\u00fadame",
+    next: "Continuar", done: "Entendido, continuar",
+    repeat: "Repetir", problem: "Problema",
+
+    s1_badge: "PASO 1 DE 3",
+    s1_title: "Abre la entrada principal",
+    s1_desc: "Cuando est\u00e9s frente a la puerta de madera, pulsa el bot\u00f3n de abajo para abrirla.",
+    s1_voice: "Est\u00e1s en Via del Portico d'Ottavia 1 D. Cuando est\u00e9s frente a la puerta de madera, pulsa el bot\u00f3n en tu pantalla para abrirla.",
+    s1_problems: ["No encuentro la entrada", "La puerta no se abre", "Quiero llamar a Michele"],
+    btn_building: "Abrir Entrada",
+
+    s2_badge: "PASO 2 DE 3",
+    s2_title: "Llega al tercer piso",
+    s2_desc: "Enciende la luz si es necesario y sube al 3er piso.",
+    s2_note: "Consejo: sube con cuidado y mant\u00e9n esta gu\u00eda abierta.",
+    s2_voice: "Enciende la luz si es necesario. Luego sube al tercer piso. \u00bfEst\u00e1s en el tercer piso?",
+    s2_ask: "\u00bfEst\u00e1s en el 3er piso?",
+    s2_no: "Sube las escaleras hasta el tercer piso. Enciende la luz si est\u00e1 oscuro.",
+    s2_problems: ["No encuentro las escaleras", "Estoy perdido en el edificio", "Quiero llamar a Michele"],
+
+    s3_badge: "PASO 3 DE 3",
+    s3_title: "Abre la puerta del apartamento",
+    s3_desc: "Pulsa el bot\u00f3n solo una vez cuando est\u00e9s seguro de estar frente a esta puerta.",
+    s3_note: "Importante: no pulses este bot\u00f3n desde la calle ni desde otro piso.",
+    s3_voice: "Ya casi est\u00e1s. Esta es la puerta de tu apartamento en el tercer piso. Pulsa el bot\u00f3n solo cuando est\u00e9s frente a esta puerta.",
+    s3_problems: ["No encuentro la puerta", "El bot\u00f3n no funciona", "Quiero llamar a Michele"],
+    btn_apartment: "Abrir Apartamento",
+
+    finalTitle: "\u00a1Bienvenido a casa!",
+    finalText: "Ya est\u00e1s dentro. \u00a1Disfruta tu estancia en Roma!",
+    finalVoice: "\u00a1Bienvenido a casa! Disfruta tu estancia en Roma.",
+    problemTitle: "\u00bfCu\u00e1l es el problema?", problemClose: "Cerrar",
+    opening: "Abriendo\u2026", opened: "Hecho.", netErr: "Error de red. Int\u00e9ntalo de nuevo.", errGeneric: "Error", missingToken: "Enlace no v\u00e1lido (falta token)."
+  }
+};
+
+const STEPS = [
+  { id:'s1', img:'building-door.jpg',    contain:false, type:'open', which:'building',  btnKey:'btn_building',  statusId:'statusBuilding' },
+  { id:'s2', img:'%20intercom.jpg',      contain:true,  type:'confirm' },
+  { id:'s3', img:'apartment-door.jpg',   contain:true,  type:'open', which:'apartment', btnKey:'btn_apartment', statusId:'statusApartment' }
+];
+
+let lang='en', step=-1, lastSpokenText='';
+const TOKEN=new URLSearchParams(location.search).get('t')||'';
+function t(key){ return (I18N[lang]||I18N.en)[key]||(I18N.en)[key]||key; }
+
+/* ── TTS ── */
+const VOICE_PREFS={en:['Samantha','Google US English','Google UK English Female','Microsoft Aria Online (Natural)'],it:['Alice','Eloisa','Google italiano','Microsoft Elsa Online (Natural)','Microsoft Isabella Online (Natural)'],fr:['Amelie','Thomas','Google fran\u00e7ais','Microsoft Denise Online (Natural)','Microsoft Vivienne Online (Natural)'],de:['Anna','Markus','Google Deutsch','Microsoft Katja Online (Natural)','Microsoft Conrad Online (Natural)'],es:['Monica','Jorge','Paulina','Google espa\u00f1ol','Microsoft Alvaro Online (Natural)']};
+let pick=null;
+function selectVoice(){if(!('speechSynthesis' in window))return null;const all=speechSynthesis.getVoices()||[];const prefs=VOICE_PREFS[lang]||[];for(const name of prefs){const v=all.find(v=>(v.name||'').toLowerCase()===name.toLowerCase());if(v)return v;}const byLang=all.find(v=>(v.lang||'').toLowerCase().startsWith(lang));return byLang||all[0]||null;}
+function refreshVoice(){pick=selectVoice();}
+if('speechSynthesis' in window){refreshVoice();speechSynthesis.onvoiceschanged=refreshVoice;}
+function warm(){if(!('speechSynthesis' in window))return;try{speechSynthesis.cancel();const dot=new SpeechSynthesisUtterance('.');dot.volume=0.01;if(pick)dot.voice=pick;dot.lang=pick?.lang||lang;speechSynthesis.speak(dot);}catch{}}
+function speak(text){if(!('speechSynthesis' in window))return;try{speechSynthesis.cancel();lastSpokenText=text;const u=new SpeechSynthesisUtterance(text.replace(/<[^>]+>/g,''));if(pick)u.voice=pick;u.lang=pick?.lang||lang;speechSynthesis.speak(u);}catch{}}
+function repeatAudio(){if(lastSpokenText)speak(lastSpokenText);}
+
+/* ── RENDERING ── */
+const $content=document.getElementById('content'),$progress=document.getElementById('progressBar'),$toolbar=document.getElementById('toolbar');
+function renderProgress(){let h='';for(let i=0;i<STEPS.length;i++){const c=i<step?'done':i===step?'active':'';h+=`<div class="progress-dot ${c}"></div>`;}$progress.innerHTML=h;$progress.classList.toggle('hidden',step<0);}
+function renderWelcome(){$toolbar.classList.add('hidden');$content.innerHTML=`<div class="welcome"><div class="welcome-icon">\ud83c\udfe0</div><h1>${t('welcomeTitle').replace(/\n/g,'<br>')}</h1><div class="addr-detail"><span>\ud83d\udccd ${t('addrInfo')}</span></div><p class="subtitle">${t('welcomeSub')}</p><button class="btn-start" onclick="warm();nextStep()">${t('start')} \u2192</button></div>`;speak(t('welcomeSub'));}
+function renderStep(idx){
+  const s=STEPS[idx],containCls=s.contain?'contain':'';let buttonsHTML='',extraHTML='';
+  if(s.type==='confirm'){
+    const askKey=s.id+'_ask',askText=t(askKey);
+    if(askText&&askText!==askKey)extraHTML=`<p class="step-desc" style="font-weight:800;color:var(--brown)">${askText}</p>`;
+    buttonsHTML=`<div class="btn-row"><button class="btn-yes" onclick="nextStep()">${t('yes')} \u2192</button><button class="btn-no" onclick="showNoHelp(${idx})">${t('no')}</button></div><div id="noHelp" class="no-help hidden"></div>`;
+  } else if(s.type==='open'){
+    buttonsHTML=`<button class="open-btn" id="btn_open_${idx}" onclick="openWith('${s.statusId}','${s.which}');return false;">${t(s.btnKey)} \u2192</button><div class="status" id="${s.statusId}"></div><div style="height:10px"></div><button class="btn-next" onclick="nextStep()">${t('done')} \u2192</button>`;
+  }
+  const noteKey=s.id+'_note',noteText=t(noteKey);
+  const noteHTML=(noteText&&noteText!==noteKey)?`<div class="step-note">${noteText}</div>`:'';
+  $content.innerHTML=`<div class="step-card"><div class="step-photo ${containCls}"><img src="${s.img}" alt=""><div class="step-badge">${t(s.id+'_badge')}</div></div><div class="step-body"><h2 class="step-title">${t(s.id+'_title')}</h2><p class="step-desc">${t(s.id+'_desc')}</p>${noteHTML}${extraHTML}${buttonsHTML}</div></div>`;
+  $toolbar.classList.remove('hidden');speak(t(s.id+'_voice'));blinkCheck();
+}
+function renderFinal(){$toolbar.classList.add('hidden');$content.innerHTML=`<div class="final"><div class="final-icon">\u2728</div><h2>${t('finalTitle')}</h2><p>${t('finalText')}</p></div>`;speak(t('finalVoice'));}
+function showNoHelp(idx){const s=STEPS[idx],noKey=s.id+'_no',noText=t(noKey);if(!noText||noText===noKey)return;const el=document.getElementById('noHelp');if(el){el.classList.remove('hidden');el.innerHTML=`<p>${noText}</p>`;speak(noText);}}
+function nextStep(){step++;if(step>=STEPS.length){renderProgress();renderFinal();}else{renderProgress();renderStep(step);}}
+
+/* ── OPENING (portico endpoint) ── */
+async function openWith(statusId,which){
+  const s=document.getElementById(statusId);if(!s)return;
+  if(!TOKEN){s.textContent=t('missingToken');return;}
+  s.textContent=t('opening');
+  const tries=(which==='building')?['building']:['apartment','door'];
+  try{for(const kind of tries){const r=await fetch(`/checkin/portico/open-direct/${kind}?t=${encodeURIComponent(TOKEN)}`,{method:'POST',cache:'no-store'});if(r.status===404)continue;const j=await r.json().catch(()=>({}));if(r.ok&&j.ok){s.textContent=t('opened');speak(t('opened'));}else{s.textContent=(j.error||j.message)?String(j.error||j.message):`${t('errGeneric')} (${r.status})`;}return;}s.textContent=`${t('errGeneric')} (endpoint not found)`;
+  }catch(e){s.textContent=t('netErr');}
+}
+
+/* ── BLINK ── */
+function blinkCheck(){const m=location.pathname.match(/\/checkin\/([^\/]+)\//);const apt=m&&m[1];if(!apt||!TOKEN)return;fetch('/checkin/'+apt+'/phase?t='+encodeURIComponent(TOKEN),{cache:'no-store'}).then(r=>r.json()).then(j=>{document.querySelectorAll('.open-btn').forEach(b=>b.classList.toggle('nc-blink',!!(j&&j.phase===3)));}).catch(()=>{});}
+
+/* ── PROBLEMS ── */
+function showProblems(){if(step<0||step>=STEPS.length)return;const s=STEPS[step],problems=t(s.id+'_problems')||[];const $o=document.getElementById('overlay'),$sh=document.getElementById('overlaySheet');let h=`<h3 class="overlay-title">${t('problemTitle')}</h3>`;problems.forEach((p,i)=>{if(i===problems.length-1)h+=`<button class="problem-btn" onclick="window.open('https://wa.me/393355245756')">\ud83d\udcde ${p}</button>`;else h+=`<button class="problem-btn" onclick="speakProblem(${step});closeOverlay()">\u26a0\ufe0f ${p}</button>`;});h+=`<button class="close-overlay" onclick="closeOverlay()">${t('problemClose')}</button>`;$sh.innerHTML=h;$o.classList.remove('hidden');}
+function speakProblem(stepIdx){const s=STEPS[stepIdx],noKey=s.id+'_no',noText=t(noKey);if(noText&&noText!==noKey){speak(noText);const el=document.getElementById('noHelp');if(el){el.classList.remove('hidden');el.innerHTML=`<p>${noText}</p>`;}}}
+function closeOverlay(){document.getElementById('overlay').classList.add('hidden');}
+
+/* ── LANGUAGE ── */
+function setLang(newLang){lang=I18N[newLang]?newLang:'en';document.documentElement.lang=lang;document.querySelectorAll('.lang-btn').forEach(b=>b.classList.toggle('active',b.dataset.lang===lang));refreshVoice();document.querySelectorAll('[data-t]').forEach(el=>{el.textContent=t(el.getAttribute('data-t'));});if(step<0)renderWelcome();else if(step>=STEPS.length)renderFinal();else renderStep(step);}
+document.querySelectorAll('.lang-btn').forEach(btn=>btn.addEventListener('click',()=>setLang(btn.dataset.lang)));
+
+/* ── INIT ── */
+(function(){const params=new URLSearchParams(location.search);const paramLang=params.get('lang');if(paramLang&&I18N[paramLang.toLowerCase()])lang=paramLang.toLowerCase();else{const bl=(navigator.language||'en').slice(0,2).toLowerCase();lang=I18N[bl]?bl:'en';}setLang(lang);})();
+</script>
+</body>
+</html>
