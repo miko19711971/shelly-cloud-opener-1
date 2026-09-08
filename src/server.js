@@ -2005,6 +2005,29 @@ app.get('/guides/:apt/premium_rome_concierge.html', requireGuideSession, (req, r
   res.sendFile(path.join(PUBLIC_DIR, 'guides', apt, 'premium_rome_concierge.html'));
 });
 
+// ── Home Concierge: token verificato sul server ────────────────────
+// Questi file uscivano da express.static senza nessun controllo: bastava
+// indovinare il nome per scaricarli interi. Il link che riceve l'ospite pero'
+// porta gia' un token firmato home-<apt> con la sua scadenza (fino al checkout
+// per l'ospite, 12h sul tablet, 4h per l'operatore), emesso da /stay-home.
+// Qui lo si verifica come fa la rotta del check-in.
+//
+// Deve stare PRIMA dello static su /guides, altrimenti non serve a niente.
+// Se il token manca o e' scaduto si finisce su /stay/<apt>, che mostra la
+// pagina "Link scaduto" con il contatto WhatsApp dell'host: meglio di un 410
+// secco per un ospite che ha solo riaperto un link vecchio.
+for (const [homeApt, homeSuffix] of Object.entries(HOME_APT_SUFFIX)) {
+  app.get(`/guides/Premium_Roman_Concierge_Home_${homeSuffix}.html`, (req, res) => {
+    const parsed = parseGuideToken(String(req.query.t || ''));
+    if (!parsed.ok) return res.redirect(302, `/stay/${homeApt}`);
+    const p = parsed.payload || {};
+    if (typeof p.exp !== 'number' || Date.now() > p.exp) return res.redirect(302, `/stay/${homeApt}`);
+    if (p.tgt !== `home-${homeApt}`) return res.redirect(302, `/stay/${homeApt}`);
+    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
+    return res.sendFile(path.join(PUBLIC_DIR, 'guides', `Premium_Roman_Concierge_Home_${homeSuffix}.html`));
+  });
+}
+
 // ── Copie conservate delle guide concierge ───────────────────────
 // Stesso ruolo delle index-classic.html del check-in: una copia intatta della
 // guida, raggiungibile solo con la stessa sessione che serve per l'originale
