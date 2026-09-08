@@ -431,6 +431,10 @@ const corsMw = cors(corsOptions);
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const PUBLIC_DIR = path.join(__dirname, "..", "public");
+// Copie conservate delle guide concierge (istantanea dell'8 settembre 2026).
+// Stanno FUORI da public apposta: dentro, i due express.static su /guides e
+// /guest-assistant le servirebbero a chiunque, senza sessione.
+const GUIDES_BACKUP_DIR = path.join(__dirname, "..", "backup", "guides-2026-09-08");
 
 const SHELLY_API_KEY  = process.env.SHELLY_API_KEY;
 const SHELLY_BASE_URL = process.env.SHELLY_BASE_URL || "https://shelly-api-eu.shelly.cloud";
@@ -2000,6 +2004,31 @@ app.get('/guides/:apt/premium_rome_concierge.html', requireGuideSession, (req, r
   res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
   res.sendFile(path.join(PUBLIC_DIR, 'guides', apt, 'premium_rome_concierge.html'));
 });
+
+// ── Copie conservate delle guide concierge ───────────────────────
+// Stesso ruolo delle index-classic.html del check-in: una copia intatta della
+// guida, raggiungibile solo con la stessa sessione che serve per l'originale
+// (cookie guide_sess legato all'appartamento).
+app.get('/guides/:apt/premium_rome_concierge-classic.html', requireGuideSession, (req, res) => {
+  const apt = String(req.params.apt || '').toLowerCase();
+  if (!VALID_APARTMENTS.includes(apt)) return res.status(404).send('Not found');
+  res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
+  res.sendFile(path.join(GUIDES_BACKUP_DIR, apt, 'premium_rome_concierge.html'));
+});
+
+// Le Home Concierge hanno l'appartamento nel nome del file, non in un :apt,
+// quindi requireGuideSession non si puo' usare: stesso controllo, scritto a mano.
+const HOME_CLASSIC_APTS = { Trastevere: 'trastevere', Scala: 'scala', Arenula: 'arenula', Portico: 'portico', Leonina: 'leonina' };
+for (const [suffix, homeApt] of Object.entries(HOME_CLASSIC_APTS)) {
+  app.get(`/guides/Premium_Roman_Concierge_Home_${suffix}-classic.html`, (req, res) => {
+    const session = verifyGuardCookie(parseCookies(req)['guide_sess']);
+    if (!session || Date.now() > session.exp || session.apartment !== homeApt) {
+      return res.redirect(302, `/stay/${homeApt}`);
+    }
+    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
+    res.sendFile(path.join(GUIDES_BACKUP_DIR, `Premium_Roman_Concierge_Home_${suffix}.html`));
+  });
+}
 
 // ── Dynamic manifest — embeds token in start_url so iOS home screen keeps it ──
 const MANIFEST_APT_NAMES = { arenula:'Via Arenula', portico:"Portico d'Ottavia", leonina:'Via Leonina', scala:'Via della Scala', trastevere:'Viale Trastevere' };
