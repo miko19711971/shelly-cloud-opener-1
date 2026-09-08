@@ -2059,6 +2059,17 @@ app.get('/guides/:apt/manifest', (req, res) => {
 
 // ── Static guide assets (icons, manifests — no session needed) ───────────
 app.use("/guides", express.static(path.join(PUBLIC_DIR, "guides"), { fallthrough: false }));
+// /guest-assistant e' un alias pubblico sulla stessa cartella di /guides: serve
+// le pagine "Guest Help" <apt>/index.html, che l'AI router manda agli ospiti in
+// chiaro ed e' giusto restino aperte. Il guaio e' che dallo stesso alias
+// passavano anche le guide concierge, che su /guides sono dietro sessione:
+// bastava indovinare il nome del file per scaricarle intere, saltando anche il
+// limite dei due dispositivi. Qui quelle vengono chiuse, il resto non cambia.
+const GUEST_ASSISTANT_PROTETTE = /(^|\/)(premium_rome_concierge[^/]*\.html|Premium_Roman_Concierge_Home_[^/]*\.html)$/i;
+app.use("/guest-assistant", (req, res, next) => {
+  if (GUEST_ASSISTANT_PROTETTE.test(req.path)) return res.status(404).send("Not found");
+  return next();
+});
 app.use("/guest-assistant", express.static(path.join(PUBLIC_DIR, "guides"), { fallthrough: false }));
 app.use("/guides-v2", express.static(path.join(PUBLIC_DIR, "guides-v2"), { fallthrough: false }));
 app.use("/public-test-ai-html", express.static(path.join(PUBLIC_DIR, "public-test-ai-html"), { fallthrough: false }));
