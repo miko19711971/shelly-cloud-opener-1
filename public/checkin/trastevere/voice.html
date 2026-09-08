@@ -747,43 +747,61 @@ const TOKEN = new URLSearchParams(location.search).get('t') || '';
 function t(key){ return (I18N[lang]||I18N.en)[key] || (I18N.en)[key] || key; }
 
 /* ══════════════════════════════════════════════════
-   TTS ENGINE
+   TTS ENGINE (same voice system as concierge guides)
    ══════════════════════════════════════════════════ */
-const LANG_CODES = { en:'en', it:'it', fr:'fr', de:'de', es:'es' };
-let voices = [];
+const VOICE_PREFS = {
+  en:['Samantha','Google US English','Google UK English Female','Microsoft Aria Online (Natural)'],
+  it:['Alice','Eloisa','Google italiano','Microsoft Elsa Online (Natural)','Microsoft Isabella Online (Natural)'],
+  fr:['Amelie','Thomas','Google français','Microsoft Denise Online (Natural)','Microsoft Vivienne Online (Natural)'],
+  de:['Anna','Markus','Google Deutsch','Microsoft Katja Online (Natural)','Microsoft Conrad Online (Natural)'],
+  es:['Monica','Jorge','Paulina','Google español','Microsoft Alvaro Online (Natural)']
+};
 
-function loadVoices(){
-  voices = speechSynthesis.getVoices();
-}
-if(speechSynthesis.onvoiceschanged !== undefined){
-  speechSynthesis.onvoiceschanged = loadVoices;
-}
-loadVoices();
+let pick = null;
 
-function pickVoice(langCode){
-  // Prefer a female voice matching the language
-  const code = LANG_CODES[langCode] || 'en';
-  const matching = voices.filter(v => v.lang.startsWith(code));
-  // Prefer female
-  const female = matching.filter(v => /female|woman|femenin|donna|femme|weiblich/i.test(v.name));
-  if(female.length) return female[0];
-  // Try names commonly female
-  const likelyFemale = matching.filter(v => /samantha|victoria|karen|moira|alice|amelie|anna|monica|paulina|Helena|Joana|Luciana|Francisca|Elsa|Nora/i.test(v.name));
-  if(likelyFemale.length) return likelyFemale[0];
-  if(matching.length) return matching[0];
-  return null;
+function selectVoice(){
+  if(!('speechSynthesis' in window)) return null;
+  const all = speechSynthesis.getVoices()||[];
+  const prefs = VOICE_PREFS[lang]||[];
+  for(const name of prefs){
+    const v = all.find(v => (v.name||'').toLowerCase()===name.toLowerCase());
+    if(v) return v;
+  }
+  const byLang = all.find(v => (v.lang||'').toLowerCase().startsWith(lang));
+  return byLang || all[0] || null;
+}
+
+function refreshVoice(){
+  pick = selectVoice();
+}
+
+if('speechSynthesis' in window){
+  refreshVoice();
+  speechSynthesis.onvoiceschanged = refreshVoice;
+}
+
+function warm(){
+  if(!('speechSynthesis' in window)) return;
+  try{
+    speechSynthesis.cancel();
+    const dot = new SpeechSynthesisUtterance('.');
+    dot.volume=0.01;
+    if(pick) dot.voice=pick;
+    dot.lang = pick?.lang || lang;
+    speechSynthesis.speak(dot);
+  }catch{}
 }
 
 function speak(text){
-  speechSynthesis.cancel();
-  lastSpokenText = text;
-  const u = new SpeechSynthesisUtterance(text);
-  u.lang = LANG_CODES[lang] || 'en';
-  u.rate = 0.92;
-  u.pitch = 1.05;
-  const v = pickVoice(lang);
-  if(v) u.voice = v;
-  speechSynthesis.speak(u);
+  if(!('speechSynthesis' in window)) return;
+  try{
+    speechSynthesis.cancel();
+    lastSpokenText = text;
+    const u = new SpeechSynthesisUtterance(text.replace(/<[^>]+>/g,''));
+    if(pick) u.voice = pick;
+    u.lang = pick?.lang || lang;
+    speechSynthesis.speak(u);
+  }catch{}
 }
 
 function repeatAudio(){
@@ -817,7 +835,7 @@ function renderWelcome(){
         <span>\ud83d\udccd ${t('addrStair')} \u2022 ${t('addrFloor')}</span>
       </div>
       <p class="subtitle">${t('welcomeSub')}</p>
-      <button class="btn-start" onclick="nextStep()">${t('start')} \u2192</button>
+      <button class="btn-start" onclick="warm();nextStep()">${t('start')} \u2192</button>
     </div>`;
   speak(t('welcomeSub'));
 }
@@ -1012,6 +1030,7 @@ function setLang(newLang){
   lang = I18N[newLang] ? newLang : 'en';
   document.documentElement.lang = lang;
   document.getElementById('langSelect').value = lang;
+  refreshVoice();
   // Update toolbar labels
   document.querySelectorAll('[data-t]').forEach(el => {
     el.textContent = t(el.getAttribute('data-t'));
