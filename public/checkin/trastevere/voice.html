@@ -58,18 +58,27 @@ body{
   font-size:11px;
   font-weight:800;
 }
-.lang-select{
+.lang-row{
+  display:flex;
+  gap:5px;
+  flex-wrap:wrap;
+}
+.lang-btn{
   background:rgba(255,255,255,.12);
   border:1px solid rgba(255,255,255,.28);
   color:white;
   border-radius:999px;
   padding:7px 12px;
   font-weight:800;
-  font-size:13px;
+  font-size:12px;
   cursor:pointer;
   backdrop-filter:blur(14px);
-  -webkit-appearance:none;
-  appearance:none;
+  -webkit-tap-highlight-color:transparent;
+}
+.lang-btn.active{
+  background:white;
+  color:var(--brown);
+  border-color:white;
 }
 
 /* ── Progress ── */
@@ -416,13 +425,13 @@ body{
   <!-- Top bar -->
   <div class="top-bar">
     <div class="brand">niceflatinrome.com</div>
-    <select class="lang-select" id="langSelect" aria-label="Language">
-      <option value="en">EN</option>
-      <option value="it">IT</option>
-      <option value="fr">FR</option>
-      <option value="de">DE</option>
-      <option value="es">ES</option>
-    </select>
+    <div class="lang-row" id="langRow" aria-label="Language selector">
+      <button class="lang-btn" data-lang="en">EN</button>
+      <button class="lang-btn" data-lang="it">IT</button>
+      <button class="lang-btn" data-lang="fr">FR</button>
+      <button class="lang-btn" data-lang="de">DE</button>
+      <button class="lang-btn" data-lang="es">ES</button>
+    </div>
   </div>
 
   <!-- Progress bar -->
@@ -1029,7 +1038,9 @@ function closeOverlay(){
 function setLang(newLang){
   lang = I18N[newLang] ? newLang : 'en';
   document.documentElement.lang = lang;
-  document.getElementById('langSelect').value = lang;
+  document.querySelectorAll('.lang-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.lang === lang);
+  });
   refreshVoice();
   // Update toolbar labels
   document.querySelectorAll('[data-t]').forEach(el => {
@@ -1041,8 +1052,8 @@ function setLang(newLang){
   else renderStep(step);
 }
 
-document.getElementById('langSelect').addEventListener('change', function(){
-  setLang(this.value);
+document.querySelectorAll('.lang-btn').forEach(btn => {
+  btn.addEventListener('click', () => setLang(btn.dataset.lang));
 });
 
 /* ══════════════════════════════════════════════════
