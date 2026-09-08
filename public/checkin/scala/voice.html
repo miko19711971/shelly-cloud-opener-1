@@ -1,0 +1,1103 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Check-in Assistant — Via della Scala 17</title>
+<style>
+:root {
+  --bg:#2b211b;
+  --paper:#efe3d1;
+  --paper2:#d8c2a1;
+  --ink:#241b15;
+  --muted:#4f4036;
+  --gold:#b8925a;
+  --gold-dark:#8f6d3e;
+  --brown:#3a2a20;
+  --deep:#1f1a17;
+  --line:rgba(184,146,90,.34);
+  --shadow:0 28px 80px rgba(0,0,0,.28);
+  --green:#2d7a3a;
+  --red:#8a2e2e;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  color:var(--ink);
+  background:
+    radial-gradient(circle at top left,rgba(184,146,90,.25),transparent 28rem),
+    radial-gradient(circle at bottom right,rgba(255,253,248,.10),transparent 30rem),
+    linear-gradient(180deg,#2b211b 0%,#3a2a20 42%,#241b15 100%);
+  min-height:100vh;
+  min-height:100dvh;
+  line-height:1.45;
+  overflow-x:hidden;
+}
+
+/* ── Container ── */
+.app{
+  width:min(520px,100%);
+  margin:0 auto;
+  min-height:100vh;
+  min-height:100dvh;
+  display:flex;
+  flex-direction:column;
+}
+
+/* ── Top bar ── */
+.top-bar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:14px 18px 10px;
+  color:rgba(255,255,255,.82);
+}
+.brand{
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  font-size:11px;
+  font-weight:800;
+}
+.lang-row{
+  display:flex;
+  gap:4px;
+  flex-wrap:nowrap;
+  flex-shrink:0;
+}
+.lang-btn{
+  background:rgba(255,255,255,.12);
+  border:1px solid rgba(255,255,255,.28);
+  color:white;
+  border-radius:999px;
+  padding:6px 10px;
+  font-weight:800;
+  font-size:11px;
+  cursor:pointer;
+  backdrop-filter:blur(14px);
+  -webkit-tap-highlight-color:transparent;
+}
+.lang-btn.active{
+  background:white;
+  color:var(--brown);
+  border-color:white;
+}
+
+/* ── Progress ── */
+.progress-bar{
+  display:flex;
+  gap:4px;
+  padding:0 18px 12px;
+}
+.progress-dot{
+  flex:1;
+  height:4px;
+  border-radius:99px;
+  background:rgba(255,255,255,.18);
+  transition:background .4s;
+}
+.progress-dot.done{background:var(--gold)}
+.progress-dot.active{background:white}
+
+/* ── Step card ── */
+.step-card{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  margin:0 12px 12px;
+  border-radius:28px;
+  overflow:hidden;
+  background:linear-gradient(135deg,#efe3d1,#d8c2a1);
+  border:1px solid var(--line);
+  box-shadow:var(--shadow);
+  animation:fadeIn .4s ease;
+}
+@keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+.step-photo{
+  position:relative;
+  width:100%;
+  aspect-ratio:4/3;
+  background:#12100e;
+  overflow:hidden;
+  flex-shrink:0;
+}
+.step-photo img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+  filter:saturate(.96) contrast(1.03) brightness(1.04);
+}
+.step-photo.contain img{
+  object-fit:contain;
+  background:#12100e;
+}
+.step-badge{
+  position:absolute;
+  top:14px;
+  left:14px;
+  background:rgba(31,26,23,.72);
+  color:white;
+  padding:6px 14px;
+  border-radius:999px;
+  font-size:12px;
+  font-weight:900;
+  backdrop-filter:blur(10px);
+  border:1px solid rgba(255,255,255,.18);
+  letter-spacing:.06em;
+}
+
+.step-body{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  padding:22px 20px 18px;
+}
+.step-title{
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:clamp(24px,5vw,32px);
+  line-height:1.05;
+  letter-spacing:-.03em;
+  margin-bottom:10px;
+}
+.step-desc{
+  color:var(--muted);
+  font-size:16px;
+  margin-bottom:16px;
+  flex:1;
+}
+.step-note{
+  border-left:4px solid var(--gold);
+  background:rgba(58,42,32,.10);
+  padding:12px 14px;
+  border-radius:0 14px 14px 0;
+  color:var(--brown);
+  font-weight:800;
+  font-size:15px;
+  margin-bottom:16px;
+}
+
+/* ── Buttons ── */
+.btn-row{
+  display:flex;
+  gap:10px;
+  margin-bottom:10px;
+}
+.btn-yes,.btn-no,.btn-next,.btn-start{
+  flex:1;
+  border:0;
+  border-radius:18px;
+  padding:16px 10px;
+  font-size:17px;
+  font-weight:950;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  transition:transform .12s,opacity .12s;
+  -webkit-tap-highlight-color:transparent;
+}
+.btn-yes:active,.btn-no:active,.btn-next:active,.btn-start:active{transform:scale(.96)}
+.btn-yes{
+  background:linear-gradient(135deg,var(--brown),var(--deep));
+  color:white;
+  box-shadow:0 12px 28px rgba(31,26,23,.22);
+}
+.btn-no{
+  background:#f4eadb;
+  color:var(--brown);
+  border:1px solid var(--line);
+}
+.btn-next{
+  background:linear-gradient(135deg,var(--brown),var(--deep));
+  color:white;
+  box-shadow:0 12px 28px rgba(31,26,23,.22);
+}
+.btn-start{
+  background:linear-gradient(135deg,var(--gold),var(--gold-dark));
+  color:white;
+  box-shadow:0 14px 34px rgba(184,146,90,.3);
+  font-size:19px;
+  padding:20px;
+  border-radius:22px;
+}
+
+/* ── Open buttons (same style as original) ── */
+.open-btn{
+  border:0;
+  cursor:pointer;
+  border-radius:18px;
+  padding:16px 22px;
+  min-height:58px;
+  background:linear-gradient(135deg,#3a2a20,#1f1a17);
+  color:white;
+  font-size:16px;
+  font-weight:950;
+  box-shadow:0 18px 34px rgba(31,26,23,.25);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  width:100%;
+  -webkit-tap-highlight-color:transparent;
+  transition:transform .12s;
+}
+.open-btn:active{transform:scale(.97)}
+.status{
+  font-size:14px;
+  color:var(--muted);
+  font-weight:800;
+  min-height:1.2em;
+  text-align:center;
+  margin-top:8px;
+}
+@keyframes ncSlowBlink{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(0,0,0,0)}50%{opacity:.55;box-shadow:0 0 0 7px rgba(0,0,0,.07)}}
+.open-btn.nc-blink{animation:ncSlowBlink 2.4s ease-in-out infinite}
+@media(prefers-reduced-motion:reduce){.open-btn.nc-blink{animation:none}}
+
+/* ── Persistent bottom toolbar ── */
+.toolbar{
+  display:flex;
+  gap:6px;
+  padding:6px 12px 14px;
+  justify-content:center;
+  flex-shrink:0;
+}
+.toolbar button{
+  background:rgba(255,255,255,.12);
+  border:1px solid rgba(255,255,255,.22);
+  color:rgba(255,255,255,.88);
+  border-radius:16px;
+  padding:10px 14px;
+  font-size:13px;
+  font-weight:800;
+  cursor:pointer;
+  backdrop-filter:blur(14px);
+  -webkit-tap-highlight-color:transparent;
+  transition:background .15s;
+  white-space:nowrap;
+}
+.toolbar button:active{background:rgba(255,255,255,.22)}
+
+/* ── Problem overlay ── */
+.overlay{
+  position:fixed;
+  inset:0;
+  z-index:100;
+  background:rgba(31,26,23,.85);
+  backdrop-filter:blur(12px);
+  display:flex;
+  align-items:flex-end;
+  justify-content:center;
+  animation:fadeIn .25s ease;
+}
+.overlay-sheet{
+  width:min(520px,100%);
+  background:linear-gradient(135deg,#efe3d1,#d8c2a1);
+  border-radius:28px 28px 0 0;
+  padding:24px 20px 32px;
+  max-height:80vh;
+  overflow-y:auto;
+}
+.overlay-title{
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:24px;
+  margin-bottom:16px;
+  letter-spacing:-.02em;
+}
+.problem-btn{
+  display:block;
+  width:100%;
+  text-align:left;
+  background:rgba(58,42,32,.08);
+  border:1px solid var(--line);
+  border-radius:16px;
+  padding:16px;
+  margin-bottom:10px;
+  font-size:16px;
+  font-weight:700;
+  color:var(--brown);
+  cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+}
+.problem-btn:active{background:rgba(58,42,32,.16)}
+.close-overlay{
+  margin-top:8px;
+  width:100%;
+  background:var(--brown);
+  color:white;
+  border:0;
+  border-radius:16px;
+  padding:16px;
+  font-size:16px;
+  font-weight:900;
+  cursor:pointer;
+}
+
+/* ── Welcome screen ── */
+.welcome{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  text-align:center;
+  padding:28px 24px;
+  color:white;
+}
+.welcome-icon{font-size:48px;margin-bottom:18px}
+.welcome h1{
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:clamp(32px,7vw,48px);
+  line-height:1.02;
+  letter-spacing:-.04em;
+  margin-bottom:12px;
+}
+.welcome .addr{
+  font-size:15px;
+  color:rgba(255,255,255,.72);
+  margin-bottom:6px;
+}
+.welcome .subtitle{
+  font-size:17px;
+  color:rgba(255,255,255,.82);
+  max-width:380px;
+  margin-bottom:32px;
+}
+.welcome .addr-detail{
+  display:inline-flex;
+  gap:12px;
+  padding:10px 16px;
+  border-radius:14px;
+  background:rgba(255,255,255,.12);
+  border:1px solid rgba(255,255,255,.2);
+  font-weight:800;
+  font-size:14px;
+  margin-bottom:28px;
+  backdrop-filter:blur(12px);
+}
+
+/* ── Final screen ── */
+.final{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  text-align:center;
+  padding:28px 24px;
+  color:white;
+}
+.final-icon{font-size:56px;margin-bottom:18px}
+.final h2{
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:clamp(28px,6vw,42px);
+  line-height:1.05;
+  letter-spacing:-.03em;
+  margin-bottom:12px;
+}
+.final p{
+  font-size:16px;
+  color:rgba(255,255,255,.78);
+  max-width:380px;
+}
+
+.hidden{display:none!important}
+
+/* ── NO help card ── */
+.no-help{
+  background:rgba(58,42,32,.08);
+  border:1px solid var(--line);
+  border-radius:16px;
+  padding:16px;
+  margin-bottom:14px;
+}
+.no-help p{
+  color:var(--muted);
+  font-size:15px;
+  margin:0;
+}
+</style>
+</head>
+<body>
+
+<div class="app" id="app">
+  <!-- Top bar -->
+  <div class="top-bar">
+    <div class="brand">niceflatinrome.com</div>
+    <div class="lang-row" id="langRow" aria-label="Language selector">
+      <button class="lang-btn" data-lang="en">EN</button>
+      <button class="lang-btn" data-lang="it">IT</button>
+      <button class="lang-btn" data-lang="fr">FR</button>
+      <button class="lang-btn" data-lang="de">DE</button>
+      <button class="lang-btn" data-lang="es">ES</button>
+    </div>
+  </div>
+
+  <!-- Progress bar -->
+  <div class="progress-bar" id="progressBar"></div>
+
+  <!-- Content area (populated by JS) -->
+  <div id="content"></div>
+
+  <!-- Persistent toolbar -->
+  <div class="toolbar" id="toolbar">
+    <button id="btnRepeat" onclick="repeatAudio()">&#x1f50a; <span data-t="repeat">Repeat</span></button>
+    <button id="btnProblem" onclick="showProblems()">&#x2753; <span data-t="problem">Problem</span></button>
+    <button onclick="window.open('tel:+393355245756')">&#x1f4de; Michele</button>
+  </div>
+</div>
+
+<!-- Problem overlay -->
+<div class="overlay hidden" id="overlay" onclick="if(event.target===this)closeOverlay()">
+  <div class="overlay-sheet" id="overlaySheet"></div>
+</div>
+
+<script>
+/* ══════════════════════════════════════════════════
+   TRANSLATIONS (from existing scala index.html)
+   ══════════════════════════════════════════════════ */
+const I18N = {
+  en: {
+    start: "Start Check-in",
+    welcomeTitle: "Welcome to\nVia della Scala 17",
+    welcomeSub: "I'll guide you step by step to your apartment. Just look, listen and confirm.",
+    addrUnit: "Unit A/1",
+    yes: "Yes, continue", no: "No, help me",
+    next: "Continue",
+    done: "Got it, continue",
+    repeat: "Repeat", problem: "Problem",
+
+    s1_badge: "STEP 1 OF 5",
+    s1_title: "Find the building entrance",
+    s1_desc: "This is the main entrance of Via della Scala 17.",
+    s1_voice: "Look for the main entrance of Via della Scala 17. Do you see this entrance?",
+    s1_ask: "Are you in front of this entrance?",
+    s1_no: "Look for number 17 on Via della Scala. The entrance is between the shops. Look at the photo carefully.",
+    s1_problems: ["I can't find the entrance", "I'm at the wrong address", "I want to call Michele"],
+
+    s2_badge: "STEP 2 OF 5",
+    s2_title: "Ring the first intercom",
+    s2_desc: "At the first intercom, ring the marked button. Then press the button below to open the first building gate.",
+    s2_voice: "Now find the first intercom and ring the marked button. Then use the button on your screen to open the first gate.",
+    s2_problems: ["I can't find the intercom", "The gate won't open", "I want to call Michele"],
+    btn_building_1: "Open First Gate",
+
+    s3_badge: "STEP 3 OF 5",
+    s3_title: "Ring the second intercom",
+    s3_desc: "At the second gate, press A/1 on the intercom. Then press the button below again to open the inner gate.",
+    s3_voice: "Now find the second intercom and press A 1. Then use the button on your screen to open the inner gate.",
+    s3_problems: ["I can't find the second intercom", "The inner gate won't open", "I want to call Michele"],
+    btn_building_2: "Open Inner Gate",
+
+    s4_badge: "STEP 4 OF 5",
+    s4_title: "Enter and turn left",
+    s4_desc: "After the second gate opens, enter and turn left. Follow the courtyard as shown in the photo.",
+    s4_voice: "Enter and turn left. Follow the courtyard as shown in the photo. Do you see the courtyard?",
+    s4_ask: "Are you in the courtyard?",
+    s4_no: "After the second gate, enter and turn left immediately. Follow the courtyard path.",
+    s4_problems: ["I can't find the courtyard", "I'm lost in the building", "I want to call Michele"],
+
+    s5_badge: "STEP 5 OF 5",
+    s5_title: "This is your apartment door",
+    s5_desc: "You have reached the green door on the left. This is your apartment entrance.",
+    s5_note: "The keys are inside the padlock. Facing the green door on the left, you will see some bicycles. On the iron bar there is a padlock. The combination is 6793. Open the padlock, take the keys, close it again, and scramble the numbers.",
+    s5_voice: "You are almost there. This is the green door on the left. The keys are in a padlock near the bicycles. The combination is 6 7 9 3. Open the padlock, take the keys, close it again and scramble the numbers. Then press the button on your screen to open the door.",
+    s5_problems: ["I can't find the green door", "I can't find the padlock", "The button doesn't work", "I want to call Michele"],
+    btn_apartment: "Open Apartment Door",
+
+    finalTitle: "Welcome home!",
+    finalText: "You're in. Enjoy your stay in Rome! If you need anything, Michele is just a message away.",
+    finalVoice: "Welcome home! You're in. Enjoy your stay in Rome.",
+
+    problemTitle: "What's the problem?",
+    problemClose: "Close",
+
+    opening: "Opening\u2026",
+    opened: "Done.",
+    netErr: "Network error. Try again.",
+    errGeneric: "Error",
+    missingToken: "Invalid link (missing token)."
+  },
+  it: {
+    start: "Inizia il Check-in",
+    welcomeTitle: "Benvenuto a\nVia della Scala 17",
+    welcomeSub: "Ti guider\u00f2 passo passo fino al tuo appartamento. Guarda, ascolta e conferma.",
+    addrUnit: "Interno A/1",
+    yes: "S\u00ec, continua", no: "No, aiutami",
+    next: "Continua",
+    done: "Capito, continua",
+    repeat: "Ripeti", problem: "Problema",
+
+    s1_badge: "PASSO 1 DI 5",
+    s1_title: "Individua l'ingresso del palazzo",
+    s1_desc: "Questo \u00e8 l'ingresso principale di Via della Scala 17.",
+    s1_voice: "Cerca l'ingresso principale al numero 17 di Via della Scala. Vedi questa entrata?",
+    s1_ask: "Sei davanti a questo ingresso?",
+    s1_no: "Cerca il numero 17 su Via della Scala. L'ingresso \u00e8 tra i negozi. Guarda bene la foto.",
+    s1_problems: ["Non trovo l'ingresso", "Sono all'indirizzo sbagliato", "Voglio chiamare Michele"],
+
+    s2_badge: "PASSO 2 DI 5",
+    s2_title: "Suona al primo citofono",
+    s2_desc: "Al primo citofono, premi il pulsante evidenziato. Poi premi il pulsante qui sotto per aprire il primo portone.",
+    s2_voice: "Ora trova il primo citofono e premi il pulsante evidenziato. Poi usa il pulsante sullo schermo per aprire il primo portone.",
+    s2_problems: ["Non trovo il citofono", "Il portone non si apre", "Voglio chiamare Michele"],
+    btn_building_1: "Apri Primo Portone",
+
+    s3_badge: "PASSO 3 DI 5",
+    s3_title: "Suona al secondo citofono",
+    s3_desc: "Al secondo portone, premi A/1 sul citofono. Poi premi di nuovo il pulsante qui sotto per aprire il portone interno.",
+    s3_voice: "Ora trova il secondo citofono e premi A 1. Poi usa il pulsante sullo schermo per aprire il portone interno.",
+    s3_problems: ["Non trovo il secondo citofono", "Il portone interno non si apre", "Voglio chiamare Michele"],
+    btn_building_2: "Apri Portone Interno",
+
+    s4_badge: "PASSO 4 DI 5",
+    s4_title: "Entra e gira a sinistra",
+    s4_desc: "Dopo l'apertura del secondo portone, entra e gira a sinistra. Segui il cortile come mostrato nella foto.",
+    s4_voice: "Entra e gira a sinistra. Segui il cortile come mostrato nella foto. Vedi il cortile?",
+    s4_ask: "Sei nel cortile?",
+    s4_no: "Dopo il secondo portone, entra e gira subito a sinistra. Segui il percorso del cortile.",
+    s4_problems: ["Non trovo il cortile", "Mi sono perso nel palazzo", "Voglio chiamare Michele"],
+
+    s5_badge: "PASSO 5 DI 5",
+    s5_title: "Questa \u00e8 la porta del tuo appartamento",
+    s5_desc: "Hai raggiunto la porta verde sulla sinistra. \u00c8 l'ingresso del tuo appartamento.",
+    s5_note: "Le chiavi sono all'interno del lucchetto. Guardando la porta verde sulla sinistra, dove ci sono le biciclette c'\u00e8 una barra di ferro con un lucchetto. La combinazione \u00e8 6793. Apri il lucchetto, prendi le chiavi, richiudilo e mischia i numeri.",
+    s5_voice: "Ci sei quasi. Questa \u00e8 la porta verde sulla sinistra. Le chiavi sono in un lucchetto vicino alle biciclette. La combinazione \u00e8 6 7 9 3. Apri il lucchetto, prendi le chiavi, richiudilo e mischia i numeri. Poi premi il pulsante sullo schermo per aprire la porta.",
+    s5_problems: ["Non trovo la porta verde", "Non trovo il lucchetto", "Il pulsante non funziona", "Voglio chiamare Michele"],
+    btn_apartment: "Apri Appartamento",
+
+    finalTitle: "Benvenuto a casa!",
+    finalText: "Sei dentro. Goditi il soggiorno a Roma! Se hai bisogno, Michele \u00e8 a un messaggio di distanza.",
+    finalVoice: "Benvenuto a casa! Sei dentro. Goditi il soggiorno a Roma.",
+
+    problemTitle: "Qual \u00e8 il problema?",
+    problemClose: "Chiudi",
+
+    opening: "Apertura\u2026",
+    opened: "Fatto.",
+    netErr: "Errore di rete. Riprova.",
+    errGeneric: "Errore",
+    missingToken: "Link non valido (token mancante)."
+  },
+  fr: {
+    start: "D\u00e9marrer le check-in",
+    welcomeTitle: "Bienvenue \u00e0\nVia della Scala 17",
+    welcomeSub: "Je vais vous guider pas \u00e0 pas jusqu'\u00e0 votre appartement. Regardez, \u00e9coutez et confirmez.",
+    addrUnit: "Unit\u00e9 A/1",
+    yes: "Oui, continuer", no: "Non, aidez-moi",
+    next: "Continuer",
+    done: "Compris, continuer",
+    repeat: "R\u00e9p\u00e9ter", problem: "Probl\u00e8me",
+
+    s1_badge: "\u00c9TAPE 1 SUR 5",
+    s1_title: "Trouvez l'entr\u00e9e de l'immeuble",
+    s1_desc: "Ceci est l'entr\u00e9e principale de Via della Scala 17.",
+    s1_voice: "Cherchez l'entr\u00e9e principale du num\u00e9ro 17 Via della Scala. Voyez-vous cette entr\u00e9e?",
+    s1_ask: "\u00cates-vous devant cette entr\u00e9e ?",
+    s1_no: "Cherchez le num\u00e9ro 17 sur Via della Scala. L'entr\u00e9e est entre les boutiques. Regardez bien la photo.",
+    s1_problems: ["Je ne trouve pas l'entr\u00e9e", "Je suis \u00e0 la mauvaise adresse", "Je veux appeler Michele"],
+
+    s2_badge: "\u00c9TAPE 2 SUR 5",
+    s2_title: "Sonnez au premier interphone",
+    s2_desc: "Au premier interphone, appuyez sur le bouton indiqu\u00e9. Puis appuyez sur le bouton ci-dessous pour ouvrir le premier portail.",
+    s2_voice: "Trouvez le premier interphone et appuyez sur le bouton indiqu\u00e9. Puis utilisez le bouton sur votre \u00e9cran pour ouvrir le premier portail.",
+    s2_problems: ["Je ne trouve pas l'interphone", "Le portail ne s'ouvre pas", "Je veux appeler Michele"],
+    btn_building_1: "Ouvrir le premier portail",
+
+    s3_badge: "\u00c9TAPE 3 SUR 5",
+    s3_title: "Sonnez au second interphone",
+    s3_desc: "Au second portail, appuyez sur A/1 \u00e0 l'interphone. Puis appuyez \u00e0 nouveau sur le bouton ci-dessous pour ouvrir le portail int\u00e9rieur.",
+    s3_voice: "Trouvez le second interphone et appuyez sur A 1. Puis utilisez le bouton sur votre \u00e9cran pour ouvrir le portail int\u00e9rieur.",
+    s3_problems: ["Je ne trouve pas le second interphone", "Le portail int\u00e9rieur ne s'ouvre pas", "Je veux appeler Michele"],
+    btn_building_2: "Ouvrir le portail int\u00e9rieur",
+
+    s4_badge: "\u00c9TAPE 4 SUR 5",
+    s4_title: "Entrez et tournez \u00e0 gauche",
+    s4_desc: "Apr\u00e8s l'ouverture du second portail, entrez et tournez \u00e0 gauche. Suivez la cour comme indiqu\u00e9 sur la photo.",
+    s4_voice: "Entrez et tournez \u00e0 gauche. Suivez la cour comme indiqu\u00e9 sur la photo. Voyez-vous la cour?",
+    s4_ask: "\u00cates-vous dans la cour ?",
+    s4_no: "Apr\u00e8s le second portail, entrez et tournez imm\u00e9diatement \u00e0 gauche. Suivez le chemin de la cour.",
+    s4_problems: ["Je ne trouve pas la cour", "Je suis perdu dans l'immeuble", "Je veux appeler Michele"],
+
+    s5_badge: "\u00c9TAPE 5 SUR 5",
+    s5_title: "Voici la porte de votre appartement",
+    s5_desc: "Vous \u00eates arriv\u00e9 \u00e0 la porte verte sur la gauche. C'est l'entr\u00e9e de votre appartement.",
+    s5_note: "Les cl\u00e9s sont \u00e0 l'int\u00e9rieur du cadenas. En face de la porte verte sur la gauche, vous verrez des v\u00e9los. Sur la barre en fer, il y a un cadenas. La combinaison est 6793. Ouvrez le cadenas, prenez les cl\u00e9s, refermez-le et m\u00e9langez les chiffres.",
+    s5_voice: "Vous y \u00eates presque. Voici la porte verte sur la gauche. Les cl\u00e9s sont dans un cadenas pr\u00e8s des v\u00e9los. La combinaison est 6 7 9 3. Ouvrez le cadenas, prenez les cl\u00e9s, refermez-le et m\u00e9langez les chiffres. Puis appuyez sur le bouton pour ouvrir la porte.",
+    s5_problems: ["Je ne trouve pas la porte verte", "Je ne trouve pas le cadenas", "Le bouton ne fonctionne pas", "Je veux appeler Michele"],
+    btn_apartment: "Ouvrir l'appartement",
+
+    finalTitle: "Bienvenue chez vous !",
+    finalText: "Vous \u00eates entr\u00e9. Profitez de votre s\u00e9jour \u00e0 Rome ! Si vous avez besoin, Michele est \u00e0 un message.",
+    finalVoice: "Bienvenue chez vous ! Vous \u00eates entr\u00e9. Profitez de votre s\u00e9jour \u00e0 Rome.",
+
+    problemTitle: "Quel est le probl\u00e8me ?",
+    problemClose: "Fermer",
+
+    opening: "Ouverture\u2026",
+    opened: "Fait.",
+    netErr: "Erreur r\u00e9seau. R\u00e9essayez.",
+    errGeneric: "Erreur",
+    missingToken: "Lien invalide (token manquant)."
+  },
+  de: {
+    start: "Check-in starten",
+    welcomeTitle: "Willkommen in der\nVia della Scala 17",
+    welcomeSub: "Ich f\u00fchre Sie Schritt f\u00fcr Schritt zu Ihrer Wohnung. Schauen, h\u00f6ren und best\u00e4tigen Sie.",
+    addrUnit: "Einheit A/1",
+    yes: "Ja, weiter", no: "Nein, hilf mir",
+    next: "Weiter",
+    done: "Verstanden, weiter",
+    repeat: "Wiederholen", problem: "Problem",
+
+    s1_badge: "SCHRITT 1 VON 5",
+    s1_title: "Geb\u00e4udeeingang finden",
+    s1_desc: "Dies ist der Haupteingang der Via della Scala 17.",
+    s1_voice: "Suchen Sie den Haupteingang der Nummer 17 in Via della Scala. Sehen Sie diesen Eingang?",
+    s1_ask: "Stehen Sie vor diesem Eingang?",
+    s1_no: "Suchen Sie die Nummer 17 in Via della Scala. Der Eingang ist zwischen den Gesch\u00e4ften. Schauen Sie sich das Foto genau an.",
+    s1_problems: ["Ich finde den Eingang nicht", "Ich bin an der falschen Adresse", "Ich m\u00f6chte Michele anrufen"],
+
+    s2_badge: "SCHRITT 2 VON 5",
+    s2_title: "An der ersten Gegensprechanlage klingeln",
+    s2_desc: "Dr\u00fccken Sie an der ersten Gegensprechanlage die markierte Taste. Dr\u00fccken Sie dann unten die Taste, um das erste Tor zu \u00f6ffnen.",
+    s2_voice: "Finden Sie die erste Gegensprechanlage und dr\u00fccken Sie die markierte Taste. Dann verwenden Sie die Taste auf Ihrem Bildschirm, um das erste Tor zu \u00f6ffnen.",
+    s2_problems: ["Ich finde die Gegensprechanlage nicht", "Das Tor \u00f6ffnet sich nicht", "Ich m\u00f6chte Michele anrufen"],
+    btn_building_1: "Erstes Tor \u00f6ffnen",
+
+    s3_badge: "SCHRITT 3 VON 5",
+    s3_title: "An der zweiten Gegensprechanlage klingeln",
+    s3_desc: "Dr\u00fccken Sie am zweiten Tor A/1 an der Gegensprechanlage. Dr\u00fccken Sie dann erneut unten die Taste, um das innere Tor zu \u00f6ffnen.",
+    s3_voice: "Finden Sie die zweite Gegensprechanlage und dr\u00fccken Sie A 1. Dann verwenden Sie die Taste auf Ihrem Bildschirm, um das innere Tor zu \u00f6ffnen.",
+    s3_problems: ["Ich finde die zweite Gegensprechanlage nicht", "Das innere Tor \u00f6ffnet sich nicht", "Ich m\u00f6chte Michele anrufen"],
+    btn_building_2: "Inneres Tor \u00f6ffnen",
+
+    s4_badge: "SCHRITT 4 VON 5",
+    s4_title: "Eintreten und links abbiegen",
+    s4_desc: "Nachdem das zweite Tor ge\u00f6ffnet ist, treten Sie ein und biegen Sie links ab. Folgen Sie dem Hof wie auf dem Foto gezeigt.",
+    s4_voice: "Treten Sie ein und biegen Sie links ab. Folgen Sie dem Hof wie auf dem Foto gezeigt. Sehen Sie den Hof?",
+    s4_ask: "Sind Sie im Hof?",
+    s4_no: "Nach dem zweiten Tor sofort links abbiegen. Folgen Sie dem Weg durch den Hof.",
+    s4_problems: ["Ich finde den Hof nicht", "Ich habe mich im Geb\u00e4ude verlaufen", "Ich m\u00f6chte Michele anrufen"],
+
+    s5_badge: "SCHRITT 5 VON 5",
+    s5_title: "Das ist Ihre Wohnungst\u00fcr",
+    s5_desc: "Sie sind bei der gr\u00fcnen T\u00fcr links angekommen. Das ist der Eingang Ihrer Wohnung.",
+    s5_note: "Die Schl\u00fcssel befinden sich im Vorh\u00e4ngeschloss. Wenn Sie der gr\u00fcnen T\u00fcr links gegen\u00fcberstehen, sehen Sie Fahrr\u00e4der. An der Eisenstange h\u00e4ngt ein Vorh\u00e4ngeschloss. Die Kombination lautet 6793. \u00d6ffnen Sie das Schloss, nehmen Sie die Schl\u00fcssel, schlie\u00dfen Sie es wieder und verdrehen Sie die Zahlen.",
+    s5_voice: "Sie sind fast da. Dies ist die gr\u00fcne T\u00fcr links. Die Schl\u00fcssel sind in einem Vorh\u00e4ngeschloss bei den Fahrr\u00e4dern. Die Kombination ist 6 7 9 3. \u00d6ffnen Sie das Schloss, nehmen Sie die Schl\u00fcssel, schlie\u00dfen Sie es wieder und verdrehen Sie die Zahlen. Dann dr\u00fccken Sie die Taste auf Ihrem Bildschirm.",
+    s5_problems: ["Ich finde die gr\u00fcne T\u00fcr nicht", "Ich finde das Vorh\u00e4ngeschloss nicht", "Die Taste funktioniert nicht", "Ich m\u00f6chte Michele anrufen"],
+    btn_apartment: "Wohnung \u00f6ffnen",
+
+    finalTitle: "Willkommen zu Hause!",
+    finalText: "Sie sind drin. Genie\u00dfen Sie Ihren Aufenthalt in Rom! Bei Bedarf ist Michele nur eine Nachricht entfernt.",
+    finalVoice: "Willkommen zu Hause! Sie sind drin. Genie\u00dfen Sie Ihren Aufenthalt in Rom.",
+
+    problemTitle: "Was ist das Problem?",
+    problemClose: "Schlie\u00dfen",
+
+    opening: "\u00d6ffnen\u2026",
+    opened: "Fertig.",
+    netErr: "Netzwerkfehler. Bitte erneut versuchen.",
+    errGeneric: "Fehler",
+    missingToken: "Ung\u00fcltiger Link (Token fehlt)."
+  },
+  es: {
+    start: "Iniciar Check-in",
+    welcomeTitle: "Bienvenido a\nVia della Scala 17",
+    welcomeSub: "Te guiar\u00e9 paso a paso hasta tu apartamento. Mira, escucha y confirma.",
+    addrUnit: "Unidad A/1",
+    yes: "S\u00ed, continuar", no: "No, ay\u00fadame",
+    next: "Continuar",
+    done: "Entendido, continuar",
+    repeat: "Repetir", problem: "Problema",
+
+    s1_badge: "PASO 1 DE 5",
+    s1_title: "Encuentra la entrada del edificio",
+    s1_desc: "Esta es la entrada principal de Via della Scala 17.",
+    s1_voice: "Busca la entrada principal del n\u00famero 17 de Via della Scala. \u00bfVes esta entrada?",
+    s1_ask: "\u00bfEst\u00e1s frente a esta entrada?",
+    s1_no: "Busca el n\u00famero 17 en Via della Scala. La entrada est\u00e1 entre las tiendas. Mira bien la foto.",
+    s1_problems: ["No encuentro la entrada", "Estoy en la direcci\u00f3n equivocada", "Quiero llamar a Michele"],
+
+    s2_badge: "PASO 2 DE 5",
+    s2_title: "Llama al primer portero",
+    s2_desc: "En el primer portero, pulsa el bot\u00f3n marcado. Luego pulsa el bot\u00f3n de abajo para abrir el primer port\u00f3n.",
+    s2_voice: "Encuentra el primer portero y pulsa el bot\u00f3n marcado. Luego usa el bot\u00f3n en tu pantalla para abrir el primer port\u00f3n.",
+    s2_problems: ["No encuentro el portero", "El port\u00f3n no se abre", "Quiero llamar a Michele"],
+    btn_building_1: "Abrir Primer Port\u00f3n",
+
+    s3_badge: "PASO 3 DE 5",
+    s3_title: "Llama al segundo portero",
+    s3_desc: "En el segundo port\u00f3n, pulsa A/1 en el portero. Luego pulsa de nuevo el bot\u00f3n de abajo para abrir el port\u00f3n interior.",
+    s3_voice: "Encuentra el segundo portero y pulsa A 1. Luego usa el bot\u00f3n en tu pantalla para abrir el port\u00f3n interior.",
+    s3_problems: ["No encuentro el segundo portero", "El port\u00f3n interior no se abre", "Quiero llamar a Michele"],
+    btn_building_2: "Abrir Port\u00f3n Interior",
+
+    s4_badge: "PASO 4 DE 5",
+    s4_title: "Entra y gira a la izquierda",
+    s4_desc: "Despu\u00e9s de abrir el segundo port\u00f3n, entra y gira a la izquierda. Sigue el patio como se muestra en la foto.",
+    s4_voice: "Entra y gira a la izquierda. Sigue el patio como se muestra en la foto. \u00bfVes el patio?",
+    s4_ask: "\u00bfEst\u00e1s en el patio?",
+    s4_no: "Despu\u00e9s del segundo port\u00f3n, entra y gira a la izquierda inmediatamente. Sigue el camino del patio.",
+    s4_problems: ["No encuentro el patio", "Estoy perdido en el edificio", "Quiero llamar a Michele"],
+
+    s5_badge: "PASO 5 DE 5",
+    s5_title: "Esta es la puerta de tu apartamento",
+    s5_desc: "Has llegado a la puerta verde de la izquierda. Es la entrada de tu apartamento.",
+    s5_note: "Las llaves est\u00e1n dentro del candado. De frente a la puerta verde a la izquierda, ver\u00e1s unas bicicletas. En la barra de hierro hay un candado. La combinaci\u00f3n es 6793. Abre el candado, toma las llaves, ci\u00e9rralo de nuevo y mezcla los n\u00fameros.",
+    s5_voice: "Ya casi est\u00e1s. Esta es la puerta verde a la izquierda. Las llaves est\u00e1n en un candado cerca de las bicicletas. La combinaci\u00f3n es 6 7 9 3. Abre el candado, toma las llaves, ci\u00e9rralo y mezcla los n\u00fameros. Luego pulsa el bot\u00f3n en tu pantalla para abrir la puerta.",
+    s5_problems: ["No encuentro la puerta verde", "No encuentro el candado", "El bot\u00f3n no funciona", "Quiero llamar a Michele"],
+    btn_apartment: "Abrir Apartamento",
+
+    finalTitle: "\u00a1Bienvenido a casa!",
+    finalText: "Ya est\u00e1s dentro. \u00a1Disfruta tu estancia en Roma! Si necesitas algo, Michele est\u00e1 a un mensaje.",
+    finalVoice: "\u00a1Bienvenido a casa! Ya est\u00e1s dentro. Disfruta tu estancia en Roma.",
+
+    problemTitle: "\u00bfCu\u00e1l es el problema?",
+    problemClose: "Cerrar",
+
+    opening: "Abriendo\u2026",
+    opened: "Hecho.",
+    netErr: "Error de red. Int\u00e9ntalo de nuevo.",
+    errGeneric: "Error",
+    missingToken: "Enlace no v\u00e1lido (falta token)."
+  }
+};
+
+/* ══════════════════════════════════════════════════
+   STEP DEFINITIONS
+   ══════════════════════════════════════════════════ */
+const STEPS = [
+  { id:'s1', img:'building-door.jpg',           contain:false, type:'confirm' },
+  { id:'s2', img:'%20intercom-entrance.jpg',     contain:true,  type:'open', which:'building', btnKey:'btn_building_1', statusId:'statusBuilding1' },
+  { id:'s3', img:'%20second-intercom-a1.jpg',    contain:true,  type:'open', which:'building', btnKey:'btn_building_2', statusId:'statusBuilding2' },
+  { id:'s4', img:'courtyard.jpg',                contain:true,  type:'confirm' },
+  { id:'s5', img:'apartment-green-door.jpg',     contain:true,  type:'open', which:'apartment', btnKey:'btn_apartment', statusId:'statusApartment' }
+];
+
+/* ══════════════════════════════════════════════════
+   STATE
+   ══════════════════════════════════════════════════ */
+let lang = 'en';
+let step = -1; // -1 = welcome
+let lastSpokenText = '';
+const TOKEN = new URLSearchParams(location.search).get('t') || '';
+
+function t(key){ return (I18N[lang]||I18N.en)[key] || (I18N.en)[key] || key; }
+
+/* ══════════════════════════════════════════════════
+   TTS ENGINE (same voice system as concierge guides)
+   ══════════════════════════════════════════════════ */
+const VOICE_PREFS = {
+  en:['Samantha','Google US English','Google UK English Female','Microsoft Aria Online (Natural)'],
+  it:['Alice','Eloisa','Google italiano','Microsoft Elsa Online (Natural)','Microsoft Isabella Online (Natural)'],
+  fr:['Amelie','Thomas','Google français','Microsoft Denise Online (Natural)','Microsoft Vivienne Online (Natural)'],
+  de:['Anna','Markus','Google Deutsch','Microsoft Katja Online (Natural)','Microsoft Conrad Online (Natural)'],
+  es:['Monica','Jorge','Paulina','Google español','Microsoft Alvaro Online (Natural)']
+};
+
+let pick = null;
+
+function selectVoice(){
+  if(!('speechSynthesis' in window)) return null;
+  const all = speechSynthesis.getVoices()||[];
+  const prefs = VOICE_PREFS[lang]||[];
+  for(const name of prefs){
+    const v = all.find(v => (v.name||'').toLowerCase()===name.toLowerCase());
+    if(v) return v;
+  }
+  const byLang = all.find(v => (v.lang||'').toLowerCase().startsWith(lang));
+  return byLang || all[0] || null;
+}
+
+function refreshVoice(){
+  pick = selectVoice();
+}
+
+if('speechSynthesis' in window){
+  refreshVoice();
+  speechSynthesis.onvoiceschanged = refreshVoice;
+}
+
+function warm(){
+  if(!('speechSynthesis' in window)) return;
+  try{
+    speechSynthesis.cancel();
+    const dot = new SpeechSynthesisUtterance('.');
+    dot.volume=0.01;
+    if(pick) dot.voice=pick;
+    dot.lang = pick?.lang || lang;
+    speechSynthesis.speak(dot);
+  }catch{}
+}
+
+function speak(text){
+  if(!('speechSynthesis' in window)) return;
+  try{
+    speechSynthesis.cancel();
+    lastSpokenText = text;
+    const u = new SpeechSynthesisUtterance(text.replace(/<[^>]+>/g,''));
+    if(pick) u.voice = pick;
+    u.lang = pick?.lang || lang;
+    speechSynthesis.speak(u);
+  }catch{}
+}
+
+function repeatAudio(){
+  if(lastSpokenText) speak(lastSpokenText);
+}
+
+/* ══════════════════════════════════════════════════
+   RENDERING
+   ══════════════════════════════════════════════════ */
+const $content = document.getElementById('content');
+const $progress = document.getElementById('progressBar');
+const $toolbar = document.getElementById('toolbar');
+
+function renderProgress(){
+  let html = '';
+  for(let i=0;i<STEPS.length;i++){
+    const cls = i < step ? 'done' : i === step ? 'active' : '';
+    html += `<div class="progress-dot ${cls}"></div>`;
+  }
+  $progress.innerHTML = html;
+  $progress.classList.toggle('hidden', step < 0);
+}
+
+function renderWelcome(){
+  $toolbar.classList.add('hidden');
+  $content.innerHTML = `
+    <div class="welcome">
+      <div class="welcome-icon">\ud83c\udfe0</div>
+      <h1>${t('welcomeTitle').replace(/\n/g,'<br>')}</h1>
+      <div class="addr-detail">
+        <span>\ud83d\udccd ${t('addrUnit')}</span>
+      </div>
+      <p class="subtitle">${t('welcomeSub')}</p>
+      <button class="btn-start" onclick="warm();nextStep()">${t('start')} \u2192</button>
+    </div>`;
+  speak(t('welcomeSub'));
+}
+
+function renderStep(idx){
+  const s = STEPS[idx];
+  const containCls = s.contain ? 'contain' : '';
+  let buttonsHTML = '';
+  let extraHTML = '';
+
+  if(s.type === 'confirm'){
+    const askKey = s.id + '_ask';
+    const askText = t(askKey);
+    if(askText && askText !== askKey){
+      extraHTML = `<p class="step-desc" style="font-weight:800;color:var(--brown)">${askText}</p>`;
+    }
+    buttonsHTML = `
+      <div class="btn-row">
+        <button class="btn-yes" onclick="nextStep()">${t('yes')} \u2192</button>
+        <button class="btn-no" onclick="showNoHelp(${idx})">${t('no')}</button>
+      </div>
+      <div id="noHelp" class="no-help hidden"></div>`;
+  } else if(s.type === 'open'){
+    const btnLabel = t(s.btnKey);
+    buttonsHTML = `
+      <button class="open-btn" id="btn_open_${idx}" onclick="openWith('${s.statusId}','${s.which}');return false;">${btnLabel} \u2192</button>
+      <div class="status" id="${s.statusId}"></div>
+      <div style="height:10px"></div>
+      <button class="btn-next" onclick="nextStep()">${t('done')} \u2192</button>`;
+  }
+
+  const noteKey = s.id + '_note';
+  const noteText = t(noteKey);
+  const noteHTML = (noteText && noteText !== noteKey) ? `<div class="step-note">${noteText}</div>` : '';
+
+  $content.innerHTML = `
+    <div class="step-card">
+      <div class="step-photo ${containCls}">
+        <img src="${s.img}" alt="">
+        <div class="step-badge">${t(s.id+'_badge')}</div>
+      </div>
+      <div class="step-body">
+        <h2 class="step-title">${t(s.id+'_title')}</h2>
+        <p class="step-desc">${t(s.id+'_desc')}</p>
+        ${noteHTML}
+        ${extraHTML}
+        ${buttonsHTML}
+      </div>
+    </div>`;
+
+  $toolbar.classList.remove('hidden');
+  speak(t(s.id+'_voice'));
+  blinkCheck();
+}
+
+function renderFinal(){
+  $toolbar.classList.add('hidden');
+  $content.innerHTML = `
+    <div class="final">
+      <div class="final-icon">\u2728</div>
+      <h2>${t('finalTitle')}</h2>
+      <p>${t('finalText')}</p>
+    </div>`;
+  speak(t('finalVoice'));
+}
+
+function showNoHelp(idx){
+  const s = STEPS[idx];
+  const noKey = s.id + '_no';
+  const noText = t(noKey);
+  if(!noText || noText === noKey) return;
+  const el = document.getElementById('noHelp');
+  if(el){
+    el.classList.remove('hidden');
+    el.innerHTML = `<p>${noText}</p>`;
+    speak(noText);
+  }
+}
+
+/* ══════════════════════════════════════════════════
+   NAVIGATION
+   ══════════════════════════════════════════════════ */
+function nextStep(){
+  step++;
+  if(step >= STEPS.length){
+    renderProgress();
+    renderFinal();
+  } else {
+    renderProgress();
+    renderStep(step);
+  }
+}
+
+/* ══════════════════════════════════════════════════
+   OPENING LOGIC (identical to original scala guide)
+   ══════════════════════════════════════════════════ */
+async function openWith(statusId, which){
+  const s = document.getElementById(statusId);
+  if(!s) return;
+  if(!TOKEN){
+    s.textContent = t('missingToken');
+    return;
+  }
+  s.textContent = t('opening');
+  const tries = (which === 'building') ? ['building'] : ['apartment','door'];
+  try {
+    for(const kind of tries){
+      const r = await fetch(`/checkin/scala/open-direct/${kind}?t=${encodeURIComponent(TOKEN)}`, {
+        method:'POST', cache:'no-store'
+      });
+      if(r.status === 404) continue;
+      const j = await r.json().catch(()=>({}));
+      if(r.ok && j.ok){
+        s.textContent = t('opened');
+        speak(t('opened'));
+      } else {
+        s.textContent = (j.error || j.message) ? String(j.error || j.message) : `${t('errGeneric')} (${r.status})`;
+      }
+      return;
+    }
+    s.textContent = `${t('errGeneric')} (endpoint not found)`;
+  } catch(e){
+    s.textContent = t('netErr');
+  }
+}
+
+/* ══════════════════════════════════════════════════
+   BLINK LOGIC (identical to original)
+   ══════════════════════════════════════════════════ */
+function blinkCheck(){
+  const m = location.pathname.match(/\/checkin\/([^\/]+)\//);
+  const apt = m && m[1];
+  if(!apt || !TOKEN) return;
+  fetch('/checkin/' + apt + '/phase?t=' + encodeURIComponent(TOKEN), {cache:'no-store'})
+    .then(r => r.json())
+    .then(j => {
+      const btns = document.querySelectorAll('.open-btn');
+      btns.forEach(b => b.classList.toggle('nc-blink', !!(j && j.phase === 3)));
+    })
+    .catch(()=>{});
+}
+
+/* ══════════════════════════════════════════════════
+   PROBLEM OVERLAY
+   ══════════════════════════════════════════════════ */
+function showProblems(){
+  if(step < 0 || step >= STEPS.length) return;
+  const s = STEPS[step];
+  const problems = t(s.id + '_problems') || [];
+  const $overlay = document.getElementById('overlay');
+  const $sheet = document.getElementById('overlaySheet');
+
+  let html = `<h3 class="overlay-title">${t('problemTitle')}</h3>`;
+  problems.forEach((p,i) => {
+    if(i === problems.length - 1){
+      html += `<button class="problem-btn" onclick="window.open('https://wa.me/393355245756')">\ud83d\udcde ${p}</button>`;
+    } else {
+      html += `<button class="problem-btn" onclick="speakProblem(${step},${i});closeOverlay()">\u26a0\ufe0f ${p}</button>`;
+    }
+  });
+  html += `<button class="close-overlay" onclick="closeOverlay()">${t('problemClose')}</button>`;
+  $sheet.innerHTML = html;
+  $overlay.classList.remove('hidden');
+}
+
+function speakProblem(stepIdx, problemIdx){
+  const s = STEPS[stepIdx];
+  const noKey = s.id + '_no';
+  const noText = t(noKey);
+  if(noText && noText !== noKey){
+    speak(noText);
+    const el = document.getElementById('noHelp');
+    if(el){
+      el.classList.remove('hidden');
+      el.innerHTML = `<p>${noText}</p>`;
+    }
+  }
+}
+
+function closeOverlay(){
+  document.getElementById('overlay').classList.add('hidden');
+}
+
+/* ══════════════════════════════════════════════════
+   LANGUAGE
+   ══════════════════════════════════════════════════ */
+function setLang(newLang){
+  lang = I18N[newLang] ? newLang : 'en';
+  document.documentElement.lang = lang;
+  document.querySelectorAll('.lang-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.lang === lang);
+  });
+  refreshVoice();
+  // Update toolbar labels
+  document.querySelectorAll('[data-t]').forEach(el => {
+    el.textContent = t(el.getAttribute('data-t'));
+  });
+  // Re-render current view
+  if(step < 0) renderWelcome();
+  else if(step >= STEPS.length) renderFinal();
+  else renderStep(step);
+}
+
+document.querySelectorAll('.lang-btn').forEach(btn => {
+  btn.addEventListener('click', () => setLang(btn.dataset.lang));
+});
+
+/* ══════════════════════════════════════════════════
+   INIT
+   ══════════════════════════════════════════════════ */
+(function init(){
+  const params = new URLSearchParams(location.search);
+  const paramLang = params.get('lang');
+  if(paramLang && I18N[paramLang.toLowerCase()]){
+    lang = paramLang.toLowerCase();
+  } else {
+    const browserLang = (navigator.language || 'en').slice(0,2).toLowerCase();
+    lang = I18N[browserLang] ? browserLang : 'en';
+  }
+  setLang(lang);
+})();
+</script>
+</body>
+</html>
