@@ -2128,15 +2128,48 @@ app.get("/checkin/:apt/index.html", (req, res) => {
     const isOperator = typeof p.op_phase === "number";
     const isGuideToken = tgt === `guide-${apt}`;
     if (!isOperator && !isGuideToken && (!isYYYYMMDD(day) || day !== tzToday())) return res.status(410).send("Questo link Ã¨ valido solo nel giorno di check-in.");
-    const filePath = path.join(PUBLIC_DIR, "checkin", apt, "index.html");
+    // Dal 2026-09-08 questo link (quello che Hostaway manda agli ospiti) apre la
+    // guida interattiva con la voce. La guida premium precedente resta raggiungibile
+    // su /checkin/:apt/index-classic.html con gli stessi controlli di token, e fa da
+    // rete di sicurezza qui sotto se il file vocale dovesse mancare.
+    const filePath = path.join(PUBLIC_DIR, "checkin", apt, "voice.html");
+    const classicPath = path.join(PUBLIC_DIR, "checkin", apt, "index-classic.html");
     return res.sendFile(filePath, (err) => {
       if (err) {
         console.error("â sendFile error:", { filePath, code: err.code, message: err.message });
-        if (!res.headersSent) return res.status(err.statusCode || 404).send("Check-in page missing on server.");
+        if (res.headersSent) return;
+        return res.sendFile(classicPath, (err2) => {
+          if (err2 && !res.headersSent) return res.status(err2.statusCode || 404).send("Check-in page missing on server.");
+        });
       }
     });
   } catch (e) {
     console.error("â /checkin/:apt/index.html crashed:", e);
+    return res.status(500).send("Internal Server Error");
+  }
+});
+
+app.get("/checkin/:apt/index-classic.html", (req, res) => {
+  try {
+    const apt = req.params.apt.toLowerCase(), t = String(req.query.t || "");
+    const parsed = parseGuideToken(t);
+    if (!parsed.ok) return res.status(410).send("Questo link non \u00e8 pi\u00f9 valido.");
+    const p = parsed.payload || {};
+    if (typeof p.exp !== "number" || Date.now() > p.exp) return res.status(410).send("Questo link \u00e8 scaduto. Richiedi un nuovo link.");
+    const { tgt, day } = p;
+    const validTgts = [`checkin-${apt}`, `guide-${apt}`];
+    if (!validTgts.includes(tgt) && typeof p.op_phase !== "number") return res.status(410).send("Link non valido.");
+    const isOperator = typeof p.op_phase === "number";
+    const isGuideToken = tgt === `guide-${apt}`;
+    if (!isOperator && !isGuideToken && (!isYYYYMMDD(day) || day !== tzToday())) return res.status(410).send("Questo link \u00e8 valido solo nel giorno di check-in.");
+    const filePath = path.join(PUBLIC_DIR, "checkin", apt, "index-classic.html");
+    return res.sendFile(filePath, (err) => {
+      if (err) {
+        if (!res.headersSent) return res.status(err.statusCode || 404).send("Classic guide not available.");
+      }
+    });
+  } catch (e) {
+    console.error("/checkin/:apt/index-classic.html crashed:", e);
     return res.status(500).send("Internal Server Error");
   }
 });
