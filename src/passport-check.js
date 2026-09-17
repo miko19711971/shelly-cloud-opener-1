@@ -47,6 +47,7 @@ const TEXTS = {
       `As required by Italian law, we must register an identity document for every guest staying in the apartment, children of any age included: ${v.expected} in total. So far we have received ${v.docs} of ${v.expected}.`, ``,
       `Please upload the missing documents here:`, v.portal, ``,
       `For each guest use the "Upload" button or the "Selfie" button and send a clear photo of the front page of the passport or ID card.`, ``,
+      `💡 If the upload doesn't work, try a different browser (Chrome works best) or resize the photo to under 5 MB.`, ``,
       `Please note: the link to your digital guide — the one that carries the electronic keys to open the building door and the apartment — is sent automatically only once the online check-in is complete, with the document of every guest. Until then the keys cannot be issued and you will not be able to get into the apartment on the day of your arrival.`, ``,
       `It only takes a minute. Thank you!`
     ]
@@ -59,6 +60,7 @@ const TEXTS = {
       `Come richiede la legge italiana, dobbiamo registrare un documento di identità per ogni ospite che soggiorna nell'appartamento, minori di qualunque età compresi: ${v.expected} in totale. Finora ne abbiamo ricevuti ${v.docs} su ${v.expected}.`, ``,
       `Carica qui i documenti mancanti:`, v.portal, ``,
       `Per ogni ospite usa il pulsante "Upload" oppure il pulsante "Selfie" e invia una foto nitida della prima pagina del passaporto o della carta d'identità.`, ``,
+      `💡 Se il caricamento non funziona, prova con un altro browser (Chrome funziona meglio) oppure riduci la dimensione della foto a meno di 5 MB.`, ``,
       `Attenzione: il link alla guida digitale — quello che contiene le chiavi elettroniche per aprire il portone e l'appartamento — viene inviato in automatico solo quando il check-in online è completo, con il documento di ogni ospite. Fino ad allora le chiavi non possono essere emesse e il giorno dell'arrivo non potrai entrare nell'appartamento.`, ``,
       `Basta un minuto. Grazie!`
     ]
@@ -71,6 +73,7 @@ const TEXTS = {
       `Como exige la ley italiana, debemos registrar un documento de identidad de cada huésped que se aloja en el apartamento, incluidos los menores de cualquier edad: ${v.expected} en total. Hasta ahora hemos recibido ${v.docs} de ${v.expected}.`, ``,
       `Sube aquí los documentos que faltan:`, v.portal, ``,
       `Para cada huésped usa el botón "Upload" o el botón "Selfie" y envía una foto nítida de la primera página del pasaporte o del documento de identidad.`, ``,
+      `💡 Si la carga no funciona, prueba con otro navegador (Chrome funciona mejor) o reduce el tamaño de la foto a menos de 5 MB.`, ``,
       `Importante: el enlace a tu guía digital — el que contiene las llaves electrónicas para abrir el portal y el apartamento — se envía automáticamente solo cuando el check-in online está completo, con el documento de cada huésped. Hasta entonces las llaves no se pueden emitir y el día de tu llegada no podrás entrar en el apartamento.`, ``,
       `Solo lleva un minuto. ¡Gracias!`
     ]
@@ -83,6 +86,7 @@ const TEXTS = {
       `Comme l'exige la loi italienne, nous devons enregistrer une pièce d'identité pour chaque voyageur séjournant dans l'appartement, enfants de tout âge compris : ${v.expected} au total. Nous en avons reçu ${v.docs} sur ${v.expected}.`, ``,
       `Merci de téléverser ici les documents manquants :`, v.portal, ``,
       `Pour chaque voyageur, utilisez le bouton "Upload" ou le bouton "Selfie" et envoyez une photo nette de la première page du passeport ou de la carte d'identité.`, ``,
+      `💡 Si le téléversement ne fonctionne pas, essayez un autre navigateur (Chrome fonctionne le mieux) ou réduisez la taille de la photo à moins de 5 Mo.`, ``,
       `Important : le lien vers votre guide numérique — celui qui contient les clés électroniques pour ouvrir la porte de l'immeuble et l'appartement — est envoyé automatiquement uniquement lorsque le check-in en ligne est complet, avec le document de chaque voyageur. Jusque-là, les clés ne peuvent pas être délivrées et le jour de votre arrivée vous ne pourrez pas entrer dans l'appartement.`, ``,
       `Cela ne prend qu'une minute. Merci !`
     ]
@@ -95,6 +99,7 @@ const TEXTS = {
       `Wie es das italienische Gesetz verlangt, müssen wir von jedem Gast ein Ausweisdokument erfassen, der in der Wohnung übernachtet, Kinder jeden Alters eingeschlossen: insgesamt ${v.expected}. Bisher haben wir ${v.docs} von ${v.expected} erhalten.`, ``,
       `Bitte laden Sie die fehlenden Dokumente hier hoch:`, v.portal, ``,
       `Verwenden Sie für jeden Gast die Schaltfläche "Upload" oder "Selfie" und senden Sie ein scharfes Foto der ersten Seite des Reisepasses oder Personalausweises.`, ``,
+      `💡 Wenn der Upload nicht funktioniert, versuchen Sie einen anderen Browser (Chrome funktioniert am besten) oder verkleinern Sie das Foto auf unter 5 MB.`, ``,
       `Wichtig: Der Link zu Ihrem digitalen Guide – der die elektronischen Schlüssel für die Haustür und die Wohnung enthält – wird automatisch erst dann verschickt, wenn der Online-Check-in mit dem Dokument jedes Gastes vollständig ist. Bis dahin können die Schlüssel nicht ausgestellt werden und Sie kommen am Anreisetag nicht in die Wohnung.`, ``,
       `Es dauert nur eine Minute. Vielen Dank!`
     ]
