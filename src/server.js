@@ -5422,14 +5422,22 @@ app.get("/admin/leonina-reminder/run", requireAdmin, async (req, res) => {
 });
 
 // ════════════════════════════════════════════════════════════════════════════
-// DAILY 10:00 (Europe/Rome) — CONTROLLO PASSAPORTI DEL GIORNO PRIMA
-// Per ogni check-in di domani controlla che sull'arrival form ci sia un
-// documento per ogni ospite. Se ne mancano, all'ospite parte un avviso sulla
-// conversazione Hostaway (che glielo consegna via email) e all'host arriva il
-// riepilogo. Logica e lettura dei documenti in src/passport-check.js.
+// DAILY CONTROLLO PASSAPORTI — DUE GIRI
+//
+// T-1 (ore 10:00 Roma): controlla gli arrivi di DOMANI. Chi non ha caricato
+//     i documenti riceve un avviso "domani e' il tuo check-in".
+//
+// T-0 (ore 08:00 Roma): controlla gli arrivi di OGGI. Chi ancora non ha
+//     caricato i documenti riceve un secondo avviso piu' urgente "oggi e'
+//     il tuo check-in". La finestra anti-duplicato e' di 12h, cosi' il
+//     messaggio T-1 (partito ~22h prima) non blocca il T-0.
+//
+// Logica e lettura dei documenti in src/passport-check.js.
 // ════════════════════════════════════════════════════════════════════════════
-const PASSPORT_CHECK_HOUR = Number(process.env.PASSPORT_CHECK_HOUR || 10);
-let _passportCheckLastDate = null;
+const PASSPORT_CHECK_HOUR_T1 = Number(process.env.PASSPORT_CHECK_HOUR || 10);
+const PASSPORT_CHECK_HOUR_T0 = Number(process.env.PASSPORT_CHECK_HOUR_T0 || 8);
+let _passportCheckLastDate_T1 = null;
+let _passportCheckLastDate_T0 = null;
 
 function _romeTomorrow() {
   const today = tzToday();                       // YYYY-MM-DD, Europe/Rome
@@ -5438,7 +5446,7 @@ function _romeTomorrow() {
   return d.toISOString().slice(0, 10);
 }
 
-async function runPassportCheckJob({ day, dryRun } = {}) {
+async function runPassportCheckJob({ day, dryRun, dedupeHours } = {}) {
   return runPassportCheck({
     getConversationId,
     sendGuestMessage: sendHostawayMessage,
@@ -5447,16 +5455,23 @@ async function runPassportCheckJob({ day, dryRun } = {}) {
       subject, text, html
     }),
     log: console.log
-  }, { day: day || _romeTomorrow(), dryRun });
+  }, { day: day || _romeTomorrow(), dryRun, dedupeHours });
 }
 
 // Parte una volta sola dentro l'ora indicata (guardia in memoria, si azzera al restart)
 setInterval(async () => {
   try {
     const today = tzToday();
-    if (_romeHour() === PASSPORT_CHECK_HOUR && _passportCheckLastDate !== today) {
-      _passportCheckLastDate = today;
+    const hour = _romeHour();
+    // T-1: ore 10 — arrivi di domani
+    if (hour === PASSPORT_CHECK_HOUR_T1 && _passportCheckLastDate_T1 !== today) {
+      _passportCheckLastDate_T1 = today;
       await runPassportCheckJob();
+    }
+    // T-0: ore 8 — arrivi di oggi (secondo promemoria, finestra anti-duplicato 12h)
+    if (hour === PASSPORT_CHECK_HOUR_T0 && _passportCheckLastDate_T0 !== today) {
+      _passportCheckLastDate_T0 = today;
+      await runPassportCheckJob({ day: today, dedupeHours: 12 });
     }
   } catch (e) { console.error("❌ Controllo passaporti tick:", e.message); }
 }, 60000);

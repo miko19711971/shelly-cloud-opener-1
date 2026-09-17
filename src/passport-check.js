@@ -378,11 +378,12 @@ export function buildHostReport(day, rows) {
 
 // ── Il controllo ────────────────────────────────────────────────────────────
 // deps: { getConversationId, sendGuestMessage, sendHostEmail, log }
-// opts: { day, dryRun }
+// opts: { day, dryRun, dedupeHours }
 export async function runPassportCheck(deps, opts = {}) {
   const log = deps.log || console.log;
   const dryRun = !!opts.dryRun;
   const day = opts.day;
+  const dedupeHours = opts.dedupeHours || 20;
   if (!process.env.HOSTAWAY_TOKEN) {
     log("❌ Controllo passaporti: HOSTAWAY_TOKEN mancante");
     return { day, rows: [], skipped: "no_token" };
@@ -427,7 +428,7 @@ export async function runPassportCheck(deps, opts = {}) {
       log(`   ? ${r.id} ${base.guestName}: nessuna conversazione → avviso non inviabile`);
       continue;
     }
-    if (await warningAlreadySent(conversationId)) {
+    if (await warningAlreadySent(conversationId, dedupeHours)) {
       rows.push({ ...row, outcome: "already_warned" });
       log(`   ⏭ ${r.id} ${base.guestName}: ${found.docs}/${base.expected}, avviso gia' inviato`);
       continue;
