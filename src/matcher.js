@@ -151,10 +151,15 @@ const STRICT_INTENTS = {
 
   malfunction: [
     "non funziona", "rotto", "guasto", "non esce acqua", "acqua calda",
+    "scarafaggi", "blatte", "insetti", "formiche", "topi", "muffa",
     "not working", "broken", "no hot water", "no water", "no electricity",
+    "cockroaches", "bugs", "insects", "ants", "mice", "mold",
     "no funciona", "roto", "no hay agua caliente", "no hay agua",
+    "cucarachas", "insectos", "hormigas", "ratones", "moho",
     "ne fonctionne pas", "pas d eau chaude", "pas d eau",
-    "funktioniert nicht", "kaputt", "kein warmwasser", "kein wasser"
+    "cafards", "insectes", "fourmis", "souris", "moisissure",
+    "funktioniert nicht", "kaputt", "kein warmwasser", "kein wasser",
+    "kakerlaken", "insekten", "ameisen", "mause", "schimmel"
   ],
 
   air_conditioning: [
