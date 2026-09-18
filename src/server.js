@@ -234,6 +234,92 @@ fs.readFile(PHASE3_PERSIST_FILE, 'utf8').then(raw => {
   if (loaded > 0) console.log(`✅ Phase 3 state restored: ${loaded} pending entries`);
 }).catch(() => {}); // file non esiste al primo avvio — OK
 
+// ── Ricostruzione da Hostaway ────────────────────────────────────────────
+// Il file qui sopra NON basta: su Render il filesystem del servizio riparte
+// pulito a ogni deploy, quindi una consegna programmata giorni prima spariva
+// e l'ospite non riceveva mai il messaggio con le chiavi (caso verificato il
+// 17/09/2026: consegna programmata l'08/09, mai partita).
+// All'avvio e ogni 30 minuti rileggiamo gli arrivi di oggi da Hostaway e
+// riprogrammiamo quelli che non hanno ancora ricevuto il messaggio. Cosi' lo
+// stato non serve piu' a nessuno: la verita' sta in Hostaway.
+
+const PHASE3_LINK_MARKER = '/checkin/';  // compare solo nel messaggio delle chiavi
+
+/** Istante reale corrispondente a un'ora di Roma. Regge il cambio dell'ora. */
+function romeDateAt(dayStr, hhmm) {
+  const naive = new Date(`${dayStr}T${hhmm}:00Z`);
+  const offset = new Date(naive.toLocaleString('en-US', { timeZone: 'Europe/Rome' })).getTime()
+               - new Date(naive.toLocaleString('en-US', { timeZone: 'UTC' })).getTime();
+  return new Date(naive.getTime() - offset);
+}
+
+/** true = chiavi gia' mandate in questa conversazione, false = no, null = non leggibile. */
+async function phase3AlreadySent(conversationId) {
+  try {
+    const r = await axios.get(
+      `https://api.hostaway.com/v1/conversations/${conversationId}/messages?limit=50`,
+      { headers: { Authorization: `Bearer ${process.env.HOSTAWAY_TOKEN}` }, timeout: 8000 }
+    );
+    return (r.data?.result || []).some(m => typeof m.body === 'string' && m.body.includes(PHASE3_LINK_MARKER));
+  } catch (e) {
+    console.error('❌ phase3AlreadySent error:', conversationId, e.message);
+    return null;
+  }
+}
+
+async function rebuildPhase3FromHostaway() {
+  if (!process.env.HOSTAWAY_TOKEN) return;
+  const today = tzToday();
+  try {
+    const r = await axios.get(
+      'https://api.hostaway.com/v1/reservations?limit=500',
+      { headers: { Authorization: `Bearer ${process.env.HOSTAWAY_TOKEN}` }, timeout: 30000 }
+    );
+    let riprogrammate = 0;
+    for (const res of (r.data?.result || [])) {
+      if (res.status === 'cancelled') continue;
+      if ((res.arrivalDate || res.checkInDate) !== today) continue;
+      const apartment = APT_LISTING_MAP[res.listingMapId];
+      if (!apartment) continue;
+
+      const key = `phase3-${res.id}`;
+      if (PENDING_PHASE3.has(key)) continue;       // gia' in programma, o gia' inviata in questo giro
+
+      const conversationId = await getConversationId(res.id);
+      if (!conversationId) continue;
+
+      // Se il messaggio c'e' gia' nella conversazione non lo rimandiamo: evita
+      // il doppione all'ospite che riapre la guida dopo un riavvio.
+      const gia = await phase3AlreadySent(conversationId);
+      if (gia !== false) continue;                 // true: ce l'ha. null: non letto, riprovo fra 30 min
+
+      const langRaw = (res.guestLanguage || res.guestLocale || 'en').toLowerCase();
+      const langMap = { spanish:'es', castilian:'es', french:'fr', italian:'it', german:'de',
+                        english:'en', deutsch:'de', italiano:'it', 'français':'fr', 'español':'es' };
+      const g = langMap[langRaw.split(',')[0].trim()] || langRaw.slice(0, 2) || 'en';
+      const lang = ['en','it','fr','de','es'].includes(g) ? g : 'en';
+
+      const arr = await getArrivalTime(res.id, resolveArrivalHHMM(res));
+      let sendAt = new Date(romeDateAt(today, arr).getTime() + 2 * 60 * 1000);
+      if (sendAt <= new Date()) sendAt = new Date(Date.now() + 60 * 1000);  // ora gia' passata: subito
+
+      PENDING_PHASE3.set(key, {
+        conversationId, apartment, lang, sendAt,
+        checkinDate: today, reservationId: String(res.id), sent: false
+      });
+      riprogrammate++;
+      console.log(`🔁 Phase 3 riprogrammata: ${apartment} | res:${res.id} | arr:${arr} | sendAt:${sendAt.toISOString()}`);
+    }
+    if (riprogrammate) savePhase3State();
+    console.log(`🔁 Ricostruzione phase 3: ${riprogrammate} riprogrammata/e per ${today}`);
+  } catch (e) {
+    console.error('❌ rebuildPhase3FromHostaway error:', e.message);
+  }
+}
+
+setTimeout(rebuildPhase3FromHostaway, 20000);              // all'avvio
+setInterval(rebuildPhase3FromHostaway, 30 * 60 * 1000);    // e ogni mezz'ora
+
 async function sendPhase2GuideMessage({ conversationId, apartment, lang = "en", reservationId = null, checkoutDate = null }) {
   // Send personalised /stay link — device registration + session happen server-side on first open
   const guideUrl     = `https://shelly-cloud-opener-1.onrender.com/stay/${apartment}?r=${reservationId}&lang=${lang}`;
