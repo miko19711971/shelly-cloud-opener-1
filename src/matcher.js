@@ -362,10 +362,8 @@ export function matchIntent(text) {
   }
 
   // 🔒 STRICT: priorita assoluta — risponde sempre (anche senza domanda)
-  // Soglia 3: servono almeno 2 parole singole (+2+2) o 1 frase (+3).
-  // Con soglia 2 bastava "internet" da sola per matchare wifi.
   for (const [intent, keywords] of Object.entries(STRICT_INTENTS)) {
-    if (matchKeywords(normalized, words, keywords) >= 3) {
+    if (matchKeywords(normalized, words, keywords) >= 2) {
       return {
         intent,
         language,
