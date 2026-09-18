@@ -253,14 +253,34 @@ function romeDateAt(dayStr, hhmm) {
   return new Date(naive.getTime() - offset);
 }
 
-/** true = chiavi gia' mandate in questa conversazione, false = no, null = non leggibile. */
+/** Le date di Hostaway arrivano come "YYYY-MM-DD HH:MM:SS" in UTC. */
+function parseHostawayDate(v) {
+  if (!v) return NaN;
+  const s = String(v).trim();
+  return Date.parse(/[TZ]/.test(s) ? s : s.replace(' ', 'T') + 'Z');
+}
+
+/**
+ * true = chiavi gia' mandate DA NOI nelle ultime 18 ore, false = no, null = non leggibile.
+ * Guardare tutta la cronologia era troppo largo: il 18/09 un link /checkin/ vecchio nella
+ * conversazione di Viktor ha fatto saltare la sua consegna delle 18:02. Contano solo i
+ * messaggi in uscita e recenti, cioe' quelli che l'ospite puo' davvero usare oggi.
+ */
 async function phase3AlreadySent(conversationId) {
   try {
     const r = await axios.get(
       `https://api.hostaway.com/v1/conversations/${conversationId}/messages?limit=50`,
       { headers: { Authorization: `Bearer ${process.env.HOSTAWAY_TOKEN}` }, timeout: 8000 }
     );
-    return (r.data?.result || []).some(m => typeof m.body === 'string' && m.body.includes(PHASE3_LINK_MARKER));
+    const limite = Date.now() - 18 * 60 * 60 * 1000;
+    return (r.data?.result || []).some(m => {
+      if (typeof m.body !== 'string' || !m.body.includes(PHASE3_LINK_MARKER)) return false;
+      const daOspite = m.isIncoming === 1 || m.isIncoming === true
+                    || m.senderRole === 'guest' || m.authorRole === 'guest';
+      if (daOspite) return false;
+      const ts = parseHostawayDate(m.date || m.insertedOn || m.insertedAt || m.createdAt);
+      return Number.isFinite(ts) && ts >= limite;
+    });
   } catch (e) {
     console.error('❌ phase3AlreadySent error:', conversationId, e.message);
     return null;
