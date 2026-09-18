@@ -255,31 +255,8 @@ function normalize(text) {
     .trim();
 }
 
-// =========================
-// LINGUA (SEMPLICE, STABILE)
-// =========================
-const LANG = {
-  it: ["come", "dove", "quando", "quanto"],
-  en: ["what", "how", "where", "when"],
-  fr: ["comment", "merci", "pourquoi", "bonjour"],
-  es: ["que", "como", "donde", "gracias", "hola"],
-  de: ["was", "wie", "wo"]
-};
-
-function detectLanguage(text) {
-  const words = normalize(text).split(" ");
-  let best = "en";
-  let score = 0;
-
-  for (const [lang, keys] of Object.entries(LANG)) {
-    let s = keys.filter(k => words.includes(k)).length;
-    if (s > score) {
-      score = s;
-      best = lang;
-    }
-  }
-  return best;
-}
+// Lingua: unica fonte di verità in language.js
+import { detectLanguage } from "./language.js";
 
 // =========================
 // MATCHING

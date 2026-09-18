@@ -97,7 +97,9 @@ export async function askGemini({ message, apartment, lang }) {
       systemInstruction: systemParts
     });
 
-    const result = await model.generateContent(message);
+    const timeout = new Promise((_, reject) =>
+      setTimeout(() => reject(new Error("timeout 8s")), 8000));
+    const result = await Promise.race([model.generateContent(message), timeout]);
     const text = result?.response?.text?.();
 
     if (!text || !text.trim()) {
@@ -107,7 +109,7 @@ export async function askGemini({ message, apartment, lang }) {
 
     return text.trim();
   } catch (err) {
-    console.error("❌ Gemini HTTP error:", err?.response?.data || err?.message || err);
+    console.error("❌ Gemini error:", err?.message || err);
     return null;
   }
 }

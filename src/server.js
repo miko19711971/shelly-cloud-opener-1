@@ -4367,22 +4367,13 @@ if (answer === "__INTERNAL_AI__") {
   answer = null;
 }
    // ======================================================
-// 🤖 FALLBACK GEMINI — domande turistiche + ringraziamenti
+// 🤖 FALLBACK GEMINI — domande turistiche
 // ======================================================
+// Il matcher ha già filtrato gli STATEMENT (isActionable=false → silenzio)
+// e i BLOCK (pagamenti, identità bot → silenzio). Se arriviamo qui,
+// il messaggio è una domanda o un ringraziamento: Gemini risponde.
 if (!answer) {
-  // Controlla se è una DOMANDA
-  const isQuestion = /\?|where|what|when|who|how|why|which|dove|cosa|quando|come|perch[eé]|quale|où|quand|comment|pourquoi|quel|dónde|cuándo|cómo|por qué|cuál|wo|wann|wie|warum|welche/i.test(message);
-  
-  // Controlla se è un RINGRAZIAMENTO o FEEDBACK
-  const isThanks = /thank|thanks|grazie|merci|danke|muchas gracias|appreciate|grateful|wonderful|amazing|perfect|excellent|great|fantastic|loved|enjoyed|beautiful|best/i.test(message);
-  
-  // Se non è né domanda né ringraziamento → SILENZIO
-  if (!isQuestion && !isThanks) {
-    console.log("💬 Messaggio casual → SILENZIO (risposta manuale)");
-    return res.json({ ok: true, silent: true, reason: "casual_message" });
-  }
-
-  console.log("🤖 Domanda o ringraziamento → Gemini fallback");
+  console.log("🤖 Fallback Gemini");
 
   try {
     const geminiReply = await askGemini({
