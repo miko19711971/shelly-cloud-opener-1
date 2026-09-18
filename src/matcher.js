@@ -150,11 +150,11 @@ const STRICT_INTENTS = {
   ],
 
   malfunction: [
-    "non funziona", "rotto", "guasto",
-    "not working", "broken",
-    "no funciona", "roto",
-    "ne fonctionne pas",
-    "funktioniert nicht", "kaputt"
+    "non funziona", "rotto", "guasto", "non esce acqua", "acqua calda",
+    "not working", "broken", "no hot water", "no water", "no electricity",
+    "no funciona", "roto", "no hay agua caliente", "no hay agua",
+    "ne fonctionne pas", "pas d eau chaude", "pas d eau",
+    "funktioniert nicht", "kaputt", "kein warmwasser", "kein wasser"
   ],
 
   air_conditioning: [
