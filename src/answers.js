@@ -24,7 +24,7 @@ export const ANSWERS = {
 water_leak: "Nel caso si verifichi una perdita d’acqua nell’appartamento, la prima cosa da fare è andare in bagno. Guardando lo specchio, sul lato sinistro, leggermente nell’angolo del muro, troverete un cappuccio di metallo: svitatelo. Dietro il cappuccio c’è un rubinetto nero: chiudetelo completamente, perché è la valvola di chiusura dell’acqua dell’intero appartamento. Una volta chiusa l’acqua, chiamate il portiere e subito dopo avvertitemi.",
 lost_keys: "Nel caso in cui doveste perdere le chiavi, la prima cosa da fare è chiamarmi immediatamente e avvertirmi, così da poter gestire la situazione nel modo corretto.",
       fire: "Se all’interno dell’appartamento dovesse svilupparsi un incendio o prendere fuoco qualcosa, utilizzate immediatamente l’estintore per spegnere il fuoco, se possibile. Mettetevi subito in sicurezza uscendo dall’immobile. Una volta fuori, chiamate immediatamente i Vigili del Fuoco e subito dopo il mio numero.",
-      "apartment_info": "The apartment is located at Via Arenula 16, Staircase C, apartment 8, fourth floor."
+      "apartment_info": "L'appartamento si trova in Via Arenula 16, Scala C, interno 8, quarto piano."
     },
     en: {
       wifi: "Wi-Fi: The router is on the desk near the window. Turn it to read the SSID and password on the label. If it doesn't work: check it's on, unplug it for 30 seconds and plug it back in. If the issue continues, message me.",
@@ -76,7 +76,7 @@ lost_keys: "If you lose the keys, the first thing to do is call me immediately a
 water_leak: "En cas de fuite d’eau dans l’appartement, allez dans la salle de bain. En regardant le miroir, sur le côté gauche près de l’angle du mur, vous trouverez un capuchon en métal : dévissez-le. Derrière se trouve un robinet noir : fermez-le complètement, car il s’agit de la vanne principale d’eau de l’appartement. Une fois l’eau coupée, appelez le concierge puis prévenez-moi immédiatement.",
 lost_keys: "Si vous perdez les clés, la première chose à faire est de m’appeler immédiatement et de m’en informer afin que je puisse gérer la situation correctement.",
       fire: "Si un incendie se déclare ou si quelque chose prend feu à l’intérieur de l’appartement, utilisez immédiatement l’extincteur pour éteindre le feu si possible. Mettez-vous aussitôt en sécurité en sortant du logement. Une fois à l’extérieur, appelez immédiatement les pompiers puis contactez-moi.",
-     "apartment_info": "The apartment is located at Via Arenula 16, Staircase C, apartment 8, fourth floor."
+     "apartment_info": "L’appartement se situe Via Arenula 16, Escalier C, appartement 8, quatrième étage."
     },
     de: {
       wifi: "WLAN: Der Router steht auf dem Schreibtisch nahe dem Fenster. Drehen Sie ihn, um SSID und Passwort auf dem Aufkleber zu lesen. Falls es nicht funktioniert: prüfen Sie, ob er eingeschaltet ist, ziehen Sie den Stecker 30 Sekunden und stecken Sie ihn wieder ein. Dann bitte melden.",
@@ -102,7 +102,7 @@ lost_keys: "Si vous perdez les clés, la première chose à faire est de m’app
 water_leak: "Falls es in der Wohnung zu einem Wasserleck kommt, gehen Sie ins Badezimmer. Wenn Sie in den Spiegel schauen, finden Sie auf der linken Seite nahe der Wandecke eine Metallkappe: Schrauben Sie diese ab. Dahinter befindet sich ein schwarzes Ventil: Schließen Sie es vollständig, da es das Hauptabsperrventil für das Wasser der Wohnung ist. Nachdem das Wasser abgestellt wurde, rufen Sie den Hausmeister an und informieren Sie mich anschließend sofort.",
 lost_keys: "Falls Sie die Schlüssel verlieren, rufen Sie mich bitte sofort an und informieren Sie mich, damit ich die Situation korrekt regeln kann.",
       fire: "Falls es in der Wohnung zu einem Brand kommt oder etwas Feuer fängt, verwenden Sie sofort den Feuerlöscher, um das Feuer – wenn möglich – zu löschen. Bringen Sie sich anschließend sofort in Sicherheit, indem Sie das Gebäude verlassen. Rufen Sie draußen sofort die Feuerwehr an und kontaktieren Sie danach mich.",
-      "apartment_info": "The apartment is located at Via Arenula 16, Staircase C, apartment 8, fourth floor."
+      "apartment_info": "Die Wohnung befindet sich in der Via Arenula 16, Treppenhaus C, Wohnung 8, vierter Stock."
     },
     es: {
       wifi: "Wi-Fi: El router está en el escritorio cerca de la ventana. Gíralo para leer el SSID y la contraseña en la etiqueta. Si no funciona: comprueba que esté encendido, desenchúfalo 30 segundos y vuelve a conectarlo. Si continúa, escríbeme.",
@@ -128,7 +128,7 @@ lost_keys: "Falls Sie die Schlüssel verlieren, rufen Sie mich bitte sofort an u
 water_leak: "En caso de una fuga de agua en el apartamento, vayan al baño. Mirando el espejo, en el lado izquierdo cerca de la esquina de la pared, encontrarán un tapón metálico: desenróscanlo. Detrás hay una válvula negra: ciérrenla completamente, ya que es la llave principal del agua del apartamento. Una vez cerrada el agua, llamen al portero y luego avísenme inmediatamente.",
 lost_keys: "En caso de que pierdan las llaves, lo primero que deben hacer es llamarme inmediatamente y avisarme para poder gestionar la situación correctamente.",
       fire: "Si se produce un incendio o algo se prende fuego dentro del apartamento, utilicen inmediatamente el extintor para apagar el fuego, si es posible. Pónganse de inmediato a salvo saliendo del inmueble. Una vez fuera, llamen inmediatamente a los bomberos y después a mi número.",
-      "apartment_info": "The apartment is located at Via Arenula 16, Staircase C, apartment 8, fourth floor."
+      "apartment_info": "El apartamento se encuentra en Via Arenula 16, Escalera C, apartamento 8, cuarto piso."
     }
   },
 
@@ -156,7 +156,7 @@ lost_keys: "En caso de que pierdan las llaves, lo primero que deben hacer es lla
       water_leak: "Nel caso si verifichi una perdita d’acqua, la prima cosa da fare è uscire dall’appartamento. Subito sul lato destro, accanto alla porta, troverete uno sportello: apritelo. All’interno c’è il primo contatore in alto con un rubinetto: chiudetelo completamente, perché è il rubinetto dell’acqua dell’appartamento. Una volta chiusa l’acqua, avvertitemi immediatamente.",
 lost_keys: "Nel caso in cui doveste perdere le chiavi, la prima cosa da fare è chiamarmi immediatamente e avvertirmi, così da poter gestire la situazione nel modo corretto.",
       fire: "Se all’interno dell’appartamento dovesse svilupparsi un incendio o prendere fuoco qualcosa, utilizzate immediatamente l’estintore per spegnere il fuoco, se possibile. Mettetevi subito in sicurezza uscendo dall’immobile. Una volta fuori, chiamate immediatamente i Vigili del Fuoco e subito dopo il mio numero.",
-      "apartment_info": "The apartment is located at Via Leonina 71, fourth floor, apartment 16."
+      "apartment_info": "L’appartamento si trova in Via Leonina 71, quarto piano, interno 16."
     },
     en: {
       wifi: "Wi-Fi: The router is on the desk near the window. Turn it to read the SSID and password on the label. If it doesn't work: check it's on, unplug it for 30 seconds and plug it back in. If the issue continues, message me.",
@@ -206,7 +206,7 @@ lost_keys: "If you lose the keys, the first thing to do is call me immediately a
       water_leak: "En cas de fuite d’eau, la première chose à faire est de sortir de l’appartement. Immédiatement sur le côté droit, près de la porte, vous trouverez un coffret : ouvrez-le. À l’intérieur se trouve le premier compteur en haut avec un robinet : fermez-le complètement, car il s’agit de la vanne d’eau de l’appartement. Une fois l’eau coupée, prévenez-moi immédiatement.",
 lost_keys: "Si vous perdez les clés, la première chose à faire est de m’appeler immédiatement et de m’en informer afin que je puisse gérer la situation correctement.",
       fire: "Si un incendie se déclare ou si quelque chose prend feu à l’intérieur de l’appartement, utilisez immédiatement l’extincteur pour éteindre le feu si possible. Mettez-vous aussitôt en sécurité en sortant du logement. Une fois à l’extérieur, appelez immédiatement les pompiers puis contactez-moi.",
-      "apartment_info": "The apartment is located at Via Leonina 71, fourth floor, apartment 16."
+      "apartment_info": "L’appartement se situe Via Leonina 71, quatrième étage, appartement 16."
     },
     de: {
       wifi: "WLAN: Der Router steht auf dem Schreibtisch nahe dem Fenster. Drehen Sie ihn, um SSID und Passwort auf dem Aufkleber zu lesen. Falls es nicht funktioniert: prüfen Sie, ob er eingeschaltet ist, ziehen Sie den Stecker 30 Sekunden und stecken Sie ihn wieder ein. Dann bitte melden.",
@@ -231,7 +231,7 @@ lost_keys: "Si vous perdez les clés, la première chose à faire est de m’app
       water_leak: "Falls es zu einem Wasserleck kommt, verlassen Sie zuerst die Wohnung. Direkt auf der rechten Seite, neben der Tür, befindet sich ein kleiner Schrank: öffnen Sie ihn. Darin finden Sie oben den ersten Zähler mit einem Ventil: schließen Sie es vollständig, da es sich um das Wasserabsperrventil der Wohnung handelt. Nachdem das Wasser abgestellt wurde, informieren Sie mich bitte sofort.",
 lost_keys: "Falls Sie die Schlüssel verlieren, rufen Sie mich bitte sofort an und informieren Sie mich, damit ich die Situation korrekt regeln kann.",
       fire: "Falls es in der Wohnung zu einem Brand kommt oder etwas Feuer fängt, verwenden Sie sofort den Feuerlöscher, um das Feuer – wenn möglich – zu löschen. Bringen Sie sich anschließend sofort in Sicherheit, indem Sie das Gebäude verlassen. Rufen Sie draußen sofort die Feuerwehr an und kontaktieren Sie danach mich.",
-      "apartment_info": "The apartment is located at Via Leonina 71, fourth floor, apartment 16."
+      "apartment_info": "Die Wohnung befindet sich in der Via Leonina 71, vierter Stock, Wohnung 16."
     },
     es: {
       wifi: "Wi-Fi: El router está en el escritorio cerca de la ventana. Gíralo para leer el SSID y la contraseña en la etiqueta. Si no funciona: comprueba que esté encendido, desenchúfalo 30 segundos y vuelve a conectarlo. Si continúa, escríbeme.",
@@ -256,7 +256,7 @@ lost_keys: "Falls Sie die Schlüssel verlieren, rufen Sie mich bitte sofort an u
       water_leak: "En caso de una fuga de agua, lo primero que deben hacer es salir del apartamento. Inmediatamente a la derecha, junto a la puerta, encontrarán un armario: ábranlo. Dentro se encuentra el primer contador en la parte superior con una llave: ciérrenla completamente, ya que es la llave de paso del agua del apartamento. Una vez cerrada el agua, avísenme inmediatamente.",
 lost_keys: "En caso de que pierdan las llaves, lo primero que deben hacer es llamarme inmediatamente y avisarme para poder gestionar la situación correctamente.",
       fire: "Si se produce un incendio o algo se prende fuego dentro del apartamento, utilicen inmediatamente el extintor para apagar el fuego, si es posible. Pónganse de inmediato a salvo saliendo del inmueble. Una vez fuera, llamen inmediatamente a los bomberos y después a mi número.",
-      "apartment_info": "The apartment is located at Via Leonina 71, fourth floor, apartment 16."
+      "apartment_info": "El apartamento se encuentra en Via Leonina 71, cuarto piso, apartamento 16."
     }
   },
 
@@ -285,7 +285,7 @@ lost_keys: "En caso de que pierdan las llaves, lo primero que deben hacer es lla
 water_leak: "Nel caso si verifichi una perdita d’acqua all’interno dell’appartamento, uscite nella corte esterna. Appena usciti, sul lato destro, nell’angolo in alto a destra, guardando verso il basso, troverete un cappuccio di metallo: rimuovetelo. Dietro il cappuccio c’è un rubinetto: ruotatelo completamente in senso opposto per chiudere il circuito dell’acqua. Dopo aver chiuso l’acqua, chiamatemi immediatamente.",
 lost_keys: "Nel caso in cui doveste perdere le chiavi, la prima cosa da fare è chiamarmi immediatamente e avvertirmi, così da poter gestire la situazione nel modo corretto.",
       fire: "Se all’interno dell’appartamento dovesse svilupparsi un incendio o prendere fuoco qualcosa, utilizzate immediatamente l’estintore per spegnere il fuoco, se possibile. Mettetevi subito in sicurezza uscendo dall’immobile. Una volta fuori, chiamate immediatamente i Vigili del Fuoco e subito dopo il mio numero.",
-      "apartment_info": "The apartment is located at Via della Scala 17, apartment 1A, ground floor."
+      "apartment_info": "L’appartamento si trova in Via della Scala 17, interno 1A, piano terra."
     },
     en: {
       wifi: "Wi-Fi: The router is on the right side of the living room, placed on a bench. SSID and password are on the router label. If it doesn't work: check it's on, unplug it for 30 seconds and plug it back in. If the issue continues, message me.",
@@ -337,7 +337,7 @@ lost_keys: "If you lose the keys, the first thing to do is call me immediately a
 water_leak: "En cas de fuite d’eau à l’intérieur de l’appartement, sortez dans la cour extérieure. Dès la sortie, sur le côté droit, dans l’angle supérieur droit, en regardant vers le bas, vous trouverez un capuchon en métal : retirez-le. Derrière ce capuchon se trouve un robinet : tournez-le complètement dans le sens opposé afin de couper l’arrivée d’eau. Après avoir coupé l’eau, appelez-moi immédiatement.",
 lost_keys: "Si vous perdez les clés, la première chose à faire est de m’appeler immédiatement et de m’en informer afin que je puisse gérer la situation correctement.",
       fire: "Si un incendie se déclare ou si quelque chose prend feu à l’intérieur de l’appartement, utilisez immédiatement l’extincteur pour éteindre le feu si possible. Mettez-vous aussitôt en sécurité en sortant du logement. Une fois à l’extérieur, appelez immédiatement les pompiers puis contactez-moi.",
-      "apartment_info": "The apartment is located at Via della Scala 17, apartment 1A, ground floor."
+      "apartment_info": "L’appartement se situe Via della Scala 17, appartement 1A, rez-de-chaussée."
     },
     de: {
       wifi: "WLAN: Der Router steht auf der rechten Seite des Wohnzimmers auf einer Bank. SSID und Passwort stehen auf dem Aufkleber. Bei Problemen: prüfen, ob er eingeschaltet ist, 30 Sekunden vom Strom trennen und wieder anschließen.",
@@ -363,7 +363,7 @@ lost_keys: "Si vous perdez les clés, la première chose à faire est de m’app
 water_leak: "Falls es in der Wohnung zu einem Wasserleck kommt, gehen Sie in den Außenhof. Sobald Sie draußen sind, auf der rechten Seite, in der oberen rechten Ecke, wenn Sie nach unten schauen, finden Sie eine Metallkappe: entfernen Sie diese. Dahinter befindet sich ein Ventil: Drehen Sie es vollständig in die entgegengesetzte Richtung, um die Wasserzufuhr zu schließen. Nachdem das Wasser abgestellt wurde, rufen Sie mich bitte sofort an.",
 lost_keys: "Falls Sie die Schlüssel verlieren, rufen Sie mich bitte sofort an und informieren Sie mich, damit ich die Situation korrekt regeln kann.",
       fire: "Falls es in der Wohnung zu einem Brand kommt oder etwas Feuer fängt, verwenden Sie sofort den Feuerlöscher, um das Feuer – wenn möglich – zu löschen. Bringen Sie sich anschließend sofort in Sicherheit, indem Sie das Gebäude verlassen. Rufen Sie draußen sofort die Feuerwehr an und kontaktieren Sie danach mich.",
-      "apartment_info": "The apartment is located at Via della Scala 17, apartment 1A, ground floor."
+      "apartment_info": "Die Wohnung befindet sich in der Via della Scala 17, Wohnung 1A, Erdgeschoss."
     },
     es: {
       wifi: "Wi-Fi: El router está en el lado derecho del salón, sobre un banco. El SSID y la contraseña están en la etiqueta. Si hay problemas: comprueba que esté encendido, desenchúfalo 30 segundos y vuelve a conectarlo.",
@@ -389,7 +389,7 @@ lost_keys: "Falls Sie die Schlüssel verlieren, rufen Sie mich bitte sofort an u
 water_leak: "En caso de una fuga de agua dentro del apartamento, salgan al patio exterior. Nada más salir, en el lado derecho, en la esquina superior derecha, mirando hacia abajo, encontrarán un tapón metálico: retírenlo. Detrás hay una llave: gírenla completamente en sentido contrario para cerrar el circuito del agua. Después de cerrar el agua, llámenme inmediatamente.",
 lost_keys: "En caso de que pierdan las llaves, lo primero que deben hacer es llamarme inmediatamente y avisarme para poder gestionar la situación correctamente.",
       fire: "Si se produce un incendio o algo se prende fuego dentro del apartamento, utilicen inmediatamente el extintor para apagar el fuego, si es posible. Pónganse de inmediato a salvo saliendo del inmueble. Una vez fuera, llamen inmediatamente a los bomberos y después a mi número.",
-      "apartment_info": "The apartment is located at Via della Scala 17, apartment 1A, ground floor."
+      "apartment_info": "El apartamento se encuentra en Via della Scala 17, apartamento 1A, planta baja."
     }
   },
 
@@ -418,7 +418,7 @@ lost_keys: "En caso de que pierdan las llaves, lo primero que deben hacer es lla
 water_leak: "Nel caso si verifichi una perdita d’acqua all’interno dell’appartamento, recatevi in cucina e guardate sotto il lavandino. Aprite i portelli sotto il lavandino: troverete una manopola che è la valvola di chiusura del circuito dell’acqua. Ruotate la manopola (se è orizzontale mettetela in verticale, o viceversa) per chiudere completamente l’acqua. Dopo aver chiuso l’acqua, chiamatemi immediatamente.",
 lost_keys: "Nel caso in cui doveste perdere le chiavi, la prima cosa da fare è chiamarmi immediatamente e avvertirmi, così da poter gestire la situazione nel modo corretto.",
       fire: "Se all’interno dell’appartamento dovesse svilupparsi un incendio o prendere fuoco qualcosa, utilizzate immediatamente l’estintore per spegnere il fuoco, se possibile. Mettetevi subito in sicurezza uscendo dall’immobile. Una volta fuori, chiamate immediatamente i Vigili del Fuoco e subito dopo il mio numero.",
-      "apartment_info": "The apartment is located at Via del Portico d’Ottavia 1D, third floor."
+      "apartment_info": "L’appartamento si trova in Via del Portico d’Ottavia 1D, terzo piano."
     },
     en: {
       wifi: "Wi-Fi: The router is on the table. Turn it to read the SSID and password on the label. If it doesn't work: check it's on, unplug it for 30 seconds and plug it back in. If the issue continues, message me.",
@@ -470,7 +470,7 @@ lost_keys: "If you lose the keys, the first thing to do is call me immediately a
 water_leak: "En cas de fuite d’eau à l’intérieur de l’appartement, rendez-vous dans la cuisine et regardez sous l’évier. Ouvrez les portes sous l’évier : vous trouverez un bouton qui est la vanne de coupure du circuit d’eau. Tournez le bouton (s’il est à l’horizontale, mettez-le à la verticale, ou inversement) afin de couper complètement l’eau. Après avoir coupé l’eau, appelez-moi immédiatement.",
 lost_keys: "Si vous perdez les clés, la première chose à faire est de m’appeler immédiatement et de m’en informer afin que je puisse gérer la situation correctement.",
       fire: "Si un incendie se déclare ou si quelque chose prend feu à l’intérieur de l’appartement, utilisez immédiatement l’extincteur pour éteindre le feu si possible. Mettez-vous aussitôt en sécurité en sortant du logement. Une fois à l’extérieur, appelez immédiatement les pompiers puis contactez-moi.",
-      "apartment_info": "The apartment is located at Via del Portico d’Ottavia 1D, third floor."
+      "apartment_info": "L’appartement se situe Via del Portico d’Ottavia 1D, troisième étage."
     },
     de: {
       wifi: "WLAN: Der Router steht auf dem Tisch. Drehen Sie ihn, um SSID und Passwort auf dem Aufkleber zu lesen. Falls es nicht funktioniert: prüfen Sie, ob er eingeschaltet ist, ziehen Sie den Stecker 30 Sekunden und stecken Sie ihn wieder ein. Dann bitte melden.",
@@ -496,7 +496,7 @@ lost_keys: "Si vous perdez les clés, la première chose à faire est de m’app
 water_leak: "Falls es in der Wohnung zu einem Wasserleck kommt, gehen Sie in die Küche und schauen Sie unter das Spülbecken. Öffnen Sie die Türen unter dem Spülbecken: Dort finden Sie einen Drehknopf, der das Absperrventil für den Wasserkreislauf ist. Drehen Sie den Knopf (ist er waagerecht, stellen Sie ihn senkrecht, oder umgekehrt), um das Wasser vollständig abzustellen. Rufen Sie mich danach bitte sofort an.",
 lost_keys: "Falls Sie die Schlüssel verlieren, rufen Sie mich bitte sofort an und informieren Sie mich, damit ich die Situation korrekt regeln kann.",
       fire: "Falls es in der Wohnung zu einem Brand kommt oder etwas Feuer fängt, verwenden Sie sofort den Feuerlöscher, um das Feuer – wenn möglich – zu löschen. Bringen Sie sich anschließend sofort in Sicherheit, indem Sie das Gebäude verlassen. Rufen Sie draußen sofort die Feuerwehr an und kontaktieren Sie danach mich.",
-      "apartment_info": "The apartment is located at Via del Portico d’Ottavia 1D, third floor."
+      "apartment_info": "Die Wohnung befindet sich in der Via del Portico d’Ottavia 1D, dritter Stock."
     },
     es: {
       wifi: "Wi-Fi: El router está sobre la mesa. Gíralo para leer el SSID y la contraseña en la etiqueta. Si no funciona: comprueba que esté encendido, desenchúfalo 30 segundos y vuelve a conectarlo. Si continúa, escríbeme.",
@@ -522,7 +522,7 @@ lost_keys: "Falls Sie die Schlüssel verlieren, rufen Sie mich bitte sofort an u
 water_leak: "En caso de que haya una fuga de agua dentro del apartamento, vayan a la cocina y miren debajo del fregadero. Abran las puertas bajo el fregadero: encontrarán una perilla que es la válvula de cierre del circuito de agua. Giren la perilla (si está en posición horizontal, pónganla en vertical, o viceversa) para cerrar completamente el agua. Después de cerrar el agua, llámenme inmediatamente.",
 lost_keys: "En caso de que pierdan las llaves, lo primero que deben hacer es llamarme inmediatamente y avisarme para poder gestionar la situación correctamente.",
       fire: "Si se produce un incendio o algo se prende fuego dentro del apartamento, utilicen inmediatamente el extintor para apagar el fuego, si es posible. Pónganse de inmediato a salvo saliendo del inmueble. Una vez fuera, llamen inmediatamente a los bomberos y después a mi número.",
-      "apartment_info": "The apartment is located at Via del Portico d’Ottavia 1D, third floor."
+      "apartment_info": "El apartamento se encuentra en Via del Portico d’Ottavia 1D, tercer piso."
     }
   },
 
@@ -551,7 +551,7 @@ lost_keys: "En caso de que pierdan las llaves, lo primero que deben hacer es lla
 water_leak: "Nel caso si verifichi una perdita d’acqua, procedete come segue. Se la perdita proviene dalla pompa del bagno con la doccia, andate nel corridoio dove si trova la tendina a soffietto. Sotto la tendina, vicino al pavimento, c’è uno spazio: all’interno, in fondo sul lato sinistro, troverete la spina della pompa. Staccate la spina. Successivamente, andate nell’altro bagno, quello con la vasca. Sotto la caldaia c’è uno sportello: apritelo con la piccola chiave e chiudete la manopola dell’acqua del circuito. Dopo aver effettuato queste operazioni, avvertitemi immediatamente.",
 lost_keys: "Nel caso in cui doveste perdere le chiavi, la prima cosa da fare è chiamarmi immediatamente e avvertirmi, così da poter gestire la situazione nel modo corretto.",
       fire: "Se all’interno dell’appartamento dovesse svilupparsi un incendio o prendere fuoco qualcosa, utilizzate immediatamente l’estintore per spegnere il fuoco, se possibile. Mettetevi subito in sicurezza uscendo dall’immobile. Una volta fuori, chiamate immediatamente i Vigili del Fuoco e subito dopo il mio numero.",
-      "apartment_info": "The apartment is located at Viale Trastevere 108, Staircase B, apartment 9, fourth floor."
+      "apartment_info": "L’appartamento si trova in Viale Trastevere 108, Scala B, interno 9, quarto piano."
     },
     en: {
       wifi: "Wi-Fi: The router is on the cabinet near the entrance. Turn it to read the SSID and password on the label. If it doesn't work: check it's on, unplug it for 30 seconds and plug it back in. If the issue continues, message me.",
@@ -604,7 +604,7 @@ lost_keys: "If you lose the keys, the first thing to do is call me immediately a
 water_leak: "En cas de fuite d’eau, procédez comme suit. Si la fuite provient de la pompe de la salle de bain avec douche, allez dans le couloir où se trouve le rideau accordéon. Sous le rideau, près du sol, il y a un espace : à l’intérieur, au fond sur le côté gauche, vous trouverez la prise de la pompe. Débranchez-la. Ensuite, allez dans l’autre salle de bain, celle avec la baignoire. Sous la chaudière, il y a un petit panneau : ouvrez-le avec la petite clé et fermez la vanne d’eau du circuit. Après ces opérations, prévenez-moi immédiatement.",
 lost_keys: "Si vous perdez les clés, la première chose à faire est de m’appeler immédiatement et de m’en informer afin que je puisse gérer la situation correctement.",
       fire: "Si un incendie se déclare ou si quelque chose prend feu à l’intérieur de l’appartement, utilisez immédiatement l’extincteur pour éteindre le feu si possible. Mettez-vous aussitôt en sécurité en sortant du logement. Une fois à l’extérieur, appelez immédiatement les pompiers puis contactez-moi.",
-      "apartment_info": "The apartment is located at Viale Trastevere 108, Staircase B, apartment 9, fourth floor."
+      "apartment_info": "L’appartement se situe Viale Trastevere 108, Escalier B, appartement 9, quatrième étage."
     },
     de: {
       wifi: "WLAN: Der Router steht auf dem Möbelstück im Eingangsbereich. Drehen Sie ihn, um SSID und Passwort auf dem Aufkleber zu lesen. Bei Problemen: 30 Sekunden vom Strom trennen und wieder anschließen.",
@@ -630,7 +630,7 @@ lost_keys: "Si vous perdez les clés, la première chose à faire est de m’app
 water_leak: "Falls es zu einem Wasserleck kommt, gehen Sie wie folgt vor. Wenn das Leck von der Pumpe des Badezimmers mit Dusche stammt, gehen Sie in den Flur, wo sich der Faltvorhang befindet. Unter dem Vorhang, nahe am Boden, gibt es einen kleinen Hohlraum: dort finden Sie hinten auf der linken Seite den Stecker der Pumpe. Ziehen Sie den Stecker heraus. Gehen Sie anschließend in das andere Badezimmer mit Badewanne. Unter dem Boiler befindet sich eine kleine Klappe: öffnen Sie sie mit dem kleinen Schlüssel und schließen Sie das Wasserabsperrventil. Informieren Sie mich danach bitte sofort.",
 lost_keys: "Falls Sie die Schlüssel verlieren, rufen Sie mich bitte sofort an und informieren Sie mich, damit ich die Situation korrekt regeln kann.",
       fire: "Falls es in der Wohnung zu einem Brand kommt oder etwas Feuer fängt, verwenden Sie sofort den Feuerlöscher, um das Feuer – wenn möglich – zu löschen. Bringen Sie sich anschließend sofort in Sicherheit, indem Sie das Gebäude verlassen. Rufen Sie draußen sofort die Feuerwehr an und kontaktieren Sie danach mich.",
-      "apartment_info": "The apartment is located at Viale Trastevere 108, Staircase B, apartment 9, fourth floor."
+      "apartment_info": "Die Wohnung befindet sich im Viale Trastevere 108, Treppenhaus B, Wohnung 9, vierter Stock."
     },
     es: {
       wifi: "Wi-Fi: El router está en el mueble cerca de la entrada. Gíralo para leer el SSID y la contraseña en la etiqueta. Si no funciona: comprueba que esté encendido, desenchúfalo 30 segundos y vuelve a conectarlo. Si continúa, escríbeme.",
@@ -656,7 +656,7 @@ lost_keys: "Falls Sie die Schlüssel verlieren, rufen Sie mich bitte sofort an u
 water_leak: "En caso de una fuga de agua, procedan de la siguiente manera. Si la fuga proviene de la bomba del baño con ducha, vayan al pasillo donde se encuentra la cortina plegable. Debajo de la cortina, cerca del suelo, hay un espacio: dentro, al fondo en el lado izquierdo, encontrarán el enchufe de la bomba. Desconéctenlo. Luego vayan al otro baño, el que tiene bañera. Debajo de la caldera hay un pequeño compartimento: ábranlo con la llave pequeña y cierren la válvula del agua del circuito. Después de realizar estas operaciones, avísenme inmediatamente.",
 lost_keys: "En caso de que pierdan las llaves, lo primero que deben hacer es llamarme inmediatamente y avisarme para poder gestionar la situación correctamente.",
       fire: "Si se produce un incendio o algo se prende fuego dentro del apartamento, utilicen inmediatamente el extintor para apagar el fuego, si es posible. Pónganse de inmediato a salvo saliendo del inmueble. Una vez fuera, llamen inmediatamente a los bomberos y después a mi número.",
-      "apartment_info": "The apartment is located at Viale Trastevere 108, Staircase B, apartment 9, fourth floor."
+      "apartment_info": "El apartamento se encuentra en Viale Trastevere 108, Escalera B, apartamento 9, cuarto piso."
     }
   }
 };

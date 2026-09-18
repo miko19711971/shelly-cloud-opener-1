@@ -4387,7 +4387,7 @@ if (!answer) {
   try {
     const geminiReply = await askGemini({
       message,
-      apartment: LISTING_TO_APARTMENT[listingId] || "rome",
+      apartment: apartment || "rome",
       lang: detectedLang || "en"
     });
 
