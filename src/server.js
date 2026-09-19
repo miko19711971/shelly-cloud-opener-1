@@ -202,7 +202,9 @@ async function runSlotCron() {
 }
 
 const SENT_SLOTS = new Set();
-setInterval(runSlotCron, 60000);
+// Slot disattivati il 19/09/2026: 7% engagement su 28 messaggi, nessun ospite li usa.
+// L'ospite ha gia' la webapp con tutte le info. Riattivare se necessario.
+// setInterval(runSlotCron, 60000);
 
 // ========================================================================
 // PHASE 3 GUIDE SCHEDULER
