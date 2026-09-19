@@ -696,12 +696,14 @@ async function openTargetAndNotify(targetDef, req) {
     const falliti = steps.length ? steps.filter(l => !l.ok).length : (result.ok ? 0 : 1);
     const esito   = result.ok ? "OK" : "FALLITA";
     const via     = (req && req.originalUrl) ? String(req.originalUrl).split("?")[0] : "?";
+    const source  = /open-direct/.test(via) ? "WEBAPP" : "LINK HOSTAWAY";
     const text = [
       "Apertura " + esito,
       "",
       "Porta:    " + label,
       "Target:   " + key,
       "Quando:   " + when + " (Europe/Rome)",
+      "Aperto da: " + source,
       "Impulsi:  " + impulsi + (falliti ? " (falliti: " + falliti + ")" : ""),
       "Chiamata: " + via,
       "",
